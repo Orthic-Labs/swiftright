@@ -1,0 +1,1757 @@
+Building for debugging...
+[Computing dependencies]
+[Pre-planning 1ΓÇë/ΓÇë124]
+[Planning deferred tasks]
+[26ΓÇë/ΓÇë47] SwiftRightRuntime
+[27ΓÇë/ΓÇë48]
+[29ΓÇë/ΓÇë69] SwiftRightRuntime
+C:\Users\adrds\AppData\Local\Programs\Swift\Platforms\6.4.0\Windows.platform\Developer\SDKs\Windows.sdk\usr\lib\swift\windows\WinSDK.swiftmodule\x86_64-unknown-windows-msvc.swiftmodule:1:1: warning: reference to type 'wchar_t' broken by a context change; 'wchar_t' was expected to be in '_Builtin_stddef', but now a candidate is found only in 'SwiftShims'
+
+1 | _Builtin_stddef.wchar_t
+
+  | |- warning: reference to type 'wchar_t' broken by a context change; 'wchar_t' was expected to be in '_Builtin_stddef', but now a candidate is found only in 'SwiftShims'
+
+  | |- note: the type was expected to be found in module '_Builtin_stddef' at 'C:\Users\adrds\AppData\Local\Programs\Swift\Toolchains\6.4.0+Asserts\usr\lib\swift\clang\include\module.modulemap'
+
+  | |- note: the type was actually found in module 'SwiftShims' at 'C:\Users\adrds\AppData\Local\Programs\Swift\Platforms\6.4.0\Windows.platform\Developer\SDKs\Windows.sdk\usr\lib\swift\shims\module.modulemap'
+
+  | |- note: the module 'WinSDK' was built with a Swift language version set to 5.10 while the current invocation uses 6.4; APINotes may change how clang declarations are imported
+
+  | `- note: declarations in the clang module '_Builtin_stddef' may be hidden by clang preprocessor macros
+
+<unknown>:0: note: attempting to recover from the previous modularization issue
+
+
+[31ΓÇë/ΓÇë69] SwiftRightRuntime
+D:\Claude\swiftright\.factory-work\product-stage\09e184945-cc18ed0f\probes\sr0-s\fresh-runtime\Sources\SwiftRightRuntime\WindowsSystemImageProvider.swift:114:13: warning: variable 'units' was never mutated; consider changing to 'let' constant [#VariableNeverMutated]
+
+112 |         defer { _ = DeleteDC(dc) }
+
+113 |         let fontHeight = Int32(max(request.targetWidth, request.targetHeight))
+
+114 |         var units = Array(request.providerFamily.utf16) + [0]
+
+    |             `- warning: variable 'units' was never mutated; consider changing to 'let' constant [#VariableNeverMutated]
+
+115 |         let font: HFONT? = units.withUnsafeBufferPointer { family in
+
+116 |             CreateFontW(-fontHeight, 0, 0, 0, Int32(FW_NORMAL), 0, 0, 0,
+
+
+
+[#VariableNeverMutated]: <https://docs.swift.org/compiler/documentation/diagnostics/variable-never-mutated>
+
+
+[37ΓÇë/ΓÇë69] SwiftRightRuntime
+[38ΓÇë/ΓÇë69] SwiftRightRuntime
+[39ΓÇë/ΓÇë69] SwiftRightRuntime
+[40ΓÇë/ΓÇë69] SwiftRightRuntime
+[41ΓÇë/ΓÇë69] SwiftRightRuntimeTests-product
+[42ΓÇë/ΓÇë69] SwiftRightRuntimeTests-product
+[44ΓÇë/ΓÇë69] SwiftRightRuntime
+[45ΓÇë/ΓÇë69] SwiftRightRuntime
+[46ΓÇë/ΓÇë69] SwiftRightRuntime
+[47ΓÇë/ΓÇë69] SwiftRightRuntime
+[48ΓÇë/ΓÇë69] SwiftRightRuntime
+[49ΓÇë/ΓÇë69] SwiftRightRuntime
+[50ΓÇë/ΓÇë69] SwiftRightRuntime
+[52ΓÇë/ΓÇë69] SwiftRightRuntime
+[53ΓÇë/ΓÇë69] SwiftRightRuntime
+[53ΓÇë/ΓÇë69]
+[56ΓÇë/ΓÇë70]
+[57ΓÇë/ΓÇë71]
+[59ΓÇë/ΓÇë92] SwiftRightRuntimeTests-product
+[61ΓÇë/ΓÇë92] SwiftRightRuntimeTests-product
+[66ΓÇë/ΓÇë92] SwiftRightRuntimeTests-product
+[67ΓÇë/ΓÇë92] SwiftRightRuntimeTests-product
+[68ΓÇë/ΓÇë92] SwiftRightRuntimeTests-product
+[69ΓÇë/ΓÇë92] SwiftRightRuntimeTests-test-runner
+[70ΓÇë/ΓÇë92] SwiftRightRuntimeTests-test-runner
+[72ΓÇë/ΓÇë92] SwiftRightRuntimeTests-product
+[73ΓÇë/ΓÇë92] SwiftRightRuntimeTests-product
+[74ΓÇë/ΓÇë92] SwiftRightRuntimeTests-product
+[75ΓÇë/ΓÇë92] SwiftRightRuntimeTests-product
+[76ΓÇë/ΓÇë92] SwiftRightRuntimeTests-product
+[77ΓÇë/ΓÇë92] SwiftRightRuntimeTests-product
+[78ΓÇë/ΓÇë92] SwiftRightRuntimeTests-product
+[79ΓÇë/ΓÇë92] SwiftRightRuntimeTests-product
+[81ΓÇë/ΓÇë92] SwiftRightRuntimeTests-product
+[82ΓÇë/ΓÇë92] SwiftRightRuntimeTests-product
+[82ΓÇë/ΓÇë92]
+[85ΓÇë/ΓÇë93] SwiftRightRuntimeTests-product
+[90ΓÇë/ΓÇë96] SwiftRightRuntimeTests-test-runner
+[91ΓÇë/ΓÇë96] SwiftRightRuntimeTests-test-runner
+[97ΓÇë/ΓÇë97] SwiftRightRuntimeTests-test-runner
+Build complete! (98.00 secs)
+Test Suite 'All tests' started at 2026-10-14 19:46:08.885
+
+Test Suite 'Debug-windows-x86_64.xctest' started at 2026-10-14 19:46:08.887
+
+Test Suite 'AlignmentTests' started at 2026-10-14 19:46:08.887
+
+Test Case 'AlignmentTests.testNineStandardAlignmentsMapToHorizontalAndVerticalAxes' started at 2026-10-14 19:46:08.887
+
+Test Case 'AlignmentTests.testNineStandardAlignmentsMapToHorizontalAndVerticalAxes' passed (0.001 seconds)
+
+Test Suite 'AlignmentTests' passed at 2026-10-14 19:46:08.888
+
+	 Executed 1 test, with 0 failures (0 unexpected) in 0.001 (0.001) seconds
+
+Test Suite 'AnimationMeasuredTests' started at 2026-10-14 19:46:08.888
+
+Test Case 'AnimationMeasuredTests.testAnimationModifierAnimatesAPlainChange' started at 2026-10-14 19:46:08.888
+
+Test Case 'AnimationMeasuredTests.testAnimationModifierAnimatesAPlainChange' passed (0.002 seconds)
+
+Test Case 'AnimationMeasuredTests.testAnimationModifierBeatsTheExplicitAnimationBelowIt' started at 2026-10-14 19:46:08.890
+
+Test Case 'AnimationMeasuredTests.testAnimationModifierBeatsTheExplicitAnimationBelowIt' passed (0.0 seconds)
+
+Test Case 'AnimationMeasuredTests.testDefaultIsTheSmoothSpringOfHalfASecond' started at 2026-10-14 19:46:08.890
+
+Test Case 'AnimationMeasuredTests.testDefaultIsTheSmoothSpringOfHalfASecond' passed (0.001 seconds)
+
+Test Case 'AnimationMeasuredTests.testDisablesAnimationsSilencesTheModifierButNotAnExplicitAnimation' started at 2026-10-14 19:46:08.891
+
+Test Case 'AnimationMeasuredTests.testDisablesAnimationsSilencesTheModifierButNotAnExplicitAnimation' passed (0.0 seconds)
+
+Test Case 'AnimationMeasuredTests.testEaseInAndEaseOutMatchSwiftUI' started at 2026-10-14 19:46:08.891
+
+Test Case 'AnimationMeasuredTests.testEaseInAndEaseOutMatchSwiftUI' passed (0.0 seconds)
+
+Test Case 'AnimationMeasuredTests.testEaseInOutIsTheCubicBezierFortyTwoZeroFiftyEightOne' started at 2026-10-14 19:46:08.892
+
+Test Case 'AnimationMeasuredTests.testEaseInOutIsTheCubicBezierFortyTwoZeroFiftyEightOne' passed (0.0 seconds)
+
+Test Case 'AnimationMeasuredTests.testIdentityTransitionDoesNotAnimateTheInsertion' started at 2026-10-14 19:46:08.892
+
+Test Case 'AnimationMeasuredTests.testIdentityTransitionDoesNotAnimateTheInsertion' passed (0.001 seconds)
+
+Test Case 'AnimationMeasuredTests.testInsertionFadesInWithTheAnimationByDefault' started at 2026-10-14 19:46:08.893
+
+Test Case 'AnimationMeasuredTests.testInsertionFadesInWithTheAnimationByDefault' passed (0.0 seconds)
+
+Test Case 'AnimationMeasuredTests.testInsertionWithoutAnAnimationAppearsAtOnce' started at 2026-10-14 19:46:08.894
+
+Test Case 'AnimationMeasuredTests.testInsertionWithoutAnAnimationAppearsAtOnce' passed (0.0 seconds)
+
+Test Case 'AnimationMeasuredTests.testInterruptionBlendsTheFirstAnimationWithTheSecond' started at 2026-10-14 19:46:08.894
+
+Test Case 'AnimationMeasuredTests.testInterruptionBlendsTheFirstAnimationWithTheSecond' passed (0.0 seconds)
+
+Test Case 'AnimationMeasuredTests.testInterruptionWithEaseInOutUsesTheSameLayering' started at 2026-10-14 19:46:08.894
+
+Test Case 'AnimationMeasuredTests.testInterruptionWithEaseInOutUsesTheSameLayering' passed (0.0 seconds)
+
+Test Case 'AnimationMeasuredTests.testLinearAndTheNoDurationVariantsLastThirtyFiveHundredths' started at 2026-10-14 19:46:08.895
+
+Test Case 'AnimationMeasuredTests.testLinearAndTheNoDurationVariantsLastThirtyFiveHundredths' passed (0.0 seconds)
+
+Test Case 'AnimationMeasuredTests.testMoveTransitionStartsOneViewWidthBeyondTheEdge' started at 2026-10-14 19:46:08.895
+
+Test Case 'AnimationMeasuredTests.testMoveTransitionStartsOneViewWidthBeyondTheEdge' passed (0.001 seconds)
+
+Test Case 'AnimationMeasuredTests.testNilAnimationModifierSnapsAnExplicitAnimation' started at 2026-10-14 19:46:08.896
+
+Test Case 'AnimationMeasuredTests.testNilAnimationModifierSnapsAnExplicitAnimation' passed (0.0 seconds)
+
+Test Case 'AnimationMeasuredTests.testNoChangeAndNilAnimationCompleteAtOnce' started at 2026-10-14 19:46:08.896
+
+Test Case 'AnimationMeasuredTests.testNoChangeAndNilAnimationCompleteAtOnce' passed (0.0 seconds)
+
+Test Case 'AnimationMeasuredTests.testOnAppearWithAnimationAnimatesFromTheStateTheViewFirstAppearedIn' started at 2026-10-14 19:46:08.896
+
+Test Case 'AnimationMeasuredTests.testOnAppearWithAnimationAnimatesFromTheStateTheViewFirstAppearedIn' passed (0.001 seconds)
+
+Test Case 'AnimationMeasuredTests.testOpacityTransitionIsTheDefault' started at 2026-10-14 19:46:08.897
+
+Test Case 'AnimationMeasuredTests.testOpacityTransitionIsTheDefault' passed (0.0 seconds)
+
+Test Case 'AnimationMeasuredTests.testRemovalFadesOutAndTheSiblingMovesUpAtOnce' started at 2026-10-14 19:46:08.897
+
+Test Case 'AnimationMeasuredTests.testRemovalFadesOutAndTheSiblingMovesUpAtOnce' passed (0.001 seconds)
+
+Test Case 'AnimationMeasuredTests.testRemovalMoveLeavesByItsOwnWidth' started at 2026-10-14 19:46:08.898
+
+Test Case 'AnimationMeasuredTests.testRemovalMoveLeavesByItsOwnWidth' passed (0.001 seconds)
+
+Test Case 'AnimationMeasuredTests.testRemovalWithoutAnAnimationIsImmediate' started at 2026-10-14 19:46:08.899
+
+Test Case 'AnimationMeasuredTests.testRemovalWithoutAnAnimationIsImmediate' passed (0.0 seconds)
+
+Test Case 'AnimationMeasuredTests.testRemovedCompletionWaitsForTheWholeChain' started at 2026-10-14 19:46:08.899
+
+Test Case 'AnimationMeasuredTests.testRemovedCompletionWaitsForTheWholeChain' passed (0.0 seconds)
+
+Test Case 'AnimationMeasuredTests.testSlideInsertsFromTheLeadingEdgeAndRemovesTowardsTheTrailingEdge' started at 2026-10-14 19:46:08.899
+
+Test Case 'AnimationMeasuredTests.testSlideInsertsFromTheLeadingEdgeAndRemovesTowardsTheTrailingEdge' passed (0.0 seconds)
+
+Test Case 'AnimationMeasuredTests.testSpringCompletionLogicalAtHalfASecondRemovedAtSettle' started at 2026-10-14 19:46:08.900
+
+Test Case 'AnimationMeasuredTests.testSpringCompletionLogicalAtHalfASecondRemovedAtSettle' passed (0.0 seconds)
+
+Test Case 'AnimationMeasuredTests.testStaticOpacityModifierScalesTheLeaf' started at 2026-10-14 19:46:08.900
+
+Test Case 'AnimationMeasuredTests.testStaticOpacityModifierScalesTheLeaf' passed (0.0 seconds)
+
+Test Case 'AnimationMeasuredTests.testTheModifierOnlyAppliesWhenItsValueChanged' started at 2026-10-14 19:46:08.901
+
+Test Case 'AnimationMeasuredTests.testTheModifierOnlyAppliesWhenItsValueChanged' passed (0.225 seconds)
+
+Test Suite 'AnimationMeasuredTests' passed at 2026-10-14 19:46:09.125
+
+	 Executed 25 tests, with 0 failures (0 unexpected) in 0.237 (0.237) seconds
+
+Test Suite 'AnimationTests' started at 2026-10-14 19:46:09.125
+
+Test Case 'AnimationTests.testAnimatedInsertInterpolatesFramesAndOpacityAndCompletesOnce' started at 2026-10-14 19:46:09.125
+
+Test Case 'AnimationTests.testAnimatedInsertInterpolatesFramesAndOpacityAndCompletesOnce' passed (0.001 seconds)
+
+Test Case 'AnimationTests.testAnimationStartedBeforeFirstTickRunsFrameByFrameOnAnAbsoluteHostClock' started at 2026-10-14 19:46:09.127
+
+Test Case 'AnimationTests.testAnimationStartedBeforeFirstTickRunsFrameByFrameOnAnAbsoluteHostClock' passed (0.001 seconds)
+
+Test Case 'AnimationTests.testAnimationWithoutChangeCompletesAtCommit' started at 2026-10-14 19:46:09.127
+
+Test Case 'AnimationTests.testAnimationWithoutChangeCompletesAtCommit' passed (0.0 seconds)
+
+Test Case 'AnimationTests.testFlushBetweenTicksDoesNotBeginOrFinishAMotion' started at 2026-10-14 19:46:09.128
+
+Test Case 'AnimationTests.testFlushBetweenTicksDoesNotBeginOrFinishAMotion' passed (0.001 seconds)
+
+Test Case 'AnimationTests.testInterruptionRetargetsFromPresentedValueAndCompletesEachTransactionOnce' started at 2026-10-14 19:46:09.128
+
+Test Case 'AnimationTests.testInterruptionRetargetsFromPresentedValueAndCompletesEachTransactionOnce' passed (0.001 seconds)
+
+Test Case 'AnimationTests.testMotionBeginsAtTheFirstTickAfterItIsCreatedEvenAfterLongTickPause' started at 2026-10-14 19:46:09.129
+
+Test Case 'AnimationTests.testMotionBeginsAtTheFirstTickAfterItIsCreatedEvenAfterLongTickPause' passed (0.0 seconds)
+
+Test Case 'AnimationTests.testOpacityChangeInterpolates' started at 2026-10-14 19:46:09.129
+
+Test Case 'AnimationTests.testOpacityChangeInterpolates' passed (0.0 seconds)
+
+Test Case 'AnimationTests.testReduceMotionCommitsNoIntermediateFramesWhileTicksArrive' started at 2026-10-14 19:46:09.129
+
+Test Case 'AnimationTests.testReduceMotionCommitsNoIntermediateFramesWhileTicksArrive' passed (0.0 seconds)
+
+Test Case 'AnimationTests.testReduceMotionJumpsToFinalValueAndStillCompletes' started at 2026-10-14 19:46:09.130
+
+Test Case 'AnimationTests.testReduceMotionJumpsToFinalValueAndStillCompletes' passed (0.0 seconds)
+
+Test Suite 'AnimationTests' passed at 2026-10-14 19:46:09.130
+
+	 Executed 9 tests, with 0 failures (0 unexpected) in 0.004 (0.004) seconds
+
+Test Suite 'BindingCollectionTests' started at 2026-10-14 19:46:09.130
+
+Test Case 'BindingCollectionTests.testBindableProjectedRowsSupportCountAndSubscript' started at 2026-10-14 19:46:09.130
+
+Test Case 'BindingCollectionTests.testBindableProjectedRowsSupportCountAndSubscript' passed (0.0 seconds)
+
+Test Case 'BindingCollectionTests.testBindingIsRandomAccessCollection' started at 2026-10-14 19:46:09.130
+
+Test Case 'BindingCollectionTests.testBindingIsRandomAccessCollection' passed (0.0 seconds)
+
+Test Case 'BindingCollectionTests.testForEachKeyPathIdentityKeepsRowNodeAcrossInsertAbove' started at 2026-10-14 19:46:09.130
+
+Test Case 'BindingCollectionTests.testForEachKeyPathIdentityKeepsRowNodeAcrossInsertAbove' passed (0.001 seconds)
+
+Test Suite 'BindingCollectionTests' passed at 2026-10-14 19:46:09.131
+
+	 Executed 3 tests, with 0 failures (0 unexpected) in 0.001 (0.001) seconds
+
+Test Suite 'BindingTransactionTests' started at 2026-10-14 19:46:09.131
+
+Test Case 'BindingTransactionTests.testConstantBindingBlocksChange' started at 2026-10-14 19:46:09.131
+
+Test Case 'BindingTransactionTests.testConstantBindingBlocksChange' passed (0.001 seconds)
+
+Test Case 'BindingTransactionTests.testDerivedBindingDrivesToggle' started at 2026-10-14 19:46:09.132
+
+Test Case 'BindingTransactionTests.testDerivedBindingDrivesToggle' passed (0.001 seconds)
+
+Test Case 'BindingTransactionTests.testDynamicMemberBindingKeepsTransaction' started at 2026-10-14 19:46:09.133
+
+Test Case 'BindingTransactionTests.testDynamicMemberBindingKeepsTransaction' passed (0.0 seconds)
+
+Test Case 'BindingTransactionTests.testOneArgumentSetterIgnoresTransaction' started at 2026-10-14 19:46:09.133
+
+Test Case 'BindingTransactionTests.testOneArgumentSetterIgnoresTransaction' passed (0.0 seconds)
+
+Test Case 'BindingTransactionTests.testSetterReceivesBindingTransaction' started at 2026-10-14 19:46:09.133
+
+Test Case 'BindingTransactionTests.testSetterReceivesBindingTransaction' passed (0.0 seconds)
+
+Test Case 'BindingTransactionTests.testStateProjectedValueWritesState' started at 2026-10-14 19:46:09.133
+
+Test Case 'BindingTransactionTests.testStateProjectedValueWritesState' passed (0.0 seconds)
+
+Test Suite 'BindingTransactionTests' passed at 2026-10-14 19:46:09.133
+
+	 Executed 6 tests, with 0 failures (0 unexpected) in 0.002 (0.002) seconds
+
+Test Suite 'ButtonLayoutTests' started at 2026-10-14 19:46:09.133
+
+Test Case 'ButtonLayoutTests.testButtonIsItsLabelPlusPadding' started at 2026-10-14 19:46:09.133
+
+Test Case 'ButtonLayoutTests.testButtonIsItsLabelPlusPadding' passed (0.0 seconds)
+
+Test Case 'ButtonLayoutTests.testButtonKeepsItsSizeInsideALargerFrame' started at 2026-10-14 19:46:09.134
+
+Test Case 'ButtonLayoutTests.testButtonKeepsItsSizeInsideALargerFrame' passed (0.0 seconds)
+
+Test Case 'ButtonLayoutTests.testTextButtonWidthAndHeightFollowItsLabel' started at 2026-10-14 19:46:09.134
+
+Test Case 'ButtonLayoutTests.testTextButtonWidthAndHeightFollowItsLabel' passed (0.0 seconds)
+
+Test Suite 'ButtonLayoutTests' passed at 2026-10-14 19:46:09.134
+
+	 Executed 3 tests, with 0 failures (0 unexpected) in 0.001 (0.001) seconds
+
+Test Suite 'ButtonStyleTests' started at 2026-10-14 19:46:09.134
+
+Test Case 'ButtonStyleTests.testBorderlessAndPlainAreTheLabelAlone' started at 2026-10-14 19:46:09.134
+
+Test Case 'ButtonStyleTests.testBorderlessAndPlainAreTheLabelAlone' passed (0.0 seconds)
+
+Test Case 'ButtonStyleTests.testButtonStyleMetadataIsNilWhenNoneApplies' started at 2026-10-14 19:46:09.134
+
+Test Case 'ButtonStyleTests.testButtonStyleMetadataIsNilWhenNoneApplies' passed (0.0 seconds)
+
+Test Case 'ButtonStyleTests.testChangingTheStyleRelaysOutTheButton' started at 2026-10-14 19:46:09.135
+
+Test Case 'ButtonStyleTests.testChangingTheStyleRelaysOutTheButton' passed (0.001 seconds)
+
+Test Case 'ButtonStyleTests.testDefaultActionMarksTheButton' started at 2026-10-14 19:46:09.136
+
+Test Case 'ButtonStyleTests.testDefaultActionMarksTheButton' passed (0.001 seconds)
+
+Test Case 'ButtonStyleTests.testDefaultActionOnlyMarksButtonsInsideItsView' started at 2026-10-14 19:46:09.136
+
+Test Case 'ButtonStyleTests.testDefaultActionOnlyMarksButtonsInsideItsView' passed (0.001 seconds)
+
+Test Case 'ButtonStyleTests.testDefaultActionRunsTheButtonOnReturn' started at 2026-10-14 19:46:09.137
+
+Test Case 'ButtonStyleTests.testDefaultActionRunsTheButtonOnReturn' passed (0.0 seconds)
+
+Test Case 'ButtonStyleTests.testLookResolution' started at 2026-10-14 19:46:09.137
+
+Test Case 'ButtonStyleTests.testLookResolution' passed (0.0 seconds)
+
+Test Case 'ButtonStyleTests.testPaddedStylesAddTwelveAndFour' started at 2026-10-14 19:46:09.137
+
+Test Case 'ButtonStyleTests.testPaddedStylesAddTwelveAndFour' passed (0.001 seconds)
+
+Test Case 'ButtonStyleTests.testRoleDoesNotChangeTheLayoutOrTheStyle' started at 2026-10-14 19:46:09.138
+
+Test Case 'ButtonStyleTests.testRoleDoesNotChangeTheLayoutOrTheStyle' passed (0.0 seconds)
+
+Test Case 'ButtonStyleTests.testStyleReachesButtonsInsideAContainerAndTheNearestOneWins' started at 2026-10-14 19:46:09.138
+
+Test Case 'ButtonStyleTests.testStyleReachesButtonsInsideAContainerAndTheNearestOneWins' passed (0.001 seconds)
+
+Test Case 'ButtonStyleTests.testTextButtonStyleChangesTheFrameByThePadding' started at 2026-10-14 19:46:09.139
+
+Test Case 'ButtonStyleTests.testTextButtonStyleChangesTheFrameByThePadding' passed (0.0 seconds)
+
+Test Suite 'ButtonStyleTests' passed at 2026-10-14 19:46:09.139
+
+	 Executed 11 tests, with 0 failures (0 unexpected) in 0.005 (0.005) seconds
+
+Test Suite 'ColorSchemeTests' started at 2026-10-14 19:46:09.139
+
+Test Case 'ColorSchemeTests.testEnvironmentModifierSwitchesTheSubtreeAndTheReadBranch' started at 2026-10-14 19:46:09.139
+
+Test Case 'ColorSchemeTests.testEnvironmentModifierSwitchesTheSubtreeAndTheReadBranch' passed (0.001 seconds)
+
+Test Case 'ColorSchemeTests.testEnvironmentReadDefaultsToLight' started at 2026-10-14 19:46:09.140
+
+Test Case 'ColorSchemeTests.testEnvironmentReadDefaultsToLight' passed (0.0 seconds)
+
+Test Case 'ColorSchemeTests.testPreferredColorSchemeDarkensTheSubtree' started at 2026-10-14 19:46:09.140
+
+Test Case 'ColorSchemeTests.testPreferredColorSchemeDarkensTheSubtree' passed (0.001 seconds)
+
+Test Case 'ColorSchemeTests.testPreferredColorSchemeNilGivesTheHostSchemeBack' started at 2026-10-14 19:46:09.141
+
+Test Case 'ColorSchemeTests.testPreferredColorSchemeNilGivesTheHostSchemeBack' passed (0.001 seconds)
+
+Test Case 'ColorSchemeTests.testPreferredColorSchemeReachesViewsOutsideItsSubtree' started at 2026-10-14 19:46:09.142
+
+Test Case 'ColorSchemeTests.testPreferredColorSchemeReachesViewsOutsideItsSubtree' passed (0.001 seconds)
+
+Test Case 'ColorSchemeTests.testSemanticColourNames' started at 2026-10-14 19:46:09.143
+
+Test Case 'ColorSchemeTests.testSemanticColourNames' passed (0.0 seconds)
+
+Test Case 'ColorSchemeTests.testSiblingsKeepTheirOwnScheme' started at 2026-10-14 19:46:09.143
+
+Test Case 'ColorSchemeTests.testSiblingsKeepTheirOwnScheme' passed (0.001 seconds)
+
+Test Suite 'ColorSchemeTests' passed at 2026-10-14 19:46:09.144
+
+	 Executed 7 tests, with 0 failures (0 unexpected) in 0.005 (0.005) seconds
+
+Test Suite 'ColorViewTests' started at 2026-10-14 19:46:09.144
+
+Test Case 'ColorViewTests.testColorIsFlexibleViewWithResolvedColor' started at 2026-10-14 19:46:09.144
+
+Test Case 'ColorViewTests.testColorIsFlexibleViewWithResolvedColor' passed (0.0 seconds)
+
+Test Suite 'ColorViewTests' passed at 2026-10-14 19:46:09.144
+
+	 Executed 1 test, with 0 failures (0 unexpected) in 0.0 (0.0) seconds
+
+Test Suite 'ContinuousRoundedGeometryTests' started at 2026-10-14 19:46:09.144
+
+Test Case 'ContinuousRoundedGeometryTests.testAllFourCornersAreRotationsOfTopLeft' started at 2026-10-14 19:46:09.145
+
+Test Case 'ContinuousRoundedGeometryTests.testAllFourCornersAreRotationsOfTopLeft' passed (0.0 seconds)
+
+Test Case 'ContinuousRoundedGeometryTests.testCornerExtentScalesWithinObservedRadiusRange' started at 2026-10-14 19:46:09.145
+
+Test Case 'ContinuousRoundedGeometryTests.testCornerExtentScalesWithinObservedRadiusRange' passed (0.0 seconds)
+
+Test Case 'ContinuousRoundedGeometryTests.testCoverageIsSixteenByThirtyTwoQuantisedAndSymmetric' started at 2026-10-14 19:46:09.145
+
+Test Case 'ContinuousRoundedGeometryTests.testCoverageIsSixteenByThirtyTwoQuantisedAndSymmetric' passed (0.128 seconds)
+
+Test Case 'ContinuousRoundedGeometryTests.testDevicePixelSnapMatchesSwiftUIEdgeRounding' started at 2026-10-14 19:46:09.273
+
+Test Case 'ContinuousRoundedGeometryTests.testDevicePixelSnapMatchesSwiftUIEdgeRounding' passed (0.0 seconds)
+
+Test Case 'ContinuousRoundedGeometryTests.testFractionalOffsetBakesSubpixelCoverageIntoBitmap' started at 2026-10-14 19:46:09.273
+
+Test Case 'ContinuousRoundedGeometryTests.testFractionalOffsetBakesSubpixelCoverageIntoBitmap' passed (0.001 seconds)
+
+Test Case 'ContinuousRoundedGeometryTests.testLargeRadiusFullScreenStrokeRasterizesWithinWorkBudget' started at 2026-10-14 19:46:09.274
+
+Test Case 'ContinuousRoundedGeometryTests.testLargeRadiusFullScreenStrokeRasterizesWithinWorkBudget' passed (1.399 seconds)
+
+Test Case 'ContinuousRoundedGeometryTests.testPathUsesThreeCubicSegmentsPerCornerAcrossAspectRatios' started at 2026-10-14 19:46:10.673
+
+Test Case 'ContinuousRoundedGeometryTests.testPathUsesThreeCubicSegmentsPerCornerAcrossAspectRatios' passed (0.0 seconds)
+
+Test Case 'ContinuousRoundedGeometryTests.testRasterizerReturnsBoundedRGBAWithObservedCoverage' started at 2026-10-14 19:46:10.673
+
+Test Case 'ContinuousRoundedGeometryTests.testRasterizerReturnsBoundedRGBAWithObservedCoverage' passed (0.094 seconds)
+
+Test Case 'ContinuousRoundedGeometryTests.testRejectsNonFiniteAndOverflowingBounds' started at 2026-10-14 19:46:10.767
+
+Test Case 'ContinuousRoundedGeometryTests.testRejectsNonFiniteAndOverflowingBounds' passed (0.0 seconds)
+
+Test Case 'ContinuousRoundedGeometryTests.testStrokeEdgeCoverageIsSmoothstepOfLinearCoverage' started at 2026-10-14 19:46:10.768
+
+Test Case 'ContinuousRoundedGeometryTests.testStrokeEdgeCoverageIsSmoothstepOfLinearCoverage' passed (0.027 seconds)
+
+Test Case 'ContinuousRoundedGeometryTests.testTranslationPreservesLocalCornerGeometry' started at 2026-10-14 19:46:10.794
+
+Test Case 'ContinuousRoundedGeometryTests.testTranslationPreservesLocalCornerGeometry' passed (0.0 seconds)
+
+Test Case 'ContinuousRoundedGeometryTests.testZeroRadiusUsesRectanglePath' started at 2026-10-14 19:46:10.794
+
+Test Case 'ContinuousRoundedGeometryTests.testZeroRadiusUsesRectanglePath' passed (0.0 seconds)
+
+Test Suite 'ContinuousRoundedGeometryTests' passed at 2026-10-14 19:46:10.795
+
+	 Executed 12 tests, with 0 failures (0 unexpected) in 1.65 (1.65) seconds
+
+Test Suite 'DevicePixelSnapTests' started at 2026-10-14 19:46:10.795
+
+Test Case 'DevicePixelSnapTests.testEveryMeasuredHalfPixelTieLandsWhereSwiftUIPutIt' started at 2026-10-14 19:46:10.795
+
+Test Case 'DevicePixelSnapTests.testEveryMeasuredHalfPixelTieLandsWhereSwiftUIPutIt' passed (0.0 seconds)
+
+Test Case 'DevicePixelSnapTests.testLayoutSnapsTiesLikeSwiftUI' started at 2026-10-14 19:46:10.795
+
+Test Case 'DevicePixelSnapTests.testLayoutSnapsTiesLikeSwiftUI' passed (0.002 seconds)
+
+Test Case 'DevicePixelSnapTests.testNonTiesRoundToNearestAndExactScalesRoundTiesUp' started at 2026-10-14 19:46:10.796
+
+Test Case 'DevicePixelSnapTests.testNonTiesRoundToNearestAndExactScalesRoundTiesUp' passed (0.0 seconds)
+
+Test Case 'DevicePixelSnapTests.testScale2_5WholePointTiesFollowTheMeasuredRuns' started at 2026-10-14 19:46:10.797
+
+Test Case 'DevicePixelSnapTests.testScale2_5WholePointTiesFollowTheMeasuredRuns' passed (0.0 seconds)
+
+Test Suite 'DevicePixelSnapTests' passed at 2026-10-14 19:46:10.797
+
+	 Executed 4 tests, with 0 failures (0 unexpected) in 0.002 (0.002) seconds
+
+Test Suite 'DisplayScaleTests' started at 2026-10-14 19:46:10.797
+
+Test Case 'DisplayScaleTests.testDisplayScaleDefaultsToUnitScaleAndAcceptsNativeScalar' started at 2026-10-14 19:46:10.797
+
+Test Case 'DisplayScaleTests.testDisplayScaleDefaultsToUnitScaleAndAcceptsNativeScalar' passed (0.0 seconds)
+
+Test Case 'DisplayScaleTests.testDisplayScaleEnvironmentModifierPropagatesToDescendant' started at 2026-10-14 19:46:10.797
+
+Test Case 'DisplayScaleTests.testDisplayScaleEnvironmentModifierPropagatesToDescendant' passed (0.001 seconds)
+
+Test Case 'DisplayScaleTests.testDisplayScaleRootOverrideReevaluatesEnvironmentReader' started at 2026-10-14 19:46:10.797
+
+Test Case 'DisplayScaleTests.testDisplayScaleRootOverrideReevaluatesEnvironmentReader' passed (0.0 seconds)
+
+Test Suite 'DisplayScaleTests' passed at 2026-10-14 19:46:10.798
+
+	 Executed 3 tests, with 0 failures (0 unexpected) in 0.001 (0.001) seconds
+
+Test Suite 'FlexibleFrameStackTests' started at 2026-10-14 19:46:10.798
+
+Test Case 'FlexibleFrameStackTests.testFiniteMaximumFrameIsMeasuredAtItsMaximumForTheInfiniteProposal' started at 2026-10-14 19:46:10.798
+
+Test Case 'FlexibleFrameStackTests.testFiniteMaximumFrameIsMeasuredAtItsMaximumForTheInfiniteProposal' passed (0.0 seconds)
+
+Test Case 'FlexibleFrameStackTests.testInfiniteMaximumFramesShareWhatFixedSiblingsLeave' started at 2026-10-14 19:46:10.798
+
+Test Case 'FlexibleFrameStackTests.testInfiniteMaximumFramesShareWhatFixedSiblingsLeave' passed (0.001 seconds)
+
+Test Suite 'FlexibleFrameStackTests' passed at 2026-10-14 19:46:10.799
+
+	 Executed 2 tests, with 0 failures (0 unexpected) in 0.001 (0.001) seconds
+
+Test Suite 'FocusContainerTests' started at 2026-10-14 19:46:10.799
+
+Test Case 'FocusContainerTests.testListReinsertRestoresFocus' started at 2026-10-14 19:46:10.799
+
+Test Case 'FocusContainerTests.testListReinsertRestoresFocus' passed (0.007 seconds)
+
+Test Case 'FocusContainerTests.testRemovingFocusedRowClearsFocusInEveryContainer' started at 2026-10-14 19:46:10.805
+
+Test Case 'FocusContainerTests.testRemovingFocusedRowClearsFocusInEveryContainer' passed (0.012 seconds)
+
+Test Case 'FocusContainerTests.testRemovingUnfocusedRowKeepsFocus' started at 2026-10-14 19:46:10.817
+
+Test Case 'FocusContainerTests.testRemovingUnfocusedRowKeepsFocus' passed (0.003 seconds)
+
+Test Case 'FocusContainerTests.testVStackAndLazyReinsertDoesNotRestoreFocus' started at 2026-10-14 19:46:10.821
+
+Test Case 'FocusContainerTests.testVStackAndLazyReinsertDoesNotRestoreFocus' passed (0.007 seconds)
+
+Test Suite 'FocusContainerTests' passed at 2026-10-14 19:46:10.828
+
+	 Executed 4 tests, with 0 failures (0 unexpected) in 0.029 (0.029) seconds
+
+Test Suite 'FocusTraversalTests' started at 2026-10-14 19:46:10.828
+
+Test Case 'FocusTraversalTests.testBackwardStartsAtLastAndWraps' started at 2026-10-14 19:46:10.828
+
+Test Case 'FocusTraversalTests.testBackwardStartsAtLastAndWraps' passed (0.004 seconds)
+
+Test Case 'FocusTraversalTests.testButtonsAreStopsOnlyWhenAllControlsEnabled' started at 2026-10-14 19:46:10.832
+
+Test Case 'FocusTraversalTests.testButtonsAreStopsOnlyWhenAllControlsEnabled' passed (0.001 seconds)
+
+Test Case 'FocusTraversalTests.testDisabledStopsAreSkipped' started at 2026-10-14 19:46:10.833
+
+Test Case 'FocusTraversalTests.testDisabledStopsAreSkipped' passed (0.002 seconds)
+
+Test Case 'FocusTraversalTests.testForwardFollowsTreeOrderAndWraps' started at 2026-10-14 19:46:10.835
+
+Test Case 'FocusTraversalTests.testForwardFollowsTreeOrderAndWraps' passed (0.003 seconds)
+
+Test Case 'FocusTraversalTests.testKeyDispatchMapsTabAndShiftTab' started at 2026-10-14 19:46:10.838
+
+Test Case 'FocusTraversalTests.testKeyDispatchMapsTabAndShiftTab' passed (0.002 seconds)
+
+Test Case 'FocusTraversalTests.testNoStopsReturnsFalse' started at 2026-10-14 19:46:10.840
+
+Test Case 'FocusTraversalTests.testNoStopsReturnsFalse' passed (0.0 seconds)
+
+Test Case 'FocusTraversalTests.testOrderFollowsRowOrderAfterInsertAbove' started at 2026-10-14 19:46:10.840
+
+Test Case 'FocusTraversalTests.testOrderFollowsRowOrderAfterInsertAbove' passed (0.003 seconds)
+
+Test Case 'FocusTraversalTests.testTabContinuesFromPointerFocus' started at 2026-10-14 19:46:10.843
+
+Test Case 'FocusTraversalTests.testTabContinuesFromPointerFocus' passed (0.003 seconds)
+
+Test Suite 'FocusTraversalTests' passed at 2026-10-14 19:46:10.846
+
+	 Executed 8 tests, with 0 failures (0 unexpected) in 0.018 (0.018) seconds
+
+Test Suite 'FontAdditionTests' started at 2026-10-14 19:46:10.846
+
+Test Case 'FontAdditionTests.testCustomFamilyMetadataSurvivesWeightModifier' started at 2026-10-14 19:46:10.846
+
+Test Case 'FontAdditionTests.testCustomFamilyMetadataSurvivesWeightModifier' passed (0.0 seconds)
+
+Test Case 'FontAdditionTests.testIndependentlyConstructedMetadataFontsCompareAndHashByValue' started at 2026-10-14 19:46:10.846
+
+Test Case 'FontAdditionTests.testIndependentlyConstructedMetadataFontsCompareAndHashByValue' passed (0.0 seconds)
+
+Test Case 'FontAdditionTests.testLegacyFontAndExplicitMetadataFontWithSameIDRemainDistinct' started at 2026-10-14 19:46:10.846
+
+Test Case 'FontAdditionTests.testLegacyFontAndExplicitMetadataFontWithSameIDRemainDistinct' passed (0.0 seconds)
+
+Test Case 'FontAdditionTests.testLegacySystemFontLeavesMetadataUnset' started at 2026-10-14 19:46:10.846
+
+Test Case 'FontAdditionTests.testLegacySystemFontLeavesMetadataUnset' passed (0.0 seconds)
+
+Test Case 'FontAdditionTests.testLineLimitReachesMeasurerAndCapsTextHeight' started at 2026-10-14 19:46:10.846
+
+Test Case 'FontAdditionTests.testLineLimitReachesMeasurerAndCapsTextHeight' passed (0.0 seconds)
+
+Test Case 'FontAdditionTests.testMetadataFontEqualityIncludesMetadataValue' started at 2026-10-14 19:46:10.847
+
+Test Case 'FontAdditionTests.testMetadataFontEqualityIncludesMetadataValue' passed (0.0 seconds)
+
+Test Case 'FontAdditionTests.testRetainedSnapshotKeepsFontMetadataAfterDesignChanges' started at 2026-10-14 19:46:10.847
+
+Test Case 'FontAdditionTests.testRetainedSnapshotKeepsFontMetadataAfterDesignChanges' passed (0.0 seconds)
+
+Test Case 'FontAdditionTests.testSameTextNodeInvalidatesWhenDesignChangesWithoutChangingID' started at 2026-10-14 19:46:10.847
+
+Test Case 'FontAdditionTests.testSameTextNodeInvalidatesWhenDesignChangesWithoutChangingID' passed (0.0 seconds)
+
+Test Case 'FontAdditionTests.testSameTextNodeInvalidatesWhenLineLimitChanges' started at 2026-10-14 19:46:10.847
+
+Test Case 'FontAdditionTests.testSameTextNodeInvalidatesWhenLineLimitChanges' passed (0.0 seconds)
+
+Test Case 'FontAdditionTests.testSystemDesignIsPassedAsMetadataWithoutChangingLegacyID' started at 2026-10-14 19:46:10.848
+
+Test Case 'FontAdditionTests.testSystemDesignIsPassedAsMetadataWithoutChangingLegacyID' passed (0.0 seconds)
+
+Test Suite 'FontAdditionTests' passed at 2026-10-14 19:46:10.848
+
+	 Executed 10 tests, with 0 failures (0 unexpected) in 0.002 (0.002) seconds
+
+Test Suite 'FrameMaximumTests' started at 2026-10-14 19:46:10.848
+
+Test Case 'FrameMaximumTests.testBareSpacerStillTakesRemainingStackShare' started at 2026-10-14 19:46:10.848
+
+Test Case 'FrameMaximumTests.testBareSpacerStillTakesRemainingStackShare' passed (0.001 seconds)
+
+Test Case 'FrameMaximumTests.testBoundedAndBareSpacersKeepIndependentStackFlexibility' started at 2026-10-14 19:46:10.848
+
+Test Case 'FrameMaximumTests.testBoundedAndBareSpacersKeepIndependentStackFlexibility' passed (0.001 seconds)
+
+Test Case 'FrameMaximumTests.testChangedMaximumInvalidatesSameIdentityContentMeasurement' started at 2026-10-14 19:46:10.849
+
+Test Case 'FrameMaximumTests.testChangedMaximumInvalidatesSameIdentityContentMeasurement' passed (0.0 seconds)
+
+Test Case 'FrameMaximumTests.testCrossAxisFlexibleBoundPreservesSpacerMainAxisFlexibility' started at 2026-10-14 19:46:10.849
+
+Test Case 'FrameMaximumTests.testCrossAxisFlexibleBoundPreservesSpacerMainAxisFlexibility' passed (0.0 seconds)
+
+Test Case 'FrameMaximumTests.testFiniteMaximumClampsFiniteParentProposal' started at 2026-10-14 19:46:10.850
+
+Test Case 'FrameMaximumTests.testFiniteMaximumClampsFiniteParentProposal' passed (0.0 seconds)
+
+Test Case 'FrameMaximumTests.testFiniteMaximumConstrainsWrappedSpacerInStack' started at 2026-10-14 19:46:10.850
+
+Test Case 'FrameMaximumTests.testFiniteMaximumConstrainsWrappedSpacerInStack' passed (0.0 seconds)
+
+Test Case 'FrameMaximumTests.testFlexibleFrameAlignmentPositionsChildInsideExpandedFrame' started at 2026-10-14 19:46:10.851
+
+Test Case 'FrameMaximumTests.testFlexibleFrameAlignmentPositionsChildInsideExpandedFrame' passed (0.0 seconds)
+
+Test Case 'FrameMaximumTests.testHorizontalScrollPilotWitnessHasFiniteFrames' started at 2026-10-14 19:46:10.851
+
+Test Case 'FrameMaximumTests.testHorizontalScrollPilotWitnessHasFiniteFrames' passed (0.001 seconds)
+
+Test Case 'FrameMaximumTests.testInfiniteMaximumAcceptsFiniteProposalAndUnspecifiedWidthStaysIntrinsic' started at 2026-10-14 19:46:10.852
+
+Test Case 'FrameMaximumTests.testInfiniteMaximumAcceptsFiniteProposalAndUnspecifiedWidthStaysIntrinsic' passed (0.0 seconds)
+
+Test Case 'FrameMaximumTests.testLegacyFixedAndDefaultFrameCallsRemainAvailable' started at 2026-10-14 19:46:10.852
+
+Test Case 'FrameMaximumTests.testLegacyFixedAndDefaultFrameCallsRemainAvailable' passed (0.001 seconds)
+
+Test Case 'FrameMaximumTests.testMalformedFlexibleBoundsNormalizeToFiniteGeometry' started at 2026-10-14 19:46:10.853
+
+Test Case 'FrameMaximumTests.testMalformedFlexibleBoundsNormalizeToFiniteGeometry' passed (0.0 seconds)
+
+Test Case 'FrameMaximumTests.testMaximumHeightClampsAndExpandsByHeightProposal' started at 2026-10-14 19:46:10.853
+
+Test Case 'FrameMaximumTests.testMaximumHeightClampsAndExpandsByHeightProposal' passed (0.0 seconds)
+
+Test Case 'FrameMaximumTests.testMinimumAndMaximumClampChildProposalAndReportedFrame' started at 2026-10-14 19:46:10.853
+
+Test Case 'FrameMaximumTests.testMinimumAndMaximumClampChildProposalAndReportedFrame' passed (0.0 seconds)
+
+Test Case 'FrameMaximumTests.testMinimumBoundSurvivesStackShareSmallerThanMinimum' started at 2026-10-14 19:46:10.854
+
+Test Case 'FrameMaximumTests.testMinimumBoundSurvivesStackShareSmallerThanMinimum' passed (0.0 seconds)
+
+Test Suite 'FrameMaximumTests' passed at 2026-10-14 19:46:10.854
+
+	 Executed 14 tests, with 0 failures (0 unexpected) in 0.006 (0.006) seconds
+
+Test Suite 'InitialFocusTests' started at 2026-10-14 19:46:10.854
+
+Test Case 'InitialFocusTests.testButtonsAreNotKeyViewsByDefault' started at 2026-10-14 19:46:10.854
+
+Test Case 'InitialFocusTests.testButtonsAreNotKeyViewsByDefault' passed (0.001 seconds)
+
+Test Case 'InitialFocusTests.testDisabledFirstFieldIsSkipped' started at 2026-10-14 19:46:10.855
+
+Test Case 'InitialFocusTests.testDisabledFirstFieldIsSkipped' passed (0.001 seconds)
+
+Test Case 'InitialFocusTests.testExistingFocusIsNotStolen' started at 2026-10-14 19:46:10.856
+
+Test Case 'InitialFocusTests.testExistingFocusIsNotStolen' passed (0.002 seconds)
+
+Test Case 'InitialFocusTests.testExternalTextChangeMovesFocusedCaretToEnd' started at 2026-10-14 19:46:10.858
+
+Test Case 'InitialFocusTests.testExternalTextChangeMovesFocusedCaretToEnd' passed (0.001 seconds)
+
+Test Case 'InitialFocusTests.testExternalTextChangeWhileComposingKeepsComposition' started at 2026-10-14 19:46:10.858
+
+Test Case 'InitialFocusTests.testExternalTextChangeWhileComposingKeepsComposition' passed (0.001 seconds)
+
+Test Case 'InitialFocusTests.testFieldBeforeListTakesFocusAheadOfIt' started at 2026-10-14 19:46:10.860
+
+Test Case 'InitialFocusTests.testFieldBeforeListTakesFocusAheadOfIt' passed (0.002 seconds)
+
+Test Case 'InitialFocusTests.testFocusComesAfterAllAppearsAndBeforeAnyTaskBody' started at 2026-10-14 19:46:10.861
+
+Test Case 'InitialFocusTests.testFocusComesAfterAllAppearsAndBeforeAnyTaskBody' passed (0.001 seconds)
+
+Test Case 'InitialFocusTests.testInitialFocusSelectsAllAndTypingReplaces' started at 2026-10-14 19:46:10.862
+
+Test Case 'InitialFocusTests.testInitialFocusSelectsAllAndTypingReplaces' passed (0.001 seconds)
+
+Test Case 'InitialFocusTests.testLazyVStackFocusesFirstField' started at 2026-10-14 19:46:10.863
+
+Test Case 'InitialFocusTests.testLazyVStackFocusesFirstField' passed (0.001 seconds)
+
+Test Case 'InitialFocusTests.testListFocusesNothing' started at 2026-10-14 19:46:10.865
+
+Test Case 'InitialFocusTests.testListFocusesNothing' passed (0.001 seconds)
+
+Test Case 'InitialFocusTests.testNoFocusBoundFieldFocusesNothing' started at 2026-10-14 19:46:10.865
+
+Test Case 'InitialFocusTests.testNoFocusBoundFieldFocusesNothing' passed (0.0 seconds)
+
+Test Case 'InitialFocusTests.testOnlyTheFirstRowReportsFocus' started at 2026-10-14 19:46:10.866
+
+Test Case 'InitialFocusTests.testOnlyTheFirstRowReportsFocus' passed (0.001 seconds)
+
+Test Case 'InitialFocusTests.testOwnEditDoesNotJumpTheCaret' started at 2026-10-14 19:46:10.867
+
+Test Case 'InitialFocusTests.testOwnEditDoesNotJumpTheCaret' passed (0.001 seconds)
+
+Test Case 'InitialFocusTests.testSecondCallDoesNothing' started at 2026-10-14 19:46:10.867
+
+Test Case 'InitialFocusTests.testSecondCallDoesNothing' passed (0.001 seconds)
+
+Test Case 'InitialFocusTests.testTextThenListFocusesNothing' started at 2026-10-14 19:46:10.868
+
+Test Case 'InitialFocusTests.testTextThenListFocusesNothing' passed (0.001 seconds)
+
+Test Case 'InitialFocusTests.testTornDownGraphFocusesNothing' started at 2026-10-14 19:46:10.869
+
+Test Case 'InitialFocusTests.testTornDownGraphFocusesNothing' passed (0.001 seconds)
+
+Test Case 'InitialFocusTests.testVStackFocusesFirstFieldAndCommitsIt' started at 2026-10-14 19:46:10.870
+
+Test Case 'InitialFocusTests.testVStackFocusesFirstFieldAndCommitsIt' passed (0.001 seconds)
+
+Test Suite 'InitialFocusTests' passed at 2026-10-14 19:46:10.871
+
+	 Executed 17 tests, with 0 failures (0 unexpected) in 0.017 (0.017) seconds
+
+Test Suite 'LabelsHiddenTests' started at 2026-10-14 19:46:10.871
+
+Test Case 'LabelsHiddenTests.testHiddenToggleCarriesOptionalVisibilityAndKeepsAccessibilityTitle' started at 2026-10-14 19:46:10.871
+
+Test Case 'LabelsHiddenTests.testHiddenToggleCarriesOptionalVisibilityAndKeepsAccessibilityTitle' passed (0.0 seconds)
+
+Test Case 'LabelsHiddenTests.testLegacyToggleKeepsOptionalVisibilityNil' started at 2026-10-14 19:46:10.871
+
+Test Case 'LabelsHiddenTests.testLegacyToggleKeepsOptionalVisibilityNil' passed (0.0 seconds)
+
+Test Case 'LabelsHiddenTests.testRootEnvironmentVisibilityChangeInvalidatesToggleAndAncestorSizes' started at 2026-10-14 19:46:10.872
+
+Test Case 'LabelsHiddenTests.testRootEnvironmentVisibilityChangeInvalidatesToggleAndAncestorSizes' passed (0.0 seconds)
+
+Test Suite 'LabelsHiddenTests' passed at 2026-10-14 19:46:10.872
+
+	 Executed 3 tests, with 0 failures (0 unexpected) in 0.001 (0.001) seconds
+
+Test Suite 'LayoutDirectionTests' started at 2026-10-14 19:46:10.872
+
+Test Case 'LayoutDirectionTests.testCustomLayoutMirrorsChildrenWithinBoundsUnderRightToLeft' started at 2026-10-14 19:46:10.872
+
+Test Case 'LayoutDirectionTests.testCustomLayoutMirrorsChildrenWithinBoundsUnderRightToLeft' passed (0.001 seconds)
+
+Test Case 'LayoutDirectionTests.testHStackMirrorsUnderRightToLeftAndLeavesLeftToRightUnchanged' started at 2026-10-14 19:46:10.873
+
+Test Case 'LayoutDirectionTests.testHStackMirrorsUnderRightToLeftAndLeavesLeftToRightUnchanged' passed (0.001 seconds)
+
+Test Case 'LayoutDirectionTests.testLayoutDirectionRoundTripAndEnvironmentReader' started at 2026-10-14 19:46:10.874
+
+Test Case 'LayoutDirectionTests.testLayoutDirectionRoundTripAndEnvironmentReader' passed (0.0 seconds)
+
+Test Case 'LayoutDirectionTests.testLeadingAlignmentFollowsRightToLeft' started at 2026-10-14 19:46:10.874
+
+Test Case 'LayoutDirectionTests.testLeadingAlignmentFollowsRightToLeft' passed (0.001 seconds)
+
+Test Case 'LayoutDirectionTests.testNestedLeftToRightOverrideUnflipsSubtree' started at 2026-10-14 19:46:10.875
+
+Test Case 'LayoutDirectionTests.testNestedLeftToRightOverrideUnflipsSubtree' passed (0.001 seconds)
+
+Test Suite 'LayoutDirectionTests' passed at 2026-10-14 19:46:10.876
+
+	 Executed 5 tests, with 0 failures (0 unexpected) in 0.004 (0.004) seconds
+
+Test Suite 'LayoutTests' started at 2026-10-14 19:46:10.876
+
+Test Case 'LayoutTests.testCrossAxisFramePreservesHStackSpacerFlexibilityAndHeight' started at 2026-10-14 19:46:10.876
+
+Test Case 'LayoutTests.testCrossAxisFramePreservesHStackSpacerFlexibilityAndHeight' passed (0.001 seconds)
+
+Test Case 'LayoutTests.testCrossAxisFramePreservesVStackSpacerFlexibilityAndWidth' started at 2026-10-14 19:46:10.877
+
+Test Case 'LayoutTests.testCrossAxisFramePreservesVStackSpacerFlexibilityAndWidth' passed (0.0 seconds)
+
+Test Case 'LayoutTests.testCustomLayoutSwitchesAtWidthThreshold' started at 2026-10-14 19:46:10.877
+
+Test Case 'LayoutTests.testCustomLayoutSwitchesAtWidthThreshold' passed (0.001 seconds)
+
+Test Case 'LayoutTests.testFixedFrameStopsSpacerFromTakingRemainingStackSpace' started at 2026-10-14 19:46:10.878
+
+Test Case 'LayoutTests.testFixedFrameStopsSpacerFromTakingRemainingStackSpace' passed (0.0 seconds)
+
+Test Case 'LayoutTests.testFrameSetsDimensionsAndAlignsChild' started at 2026-10-14 19:46:10.878
+
+Test Case 'LayoutTests.testFrameSetsDimensionsAndAlignsChild' passed (0.0 seconds)
+
+Test Case 'LayoutTests.testFramesArePixelAlignedAtScale2_5' started at 2026-10-14 19:46:10.879
+
+Test Case 'LayoutTests.testFramesArePixelAlignedAtScale2_5' passed (0.001 seconds)
+
+Test Case 'LayoutTests.testHStackDistributesWidthToSpacer' started at 2026-10-14 19:46:10.879
+
+Test Case 'LayoutTests.testHStackDistributesWidthToSpacer' passed (0.001 seconds)
+
+Test Case 'LayoutTests.testPaddingInsetsChild' started at 2026-10-14 19:46:10.880
+
+Test Case 'LayoutTests.testPaddingInsetsChild' passed (0.0 seconds)
+
+Test Case 'LayoutTests.testRelayoutRemeasuresOnlyChangedText' started at 2026-10-14 19:46:10.880
+
+Test Case 'LayoutTests.testRelayoutRemeasuresOnlyChangedText' passed (0.001 seconds)
+
+Test Case 'LayoutTests.testSwiftUIGeometryLayoutWitnessesBridgeToPortableEngine' started at 2026-10-14 19:46:10.881
+
+Test Case 'LayoutTests.testSwiftUIGeometryLayoutWitnessesBridgeToPortableEngine' passed (0.001 seconds)
+
+Test Case 'LayoutTests.testTextWrapsWhenProposedWidthShrinks' started at 2026-10-14 19:46:10.881
+
+Test Case 'LayoutTests.testTextWrapsWhenProposedWidthShrinks' passed (0.0 seconds)
+
+Test Case 'LayoutTests.testVStackAlignmentLeadingCenterTrailing' started at 2026-10-14 19:46:10.882
+
+Test Case 'LayoutTests.testVStackAlignmentLeadingCenterTrailing' passed (0.001 seconds)
+
+Test Suite 'LayoutTests' passed at 2026-10-14 19:46:10.882
+
+	 Executed 12 tests, with 0 failures (0 unexpected) in 0.006 (0.006) seconds
+
+Test Suite 'LazyContainerTests' started at 2026-10-14 19:46:10.882
+
+Test Case 'LazyContainerTests.testLazyVStackReinsertResetsStateWhileLifecycleFires' started at 2026-10-14 19:46:10.882
+
+Test Case 'LazyContainerTests.testLazyVStackReinsertResetsStateWhileLifecycleFires' passed (0.265 seconds)
+
+Test Suite 'LazyContainerTests' passed at 2026-10-14 19:46:11.147
+
+	 Executed 1 test, with 0 failures (0 unexpected) in 0.265 (0.265) seconds
+
+Test Suite 'ListLayoutTests' started at 2026-10-14 19:46:11.147
+
+Test Case 'ListLayoutTests.testListStyleMetadata' started at 2026-10-14 19:46:11.147
+
+Test Case 'ListLayoutTests.testListStyleMetadata' passed (0.001 seconds)
+
+Test Case 'ListLayoutTests.testListTakesTheWholeProposalAndHasNoIdealSize' started at 2026-10-14 19:46:11.148
+
+Test Case 'ListLayoutTests.testListTakesTheWholeProposalAndHasNoIdealSize' passed (0.001 seconds)
+
+Test Case 'ListLayoutTests.testOnMoveReceivesSourceOffsetsAndTheDestinationBeforeTheMove' started at 2026-10-14 19:46:11.149
+
+Test Case 'ListLayoutTests.testOnMoveReceivesSourceOffsetsAndTheDestinationBeforeTheMove' passed (0.001 seconds)
+
+Test Case 'ListLayoutTests.testOnMoveRowWithoutAHandlerDoesNothing' started at 2026-10-14 19:46:11.150
+
+Test Case 'ListLayoutTests.testOnMoveRowWithoutAHandlerDoesNothing' passed (0.0 seconds)
+
+Test Case 'ListLayoutTests.testOnMoveUpAndTheSelectionRoute' started at 2026-10-14 19:46:11.151
+
+Test Case 'ListLayoutTests.testOnMoveUpAndTheSelectionRoute' passed (0.001 seconds)
+
+Test Case 'ListLayoutTests.testPlainStyleStartsAtTheTopAndInsetsEightPoints' started at 2026-10-14 19:46:11.151
+
+Test Case 'ListLayoutTests.testPlainStyleStartsAtTheTopAndInsetsEightPoints' passed (0.001 seconds)
+
+Test Case 'ListLayoutTests.testRowFrameFromContent' started at 2026-10-14 19:46:11.152
+
+Test Case 'ListLayoutTests.testRowFrameFromContent' passed (0.001 seconds)
+
+Test Case 'ListLayoutTests.testRowHeightIsContentPlusEightAtLeastTwentyFour' started at 2026-10-14 19:46:11.153
+
+Test Case 'ListLayoutTests.testRowHeightIsContentPlusEightAtLeastTwentyFour' passed (0.0 seconds)
+
+Test Case 'ListLayoutTests.testTextRowsAreTwentyFourPointsFromTenPointsDown' started at 2026-10-14 19:46:11.153
+
+Test Case 'ListLayoutTests.testTextRowsAreTwentyFourPointsFromTenPointsDown' passed (0.0 seconds)
+
+Test Suite 'ListLayoutTests' passed at 2026-10-14 19:46:11.153
+
+	 Executed 9 tests, with 0 failures (0 unexpected) in 0.006 (0.006) seconds
+
+Test Suite 'NativeWindowsBodyFontTests' started at 2026-10-14 19:46:11.153
+
+Test Case 'NativeWindowsBodyFontTests.testCoreTextLineHeightIsRoundedAscentPlusRoundedDescent' started at 2026-10-14 19:46:11.153
+
+Test Case 'NativeWindowsBodyFontTests.testCoreTextLineHeightIsRoundedAscentPlusRoundedDescent' passed (0.0 seconds)
+
+Test Case 'NativeWindowsBodyFontTests.testLiveProfileCarriesTheResolvedFacesHheaMetrics' started at 2026-10-14 19:46:11.154
+
+Test Case 'NativeWindowsBodyFontTests.testLiveProfileCarriesTheResolvedFacesHheaMetrics' passed (0.0 seconds)
+
+Test Case 'NativeWindowsBodyFontTests.testPublicPolicyValuePreservesMeasuredUnitsAndIdentity' started at 2026-10-14 19:46:11.154
+
+Test Case 'NativeWindowsBodyFontTests.testPublicPolicyValuePreservesMeasuredUnitsAndIdentity' passed (0.0 seconds)
+
+Test Case 'NativeWindowsBodyFontTests.testRejectsOutOfRangeDPIBeforePlatformResolution' started at 2026-10-14 19:46:11.154
+
+Test Case 'NativeWindowsBodyFontTests.testRejectsOutOfRangeDPIBeforePlatformResolution' passed (0.105 seconds)
+
+Test Case 'NativeWindowsBodyFontTests.testResolvesLiveDPI240ProfileWithConsistentUnits' started at 2026-10-14 19:46:11.259
+
+Test Case 'NativeWindowsBodyFontTests.testResolvesLiveDPI240ProfileWithConsistentUnits' passed (0.0 seconds)
+
+Test Case 'NativeWindowsBodyFontTests.testResolvesLiveDPI96ProfileWithConsistentUnits' started at 2026-10-14 19:46:11.259
+
+Test Case 'NativeWindowsBodyFontTests.testResolvesLiveDPI96ProfileWithConsistentUnits' passed (0.11 seconds)
+
+Test Suite 'NativeWindowsBodyFontTests' passed at 2026-10-14 19:46:11.369
+
+	 Executed 6 tests, with 0 failures (0 unexpected) in 0.216 (0.216) seconds
+
+Test Suite 'OnChangeTests' started at 2026-10-14 19:46:11.369
+
+Test Case 'OnChangeTests.testActionRunsOncePerValueChangeWithOldAndNew' started at 2026-10-14 19:46:11.369
+
+Test Case 'OnChangeTests.testActionRunsOncePerValueChangeWithOldAndNew' passed (0.004 seconds)
+
+Test Case 'OnChangeTests.testInitialAndArgumentlessActions' started at 2026-10-14 19:46:11.374
+
+Test Case 'OnChangeTests.testInitialAndArgumentlessActions' passed (0.001 seconds)
+
+Test Case 'OnChangeTests.testListEditAfterReinsertCompareWithReinsertedValue' started at 2026-10-14 19:46:11.374
+
+Test Case 'OnChangeTests.testListEditAfterReinsertCompareWithReinsertedValue' passed (0.004 seconds)
+
+Test Case 'OnChangeTests.testListEvictedRowLosesItsBaselineWithItsState' started at 2026-10-14 19:46:11.378
+
+Test Case 'OnChangeTests.testListEvictedRowLosesItsBaselineWithItsState' passed (0.017 seconds)
+
+Test Case 'OnChangeTests.testListReinsertWithChangedValueRunsOnceWithPreservedState' started at 2026-10-14 19:46:11.395
+
+Test Case 'OnChangeTests.testListReinsertWithChangedValueRunsOnceWithPreservedState' passed (0.003 seconds)
+
+Test Case 'OnChangeTests.testListReinsertWithUnchangedValueRunsNothing' started at 2026-10-14 19:46:11.398
+
+Test Case 'OnChangeTests.testListReinsertWithUnchangedValueRunsNothing' passed (0.003 seconds)
+
+Test Case 'OnChangeTests.testVStackAndLazyReinsertAreFreshAndRunNothing' started at 2026-10-14 19:46:11.401
+
+Test Case 'OnChangeTests.testVStackAndLazyReinsertAreFreshAndRunNothing' passed (0.006 seconds)
+
+Test Case 'OnChangeTests.testVStackAndLazyReinsertWithPreviousValueRunNothing' started at 2026-10-14 19:46:11.408
+
+Test Case 'OnChangeTests.testVStackAndLazyReinsertWithPreviousValueRunNothing' passed (0.005 seconds)
+
+Test Suite 'OnChangeTests' passed at 2026-10-14 19:46:11.412
+
+	 Executed 8 tests, with 0 failures (0 unexpected) in 0.043 (0.043) seconds
+
+Test Suite 'PaddingFrameTests' started at 2026-10-14 19:46:11.412
+
+Test Case 'PaddingFrameTests.testBothBoundsOnBothAxesClampTheOffer' started at 2026-10-14 19:46:11.412
+
+Test Case 'PaddingFrameTests.testBothBoundsOnBothAxesClampTheOffer' passed (0.001 seconds)
+
+Test Case 'PaddingFrameTests.testEdgeInsetsPaddingSizesTheViewAndInsetsTheChild' started at 2026-10-14 19:46:11.413
+
+Test Case 'PaddingFrameTests.testEdgeInsetsPaddingSizesTheViewAndInsetsTheChild' passed (0.001 seconds)
+
+Test Case 'PaddingFrameTests.testEdgeSetPaddingAndDefaultAmount' started at 2026-10-14 19:46:11.413
+
+Test Case 'PaddingFrameTests.testEdgeSetPaddingAndDefaultAmount' passed (0.001 seconds)
+
+Test Case 'PaddingFrameTests.testIdealLengthStandsInForAnUnspecifiedProposal' started at 2026-10-14 19:46:11.414
+
+Test Case 'PaddingFrameTests.testIdealLengthStandsInForAnUnspecifiedProposal' passed (0.0 seconds)
+
+Test Case 'PaddingFrameTests.testMaximumFillsTheOfferUpToTheMaximum' started at 2026-10-14 19:46:11.414
+
+Test Case 'PaddingFrameTests.testMaximumFillsTheOfferUpToTheMaximum' passed (0.001 seconds)
+
+Test Case 'PaddingFrameTests.testMinimumAloneKeepsChildSizeInsteadOfFillingTheOffer' started at 2026-10-14 19:46:11.415
+
+Test Case 'PaddingFrameTests.testMinimumAloneKeepsChildSizeInsteadOfFillingTheOffer' passed (0.0 seconds)
+
+Test Case 'PaddingFrameTests.testOversizedChildUnderMaximumIsCappedAndCentred' started at 2026-10-14 19:46:11.415
+
+Test Case 'PaddingFrameTests.testOversizedChildUnderMaximumIsCappedAndCentred' passed (0.0 seconds)
+
+Test Suite 'PaddingFrameTests' passed at 2026-10-14 19:46:11.415
+
+	 Executed 7 tests, with 0 failures (0 unexpected) in 0.003 (0.003) seconds
+
+Test Suite 'PerformanceTests' started at 2026-10-14 19:46:11.415
+
+Test Case 'PerformanceTests.testIncrementalCommitsEqualAFreshGraph' started at 2026-10-14 19:46:11.415
+
+Test Case 'PerformanceTests.testIncrementalCommitsEqualAFreshGraph' passed (4.324 seconds)
+
+Test Case 'PerformanceTests.testRemovedRowsLeaveNoObservationRegistrationsBehind' started at 2026-10-14 19:46:15.739
+
+Test Case 'PerformanceTests.testRemovedRowsLeaveNoObservationRegistrationsBehind' passed (0.687 seconds)
+
+Test Case 'PerformanceTests.testRepeatedEvaluationDoesNotStackObservationRegistrations' started at 2026-10-14 19:46:16.426
+
+Test Case 'PerformanceTests.testRepeatedEvaluationDoesNotStackObservationRegistrations' passed (0.006 seconds)
+
+Test Case 'PerformanceTests.testRowEditWorkIsLinearAndMeasuresOnlyChangedText' started at 2026-10-14 19:46:16.433
+
+Test Case 'PerformanceTests.testRowEditWorkIsLinearAndMeasuresOnlyChangedText' passed (0.182 seconds)
+
+Test Case 'PerformanceTests.testScrollOnlyCommitEvaluatesAndMeasuresNothing' started at 2026-10-14 19:46:16.614
+
+Test Case 'PerformanceTests.testScrollOnlyCommitEvaluatesAndMeasuresNothing' passed (0.203 seconds)
+
+Test Case 'PerformanceTests.testSingleRowEditCommitTime' started at 2026-10-14 19:46:16.818
+
+PERF 200-row commit medians (ms): typing 17.2695, scroll-only 23.8269, row edit 19.4568  optimized=false
+
+Test Case 'PerformanceTests.testSingleRowEditCommitTime' passed (1.984 seconds)
+
+Test Case 'PerformanceTests.testTypingEvaluatesTheHeaderOnlyAndNeverMeasuresRows' started at 2026-10-14 19:46:18.802
+
+Test Case 'PerformanceTests.testTypingEvaluatesTheHeaderOnlyAndNeverMeasuresRows' passed (0.163 seconds)
+
+Test Suite 'PerformanceTests' passed at 2026-10-14 19:46:18.965
+
+	 Executed 7 tests, with 0 failures (0 unexpected) in 7.549 (7.549) seconds
+
+Test Suite 'PreferenceGraphTests' started at 2026-10-14 19:46:18.965
+
+Test Case 'PreferenceGraphTests.testDescendantPreferenceChangeBubblesWithoutParentBodyEvaluation' started at 2026-10-14 19:46:18.965
+
+Test Case 'PreferenceGraphTests.testDescendantPreferenceChangeBubblesWithoutParentBodyEvaluation' passed (0.002 seconds)
+
+Test Case 'PreferenceGraphTests.testObserverRunsAfterSettledGraphAndOnlyForChangedValue' started at 2026-10-14 19:46:18.967
+
+Test Case 'PreferenceGraphTests.testObserverRunsAfterSettledGraphAndOnlyForChangedValue' passed (0.001 seconds)
+
+Test Case 'PreferenceGraphTests.testPreferenceReductionFollowsChildOrder' started at 2026-10-14 19:46:18.968
+
+Test Case 'PreferenceGraphTests.testPreferenceReductionFollowsChildOrder' passed (0.0 seconds)
+
+Test Suite 'PreferenceGraphTests' passed at 2026-10-14 19:46:18.969
+
+	 Executed 3 tests, with 0 failures (0 unexpected) in 0.004 (0.004) seconds
+
+Test Suite 'PreferenceNilDefaultTests' started at 2026-10-14 19:46:18.969
+
+Test Case 'PreferenceNilDefaultTests.testFirstContributionWinsAndIsRenderedByTheObservingParent' started at 2026-10-14 19:46:18.969
+
+Test Case 'PreferenceNilDefaultTests.testFirstContributionWinsAndIsRenderedByTheObservingParent' passed (0.002 seconds)
+
+Test Case 'PreferenceNilDefaultTests.testObserverReportsTheDefaultOnceWhenNothingContributes' started at 2026-10-14 19:46:18.971
+
+Test Case 'PreferenceNilDefaultTests.testObserverReportsTheDefaultOnceWhenNothingContributes' passed (0.0 seconds)
+
+Test Case 'PreferenceNilDefaultTests.testOptionalValuedKeyDefaultsToNil' started at 2026-10-14 19:46:18.971
+
+Test Case 'PreferenceNilDefaultTests.testOptionalValuedKeyDefaultsToNil' passed (0.107 seconds)
+
+Test Case 'PreferenceNilDefaultTests.testWithoutContributorsTheParentSeesTheNilDefault' started at 2026-10-14 19:46:19.078
+
+Test Case 'PreferenceNilDefaultTests.testWithoutContributorsTheParentSeesTheNilDefault' passed (0.001 seconds)
+
+Test Suite 'PreferenceNilDefaultTests' passed at 2026-10-14 19:46:19.079
+
+	 Executed 4 tests, with 0 failures (0 unexpected) in 0.11 (0.11) seconds
+
+Test Suite 'PreferenceValuesTests' started at 2026-10-14 19:46:19.079
+
+Test Case 'PreferenceValuesTests.testDefaultAndSharedReduction' started at 2026-10-14 19:46:19.079
+
+Test Case 'PreferenceValuesTests.testDefaultAndSharedReduction' passed (0.0 seconds)
+
+Test Suite 'PreferenceValuesTests' passed at 2026-10-14 19:46:19.079
+
+	 Executed 1 test, with 0 failures (0 unexpected) in 0.0 (0.0) seconds
+
+Test Suite 'PresentationNoMessageTests' started at 2026-10-14 19:46:19.079
+
+Test Case 'PresentationNoMessageTests.testAlertWithoutMessage' started at 2026-10-14 19:46:19.079
+
+Test Case 'PresentationNoMessageTests.testAlertWithoutMessage' passed (0.001 seconds)
+
+Test Case 'PresentationNoMessageTests.testConfirmationDialogWithoutMessage' started at 2026-10-14 19:46:19.080
+
+Test Case 'PresentationNoMessageTests.testConfirmationDialogWithoutMessage' passed (0.001 seconds)
+
+Test Suite 'PresentationNoMessageTests' passed at 2026-10-14 19:46:19.080
+
+	 Executed 2 tests, with 0 failures (0 unexpected) in 0.001 (0.001) seconds
+
+Test Suite 'RowRefreshTests' started at 2026-10-14 19:46:19.080
+
+Test Case 'RowRefreshTests.testEditingOneRowEvaluatesThatRowOnly' started at 2026-10-14 19:46:19.080
+
+Test Case 'RowRefreshTests.testEditingOneRowEvaluatesThatRowOnly' passed (0.017 seconds)
+
+Test Case 'RowRefreshTests.testInsertRemoveAndReorderEvaluateOnlyNewRows' started at 2026-10-14 19:46:19.098
+
+Test Case 'RowRefreshTests.testInsertRemoveAndReorderEvaluateOnlyNewRows' passed (0.019 seconds)
+
+Test Case 'RowRefreshTests.testNonEquatableElementsStillUpdate' started at 2026-10-14 19:46:19.117
+
+Test Case 'RowRefreshTests.testNonEquatableElementsStillUpdate' passed (0.002 seconds)
+
+Test Case 'RowRefreshTests.testParentChangeReachesRowsWhoseElementsDidNotChange' started at 2026-10-14 19:46:19.119
+
+Test Case 'RowRefreshTests.testParentChangeReachesRowsWhoseElementsDidNotChange' passed (0.009 seconds)
+
+Test Case 'RowRefreshTests.testRemovedRowsStopObserving' started at 2026-10-14 19:46:19.128
+
+Test Case 'RowRefreshTests.testRemovedRowsStopObserving' passed (0.004 seconds)
+
+Test Case 'RowRefreshTests.testRowBindingReadsAndWritesLiveOutsideEvaluation' started at 2026-10-14 19:46:19.132
+
+Test Case 'RowRefreshTests.testRowBindingReadsAndWritesLiveOutsideEvaluation' passed (0.0 seconds)
+
+Test Case 'RowRefreshTests.testTypingIntoARowFieldUpdatesModelAndDisplay' started at 2026-10-14 19:46:19.132
+
+Test Case 'RowRefreshTests.testTypingIntoARowFieldUpdatesModelAndDisplay' passed (0.006 seconds)
+
+Test Suite 'RowRefreshTests' passed at 2026-10-14 19:46:19.138
+
+	 Executed 7 tests, with 0 failures (0 unexpected) in 0.057 (0.057) seconds
+
+Test Suite 'RuntimeTests' started at 2026-10-14 19:46:19.138
+
+Test Case 'RuntimeTests.testBindingWriteBackThroughForEach' started at 2026-10-14 19:46:19.138
+
+Test Case 'RuntimeTests.testBindingWriteBackThroughForEach' passed (0.001 seconds)
+
+Test Case 'RuntimeTests.testCommitSinkReceivesResolvedTree' started at 2026-10-14 19:46:19.139
+
+Test Case 'RuntimeTests.testCommitSinkReceivesResolvedTree' passed (0.001 seconds)
+
+Test Case 'RuntimeTests.testEnvironmentOverridePropagation' started at 2026-10-14 19:46:19.140
+
+Test Case 'RuntimeTests.testEnvironmentOverridePropagation' passed (0.11 seconds)
+
+Test Case 'RuntimeTests.testF1_SurvivingRowIdentityAcrossInsertAbove' started at 2026-10-14 19:46:19.250
+
+Test Case 'RuntimeTests.testF1_SurvivingRowIdentityAcrossInsertAbove' passed (0.011 seconds)
+
+Test Case 'RuntimeTests.testF2_ReorderPreservesStateAndFocus' started at 2026-10-14 19:46:19.261
+
+Test Case 'RuntimeTests.testF2_ReorderPreservesStateAndFocus' passed (0.008 seconds)
+
+Test Case 'RuntimeTests.testF3_ListReinsertPreservesStateWhileLifecycleFires' started at 2026-10-14 19:46:19.269
+
+Test Case 'RuntimeTests.testF3_ListReinsertPreservesStateWhileLifecycleFires' passed (0.263 seconds)
+
+Test Case 'RuntimeTests.testF3_ListRetainedStateIsBounded' started at 2026-10-14 19:46:19.532
+
+Test Case 'RuntimeTests.testF3_ListRetainedStateIsBounded' passed (0.193 seconds)
+
+Test Case 'RuntimeTests.testF3_VStackReinsertResetsState' started at 2026-10-14 19:46:19.725
+
+Test Case 'RuntimeTests.testF3_VStackReinsertResetsState' passed (0.264 seconds)
+
+Test Case 'RuntimeTests.testF4_StaleAsyncResultIsRejectedAfterRemoval' started at 2026-10-14 19:46:19.989
+
+Test Case 'RuntimeTests.testF4_StaleAsyncResultIsRejectedAfterRemoval' passed (0.125 seconds)
+
+Test Case 'RuntimeTests.testObservationFineGrainedInvalidation' started at 2026-10-14 19:46:20.115
+
+Test Case 'RuntimeTests.testObservationFineGrainedInvalidation' passed (0.002 seconds)
+
+Test Case 'RuntimeTests.testTransactionAnimationTagRecorded' started at 2026-10-14 19:46:20.116
+
+Test Case 'RuntimeTests.testTransactionAnimationTagRecorded' passed (0.001 seconds)
+
+Test Suite 'RuntimeTests' passed at 2026-10-14 19:46:20.117
+
+	 Executed 11 tests, with 0 failures (0 unexpected) in 0.98 (0.98) seconds
+
+Test Suite 'SR1ControlTests' started at 2026-10-14 19:46:20.117
+
+Test Case 'SR1ControlTests.testDisabledBlocksButtonsAndNestedFalseDoesNotReenable' started at 2026-10-14 19:46:20.117
+
+Test Case 'SR1ControlTests.testDisabledBlocksButtonsAndNestedFalseDoesNotReenable' passed (0.002 seconds)
+
+Test Case 'SR1ControlTests.testDisabledToggleDoesNotFlip' started at 2026-10-14 19:46:20.119
+
+Test Case 'SR1ControlTests.testDisabledToggleDoesNotFlip' passed (0.002 seconds)
+
+Test Case 'SR1ControlTests.testImageReferencesAndLabels' started at 2026-10-14 19:46:20.121
+
+Test Case 'SR1ControlTests.testImageReferencesAndLabels' passed (0.001 seconds)
+
+Test Case 'SR1ControlTests.testImageUsesHostIntrinsicSize' started at 2026-10-14 19:46:20.122
+
+Test Case 'SR1ControlTests.testImageUsesHostIntrinsicSize' passed (0.0 seconds)
+
+Test Case 'SR1ControlTests.testLabelDividerAndStyleResolve' started at 2026-10-14 19:46:20.123
+
+Test Case 'SR1ControlTests.testLabelDividerAndStyleResolve' passed (0.002 seconds)
+
+Test Case 'SR1ControlTests.testResizableImageUsesProposalAndRetainsResizeOptions' started at 2026-10-14 19:46:20.125
+
+Test Case 'SR1ControlTests.testResizableImageUsesProposalAndRetainsResizeOptions' passed (0.0 seconds)
+
+Test Case 'SR1ControlTests.testReturnCommitsCompositionAndSingleLineRejectsBreaks' started at 2026-10-14 19:46:20.125
+
+Test Case 'SR1ControlTests.testReturnCommitsCompositionAndSingleLineRejectsBreaks' passed (0.001 seconds)
+
+Test Case 'SR1ControlTests.testScaledToFitPreservesAspectRatioInsideProposal' started at 2026-10-14 19:46:20.126
+
+Test Case 'SR1ControlTests.testScaledToFitPreservesAspectRatioInsideProposal' passed (0.0 seconds)
+
+Test Case 'SR1ControlTests.testScaledToFitWithoutResizableKeepsNaturalImageSize' started at 2026-10-14 19:46:20.126
+
+Test Case 'SR1ControlTests.testScaledToFitWithoutResizableKeepsNaturalImageSize' passed (0.0 seconds)
+
+Test Case 'SR1ControlTests.testTextEditorInsertsLineBreaksAndMeasuresLines' started at 2026-10-14 19:46:20.127
+
+Test Case 'SR1ControlTests.testTextEditorInsertsLineBreaksAndMeasuresLines' passed (0.001 seconds)
+
+Test Case 'SR1ControlTests.testToggleFlipsBindingAndReportsCheckboxState' started at 2026-10-14 19:46:20.127
+
+Test Case 'SR1ControlTests.testToggleFlipsBindingAndReportsCheckboxState' passed (0.001 seconds)
+
+Test Suite 'SR1ControlTests' passed at 2026-10-14 19:46:20.128
+
+	 Executed 11 tests, with 0 failures (0 unexpected) in 0.01 (0.01) seconds
+
+Test Suite 'SR1SelectionMenuTests' started at 2026-10-14 19:46:20.128
+
+Test Case 'SR1SelectionMenuTests.testAlertPresentationAndActionDispatch' started at 2026-10-14 19:46:20.128
+
+Test Case 'SR1SelectionMenuTests.testAlertPresentationAndActionDispatch' passed (0.001 seconds)
+
+Test Case 'SR1SelectionMenuTests.testConfirmationDialogVisibilityAndDisabledAction' started at 2026-10-14 19:46:20.129
+
+Test Case 'SR1SelectionMenuTests.testConfirmationDialogVisibilityAndDisabledAction' passed (0.001 seconds)
+
+Test Case 'SR1SelectionMenuTests.testContextMenuAndMenuItemsDispatch' started at 2026-10-14 19:46:20.129
+
+Test Case 'SR1SelectionMenuTests.testContextMenuAndMenuItemsDispatch' passed (0.001 seconds)
+
+Test Case 'SR1SelectionMenuTests.testDeleteWithoutHandlerReturnsFalse' started at 2026-10-14 19:46:20.131
+
+Test Case 'SR1SelectionMenuTests.testDeleteWithoutHandlerReturnsFalse' passed (0.001 seconds)
+
+Test Case 'SR1SelectionMenuTests.testKeyboardRegistryLogicalMappingAndDispatch' started at 2026-10-14 19:46:20.132
+
+Test Case 'SR1SelectionMenuTests.testKeyboardRegistryLogicalMappingAndDispatch' passed (0.002 seconds)
+
+Test Case 'SR1SelectionMenuTests.testMultipleSelectionModifiersAndRanges' started at 2026-10-14 19:46:20.134
+
+Test Case 'SR1SelectionMenuTests.testMultipleSelectionModifiersAndRanges' passed (0.001 seconds)
+
+Test Case 'SR1SelectionMenuTests.testOnDeleteRunsWithRowOffsets' started at 2026-10-14 19:46:20.135
+
+Test Case 'SR1SelectionMenuTests.testOnDeleteRunsWithRowOffsets' passed (0.002 seconds)
+
+Test Case 'SR1SelectionMenuTests.testSingleSelectionClickAndKeyboardNavigation' started at 2026-10-14 19:46:20.137
+
+Test Case 'SR1SelectionMenuTests.testSingleSelectionClickAndKeyboardNavigation' passed (0.001 seconds)
+
+Test Suite 'SR1SelectionMenuTests' passed at 2026-10-14 19:46:20.138
+
+	 Executed 8 tests, with 0 failures (0 unexpected) in 0.01 (0.01) seconds
+
+Test Suite 'ScalarPaddingTests' started at 2026-10-14 19:46:20.138
+
+Test Case 'ScalarPaddingTests.testScalarPaddingInsetsEveryEdge' started at 2026-10-14 19:46:20.138
+
+Test Case 'ScalarPaddingTests.testScalarPaddingInsetsEveryEdge' passed (0.0 seconds)
+
+Test Suite 'ScalarPaddingTests' passed at 2026-10-14 19:46:20.138
+
+	 Executed 1 test, with 0 failures (0 unexpected) in 0.0 (0.0) seconds
+
+Test Suite 'ScrollAnchorTests' started at 2026-10-14 19:46:20.138
+
+Test Case 'ScrollAnchorTests.testAnchorAppliesToTheScrollingAxisOnly' started at 2026-10-14 19:46:20.138
+
+Test Case 'ScrollAnchorTests.testAnchorAppliesToTheScrollingAxisOnly' passed (0.002 seconds)
+
+Test Case 'ScrollAnchorTests.testBottomAnchorStartsAtTheEndOfTheContent' started at 2026-10-14 19:46:20.140
+
+Test Case 'ScrollAnchorTests.testBottomAnchorStartsAtTheEndOfTheContent' passed (0.001 seconds)
+
+Test Case 'ScrollAnchorTests.testCenterAnchorStartsHalfWay' started at 2026-10-14 19:46:20.141
+
+Test Case 'ScrollAnchorTests.testCenterAnchorStartsHalfWay' passed (0.001 seconds)
+
+Test Case 'ScrollAnchorTests.testProgrammaticScrollOverridesTheAnchor' started at 2026-10-14 19:46:20.141
+
+Test Case 'ScrollAnchorTests.testProgrammaticScrollOverridesTheAnchor' passed (0.001 seconds)
+
+Test Case 'ScrollAnchorTests.testTopAnchorAndShortContentStayAtOffsetZero' started at 2026-10-14 19:46:20.142
+
+Test Case 'ScrollAnchorTests.testTopAnchorAndShortContentStayAtOffsetZero' passed (0.001 seconds)
+
+Test Case 'ScrollAnchorTests.testWithoutAnAnchorTheContentStartsAtTheTop' started at 2026-10-14 19:46:20.143
+
+Test Case 'ScrollAnchorTests.testWithoutAnAnchorTheContentStartsAtTheTop' passed (0.0 seconds)
+
+Test Suite 'ScrollAnchorTests' passed at 2026-10-14 19:46:20.143
+
+	 Executed 6 tests, with 0 failures (0 unexpected) in 0.005 (0.005) seconds
+
+Test Suite 'ScrollViewAxisTests' started at 2026-10-14 19:46:20.143
+
+Test Case 'ScrollViewAxisTests.testChangingAxesOnSameScrollViewInvalidatesWrappedContentSize' started at 2026-10-14 19:46:20.143
+
+Test Case 'ScrollViewAxisTests.testChangingAxesOnSameScrollViewInvalidatesWrappedContentSize' passed (0.001 seconds)
+
+Test Case 'ScrollViewAxisTests.testConfiguredHorizontalScrollUsesWidthForContentAndClamping' started at 2026-10-14 19:46:20.144
+
+Test Case 'ScrollViewAxisTests.testConfiguredHorizontalScrollUsesWidthForContentAndClamping' passed (0.001 seconds)
+
+Test Case 'ScrollViewAxisTests.testConfiguredTwoAxisOffsetsClampIndependently' started at 2026-10-14 19:46:20.145
+
+Test Case 'ScrollViewAxisTests.testConfiguredTwoAxisOffsetsClampIndependently' passed (0.002 seconds)
+
+Test Case 'ScrollViewAxisTests.testConfiguredVerticalScrollUsesHeightForContentAndClamping' started at 2026-10-14 19:46:20.147
+
+Test Case 'ScrollViewAxisTests.testConfiguredVerticalScrollUsesHeightForContentAndClamping' passed (0.001 seconds)
+
+Test Suite 'ScrollViewAxisTests' passed at 2026-10-14 19:46:20.148
+
+	 Executed 4 tests, with 0 failures (0 unexpected) in 0.005 (0.005) seconds
+
+Test Suite 'ScrollViewTests' started at 2026-10-14 19:46:20.148
+
+Test Case 'ScrollViewTests.testScrollOffsetShiftsContentAndClamps' started at 2026-10-14 19:46:20.148
+
+Test Case 'ScrollViewTests.testScrollOffsetShiftsContentAndClamps' passed (0.108 seconds)
+
+Test Suite 'ScrollViewTests' passed at 2026-10-14 19:46:20.257
+
+	 Executed 1 test, with 0 failures (0 unexpected) in 0.108 (0.108) seconds
+
+Test Suite 'ShapeTests' started at 2026-10-14 19:46:20.257
+
+Test Case 'ShapeTests.testCircleFillRecordsShapeIdentityAndBounds' started at 2026-10-14 19:46:20.257
+
+Test Case 'ShapeTests.testCircleFillRecordsShapeIdentityAndBounds' passed (0.0 seconds)
+
+Test Case 'ShapeTests.testRectangleFillRecordsProposedBoundsAndResolvedPaint' started at 2026-10-14 19:46:20.257
+
+Test Case 'ShapeTests.testRectangleFillRecordsProposedBoundsAndResolvedPaint' passed (0.108 seconds)
+
+Test Case 'ShapeTests.testRoundedRectangleDefaultMatchesSDKContinuousStyle' started at 2026-10-14 19:46:20.365
+
+Test Case 'ShapeTests.testRoundedRectangleDefaultMatchesSDKContinuousStyle' passed (0.0 seconds)
+
+Test Case 'ShapeTests.testRoundedRectangleStrokeRecordsGeometryAndLineWidth' started at 2026-10-14 19:46:20.366
+
+Test Case 'ShapeTests.testRoundedRectangleStrokeRecordsGeometryAndLineWidth' passed (0.0 seconds)
+
+Test Suite 'ShapeTests' passed at 2026-10-14 19:46:20.366
+
+	 Executed 4 tests, with 0 failures (0 unexpected) in 0.109 (0.109) seconds
+
+Test Suite 'SnapshotStorageTests' started at 2026-10-14 19:46:20.366
+
+Test Case 'SnapshotStorageTests.testDifferentGeometryOrPaintMakesSnapshotsUnequal' started at 2026-10-14 19:46:20.366
+
+Test Case 'SnapshotStorageTests.testDifferentGeometryOrPaintMakesSnapshotsUnequal' passed (0.11 seconds)
+
+Test Case 'SnapshotStorageTests.testEqualShapesIgnoreIndependentStorageBoxes' started at 2026-10-14 19:46:20.476
+
+Test Case 'SnapshotStorageTests.testEqualShapesIgnoreIndependentStorageBoxes' passed (0.0 seconds)
+
+Test Case 'SnapshotStorageTests.testLegacySnapshotHasNoShapeMetadata' started at 2026-10-14 19:46:20.477
+
+Test Case 'SnapshotStorageTests.testLegacySnapshotHasNoShapeMetadata' passed (0.108 seconds)
+
+Test Case 'SnapshotStorageTests.testRetainedSnapshotKeepsShapeValueAfterGraphChanges' started at 2026-10-14 19:46:20.585
+
+Test Case 'SnapshotStorageTests.testRetainedSnapshotKeepsShapeValueAfterGraphChanges' passed (0.001 seconds)
+
+Test Suite 'SnapshotStorageTests' passed at 2026-10-14 19:46:20.586
+
+	 Executed 4 tests, with 0 failures (0 unexpected) in 0.219 (0.219) seconds
+
+Test Suite 'StackAdditionTests' started at 2026-10-14 19:46:20.586
+
+Test Case 'StackAdditionTests.testOverlayKeepsBaseMeasurementPlacesAboveBaseAndPreservesOrder' started at 2026-10-14 19:46:20.586
+
+Test Case 'StackAdditionTests.testOverlayKeepsBaseMeasurementPlacesAboveBaseAndPreservesOrder' passed (0.001 seconds)
+
+Test Case 'StackAdditionTests.testZStackMeasuresLargestChildPlacesByAlignmentAndKeepsOrder' started at 2026-10-14 19:46:20.587
+
+Test Case 'StackAdditionTests.testZStackMeasuresLargestChildPlacesByAlignmentAndKeepsOrder' passed (0.001 seconds)
+
+Test Suite 'StackAdditionTests' passed at 2026-10-14 19:46:20.587
+
+	 Executed 2 tests, with 0 failures (0 unexpected) in 0.002 (0.002) seconds
+
+Test Suite 'SystemImageDeviceInkTests' started at 2026-10-14 19:46:20.587
+
+Test Case 'SystemImageDeviceInkTests.testDeviceBoxOutsideFrameThrows' started at 2026-10-14 19:46:20.587
+
+Test Case 'SystemImageDeviceInkTests.testDeviceBoxOutsideFrameThrows' passed (0.0 seconds)
+
+Test Case 'SystemImageDeviceInkTests.testDeviceInkBoxIsReachedExactlyEvenWithSharpTips' started at 2026-10-14 19:46:20.587
+
+Test Case 'SystemImageDeviceInkTests.testDeviceInkBoxIsReachedExactlyEvenWithSharpTips' passed (0.088 seconds)
+
+Test Case 'SystemImageDeviceInkTests.testInkMayOverflowTheFrameThroughTheInset' started at 2026-10-14 19:46:20.675
+
+Test Case 'SystemImageDeviceInkTests.testInkMayOverflowTheFrameThroughTheInset' passed (0.107 seconds)
+
+Test Case 'SystemImageDeviceInkTests.testUnreachableDeviceBoxIsReportedNotHidden' started at 2026-10-14 19:46:20.782
+
+Test Case 'SystemImageDeviceInkTests.testUnreachableDeviceBoxIsReportedNotHidden' passed (1.614 seconds)
+
+Test Case 'SystemImageDeviceInkTests.testWithoutCalibrationLinearMetricsPlacementIsUsed' started at 2026-10-14 19:46:22.396
+
+Test Case 'SystemImageDeviceInkTests.testWithoutCalibrationLinearMetricsPlacementIsUsed' passed (0.006 seconds)
+
+Test Suite 'SystemImageDeviceInkTests' passed at 2026-10-14 19:46:22.402
+
+	 Executed 5 tests, with 0 failures (0 unexpected) in 1.814 (1.814) seconds
+
+Test Suite 'SystemImageFitIntrinsicTests' started at 2026-10-14 19:46:22.402
+
+Test Case 'SystemImageFitIntrinsicTests.testDefaultFitIntrinsicKeepsNaturalSize' started at 2026-10-14 19:46:22.402
+
+Test Case 'SystemImageFitIntrinsicTests.testDefaultFitIntrinsicKeepsNaturalSize' passed (0.0 seconds)
+
+Test Case 'SystemImageFitIntrinsicTests.testScaleClassModelPredictsInkBoxForAnyFrame' started at 2026-10-14 19:46:22.402
+
+Test Case 'SystemImageFitIntrinsicTests.testScaleClassModelPredictsInkBoxForAnyFrame' passed (0.0 seconds)
+
+Test Case 'SystemImageFitIntrinsicTests.testScaledToFitUsesHostFitIntrinsicSizeWhileNaturalSizeStaysForFixedImages' started at 2026-10-14 19:46:22.402
+
+Test Case 'SystemImageFitIntrinsicTests.testScaledToFitUsesHostFitIntrinsicSizeWhileNaturalSizeStaysForFixedImages' passed (0.0 seconds)
+
+Test Suite 'SystemImageFitIntrinsicTests' passed at 2026-10-14 19:46:22.402
+
+	 Executed 3 tests, with 0 failures (0 unexpected) in 0.001 (0.001) seconds
+
+Test Suite 'SystemImageLayoutMetricsTests' started at 2026-10-14 19:46:22.402
+
+Test Case 'SystemImageLayoutMetricsTests.testBottomUpBoundsFlip' started at 2026-10-14 19:46:22.402
+
+Test Case 'SystemImageLayoutMetricsTests.testBottomUpBoundsFlip' passed (0.0 seconds)
+
+Test Case 'SystemImageLayoutMetricsTests.testComposeCentresLayoutBoxInNonSquareFrameAndKeepsOrientation' started at 2026-10-14 19:46:22.403
+
+Test Case 'SystemImageLayoutMetricsTests.testComposeCentresLayoutBoxInNonSquareFrameAndKeepsOrientation' passed (0.0 seconds)
+
+Test Case 'SystemImageLayoutMetricsTests.testComposeLandsInkOnMetricsRectWithFractionalEdges' started at 2026-10-14 19:46:22.403
+
+Test Case 'SystemImageLayoutMetricsTests.testComposeLandsInkOnMetricsRectWithFractionalEdges' passed (0.002 seconds)
+
+Test Case 'SystemImageLayoutMetricsTests.testComposeProducesAreaWeightedPartialCoverageAtFractionalEdges' started at 2026-10-14 19:46:22.405
+
+Test Case 'SystemImageLayoutMetricsTests.testComposeProducesAreaWeightedPartialCoverageAtFractionalEdges' passed (0.0 seconds)
+
+Test Case 'SystemImageLayoutMetricsTests.testComposeRejectsFaceMismatchAndEmptyCoverage' started at 2026-10-14 19:46:22.405
+
+Test Case 'SystemImageLayoutMetricsTests.testComposeRejectsFaceMismatchAndEmptyCoverage' passed (0.0 seconds)
+
+Test Case 'SystemImageLayoutMetricsTests.testHalfCoverageBoundsIgnoreFaintFringe' started at 2026-10-14 19:46:22.405
+
+Test Case 'SystemImageLayoutMetricsTests.testHalfCoverageBoundsIgnoreFaintFringe' passed (0.0 seconds)
+
+Test Case 'SystemImageLayoutMetricsTests.testInkRectScalesLinearlyWithFrame' started at 2026-10-14 19:46:22.405
+
+Test Case 'SystemImageLayoutMetricsTests.testInkRectScalesLinearlyWithFrame' passed (0.0 seconds)
+
+Test Case 'SystemImageLayoutMetricsTests.testLayoutBoxAspectFitsAndCentres' started at 2026-10-14 19:46:22.405
+
+Test Case 'SystemImageLayoutMetricsTests.testLayoutBoxAspectFitsAndCentres' passed (0.0 seconds)
+
+Test Case 'SystemImageLayoutMetricsTests.testMetricsValidation' started at 2026-10-14 19:46:22.405
+
+Test Case 'SystemImageLayoutMetricsTests.testMetricsValidation' passed (0.0 seconds)
+
+Test Case 'SystemImageLayoutMetricsTests.testStarInkRectAtMeasuredFrame' started at 2026-10-14 19:46:22.405
+
+Test Case 'SystemImageLayoutMetricsTests.testStarInkRectAtMeasuredFrame' passed (0.0 seconds)
+
+Test Case 'SystemImageLayoutMetricsTests.testTintAlphaScalesCoverage' started at 2026-10-14 19:46:22.405
+
+Test Case 'SystemImageLayoutMetricsTests.testTintAlphaScalesCoverage' passed (0.107 seconds)
+
+Test Suite 'SystemImageLayoutMetricsTests' passed at 2026-10-14 19:46:22.513
+
+	 Executed 11 tests, with 0 failures (0 unexpected) in 0.11 (0.11) seconds
+
+Test Suite 'SystemImageRasterProviderTests' started at 2026-10-14 19:46:22.513
+
+Test Case 'SystemImageRasterProviderTests.testAspectFitDoesNotClipWideCoverage' started at 2026-10-14 19:46:22.513
+
+Test Case 'SystemImageRasterProviderTests.testAspectFitDoesNotClipWideCoverage' passed (0.0 seconds)
+
+Test Case 'SystemImageRasterProviderTests.testSelectedFaceMismatchFailsVisible' started at 2026-10-14 19:46:22.513
+
+Test Case 'SystemImageRasterProviderTests.testSelectedFaceMismatchFailsVisible' passed (0.109 seconds)
+
+Test Case 'SystemImageRasterProviderTests.testTopDownAndBottomUpPreserveDeclaredOrientation' started at 2026-10-14 19:46:22.622
+
+Test Case 'SystemImageRasterProviderTests.testTopDownAndBottomUpPreserveDeclaredOrientation' passed (0.0 seconds)
+
+Test Suite 'SystemImageRasterProviderTests' passed at 2026-10-14 19:46:22.622
+
+	 Executed 3 tests, with 0 failures (0 unexpected) in 0.109 (0.109) seconds
+
+Test Suite 'TaskIDTests' started at 2026-10-14 19:46:22.622
+
+Test Case 'TaskIDTests.testDisappearCancelsTask' started at 2026-10-14 19:46:22.622
+
+Test Case 'TaskIDTests.testDisappearCancelsTask' passed (0.124 seconds)
+
+Test Case 'TaskIDTests.testIdChangeCancelsAndRestartsTask' started at 2026-10-14 19:46:22.746
+
+Test Case 'TaskIDTests.testIdChangeCancelsAndRestartsTask' passed (0.126 seconds)
+
+Test Case 'TaskIDTests.testSameIdDoesNotRestartTask' started at 2026-10-14 19:46:22.872
+
+Test Case 'TaskIDTests.testSameIdDoesNotRestartTask' passed (0.126 seconds)
+
+Test Suite 'TaskIDTests' passed at 2026-10-14 19:46:22.998
+
+	 Executed 3 tests, with 0 failures (0 unexpected) in 0.376 (0.376) seconds
+
+Test Suite 'TeardownTests' started at 2026-10-14 19:46:22.998
+
+Test Case 'TeardownTests.testNothingCommitsAfterTearDown' started at 2026-10-14 19:46:22.998
+
+Test Case 'TeardownTests.testNothingCommitsAfterTearDown' passed (0.001 seconds)
+
+Test Case 'TeardownTests.testTearDownReleasesGraphNodesStateAndTaskCaptures' started at 2026-10-14 19:46:22.999
+
+Test Case 'TeardownTests.testTearDownReleasesGraphNodesStateAndTaskCaptures' passed (0.125 seconds)
+
+Test Case 'TeardownTests.testTearDownReleasesListRowsAndRowCache' started at 2026-10-14 19:46:23.124
+
+Test Case 'TeardownTests.testTearDownReleasesListRowsAndRowCache' passed (0.126 seconds)
+
+Test Case 'TeardownTests.testTearDownRunsDisappearCancelsTasksAndEmitsFinalRecord' started at 2026-10-14 19:46:23.250
+
+Test Case 'TeardownTests.testTearDownRunsDisappearCancelsTasksAndEmitsFinalRecord' passed (0.125 seconds)
+
+Test Suite 'TeardownTests' passed at 2026-10-14 19:46:23.375
+
+	 Executed 4 tests, with 0 failures (0 unexpected) in 0.377 (0.377) seconds
+
+Test Suite 'TextFieldBlockTests' started at 2026-10-14 19:46:23.375
+
+Test Case 'TextFieldBlockTests.testBezeledFieldIs24PointsTallAndFillsItsFrame' started at 2026-10-14 19:46:23.375
+
+Test Case 'TextFieldBlockTests.testBezeledFieldIs24PointsTallAndFillsItsFrame' passed (0.001 seconds)
+
+Test Case 'TextFieldBlockTests.testBoolFocusStateFollowsFocusAndTab' started at 2026-10-14 19:46:23.377
+
+Test Case 'TextFieldBlockTests.testBoolFocusStateFollowsFocusAndTab' passed (0.004 seconds)
+
+Test Case 'TextFieldBlockTests.testFocusStateAssignmentSelectsWholeTextButPointerPlacementStays' started at 2026-10-14 19:46:23.380
+
+Test Case 'TextFieldBlockTests.testFocusStateAssignmentSelectsWholeTextButPointerPlacementStays' passed (0.001 seconds)
+
+Test Case 'TextFieldBlockTests.testFocusTextFieldMovesBetweenBoundAndImplicitFocus' started at 2026-10-14 19:46:23.382
+
+Test Case 'TextFieldBlockTests.testFocusTextFieldMovesBetweenBoundAndImplicitFocus' passed (0.002 seconds)
+
+Test Case 'TextFieldBlockTests.testIdealWidthIsTextPlusBezelInsetAndEmptyUsesThePlaceholder' started at 2026-10-14 19:46:23.383
+
+Test Case 'TextFieldBlockTests.testIdealWidthIsTextPlusBezelInsetAndEmptyUsesThePlaceholder' passed (0.001 seconds)
+
+Test Case 'TextFieldBlockTests.testPlaceholderIsThePromptElseTheTitle' started at 2026-10-14 19:46:23.384
+
+Test Case 'TextFieldBlockTests.testPlaceholderIsThePromptElseTheTitle' passed (0.002 seconds)
+
+Test Case 'TextFieldBlockTests.testPlainFieldHasNoBezelHeightOrInset' started at 2026-10-14 19:46:23.386
+
+Test Case 'TextFieldBlockTests.testPlainFieldHasNoBezelHeightOrInset' passed (0.0 seconds)
+
+Test Case 'TextFieldBlockTests.testReturnSelectsTheWholeTextWithOrWithoutSubmitAction' started at 2026-10-14 19:46:23.386
+
+Test Case 'TextFieldBlockTests.testReturnSelectsTheWholeTextWithOrWithoutSubmitAction' passed (0.001 seconds)
+
+Test Case 'TextFieldBlockTests.testReturnWhileComposingCommitsAndDoesNotSubmit' started at 2026-10-14 19:46:23.387
+
+Test Case 'TextFieldBlockTests.testReturnWhileComposingCommitsAndDoesNotSubmit' passed (0.001 seconds)
+
+Test Case 'TextFieldBlockTests.testStyleMetadataAndArtworkSelection' started at 2026-10-14 19:46:23.388
+
+Test Case 'TextFieldBlockTests.testStyleMetadataAndArtworkSelection' passed (0.0 seconds)
+
+Test Case 'TextFieldBlockTests.testSubmitRunsOuterActionBeforeInner' started at 2026-10-14 19:46:23.388
+
+Test Case 'TextFieldBlockTests.testSubmitRunsOuterActionBeforeInner' passed (0.001 seconds)
+
+Test Case 'TextFieldBlockTests.testTabIntoAFieldSelectsItsWholeText' started at 2026-10-14 19:46:23.388
+
+Test Case 'TextFieldBlockTests.testTabIntoAFieldSelectsItsWholeText' passed (0.001 seconds)
+
+Test Case 'TextFieldBlockTests.testUnboundFieldsAreTabStopsAndTakeImplicitFocus' started at 2026-10-14 19:46:23.389
+
+Test Case 'TextFieldBlockTests.testUnboundFieldsAreTabStopsAndTakeImplicitFocus' passed (0.001 seconds)
+
+Test Suite 'TextFieldBlockTests' passed at 2026-10-14 19:46:23.391
+
+	 Executed 13 tests, with 0 failures (0 unexpected) in 0.015 (0.015) seconds
+
+Test Suite 'TextInputTests' started at 2026-10-14 19:46:23.391
+
+Test Case 'TextInputTests.testCompositionStaysWithRowWhenRowInsertedAbove' started at 2026-10-14 19:46:23.391
+
+Test Case 'TextInputTests.testCompositionStaysWithRowWhenRowInsertedAbove' passed (0.002 seconds)
+
+Test Case 'TextInputTests.testEmptyReplaceEndsCompositionWithoutCommit' started at 2026-10-14 19:46:23.393
+
+Test Case 'TextInputTests.testEmptyReplaceEndsCompositionWithoutCommit' passed (0.001 seconds)
+
+Test Case 'TextInputTests.testMarkedTextDoesNotLeakIntoBindingUntilCommitted' started at 2026-10-14 19:46:23.394
+
+Test Case 'TextInputTests.testMarkedTextDoesNotLeakIntoBindingUntilCommitted' passed (0.001 seconds)
+
+Test Case 'TextInputTests.testOutOfRangeOperationsAreRefused' started at 2026-10-14 19:46:23.394
+
+Test Case 'TextInputTests.testOutOfRangeOperationsAreRefused' passed (0.0 seconds)
+
+Test Case 'TextInputTests.testReplaceCommitsDirectlyAndEndsComposition' started at 2026-10-14 19:46:23.394
+
+Test Case 'TextInputTests.testReplaceCommitsDirectlyAndEndsComposition' passed (0.0 seconds)
+
+Test Case 'TextInputTests.testSelectionOutsideCompositionCommits' started at 2026-10-14 19:46:23.395
+
+Test Case 'TextInputTests.testSelectionOutsideCompositionCommits' passed (0.0 seconds)
+
+Test Case 'TextInputTests.testUTF16RangesCountSurrogatePairs' started at 2026-10-14 19:46:23.395
+
+Test Case 'TextInputTests.testUTF16RangesCountSurrogatePairs' passed (0.0 seconds)
+
+Test Suite 'TextInputTests' passed at 2026-10-14 19:46:23.395
+
+	 Executed 7 tests, with 0 failures (0 unexpected) in 0.005 (0.005) seconds
+
+Test Suite 'ToggleLayoutTests' started at 2026-10-14 19:46:23.395
+
+Test Case 'ToggleLayoutTests.testCheckboxLabelMovesToTheLeftUnderRightToLeft' started at 2026-10-14 19:46:23.395
+
+Test Case 'ToggleLayoutTests.testCheckboxLabelMovesToTheLeftUnderRightToLeft' passed (0.001 seconds)
+
+Test Case 'ToggleLayoutTests.testCheckboxLeadsItsLabelWithFourPointEightBetween' started at 2026-10-14 19:46:23.396
+
+Test Case 'ToggleLayoutTests.testCheckboxLeadsItsLabelWithFourPointEightBetween' passed (0.0 seconds)
+
+Test Case 'ToggleLayoutTests.testDisabledSwitchKeepsItsSizeAndReportsDisabled' started at 2026-10-14 19:46:23.397
+
+Test Case 'ToggleLayoutTests.testDisabledSwitchKeepsItsSizeAndReportsDisabled' passed (0.001 seconds)
+
+Test Case 'ToggleLayoutTests.testLabelLeadsAndControlTrailsWithEightPointsBetween' started at 2026-10-14 19:46:23.398
+
+Test Case 'ToggleLayoutTests.testLabelLeadsAndControlTrailsWithEightPointsBetween' passed (0.001 seconds)
+
+Test Case 'ToggleLayoutTests.testMetricsResolveSwitchAndCheckboxStylesOnly' started at 2026-10-14 19:46:23.398
+
+Test Case 'ToggleLayoutTests.testMetricsResolveSwitchAndCheckboxStylesOnly' passed (0.0 seconds)
+
+Test Case 'ToggleLayoutTests.testRightToLeftPutsTheLabelAtTheTrailingEdge' started at 2026-10-14 19:46:23.398
+
+Test Case 'ToggleLayoutTests.testRightToLeftPutsTheLabelAtTheTrailingEdge' passed (0.001 seconds)
+
+Test Case 'ToggleLayoutTests.testSwitchControlSizeIsPixelAlignedAtScale2_5' started at 2026-10-14 19:46:23.399
+
+Test Case 'ToggleLayoutTests.testSwitchControlSizeIsPixelAlignedAtScale2_5' passed (0.0 seconds)
+
+Test Case 'ToggleLayoutTests.testSwitchIsAnIntrinsicSizedChildInAStack' started at 2026-10-14 19:46:23.399
+
+Test Case 'ToggleLayoutTests.testSwitchIsAnIntrinsicSizedChildInAStack' passed (0.001 seconds)
+
+Test Case 'ToggleLayoutTests.testSwitchWithoutLabelIsTheControlAlone' started at 2026-10-14 19:46:23.401
+
+Test Case 'ToggleLayoutTests.testSwitchWithoutLabelIsTheControlAlone' passed (0.0 seconds)
+
+Test Case 'ToggleLayoutTests.testToggleWithoutStyleIsTheDefaultCheckbox' started at 2026-10-14 19:46:23.401
+
+Test Case 'ToggleLayoutTests.testToggleWithoutStyleIsTheDefaultCheckbox' passed (0.0 seconds)
+
+Test Suite 'ToggleLayoutTests' passed at 2026-10-14 19:46:23.402
+
+	 Executed 10 tests, with 0 failures (0 unexpected) in 0.006 (0.006) seconds
+
+Test Suite 'ToggleStyleTests' started at 2026-10-14 19:46:23.402
+
+Test Case 'ToggleStyleTests.testAutomaticStyleMetadataLeavesLegacyToggleGeometryAndAccessibilityUnchanged' started at 2026-10-14 19:46:23.402
+
+Test Case 'ToggleStyleTests.testAutomaticStyleMetadataLeavesLegacyToggleGeometryAndAccessibilityUnchanged' passed (0.001 seconds)
+
+Test Case 'ToggleStyleTests.testSwitchStyleMetadataIsRecordedWithoutChangingToggleKind' started at 2026-10-14 19:46:23.403
+
+Test Case 'ToggleStyleTests.testSwitchStyleMetadataIsRecordedWithoutChangingToggleKind' passed (0.001 seconds)
+
+Test Suite 'ToggleStyleTests' passed at 2026-10-14 19:46:23.403
+
+	 Executed 2 tests, with 0 failures (0 unexpected) in 0.002 (0.002) seconds
+
+Test Suite 'WindowsSystemImageProviderTests' started at 2026-10-14 19:46:23.403
+
+Test Case 'WindowsSystemImageProviderTests.testDeclaredSegoeGlyphReturnsExactFaceAndCoverage' started at 2026-10-14 19:46:23.403
+
+Test Case 'WindowsSystemImageProviderTests.testDeclaredSegoeGlyphReturnsExactFaceAndCoverage' passed (0.001 seconds)
+
+Test Case 'WindowsSystemImageProviderTests.testFaceDecodeKeepsWrongFaceVisibleAndRejectsUnterminatedFace' started at 2026-10-14 19:46:23.404
+
+Test Case 'WindowsSystemImageProviderTests.testFaceDecodeKeepsWrongFaceVisibleAndRejectsUnterminatedFace' passed (0.0 seconds)
+
+Test Case 'WindowsSystemImageProviderTests.testFaceDecodeUsesNulTerminationWhenReportedLengthExcludesNul' started at 2026-10-14 19:46:23.404
+
+Test Case 'WindowsSystemImageProviderTests.testFaceDecodeUsesNulTerminationWhenReportedLengthExcludesNul' passed (0.0 seconds)
+
+Test Case 'WindowsSystemImageProviderTests.testFaceDecodeUsesNulTerminationWhenReportedLengthIncludesNul' started at 2026-10-14 19:46:23.404
+
+Test Case 'WindowsSystemImageProviderTests.testFaceDecodeUsesNulTerminationWhenReportedLengthIncludesNul' passed (0.0 seconds)
+
+Test Case 'WindowsSystemImageProviderTests.testInvalidTargetFailsBeforeNativeAllocation' started at 2026-10-14 19:46:23.404
+
+Test Case 'WindowsSystemImageProviderTests.testInvalidTargetFailsBeforeNativeAllocation' passed (0.0 seconds)
+
+Test Suite 'WindowsSystemImageProviderTests' passed at 2026-10-14 19:46:23.404
+
+	 Executed 5 tests, with 0 failures (0 unexpected) in 0.001 (0.001) seconds
+
+Test Suite 'Debug-windows-x86_64.xctest' passed at 2026-10-14 19:46:23.404
+
+	 Executed 333 tests, with 0 failures (0 unexpected) in 14.511 (14.511) seconds
+
+Test Suite 'All tests' passed at 2026-10-14 19:46:23.405
+
+	 Executed 333 tests, with 0 failures (0 unexpected) in 14.511 (14.511) seconds
+
+Γùè Test run started.
+
+ΓåÆ Testing Library Version: 6.4 (efd8d65801f569d)
+
+ΓåÆ Target Platform: x86_64-unknown-windows-msvc
+
+ΓêÜ Test run with 0 tests in 0 suites passed after 0.001 seconds.
+

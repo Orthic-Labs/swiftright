@@ -1,0 +1,319 @@
+Building for debugging...
+[Computing dependencies]
+[Pre-planning 1ΓÇë/ΓÇë155]
+[Planning deferred tasks]
+[30ΓÇë/ΓÇë53] SwiftRightBridge
+[32ΓÇë/ΓÇë64] SwiftRightBridge
+C:\Users\adrds\AppData\Local\Programs\Swift\Platforms\6.4.0\Windows.platform\Developer\SDKs\Windows.sdk\usr\lib\swift\windows\WinSDK.swiftmodule\x86_64-unknown-windows-msvc.swiftmodule:1:1: warning: reference to type 'wchar_t' broken by a context change; 'wchar_t' was expected to be in '_Builtin_stddef', but now a candidate is found only in 'SwiftShims'
+
+1 | _Builtin_stddef.wchar_t
+
+  | |- warning: reference to type 'wchar_t' broken by a context change; 'wchar_t' was expected to be in '_Builtin_stddef', but now a candidate is found only in 'SwiftShims'
+
+  | |- note: the type was expected to be found in module '_Builtin_stddef' at 'C:\Users\adrds\AppData\Local\Programs\Swift\Toolchains\6.4.0+Asserts\usr\lib\swift\clang\include\module.modulemap'
+
+  | |- note: the type was actually found in module 'SwiftShims' at 'C:\Users\adrds\AppData\Local\Programs\Swift\Platforms\6.4.0\Windows.platform\Developer\SDKs\Windows.sdk\usr\lib\swift\shims\module.modulemap'
+
+  | `- note: declarations in the clang module '_Builtin_stddef' may be hidden by clang preprocessor macros
+
+<unknown>:0: note: attempting to recover from the previous modularization issue
+
+
+[35ΓÇë/ΓÇë64] SwiftRightBridge
+[40ΓÇë/ΓÇë64] SwiftRightBridge
+[41ΓÇë/ΓÇë64] SwiftRightBridge
+[42ΓÇë/ΓÇë64] SwiftRightBridge
+[43ΓÇë/ΓÇë64] SwiftRightBridgeTests-product
+[44ΓÇë/ΓÇë64] SwiftRightBridgeTests-product
+[46ΓÇë/ΓÇë64] SwiftRightBridge
+[47ΓÇë/ΓÇë64] SwiftRightBridge
+[48ΓÇë/ΓÇë64] SwiftRightBridge
+[48ΓÇë/ΓÇë64] CDispatchPrivate
+[53ΓÇë/ΓÇë75] SwiftRightBridgeTests-product
+[55ΓÇë/ΓÇë75] SwiftRightBridgeTests-product
+[60ΓÇë/ΓÇë75] SwiftRightBridgeTests-product
+[61ΓÇë/ΓÇë75] SwiftRightBridgeTests-product
+[62ΓÇë/ΓÇë75] SwiftRightBridgeTests-product
+[63ΓÇë/ΓÇë75] SwiftRightBridgeTests-test-runner
+[64ΓÇë/ΓÇë75] SwiftRightBridgeTests-test-runner
+[68ΓÇë/ΓÇë76] SwiftRightBridge-product
+[73ΓÇë/ΓÇë79] SwiftRightBridgeTests-test-runner
+[74ΓÇë/ΓÇë79] SwiftRightBridgeTests-test-runner
+[80ΓÇë/ΓÇë80] SwiftRightBridgeTests-test-runner
+Build complete! (36.43 secs)
+Test Suite 'All tests' started at 2026-10-14 19:48:50.250
+
+Test Suite 'Debug-windows-x86_64.xctest' started at 2026-10-14 19:48:50.251
+
+Test Suite 'AXTextRunTests' started at 2026-10-14 19:48:50.251
+
+Test Case 'AXTextRunTests.testBlockSizeIsTwoToTheSixteenth' started at 2026-10-14 19:48:50.251
+
+Test Case 'AXTextRunTests.testBlockSizeIsTwoToTheSixteenth' passed (0.001 seconds)
+
+Test Case 'AXTextRunTests.testEmptyTextPublishesOneZeroLengthRunAtFirstID' started at 2026-10-14 19:48:50.252
+
+Test Case 'AXTextRunTests.testEmptyTextPublishesOneZeroLengthRunAtFirstID' passed (0.0 seconds)
+
+Test Case 'AXTextRunTests.testExactlyOneBlockOfLinesIsAccepted' started at 2026-10-14 19:48:50.252
+
+Test Case 'AXTextRunTests.testExactlyOneBlockOfLinesIsAccepted' passed (0.061 seconds)
+
+Test Case 'AXTextRunTests.testFortyLineEditorStaysInsideItsBlock' started at 2026-10-14 19:48:50.314
+
+Test Case 'AXTextRunTests.testFortyLineEditorStaysInsideItsBlock' passed (0.001 seconds)
+
+Test Case 'AXTextRunTests.testMeasuredButEmptyCellsStillOneRun' started at 2026-10-14 19:48:50.314
+
+Test Case 'AXTextRunTests.testMeasuredButEmptyCellsStillOneRun' passed (0.0 seconds)
+
+Test Case 'AXTextRunTests.testMultiLineRunIdsAreContiguousFromTheBlockBase' started at 2026-10-14 19:48:50.315
+
+Test Case 'AXTextRunTests.testMultiLineRunIdsAreContiguousFromTheBlockBase' passed (0.0 seconds)
+
+Test Case 'AXTextRunTests.testOneLineOverTheBlockThrowsTypedError' started at 2026-10-14 19:48:50.315
+
+Test Case 'AXTextRunTests.testOneLineOverTheBlockThrowsTypedError' passed (0.011 seconds)
+
+Test Case 'AXTextRunTests.testUnCheckedWrapperHasTheSameEmptyBehaviour' started at 2026-10-14 19:48:50.326
+
+Test Case 'AXTextRunTests.testUnCheckedWrapperHasTheSameEmptyBehaviour' passed (0.0 seconds)
+
+Test Suite 'AXTextRunTests' passed at 2026-10-14 19:48:50.326
+
+	 Executed 8 tests, with 0 failures (0 unexpected) in 0.075 (0.075) seconds
+
+Test Suite 'BundledFontTests' started at 2026-10-14 19:48:50.326
+
+Test Case 'BundledFontTests.testA06RendererReportsFontsUnsupportedNotSilentFallback' started at 2026-10-14 19:48:50.326
+
+Test Case 'BundledFontTests.testA06RendererReportsFontsUnsupportedNotSilentFallback' passed (0.0 seconds)
+
+Test Case 'BundledFontTests.testBaseViewKeepsTheRenderersOwnNumbers' started at 2026-10-14 19:48:50.326
+
+Test Case 'BundledFontTests.testBaseViewKeepsTheRenderersOwnNumbers' passed (0.0 seconds)
+
+Test Case 'BundledFontTests.testBothExportsSelect07' started at 2026-10-14 19:48:50.326
+
+Test Case 'BundledFontTests.testBothExportsSelect07' passed (0.0 seconds)
+
+Test Case 'BundledFontTests.testBridge07OnA06RendererFallsBackOrRefuses' started at 2026-10-14 19:48:50.326
+
+Test Case 'BundledFontTests.testBridge07OnA06RendererFallsBackOrRefuses' passed (0.0 seconds)
+
+Test Case 'BundledFontTests.testHalfExportedRendererIsRefused' started at 2026-10-14 19:48:50.326
+
+Test Case 'BundledFontTests.testHalfExportedRendererIsRefused' passed (0.17 seconds)
+
+Test Case 'BundledFontTests.testLayoutsMatchTheHeader' started at 2026-10-14 19:48:50.497
+
+Test Case 'BundledFontTests.testLayoutsMatchTheHeader' passed (0.0 seconds)
+
+Test Case 'BundledFontTests.testLegacyViewOfA07RendererIsStillA06View' started at 2026-10-14 19:48:50.497
+
+Test Case 'BundledFontTests.testLegacyViewOfA07RendererIsStillA06View' passed (0.0 seconds)
+
+Test Case 'BundledFontTests.testLibraryOn06RendererThrowsWhenThereIsAFontToRegister' started at 2026-10-14 19:48:50.497
+
+Test Case 'BundledFontTests.testLibraryOn06RendererThrowsWhenThereIsAFontToRegister' passed (0.004 seconds)
+
+Test Case 'BundledFontTests.testLibraryRegistersResourceDirectoryAndMapsCustomNames' started at 2026-10-14 19:48:50.501
+
+Test Case 'BundledFontTests.testLibraryRegistersResourceDirectoryAndMapsCustomNames' passed (0.004 seconds)
+
+Test Case 'BundledFontTests.testRegisterFontOn07ReturnsIdentity' started at 2026-10-14 19:48:50.505
+
+Test Case 'BundledFontTests.testRegisterFontOn07ReturnsIdentity' passed (0.0 seconds)
+
+Test Case 'BundledFontTests.testRegisterFontPropagatesRendererRefusal' started at 2026-10-14 19:48:50.505
+
+Test Case 'BundledFontTests.testRegisterFontPropagatesRendererRefusal' passed (0.0 seconds)
+
+Test Case 'BundledFontTests.testResolveReportsFallbackBeforeRegistrationAndBundledAfter' started at 2026-10-14 19:48:50.505
+
+Test Case 'BundledFontTests.testResolveReportsFallbackBeforeRegistrationAndBundledAfter' passed (0.0 seconds)
+
+Test Case 'BundledFontTests.testValidate07AcceptsTheTrueViewAndRejectsEveryDrift' started at 2026-10-14 19:48:50.505
+
+Test Case 'BundledFontTests.testValidate07AcceptsTheTrueViewAndRejectsEveryDrift' passed (0.0 seconds)
+
+Test Suite 'BundledFontTests' passed at 2026-10-14 19:48:50.505
+
+	 Executed 13 tests, with 0 failures (0 unexpected) in 0.179 (0.179) seconds
+
+Test Suite 'ButtonFocusGateTests' started at 2026-10-14 19:48:50.505
+
+Test Case 'ButtonFocusGateTests.testConfirmTakesAHeldRequestOfAnyAge' started at 2026-10-14 19:48:50.505
+
+Test Case 'ButtonFocusGateTests.testConfirmTakesAHeldRequestOfAnyAge' passed (0.0 seconds)
+
+Test Case 'ButtonFocusGateTests.testInvokeAfterTheFocusWasAppliedKeepsIt' started at 2026-10-14 19:48:50.505
+
+Test Case 'ButtonFocusGateTests.testInvokeAfterTheFocusWasAppliedKeepsIt' passed (0.0 seconds)
+
+Test Case 'ButtonFocusGateTests.testInvokeAfterTheWindowDoesNotCancelAnUntakenRequest' started at 2026-10-14 19:48:50.505
+
+Test Case 'ButtonFocusGateTests.testInvokeAfterTheWindowDoesNotCancelAnUntakenRequest' passed (0.0 seconds)
+
+Test Case 'ButtonFocusGateTests.testInvokeOfAnotherNodeLeavesTheRequestHeld' started at 2026-10-14 19:48:50.505
+
+Test Case 'ButtonFocusGateTests.testInvokeOfAnotherNodeLeavesTheRequestHeld' passed (0.0 seconds)
+
+Test Case 'ButtonFocusGateTests.testInvokeRightAfterFocusCancelsTheRequest' started at 2026-10-14 19:48:50.505
+
+Test Case 'ButtonFocusGateTests.testInvokeRightAfterFocusCancelsTheRequest' passed (0.0 seconds)
+
+Test Case 'ButtonFocusGateTests.testInvokeWithNothingHeldCancelsNothing' started at 2026-10-14 19:48:50.505
+
+Test Case 'ButtonFocusGateTests.testInvokeWithNothingHeldCancelsNothing' passed (0.0 seconds)
+
+Test Case 'ButtonFocusGateTests.testLoneFocusRequestIsAppliedAfterTheWindow' started at 2026-10-14 19:48:50.505
+
+Test Case 'ButtonFocusGateTests.testLoneFocusRequestIsAppliedAfterTheWindow' passed (0.0 seconds)
+
+Test Case 'ButtonFocusGateTests.testNewRequestForAnotherNodeConfirmsTheEarlierOne' started at 2026-10-14 19:48:50.505
+
+Test Case 'ButtonFocusGateTests.testNewRequestForAnotherNodeConfirmsTheEarlierOne' passed (0.0 seconds)
+
+Test Case 'ButtonFocusGateTests.testRecordedGapsAreInsideTheWindow' started at 2026-10-14 19:48:50.505
+
+Test Case 'ButtonFocusGateTests.testRecordedGapsAreInsideTheWindow' passed (0.0 seconds)
+
+Test Case 'ButtonFocusGateTests.testRepeatedRequestForTheSameNodeRestartsTheWindow' started at 2026-10-14 19:48:50.505
+
+Test Case 'ButtonFocusGateTests.testRepeatedRequestForTheSameNodeRestartsTheWindow' passed (0.0 seconds)
+
+Test Suite 'ButtonFocusGateTests' passed at 2026-10-14 19:48:50.505
+
+	 Executed 10 tests, with 0 failures (0 unexpected) in 0.0 (0.0) seconds
+
+Test Suite 'FontFileMetricsTests' started at 2026-10-14 19:48:50.505
+
+Test Case 'FontFileMetricsTests.testParsesFirstFaceOfACollection' started at 2026-10-14 19:48:50.505
+
+Test Case 'FontFileMetricsTests.testParsesFirstFaceOfACollection' passed (0.0 seconds)
+
+Test Case 'FontFileMetricsTests.testParsesHeadAndHheaAndLineHeightIsRoundedAscentPlusRoundedDescent' started at 2026-10-14 19:48:50.506
+
+Test Case 'FontFileMetricsTests.testParsesHeadAndHheaAndLineHeightIsRoundedAscentPlusRoundedDescent' passed (0.0 seconds)
+
+Test Case 'FontFileMetricsTests.testRealTinosWhenTheRepositoryFileIsPresent' started at 2026-10-14 19:48:50.506
+
+D:\Claude\swiftright\.factory-work\product-stage\09e184945-cc18ed0f\packages\SwiftRightBridge\Tests\SwiftRightBridgeTests\FontFileMetricsTests.swift:51: FontFileMetricsTests.testRealTinosWhenTheRepositoryFileIsPresent : Test skipped - repository font not staged
+
+Test Case 'FontFileMetricsTests.testRealTinosWhenTheRepositoryFileIsPresent' skipped (0.0 seconds)
+
+Test Case 'FontFileMetricsTests.testRejectsMissingTablesAndImplausibleValues' started at 2026-10-14 19:48:50.506
+
+Test Case 'FontFileMetricsTests.testRejectsMissingTablesAndImplausibleValues' passed (0.0 seconds)
+
+Test Suite 'FontFileMetricsTests' passed at 2026-10-14 19:48:50.506
+
+	 Executed 4 tests, with 1 test skipped and 0 failures (0 unexpected) in 0.001 (0.001) seconds
+
+Test Suite 'MetricsLatchTests' started at 2026-10-14 19:48:50.506
+
+Test Case 'MetricsLatchTests.testBadPayloadValuesAreClamped' started at 2026-10-14 19:48:50.506
+
+Test Case 'MetricsLatchTests.testBadPayloadValuesAreClamped' passed (0.0 seconds)
+
+Test Case 'MetricsLatchTests.testEventPayloadOverridesStaleGetter' started at 2026-10-14 19:48:50.506
+
+Test Case 'MetricsLatchTests.testEventPayloadOverridesStaleGetter' passed (0.0 seconds)
+
+Test Case 'MetricsLatchTests.testLaterEventReplacesEarlierOne' started at 2026-10-14 19:48:50.506
+
+Test Case 'MetricsLatchTests.testLaterEventReplacesEarlierOne' passed (0.0 seconds)
+
+Test Case 'MetricsLatchTests.testOtherEventsAreIgnored' started at 2026-10-14 19:48:50.506
+
+Test Case 'MetricsLatchTests.testOtherEventsAreIgnored' passed (0.0 seconds)
+
+Test Suite 'MetricsLatchTests' passed at 2026-10-14 19:48:50.506
+
+	 Executed 4 tests, with 0 failures (0 unexpected) in 0.0 (0.0) seconds
+
+Test Suite 'RepairGuardTests' started at 2026-10-14 19:48:50.506
+
+Test Case 'RepairGuardTests.testAttemptBackoffMarker' started at 2026-10-14 19:48:50.506
+
+Test Case 'RepairGuardTests.testAttemptBackoffMarker' passed (0.0 seconds)
+
+Test Case 'RepairGuardTests.testDeployedFileIsByteIdenticalToPinnedFile' started at 2026-10-14 19:48:50.506
+
+Test Case 'RepairGuardTests.testDeployedFileIsByteIdenticalToPinnedFile' passed (0.001 seconds)
+
+Test Case 'RepairGuardTests.testEmbeddedScriptMatchesSourceFile' started at 2026-10-14 19:48:50.507
+
+Test Case 'RepairGuardTests.testEmbeddedScriptMatchesSourceFile' passed (0.001 seconds)
+
+Test Case 'RepairGuardTests.testMarkerWrittenOnlyAfterSpawn' started at 2026-10-14 19:48:50.508
+
+Test Case 'RepairGuardTests.testMarkerWrittenOnlyAfterSpawn' passed (0.018 seconds)
+
+Test Case 'RepairGuardTests.testNeedsInstallDecisions' started at 2026-10-14 19:48:50.526
+
+Test Case 'RepairGuardTests.testNeedsInstallDecisions' passed (0.101 seconds)
+
+Test Case 'RepairGuardTests.testSanitizedName' started at 2026-10-14 19:48:50.628
+
+Test Case 'RepairGuardTests.testSanitizedName' passed (0.109 seconds)
+
+Test Case 'RepairGuardTests.testScriptSafetyContract' started at 2026-10-14 19:48:50.737
+
+Test Case 'RepairGuardTests.testScriptSafetyContract' passed (0.001 seconds)
+
+Test Case 'RepairGuardTests.testTaskMissingTriggersInstall' started at 2026-10-14 19:48:50.738
+
+Test Case 'RepairGuardTests.testTaskMissingTriggersInstall' passed (0.0 seconds)
+
+Test Suite 'RepairGuardTests' passed at 2026-10-14 19:48:50.738
+
+	 Executed 8 tests, with 0 failures (0 unexpected) in 0.232 (0.232) seconds
+
+Test Suite 'SelectionRectsTests' started at 2026-10-14 19:48:50.738
+
+Test Case 'SelectionRectsTests.testCollapsedSelectionHasNoRects' started at 2026-10-14 19:48:50.738
+
+Test Case 'SelectionRectsTests.testCollapsedSelectionHasNoRects' passed (0.0 seconds)
+
+Test Case 'SelectionRectsTests.testEmptyCellsYieldNothing' started at 2026-10-14 19:48:50.738
+
+Test Case 'SelectionRectsTests.testEmptyCellsYieldNothing' passed (0.0 seconds)
+
+Test Case 'SelectionRectsTests.testMultiLineRangeGivesOneRectPerLine' started at 2026-10-14 19:48:50.738
+
+Test Case 'SelectionRectsTests.testMultiLineRangeGivesOneRectPerLine' passed (0.0 seconds)
+
+Test Case 'SelectionRectsTests.testReversedAndOutOfRangeBoundsAreClamped' started at 2026-10-14 19:48:50.738
+
+Test Case 'SelectionRectsTests.testReversedAndOutOfRangeBoundsAreClamped' passed (0.0 seconds)
+
+Test Case 'SelectionRectsTests.testSelectedLineBreakAddsNub' started at 2026-10-14 19:48:50.738
+
+Test Case 'SelectionRectsTests.testSelectedLineBreakAddsNub' passed (0.107 seconds)
+
+Test Case 'SelectionRectsTests.testSingleLineRange' started at 2026-10-14 19:48:50.846
+
+Test Case 'SelectionRectsTests.testSingleLineRange' passed (0.109 seconds)
+
+Test Suite 'SelectionRectsTests' passed at 2026-10-14 19:48:50.954
+
+	 Executed 6 tests, with 0 failures (0 unexpected) in 0.216 (0.216) seconds
+
+Test Suite 'Debug-windows-x86_64.xctest' passed at 2026-10-14 19:48:50.955
+
+	 Executed 53 tests, with 1 test skipped and 0 failures (0 unexpected) in 0.703 (0.703) seconds
+
+Test Suite 'All tests' passed at 2026-10-14 19:48:50.955
+
+	 Executed 53 tests, with 1 test skipped and 0 failures (0 unexpected) in 0.703 (0.703) seconds
+
+Γùè Test run started.
+
+ΓåÆ Testing Library Version: 6.4 (efd8d65801f569d)
+
+ΓåÆ Target Platform: x86_64-unknown-windows-msvc
+
+ΓêÜ Test run with 0 tests in 0 suites passed after 0.001 seconds.
+

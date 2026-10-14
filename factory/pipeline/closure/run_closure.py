@@ -42,7 +42,7 @@ def main():
     if res.exists():
         for l in res.read_text().splitlines():
             j = json.loads(l)
-            if j["stage"] == stage and j.get("done"): done.add((j["case"], j["n"]))
+            if j["stage"] == stage and j.get("done") and j.get("exit") == 0: done.add((j["case"], j["n"]))
     for label, case, n in JOBS:
         if (case, n) in done or (only and only not in case): continue
         t = time.time()

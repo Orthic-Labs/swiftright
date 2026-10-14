@@ -1,0 +1,75 @@
+{
+ "pairs": 5,
+ "frames": null,
+ "exact": 0,
+ "exactWithExclusions": 0,
+ "edgeAA": 0,
+ "fail": 5,
+ "maxdiff": 0,
+ "diffbbox": null,
+ "rows": [
+  {
+   "run": 1,
+   "error": "missing capture"
+  },
+  {
+   "run": 1,
+   "phase": "start",
+   "error": "missing capture"
+  },
+  {
+   "run": 1,
+   "phase": "b1",
+   "error": "missing capture"
+  },
+  {
+   "run": 1,
+   "phase": "a1",
+   "error": "missing capture"
+  },
+  {
+   "run": 1,
+   "phase": "b2",
+   "error": "missing capture"
+  }
+ ],
+ "gate": "exact outside excluded regions",
+ "excludedRegions": [
+  {
+   "name": "A text glyph region (Segoe UI vs SF, sr1-decisions #2); gated by the semantic tree",
+   "rect": [
+    200,
+    50,
+    700,
+    100
+   ]
+  },
+  {
+   "name": "B text glyph region (Segoe UI vs SF, sr1-decisions #2); gated by the semantic tree",
+   "rect": [
+    200,
+    100,
+    700,
+    150
+   ]
+  },
+  {
+   "name": "button row 0 width and label glyphs (Segoe UI vs SF, decision 2/11); the artwork is gated by swiftui.button, its action by the tree and the squares",
+   "rect": [
+    100,
+    150,
+    700,
+    225
+   ]
+  },
+  {
+   "name": "button row 1 width and label glyphs (Segoe UI vs SF, decision 2/11); the artwork is gated by swiftui.button, its action by the tree and the squares",
+   "rect": [
+    100,
+    225,
+    700,
+    300
+   ]
+  }
+ ]
+}

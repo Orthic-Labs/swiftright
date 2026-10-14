@@ -1,44 +1,44 @@
-# SR1 status: 14 October 2026, one consolidated build
+# SR1 status: 15 October 2026, text-origin gap closed, one new stage
 
-All 20 blocks (plus the cross-cutting pixel-tie cases) were rerun on **one product stage: `58df259c5-4c63f440`** (git archive of commit `58df259c5`; runtime, bridge and `SwiftRightHost` from a single tree `4c63f440307c`), factory renderer 0.7 `82513ae0...`, minimised Windows Sandbox through `factory/tools/pair.py --sandbox`. Round-3 cases (blocks 11-20, 85 cases) ran at N=20; round-1/2 and pixel-tie cases (42) ran at N=3 as regression. Result: **127 of 127 jobs pass their deciding gate; no case changed verdict against its earlier stage; no product change was needed.** Raw per-case output: `factory/pipeline/consolidation/results.jsonl` (driver `run_all.py`), per-run reports under each case's `runs/`.
+**Stage `d07df2581-cc18ed0f`** (git archive of commit `d07df2581`; runtime, bridge and `SwiftRightHost` tree `cc18ed0f4a7e`, factory renderer 0.7 `82513ae0...`, minimised Windows Sandbox through `factory/tools/pair.py --sandbox`). It replaces the consolidation stage `58df259c5-4c63f440` for the TextField blocks. **126 of 128 jobs pass their deciding gates; 2 fail: `swiftui.animation/completion-v1` and `default-spring-v1` (block 18), see "Open" below.** Raw per-case output: `factory/pipeline/consolidation/results.jsonl` (this pass appended; driver `factory/pipeline/closure/run_closure.py`), table `consolidation-table.json`.
 
-What changed for this pass: every Windows host now centres its tree through the runtime (a `ZStack` in a viewport-sized frame) instead of translating the finished tree, as the half-pixel tie rule requires (`blocks-6-10/pixel-ties/README.md`); 46 case hosts were restamped (diff = centring only) and the stampers (`stamp-case.py`, both `new-case.py`) now do the same. `job-interact.ps1` no longer shadows its `$VK` table with `$vk`, so `mods` key steps work.
+What changed. (1) **TextField text origin**: the runtime put bezeled text 4 pt in; macOS puts it 6 pt in (`NSTextFieldCell` content rect inset 4 + the field editor's 2 pt line-fragment padding; measured on the captures and read from AppKit, `factory/tools/appkit-probe`). Fixed, with `swiftui.textfield/FACTS.md` corrected. The selection highlight is now (179,215,255), the emphasized `selectedTextBackgroundColor` the Mac draws (it was (153,201,239)). (2) **A text-origin gate** (decision 12, `factory/tools/pair_textorigin_report.py`) now runs beside every TextField case's deciding gate: first ink column, selection colour and start column, and the caret column (Mac insertion point read from the field editor) are compared at 0 px tolerance; the old captures fail it (first ink 5-7 px left, selection 40 vs 35, colour differs). (3) **derived-click**: the Mac capture was stale (decision 13); fixed in the Mac host, and the case now also gates pixels. (4) Lane A decisions A1-A10 and its history are restored below.
 
-Tests on the stage (default build, `--jobs 1`): Windows runtime 333, host 121, bridge 51 (1 skipped); Mac (git archive on the internal disk) runtime 325, host 121, bridge 52 (1 skipped); 0 failures.
+Tests on the stage tree (default build, `--jobs 1`; logs kept in `factory/pipeline/closure/logs/`): Windows runtime 333, host 121, bridge 53 (1 skipped), logs `win-tests/`; Mac (git archive on the internal disk) runtime 325, host 121, bridge 54 (1 skipped), logs `mac-tests/`; 0 failures. They ran on commit `09e184945`, whose product tree hash `cc18ed0f...` is identical to the stage's (later commits changed docs, tools and cases only).
 
-Pixel `fail` counts inside a row are by design where a control, semantic, clock or image gate decides (label width Segoe vs SF, animating partial-coverage column, glyph shape, dialogs); the gate column names the decider.
+Which gate decides each block, stated plainly. "Pixels" means the full-frame diff outside the named excluded glyph regions (exact or edge-aa <= 32, decision 5); "semantic" means the accessibility-tree comparison (`pair_semantic_report.py`); glyph shapes are never gated (decision 2).
 
-| Block | Cases | N | Verdict on the stage (every case passed its deciding gate) | Caveats |
-|---|---|---|---|---|
-| 1 rounded-rect | 5 | 3 | edge-aa<=32 (max 17); 15/15 pairs | Continuous stroke; 4 gen variants share the verdict |
-| 2 image | 4 | 3 | image gate 12/12 (frame, ink bbox, tint); glyph shape reported (638 / 253 / 1692 / 1187 px) | Segoe Fluent substitute glyph; 48 pt uses a measured ink override (not evidence of generalisation) |
-| 3 stack-overlay | 1 | 3 | edge-aa<=32 outside the named `+` glyph region | decision 2 (Segoe UI vs SF) |
-| 4 text-bundled | 1 | 3 | text gate 3/3 (exact outside glyph region, ink bbox within 1 px) | Tinos via ABI 0.7 font registration |
-| 5 custom-layout | 2 | 3 | exact 6/6 (LTR and RTL) |  |
-| 6 scroll-view | 4 | 3 | exact 9/12, exact-with-exclusions 3/12 (row-text glyph region) | Mac side is an offscreen NSHostingView (ImageRenderer renders ScrollView blank) |
-| 7 toggle | 6 | 3 | edge-aa<=32 12/12 (max 18); labelled cases 6/6 by control gate | labelled cases: pixel verdict fail by design (label width Segoe vs SF, -16 px on the switch) |
-| 8 disabled (+button, text colour) | 9 | 3 | edge-aa<=32 18, exact-with-exclusions 3; button gate 6/6 (enabled, disabled); text-colour gate on `plain-*` and `foreground-colour` | Button is 8 px narrower by design (label advance); Button artwork light only |
-| 9 padding-frame | 5 | 3 | exact 9/15, edge-aa<=32 6/15 (max 31) | fractional `Color` edges |
-| 10 preference-key | 2 | 3 | exact 6/6 |  |
-| 11 button | 19 | 20 | 20 x 19 cases: button gate or text-colour gate or semantic (click/Return) 19/19 pass; pixels exact 2 cases, edge-aa<=32 2 cases | bordered/prominent are 7-8 px narrower (label advance); every Button style is measured in light only; pressed/focused states unmeasured |
-| 12 binding | 4 | 20 | exact 1, edge-aa<=32 2 (+ text exclusion), click semantic 20/20 | `derived-toggle` text glyph region excluded |
-| 13 textfield | 6 | 20 | semantic 120/120 (6 cases) | Windows focus ring not drawn; real IME/TSF deferred to hardware |
-| 14 focus-state | 4 | 20 | semantic 80/80 (4 cases) | UIA keyboard focus is false in the Sandbox; gated through `@FocusState` text and `HOST_FIELD` log |
-| 15 ime-marked-text | 4 | 20 | semantic 80/80 (4 cases) | posted WM_IME messages only; real composition needs hardware |
-| 16 list | 13 | 20 | list gate 13/13 cases (rows, text, order, selection, frame within 1 px, label ink); pixels exact 1, exact-with-exclusions 5, edge-aa<=32 7 | label glyph regions excluded (decision 2) |
-| 17 alert | 9 | 20 | semantic 180/180 (9 cases: open phase TaskDialog vs Mac alert record, final phase) | pixels of the main window reported, never gate |
-| 18 animation | 7 | 20 | clock gate 7/7 cases (780 pairs ok) | spring cases use the named 2 px extent tolerance; one explicit transaction per flush |
-| 19 opacity-transition | 7 | 20 | clock gate / exact: 640/640 pairs (exact 620, text-exclusion 20) | Image fade excluded; no `.scale`/custom Transition |
-| 20 color-scheme | 12 | 20 | exact 60 (3 cases), edge-aa<=32 160 (8 cases, haze <= 3), text-colour gate 20/20 | Toggle artwork measured at scale 2.5 only |
-| pixel-ties | 3 | 3 | exact 9/9 (ruler, centered-origin, layout) | half-pixel tie rule `3353d63f`; hosts centre through the runtime |
+| Block | Jobs (N) | What decides, and what does not | Result on `d07df2581-cc18ed0f` |
+|---|---|---|---|
+| 1 rounded-rect | 5 (3) | pixels, edge-aa <= 32 | 15/15 pairs (N=20 earlier on `58df259c5`) |
+| 2 image | 4 (3) | image gate: frame, ink bbox, tint; glyph shape reported only | 12/12 |
+| 3 stack-overlay | 1 (3) | pixels outside the named `+` glyph region | 3/3 |
+| 4 text-bundled | 1 (3) | text gate (exact outside glyph region, ink bbox within 1 px) | 3/3 |
+| 5 custom-layout | 2 (3) | pixels, exact | 6/6 |
+| 6 scroll-view | 4 (3) | pixels, exact (row-text region excluded in one case) | 12/12 |
+| 7 toggle | 6 (3) | pixels (unlabelled) or control gate (labelled: label width Segoe vs SF) | 18/18 |
+| 8 disabled | 9 (3) | pixels, button gate, text-colour gate | 27/27 |
+| 9 padding-frame | 5 (3) | pixels, exact or edge-aa | 15/15 |
+| 10 preference-key | 2 (3) | pixels, exact | 6/6 |
+| 11 button | 19 (3) | button gate, text-colour gate, semantic (clicks) + counter pixels | 57/57 (N=20 earlier) |
+| 12 binding | 4: `derived-click` (20), 3 others (3) | `derived-click`: semantic tree (3 phases) AND pixels edge-aa <= 32 outside the `count: 0` glyphs; others pixels | 20/20 and 9/9 |
+| 13 textfield | 7 (20) | static cases (placeholder, prompt, automatic, filled-truncated, plain): pixels outside the named text rect + semantic + **text-origin gate**; `submit`: semantic (pixels report-only) + origin gate incl. selection colour/start; `caret-empty`: semantic + origin gate incl. the caret column. Not gated: glyph shapes, the right-hand clip, the focus ring, a caret after typed text | 140/140 runs pass every gate; first-ink delta 0 px in all |
+| 14 focus-state | 4 (20) | semantic tree at every phase (focus text, values) + **text-origin gate on the final frame** (first ink; selection colour and start where a Tab selects all). Pixels are report-only. Not gated: UIA keyboard focus (false in the Sandbox), the Mac harness leaves a field's selection on a synthetic click into an already-editing field (`tab-order` phase t4), so its final frame follows a Tab | 80/80 runs, 120 field checks |
+| 15 ime-marked-text | 4 (20) | semantic tree (bound text) + **origin gate: first ink only**. Pixels are report-only. Not gated: the marked-text look (yellow background on the Mac, underline on Windows), its position, the candidate window; composition is posted WM_IME / in-process TextStore calls, not a real IME | 80/80 runs |
+| 16 list | 13 (3) | list gate (rows, text, order, selection, frame within 1 px) + pixels outside glyph regions | 39/39 |
+| 17 alert | 9 (3) | semantic (TaskDialog vs Mac alert record); window pixels reported only | 27/27 |
+| 18 animation | 7 (3) | clock gate (extent within 1 px, progress, pixels outside tracking strips) | **5 of 7 pass; `completion-v1` and `default-spring-v1` fail the last frame (t = 0.6)** |
+| 19 opacity-transition | 7 (3) | clock gate / exact pixels | 21/21 |
+| 20 color-scheme | 12 (3) | pixels exact or edge-aa (haze <= 3), text-colour gate | 36/36 |
+| pixel-ties | 3 (3) | pixels, exact | 9/9 |
 
-Case list per block: `factory/pipeline/consolidation/run_all.py` (JOBS). Cases: 127 jobs = 85 round-3 (N=20) + 42 regression (N=3).
+Open. (a) **Block 18, two cases fail on the unchanged runtime**: at the final clock step (t = 0.6 s) the Mac reference's SwiftUI default spring has not finished (Mac value 99.44 of 100, extent 498.6 px; Windows 500) while at t = 0.52 both agree (496.84 / 497). The same cases passed 20/20 on `58df259c5` at 04:21 on 14 October; the Mac capture host and the cases are unchanged since, the failure reproduces on a Mac-only rerun at 12.5 ms and 3 ms sub-stepping of the manual clock, so it is not the sampling cadence. Not diagnosed further; the cause is on the Mac reference side (OS or machine state), not in this change. (b) Real Microsoft IME, TSF and Narrator, the Windows focus ring, dark TextField paint, the unemphasized (grey) selection, and the macOS right-hand text clip are not delivered or not gated (the Mac cuts a glyph at 4 pt from the edge for spaced text and ends on a whole glyph at 6 pt for an unspaced one). (c) `factory/tools/test_pair_textorigin_report.py` was not run locally: the workspace build hook blocks executing files with that name; the gate itself ran on 1,000+ real pairs and reproduced the original defect on the old captures. (d) Tests were run with direct `swift test` and the sanctioned Windows route (`stage-test.ps1`), not through managed GitHub Actions, as in the consolidation.
 
-Known gaps: SliceApp's own backend does not use `ResolvedNodePainter`; 41 symbol sizes use measured ink overrides; hairline strokes below 1.5 px and scales 1.25 and 1.5 are untested; Button artwork and button styles are light only; real Microsoft IME, TSF and Narrator are deferred to hardware; the Windows default text colour is 0x1f1f1f against the Mac's 0x272727 (within the colour gate).
+Known gaps carried over: SliceApp's own backend does not use `ResolvedNodePainter`; 41 symbol sizes use measured ink overrides; hairline strokes below 1.5 px and scales 1.25 and 1.5 are untested; Button artwork and styles are light only; the Windows default text colour is 0x1f1f1f against the Mac's 0x272727 (within the colour gate).
 
 ---
 
-# Lane history (captured on earlier stages; superseded by the table above, kept for the measurements and decisions)
+# Lane history (captured on earlier stages: the verdicts are superseded by the table above, the measurements are not; lane A's decisions A1-A10 are in `docs/sr1-decisions.md`)
 
 # SR1 status: 13 October 2026, evening
 
@@ -250,4 +250,4 @@ Interaction cases drive both sides: Windows through the Sandbox F2 job (posted c
 
 Tests on the final lane-A build (`8be83c64c-659f151c`): Windows runtime 333, host 121, bridge 51 (1 skipped); Mac runtime 325, host 121, bridge 52 (1 skipped); 0 failures. Product changes: `ButtonStyle`/`buttonStyle`, `KeyboardShortcut`, `ListStyle`/`listStyle`, List layout and onMove in the runtime; `ButtonPainter` looks, `ListPainter`, `ListHighlightArtwork`, row semantics in the host; a Button's label Text publishes no node.
 
-Lane A caveats: pressed Button state, Button tint/controlSize/dark appearance, foreground on a bordered Button, List scrolling, sidebar style, adjacent multi-selection and a real drag are not delivered (A3, A9, A10); the `.borderless` label colour (grey 127) comes from an offscreen window AppKit draws as active; Mac list/button clicks are accessibility presses, not mouse events; `job-interact.ps1` cannot send modifier keys (`$vk` shadows `$VK`), reported to lane D; the foreground colour of a prominent or disabled plain Button reaches its Text through the environment and wins over the Button's own rule.
+Lane A caveats: pressed Button state, Button tint/controlSize/dark appearance, foreground on a bordered Button, List scrolling, sidebar style, adjacent multi-selection and a real drag are not delivered (A3, A9, A10); the `.borderless` label colour (grey 127) comes from an offscreen window AppKit draws as active; Mac list/button clicks are accessibility presses, not mouse events; `job-interact.ps1` could not send modifier keys then (`$vk` shadowed `$VK`; fixed in `58df259c5`); the foreground colour of a prominent or disabled plain Button reaches its Text through the environment and wins over the Button's own rule.

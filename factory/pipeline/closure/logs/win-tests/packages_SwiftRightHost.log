@@ -1,0 +1,737 @@
+Building for debugging...
+[Computing dependencies]
+[Constructing description]
+[Pre-planning 1ΓÇë/ΓÇë215]
+[Planning deferred tasks]
+[16ΓÇë/ΓÇë76] SwiftRightRuntime
+[40ΓÇë/ΓÇë77]
+[42ΓÇë/ΓÇë98] SwiftRightRuntime
+C:\Users\adrds\AppData\Local\Programs\Swift\Platforms\6.4.0\Windows.platform\Developer\SDKs\Windows.sdk\usr\lib\swift\windows\WinSDK.swiftmodule\x86_64-unknown-windows-msvc.swiftmodule:1:1: warning: reference to type 'wchar_t' broken by a context change; 'wchar_t' was expected to be in '_Builtin_stddef', but now a candidate is found only in 'SwiftShims'
+
+1 | _Builtin_stddef.wchar_t
+
+  | |- warning: reference to type 'wchar_t' broken by a context change; 'wchar_t' was expected to be in '_Builtin_stddef', but now a candidate is found only in 'SwiftShims'
+
+  | |- note: the type was expected to be found in module '_Builtin_stddef' at 'C:\Users\adrds\AppData\Local\Programs\Swift\Toolchains\6.4.0+Asserts\usr\lib\swift\clang\include\module.modulemap'
+
+  | |- note: the type was actually found in module 'SwiftShims' at 'C:\Users\adrds\AppData\Local\Programs\Swift\Platforms\6.4.0\Windows.platform\Developer\SDKs\Windows.sdk\usr\lib\swift\shims\module.modulemap'
+
+  | |- note: the module 'WinSDK' was built with a Swift language version set to 5.10 while the current invocation uses 6.4; APINotes may change how clang declarations are imported
+
+  | `- note: declarations in the clang module '_Builtin_stddef' may be hidden by clang preprocessor macros
+
+<unknown>:0: note: attempting to recover from the previous modularization issue
+
+
+[44ΓÇë/ΓÇë98] SwiftRightRuntime
+D:\Claude\swiftright\.factory-work\product-stage\09e184945-cc18ed0f\probes\sr0-s\fresh-runtime\Sources\SwiftRightRuntime\WindowsSystemImageProvider.swift:114:13: warning: variable 'units' was never mutated; consider changing to 'let' constant [#VariableNeverMutated]
+
+112 |         defer { _ = DeleteDC(dc) }
+
+113 |         let fontHeight = Int32(max(request.targetWidth, request.targetHeight))
+
+114 |         var units = Array(request.providerFamily.utf16) + [0]
+
+    |             `- warning: variable 'units' was never mutated; consider changing to 'let' constant [#VariableNeverMutated]
+
+115 |         let font: HFONT? = units.withUnsafeBufferPointer { family in
+
+116 |             CreateFontW(-fontHeight, 0, 0, 0, Int32(FW_NORMAL), 0, 0, 0,
+
+
+
+[#VariableNeverMutated]: <https://docs.swift.org/compiler/documentation/diagnostics/variable-never-mutated>
+
+
+[50ΓÇë/ΓÇë98] SwiftRightRuntime
+[51ΓÇë/ΓÇë98] SwiftRightRuntime
+[52ΓÇë/ΓÇë98] SwiftRightRuntime
+[53ΓÇë/ΓÇë98] SwiftRightRuntime
+[54ΓÇë/ΓÇë98] SwiftRightRuntime
+[55ΓÇë/ΓÇë98] SwiftRightRuntime
+[56ΓÇë/ΓÇë98] SwiftRightRuntime-product
+[57ΓÇë/ΓÇë98] SwiftRightRuntime-product
+[58ΓÇë/ΓÇë98] SwiftRightRuntime-product
+[60ΓÇë/ΓÇë98] SwiftRightRuntime
+[61ΓÇë/ΓÇë98] SwiftRightRuntime
+[62ΓÇë/ΓÇë98] SwiftRightRuntime
+[63ΓÇë/ΓÇë98] SwiftRightRuntime
+[64ΓÇë/ΓÇë98] SwiftRightRuntime
+[65ΓÇë/ΓÇë98] SwiftRightRuntime
+[66ΓÇë/ΓÇë98] SwiftRightRuntime
+[66ΓÇë/ΓÇë98]
+[70ΓÇë/ΓÇë111] SwiftRightBridge
+[72ΓÇë/ΓÇë111] SwiftRightRuntime
+[73ΓÇë/ΓÇë111] SwiftRightBridge
+[78ΓÇë/ΓÇë111] SwiftRightBridge
+[79ΓÇë/ΓÇë111] SwiftRightBridge
+[80ΓÇë/ΓÇë111] SwiftRightBridge
+[81ΓÇë/ΓÇë111] SwiftRightBridge
+[82ΓÇë/ΓÇë111] SwiftRightBridge
+[83ΓÇë/ΓÇë111] SwiftRightBridge
+[84ΓÇë/ΓÇë111] SwiftRightBridge-product
+[85ΓÇë/ΓÇë111] SwiftRightBridge-product
+[86ΓÇë/ΓÇë111] SwiftRightHost
+[90ΓÇë/ΓÇë112]
+[92ΓÇë/ΓÇë134] SwiftRightRuntime
+[93ΓÇë/ΓÇë134] SwiftRightHost
+[95ΓÇë/ΓÇë134] SwiftRightHost
+[101ΓÇë/ΓÇë134] SwiftRightHost
+[102ΓÇë/ΓÇë134] SwiftRightHost
+[103ΓÇë/ΓÇë134] SwiftRightHost
+[104ΓÇë/ΓÇë134] SwiftRightHost
+[106ΓÇë/ΓÇë134] SwiftRightHost
+[107ΓÇë/ΓÇë134] SwiftRightHostTests-product
+[108ΓÇë/ΓÇë134] SwiftRightHostTests-product
+[110ΓÇë/ΓÇë134] SwiftRightHost
+[111ΓÇë/ΓÇë134] SwiftRightHost
+[112ΓÇë/ΓÇë134] SwiftRightHost
+[113ΓÇë/ΓÇë134] SwiftRightHost
+[114ΓÇë/ΓÇë134] SwiftRightHost
+[115ΓÇë/ΓÇë134] SwiftRightHost
+[116ΓÇë/ΓÇë134] SwiftRightHost
+[117ΓÇë/ΓÇë134] SwiftRightHost
+[117ΓÇë/ΓÇë134]
+[120ΓÇë/ΓÇë136]
+[122ΓÇë/ΓÇë157] SwiftRightHostTests-product
+[124ΓÇë/ΓÇë157] SwiftRightHostTests-product
+[129ΓÇë/ΓÇë157] SwiftRightHostTests-product
+[130ΓÇë/ΓÇë157] SwiftRightHostTests-product
+[131ΓÇë/ΓÇë157] SwiftRightHostTests-product
+[132ΓÇë/ΓÇë157] SwiftRightHostTests-product
+[133ΓÇë/ΓÇë157] SwiftRightHostTests-product
+[134ΓÇë/ΓÇë157] SwiftRightHostTests-test-runner
+[135ΓÇë/ΓÇë157] SwiftRightHostTests-test-runner
+[137ΓÇë/ΓÇë157] SwiftRightHostTests-product
+[138ΓÇë/ΓÇë157] SwiftRightHostTests-product
+[139ΓÇë/ΓÇë157] SwiftRightHostTests-product
+[140ΓÇë/ΓÇë157] SwiftRightHostTests-product
+[141ΓÇë/ΓÇë157] SwiftRightHostTests-product
+[142ΓÇë/ΓÇë157] SwiftRightHostTests-product
+[143ΓÇë/ΓÇë157] SwiftRightHostTests-product
+[144ΓÇë/ΓÇë157] SwiftRightHostTests-product
+[145ΓÇë/ΓÇë157] SwiftRightHostTests-product
+[145ΓÇë/ΓÇë157]
+[150ΓÇë/ΓÇë158] SwiftRightHostTests-product
+[155ΓÇë/ΓÇë161] SwiftRightHostTests-test-runner
+[156ΓÇë/ΓÇë161] SwiftRightHostTests-test-runner
+[162ΓÇë/ΓÇë162] SwiftRightHostTests-test-runner
+Build complete! (100.02 secs)
+Test Suite 'All tests' started at 2026-10-14 19:48:06.908
+
+Test Suite 'Debug-windows-x86_64.xctest' started at 2026-10-14 19:48:06.909
+
+Test Suite 'ButtonArtworkTests' started at 2026-10-14 19:48:06.909
+
+Test Case 'ButtonArtworkTests.testDisabledMatchesSwiftUI' started at 2026-10-14 19:48:06.909
+
+Test Case 'ButtonArtworkTests.testDisabledMatchesSwiftUI' passed (0.092 seconds)
+
+Test Case 'ButtonArtworkTests.testEnabledMatchesSwiftUI' started at 2026-10-14 19:48:07.001
+
+Test Case 'ButtonArtworkTests.testEnabledMatchesSwiftUI' passed (0.094 seconds)
+
+Test Case 'ButtonArtworkTests.testFlatFillsAndLabelColoursAreExact' started at 2026-10-14 19:48:07.096
+
+Test Case 'ButtonArtworkTests.testFlatFillsAndLabelColoursAreExact' passed (0.184 seconds)
+
+Test Case 'ButtonArtworkTests.testLookColoursAreTheMeasuredOnes' started at 2026-10-14 19:48:07.280
+
+Test Case 'ButtonArtworkTests.testLookColoursAreTheMeasuredOnes' passed (0.178 seconds)
+
+Test Case 'ButtonArtworkTests.testProminentDisabledMatchesSwiftUI' started at 2026-10-14 19:48:07.458
+
+Test Case 'ButtonArtworkTests.testProminentDisabledMatchesSwiftUI' passed (0.093 seconds)
+
+Test Case 'ButtonArtworkTests.testProminentMatchesSwiftUI' started at 2026-10-14 19:48:07.551
+
+Test Case 'ButtonArtworkTests.testProminentMatchesSwiftUI' passed (0.09 seconds)
+
+Test Case 'ButtonArtworkTests.testWiderButtonKeepsItsCornersAndFlatMiddle' started at 2026-10-14 19:48:07.641
+
+Test Case 'ButtonArtworkTests.testWiderButtonKeepsItsCornersAndFlatMiddle' passed (0.204 seconds)
+
+Test Suite 'ButtonArtworkTests' passed at 2026-10-14 19:48:07.845
+
+	 Executed 7 tests, with 0 failures (0 unexpected) in 0.936 (0.936) seconds
+
+Test Suite 'ButtonPainterTests' started at 2026-10-14 19:48:07.845
+
+Test Case 'ButtonPainterTests.testBorderlessAndPlainHaveNoBodyButStayHitTargets' started at 2026-10-14 19:48:07.845
+
+Test Case 'ButtonPainterTests.testBorderlessAndPlainHaveNoBodyButStayHitTargets' passed (0.003 seconds)
+
+Test Case 'ButtonPainterTests.testBorderlessAndPlainLabelColours' started at 2026-10-14 19:48:07.849
+
+Test Case 'ButtonPainterTests.testBorderlessAndPlainLabelColours' passed (0.001 seconds)
+
+Test Case 'ButtonPainterTests.testButtonFrameIsLabelPlusPadding' started at 2026-10-14 19:48:07.850
+
+Test Case 'ButtonPainterTests.testButtonFrameIsLabelPlusPadding' passed (0.0 seconds)
+
+Test Case 'ButtonPainterTests.testButtonLabelTextPublishesNoSemanticNodeOfItsOwn' started at 2026-10-14 19:48:07.850
+
+Test Case 'ButtonPainterTests.testButtonLabelTextPublishesNoSemanticNodeOfItsOwn' passed (0.0 seconds)
+
+Test Case 'ButtonPainterTests.testButtonPaintsOneImageAndButtonSemantics' started at 2026-10-14 19:48:07.851
+
+Test Case 'ButtonPainterTests.testButtonPaintsOneImageAndButtonSemantics' passed (0.0 seconds)
+
+Test Case 'ButtonPainterTests.testDisabledButtonIsFlaggedOffersNoActionAndHasADifferentFill' started at 2026-10-14 19:48:07.851
+
+Test Case 'ButtonPainterTests.testDisabledButtonIsFlaggedOffersNoActionAndHasADifferentFill' passed (0.0 seconds)
+
+Test Case 'ButtonPainterTests.testDisabledDefaultActionIsAnOrdinaryDisabledButton' started at 2026-10-14 19:48:07.851
+
+Test Case 'ButtonPainterTests.testDisabledDefaultActionIsAnOrdinaryDisabledButton' passed (0.001 seconds)
+
+Test Case 'ButtonPainterTests.testForegroundOnABorderedButtonTintsItsFillAndIsNotModelled' started at 2026-10-14 19:48:07.852
+
+Test Case 'ButtonPainterTests.testForegroundOnABorderedButtonTintsItsFillAndIsNotModelled' passed (0.0 seconds)
+
+Test Case 'ButtonPainterTests.testForegroundStyleColoursABorderlessLabel' started at 2026-10-14 19:48:07.852
+
+Test Case 'ButtonPainterTests.testForegroundStyleColoursABorderlessLabel' passed (0.0 seconds)
+
+Test Case 'ButtonPainterTests.testProminentAndDefaultActionPaintTheAccentFillAndAWhiteLabel' started at 2026-10-14 19:48:07.853
+
+Test Case 'ButtonPainterTests.testProminentAndDefaultActionPaintTheAccentFillAndAWhiteLabel' passed (0.001 seconds)
+
+Test Case 'ButtonPainterTests.testRoleDoesNotChangeThePaint' started at 2026-10-14 19:48:07.853
+
+Test Case 'ButtonPainterTests.testRoleDoesNotChangeThePaint' passed (0.0 seconds)
+
+Test Case 'ButtonPainterTests.testTheLabelTakesTheButtonsLabelColour' started at 2026-10-14 19:48:07.854
+
+Test Case 'ButtonPainterTests.testTheLabelTakesTheButtonsLabelColour' passed (0.0 seconds)
+
+Test Suite 'ButtonPainterTests' passed at 2026-10-14 19:48:07.854
+
+	 Executed 12 tests, with 0 failures (0 unexpected) in 0.009 (0.009) seconds
+
+Test Suite 'CheckboxArtworkTests' started at 2026-10-14 19:48:07.854
+
+Test Case 'CheckboxArtworkTests.testDisabledOffMatchesSwiftUI' started at 2026-10-14 19:48:07.854
+
+Test Case 'CheckboxArtworkTests.testDisabledOffMatchesSwiftUI' passed (0.025 seconds)
+
+Test Case 'CheckboxArtworkTests.testDisabledOnMatchesSwiftUI' started at 2026-10-14 19:48:07.879
+
+Test Case 'CheckboxArtworkTests.testDisabledOnMatchesSwiftUI' passed (0.05 seconds)
+
+Test Case 'CheckboxArtworkTests.testFlatStateColoursAreExact' started at 2026-10-14 19:48:07.929
+
+Test Case 'CheckboxArtworkTests.testFlatStateColoursAreExact' passed (0.071 seconds)
+
+Test Case 'CheckboxArtworkTests.testOffMatchesSwiftUI' started at 2026-10-14 19:48:08.000
+
+Test Case 'CheckboxArtworkTests.testOffMatchesSwiftUI' passed (0.003 seconds)
+
+Test Case 'CheckboxArtworkTests.testOnMatchesSwiftUI' started at 2026-10-14 19:48:08.003
+
+Test Case 'CheckboxArtworkTests.testOnMatchesSwiftUI' passed (0.003 seconds)
+
+Test Case 'CheckboxArtworkTests.testOnStateDrawsAWhiteCheckAndDisabledADimmedOne' started at 2026-10-14 19:48:08.006
+
+Test Case 'CheckboxArtworkTests.testOnStateDrawsAWhiteCheckAndDisabledADimmedOne' passed (0.0 seconds)
+
+Test Suite 'CheckboxArtworkTests' passed at 2026-10-14 19:48:08.006
+
+	 Executed 6 tests, with 0 failures (0 unexpected) in 0.152 (0.152) seconds
+
+Test Suite 'ColorSchemePaintTests' started at 2026-10-14 19:48:08.006
+
+Test Case 'ColorSchemePaintTests.testDarkCheckboxColours' started at 2026-10-14 19:48:08.006
+
+Test Case 'ColorSchemePaintTests.testDarkCheckboxColours' passed (0.187 seconds)
+
+Test Case 'ColorSchemePaintTests.testDarkSwitchUsesTheDarkTrackAndTranslucentKnob' started at 2026-10-14 19:48:08.193
+
+Test Case 'ColorSchemePaintTests.testDarkSwitchUsesTheDarkTrackAndTranslucentKnob' passed (0.393 seconds)
+
+Test Case 'ColorSchemePaintTests.testDefaultTextTakesTheDarkLabelColourOnlyInDark' started at 2026-10-14 19:48:08.586
+
+Test Case 'ColorSchemePaintTests.testDefaultTextTakesTheDarkLabelColourOnlyInDark' passed (0.002 seconds)
+
+Test Case 'ColorSchemePaintTests.testHostPaintTablesCoverEveryLightNameInDark' started at 2026-10-14 19:48:08.589
+
+Test Case 'ColorSchemePaintTests.testHostPaintTablesCoverEveryLightNameInDark' passed (0.0 seconds)
+
+Test Case 'ColorSchemePaintTests.testSemanticColoursDarkViaPreferredColorScheme' started at 2026-10-14 19:48:08.589
+
+Test Case 'ColorSchemePaintTests.testSemanticColoursDarkViaPreferredColorScheme' passed (0.001 seconds)
+
+Test Case 'ColorSchemePaintTests.testSemanticColoursLight' started at 2026-10-14 19:48:08.589
+
+Test Case 'ColorSchemePaintTests.testSemanticColoursLight' passed (0.0 seconds)
+
+Test Suite 'ColorSchemePaintTests' passed at 2026-10-14 19:48:08.590
+
+	 Executed 6 tests, with 0 failures (0 unexpected) in 0.583 (0.583) seconds
+
+Test Suite 'DialogLayoutTests' started at 2026-10-14 19:48:08.590
+
+Test Case 'DialogLayoutTests.testMeasuredMacOSMatrix' started at 2026-10-14 19:48:08.590
+
+Test Case 'DialogLayoutTests.testMeasuredMacOSMatrix' passed (0.0 seconds)
+
+Test Suite 'DialogLayoutTests' passed at 2026-10-14 19:48:08.590
+
+	 Executed 1 test, with 0 failures (0 unexpected) in 0.0 (0.0) seconds
+
+Test Suite 'HostTextInputTests' started at 2026-10-14 19:48:08.590
+
+Test Case 'HostTextInputTests.testAccessibilityFocusSetValueAndSelection' started at 2026-10-14 19:48:08.590
+
+Test Case 'HostTextInputTests.testAccessibilityFocusSetValueAndSelection' passed (0.001 seconds)
+
+Test Case 'HostTextInputTests.testCaretBoundsComeFromThePaintedLayout' started at 2026-10-14 19:48:08.591
+
+Test Case 'HostTextInputTests.testCaretBoundsComeFromThePaintedLayout' passed (0.0 seconds)
+
+Test Case 'HostTextInputTests.testKeysEditAndMoveWithinTheFocusedField' started at 2026-10-14 19:48:08.592
+
+Test Case 'HostTextInputTests.testKeysEditAndMoveWithinTheFocusedField' passed (0.001 seconds)
+
+Test Case 'HostTextInputTests.testMarkedTextIsShownButNotCommittedUntilUnmark' started at 2026-10-14 19:48:08.593
+
+Test Case 'HostTextInputTests.testMarkedTextIsShownButNotCommittedUntilUnmark' passed (0.001 seconds)
+
+Test Case 'HostTextInputTests.testPointerPressFocusesTheFieldAndPlacesTheCaret' started at 2026-10-14 19:48:08.594
+
+Test Case 'HostTextInputTests.testPointerPressFocusesTheFieldAndPlacesTheCaret' passed (0.0 seconds)
+
+Test Case 'HostTextInputTests.testReturnSubmitsAndTabMovesFocus' started at 2026-10-14 19:48:08.594
+
+Test Case 'HostTextInputTests.testReturnSubmitsAndTabMovesFocus' passed (0.001 seconds)
+
+Test Case 'HostTextInputTests.testReturnWhileComposingCommitsWithoutSubmitting' started at 2026-10-14 19:48:08.595
+
+Test Case 'HostTextInputTests.testReturnWhileComposingCommitsWithoutSubmitting' passed (0.001 seconds)
+
+Test Case 'HostTextInputTests.testTypedCharactersArriveAsReplaceAndLandInTheBinding' started at 2026-10-14 19:48:08.596
+
+Test Case 'HostTextInputTests.testTypedCharactersArriveAsReplaceAndLandInTheBinding' passed (0.001 seconds)
+
+Test Suite 'HostTextInputTests' passed at 2026-10-14 19:48:08.596
+
+	 Executed 8 tests, with 0 failures (0 unexpected) in 0.006 (0.006) seconds
+
+Test Suite 'ListPainterTests' started at 2026-10-14 19:48:08.596
+
+Test Case 'ListPainterTests.testARowThatIsABareTextStillPaintsItsText' started at 2026-10-14 19:48:08.596
+
+Test Case 'ListPainterTests.testARowThatIsABareTextStillPaintsItsText' passed (0.001 seconds)
+
+Test Case 'ListPainterTests.testBackgroundAndFourSeparatorsInTwoLayers' started at 2026-10-14 19:48:08.597
+
+Test Case 'ListPainterTests.testBackgroundAndFourSeparatorsInTwoLayers' passed (0.001 seconds)
+
+Test Case 'ListPainterTests.testHighlightCornerMatchesSwiftUI' started at 2026-10-14 19:48:08.598
+
+Test Case 'ListPainterTests.testHighlightCornerMatchesSwiftUI' passed (0.319 seconds)
+
+Test Case 'ListPainterTests.testListAndRowsPublishListSemantics' started at 2026-10-14 19:48:08.917
+
+Test Case 'ListPainterTests.testListAndRowsPublishListSemantics' passed (0.001 seconds)
+
+Test Case 'ListPainterTests.testPlainStyleSelectionIsAFlatFullWidthRectangleAndSeparatorsReachTheEdge' started at 2026-10-14 19:48:08.918
+
+Test Case 'ListPainterTests.testPlainStyleSelectionIsAFlatFullWidthRectangleAndSeparatorsReachTheEdge' passed (0.002 seconds)
+
+Test Case 'ListPainterTests.testRowsAreSixtyPixelsFromTheTenPointInset' started at 2026-10-14 19:48:08.919
+
+Test Case 'ListPainterTests.testRowsAreSixtyPixelsFromTheTenPointInset' passed (0.001 seconds)
+
+Test Case 'ListPainterTests.testSelectedRowIsARasterisedRoundedRectAndGreyUntilTheListIsActive' started at 2026-10-14 19:48:08.920
+
+Test Case 'ListPainterTests.testSelectedRowIsARasterisedRoundedRectAndGreyUntilTheListIsActive' passed (0.31 seconds)
+
+Test Case 'ListPainterTests.testSeparatorColumnMatchesTheMacPixels' started at 2026-10-14 19:48:09.230
+
+Test Case 'ListPainterTests.testSeparatorColumnMatchesTheMacPixels' passed (0.0 seconds)
+
+Test Case 'ListPainterTests.testSeparatorsNextToTheSelectedRowAreHidden' started at 2026-10-14 19:48:09.230
+
+Test Case 'ListPainterTests.testSeparatorsNextToTheSelectedRowAreHidden' passed (0.001 seconds)
+
+Test Case 'ListPainterTests.testSidebarStyleIsNotPaintedAndSaysSo' started at 2026-10-14 19:48:09.231
+
+Test Case 'ListPainterTests.testSidebarStyleIsNotPaintedAndSaysSo' passed (0.001 seconds)
+
+Test Case 'ListPainterTests.testTextInAnActiveSelectionIsWhiteAndOtherTextKeepsItsColour' started at 2026-10-14 19:48:09.232
+
+Test Case 'ListPainterTests.testTextInAnActiveSelectionIsWhiteAndOtherTextKeepsItsColour' passed (0.001 seconds)
+
+Test Suite 'ListPainterTests' passed at 2026-10-14 19:48:09.233
+
+	 Executed 11 tests, with 0 failures (0 unexpected) in 0.636 (0.636) seconds
+
+Test Suite 'PainterTests' started at 2026-10-14 19:48:09.233
+
+Test Case 'PainterTests.testAFailedCommitReleasesTheNewShapeImagesAndKeepsTheOld' started at 2026-10-14 19:48:09.233
+
+Test Case 'PainterTests.testAFailedCommitReleasesTheNewShapeImagesAndKeepsTheOld' passed (0.031 seconds)
+
+Test Case 'PainterTests.testAnUnknownSymbolFailsVisibly' started at 2026-10-14 19:48:09.264
+
+Test Case 'PainterTests.testAnUnknownSymbolFailsVisibly' passed (0.002 seconds)
+
+Test Case 'PainterTests.testContinuousStrokeBecomesAnImagePrimitiveWithNoAdapter' started at 2026-10-14 19:48:09.266
+
+Test Case 'PainterTests.testContinuousStrokeBecomesAnImagePrimitiveWithNoAdapter' passed (0.057 seconds)
+
+Test Case 'PainterTests.testForegroundColourReachesTheTextRun' started at 2026-10-14 19:48:09.323
+
+Test Case 'PainterTests.testForegroundColourReachesTheTextRun' passed (0.001 seconds)
+
+Test Case 'PainterTests.testImageWithoutAnAppliedForegroundUsesTheSymbolsOwnColour' started at 2026-10-14 19:48:09.324
+
+Test Case 'PainterTests.testImageWithoutAnAppliedForegroundUsesTheSymbolsOwnColour' passed (0.058 seconds)
+
+Test Case 'PainterTests.testStackOverlayTextAndShapesPaintFromTheRuntimeTree' started at 2026-10-14 19:48:09.382
+
+Test Case 'PainterTests.testStackOverlayTextAndShapesPaintFromTheRuntimeTree' passed (0.001 seconds)
+
+Test Case 'PainterTests.testSystemImageBecomesAnImagePrimitiveFromTheShippedTable' started at 2026-10-14 19:48:09.383
+
+Test Case 'PainterTests.testSystemImageBecomesAnImagePrimitiveFromTheShippedTable' passed (0.159 seconds)
+
+Test Case 'PainterTests.testTextOpacityIsBakedIntoTheRunColourAlpha' started at 2026-10-14 19:48:09.542
+
+Test Case 'PainterTests.testTextOpacityIsBakedIntoTheRunColourAlpha' passed (0.001 seconds)
+
+Test Case 'PainterTests.testUnsupportedNodesFailVisibly' started at 2026-10-14 19:48:09.543
+
+Test Case 'PainterTests.testUnsupportedNodesFailVisibly' passed (0.0 seconds)
+
+Test Suite 'PainterTests' passed at 2026-10-14 19:48:09.543
+
+	 Executed 9 tests, with 0 failures (0 unexpected) in 0.31 (0.31) seconds
+
+Test Suite 'PresentationCoordinatorTests' started at 2026-10-14 19:48:09.543
+
+Test Case 'PresentationCoordinatorTests.testAnswerToAnotherRequestIsNotOurs' started at 2026-10-14 19:48:09.543
+
+Test Case 'PresentationCoordinatorTests.testAnswerToAnotherRequestIsNotOurs' passed (0.001 seconds)
+
+Test Case 'PresentationCoordinatorTests.testButtonRunsItsActionAndDismisses' started at 2026-10-14 19:48:09.544
+
+Test Case 'PresentationCoordinatorTests.testButtonRunsItsActionAndDismisses' passed (0.0 seconds)
+
+Test Case 'PresentationCoordinatorTests.testClosingTheDialogRunsTheCancelAction' started at 2026-10-14 19:48:09.544
+
+Test Case 'PresentationCoordinatorTests.testClosingTheDialogRunsTheCancelAction' passed (0.0 seconds)
+
+Test Case 'PresentationCoordinatorTests.testPresentedAlertIsRequestedOnceWithTitleMessageAndButtons' started at 2026-10-14 19:48:09.544
+
+Test Case 'PresentationCoordinatorTests.testPresentedAlertIsRequestedOnceWithTitleMessageAndButtons' passed (0.0 seconds)
+
+Test Case 'PresentationCoordinatorTests.testRepresentingAfterDismissOpensANewDialog' started at 2026-10-14 19:48:09.544
+
+Test Case 'PresentationCoordinatorTests.testRepresentingAfterDismissOpensANewDialog' passed (0.0 seconds)
+
+Test Suite 'PresentationCoordinatorTests' passed at 2026-10-14 19:48:09.545
+
+	 Executed 5 tests, with 0 failures (0 unexpected) in 0.002 (0.002) seconds
+
+Test Suite 'RetainedRunTests' started at 2026-10-14 19:48:09.545
+
+Test Case 'RetainedRunTests.testChoosesTheMatchingMeasurementAndRefusesTheAmbiguousOrMissing' started at 2026-10-14 19:48:09.545
+
+Test Case 'RetainedRunTests.testChoosesTheMatchingMeasurementAndRefusesTheAmbiguousOrMissing' passed (0.0 seconds)
+
+Test Case 'RetainedRunTests.testSnappedExtentsMatchFloorOrCeilOfTheMeasuredExtent' started at 2026-10-14 19:48:09.545
+
+Test Case 'RetainedRunTests.testSnappedExtentsMatchFloorOrCeilOfTheMeasuredExtent' passed (0.0 seconds)
+
+Test Suite 'RetainedRunTests' passed at 2026-10-14 19:48:09.545
+
+	 Executed 2 tests, with 0 failures (0 unexpected) in 0.0 (0.0) seconds
+
+Test Suite 'ScrollPaintTests' started at 2026-10-14 19:48:09.545
+
+Test Case 'ScrollPaintTests.testContentBelowTheViewportStillExistsAndScrollingMovesIt' started at 2026-10-14 19:48:09.545
+
+Test Case 'ScrollPaintTests.testContentBelowTheViewportStillExistsAndScrollingMovesIt' passed (0.001 seconds)
+
+Test Case 'ScrollPaintTests.testEveryDescendantPrimitiveIsClippedToTheViewport' started at 2026-10-14 19:48:09.546
+
+Test Case 'ScrollPaintTests.testEveryDescendantPrimitiveIsClippedToTheViewport' passed (0.0 seconds)
+
+Test Case 'ScrollPaintTests.testNestedScrollViewsIntersectTheirClips' started at 2026-10-14 19:48:09.546
+
+Test Case 'ScrollPaintTests.testNestedScrollViewsIntersectTheirClips' passed (0.0 seconds)
+
+Test Case 'ScrollPaintTests.testSemanticSystemColoursPaint' started at 2026-10-14 19:48:09.547
+
+Test Case 'ScrollPaintTests.testSemanticSystemColoursPaint' passed (0.0 seconds)
+
+Test Case 'ScrollPaintTests.testUserDefinedCompositeViewsPaintThroughTheirChildren' started at 2026-10-14 19:48:09.547
+
+Test Case 'ScrollPaintTests.testUserDefinedCompositeViewsPaintThroughTheirChildren' passed (0.001 seconds)
+
+Test Suite 'ScrollPaintTests' passed at 2026-10-14 19:48:09.547
+
+	 Executed 5 tests, with 0 failures (0 unexpected) in 0.002 (0.002) seconds
+
+Test Suite 'ShapePainterTests' started at 2026-10-14 19:48:09.547
+
+Test Case 'ShapePainterTests.testCircleIsTheCentredSquare' started at 2026-10-14 19:48:09.547
+
+Test Case 'ShapePainterTests.testCircleIsTheCentredSquare' passed (0.0 seconds)
+
+Test Case 'ShapePainterTests.testCircularRoundedStrokeIsCentredOnThePath' started at 2026-10-14 19:48:09.547
+
+Test Case 'ShapePainterTests.testCircularRoundedStrokeIsCentredOnThePath' passed (0.0 seconds)
+
+Test Case 'ShapePainterTests.testContinuousFillRequest' started at 2026-10-14 19:48:09.548
+
+Test Case 'ShapePainterTests.testContinuousFillRequest' passed (0.0 seconds)
+
+Test Case 'ShapePainterTests.testContinuousRasterPlacementBakesTheFractionalOriginIntoTheBitmap' started at 2026-10-14 19:48:09.548
+
+Test Case 'ShapePainterTests.testContinuousRasterPlacementBakesTheFractionalOriginIntoTheBitmap' passed (0.056 seconds)
+
+Test Case 'ShapePainterTests.testDefaultRoundedRectangleIsContinuousAndRoutesToTheRasterizer' started at 2026-10-14 19:48:09.603
+
+Test Case 'ShapePainterTests.testDefaultRoundedRectangleIsContinuousAndRoutesToTheRasterizer' passed (0.0 seconds)
+
+Test Case 'ShapePainterTests.testInvalidInputsFailVisibly' started at 2026-10-14 19:48:09.604
+
+Test Case 'ShapePainterTests.testInvalidInputsFailVisibly' passed (0.0 seconds)
+
+Test Case 'ShapePainterTests.testRectangleFillIsAPlainRect' started at 2026-10-14 19:48:09.604
+
+Test Case 'ShapePainterTests.testRectangleFillIsAPlainRect' passed (0.0 seconds)
+
+Test Case 'ShapePainterTests.testRectangleStrokeKeepsSharpCorners' started at 2026-10-14 19:48:09.604
+
+Test Case 'ShapePainterTests.testRectangleStrokeKeepsSharpCorners' passed (0.0 seconds)
+
+Test Case 'ShapePainterTests.testRegisteringKeepsTheHandleForTheCaller' started at 2026-10-14 19:48:09.604
+
+Test Case 'ShapePainterTests.testRegisteringKeepsTheHandleForTheCaller' passed (0.003 seconds)
+
+Test Suite 'ShapePainterTests' passed at 2026-10-14 19:48:09.607
+
+	 Executed 9 tests, with 0 failures (0 unexpected) in 0.06 (0.06) seconds
+
+Test Suite 'SingleLineTextTests' started at 2026-10-14 19:48:09.607
+
+Test Case 'SingleLineTextTests.testFittingTextIsReturnedUntouched' started at 2026-10-14 19:48:09.607
+
+Test Case 'SingleLineTextTests.testFittingTextIsReturnedUntouched' passed (0.0 seconds)
+
+Test Case 'SingleLineTextTests.testLongTextTruncatesToTheLongestFittingPrefixPlusEllipsis' started at 2026-10-14 19:48:09.608
+
+Test Case 'SingleLineTextTests.testLongTextTruncatesToTheLongestFittingPrefixPlusEllipsis' passed (0.0 seconds)
+
+Test Case 'SingleLineTextTests.testUnboundedMultilineAndEmptyFailVisibly' started at 2026-10-14 19:48:09.608
+
+Test Case 'SingleLineTextTests.testUnboundedMultilineAndEmptyFailVisibly' passed (0.0 seconds)
+
+Test Suite 'SingleLineTextTests' passed at 2026-10-14 19:48:09.608
+
+	 Executed 3 tests, with 0 failures (0 unexpected) in 0.0 (0.0) seconds
+
+Test Suite 'SwitchArtworkTests' started at 2026-10-14 19:48:09.608
+
+Test Case 'SwitchArtworkTests.testDisabledOffMatchesSwiftUI' started at 2026-10-14 19:48:09.608
+
+Test Case 'SwitchArtworkTests.testDisabledOffMatchesSwiftUI' passed (0.192 seconds)
+
+Test Case 'SwitchArtworkTests.testDisabledOnMatchesSwiftUI' started at 2026-10-14 19:48:09.799
+
+Test Case 'SwitchArtworkTests.testDisabledOnMatchesSwiftUI' passed (0.26 seconds)
+
+Test Case 'SwitchArtworkTests.testFlatStateColoursAreExact' started at 2026-10-14 19:48:10.060
+
+Test Case 'SwitchArtworkTests.testFlatStateColoursAreExact' passed (0.708 seconds)
+
+Test Case 'SwitchArtworkTests.testKnobSitsAtTheTrailingEndWhenOnAndLeadingWhenOff' started at 2026-10-14 19:48:10.767
+
+Test Case 'SwitchArtworkTests.testKnobSitsAtTheTrailingEndWhenOnAndLeadingWhenOff' passed (0.108 seconds)
+
+Test Case 'SwitchArtworkTests.testOffMatchesSwiftUI' started at 2026-10-14 19:48:10.876
+
+Test Case 'SwitchArtworkTests.testOffMatchesSwiftUI' passed (0.013 seconds)
+
+Test Case 'SwitchArtworkTests.testOnMatchesSwiftUI' started at 2026-10-14 19:48:10.889
+
+Test Case 'SwitchArtworkTests.testOnMatchesSwiftUI' passed (0.014 seconds)
+
+Test Case 'SwitchArtworkTests.testOtherScalesKeepTheShape' started at 2026-10-14 19:48:10.902
+
+Test Case 'SwitchArtworkTests.testOtherScalesKeepTheShape' passed (0.193 seconds)
+
+Test Case 'SwitchArtworkTests.testRenderIsDeterministicAndMemoised' started at 2026-10-14 19:48:11.095
+
+Test Case 'SwitchArtworkTests.testRenderIsDeterministicAndMemoised' passed (0.0 seconds)
+
+Test Suite 'SwitchArtworkTests' passed at 2026-10-14 19:48:11.096
+
+	 Executed 8 tests, with 0 failures (0 unexpected) in 1.488 (1.488) seconds
+
+Test Suite 'SystemImageTests' started at 2026-10-14 19:48:11.096
+
+Test Case 'SystemImageTests.testAFaceThatIsNotTheDeclaredProviderIsRefused' started at 2026-10-14 19:48:11.096
+
+Test Case 'SystemImageTests.testAFaceThatIsNotTheDeclaredProviderIsRefused' passed (0.004 seconds)
+
+Test Case 'SystemImageTests.testEmbeddedTableEqualsTheAssetFile' started at 2026-10-14 19:48:11.099
+
+Test Case 'SystemImageTests.testEmbeddedTableEqualsTheAssetFile' passed (0.004 seconds)
+
+Test Case 'SystemImageTests.testGraphResolvesImageFrameThroughTheInstalledHooks' started at 2026-10-14 19:48:11.104
+
+Test Case 'SystemImageTests.testGraphResolvesImageFrameThroughTheInstalledHooks' passed (0.001 seconds)
+
+Test Case 'SystemImageTests.testInkOverrideIsReportedAsAMeasurementNotARule' started at 2026-10-14 19:48:11.105
+
+Test Case 'SystemImageTests.testInkOverrideIsReportedAsAMeasurementNotARule' passed (0.001 seconds)
+
+Test Case 'SystemImageTests.testLayoutHooksFollowTheScaleClass' started at 2026-10-14 19:48:11.107
+
+Test Case 'SystemImageTests.testLayoutHooksFollowTheScaleClass' passed (0.117 seconds)
+
+Test Case 'SystemImageTests.testRasterIsCachedPerReferenceTintAndSizeAndReleasedAtTeardown' started at 2026-10-14 19:48:11.224
+
+Test Case 'SystemImageTests.testRasterIsCachedPerReferenceTintAndSizeAndReleasedAtTeardown' passed (0.104 seconds)
+
+Test Case 'SystemImageTests.testRejectsAnInvalidTable' started at 2026-10-14 19:48:11.327
+
+Test Case 'SystemImageTests.testRejectsAnInvalidTable' passed (0.002 seconds)
+
+Test Case 'SystemImageTests.testStarFillIsInTheShippedTableWithItsSubstituteProviderDeclared' started at 2026-10-14 19:48:11.330
+
+Test Case 'SystemImageTests.testStarFillIsInTheShippedTableWithItsSubstituteProviderDeclared' passed (0.001 seconds)
+
+Test Suite 'SystemImageTests' passed at 2026-10-14 19:48:11.331
+
+	 Executed 8 tests, with 0 failures (0 unexpected) in 0.235 (0.235) seconds
+
+Test Suite 'TextFieldPainterTests' started at 2026-10-14 19:48:11.331
+
+Test Case 'TextFieldPainterTests.testBezelFillIsNearlyOpaqueWhite' started at 2026-10-14 19:48:11.331
+
+Test Case 'TextFieldPainterTests.testBezelFillIsNearlyOpaqueWhite' passed (0.009 seconds)
+
+Test Case 'TextFieldPainterTests.testBezelMatchesMeasuredCornersAndEdges' started at 2026-10-14 19:48:11.340
+
+Test Case 'TextFieldPainterTests.testBezelMatchesMeasuredCornersAndEdges' passed (0.0 seconds)
+
+Test Case 'TextFieldPainterTests.testBezeledFieldPaintsBezelPlaceholderAndSemantics' started at 2026-10-14 19:48:11.341
+
+Test Case 'TextFieldPainterTests.testBezeledFieldPaintsBezelPlaceholderAndSemantics' passed (0.001 seconds)
+
+Test Case 'TextFieldPainterTests.testCommitPublishesTheFocusedFieldAndDrawsItsCaret' started at 2026-10-14 19:48:11.342
+
+Test Case 'TextFieldPainterTests.testCommitPublishesTheFocusedFieldAndDrawsItsCaret' passed (0.001 seconds)
+
+Test Case 'TextFieldPainterTests.testPlainFieldHasNoBezelAndUsesThePrompt' started at 2026-10-14 19:48:11.343
+
+Test Case 'TextFieldPainterTests.testPlainFieldHasNoBezelAndUsesThePrompt' passed (0.001 seconds)
+
+Test Case 'TextFieldPainterTests.testTypedTextUsesTheTextColourAndTheValueIsPublished' started at 2026-10-14 19:48:11.343
+
+Test Case 'TextFieldPainterTests.testTypedTextUsesTheTextColourAndTheValueIsPublished' passed (0.0 seconds)
+
+Test Suite 'TextFieldPainterTests' passed at 2026-10-14 19:48:11.344
+
+	 Executed 6 tests, with 0 failures (0 unexpected) in 0.012 (0.012) seconds
+
+Test Suite 'TextRequestAdapterTests' started at 2026-10-14 19:48:11.344
+
+Test Case 'TextRequestAdapterTests.testBodyTextUsesTheLiveBodyProfile' started at 2026-10-14 19:48:11.344
+
+Test Case 'TextRequestAdapterTests.testBodyTextUsesTheLiveBodyProfile' passed (0.0 seconds)
+
+Test Case 'TextRequestAdapterTests.testCustomFontResolvesThroughTheBundledLibraryWithCoreTextLineHeight' started at 2026-10-14 19:48:11.344
+
+Test Case 'TextRequestAdapterTests.testCustomFontResolvesThroughTheBundledLibraryWithCoreTextLineHeight' passed (0.0 seconds)
+
+Test Case 'TextRequestAdapterTests.testUnresolvableRequestsFailVisiblyInsteadOfFallingBack' started at 2026-10-14 19:48:11.344
+
+Test Case 'TextRequestAdapterTests.testUnresolvableRequestsFailVisiblyInsteadOfFallingBack' passed (0.0 seconds)
+
+Test Suite 'TextRequestAdapterTests' passed at 2026-10-14 19:48:11.344
+
+	 Executed 3 tests, with 0 failures (0 unexpected) in 0.0 (0.0) seconds
+
+Test Suite 'TogglePainterTests' started at 2026-10-14 19:48:11.344
+
+Test Case 'TogglePainterTests.testActivationFlipsTheNextPaintAndDisabledIgnoresIt' started at 2026-10-14 19:48:11.344
+
+Test Case 'TogglePainterTests.testActivationFlipsTheNextPaintAndDisabledIgnoresIt' passed (0.001 seconds)
+
+Test Case 'TogglePainterTests.testCheckboxLeadsItsLabel' started at 2026-10-14 19:48:11.345
+
+Test Case 'TogglePainterTests.testCheckboxLeadsItsLabel' passed (0.001 seconds)
+
+Test Case 'TogglePainterTests.testControlTrailsItsLabel' started at 2026-10-14 19:48:11.346
+
+Test Case 'TogglePainterTests.testControlTrailsItsLabel' passed (0.001 seconds)
+
+Test Case 'TogglePainterTests.testDefaultToggleIsACheckboxAtItsFrame' started at 2026-10-14 19:48:11.347
+
+Test Case 'TogglePainterTests.testDefaultToggleIsACheckboxAtItsFrame' passed (0.0 seconds)
+
+Test Case 'TogglePainterTests.testDisabledSwitchIsFlaggedAndOffersNoAction' started at 2026-10-14 19:48:11.347
+
+Test Case 'TogglePainterTests.testDisabledSwitchIsFlaggedAndOffersNoAction' passed (0.001 seconds)
+
+Test Case 'TogglePainterTests.testOffSwitchReportsOffAndDrawsADifferentImage' started at 2026-10-14 19:48:11.348
+
+Test Case 'TogglePainterTests.testOffSwitchReportsOffAndDrawsADifferentImage' passed (0.001 seconds)
+
+Test Case 'TogglePainterTests.testRepaintReleasesTheReplacedImage' started at 2026-10-14 19:48:11.348
+
+Test Case 'TogglePainterTests.testRepaintReleasesTheReplacedImage' passed (0.0 seconds)
+
+Test Case 'TogglePainterTests.testSwitchWithoutLabelPaintsOneImageOverItsFrame' started at 2026-10-14 19:48:11.349
+
+Test Case 'TogglePainterTests.testSwitchWithoutLabelPaintsOneImageOverItsFrame' passed (0.0 seconds)
+
+Test Case 'TogglePainterTests.testUnknownToggleStyleFailsVisibly' started at 2026-10-14 19:48:11.349
+
+Test Case 'TogglePainterTests.testUnknownToggleStyleFailsVisibly' passed (0.106 seconds)
+
+Test Suite 'TogglePainterTests' passed at 2026-10-14 19:48:11.455
+
+	 Executed 9 tests, with 0 failures (0 unexpected) in 0.111 (0.111) seconds
+
+Test Suite 'TreeCommitTests' started at 2026-10-14 19:48:11.455
+
+Test Case 'TreeCommitTests.testAFailedSubmitReleasesTheImagesOfThatCommit' started at 2026-10-14 19:48:11.455
+
+Test Case 'TreeCommitTests.testAFailedSubmitReleasesTheImagesOfThatCommit' passed (0.03 seconds)
+
+Test Case 'TreeCommitTests.testAnUnsupportedNodeAbortsBeforeSubmitting' started at 2026-10-14 19:48:11.486
+
+Test Case 'TreeCommitTests.testAnUnsupportedNodeAbortsBeforeSubmitting' passed (0.102 seconds)
+
+Test Case 'TreeCommitTests.testCommitUpsertsEveryNodeUnderItsParentAndRemovesWhatIsGone' started at 2026-10-14 19:48:11.588
+
+Test Case 'TreeCommitTests.testCommitUpsertsEveryNodeUnderItsParentAndRemovesWhatIsGone' passed (0.001 seconds)
+
+Test Suite 'TreeCommitTests' passed at 2026-10-14 19:48:11.589
+
+	 Executed 3 tests, with 0 failures (0 unexpected) in 0.134 (0.134) seconds
+
+Test Suite 'Debug-windows-x86_64.xctest' passed at 2026-10-14 19:48:11.589
+
+	 Executed 121 tests, with 0 failures (0 unexpected) in 4.677 (4.677) seconds
+
+Test Suite 'All tests' passed at 2026-10-14 19:48:11.589
+
+	 Executed 121 tests, with 0 failures (0 unexpected) in 4.677 (4.677) seconds
+
+Γùè Test run started.
+
+ΓåÆ Testing Library Version: 6.4 (efd8d65801f569d)
+
+ΓåÆ Target Platform: x86_64-unknown-windows-msvc
+
+ΓêÜ Test run with 0 tests in 0 suites passed after 0.001 seconds.
+

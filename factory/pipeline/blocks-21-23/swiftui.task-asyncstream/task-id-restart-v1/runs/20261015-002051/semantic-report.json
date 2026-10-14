@@ -1,0 +1,68 @@
+{
+ "pairs": 1,
+ "pass_": 1,
+ "fail": 0,
+ "gate": {
+  "fields": [
+   "role",
+   "name",
+   "enabled",
+   "count",
+   "order"
+  ],
+  "scope": "main",
+  "phases": [
+   "start",
+   "e1",
+   "restart",
+   "old",
+   "e2",
+   ""
+  ]
+ },
+ "rows": [
+  {
+   "run": 1,
+   "verdict": "pass",
+   "compared": {
+    "start": {
+     "main": {
+      "windows": 4,
+      "mac": 4
+     }
+    },
+    "e1": {
+     "main": {
+      "windows": 4,
+      "mac": 4
+     }
+    },
+    "restart": {
+     "main": {
+      "windows": 4,
+      "mac": 4
+     }
+    },
+    "old": {
+     "main": {
+      "windows": 4,
+      "mac": 4
+     }
+    },
+    "e2": {
+     "main": {
+      "windows": 4,
+      "mac": 4
+     }
+    },
+    "final": {
+     "main": {
+      "windows": 4,
+      "mac": 4
+     }
+    }
+   },
+   "mismatches": []
+  }
+ ]
+}
