@@ -110,6 +110,7 @@ public enum HostPaint {
             "secondaryLabel": 0x0000007f,
             "accentColor": 0x007affff,
             "background": 0xffffffff,
+            "separator": 0x00000019,   // Divider (block swiftui.spacer-divider): black at 25/255, light appearance only
         ]
         guard let value = native[name] else { throw HostPaintError.unsupportedSemanticFill(name) }
         return value

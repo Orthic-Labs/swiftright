@@ -160,7 +160,7 @@ public final class ResolvedNodePainter {
 
     /// Runtime primitive node kinds (`Graph.kindName`) this paint path does not emit yet; they fail visibly. Every other kind is a
     /// structural container, a modifier or a user-defined composite view, whose children are painted individually.
-    static let unpaintedPrimitives: Set<String> = ["TextEditor", "Divider", "Menu"]
+    static let unpaintedPrimitives: Set<String> = ["TextEditor", "Menu"]
 
     public static func isStructuralContainer(_ kind: String) -> Bool {
         switch kind {
@@ -230,6 +230,12 @@ public final class ResolvedNodePainter {
             return NodeEmission(primitives: try ListPainter.primitives(for: node, bounds: bounds, scale: scale),
                                 semantic: SemanticNode(role: .list, label: node.accessibility.label ?? "", identifier: node.id, disabled: !node.accessibility.isEnabled),
                                 flags: [], structural: false)
+
+        case "Divider":
+            // Measured on macOS 27 (light): the separator is black at alpha 25/255 (230 over white, (0,123,230) over (0,136,255)), as thick as the layout box (1 pt, snapped to the
+            // device grid like any edge: 2 or 3 px at scale 2.5). The dark separator is not measured: it fails visibly rather than guess.
+            guard node.style.colorScheme != .dark else { throw HostPaintError.unsupportedNode("Divider (dark appearance not measured)") }
+            return NodeEmission(primitives: [.rect(bounds, color: try HostPaint.rgba(.semantic("separator"), opacity: node.opacity, scheme: node.style.colorScheme))], semantic: nil, flags: [], structural: false)
 
         case "Color":
             guard let color = node.color else { throw HostPaintError.colorMetadataRequired }

@@ -211,16 +211,22 @@ def edge_gate(im, iw, exclusions=()):
                 bandPixels=cnt(band))
 
 
-def compare(out, runs, exclusions=(), frames=0):
+def load_phases(case):
+    """E1: <case>/pair.json {"phaseShots":["a","b"]} - labelled `shot` steps whose PNGs (mac/run-NN-<label>.png, windows/native-NN-<label>.png) are pixel-compared like the final capture, with the same exclusions."""
+    pj = case / "pair.json"
+    return [str(x) for x in json.loads(pj.read_text()).get("phaseShots", [])] if pj.is_file() else []
+
+
+def compare(out, runs, exclusions=(), frames=0, phases=()):
     """exact = pixel-identical outside the named exclusion rects. Excluded regions are reported separately
     (diff pixel count, ink bbox on each side); they never gate. Without exclusions this is the plain full-frame exact diff."""
     rows, first = [], None
     # frames > 0 (F1 manual clock): every run has one capture per clock step, run-NN-fKK.png / native-NN-fKK.png; each (run, frame) is one pair
-    items = [(i, k) for i in range(1, runs + 1) for k in (range(frames) if frames else [None])]
+    items = [(i, k) for i in range(1, runs + 1) for k in (list(range(frames)) if frames else [None]) + list(phases)]
     for i, k in items:
-        sfx = "" if k is None else f"-f{k:02d}"
+        sfx = "" if k is None else (f"-f{k:02d}" if isinstance(k, int) else f"-{k}")
         a, b = out / f"mac/run-{i:02d}{sfx}.png", out / f"windows/native-{i:02d}{sfx}.png"
-        fr = {} if k is None else dict(frame=k)
+        fr = {} if k is None else (dict(frame=k) if isinstance(k, int) else dict(phase=k))
         if not (a.is_file() and b.is_file()):
             rows.append(dict(run=i, **fr, error="missing capture")); continue
         im, iw = Image.open(a).convert("RGB"), Image.open(b).convert("RGB")
@@ -264,7 +270,7 @@ def compare(out, runs, exclusions=(), frames=0):
     (out / "report.json").write_text(json.dumps(rep, indent=1))
     for r in rows:
         if "gate" in r:
-            g = r["gate"]; print(f"  run {r['run']:02d}{'' if 'frame' not in r else ' f%02d' % r['frame']} {r['verdict']} total={g['totalDiff']} in-band={g['inBandDiff']} out-of-band={g['outOfBandDiff']} max-in-band={g['maxInBand']} max-out-of-band={g['maxOutOfBand']}")
+            g = r["gate"]; print(f"  run {r['run']:02d}{'' if 'frame' not in r else ' f%02d' % r['frame']}{'' if 'phase' not in r else ' ' + r['phase']} {r['verdict']} total={g['totalDiff']} in-band={g['inBandDiff']} out-of-band={g['outOfBandDiff']} max-in-band={g['maxInBand']} max-out-of-band={g['maxOutOfBand']}")
     names = ", ".join(e["name"] + str(list(e["rect"])) for e in exclusions)
     print(f"pairs={len(items)} exact={nex} exact-with-exclusions={nexw}" + (f" (excluding: {names})" if exclusions else "") + f" edge-aa<=32={len(ok) - nex - nexw} fail={len(bad)} maxdiff={worst} diffbbox={bbox}")
     return len(ok) == len(items)
@@ -312,7 +318,7 @@ def main():
     if a.recompare:
         out = Path(a.recompare).resolve(); clock = load_clock(case, a.frames)
         n = len({q.name[:6] for q in (out / "mac").glob("run-*.png")})
-        ok = compare(out, n, load_exclusions(case, a.exclude_text_bbox), len(clock or []))
+        ok = compare(out, n, load_exclusions(case, a.exclude_text_bbox), len(clock or []), load_phases(case))
         sem = semantic_gate(case, out)
         sys.exit(0 if (ok if sem is None else sem and (ok or semantic_decides(case))) else 1)
     clock = load_clock(case, a.frames)
@@ -327,7 +333,7 @@ def main():
         windows(case, name, a.runs, out, a.shared, a.sandbox, a.stage, a.renderer, steps, clock)
     if not a.skip_mac: mac(case, name, a.runs, out, clock)
     print(f"out={out}")
-    ok = compare(out, a.runs, load_exclusions(case, a.exclude_text_bbox), len(clock or []))
+    ok = compare(out, a.runs, load_exclusions(case, a.exclude_text_bbox), len(clock or []), load_phases(case))
     sem = semantic_gate(case, out)
     if sem is None:
         sys.exit(0 if ok else 1)

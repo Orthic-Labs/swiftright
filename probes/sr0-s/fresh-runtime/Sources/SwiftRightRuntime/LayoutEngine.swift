@@ -48,6 +48,9 @@ struct StackSpec: Sendable, Equatable {
     /// Keeps `@State` of keyed rows removed from this container, so a reinserted row with the same
     /// id gets its old state back. Only List does this on the recorded macOS 27 oracle (SR0-O F3).
     var retainsRemovedRowState = false
+    /// The spacing was not given (`spacing: nil`): the distance next to a Spacer is then 0, not the default spacing (measured on macOS 27: `HStack { 40 pt; Spacer(minLength: 0); 40 pt }`
+    /// in an 80 pt frame leaves no gap, while two rectangles are 8 pt apart; an explicit `spacing:` applies on both sides of a Spacer).
+    var spacingIsDefault = false
 
     init(name: String, axis: StackAxis, cross: CrossAlignment, alignment: Alignment = .center,
          spacing: CGFloat, fillsCross: Bool, retainsRemovedRowState: Bool = false) {
@@ -68,6 +71,8 @@ struct StackPlan {
     /// The proposal each child was sized under; placement passes it back unchanged.
     let proposals: [ProposedViewSize]
     let size: LayoutSize
+    /// The distance after each child (empty for the overlay and overlap plans).
+    var gaps: [CGFloat] = []
 }
 
 let groupStackSpec = StackSpec(name: "Group", axis: .vertical, cross: .start, spacing: 0, fillsCross: false)
@@ -135,6 +140,8 @@ extension Graph {
         case .shape:
             return LayoutSize(width: finiteLength(proposal.width) ?? 10, height: finiteLength(proposal.height) ?? 10)
         case .divider:
+            // A Divider is a thin rule across the axis its enclosing stack does NOT lay out along (vertical in an HStack, whether or not a frame wraps it).
+            if dividerIsVertical(node) { return LayoutSize(width: dividerThickness, height: finiteLength(proposal.height) ?? 0) }
             return LayoutSize(width: finiteLength(proposal.width) ?? 0, height: dividerThickness)
         case .spacer:
             return .zero
@@ -368,7 +375,8 @@ extension Graph {
         if spec.axis == .overlap { return overlapPlan(children, spec, proposal) }
         if spec.axis == .overlay { return overlayPlan(children, spec, proposal) }
         let axis = spec.axis
-        let spacingTotal = spec.spacing * CGFloat(max(0, children.count - 1))
+        let gaps = stackGaps(children, spec)
+        let spacingTotal = gaps.reduce(0, +)
         let crossLimit = axis.crossLimit(proposal)
         let minLengths: [CGFloat?] = children.map { spacerLength($0, axis) }
         let fixed: [LayoutSize?] = children.map { fixedStackSize($0, axis, crossLimit) }
@@ -423,7 +431,7 @@ extension Graph {
         let contentCross = sizes.map(axis.cross).max() ?? 0
         let cross = spec.fillsCross ? (crossLimit ?? contentCross) : contentCross
         let main = sizes.reduce(0) { $0 + axis.main($1) } + spacingTotal
-        return StackPlan(children: children, sizes: sizes, proposals: proposals, size: axis.size(main: main, cross: cross))
+        return StackPlan(children: children, sizes: sizes, proposals: proposals, size: axis.size(main: main, cross: cross), gaps: gaps)
     }
 
     private func placeStack(_ children: [Node], _ spec: StackSpec, in rect: LayoutRect, proposal: ProposedViewSize, mirrored: Bool) {
@@ -440,7 +448,9 @@ extension Graph {
         let crossLength = axis.cross(rect.size)
         var offset = axis == .vertical ? rect.minY : rect.minX
         for (index, child) in children.enumerated() {
-            let size = plan.sizes[index]
+            var size = plan.sizes[index]
+            // A Divider directly in a stack fills the stack's cross axis (the tallest sibling of an HStack, the widest of a VStack), not just the proposal it was measured under.
+            if case .divider = child.kind { size = axis.size(main: axis.main(size), cross: crossLength) }
             let slack = crossLength - axis.cross(size)
             let crossOffset: CGFloat
             switch spec.cross {
@@ -452,7 +462,7 @@ extension Graph {
                 ? LayoutPoint(x: rect.minX + crossOffset, y: offset)
                 : LayoutPoint(x: offset, y: rect.minY + crossOffset)
             place(child, in: mirroredRect(LayoutRect(origin: origin, size: size), in: rect, if: mirrored), proposal: plan.proposals[index])
-            offset += axis.main(size) + spec.spacing
+            offset += axis.main(size) + (index < plan.gaps.count ? plan.gaps[index] : 0)
         }
     }
 
@@ -528,6 +538,39 @@ extension Graph {
         if children.count == 1 { return measure(children[0], proposal) }
         if children.isEmpty { return .zero }
         return stackPlan(children, groupStackSpec, proposal).size
+    }
+
+    /// The distance between each child and the next. A default (nil) spacing is 0 next to a Spacer.
+    func stackGaps(_ children: [Node], _ spec: StackSpec) -> [CGFloat] {
+        guard children.count > 1 else { return [] }
+        return (0..<(children.count - 1)).map { index in
+            spec.spacingIsDefault && (isSpacerView(children[index]) || isSpacerView(children[index + 1])) ? 0 : spec.spacing
+        }
+    }
+
+    /// A Spacer, or a Spacer seen through single-child wrappers (`Spacer().frame(width: 30)`).
+    private func isSpacerView(_ node: Node) -> Bool {
+        if case .spacer = node.kind { return true }
+        switch node.kind {
+        case .modifier(.frame), .modifier(.flexibleFrame): break
+        default: guard node.kind.passesThrough else { return false }
+        }
+        let children = childNodes(node)
+        return children.count == 1 && isSpacerView(children[0])
+    }
+
+    /// True when the nearest enclosing stack lays out horizontally (HStack): the Divider is then a vertical rule. ZStack, overlays and everything else give a horizontal rule.
+    func dividerIsVertical(_ node: Node) -> Bool {
+        var child = node
+        while let parent = child.parent {
+            if case .stack(let spec) = parent.kind {
+                // The base of an `.overlay` modifier belongs to the stack around the modified view; the overlaid view does not (it sits in a ZStack-like layer: a horizontal rule).
+                if spec.axis == .overlay, childNodes(parent).first === child { child = parent; continue }
+                return spec.axis == .horizontal
+            }
+            child = parent
+        }
+        return false
     }
 
     /// A divider's size in a stack: thin on the main axis, filling the cross axis.

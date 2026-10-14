@@ -1,5 +1,5 @@
 import Foundation
-import Observation
+@_exported import Observation
 
 // Dynamic properties are value-type wrappers that hold a reference cell. The graph binds each
 // cell to the owning node (by property label) before evaluating that node's body, so storage

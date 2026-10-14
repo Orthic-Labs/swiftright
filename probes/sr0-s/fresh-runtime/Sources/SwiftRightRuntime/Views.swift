@@ -149,7 +149,9 @@ public struct Text: View, PrimitiveView {
 
 public struct Spacer: View, PrimitiveView {
     let minLength: CGFloat
-    public init(minLength: CGFloat? = nil) { self.minLength = minLength ?? 0 }
+    /// A nil `minLength` is 8 pt on macOS, in every stack and whatever the stack's own spacing is (measured on macOS 27: `HStack(spacing: 0) { 40 pt; Spacer(); 40 pt }` in
+    /// an 80 pt frame still leaves an 8 pt gap, and so does a VStack; `Spacer(minLength: 0)` collapses to nothing).
+    public init(minLength: CGFloat? = nil) { self.minLength = minLength ?? 8 }
     @MainActor public var body: Never { return fatalError("primitive view has no body") }
     var nodeKind: NodeKind { .spacer(minLength) }
     var nodeContent: (any View)? { nil }
@@ -298,8 +300,8 @@ public struct VStack<Content: View>: View, PrimitiveView {
     }
     @MainActor public var body: Never { return fatalError("primitive view has no body") }
     var nodeKind: NodeKind {
-        .stack(StackSpec(name: "VStack", axis: .vertical, cross: alignment.crossAlignment,
-                         spacing: spacing ?? defaultStackSpacing, fillsCross: false))
+        { var spec = StackSpec(name: "VStack", axis: .vertical, cross: alignment.crossAlignment,
+                         spacing: spacing ?? defaultStackSpacing, fillsCross: false); spec.spacingIsDefault = spacing == nil; return .stack(spec) }()
     }
     var nodeContent: (any View)? { content }
 }
@@ -315,8 +317,8 @@ public struct HStack<Content: View>: View, PrimitiveView {
     }
     @MainActor public var body: Never { return fatalError("primitive view has no body") }
     var nodeKind: NodeKind {
-        .stack(StackSpec(name: "HStack", axis: .horizontal, cross: alignment.crossAlignment,
-                         spacing: spacing ?? defaultStackSpacing, fillsCross: false))
+        { var spec = StackSpec(name: "HStack", axis: .horizontal, cross: alignment.crossAlignment,
+                         spacing: spacing ?? defaultStackSpacing, fillsCross: false); spec.spacingIsDefault = spacing == nil; return .stack(spec) }()
     }
     var nodeContent: (any View)? { content }
 }
@@ -349,8 +351,8 @@ public struct LazyVStack<Content: View>: View, PrimitiveView {
     }
     @MainActor public var body: Never { return fatalError("primitive view has no body") }
     var nodeKind: NodeKind {
-        .stack(StackSpec(name: "LazyVStack", axis: .vertical, cross: alignment.crossAlignment,
-                         spacing: spacing ?? defaultStackSpacing, fillsCross: false))
+        { var spec = StackSpec(name: "LazyVStack", axis: .vertical, cross: alignment.crossAlignment,
+                         spacing: spacing ?? defaultStackSpacing, fillsCross: false); spec.spacingIsDefault = spacing == nil; return .stack(spec) }()
     }
     var nodeContent: (any View)? { content }
 }

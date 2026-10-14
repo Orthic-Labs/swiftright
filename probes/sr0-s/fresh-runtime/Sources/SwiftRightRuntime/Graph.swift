@@ -461,6 +461,10 @@ final class Node {
     var layoutKey = LayoutKey.unset
     /// True from `setView` until the node is evaluated: its stored view is not the one it last expanded.
     var viewReplaced = false
+    /// Identifies the environment this node's content sees: a fresh value whenever the node is the root or edits the environment, else its parent's. A child whose
+    /// `inheritedStamp` differs from its parent's `envStamp` may see another environment and so cannot keep its body (`Graph.canKeepBody`).
+    var envStamp = 0
+    var inheritedStamp = -1
     /// Marked dirty because a ForEach data source it expands changed (`Graph.noteDataChange`), and/or for any other reason
     /// (`fullDirty`: its own observation fired, the root environment changed). Only a data-only mark may re-expand the node
     /// without re-evaluating its unchanged rows.
@@ -845,6 +849,7 @@ public final class Graph {
     private(set) var layoutEpoch = 0
     /// Counts evaluation rounds of a flush; see `Node.evaluatedRound`.
     private var evaluationRound = 0
+    private var envStampCounter = 0
     /// `.preferredColorScheme` (ColorScheme.swift): the request made during this flush, and the root scheme before the first request.
     var windowSchemeRequest: PreferredSchemeRequest?
     var windowSchemeBase: ColorScheme?
@@ -1073,6 +1078,7 @@ public final class Graph {
         var environment = root.inherited
         update(&environment)
         root.inherited = environment
+        root.envStamp = 0
         root.fullDirty = true
         dirty[root.id] = root
     }
@@ -1161,10 +1167,7 @@ public final class Graph {
             if same {
                 for index in entries.indices {
                     if keepExisting, !isChangedRow(entries[index], changedRows) { continue }
-                    let existing = parent.childNodes[index]
-                    existing.setView(entries[index].view, info: entries[index].info)
-                    inherit(existing, from: parent)
-                    evaluate(existing)
+                    refreshChild(parent.childNodes[index], with: entries[index].view, info: entries[index].info, from: parent)
                 }
                 return
             }
@@ -1202,10 +1205,8 @@ public final class Graph {
                 if keepExisting, !isChangedRow(entry, changedRows) {
                     live.append(existing)
                 } else {
-                    existing.setView(entry.view, info: entry.info)
-                    inherit(existing, from: parent)
                     live.append(existing)
-                    evaluate(existing)
+                    refreshChild(existing, with: entry.view, info: entry.info, from: parent)
                 }
             } else {
                 let created = Node(id: childID, relative: relatives[index], view: entry.view, info: entry.info, parent: parent)
@@ -1240,6 +1241,22 @@ public final class Graph {
         child.inherited = parent.environment
         child.inheritedEnabled = parent.enabled
         child.inheritedStyle = parent.style
+        child.inheritedStamp = parent.envStamp
+    }
+
+    /// Hands `child` its new view and evaluates it, unless SwiftUI would not run its body: a user view that is alive, clean, sees the same environment and whose new view value
+    /// compares equal to the one it last evaluated keeps its body (its own observation still wakes it when a model it read changes).
+    private func refreshChild(_ child: Node, with view: any View, info: ViewTypes.Info, from parent: Node) {
+        if canKeepBody(child, newView: view, parent: parent) { return }
+        child.setView(view, info: info)
+        inherit(child, from: parent)
+        evaluate(child)
+    }
+
+    private func canKeepBody(_ child: Node, newView: any View, parent: Node) -> Bool {
+        guard child.alive, child.appeared, !child.viewReplaced, !child.fullDirty, !child.dataStale, child.inheritedStamp == parent.envStamp else { return false }
+        guard case .user = child.kind else { return false }
+        return ViewEquality.equal(child.view, newView)
     }
 
     /// Gives focus back to a reinserted node that held it when its List removed it.
@@ -1434,9 +1451,16 @@ public final class Graph {
             noteWindowSchemeRequest(node)
         }
         if node.parent == nil || kind.changesEnvironment {
+            // An environment modifier re-applies its closure on every evaluation (its result cannot be compared), so its content always sees "another" environment; the root
+            // only when its environment was edited (`setRootEnvironment` zeroes the stamp).
+            if kind.changesEnvironment || node.envStamp == 0 {
+                envStampCounter &+= 1
+                node.envStamp = envStampCounter
+            }
             node.enabled = node.environment.isEnabled
             node.style = ResolvedStyle(font: node.environment.font, foreground: node.environment.foregroundStyle, colorScheme: node.environment.colorScheme)
         } else {
+            node.envStamp = node.parent?.envStamp ?? 0
             node.enabled = node.inheritedEnabled
             node.style = node.inheritedStyle
         }
@@ -1517,10 +1541,7 @@ public final class Graph {
             // entry list and no id built.
             if node.childNodes.count == 1, node.childNodes[0].relative.count == 1,
                case .type(let name) = node.childNodes[0].relative[0], name === producedInfo.name {
-                let child = node.childNodes[0]
-                child.setView(produced, info: producedInfo)
-                inherit(child, from: node)
-                evaluate(child)
+                refreshChild(node.childNodes[0], with: produced, info: producedInfo, from: node)
             } else {
                 reconcile(node, entries: [Entry(relative: [.type(producedInfo.name)], view: produced, info: producedInfo)])
             }

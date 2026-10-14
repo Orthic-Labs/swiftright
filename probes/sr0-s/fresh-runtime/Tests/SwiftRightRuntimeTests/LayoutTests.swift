@@ -237,8 +237,9 @@ final class LayoutTests: XCTestCase {
         XCTAssertEqual(stack.kind, "HStack")
         XCTAssertEqual(stack.frame.width, 300)
         XCTAssertEqual(stack.children.map(\.kind), ["Text", "Spacer", "Text"])
-        XCTAssertEqual(stack.children.map(\.frame.width), [8, 268, 8])
-        XCTAssertEqual(stack.children.map(\.frame.minX), [0, 16, 292])
+        // default spacing is 0 next to a Spacer (macOS 27 measurement, SpacerDividerTests): A | Spacer 284 | B
+        XCTAssertEqual(stack.children.map(\.frame.width), [8, 284, 8])
+        XCTAssertEqual(stack.children.map(\.frame.minX), [0, 8, 292])
     }
 
     func testVStackAlignmentLeadingCenterTrailing() throws {
