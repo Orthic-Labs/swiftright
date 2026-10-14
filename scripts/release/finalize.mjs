@@ -68,7 +68,7 @@ async function finalizeWindows() {
   const unsignedRoot = need("RIGHT_GIT_UNSIGNED_CANDIDATE_ROOT");
   const outRoot = path.resolve(need("RIGHT_GIT_FINALIZED_WINDOWS_ROOT"));
   const revision = need("RIGHT_GIT_SOURCE_REVISION");
-  const msix = findFile(unsignedRoot, "SliceApp_0.1.0.0_x64.msix");
+  const msix = findFile(unsignedRoot, "SliceApp_0.1.1.0_x64.msix");
   const seal = JSON.parse(readFileSync(findFile(unsignedRoot, "msix-seal.json"), "utf8"));
   const identity = JSON.parse(readFileSync(findFile(unsignedRoot, "build-identity.json"), "utf8"));
   const unsignedSha = sha256(msix);
@@ -142,7 +142,7 @@ async function finalizeMacos() {
   const unsignedRoot = need("RIGHT_GIT_UNSIGNED_CANDIDATE_ROOT");
   const outRoot = path.resolve(need("RIGHT_GIT_FINALIZED_MACOS_ROOT"));
   const revision = need("RIGHT_GIT_SOURCE_REVISION");
-  const dmg = findFile(unsignedRoot, "SliceApp_0.1.0_arm64.dmg");
+  const dmg = findFile(unsignedRoot, "SliceApp_0.1.1_arm64.dmg");
   const identity = JSON.parse(readFileSync(findFile(unsignedRoot, "build-identity.json"), "utf8"));
   const unsignedSha = sha256(dmg);
   if (unsignedSha !== identity.dmgSha256) throw new Error(`unsigned DMG sha256 ${unsignedSha} differs from the candidate identity ${identity.dmgSha256}`);
@@ -206,7 +206,7 @@ async function finalizeMacos() {
 async function qualify() {
   const root = path.resolve(need("RIGHT_GIT_FINALIZED_WINDOWS_ROOT"));
   const evidenceRoot = path.resolve(need("RIGHT_GIT_QUALIFICATION_EVIDENCE_ROOT"));
-  const msix = findFile(root, "SliceApp_0.1.0.0_x64.msix");
+  const msix = findFile(root, "SliceApp_0.1.1.0_x64.msix");
   const seal = JSON.parse(readFileSync(findFile(root, "msix-seal.json"), "utf8"));
   const sha = sha256(msix);
   if (seal.signed !== true || sha !== seal.msix.sha256) throw new Error(`finalized MSIX sha256 ${sha} does not match its signed seal`);
