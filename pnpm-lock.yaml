@@ -8,24 +8,33 @@ importers:
 
   .:
     devDependencies:
+      '@rightkit/ci':
+        specifier: 0.2.42
+        version: 0.2.42
       '@rightkit/release':
-        specifier: 0.2.151
-        version: 0.2.151
+        specifier: 0.2.153
+        version: 0.2.153
 
 packages:
 
-  '@rightkit/release@0.2.151':
-    resolution: {integrity: sha512-8kZPkVENeGfk3H2usEaIg9FM+N7hVf90PyPNcaRFHAHih+7apgH5wYZWRB75gRtVQgbGffc72DH4YAbOvoZ7cw==}
+  '@rightkit/ci@0.2.42':
+    resolution: {integrity: sha512-S5R3KIJpuTpNyjNUgwBWjcvJdXRelfDlDUyu9a5IKzhPGT+Z+nbCjmucWfFvzJZZ45SFIOoeZ0c6c8o3pBoOgQ==}
     hasBin: true
 
-  smol-toml@1.7.0:
-    resolution: {integrity: sha512-aqVvWoyO21L23mb+drl4RmMXbf6N7FdHjAhTRA9ZBL7apWBgfWC16KjrASI+1p9GAroljyMHj6fK67i0UiTNvQ==}
+  '@rightkit/release@0.2.153':
+    resolution: {integrity: sha512-dwPcKSMxgCBiQXg4EDbN+IuANQ6DEbqYMPT7vn4EABi1aNS8afXRnvwlMLEy5r66aNp//K8xc0E9SklsSs8LgA==}
+    hasBin: true
+
+  smol-toml@1.9.0:
+    resolution: {integrity: sha512-hpd+HLON7HdZXqYchMM/+LaTTbdK0AU3NngIJ4KVyWbY9bfQqdL9cD+4yf6dUoU2Ap4VsU0JkQi6FxAI1B2mXQ==}
     engines: {node: '>= 18'}
 
 snapshots:
 
-  '@rightkit/release@0.2.151':
-    dependencies:
-      smol-toml: 1.7.0
+  '@rightkit/ci@0.2.42': {}
 
-  smol-toml@1.7.0: {}
+  '@rightkit/release@0.2.153':
+    dependencies:
+      smol-toml: 1.9.0
+
+  smol-toml@1.9.0: {}
