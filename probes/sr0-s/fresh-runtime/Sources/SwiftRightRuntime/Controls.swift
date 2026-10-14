@@ -367,6 +367,10 @@ private enum LineLimitKey: EnvironmentKey {
     static var defaultValue: Int? { nil }
 }
 
+private enum TextCaseKey: EnvironmentKey {
+    static var defaultValue: Text.Case? { nil }
+}
+
 private enum DefaultScrollAnchorKey: EnvironmentKey {
     static var defaultValue: UnitPoint? { nil }
 }
@@ -391,6 +395,12 @@ extension EnvironmentValues {
     public var lineLimit: Int? {
         get { self[LineLimitKey.self] }
         set { self[LineLimitKey.self] = newValue }
+    }
+
+    /// `.textCase(_:)`: the case descendant Text views display in; nil leaves the text as written.
+    public var textCase: Text.Case? {
+        get { self[TextCaseKey.self] }
+        set { self[TextCaseKey.self] = newValue }
     }
 
     /// Where a scroll view first positions its content (`.defaultScrollAnchor`); nil starts at the leading/top edge.

@@ -101,7 +101,7 @@ extension Graph {
     private func computeSize(_ node: Node, _ proposal: ProposedViewSize) -> LayoutSize {
         switch node.kind {
         case .text(let string):
-            return measureText(node, string, width: proposal.width)
+            return measureText(node, node.environment.textCase?.apply(string) ?? string, width: proposal.width)
         case .textField:
             return measureTextField(node, proposal)
         case .textEditor:

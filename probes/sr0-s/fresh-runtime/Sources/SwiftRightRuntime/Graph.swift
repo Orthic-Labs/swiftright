@@ -1596,7 +1596,8 @@ public final class Graph {
     private func noteLayoutContent(_ node: Node, _ kind: NodeKind) {
         let key: LayoutKey
         switch kind {
-        case .text(let string):
+        case .text(let raw):
+            let string = node.environment.textCase?.apply(raw) ?? raw
             let font = node.environment.font
             let lineLimit = node.environment.lineLimit
             key = font?.metadata == nil && lineLimit == nil
@@ -1786,7 +1787,7 @@ public final class Graph {
         var marked: UTF16Range?
         switch kind {
         case .text(let string):
-            text = string
+            text = node.environment.textCase?.apply(string) ?? string
         case .textField, .textEditor:
             text = node.textInput?.display
             selection = node.textInput?.selection
@@ -1903,7 +1904,7 @@ public final class Graph {
         switch node.kind {
         case .text(let string):
             role = "static-text"
-            label = string
+            label = node.environment.textCase?.apply(string) ?? string
         case .button:
             role = "button"
             label = joinedText(children)

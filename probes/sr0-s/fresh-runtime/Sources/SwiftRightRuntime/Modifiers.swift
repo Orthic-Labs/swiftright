@@ -247,6 +247,14 @@ extension View {
         }))
     }
 
+    /// Displays descendant Text views in upper or lower case (the case of the displayed string, the layout and the accessibility label all follow); nil leaves them as written.
+    /// Apple: https://developer.apple.com/documentation/swiftui/view/textcase(_:)
+    public func textCase(_ textCase: Text.Case?) -> some View {
+        Modified(content: self, spec: .environment({ (environment: inout EnvironmentValues) in
+            environment.textCase = textCase
+        }))
+    }
+
     /// Limits descendant Text views to at most `number` lines; nil removes the limit.
     public func lineLimit(_ number: Int?) -> some View {
         Modified(content: self, spec: .environment({ (environment: inout EnvironmentValues) in

@@ -145,6 +145,12 @@ public struct Text: View, PrimitiveView {
     @MainActor public var body: Never { return fatalError("primitive view has no body") }
     var nodeKind: NodeKind { .text(string) }
     var nodeContent: (any View)? { nil }
+
+    /// Apple: https://developer.apple.com/documentation/swiftui/text/case
+    public enum Case: Hashable, Sendable {
+        case uppercase, lowercase
+        func apply(_ string: String) -> String { self == .uppercase ? string.uppercased() : string.lowercased() }
+    }
 }
 
 public struct Spacer: View, PrimitiveView {
