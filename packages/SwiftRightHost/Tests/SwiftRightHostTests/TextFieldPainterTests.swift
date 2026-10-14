@@ -123,7 +123,7 @@ final class TextFieldPainterTests: XCTestCase {
         guard case .image(_, let rect, _) = field.1.primitives[0] else { return XCTFail("bezel image first") }
         XCTAssertEqual(rect.w, 306 - 2.0 / 64, accuracy: 0.0001)
         guard case .clipPush(let clip) = field.1.primitives[1] else { return XCTFail("clip") }
-        XCTAssertEqual(clip.x, Float(field.0.pixelFrame.x) + 15); XCTAssertEqual(clip.w, 270)   // 6 pt from each side (cell 4 + line-fragment padding 2)
+        XCTAssertEqual(clip.x, Float(field.0.pixelFrame.x) + 10); XCTAssertEqual(clip.w, 280)   // the cell content rect: 4 pt from each side (Mac ink reaches 4 pt from the right edge)
         guard case .text(_, let x, let y) = field.1.primitives[2] else { return XCTFail("text") }
         XCTAssertEqual(x, Float(field.0.pixelFrame.x) + 15)          // 6 pt: cell inset 4 + field editor padding 2 (AppKit, measured)
         XCTAssertEqual(y, Float(field.0.pixelFrame.y) + 10)          // (60 - 40) / 2

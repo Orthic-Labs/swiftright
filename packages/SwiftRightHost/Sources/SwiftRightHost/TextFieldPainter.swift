@@ -89,8 +89,9 @@ extension ResolvedNodePainter {
         let isPlaceholder = shown.isEmpty
         let content = isPlaceholder ? (node.placeholder ?? "") : shown
         let isFocused = focusedFieldID == node.id
-        let inset = Float(TextFieldMetrics.textOrigin(artwork)) * scale
-        let clip = Rect(x: bounds.x + inset, y: bounds.y, w: max(0, bounds.w - 2 * inset), h: bounds.h)
+        let inset = Float(TextFieldMetrics.textOrigin(artwork)) * scale          // where the text starts (bezel: 6 pt)
+        let clipInset = Float(TextFieldMetrics.textInset(artwork)) * scale        // the cell's content rect clips it (bezel: 4 pt each side; Mac: ink reaches 4 pt from the right edge)
+        let clip = Rect(x: bounds.x + clipInset, y: bounds.y, w: max(0, bounds.w - 2 * clipInset), h: bounds.h)
         if !content.isEmpty {
             let color: UInt32
             if isPlaceholder { color = artwork == .plain ? TextFieldColors.plainPlaceholder : TextFieldColors.placeholder }
@@ -104,7 +105,7 @@ extension ResolvedNodePainter {
             // A focused field scrolls to keep its caret inside (AppKit's field editor does the same).
             if isFocused, !isPlaceholder, let selection = node.selection {
                 let caret = xs[min(max(selection.location + selection.length, 0), xs.count - 1)]
-                let visible = max(0, clip.w)
+                let visible = max(0, clip.x + clip.w - (bounds.x + inset))
                 if caret > visible { originX -= caret - visible }
             }
             pendingFieldLayouts[node.id] = TextFieldLayout(bounds: bounds, textOriginX: originX, boundaries: isPlaceholder ? [0] : xs,

@@ -13,16 +13,6 @@
   ],
   "pixels": "report-only"
  },
- "steps": [
-  {
-   "op": "wait",
-   "ms": 2200
-  }
- ],
- "macArgs": [
-  "--steps",
-  "[{\"op\":\"click\",\"x\":150,\"y\":55},{\"op\":\"wait\",\"ms\":250},{\"op\":\"ime\",\"action\":\"compose\",\"text\":\"ni\"},{\"op\":\"ime\",\"action\":\"commit\",\"text\":\"\\u4f60\"},{\"op\":\"wait\",\"ms\":250}]"
- ],
  "textOriginGate": {
   "fields": [
    [
@@ -32,5 +22,15 @@
     85
    ]
   ]
- }
+ },
+ "steps": [
+  {
+   "op": "wait",
+   "ms": 2200
+  }
+ ],
+ "macArgs": [
+  "--steps",
+  "[{\"op\":\"click\",\"x\":150,\"y\":55},{\"op\":\"wait\",\"ms\":250},{\"op\":\"ime\",\"action\":\"compose\",\"text\":\"ni\"},{\"op\":\"ime\",\"action\":\"commit\",\"text\":\"\\u4f60\"},{\"op\":\"wait\",\"ms\":250}]"
+ ]
 }

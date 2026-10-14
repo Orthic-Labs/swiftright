@@ -50,6 +50,11 @@ final class StepRunner {
         var line = "MAC_FACT step=\(tag)"
         if let tv = window.firstResponder as? NSTextView {
             line += " fieldEditor=1 text=\(tv.string.debugDescription) selection=\(tv.selectedRange().location)+\(tv.selectedRange().length) marked=\(tv.markedRange().location == NSNotFound ? "none" : "\(tv.markedRange().location)+\(tv.markedRange().length)")"
+            // The insertion point's x in capture pixels (AppKit draws no caret in a window that is never on a display): firstRect of an empty range at the selection start, screen -> window.
+            if let w = tv.window {
+                let r = w.convertFromScreen(tv.firstRect(forCharacterRange: NSRange(location: tv.selectedRange().location, length: 0), actualRange: nil))
+                line += " caretXpx=\(String(format: "%.2f", Double(r.origin.x * captureScale)))"
+            }
         } else { line += " fieldEditor=0 firstResponder=\(type(of: window.firstResponder as Any))" }
         print(line)
     }

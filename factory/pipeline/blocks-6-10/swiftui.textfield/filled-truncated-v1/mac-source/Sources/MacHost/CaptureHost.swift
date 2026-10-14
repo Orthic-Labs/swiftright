@@ -50,6 +50,11 @@ final class StepRunner {
         var line = "MAC_FACT step=\(tag)"
         if let tv = window.firstResponder as? NSTextView {
             line += " fieldEditor=1 text=\(tv.string.debugDescription) selection=\(tv.selectedRange().location)+\(tv.selectedRange().length) marked=\(tv.markedRange().location == NSNotFound ? "none" : "\(tv.markedRange().location)+\(tv.markedRange().length)")"
+            // The insertion point's x in capture pixels (AppKit draws no caret in a window that is never on a display): firstRect of an empty range at the selection start, screen -> window.
+            if let w = tv.window {
+                let r = w.convertFromScreen(tv.firstRect(forCharacterRange: NSRange(location: tv.selectedRange().location, length: 0), actualRange: nil))
+                line += " caretXpx=\(String(format: "%.2f", Double(r.origin.x * captureScale)))"
+            }
         } else { line += " fieldEditor=0 firstResponder=\(type(of: window.firstResponder as Any))" }
         print(line)
     }
@@ -113,6 +118,15 @@ final class StepRunner {
     }
 }
 
+/// A SwiftUI `.switch` Toggle (NSSwitch) redraws its knob and track from a display-link animation after a click; a window that is never on a display never
+/// ticks it, so the layers keep the state from before the click while `state` and the accessibility value are already new (measured on derived-click-v1:
+/// state 0, knob layers still at the "on" x). Flipping a switch's state and restoring it, with a run-loop turn after each, makes SwiftUI redraw it settled.
+/// A programmatic change sends no action (one binding setter call per click, counted), so nothing but pixels changes. No-op without switches.
+@MainActor func settleSwitches(_ root: NSView) {
+    func all(_ v: NSView) -> [NSSwitch] { (v as? NSSwitch).map { [$0] } ?? v.subviews.flatMap(all) }
+    for sw in all(root) { let st = sw.state; sw.state = st == .on ? .off : .on; spin(0.2); sw.state = st; spin(0.3) }
+}
+
 @MainActor
 func capture(_ witness: AnyView, width: CGFloat, height: CGFloat, to path: String, ax: String?) throws {
     if ax != nil { AXDump.enableInProcessAccessibility() }
@@ -134,7 +148,7 @@ func capture(_ witness: AnyView, width: CGFloat, height: CGFloat, to path: Strin
     host.layoutSubtreeIfNeeded()
     host.displayIfNeeded()
     spin(0.3)
-    if let steps { StepRunner(window: window, host: host, height: height, ax: ax).run(steps) }
+    if let steps { StepRunner(window: window, host: host, height: height, ax: ax).run(steps); settleSwitches(host) }
     host.layoutSubtreeIfNeeded()
     host.displayIfNeeded()
     let pixelsWide = Int((width * captureScale).rounded()), pixelsHigh = Int((height * captureScale).rounded())

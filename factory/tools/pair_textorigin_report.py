@@ -10,11 +10,16 @@ Glyph shapes stay excluded (decision 2: Segoe UI vs SF), but WHERE the text star
   2. selection: present on one side and not the other fails. When both draw one: the colour must be identical (the Mac's NSColor.selectedTextBackgroundColor
      over white, (179,215,255)) and the start x (the leftmost column of >= 10 pixels of that exact colour) must be equal within "selectionStartTolerancePx"
      (default 0). The selection's end x and height follow the glyph advances and the line height (Segoe vs SF) and are reported, not gated.
-  3. caret: a 1-2 px column in the exact caret colour (0x111111) on the Windows capture is reported (x, relative to the first ink and to the field edge). The Mac
-     draws no caret in an offscreen window, so there is nothing to compare; its x is the text origin gated by 1-2, and TextFieldPainterTests pins it.
+  3. caret: the Mac draws no caret in a window that is never on a display, so its insertion point is read from the field editor (MAC_FACT caretXpx in
+     mac-run-NN.log: firstRect of an empty range at the selection, capture px). With "caret": "macFact" the leftmost column of the Windows caret (a 1-2 px column in the
+     exact caret colour 0x111111) must equal it within "caretTolerancePx" (default 0), for a caret at the text origin (an empty focused field: no glyph advance in it).
+     Without "caret" the Windows caret column is reported only.
+  4. clip edge (opt-in, "lastInk": true, for a field whose text is clipped): the rightmost ink column. A glyph cut by the clip edge ends exactly on it, so the two sides
+     must agree within "lastInkTolerancePx" (default 0): this is the right-hand twin of the origin (the same 6 pt inset).
 pair.json:  "textOriginGate": {"fields": [[x0,y0,x1,y1], ...]   // field FRAMES in capture px (the 1 pt border is drawn outside them)
-                               "firstInkTolerancePx": 0, "firstInkToleranceReason": "...", "selectionStartTolerancePx": 0, "requireInk": true}"""
-import json, sys
+                               "firstInkTolerancePx": 0, "firstInkToleranceReason": "...", "selectionStartTolerancePx": 0, "requireInk": true,
+                               "caret": "macFact", "caretTolerancePx": 0, "lastInk": true}"""
+import json, re, sys
 from collections import Counter
 from pathlib import Path
 from PIL import Image
@@ -50,7 +55,7 @@ def analyse(im, frame):
     caret_x = sorted(x for x, n in caret_cols.items() if n >= 18)
     thr = min([lum(bg)] + ([lum(tuple(sel["colour"]))] if sel else [])) - INK_MARGIN
     ink = [x for x, _, p in pts if lum(p) <= thr and x not in caret_x]
-    return dict(background=list(bg), firstInkX=min(ink) if ink else None, selection=sel, caretX=caret_x or None)
+    return dict(background=list(bg), firstInkX=min(ink) if ink else None, lastInkX=max(ink) if ink else None, selection=sel, caretX=caret_x or None)
 
 
 def gate(mac, win, cfg):
@@ -64,6 +69,10 @@ def gate(mac, win, cfg):
         d = win["firstInkX"] - mac["firstInkX"]
         if abs(d) > tol_ink:
             why.append(f"first ink x differs by {d} px (mac {mac['firstInkX']}, win {win['firstInkX']}, tolerance {tol_ink})")
+    if cfg.get("lastInk") and mac["lastInkX"] is not None and win["lastInkX"] is not None:
+        d = win["lastInkX"] - mac["lastInkX"]
+        if abs(d) > int(cfg.get("lastInkTolerancePx", 0)):
+            why.append(f"last ink x (clip edge) differs by {d} px (mac {mac['lastInkX']}, win {win['lastInkX']})")
     ms, ws = mac["selection"], win["selection"]
     if (ms is None) != (ws is None):
         why.append(f"selection drawn on {'mac' if ms else 'windows'} only")
@@ -73,6 +82,13 @@ def gate(mac, win, cfg):
         if abs(ms["startX"] - ws["startX"]) > tol_sel:
             why.append(f"selection start x mac {ms['startX']} != windows {ws['startX']} (tolerance {tol_sel})")
     return why
+
+
+def mac_caret_px(out, n):
+    """The last MAC_FACT caretXpx of mac-run-NN.log (the insertion point after the final step), or None."""
+    log = out / f"mac-run-{n}.log"
+    vals = [float(m) for m in re.findall(r"MAC_FACT .*? caretXpx=([0-9.\-]+)", log.read_text(errors="replace"))] if log.is_file() else []
+    return vals[-1] if vals else None
 
 
 def main():
@@ -88,6 +104,13 @@ def main():
         for k, frame in enumerate(cfg["fields"]):
             m, w = analyse(im, frame), analyse(iw, frame)
             why = gate(m, w, cfg)
+            if k == 0 and cfg.get("caret") == "macFact":
+                mc, wc = mac_caret_px(out, n), (w["caretX"] or [None])[0]
+                m["caretXpx"] = mc
+                if mc is None or wc is None:
+                    why.append(f"caret: mac insertion point {mc}, windows caret column {wc}")
+                elif abs(wc - mc) > float(cfg.get("caretTolerancePx", 0)):
+                    why.append(f"caret x mac {mc:.2f} != windows column {wc} (tolerance {cfg.get('caretTolerancePx', 0)} px)")
             rows.append(dict(run=int(n), field=k, frame=frame, ok=not why, why=why, mac=m, windows=w))
             bad += bool(why)
     rep = dict(gate="text origin (first ink x, selection colour and start x)", firstInkTolerancePx=cfg.get("firstInkTolerancePx", 0),
@@ -100,7 +123,7 @@ def main():
         m, w = r["mac"], r["windows"]
         sm, sw = m["selection"], w["selection"]
         print(f"  textorigin run {r['run']:02d} field {r['field']}: {'ok' if r['ok'] else 'FAIL ' + '; '.join(r['why'])} first-ink mac={m['firstInkX']} win={w['firstInkX']}"
-              + (f" selection mac x={sm['startX']} {tuple(sm['colour'])} win x={sw['startX']} {tuple(sw['colour'])}" if sm and sw else "") + (f" caret win x={w['caretX']}" if w["caretX"] else ""))
+              + (f" selection mac x={sm['startX']} {tuple(sm['colour'])} win x={sw['startX']} {tuple(sw['colour'])}" if sm and sw else "") + (f" caret win x={w['caretX']}" if w["caretX"] else "") + (f" caret mac insertion x={m['caretXpx']}" if m.get("caretXpx") is not None else ""))
     d = Counter((r["windows"]["firstInkX"] - r["mac"]["firstInkX"]) for r in rows if "mac" in r and r["mac"]["firstInkX"] is not None and r["windows"]["firstInkX"] is not None)
     print(f"textorigin checks={len(rows)} pass={len(rows) - bad} fail={bad} first-ink delta (win-mac px): {dict(sorted(d.items()))}")
     sys.exit(1 if bad else 0)
