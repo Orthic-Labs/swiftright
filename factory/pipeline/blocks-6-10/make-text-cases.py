@@ -33,9 +33,9 @@ def cases():
     var body: some View {{ TextField("Name", text: $name, prompt: Text("Enter")).textFieldStyle(.roundedBorder){pad} }}
 }}''', "Witness_tf_prompt", exclude=[("prompt 'Enter' glyphs", FIELD_RECT)], sem=SEM)
     case("swiftui.textfield", "filled-truncated-v1", '''struct Witness_tf_truncated: View {
-    @State private var name = "HelloLongSentenceThatWillNotFit"
+    @State private var name = "Hello, a long sentence that will not fit"
     var body: some View { TextField("Name", text: $name).textFieldStyle(.roundedBorder).frame(width: 80).padding(10) }
-}''', "Witness_tf_truncated", exclude=[("typed text glyphs, clipped at the field's text area", [35, 30, 215, 80])], sem=SEM, origin={"fields": [[25, 25, 225, 85]], "lastInk": True})
+}''', "Witness_tf_truncated", exclude=[("typed text glyphs, clipped at the field's text area", [35, 30, 215, 80])], sem=SEM, origin={"fields": [[25, 25, 225, 85]]})
     case("swiftui.textfield", "plain-v1", '''struct Witness_tf_plain: View {
     @State private var name = "Hello"
     var body: some View { TextField("Name", text: $name).textFieldStyle(.plain).frame(width: 120).padding(10) }

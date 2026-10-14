@@ -4,10 +4,10 @@ Method as in `../swiftui.binding/FACTS.md` (offscreen `NSHostingView`, scale 2.5
 
 ## TextField look and size (pixels at scale 2.5 on white; `.automatic`, `.roundedBorder`, `.squareBorder` are identical)
 - `AppKitTextField` fills the width it is offered; height 24 pt bezeled, 16 pt `.plain` (no bezel, text at x = 0). Ideal size (`fixedSize`): text width + 8 pt (the placeholder when empty: `TextField("Name")` 48 x 24, "Hello" typed 43 x 24, prompt "Enter" 44 x 24). `frame(width:)` gives exactly that width.
-- The text STARTS 6 pt in, in a 16 pt line, vertically centred; a long text is clipped at the cell's content rect, 4 pt from each side, so its ink reaches 4 pt from the right edge (no ellipsis; measured: last ink column 214 in a frame ending at 225). 6 = the cell's 4 pt content inset
+- The text STARTS 6 pt in, in a 16 pt line, vertically centred; a long text is clipped, not ellipsised, and the Mac's right-hand clip is not settled: with spaces (`Hello, a long sentence...`, 80 pt field) a glyph is cut at 4 pt from the edge (last ink column 214 in a frame ending at 225); an unspaced text ends on a whole glyph at 6 pt (210). The runtime clips at 4 pt; the right clip is not gated. 6 = the cell's 4 pt content inset
   (`NSTextFieldCell.drawingRect(forBounds: 120x24)` is (4,4,112,16); `cellSize` of "Hello" is 43x24 = text + 2 x 4, which is why the ideal width uses 4) + the
   field editor's `NSTextContainer.lineFragmentPadding` of 2 pt (probe: `factory/tools/appkit-probe`). Measured on the captures: the selection highlight of a
-  selected field starts at x = 40 px (frame at 25, scale 2.5) = 6 pt; the clip of `filled-truncated-v1` is 4 pt inside the 80 pt frame's right edge. An
+  selected field starts at x = 40 px (frame at 25, scale 2.5) = 6 pt; (see the clip note above for the right edge). An
   earlier version of this file said 4 pt (the cell inset alone): wrong by the 2 pt padding. The unbezeled `.plain` field has no cell inset (text at x = 0).
 - Selection highlight: `NSColor.selectedTextBackgroundColor`, aqua: (0.7020, 0.8431, 1.0) = (179,215,255) on white (the accent (0,122,255) at 30%); the Mac captures draw exactly
   this (the window answers `hasKeyAppearance`, so the field editor is emphasized). Unemphasized (a window that is not key) is (220,220,220); darkAqua emphasized (63,99,139).

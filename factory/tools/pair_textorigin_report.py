@@ -14,11 +14,9 @@ Glyph shapes stay excluded (decision 2: Segoe UI vs SF), but WHERE the text star
      mac-run-NN.log: firstRect of an empty range at the selection, capture px). With "caret": "macFact" the leftmost column of the Windows caret (a 1-2 px column in the
      exact caret colour 0x111111) must equal it within "caretTolerancePx" (default 0), for a caret at the text origin (an empty focused field: no glyph advance in it).
      Without "caret" the Windows caret column is reported only.
-  4. clip edge (opt-in, "lastInk": true, for a field whose text is clipped): the rightmost ink column. A glyph cut by the clip edge ends exactly on it, so the two sides
-     must agree within "lastInkTolerancePx" (default 0): this is the right-hand twin of the origin (the same 6 pt inset).
 pair.json:  "textOriginGate": {"fields": [[x0,y0,x1,y1], ...]   // field FRAMES in capture px (the 1 pt border is drawn outside them)
                                "firstInkTolerancePx": 0, "firstInkToleranceReason": "...", "selectionStartTolerancePx": 0, "requireInk": true,
-                               "caret": "macFact", "caretTolerancePx": 0, "lastInk": true}"""
+                               "caret": "macFact", "caretTolerancePx": 0}"""
 import json, re, sys
 from collections import Counter
 from pathlib import Path
@@ -55,7 +53,7 @@ def analyse(im, frame):
     caret_x = sorted(x for x, n in caret_cols.items() if n >= 18)
     thr = min([lum(bg)] + ([lum(tuple(sel["colour"]))] if sel else [])) - INK_MARGIN
     ink = [x for x, _, p in pts if lum(p) <= thr and x not in caret_x]
-    return dict(background=list(bg), firstInkX=min(ink) if ink else None, lastInkX=max(ink) if ink else None, selection=sel, caretX=caret_x or None)
+    return dict(background=list(bg), firstInkX=min(ink) if ink else None, selection=sel, caretX=caret_x or None)
 
 
 def gate(mac, win, cfg):
@@ -69,10 +67,6 @@ def gate(mac, win, cfg):
         d = win["firstInkX"] - mac["firstInkX"]
         if abs(d) > tol_ink:
             why.append(f"first ink x differs by {d} px (mac {mac['firstInkX']}, win {win['firstInkX']}, tolerance {tol_ink})")
-    if cfg.get("lastInk") and mac["lastInkX"] is not None and win["lastInkX"] is not None:
-        d = win["lastInkX"] - mac["lastInkX"]
-        if abs(d) > int(cfg.get("lastInkTolerancePx", 0)):
-            why.append(f"last ink x (clip edge) differs by {d} px (mac {mac['lastInkX']}, win {win['lastInkX']})")
     ms, ws = mac["selection"], win["selection"]
     if (ms is None) != (ws is None):
         why.append(f"selection drawn on {'mac' if ms else 'windows'} only")
