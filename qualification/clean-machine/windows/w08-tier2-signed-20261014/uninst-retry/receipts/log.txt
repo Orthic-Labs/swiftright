@@ -1,0 +1,23 @@
+15:18:17.017 w08-recovery guest start, method tier2-uninstall-retry, host 4F604C52-1BDE-4, os 10.0.26100.0
+15:18:18.159 default routes: 1
+15:18:18.334 signer imported to TrustedPeople
+15:18:18.905 feed server pid 5700
+15:18:27.374 feed up (0.1.0.0 feed)
+15:18:27.388 cancel offsets from delays.txt: 360,330,390,300,420,270,360,330,390,300,420,270
+15:18:27.399 attempt 1 delay +360 ms
+15:18:42.440 marker written, rows.json sha 2CC3BC85DCDB17E4E6B8AFF44D4B146EF6660D6666340C5EEDCBBF5342809AD5
+15:18:44.158 guard registered by the first launch: True
+15:18:52.131   -> NEEDS-REMEDIATION registered=0.1.0.0:Modified, NeedsRemediation op_after=2 failed_state=RegistrationChanged 
+15:18:52.358 appinstaller association after induction: 0.1.0.0 -> https://localhost:8443/sliceapp/SliceApp.appinstaller | after install of the winning attempt: 0.1.0.0 -> https://localhost:8443/sliceapp/SliceApp.appinstaller
+15:18:52.402 pre-recovery: package=0.1.0.0:Modified, NeedsRemediation (no launch attempt before the method)
+15:18:52.481 recovery: feed down at the cancel -> first run fails and schedules a retry; then Remove-AppxPackage; the retry tick (NO manual start) must remove the task and the folder
+15:21:26.098 recovery result: task removed by the retry tick=True (137.6 s after the remove) repair dir removed=True user data kept=True package now none
+15:21:31.951 post: package=none launched=False version= banner= marker_in_file=True marker_ui=
+15:21:32.171 screenshot post.jpg 2732x1631
+15:21:32.175 post screenshot done
+15:21:32.179 feed tail read
+15:21:32.179 finally: begin
+15:21:32.191 finally: result saved
+15:21:32.225 finally: logs copied
+15:21:32.246 finally: DONE written, stopping computer
+15:21:40.246 guest shutdown suppressed by the long-lived worker

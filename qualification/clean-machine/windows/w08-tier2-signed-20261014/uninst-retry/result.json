@@ -1,0 +1,189 @@
+{
+    "kind":  "w08",
+    "method":  "tier2-uninstall-retry",
+    "ok":  true,
+    "needs_fresh_sandbox":  false,
+    "clean_before":  {
+                         "clean":  true,
+                         "verify":  {
+                                        "packages":  [
+
+                                                     ],
+                                        "tasks":  [
+
+                                                  ],
+                                        "certs":  [
+
+                                                  ],
+                                        "sslcert_8443":  false,
+                                        "app_data":  false,
+                                        "feed_dir":  false,
+                                        "processes":  [
+
+                                                      ]
+                                    },
+                         "steps":  [
+                                       "ok   stop feed servers",
+                                       "ok   stop app + settings",
+                                       "ok   remove repair scheduled tasks",
+                                       "ok   remove package (all users, then current user)",
+                                       "ok   remove signer + feed certificates",
+                                       "ok   remove http sslcert bindings 8443",
+                                       "ok   remove app data + feed + harness temp"
+                                   ]
+                     },
+    "clean_after":  {
+                        "clean":  true,
+                        "verify":  {
+                                       "packages":  [
+
+                                                    ],
+                                       "tasks":  [
+
+                                                 ],
+                                       "certs":  [
+
+                                                 ],
+                                       "sslcert_8443":  false,
+                                       "app_data":  false,
+                                       "feed_dir":  false,
+                                       "processes":  [
+
+                                                     ]
+                                   },
+                        "steps":  [
+                                      "ok   stop feed servers",
+                                      "ok   stop app + settings",
+                                      "ok   remove repair scheduled tasks",
+                                      "ok   remove package (all users, then current user)",
+                                      "ok   remove signer + feed certificates",
+                                      "ok   remove http sslcert bindings 8443",
+                                      "ok   remove app data + feed + harness temp"
+                                  ]
+                    },
+    "signer_thumbprint":  "79ED27C027BFE6FBABC7D9C3F2926E05491EAE5F",
+    "old_sha256":  "2ef9dc7b6f89000bf9a01ff58e318e4a55fe91cf80f037dfec95c29e66a74050",
+    "new_sha256":  "20633b304c626d2b8cbd379b46af8478a993ad88214447ceb03baf9fb61ff9bb",
+    "guest_sha256_original":  "8c2bd58ba7abfe770bd10de4f65fba413efc5ec8362e7e8c24b4cb284c4fc555",
+    "stop_computer_calls_patched":  1,
+    "harness_exit":  0,
+    "harness_seconds":  205.5,
+    "harness_errors":  [
+
+                       ],
+    "induction":  {
+                      "success":  true,
+                      "attempts_total":  1,
+                      "genuine_cancels":  1,
+                      "completed_anyway":  0,
+                      "setup_failed":  0,
+                      "winning_delay_ms":  360,
+                      "winning_failed_state":  "RegistrationChanged"
+                  },
+    "pre_recovery_package":  "0.1.0.0:Modified, NeedsRemediation",
+    "recovery":  {
+                     "command":  "feed down at the cancel -\u003e first run fails and schedules a retry; then Remove-AppxPackage; the retry tick (NO manual start) must remove the task and the folder",
+                     "manual_task_start":  false,
+                     "retry_json_seen_s":  11.7,
+                     "guard_before_remove":  {
+                                                 "task_name":  "OrthicLabs.SliceApp_j3cejpx244dcr-Repair",
+                                                 "task_exists":  true,
+                                                 "task_state":  "Running",
+                                                 "last_run":  "10/14/2026 15:18:44",
+                                                 "last_result":  267009,
+                                                 "triggers":  [
+                                                                  "MSFT_TaskEventTrigger \u003cQueryList\u003e\u003cQuery Id=\"0\" Path=\"Microsoft-Windows-AppXDeploymentServer/Operational\"\u003e\u003cSelect Path=\"Microsoft-Windows-AppXDeploymentServer/Operational\"\u003e*[System[(EventID=751)]]\u003c/Select\u003e\u003c/Query\u003e\u003c/QueryList\u003e",
+                                                                  "MSFT_TaskLogonTrigger"
+                                                              ],
+                                                 "action":  "%SystemRoot%\\System32\\conhost.exe --headless powershell.exe -NoProfile -NonInteractive -ExecutionPolicy Bypass -WindowStyle Hidden -File \"C:\\Users\\WDAGUtilityAccount\\AppData\\Local\\SliceApp\\repair\\repair-guard.ps1\"",
+                                                 "run_as":  "WDAGUtilityAccount Interactive Limited",
+                                                 "dir_exists":  true,
+                                                 "files":  [
+                                                               "guard.json 551",
+                                                               "install-result.json 224",
+                                                               "repair-guard.ps1 24757",
+                                                               "repair.log 1027",
+                                                               "retry.json 151"
+                                                           ],
+                                                 "guard_json":  "{ \"guardVersion\": 2, \"pfn\": \"OrthicLabs.SliceApp_j3cejpx244dcr\", \"name\": \"OrthicLabs.SliceApp\", \"publisher\": \"CN=Damned Ventures LLC, O=Damned Ventures LLC, L=new york, S=New York, C=US\", \"feed\": \"https://localhost:8443/sliceapp/SliceApp.appinstaller\", \"msix\": \"https://localhost:8443/sliceapp/SliceApp_0.1.0.0_x64.msix\", \"task\": \"OrthicLabs.SliceApp_j3cejpx244dcr-Repair\", \"dir\": \"C:\\\\Users\\\\WDAGUtilityAccount\\\\AppData\\\\Local\\\\SliceApp\\\\repair\", \"installedUtc\": \"2026-10-14T09:48:40.6634736Z\" }",
+                                                 "repair_log":  [
+                                                                    "2026-10-14T09:48:36Z [app] installer started (script changed, guard.json missing or task missing)",
+                                                                    "2026-10-14T15:18:40.804+05:30 [install] task OrthicLabs.SliceApp_j3cejpx244dcr-Repair registered; identity=OrthicLabs.SliceApp / CN=Damned Ventures LLC, O=Damned Ventures LLC, L=new york, S=New York, C=US; feed=https://localhost:8443/sliceapp/SliceApp.appinstaller msix=https://localhost:8443/sliceapp/SliceApp_0.1.0.0_x64.msix",
+                                                                    "2026-10-14T15:18:47.225+05:30 [repair] package NOT healthy: 0.1.0.0:Modified, NeedsRemediation; letting the deployment service settle",
+                                                                    "2026-10-14T15:18:59.736+05:30 [repair] feed unreachable, skipping -AppInstallerFile: https://localhost:8443/sliceapp/SliceApp.appinstaller : Unable to connect to the remote server",
+                                                                    "2026-10-14T15:18:59.753+05:30 [repair] downloading https://localhost:8443/sliceapp/SliceApp_0.1.0.0_x64.msix",
+                                                                    "2026-10-14T15:19:03.841+05:30 [repair] msix unreachable, skipping -Path: https://localhost:8443/sliceapp/SliceApp_0.1.0.0_x64.msix : Unable to connect to the remote server"
+                                                                ],
+                                                 "last-result.json":  null,
+                                                 "retry.json":  "{ \"attempt\": 1, \"firstFailureEpoch\": 1791971344, \"nextEpoch\": 1791971464, \"delayMinutes\": 2, \"reason\": \"repair failed\" }",
+                                                 "install-result.json":  "{ \"status\": \"installed\", \"code\": 0, \"mode\": \"install\", \"timeUtc\": \"2026-10-14T09:48:40.8461663Z\", \"guardVersion\": 2, \"detail\": \"task OrthicLabs.SliceApp_j3cejpx244dcr-Repair registered\" }",
+                                                 "install-attempt.json":  null
+                                             },
+                     "package_after_remove":  "none",
+                     "task_exists_right_after_remove":  true,
+                     "task_removed":  true,
+                     "seconds_to_task_removed":  137.6,
+                     "repair_dir_removed":  true,
+                     "parent_dir_kept":  true,
+                     "rows_kept":  true,
+                     "cleanup_note":  [
+                                          "2026-10-14T15:21:17.9200615+05:30 package OrthicLabs.SliceApp_j3cejpx244dcr absent; removing task OrthicLabs.SliceApp_j3cejpx244dcr-Repair and C:\\Users\\WDAGUtilityAccount\\AppData\\Local\\SliceApp\\repair",
+                                          "task unregistered"
+                                      ],
+                     "pass":  true,
+                     "result":  "task removed by the retry tick=True (137.6 s after the remove) repair dir removed=True user data kept=True",
+                     "seconds":  153.1,
+                     "feed_requests_during":  0,
+                     "appx_events":  [
+                                         "15:19:04.894 id=603 Information: Started deployment Remove operation on a package with main parameter OrthicLabs.SliceApp_0.1.0.0_x64__j3cejpx244dcr and Options 0 and 0. See http://go.microsoft.com/fwlink/?LinkId=235160 for help diag",
+                                         "15:19:04.901 id=10002 Verbose: Creating Resiliency File C:\\ProgramData\\Microsoft\\Windows\\AppRepository\\dac6489b-6661-4b53-8bf5-643e3a5699d8_S-1-5-21-2047949552-857980807-821054962-504_85.rslc for Remove Operation on Package OrthicL",
+                                         "15:19:04.908 id=607 Information: Deployment Remove operation on package OrthicLabs.SliceApp_0.1.0.0_x64__j3cejpx244dcr has been de-queued and is running for user SID S-1-5-21-2047949552-857980807-821054962-504.",
+                                         "15:19:04.910 id=855 Information: Finished resolving action lists. DeploymentRequest action lists: removePackageList: OrthicLabs.SliceApp_0.1.0.0_x64__j3cejpx244dcr.",
+                                         "15:19:04.917 id=617 Verbose: Successfully updated the status for package OrthicLabs.SliceApp_0.1.0.0_x64__j3cejpx244dcr and user S-1-5-21-2047949552-857980807-821054962-504 (Clear=0x0, Set=0x20).",
+                                         "15:19:05.154 id=617 Verbose: Successfully updated the status for package OrthicLabs.SliceApp_0.1.0.0_x64__j3cejpx244dcr and user S-1-5-21-2047949552-857980807-821054962-504 (Clear=0xFFFFFFFF, Set=0x0).",
+                                         "15:19:05.240 id=818 Verbose: Determining packages to be installed during logon for user: S-1-5-21-2047949552-857980807-821054962-504.",
+                                         "15:19:05.244 id=400 Information: Deployment Remove operation with target volume C: on Package OrthicLabs.SliceApp_0.1.0.0_x64__j3cejpx244dcr from: (OrthicLabs.SliceApp_0.1.0.0_x64__j3cejpx244dcr) finished successfully.",
+                                         "15:19:05.258 id=472 Verbose: Moving package folder \\\\?\\C:\\Program Files\\WindowsApps\\OrthicLabs.SliceApp_0.1.0.0_x64__j3cejpx244dcr to \\\\?\\C:\\Program Files\\WindowsApps\\Deleted\\OrthicLabs.SliceApp_0.1.0.0_x64__j3cejpx244dcr205d38a0",
+                                         "20:14:57.209 id=939 Information: Appxsvc lifecycle transition to Starting (Checkpoint=2)",
+                                         "20:14:57.418 id=682 Information: All inbox manifest cache entries were deleted.",
+                                         "20:14:57.479 id=633 Information: PreRegisterPackage 1527c705-839a-4832-9118-54d4Bd6a0c89_10.0.19640.1000_neutral_neutral_cw5n1h2txyewy, IsInstalled=false, Options=ImmediatePriorityRequest,PreRegisterIndexing.",
+                                         "20:14:57.481 id=607 Information: Deployment PreRegisterPackage operation on package 1527c705-839a-4832-9118-54d4Bd6a0c89_10.0.19640.1000_neutral_neutral_cw5n1h2txyewy has been de-queued and is running for user SID S-1-5-18.",
+                                         "20:14:57.488 id=854 Information: Successfully added the following uri(s) to be processed: C:\\Windows\\SystemApps\\Microsoft.Windows.FilePicker_cw5n1h2txyewy\\AppxManifest.xml.",
+                                         "20:14:57.505 id=574 Information: Preferred package version for package family is changing. Current preferred version is: NULL. New preferred version will be: 1527c705-839a-4832-9118-54d4Bd6a0c89_10.0.19640.1000_neutral_neutral_cw5n1h",
+                                         "20:14:57.533 id=855 Information: Finished resolving action lists. DeploymentRequest action lists: addPackageList: 1527c705-839a-4832-9118-54d4Bd6a0c89_10.0.19640.1000_neutral_neutral_cw5n1h2txyewy.",
+                                         "20:14:57.736 id=617 Verbose: Successfully updated the status for package 1527c705-839a-4832-9118-54d4Bd6a0c89_10.0.19640.1000_neutral_neutral_cw5n1h2txyewy and user S-1-5-18 (Clear=0x10000C00, Set=0x0).",
+                                         "20:14:57.736 id=400 Information: Deployment PreRegisterPackage operation with target volume C: on Package 1527c705-839a-4832-9118-54d4Bd6a0c89_10.0.19640.1000_neutral_neutral_cw5n1h2txyewy from: finished successfully.",
+                                         "20:14:57.745 id=613 Information: Performance summary of Deployment PreRegisterPackage operation on Package 1527c705-839a-4832-9118-54d4Bd6a0c89_10.0.19640.1000_neutral_neutral_cw5n1h2txyewy: Overall time: 265 ms (Active time: 265 ms)",
+                                         "20:14:57.755 id=633 Information: PreRegisterPackage c5e2524a-ea46-4f67-841f-6a9465d9d515_10.0.26100.1_neutral_neutral_cw5n1h2txyewy, IsInstalled=false, Options=ImmediatePriorityRequest,PreRegisterIndexing.",
+                                         "20:14:57.756 id=607 Information: Deployment PreRegisterPackage operation on package c5e2524a-ea46-4f67-841f-6a9465d9d515_10.0.26100.1_neutral_neutral_cw5n1h2txyewy has been de-queued and is running for user SID S-1-5-18.",
+                                         "20:14:57.765 id=854 Information: Successfully added the following uri(s) to be processed: C:\\Windows\\SystemApps\\Microsoft.Windows.FileExplorer_cw5n1h2txyewy\\AppxManifest.xml.",
+                                         "20:14:57.772 id=574 Information: Preferred package version for package family is changing. Current preferred version is: NULL. New preferred version will be: c5e2524a-ea46-4f67-841f-6a9465d9d515_10.0.26100.1_neutral_neutral_cw5n1h2tx",
+                                         "20:14:57.783 id=855 Information: Finished resolving action lists. DeploymentRequest action lists: addPackageList: c5e2524a-ea46-4f67-841f-6a9465d9d515_10.0.26100.1_neutral_neutral_cw5n1h2txyewy.",
+                                         "20:14:57.853 id=617 Verbose: Successfully updated the status for package c5e2524a-ea46-4f67-841f-6a9465d9d515_10.0.26100.1_neutral_neutral_cw5n1h2txyewy and user S-1-5-18 (Clear=0x10000C00, Set=0x0).",
+                                         "20:14:57.853 id=400 Information: Deployment PreRegisterPackage operation with target volume C: on Package c5e2524a-ea46-4f67-841f-6a9465d9d515_10.0.26100.1_neutral_neutral_cw5n1h2txyewy from: finished successfully.",
+                                         "20:14:57.861 id=613 Information: Performance summary of Deployment PreRegisterPackage operation on Package c5e2524a-ea46-4f67-841f-6a9465d9d515_10.0.26100.1_neutral_neutral_cw5n1h2txyewy: Overall time: 109 ms (Active time: 109 ms) En",
+                                         "20:14:57.869 id=633 Information: PreRegisterPackage E2A4F912-2574-4A75-9BB0-0D023378592B_10.0.19640.1000_neutral_neutral_cw5n1h2txyewy, IsInstalled=false, Options=ImmediatePriorityRequest,PreRegisterIndexing.",
+                                         "20:14:57.870 id=607 Information: Deployment PreRegisterPackage operation on package E2A4F912-2574-4A75-9BB0-0D023378592B_10.0.19640.1000_neutral_neutral_cw5n1h2txyewy has been de-queued and is running for user SID S-1-5-18.",
+                                         "20:14:57.878 id=854 Information: Successfully added the following uri(s) to be processed: C:\\Windows\\SystemApps\\Microsoft.Windows.AppResolverUX_cw5n1h2txyewy\\AppxManifest.xml."
+                                     ]
+                 },
+    "post":  {
+                 "tag":  "tier2-uninstall-retry",
+                 "package":  "none",
+                 "package_detail":  null,
+                 "appinstaller_assoc":  "no package",
+                 "needs_remediation":  false,
+                 "marker_in_file_before_launch":  true,
+                 "rows_sha_before_launch":  "2CC3BC85DCDB17E4E6B8AFF44D4B146EF6660D6666340C5EEDCBBF5342809AD5",
+                 "rows_sha_equals_written":  true,
+                 "launch":  {
+                                "launched":  false,
+                                "error":  "no package registered"
+                            },
+                 "marker_in_file_after":  true,
+                 "rows_sha_after":  "2CC3BC85DCDB17E4E6B8AFF44D4B146EF6660D6666340C5EEDCBBF5342809AD5",
+                 "rows_sha_equals_written_after":  true
+             },
+    "pass":  true,
+    "reason":  "finished"
+}

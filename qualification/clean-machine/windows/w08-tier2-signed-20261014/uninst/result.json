@@ -1,0 +1,149 @@
+{
+    "kind":  "w08",
+    "method":  "tier2-uninstall",
+    "ok":  true,
+    "needs_fresh_sandbox":  false,
+    "clean_before":  {
+                         "clean":  true,
+                         "verify":  {
+                                        "packages":  [
+
+                                                     ],
+                                        "tasks":  [
+
+                                                  ],
+                                        "certs":  [
+
+                                                  ],
+                                        "sslcert_8443":  false,
+                                        "app_data":  false,
+                                        "feed_dir":  false,
+                                        "processes":  [
+
+                                                      ]
+                                    },
+                         "steps":  [
+                                       "ok   stop feed servers",
+                                       "ok   stop app + settings",
+                                       "ok   remove repair scheduled tasks",
+                                       "ok   remove package (all users, then current user)",
+                                       "ok   remove signer + feed certificates",
+                                       "ok   remove http sslcert bindings 8443",
+                                       "ok   remove app data + feed + harness temp"
+                                   ]
+                     },
+    "clean_after":  {
+                        "clean":  true,
+                        "verify":  {
+                                       "packages":  [
+
+                                                    ],
+                                       "tasks":  [
+
+                                                 ],
+                                       "certs":  [
+
+                                                 ],
+                                       "sslcert_8443":  false,
+                                       "app_data":  false,
+                                       "feed_dir":  false,
+                                       "processes":  [
+
+                                                     ]
+                                   },
+                        "steps":  [
+                                      "ok   stop feed servers",
+                                      "ok   stop app + settings",
+                                      "ok   remove repair scheduled tasks",
+                                      "ok   remove package (all users, then current user)",
+                                      "ok   remove signer + feed certificates",
+                                      "ok   remove http sslcert bindings 8443",
+                                      "ok   remove app data + feed + harness temp"
+                                  ]
+                    },
+    "signer_thumbprint":  "79ED27C027BFE6FBABC7D9C3F2926E05491EAE5F",
+    "old_sha256":  "2ef9dc7b6f89000bf9a01ff58e318e4a55fe91cf80f037dfec95c29e66a74050",
+    "new_sha256":  "20633b304c626d2b8cbd379b46af8478a993ad88214447ceb03baf9fb61ff9bb",
+    "guest_sha256_original":  "8c2bd58ba7abfe770bd10de4f65fba413efc5ec8362e7e8c24b4cb284c4fc555",
+    "stop_computer_calls_patched":  1,
+    "harness_exit":  0,
+    "harness_seconds":  58.1,
+    "harness_errors":  [
+
+                       ],
+    "induction":  {
+
+                  },
+    "pre_recovery_package":  null,
+    "recovery":  {
+                     "first_launch":  {
+                                          "tag":  "uninstall-first-launch",
+                                          "launched":  true,
+                                          "pid":  2212,
+                                          "window_name":  "SliceApp",
+                                          "exe_path":  "C:\\Program Files\\WindowsApps\\OrthicLabs.SliceApp_0.1.0.0_x64__j3cejpx244dcr\\SliceApp.exe",
+                                          "running_version":  "0.1.0.0",
+                                          "seconds":  2,
+                                          "processes_without_window":  0,
+                                          "top_windows":  [
+                                                              "class=Zed::Window name=[SliceApp] pid=0",
+                                                              "class=ConsoleWindowClass name=[Administrator: Windows PowerShell] pid=6768"
+                                                          ]
+                                      },
+                     "guard_registered":  true,
+                     "guard_before":  {
+                                          "task_name":  "OrthicLabs.SliceApp_j3cejpx244dcr-Repair",
+                                          "task_exists":  true,
+                                          "task_state":  "Ready",
+                                          "last_run":  "11/30/1999 00:00:00",
+                                          "last_result":  267011,
+                                          "triggers":  [
+                                                           "MSFT_TaskEventTrigger \u003cQueryList\u003e\u003cQuery Id=\"0\" Path=\"Microsoft-Windows-AppXDeploymentServer/Operational\"\u003e\u003cSelect Path=\"Microsoft-Windows-AppXDeploymentServer/Operational\"\u003e*[System[(EventID=751)]]\u003c/Select\u003e\u003c/Query\u003e\u003c/QueryList\u003e",
+                                                           "MSFT_TaskLogonTrigger"
+                                                       ],
+                                          "action":  "%SystemRoot%\\System32\\conhost.exe --headless powershell.exe -NoProfile -NonInteractive -ExecutionPolicy Bypass -WindowStyle Hidden -File \"C:\\Users\\WDAGUtilityAccount\\AppData\\Local\\SliceApp\\repair\\repair-guard.ps1\"",
+                                          "run_as":  "WDAGUtilityAccount Interactive Limited",
+                                          "dir_exists":  true,
+                                          "files":  [
+                                                        "guard.json 551",
+                                                        "install-result.json 224",
+                                                        "repair-guard.ps1 24757",
+                                                        "repair.log 428"
+                                                    ],
+                                          "guard_json":  "{ \"guardVersion\": 2, \"pfn\": \"OrthicLabs.SliceApp_j3cejpx244dcr\", \"name\": \"OrthicLabs.SliceApp\", \"publisher\": \"CN=Damned Ventures LLC, O=Damned Ventures LLC, L=new york, S=New York, C=US\", \"feed\": \"https://localhost:8443/sliceapp/SliceApp.appinstaller\", \"msix\": \"https://localhost:8443/sliceapp/SliceApp_0.1.0.0_x64.msix\", \"task\": \"OrthicLabs.SliceApp_j3cejpx244dcr-Repair\", \"dir\": \"C:\\\\Users\\\\WDAGUtilityAccount\\\\AppData\\\\Local\\\\SliceApp\\\\repair\", \"installedUtc\": \"2026-10-14T09:27:26.3887870Z\" }",
+                                          "repair_log":  [
+                                                             "2026-10-14T09:27:22Z [app] installer started (script changed, guard.json missing or task missing)",
+                                                             "2026-10-14T14:57:26.478+05:30 [install] task OrthicLabs.SliceApp_j3cejpx244dcr-Repair registered; identity=OrthicLabs.SliceApp / CN=Damned Ventures LLC, O=Damned Ventures LLC, L=new york, S=New York, C=US; feed=https://localhost:8443/sliceapp/SliceApp.appinstaller msix=https://localhost:8443/sliceapp/SliceApp_0.1.0.0_x64.msix"
+                                                         ],
+                                          "last-result.json":  null,
+                                          "retry.json":  null,
+                                          "install-result.json":  "{ \"status\": \"installed\", \"code\": 0, \"mode\": \"install\", \"timeUtc\": \"2026-10-14T09:27:26.4955989Z\", \"guardVersion\": 2, \"detail\": \"task OrthicLabs.SliceApp_j3cejpx244dcr-Repair registered\" }",
+                                          "install-attempt.json":  null
+                                      },
+                     "rows_exists_before":  true,
+                     "parent_dir_before":  true,
+                     "package_after_remove":  "none",
+                     "task_exists_right_after_remove":  true,
+                     "task_removed":  true,
+                     "seconds_to_task_removed":  15.9,
+                     "guard_after":  {
+                                         "task_name":  "OrthicLabs.SliceApp_j3cejpx244dcr-Repair",
+                                         "task_exists":  false,
+                                         "dir_exists":  false
+                                     },
+                     "repair_dir_removed":  true,
+                     "parent_dir_kept":  true,
+                     "rows_kept":  true,
+                     "cleanup_note":  [
+                                          "2026-10-14T14:57:45.4148597+05:30 package OrthicLabs.SliceApp_j3cejpx244dcr absent; removing task OrthicLabs.SliceApp_j3cejpx244dcr-Repair and C:\\Users\\WDAGUtilityAccount\\AppData\\Local\\SliceApp\\repair",
+                                          "task unregistered"
+                                      ],
+                     "pass":  true,
+                     "result":  "task removed=True repair dir removed=True user data kept=True"
+                 },
+    "post":  {
+
+             },
+    "pass":  true,
+    "reason":  "finished"
+}

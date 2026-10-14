@@ -1,0 +1,68 @@
+{
+    "method":  "tier2-healthy",
+    "started_utc":  "2026-10-14T09:23:03.2724635Z",
+    "marker":  "w08-recovery-tier2-healthy-marker",
+    "attempts":  [
+
+                 ],
+    "induction":  {
+
+                  },
+    "pre_recovery":  {
+
+                     },
+    "recovery":  {
+                     "first_launch":  {
+                                          "tag":  "first-launch",
+                                          "launched":  true,
+                                          "pid":  5568,
+                                          "window_name":  "SliceApp",
+                                          "exe_path":  "C:\\Program Files\\WindowsApps\\OrthicLabs.SliceApp_0.1.0.0_x64__j3cejpx244dcr\\SliceApp.exe",
+                                          "running_version":  "0.1.0.0",
+                                          "seconds":  1.4,
+                                          "processes_without_window":  0,
+                                          "top_windows":  [
+                                                              "class=Zed::Window name=[SliceApp] pid=0",
+                                                              "class=ConsoleWindowClass name=[Administrator: Windows PowerShell] pid=6768"
+                                                          ]
+                                      },
+                     "guard_registered":  true,
+                     "package_before":  {
+                                            "version":  "0.1.0.0",
+                                            "status":  "Ok",
+                                            "full_name":  "OrthicLabs.SliceApp_0.1.0.0_x64__j3cejpx244dcr",
+                                            "install_location":  "C:\\Program Files\\WindowsApps\\orthiclabs.sliceapp_0.1.0.0_x64__j3cejpx244dcr",
+                                            "is_partially_staged":  "False",
+                                            "user_install_state":  ""
+                                        },
+                     "last_result":  {
+                                         "status":  "healthy",
+                                         "code":  0,
+                                         "mode":  "repair",
+                                         "timeUtc":  "2026-10-14T09:23:32.4306280Z",
+                                         "guardVersion":  2,
+                                         "detail":  "package healthy: 0.1.0.0:Ok"
+                                     },
+                     "package_after":  {
+                                           "version":  "0.1.0.0",
+                                           "status":  "Ok",
+                                           "full_name":  "OrthicLabs.SliceApp_0.1.0.0_x64__j3cejpx244dcr",
+                                           "install_location":  "C:\\Program Files\\WindowsApps\\orthiclabs.sliceapp_0.1.0.0_x64__j3cejpx244dcr",
+                                           "is_partially_staged":  "False",
+                                           "user_install_state":  ""
+                                       },
+                     "guard_log_new":  "2026-10-14T14:53:32.414+05:30 [repair] HEALTHY (code 0): package healthy: 0.1.0.0:Ok\r\n",
+                     "package_unchanged":  true,
+                     "add_appx_logged":  false,
+                     "pass":  true,
+                     "result":  "status=healthy package unchanged=True Add-AppxPackage logged=False"
+                 },
+    "post":  {
+
+             },
+    "errors":  [
+
+               ],
+    "default_routes":  1,
+    "ended_utc":  "2026-10-14T09:23:33.1286108Z"
+}

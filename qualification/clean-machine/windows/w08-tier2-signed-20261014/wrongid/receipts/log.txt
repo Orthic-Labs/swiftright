@@ -1,0 +1,25 @@
+14:58:32.560 w08-recovery guest start, method tier2-wrongid, host 4F604C52-1BDE-4, os 10.0.26100.0
+14:58:33.589 default routes: 1
+14:58:33.755 signer imported to TrustedPeople
+14:58:34.157 feed server pid 7520
+14:58:42.659 feed up (0.1.0.0 feed)
+14:58:42.674 cancel offsets from delays.txt: 360,330,390,300,420,270,360,330,390,300,420,270
+14:58:42.684 attempt 1 delay +360 ms
+14:58:57.100 marker written, rows.json sha F3700E5B8A2F7F4129E3C65A54CE47E1F62DA5E68FFB941E751A2B0307F9E5E9
+14:58:58.544 guard registered by the first launch: True
+14:59:06.300   -> NEEDS-REMEDIATION registered=0.1.0.0:Modified, NeedsRemediation op_after=2 failed_state=RegistrationChanged 
+14:59:06.543 appinstaller association after induction: 0.1.0.0 -> https://localhost:8443/sliceapp/SliceApp.appinstaller | after install of the winning attempt: 0.1.0.0 -> https://localhost:8443/sliceapp/SliceApp.appinstaller
+14:59:06.608 pre-recovery: package=0.1.0.0:Modified, NeedsRemediation (no launch attempt before the method)
+14:59:06.636 recovery: NO action of ours on the guard (never started by hand): wait for the repair guard task (OrthicLabs.SliceApp_j3cejpx244dcr-Repair, event 751 / logon / its own retry), then launch via explorer shell:AppsFolder; condition applied at the cancel: wrongid
+15:00:00.083 feed restored at +61 s (feed files restored); package 0.1.0.0:Modified, NeedsRemediation
+15:01:25.010 bad-then-restore: package while bad 0.1.0.0:Modified, NeedsRemediation; explicit failure logged True; recovered by the guard retry True (84.3 s after the restore)
+15:01:25.553 recovery result: package 0.1.1.0:Ok; seconds to Ok from cancel 145.3 package now 0.1.1.0:Ok
+15:01:36.363 post: package=0.1.1.0:Ok launched=True version=0.1.1.0 banner=True marker_in_file=True marker_ui=True
+15:01:36.537 screenshot post.jpg 2732x1631
+15:01:36.539 post screenshot done
+15:01:36.542 feed tail read
+15:01:36.542 finally: begin
+15:01:36.550 finally: result saved
+15:01:36.550 finally: logs copied
+15:01:36.568 finally: DONE written, stopping computer
+15:01:44.570 guest shutdown suppressed by the long-lived worker

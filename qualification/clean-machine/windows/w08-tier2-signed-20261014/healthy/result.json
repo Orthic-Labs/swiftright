@@ -1,0 +1,129 @@
+{
+    "kind":  "w08",
+    "method":  "tier2-healthy",
+    "ok":  true,
+    "needs_fresh_sandbox":  false,
+    "clean_before":  {
+                         "clean":  true,
+                         "verify":  {
+                                        "packages":  [
+
+                                                     ],
+                                        "tasks":  [
+
+                                                  ],
+                                        "certs":  [
+
+                                                  ],
+                                        "sslcert_8443":  false,
+                                        "app_data":  false,
+                                        "feed_dir":  false,
+                                        "processes":  [
+
+                                                      ]
+                                    },
+                         "steps":  [
+                                       "ok   stop feed servers",
+                                       "ok   stop app + settings",
+                                       "ok   remove repair scheduled tasks",
+                                       "ok   remove package (all users, then current user)",
+                                       "ok   remove signer + feed certificates",
+                                       "ok   remove http sslcert bindings 8443",
+                                       "ok   remove app data + feed + harness temp"
+                                   ]
+                     },
+    "clean_after":  {
+                        "clean":  true,
+                        "verify":  {
+                                       "packages":  [
+
+                                                    ],
+                                       "tasks":  [
+
+                                                 ],
+                                       "certs":  [
+
+                                                 ],
+                                       "sslcert_8443":  false,
+                                       "app_data":  false,
+                                       "feed_dir":  false,
+                                       "processes":  [
+
+                                                     ]
+                                   },
+                        "steps":  [
+                                      "ok   stop feed servers",
+                                      "ok   stop app + settings",
+                                      "ok   remove repair scheduled tasks",
+                                      "ok   remove package (all users, then current user)",
+                                      "ok   remove signer + feed certificates",
+                                      "ok   remove http sslcert bindings 8443",
+                                      "ok   remove app data + feed + harness temp"
+                                  ]
+                    },
+    "signer_thumbprint":  "79ED27C027BFE6FBABC7D9C3F2926E05491EAE5F",
+    "old_sha256":  "2ef9dc7b6f89000bf9a01ff58e318e4a55fe91cf80f037dfec95c29e66a74050",
+    "new_sha256":  "20633b304c626d2b8cbd379b46af8478a993ad88214447ceb03baf9fb61ff9bb",
+    "guest_sha256_original":  "8c2bd58ba7abfe770bd10de4f65fba413efc5ec8362e7e8c24b4cb284c4fc555",
+    "stop_computer_calls_patched":  1,
+    "harness_exit":  0,
+    "harness_seconds":  39.9,
+    "harness_errors":  [
+
+                       ],
+    "induction":  {
+
+                  },
+    "pre_recovery_package":  null,
+    "recovery":  {
+                     "first_launch":  {
+                                          "tag":  "first-launch",
+                                          "launched":  true,
+                                          "pid":  5568,
+                                          "window_name":  "SliceApp",
+                                          "exe_path":  "C:\\Program Files\\WindowsApps\\OrthicLabs.SliceApp_0.1.0.0_x64__j3cejpx244dcr\\SliceApp.exe",
+                                          "running_version":  "0.1.0.0",
+                                          "seconds":  1.4,
+                                          "processes_without_window":  0,
+                                          "top_windows":  [
+                                                              "class=Zed::Window name=[SliceApp] pid=0",
+                                                              "class=ConsoleWindowClass name=[Administrator: Windows PowerShell] pid=6768"
+                                                          ]
+                                      },
+                     "guard_registered":  true,
+                     "package_before":  {
+                                            "version":  "0.1.0.0",
+                                            "status":  "Ok",
+                                            "full_name":  "OrthicLabs.SliceApp_0.1.0.0_x64__j3cejpx244dcr",
+                                            "install_location":  "C:\\Program Files\\WindowsApps\\orthiclabs.sliceapp_0.1.0.0_x64__j3cejpx244dcr",
+                                            "is_partially_staged":  "False",
+                                            "user_install_state":  ""
+                                        },
+                     "last_result":  {
+                                         "status":  "healthy",
+                                         "code":  0,
+                                         "mode":  "repair",
+                                         "timeUtc":  "2026-10-14T09:23:32.4306280Z",
+                                         "guardVersion":  2,
+                                         "detail":  "package healthy: 0.1.0.0:Ok"
+                                     },
+                     "package_after":  {
+                                           "version":  "0.1.0.0",
+                                           "status":  "Ok",
+                                           "full_name":  "OrthicLabs.SliceApp_0.1.0.0_x64__j3cejpx244dcr",
+                                           "install_location":  "C:\\Program Files\\WindowsApps\\orthiclabs.sliceapp_0.1.0.0_x64__j3cejpx244dcr",
+                                           "is_partially_staged":  "False",
+                                           "user_install_state":  ""
+                                       },
+                     "guard_log_new":  "2026-10-14T14:53:32.414+05:30 [repair] HEALTHY (code 0): package healthy: 0.1.0.0:Ok\r\n",
+                     "package_unchanged":  true,
+                     "add_appx_logged":  false,
+                     "pass":  true,
+                     "result":  "status=healthy package unchanged=True Add-AppxPackage logged=False"
+                 },
+    "post":  {
+
+             },
+    "pass":  true,
+    "reason":  "finished"
+}
