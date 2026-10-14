@@ -8,5 +8,7 @@ ap = argparse.ArgumentParser(); ap.add_argument("case"); ap.add_argument("--witn
 case = Path(a.case).resolve()
 src = case / "mac-source/Sources/FactoryProbe"; src.mkdir(parents=True, exist_ok=True)
 shutil.copy(case / "package/Sources/FactoryProbe/Witness.swift", src / "Witness.swift")
-(src / "CaptureHost.swift").write_text((HERE / "CaptureHost.template.swift").read_text().replace("@@WITNESS@@", a.witness))
+tpl = (HERE / "CaptureHost.template.swift").read_text()
+assert "ScalePin." in tpl, "Mac host template does not pin the window/displayScale (decision C12; factory/tools/mac-scale-pin/pin_hosts.py)"
+(src / "CaptureHost.swift").write_text(tpl.replace("@@WITNESS@@", a.witness))
 print("stamped", src)

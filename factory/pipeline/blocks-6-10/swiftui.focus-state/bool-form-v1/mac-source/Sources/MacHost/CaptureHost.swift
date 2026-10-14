@@ -24,7 +24,7 @@ let captureScale = CGFloat(Double(value("--scale") ?? "2.5") ?? 2.5)
 
 final class OffscreenWindow: NSWindow {
     @objc(hasKeyAppearance) func hasKeyAppearanceOverride() -> Bool { true }
-    override var backingScaleFactor: CGFloat { captureScale }
+    override var backingScaleFactor: CGFloat { ScalePin.scale }
     override var canBecomeKey: Bool { true }
     override var canBecomeMain: Bool { true }
 }
@@ -139,6 +139,7 @@ func capture(_ witness: AnyView, width: CGFloat, height: CGFloat, to path: Strin
     let window = OffscreenWindow(contentRect: host.frame, styleMask: [.borderless], backing: .buffered, defer: false)
     window.appearance = NSAppearance(named: .aqua)
     window.contentView = host
+    ScalePin.report(window: window)
     let steps = value("--steps").flatMap { try? JSONSerialization.jsonObject(with: Data($0.utf8)) as? [[String: Any]] }
     if steps != nil {
         NSApp.setActivationPolicy(.accessory)

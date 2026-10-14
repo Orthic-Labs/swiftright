@@ -148,6 +148,7 @@ struct CaptureHost {
         let scale = Double(value("--scale") ?? "1") ?? 1
         let instrumented = !CommandLine.arguments.contains("--plain")
         let start = DispatchTime.now().uptimeNanoseconds
+        ScalePin.reportRenderer(scale: scale)
         let renderer = ImageRenderer(content: content(instrumented: instrumented))
         renderer.scale = scale
         guard let image = renderer.cgImage, let path = value("--png") else { throw NSError(domain: "F5", code: 1, userInfo: [NSLocalizedDescriptionKey: "ImageRenderer returned no image or --png missing"]) }

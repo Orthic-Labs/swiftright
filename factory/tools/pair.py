@@ -15,6 +15,7 @@ SSH = ["ssh", "-o", "BatchMode=yes", "win"]
 EXE_REL = r"scratch\x86_64-unknown-windows-msvc\release\FactoryProbe.exe"
 STAGE_ROOT = rf"{WIN_ROOT}\product-stage"
 DEFAULT_RENDERER = rf"{WIN_ROOT}\inputs\renderer-0.7-baseline-22ad719b\swiftright_render.dll"
+CAPTURE_SCALE = 2.5   # the density both sides capture at (the Windows Graph's scale; every Mac host gets --scale 2.5) and the scale every Mac host pins its window and displayScale to (decision C12)
 
 
 def sh(cmd, log=None, check=True, timeout=None):
@@ -99,7 +100,7 @@ def write_build_info(out, case, stage, stage_dir, renderer):
     print(f"build: stage {meta['name']} ({meta['mode']}{', DIRTY' if meta.get('dirty') else ''}) renderer sha256 {sha.strip()[:12]}", flush=True)
 
 
-def mac(case, name, runs, out, clock=None):
+def mac(case, name, runs, out, clock=None, strict=False):
     mdir = out / "mac"; mdir.mkdir(parents=True, exist_ok=True)
     cache = Path.home() / "Library/Caches/SwiftRightFactory/pair" / name
     (cache / "mc").mkdir(parents=True, exist_ok=True); (cache / "bin").mkdir(exist_ok=True)
@@ -108,6 +109,8 @@ def mac(case, name, runs, out, clock=None):
         srcs.append(str(Path(__file__).resolve().parent / "mac-ax-dump/AXDump.swift"))   # F3: in-process accessibility dump (no AX client API, no TCC)
     if any("AlertHooks." in Path(p).read_text() for p in srcs):
         srcs.append(str(Path(__file__).resolve().parent / "mac-ax-dump/AlertHooks.swift"))   # block 17: observe SwiftUI alerts without presenting them
+    if any("ScalePin." in Path(p).read_text() for p in srcs):
+        srcs.append(str(Path(__file__).resolve().parent / "mac-scale-pin/ScalePin.swift"))   # decision C12: the window/displayScale pin and its MAC_ENV report
     pj = case / "pair.json"
     mac_args = json.loads(pj.read_text()).get("macArgs", []) if pj.is_file() else []   # extra host arguments for the case (e.g. ["--press", "1"])
     sh(["/usr/bin/xcrun", "swiftc", "-parse-as-library", "-O", "-module-cache-path", str(cache / "mc"),
@@ -115,26 +118,27 @@ def mac(case, name, runs, out, clock=None):
     # the host only accepts scratch roots under a prefix hard-coded in its source
     m = re.search(r'scratchPrefix\s*=\s*"([^"]+)"', "\n".join(Path(s).read_text() for s in srcs))
     base = Path(m.group(1)) if m else cache / "scratch"
-    allsrc = "\n".join(Path(s).read_text() for s in srcs)
+    allsrc = "\n".join(Path(s).read_text() for s in srcs if "mac-scale-pin" not in s)   # the case's own flags: ScalePin.swift also parses --scale, which must not make an observe-mode host receive it
     png_mode = 'value("--png")' in allsrc          # older rounded-style host: --plain --scale S --png FILE
     scale_flag = ['"--scale"' in allsrc]
     ax_mode = '"--ax"' in allsrc                    # host writes the in-process accessibility dump when given --ax FILE
     for i in range(1, runs + 1):
         if clock is not None:
             # F1: one host run per run index, one PNG per clock step (mac/run-NN-fKK.png); MAC_FRAME lines (SwiftUI's own animation evaluation at each step) land in mac-run-NN.log
-            sh([str(cache / "bin/host"), "--scale", "2.5", "--clock", ",".join(repr(t) for t in clock), "--out", str(mdir), "--prefix", f"run-{i:02d}"],
+            sh([str(cache / "bin/host"), "--scale", str(CAPTURE_SCALE), "--clock", ",".join(repr(t) for t in clock), "--out", str(mdir), "--prefix", f"run-{i:02d}"],
                log=out / f"mac-run-{i:02d}.log", timeout=120 + 20 * len(clock))
             continue
         if png_mode:
-            sh([str(cache / "bin/host"), "--plain", "--scale", "2.5", "--png", str(mdir / f"run-{i:02d}.png"), *(["--ax", str(mdir / f"ax-{i:02d}.json")] if ax_mode else []), *mac_args],
+            sh([str(cache / "bin/host"), "--plain", "--scale", str(CAPTURE_SCALE), "--png", str(mdir / f"run-{i:02d}.png"), *(["--ax", str(mdir / f"ax-{i:02d}.json")] if ax_mode else []), *mac_args],
                log=out / f"mac-run-{i:02d}.log", timeout=120)
             continue
         scratch = base / f"pair-{out.name}-{i:02d}"
-        sh([str(cache / "bin/host"), "--observe", *(["--scale", "2.5"] if scale_flag[0] else []), "--scratch-root", str(scratch)],
+        sh([str(cache / "bin/host"), "--observe", *(["--scale", str(CAPTURE_SCALE)] if scale_flag[0] else []), "--scratch-root", str(scratch)],
            log=out / f"mac-run-{i:02d}.log", timeout=120)
         shutil.move(str(scratch / "client.png"), mdir / f"run-{i:02d}.png")
     mac_provenance(out)
     print(f"mac capture {runs}/{runs} ok", flush=True)
+    return scale_guard(out, runs, strict)
 
 
 def mac_provenance(out):
@@ -151,6 +155,39 @@ def mac_provenance(out):
     d = json.loads(bj.read_text()) if bj.is_file() else {}
     d["mac"] = info
     bj.write_text(json.dumps(d, indent=1))
+
+
+def scale_guard(out, runs, strict=False, quiet=False):
+    """Decision C12: a Mac reference must not depend on the attached screen. Every run's host prints a MAC_ENV line (factory/tools/mac-scale-pin/ScalePin.swift) with the pinned display scale, the
+    window's backing scale ("none" for an ImageRenderer host) and the displayScale SwiftUI gives a view in that window; each must equal CAPTURE_SCALE. Recorded in build.json mac.scaleGuard.
+    status MISMATCH (a host reported another scale) always fails the run; UNREPORTED (a host that prints no MAC_ENV, i.e. not yet pinned) fails only with strict (--scale-guard strict). Returns True when the run may pass."""
+    want, rows, bad, silent = CAPTURE_SCALE, [], [], []
+    for i in range(1, runs + 1):
+        lg = out / f"mac-run-{i:02d}.log"
+        m = re.search(r"^MAC_ENV (.*)$", lg.read_text(errors="replace"), re.M) if lg.is_file() else None
+        if not m:
+            silent.append(i); continue
+        kv = dict(re.findall(r"(\w+)=(\S+)", m.group(1)))
+        try:
+            pinned, eff = float(kv["pinnedDisplayScale"]), float(kv["effectiveDisplayScale"])
+            backing = kv["windowBackingScale"]; b = None if backing == "none" else float(backing)
+        except (KeyError, ValueError):
+            bad.append(dict(run=i, line=m.group(1)[:300], why="unparsable")); continue
+        rows.append((pinned, backing, eff, kv.get("screens", "")))
+        if pinned != want or eff != want or (b is not None and b != want):
+            bad.append(dict(run=i, pinnedDisplayScale=pinned, windowBackingScale=backing, effectiveDisplayScale=eff, screens=kv.get("screens", "")))
+    status = "MISMATCH" if bad else "UNREPORTED" if silent else "OK"
+    info = dict(captureScale=want, status=status, runs=runs, reported=len(rows), distinct=sorted({(r[0], r[1], r[2]) for r in rows}), screens=sorted({r[3] for r in rows}),
+                mismatches=bad[:10], unreportedRuns=silent[:10])
+    bj = out / "build.json"
+    d = json.loads(bj.read_text()) if bj.is_file() else {}
+    d.setdefault("mac", {})["scaleGuard"] = json.loads(json.dumps(info))
+    bj.write_text(json.dumps(d, indent=1))
+    ok = status == "OK" or (status == "UNREPORTED" and not strict)
+    if not quiet:
+        print(f"mac scale guard: {status} (capture scale {want}, {len(rows)}/{runs} runs reported; screens {info['screens']})" + ("" if ok else "  FAIL"), flush=True)
+        for b in bad[:3]: print(f"  scale guard FAIL run {b['run']}: {b}", flush=True)
+    return ok
 
 
 def load_exclusions(case, cli):
@@ -317,6 +354,18 @@ def semantic_decides(case):
     return "clockGate" in cfg or "imageFrame" in cfg or "controlGate" in cfg or cfg.get("semanticGate", {}).get("pixels") == "report-only" or "buttonGate" in cfg
 
 
+def recorded_scale_guard(out, strict):
+    """--recompare: the guard result recorded in build.json at capture time (a run captured before decision C12 has none: reported as unrecorded, failing only with strict)."""
+    bj = out / "build.json"
+    g = (json.loads(bj.read_text()).get("mac", {}).get("scaleGuard") if bj.is_file() else None)
+    if g is None:
+        print("mac scale guard: not recorded (captured before decision C12)" + ("  FAIL" if strict else ""))
+        return not strict
+    ok = g["status"] == "OK" or (g["status"] == "UNREPORTED" and not strict)
+    print(f"mac scale guard: {g['status']} (recorded; capture scale {g['captureScale']})" + ("" if ok else "  FAIL"))
+    return ok
+
+
 def main():
     ap = argparse.ArgumentParser()
     ap.add_argument("case"); ap.add_argument("--runs", type=int, default=1)
@@ -328,6 +377,7 @@ def main():
     ap.add_argument("--frames", metavar="T0,T1,..", help="F1: manual-clock times in seconds (one capture pair per step per run); default: <case>/pair.json \"clock\" if present")
     ap.add_argument("--recompare", metavar="RUN_DIR", help="re-evaluate an existing runs/<ts> dir with the gate, no capture")
     ap.add_argument("--out", help="reuse an existing runs/<ts> dir for the skipped side")
+    ap.add_argument("--scale-guard", choices=["strict", "default"], default="default", help="decision C12: a Mac host that reports a scale other than the capture scale always fails the run; strict also fails a host that reports none (not yet pinned)")
     a = ap.parse_args()
     case = Path(a.case).resolve(); name = case.name
     global HAZE
@@ -337,7 +387,8 @@ def main():
         n = len({q.name[:6] for q in (out / "mac").glob("run-*.png")})
         ok = compare(out, n, load_exclusions(case, a.exclude_text_bbox), len(clock or []), load_phases(case))
         sem = semantic_gate(case, out)
-        sys.exit(0 if (ok if sem is None else sem and (ok or semantic_decides(case))) else 1)
+        sg = recorded_scale_guard(out, a.scale_guard == "strict")
+        sys.exit(0 if (sg and (ok if sem is None else sem and (ok or semantic_decides(case)))) else 1)
     clock = load_clock(case, a.frames)
     out = Path(a.out) if a.out else case / "runs" / time.strftime("%Y%m%d-%H%M%S")
     out.mkdir(parents=True, exist_ok=True)
@@ -348,15 +399,15 @@ def main():
         if steps is not None and not a.sandbox: sys.exit("--steps (and pair.json steps) need --sandbox")
         if clock is not None and not a.sandbox: sys.exit("--frames (and pair.json clock) need --sandbox")
         windows(case, name, a.runs, out, a.shared, a.sandbox, a.stage, a.renderer, steps, clock)
-    if not a.skip_mac: mac(case, name, a.runs, out, clock)
+    guard = True if a.skip_mac else mac(case, name, a.runs, out, clock, a.scale_guard == "strict")
     print(f"out={out}")
-    ok = compare(out, a.runs, load_exclusions(case, a.exclude_text_bbox), len(clock or []), load_phases(case))
+    ok = compare(out, a.runs, load_exclusions(case, a.exclude_text_bbox), len(clock or []), load_phases(case)) and guard   # a failed scale guard fails the run whatever the pixels say
     sem = semantic_gate(case, out)
     if sem is None:
         sys.exit(0 if ok else 1)
     # An Image(systemName:) case differs from the Mac inside the glyph region by design (substitute provider): its semantic gate decides.
     image = semantic_decides(case)
-    sys.exit(0 if sem and (ok or image) else 1)
+    sys.exit(0 if guard and sem and (ok or image) else 1)
 
 
 if __name__ == "__main__":

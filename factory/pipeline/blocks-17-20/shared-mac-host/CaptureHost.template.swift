@@ -23,7 +23,7 @@ let captureScale = CGFloat(Double(value("--scale") ?? "2.5") ?? 2.5)
 final class OffscreenWindow: NSWindow {
     // AppKit asks the window whether to draw controls active; offscreen there is no activation, so say yes.
     @objc(hasKeyAppearance) func hasKeyAppearanceOverride() -> Bool { true }
-    override var backingScaleFactor: CGFloat { captureScale }
+    override var backingScaleFactor: CGFloat { ScalePin.scale }
 }
 
 @MainActor
@@ -40,6 +40,7 @@ func capture(_ witness: AnyView, width: CGFloat, height: CGFloat, to path: Strin
     let window = OffscreenWindow(contentRect: host.frame, styleMask: [.borderless], backing: .buffered, defer: false)
     if "@@APPEARANCE@@" != "none" { window.appearance = NSAppearance(named: "@@APPEARANCE@@" == "darkAqua" ? .darkAqua : .aqua) }
     window.contentView = host
+    ScalePin.report(window: window)
     host.layoutSubtreeIfNeeded()
     host.displayIfNeeded()
     RunLoop.current.run(until: Date().addingTimeInterval(@@SETTLE@@))

@@ -12,7 +12,9 @@ case = H / a.case; w = Path(a.witness_file).read_bytes()
 (case / "mac-source/Sources/MacHost").mkdir(parents=True, exist_ok=True)
 (case / "package/Sources/FactoryProbe/Witness.swift").write_bytes(w)
 (case / "mac-source/Sources/MacHost/Witness.swift").write_bytes(w)
-(case / "mac-source/Sources/MacHost/CaptureHost.swift").write_text((H / ("MacClockHost.template.swift" if a.clock else "MacHost.template.swift")).read_text().replace("@@WITNESS@@", a.expr).replace("@@SETTLE@@", a.settle))
+mac_template = (H / ("MacClockHost.template.swift" if a.clock else "MacHost.template.swift")).read_text()
+assert "ScalePin." in mac_template, "Mac host template does not pin the window/displayScale (decision C12; factory/tools/mac-scale-pin/pin_hosts.py)"
+(case / "mac-source/Sources/MacHost/CaptureHost.swift").write_text(mac_template.replace("@@WITNESS@@", a.expr).replace("@@SETTLE@@", a.settle))
 subprocess.check_call([sys.executable, str(H.parent / "pilot-delivery-five-v1/shared-windows-host/stamp-case.py"), str(case), "--witness", a.expr, "--centered"])
 if a.clock:
     pj = case / "pair.json"; cfg = json.loads(pj.read_text()) if pj.is_file() else {}

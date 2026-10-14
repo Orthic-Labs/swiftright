@@ -109,12 +109,11 @@ struct ClockCaptureHost {
             .background(Color.white)
             .environment(\.colorScheme, .light)
             .environment(\.displayScale, displayScale)
-        let screens = NSScreen.screens.map { "\(Int($0.frame.width))x\(Int($0.frame.height))@\($0.backingScaleFactor)x" }.joined(separator: ",")
-        print("MAC_ENV os=\(ProcessInfo.processInfo.operatingSystemVersionString) pinnedDisplayScale=\(displayScale) screens=[\(screens)]")
         let host = NSHostingView(rootView: root)
         host.frame = NSRect(x: 0, y: 0, width: 320, height: 240)
         let window = PinnedScaleWindow(contentRect: host.frame, styleMask: [.borderless], backing: .buffered, defer: false)
         window.contentView = host
+        ScalePin.report(window: window)
         host.layoutSubtreeIfNeeded()
         pump(@@SETTLE@@)
         for (k, t) in times.enumerated() {

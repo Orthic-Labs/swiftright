@@ -15,6 +15,7 @@ case = H / a.case; w = Path(a.witness_file).read_bytes()
 (case / "package/Sources/FactoryProbe/Witness.swift").write_bytes(w)
 (case / "mac-source/Sources/MacHost/Witness.swift").write_bytes(w)
 t = (H / "shared-mac-host/CaptureHost.template.swift").read_text()
+assert "ScalePin." in t, "Mac host template does not pin the window/displayScale (decision C12; factory/tools/mac-scale-pin/pin_hosts.py)"
 (case / "mac-source/Sources/MacHost/CaptureHost.swift").write_text(t.replace("@@WITNESS@@", a.expr).replace("@@SETTLE@@", a.settle))
 subprocess.check_call([sys.executable, str(H.parent / "pilot-delivery-five-v1/shared-windows-host/stamp-case.py"), str(case), "--witness", a.expr, "--centered"], stdout=subprocess.DEVNULL)
 src = case / "package/Sources/FactoryProbe"

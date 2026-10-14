@@ -51,6 +51,11 @@ def main():
     shutil.copy(HERE / "FactoryViewport.swift", src / "FactoryViewport.swift")
     (pkg / "Package.swift").write_text(PACKAGE)
     print("stamped", pkg)
+    # decision C12: the case's Mac host (mac-source, stamped beside this package by new-case.py / stamp-mac.py) must pin the window and displayScale to the capture scale
+    mac_src = pkg.parent / "mac-source"
+    unpinned = [str(f) for f in sorted(mac_src.rglob("*.swift")) if "@main" in f.read_text() and "ScalePin." not in f.read_text()] if mac_src.is_dir() else []
+    if unpinned:
+        raise SystemExit("Mac host does not pin the window/displayScale (decision C12; run factory/tools/mac-scale-pin/pin_hosts.py): " + ", ".join(unpinned))
 
 
 if __name__ == "__main__":

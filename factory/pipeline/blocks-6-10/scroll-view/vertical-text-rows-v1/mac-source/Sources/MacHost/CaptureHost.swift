@@ -24,8 +24,9 @@ struct CaptureHost {
             .environment(\.colorScheme, .light)
         let host = NSHostingView(rootView: root)
         host.frame = NSRect(x: 0, y: 0, width: 320, height: 240)
-        let window = NSWindow(contentRect: host.frame, styleMask: [.borderless], backing: .buffered, defer: false)
+        let window = ScalePinnedWindow(contentRect: host.frame, styleMask: [.borderless], backing: .buffered, defer: false)
         window.contentView = host
+        ScalePin.report(window: window)
         host.layoutSubtreeIfNeeded()
         RunLoop.current.run(until: Date().addingTimeInterval(0.3))
         host.layoutSubtreeIfNeeded(); host.displayIfNeeded()

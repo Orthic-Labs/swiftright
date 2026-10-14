@@ -118,6 +118,7 @@ struct CustomLayoutMacHost {
         host.frame = NSRect(x: 0, y: 0, width: fixedWidth, height: fixedHeight)
         host.layoutSubtreeIfNeeded()
         let before = try rootRSS("before-render")
+        ScalePin.reportRenderer(scale: renderScale)
         let renderer = ImageRenderer(content: root)
         renderer.scale = renderScale
         guard let image = renderer.cgImage else {

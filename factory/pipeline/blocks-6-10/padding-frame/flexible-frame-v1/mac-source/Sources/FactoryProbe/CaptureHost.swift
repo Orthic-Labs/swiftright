@@ -18,6 +18,7 @@ struct CaptureHost {
         let scale = Double(value("--scale") ?? "2.5") ?? 2.5
         let content = ZStack(alignment: .center) { Witness_flexible_frame().environment(\.colorScheme, .light) }
             .frame(width: 320, height: 240, alignment: .center).background(Color.white)
+        ScalePin.reportRenderer(scale: scale)
         let renderer = ImageRenderer(content: content)
         renderer.scale = scale
         guard let image = renderer.cgImage, let path = value("--png"),

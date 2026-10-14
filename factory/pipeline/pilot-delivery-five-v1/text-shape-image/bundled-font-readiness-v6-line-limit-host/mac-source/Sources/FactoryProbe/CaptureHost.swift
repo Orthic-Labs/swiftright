@@ -48,6 +48,7 @@ struct CaptureHost {
             throw NSError(domain: "TinosResolve", code: 3)
         }
         let scale = Double(value("--scale") ?? "1") ?? 1
+        ScalePin.reportRenderer(scale: scale)
         let renderer = ImageRenderer(content: content())
         renderer.scale = scale
         guard let image = renderer.cgImage, let path = value("--png") else { throw NSError(domain: "TinosRender", code: 4) }

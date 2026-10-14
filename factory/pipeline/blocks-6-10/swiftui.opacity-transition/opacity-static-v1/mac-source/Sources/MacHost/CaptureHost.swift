@@ -20,10 +20,8 @@ struct CaptureHost {
         guard let path = value("--png") else { throw NSError(domain: "MacHost", code: 1, userInfo: [NSLocalizedDescriptionKey: "--png missing"]) }
         // The reference screen is pinned to a 2x display (decision C11): SwiftUI lays text out for the scale it sees, the attached screen decides otherwise (a headless
         // 1920x1080 at 1x gives a 2 px taller line than a Retina panel). `--display-scale` overrides.
-        let displayScale = Double(value("--display-scale") ?? "2") ?? 2
+        let displayScale = Double(value("--display-scale") ?? "") ?? scale
         PinnedScaleWindow.pinned = CGFloat(displayScale)
-        let screens = NSScreen.screens.map { "\(Int($0.frame.width))x\(Int($0.frame.height))@\($0.backingScaleFactor)x" }.joined(separator: ",")
-        print("MAC_ENV os=\(ProcessInfo.processInfo.operatingSystemVersionString) pinnedDisplayScale=\(displayScale) screens=[\(screens)]")
         let root = ZStack(alignment: .center) { Witness_opacity_static() }
             .frame(width: 320, height: 240, alignment: .center)
             .background(Color.white)
@@ -33,6 +31,7 @@ struct CaptureHost {
         host.frame = NSRect(x: 0, y: 0, width: 320, height: 240)
         let window = PinnedScaleWindow(contentRect: host.frame, styleMask: [.borderless], backing: .buffered, defer: false)
         window.contentView = host
+        ScalePin.report(window: window)
         host.layoutSubtreeIfNeeded()
         RunLoop.current.run(until: Date().addingTimeInterval(0.3))
         host.layoutSubtreeIfNeeded(); host.displayIfNeeded()
