@@ -1,3 +1,58 @@
-{"semanticGate": {"fields": ["role", "name", "enabled", "dialogTitle", "count", "order"], "scope": "all", "pixels": "report-only", "phases": ["open", ""], "dialogs": {"count": {"open": 1, "": 0}}},
- "macArgs": ["--press", "0"],
- "steps": [{"op": "wait", "ms": 1200}, {"op": "foreground", "target": "dialog"}, {"op": "dump", "label": "open"}, {"op":"key","key":"Enter","target":"dialog"}, {"op": "wait", "ms": 800}]}
+{
+ "semanticGate": {
+  "fields": [
+   "role",
+   "name",
+   "enabled",
+   "dialogTitle",
+   "count",
+   "order",
+   "defaultButton",
+   "boundsY",
+   "boundsCentreX"
+  ],
+  "scope": "all",
+  "pixels": "report-only",
+  "phases": [
+   "open",
+   ""
+  ],
+  "dialogs": {
+   "count": {
+    "open": 1,
+    "": 0
+   }
+  },
+  "boundsCentreXRoles": [
+   "text"
+  ],
+  "boundsCentreXTolerancePt": 0.25
+ },
+ "macArgs": [
+  "--press",
+  "0"
+ ],
+ "steps": [
+  {
+   "op": "wait",
+   "ms": 1200
+  },
+  {
+   "op": "foreground",
+   "target": "dialog"
+  },
+  {
+   "op": "dump",
+   "label": "open"
+  },
+  {
+   "op": "key",
+   "key": "Enter",
+   "target": "dialog"
+  },
+  {
+   "op": "wait",
+   "ms": 800
+  }
+ ]
+}

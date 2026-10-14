@@ -294,7 +294,7 @@ def compare(out, runs, exclusions=(), frames=0, phases=()):
 
 
 def semantic_gate(case, out):
-    """Cases whose pair.json declares a semantic gate (imageFrame: Image(systemName:) frame/ink/tint; textGate: glyph-region ink bbox) run its report tool; "textOriginGate" adds the text-origin gate (pair_textorigin_report.py), "imeGate" the IME marked/selected range gate (pair_ime_report.py).
+    """Cases whose pair.json declares a semantic gate (imageFrame: Image(systemName:) frame/ink/tint; textGate: glyph-region ink bbox) run its report tool; "textOriginGate" adds the text-origin gate (pair_textorigin_report.py), "imeGate" the IME marked/selected range gate (pair_ime_report.py), and "textColourGate" beside a deciding gate that is not the text-colour one (a text gate case also gates its ink colour).
     Returns None when the case declares none, else whether the semantic gate passed."""
     pj = case / "pair.json"
     if not pj.is_file():
@@ -302,7 +302,7 @@ def semantic_gate(case, out):
     cfg = json.loads(pj.read_text())
     tool = "pair_list_report.py" if "listGate" in cfg else "pair_semantic_report.py" if "semanticGate" in cfg else "pair_clock_report.py" if "clockGate" in cfg else "pair_image_report.py" if "imageFrame" in cfg else "pair_control_report.py" if "controlGate" in cfg else "pair_button_report.py" if "buttonGate" in cfg else "pair_textcolour_report.py" if "textColourGate" in cfg else "pair_text_report.py" if "textGate" in cfg else None
     results = []
-    for t in [tool] + (["pair_textorigin_report.py"] if "textOriginGate" in cfg else []) + (["pair_ime_report.py"] if "imeGate" in cfg else []):   # the text-origin (sr1-decisions #12) and IME marked-range (#15) gates run beside whichever gate decides
+    for t in [tool] + (["pair_textorigin_report.py"] if "textOriginGate" in cfg else []) + (["pair_ime_report.py"] if "imeGate" in cfg else []) + (["pair_textcolour_report.py"] if "textColourGate" in cfg and tool != "pair_textcolour_report.py" else []) + (["pair_text_report.py"] if "textGate" in cfg and tool != "pair_text_report.py" else []):   # the text-origin (sr1-decisions #12) and IME marked-range (#15) gates run beside whichever gate decides
         if not t:
             continue
         r = subprocess.run([sys.executable, str(Path(__file__).resolve().parent / t), str(case), str(out)], capture_output=True, text=True)

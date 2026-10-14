@@ -14,9 +14,17 @@ Glyph shapes stay excluded (decision 2: Segoe UI vs SF), but WHERE the text star
      mac-run-NN.log: firstRect of an empty range at the selection, capture px). With "caret": "macFact" the leftmost column of the Windows caret (a 1-2 px column in the
      exact caret colour 0x111111) must equal it within "caretTolerancePx" (default 0), for a caret at the text origin (an empty focused field: no glyph advance in it).
      Without "caret" the Windows caret column is reported only.
+  4. vertical (sr1-decisions #14): the same ink, measured down the page. firstInkY is the topmost and baseline the lowest ink row of the
+     FIRST GLYPH (the run of consecutive ink columns that starts at the first ink column). Taking the first glyph keeps the measure independent of what follows it: a
+     marked-text underline, a taller letter later in the text, or a different right-hand clip (decision 12) never moves it.
+     Windows draws the body font at 12 pt and the Mac at 13 pt (decision 2), so glyph height differs; the line is centred on both sides, so the top sits lower and the
+     baseline higher on Windows by a measured, bounded amount. Gated: |firstInkY delta| <= "firstInkYTolerancePx", |baseline delta| <= "baselineTolerancePx" and the
+     distance of the mid-point of (firstInkY, baseline) <= "inkCentreYTolerancePx", each default 0, a non-zero value carrying "yToleranceReason" (measured over every
+     committed run; an unlisted tolerance is 0).
 pair.json:  "textOriginGate": {"fields": [[x0,y0,x1,y1], ...]   // field FRAMES in capture px (the 1 pt border is drawn outside them)
                                "firstInkTolerancePx": 0, "firstInkToleranceReason": "...", "selectionStartTolerancePx": 0, "requireInk": true,
-                               "caret": "macFact", "caretTolerancePx": 0}"""
+                               "caret": "macFact", "caretTolerancePx": 0,
+                               "firstInkYTolerancePx": 2, "baselineTolerancePx": 2, "inkCentreYTolerancePx": 0.5, "yToleranceReason": "..."}"""
 import json, re, sys
 from collections import Counter
 from pathlib import Path
@@ -52,8 +60,19 @@ def analyse(im, frame):
     caret_cols = Counter(x for x, _, p in pts if p == CARET)
     caret_x = sorted(x for x, n in caret_cols.items() if n >= 18)
     thr = min([lum(bg)] + ([lum(tuple(sel["colour"]))] if sel else [])) - INK_MARGIN
-    ink = [x for x, _, p in pts if lum(p) <= thr and x not in caret_x]
-    return dict(background=list(bg), firstInkX=min(ink) if ink else None, selection=sel, caretX=caret_x or None)
+    inkpts = [(x, y) for x, y, p in pts if lum(p) <= thr and x not in caret_x]
+    ink = [x for x, _ in inkpts]
+    first_y = base_y = None
+    if inkpts:
+        cols = sorted(set(ink))
+        run = {cols[0]}
+        for c in cols[1:]:
+            if c != max(run) + 1:
+                break
+            run.add(c)
+        first_y = min(y for x, y in inkpts if x in run)
+        base_y = max(y for x, y in inkpts if x in run)
+    return dict(background=list(bg), firstInkX=min(ink) if ink else None, firstInkY=first_y, baselineY=base_y, selection=sel, caretX=caret_x or None)
 
 
 def gate(mac, win, cfg):
@@ -67,6 +86,17 @@ def gate(mac, win, cfg):
         d = win["firstInkX"] - mac["firstInkX"]
         if abs(d) > tol_ink:
             why.append(f"first ink x differs by {d} px (mac {mac['firstInkX']}, win {win['firstInkX']}, tolerance {tol_ink})")
+    if mac.get("firstInkY") is not None and win.get("firstInkY") is not None:
+        tol_y, tol_b, tol_c = (float(cfg.get(k, 0)) for k in ("firstInkYTolerancePx", "baselineTolerancePx", "inkCentreYTolerancePx"))
+        dy = win["firstInkY"] - mac["firstInkY"]
+        db = win["baselineY"] - mac["baselineY"]
+        dc = (dy + db) / 2
+        if abs(dy) > tol_y:
+            why.append(f"first ink y differs by {dy} px (mac {mac['firstInkY']}, win {win['firstInkY']}, tolerance {tol_y:g})")
+        if abs(db) > tol_b:
+            why.append(f"baseline differs by {db} px (mac {mac['baselineY']}, win {win['baselineY']}, tolerance {tol_b:g})")
+        if abs(dc) > tol_c:
+            why.append(f"ink vertical centre differs by {dc:g} px (first ink y {dy}, baseline {db}, tolerance {tol_c:g})")
     ms, ws = mac["selection"], win["selection"]
     if (ms is None) != (ws is None):
         why.append(f"selection drawn on {'mac' if ms else 'windows'} only")
@@ -107,7 +137,7 @@ def main():
                     why.append(f"caret x mac {mc:.2f} != windows column {wc} (tolerance {cfg.get('caretTolerancePx', 0)} px)")
             rows.append(dict(run=int(n), field=k, frame=frame, ok=not why, why=why, mac=m, windows=w))
             bad += bool(why)
-    rep = dict(gate="text origin (first ink x, selection colour and start x)", firstInkTolerancePx=cfg.get("firstInkTolerancePx", 0),
+    rep = dict(gate="text origin (first ink x, first ink y, baseline, selection colour and start x)", yTolerancesPx=dict(firstInkY=cfg.get("firstInkYTolerancePx", 0), baseline=cfg.get("baselineTolerancePx", 0), inkCentreY=cfg.get("inkCentreYTolerancePx", 0)), yToleranceReason=cfg.get("yToleranceReason"), firstInkTolerancePx=cfg.get("firstInkTolerancePx", 0),
                firstInkToleranceReason=cfg.get("firstInkToleranceReason"), selectionStartTolerancePx=cfg.get("selectionStartTolerancePx", 0),
                checks=len(rows), fail=bad, rows=rows)
     (out / "textorigin-report.json").write_text(json.dumps(rep, indent=1))
@@ -116,7 +146,7 @@ def main():
             print(f"  textorigin run {r['run']:02d}: FAIL {r['why']}"); continue
         m, w = r["mac"], r["windows"]
         sm, sw = m["selection"], w["selection"]
-        print(f"  textorigin run {r['run']:02d} field {r['field']}: {'ok' if r['ok'] else 'FAIL ' + '; '.join(r['why'])} first-ink mac={m['firstInkX']} win={w['firstInkX']}"
+        print(f"  textorigin run {r['run']:02d} field {r['field']}: {'ok' if r['ok'] else 'FAIL ' + '; '.join(r['why'])} first-ink mac={m['firstInkX']} win={w['firstInkX']} y(top/baseline) mac={m['firstInkY']}/{m['baselineY']} win={w['firstInkY']}/{w['baselineY']}"
               + (f" selection mac x={sm['startX']} {tuple(sm['colour'])} win x={sw['startX']} {tuple(sw['colour'])}" if sm and sw else "") + (f" caret win x={w['caretX']}" if w["caretX"] else "") + (f" caret mac insertion x={m['caretXpx']}" if m.get("caretXpx") is not None else ""))
     d = Counter((r["windows"]["firstInkX"] - r["mac"]["firstInkX"]) for r in rows if "mac" in r and r["mac"]["firstInkX"] is not None and r["windows"]["firstInkX"] is not None)
     print(f"textorigin checks={len(rows)} pass={len(rows) - bad} fail={bad} first-ink delta (win-mac px): {dict(sorted(d.items()))}")

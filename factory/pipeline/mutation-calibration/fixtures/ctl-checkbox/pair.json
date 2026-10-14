@@ -3,8 +3,13 @@
   "helper": "factory/tools/pair_control_report.py",
   "minControlHeightPx": 36,
   "controlYTolerancePx": 2,
-  "labelCentreTolerancePx": 3,
+  "labelCentreTolerancePx": 1,
   "edgeAA": 32,
-  "note": "The label text differs by docs/sr1-decisions.md decision 2 (Segoe UI vs SF); a labelled checkbox keeps its box at the Mac position relative to the label (leading edge), and AppKit sets a labelled box 0.8 pt low, so y is allowed 2 px of play for the line-height difference between the fonts. The box itself must match exactly with edge-aa<=32."
+  "note": "The label text differs by docs/sr1-decisions.md decision 2 (Segoe UI vs SF); a labelled checkbox keeps its box at the Mac position relative to the label (leading edge), and AppKit sets a labelled box 0.8 pt low, so y is allowed 2 px of play for the line-height difference between the fonts. The box itself must match exactly with edge-aa<=32.",
+  "labelCentreToleranceReason": "measured: the label's vertical centre differs by 0.5 px on every run (Segoe UI 12 pt vs SF 13 pt, decision 2); was 3 px",
+  "leadingXTolerancePx": 0,
+  "labelLeadingXTolerancePx": 0,
+  "controlGapTolerancePx": 0,
+  "controlGapToleranceReason": "checkbox: the label starts a fixed 4.8 pt after the box; the gap measured 14 px on both sides on every run"
  }
 }

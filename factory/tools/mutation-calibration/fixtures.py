@@ -3,6 +3,7 @@
 factory/pipeline/mutation-calibration/fixtures/<id>/ so the calibration runs offline and byte-stable: no capture, no Windows, no Sandbox.
 
   python3 fixtures.py            # rebuild every fixture from the SOURCE paths below (read-only on the sources)
+  python3 fixtures.py --refresh-config   # only re-copy each case's pair.json (the committed run dirs have since been trimmed to run 01 PNGs and reports; the logs live in the fixtures)
 Each fixture: pair.json (the case's own gate configuration, unchanged), run/ (run 01 inputs only), SOURCE.json (where it came from)."""
 import json, shutil, sys
 from pathlib import Path
@@ -38,8 +39,9 @@ BASES = {
     # semantic gate
     "sem-click":     (f"{B11}/swiftui.button/click-increments-v1", "20261014-214203", ["mac/ax-01.json", "windows/uia-01.json"]),
     "sem-binding":   (f"{B6}/swiftui.binding/derived-click-v1", "20261014-195505", ["mac/ax-01*.json", "windows/uia-01*.json"]),
-    "sem-alert-three": (f"{B17}/swiftui.alert/three-buttons-v1", "20261014-225724", ["mac/ax-01*.json", "windows/uia-01*.json"]),
-    "sem-alert-default": (f"{B17}/swiftui.alert/default-enter-v1", "20261014-224807", ["mac/ax-01*.json", "windows/uia-01*.json"]),
+    "sem-alert-three": (f"{B17}/swiftui.alert/three-buttons-v1", "20261014-225724", ["mac/ax-01*.json", "windows/uia-01*.json", "windows/host-01.stdout.txt"]),
+    "sem-alert-default": (f"{B17}/swiftui.alert/default-enter-v1", "20261014-224807", ["mac/ax-01*.json", "windows/uia-01*.json", "windows/host-01.stdout.txt"]),
+    "sem-alert-confirm": (f"{B17}/swiftui.alert/confirm-delete-v1", "20261014-224327", ["mac/ax-01*.json", "windows/uia-01*.json", "windows/host-01.stdout.txt"]),
     "sem-focus-tab": (f"{B6}/swiftui.focus-state/tab-order-v1", "20261014-203430", ["mac/ax-01*.json", "windows/uia-01*.json", "windows/host-01.stdout.txt", "mac-run-01.log"]),
     "sem-ime":       (f"{B6}/swiftui.ime-marked-text/ime-composing-v1", "20261014-204651", ["mac/ax-01*.json", "windows/uia-01*.json", "windows/host-01.stdout.txt", "mac-run-01.log"]),
     "sem-tf-placeholder": (f"{B6}/swiftui.textfield/placeholder-v1", "20261014-201102", ["mac/ax-01*.json", "windows/uia-01*.json", "mac-run-01.log"]),
@@ -86,5 +88,13 @@ def build():
         print(bid, len(got), "files")
 
 
+def refresh_pair_json():
+    """Re-copy only each fixture's pair.json from its case (the case configuration changed: new gates, tolerances); the run files stay byte-for-byte what they were."""
+    for bid, (case, run, extra) in BASES.items():
+        if (PIPE / case / "pair.json").is_file():
+            shutil.copy2(PIPE / case / "pair.json", OUT / bid / "pair.json")
+            print(bid, "pair.json refreshed")
+
+
 if __name__ == "__main__":
-    build()
+    refresh_pair_json() if "--refresh-config" in sys.argv else build()

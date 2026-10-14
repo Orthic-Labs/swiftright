@@ -8,7 +8,7 @@ import pair_list_report as L
 
 MUTATIONS = []
 add = lambda gate, *a, **k: MUTATIONS.append(M(gate, *a, **k))
-GS, GL = "semantic", "list"
+GS, GL, GI = "semantic", "list", "ime"
 
 
 def U(ctx, f): return ctx.p(f"windows/{f}")
@@ -78,10 +78,15 @@ def bounds_move(role, name, dx, dy, main=True):
     return fn
 
 
-NOBOUNDS = "the case's semanticGate.fields omits bounds (boundsTolerancePt is implemented but no shipped case lists bounds)"
 NOFOCUS = "docs/sr1-status.md block 14 caveat and sr1-decisions D7: UIA keyboard focus is false in the Sandbox; focus is gated through @FocusState text, not the UIA flag"
 
 # ---- sem-click: Button click (final phase): role, name, enabled, count, order ----
+def log_edit(rel, old, new):
+    def f(ctx):
+        p = ctx.p(rel); t = p.read_text(errors="replace"); assert old in t, (rel, old); p.write_text(t.replace(old, new)); return f"{rel}: '{old}' -> '{new}'"
+    return f
+
+
 B = "sem-click"
 add(GS, B, "wrong-value", "catch", edit("uia-01.json", set_key("Text", "Count 1", "name", "Count 2")), "wrong value: the counter text")
 add(GS, B, "missing-node", "catch", edit("uia-01.json", remove("Button", "Add")), "a missing node: the Add button")
@@ -91,7 +96,11 @@ add(GS, B, "extra-node", "catch", edit("uia-01.json", duplicate("Button", "Add",
 add(GS, B, "wrong-name", "catch", edit("uia-01.json", set_key("Button", "Add", "name", "Plus")), "a wrong button name")
 add(GS, B, "order-swapped", "catch", edit("uia-01.json", swap("Text", "Count 1", "Button", "Add")), "tree order swapped")
 add(GS, B, "name-whitespace", "near", edit("uia-01.json", set_key("Text", "Count 1", "name", "Count   1")), "internal whitespace differs (the comparator collapses it)")
-add(GS, B, "bounds-30pt", "catch", edit("uia-01.json", bounds_move("Button", "Add", 75, 0)), "button 30 pt out of place", design=NOBOUNDS)
+add(GS, B, "bounds-30pt-x", "catch", edit("uia-01.json", bounds_move("Button", "Add", 75, 0)), "button 30 pt out of place in x (its centre is gated, decision 17)")
+add(GS, B, "bounds-x-2pt", "catch", edit("uia-01.json", bounds_move("Button", "Add", 5, 0)), "button published 2 pt (5 px) off in x")
+add(GS, B, "bounds-y-2pt", "catch", edit("uia-01.json", bounds_move("Button", "Add", 0, 5)), "button published 2 pt (5 px) too low")
+add(GS, B, "bounds-y-30pt", "catch", edit("uia-01.json", bounds_move("Button", "Add", 0, 75)), "button published 30 pt too low")
+add(GS, B, "bounds-text-y-2pt", "catch", edit("uia-01.json", bounds_move("Text", "Count 1", 0, 5)), "the count text published 2 pt too low")
 add(GS, B, "focus-flag", "catch", edit("uia-01.json", focus_flag("Button", "Add")), "wrong focus owner (UIA flag)", design=NOFOCUS)
 # ---- sem-binding: Toggle state through two clicks (phases c1, c2, final) ----
 B = "sem-binding"
@@ -112,7 +121,12 @@ add(GS, B, "dialog-title", "catch", edit("uia-01-open.json", dlg_title("Choose!"
 add(GS, B, "dialog-message", "catch", edit("uia-01-open.json", set_key("Text", "Pick one.", "name", "Pick two.", False)), "wrong message text")
 add(GS, B, "dialog-missing", "catch", edit("uia-01-open.json", dlg_drop), "no dialog shown")
 add(GS, B, "dialog-double", "catch", edit("uia-01-open.json", dlg_double), "two dialogs shown")
-add(GS, B, "default-button-wrong", "catch", edit("uia-01-open.json", focus_flag("Button", "Third", False)), "wrong default button: keyboard focus on Third (Mac default is First)", design="docs/sr1-decisions.md D6: the default button cannot be read from UIA focus in the Sandbox; it is gated by behaviour (Enter runs the Mac default), so the static 'default' field is not listed in any alert case")
+add(GS, B, "default-button-wrong", "catch", log_edit("windows/host-01.stdout.txt", "default=0", "default=2"), "wrong default button: the Windows TaskDialog is asked to default to Third (Mac default is First); host log HOST_DIALOG_REQUEST default=2")
+add(GS, B, "default-button-wrong-cancel", "catch", log_edit("windows/host-01.stdout.txt", "default=0", "default=1"), "wrong default button: Cancel")
+add(GS, B, "default-button-none", "catch", log_edit("windows/host-01.stdout.txt", "default=0", "default=none"), "no default button requested")
+add(GS, B, "default-index-out-of-range", "catch", log_edit("windows/host-01.stdout.txt", "default=0", "default=7"), "default index beyond the buttons")
+add(GS, B, "default-request-missing", "catch", log_edit("windows/host-01.stdout.txt", "HOST_DIALOG_REQUEST", "HOST_DIALOG_REQUESX"), "the host log records no dialog request")
+add(GS, B, "default-button-uia-focus", "catch", edit("uia-01-open.json", focus_flag("Button", "Third", False)), "wrong default button: UIA keyboard focus on Third", design=NOFOCUS)
 # ---- sem-alert-default: Enter must run the Mac default button (Save) ----
 B = "sem-alert-default"
 add(GS, B, "enter-ran-wrong-button", "catch", edit("uia-01.json", set_key("Text", "Done", "name", "Waiting")), "wrong default button: Enter ran 'Don't save' (nothing happened) instead of 'Save'")
@@ -123,7 +137,10 @@ def dlg_linger(ctx):
 
 add(GS, B, "enter-ignored", "catch", dlg_linger, "wrong default button: Enter did not dismiss the dialog")
 add(GS, B, "button-set-wrong", "catch", edit("uia-01-open.json", set_key("Button", "Don't save", "name", "Discard", False)), "wrong button set")
-add(GS, B, "default-button-wrong", "catch", edit("uia-01-open.json", focus_flag("Button", "Cancel", False)), "wrong default button: focus on Cancel", design="docs/sr1-decisions.md D6: gated by behaviour (the Enter case above), not by a static flag")
+add(GS, B, "default-button-wrong", "catch", log_edit("windows/host-01.stdout.txt", "default=0", "default=2"), "wrong default button: the Windows TaskDialog defaults to Cancel (Mac default is Save)")
+B = "sem-alert-confirm"
+add(GS, B, "destructive-default", "catch", log_edit("windows/host-01.stdout.txt", "default=1", "default=0"), "the destructive Delete button is the Windows default (the Mac has none and Cancel is the Escape button)")
+add(GS, B, "default-button-none", "catch", log_edit("windows/host-01.stdout.txt", "default=1", "default=none"), "no default button requested")
 # ---- sem-focus-tab: focus owner follows Tab (phases t1..t5), gated through the @FocusState text ----
 B = "sem-focus-tab"
 add(GS, B, "wrong-focus-owner-text", "catch", edit("uia-01-t2.json", set_key("Text", "focus: second", "name", "focus: first")), "wrong focus owner: the @FocusState text names the other field")
@@ -139,17 +156,23 @@ add(GS, B, "value-uncommitted", "catch", edit("uia-01.json", set_key("Edit", "Na
 add(GS, B, "missing-field", "catch", edit("uia-01.json", remove("Edit", "Name")), "a missing node")
 
 
-def log_edit(rel, old, new):
-    def f(ctx):
-        p = ctx.p(rel); t = p.read_text(errors="replace"); assert old in t, (rel, old); p.write_text(t.replace(old, new)); return f"{rel}: '{old}' -> '{new}'"
-    return f
-
-
-add(GS, B, "marked-range-windows", "catch", log_edit("windows/host-01.stdout.txt", "marked=2+2", "marked=0+2"), "wrong marked-text range on Windows (host HOST_FIELD log: marked=0+2, Mac marks 2+2)")
-add(GS, B, "marked-range-mac", "catch", log_edit("mac-run-01.log", "marked=2+2", "marked=3+1"), "wrong marked-text range on the Mac reference (MAC_FACT log)")
-add(GS, B, "marked-lost-windows", "catch", log_edit("windows/host-01.stdout.txt", "marked=2+2", "marked=none"), "marked range lost on Windows (composition committed early)")
+add(GI, B, "marked-range-windows", "catch", log_edit("windows/host-01.stdout.txt", "marked=2+2", "marked=0+2"), "wrong marked-text range on Windows (host HOST_FIELD log: marked=0+2, Mac marks 2+2)")
+add(GI, B, "marked-range-mac", "catch", log_edit("mac-run-01.log", "marked=2+2", "marked=3+1"), "wrong marked-text range on the Mac reference (MAC_FACT log)")
+add(GI, B, "marked-lost-windows", "catch", log_edit("windows/host-01.stdout.txt", "marked=2+2", "marked=none"), "marked range lost on Windows (composition committed early)")
+add(GI, B, "marked-appears-on-mac-click", "catch", log_edit("mac-run-01.log", "step=0:click fieldEditor=1 text=\"ab\" selection=2+0 marked=2+0", "step=0:click fieldEditor=1 text=\"ab\" selection=2+0 marked=0+2"), "marked text present on the Mac before any composition")
+add(GI, B, "marked-length-windows", "catch", log_edit("windows/host-01.stdout.txt", "marked=2+2", "marked=2+1"), "marked range one unit short on Windows")
+add(GI, B, "selection-windows", "catch", log_edit("windows/host-01.stdout.txt", "selection=4+0 marked=2+2", "selection=3+0 marked=2+2"), "selected range wrong on Windows (caret inside the marked text)")
+add(GI, B, "selection-mac", "catch", log_edit("mac-run-01.log", "selection=4+0 marked=2+2", "selection=4+1 marked=2+2"), "selected range wrong on the Mac reference")
+add(GI, B, "text-windows", "catch", log_edit("windows/host-01.stdout.txt", "display=\"abni\"", "display=\"abnj\""), "composed string differs on Windows")
+add(GI, B, "text-mac", "catch", log_edit("mac-run-01.log", "text=\"abni\"", "text=\"abno\""), "composed string differs on the Mac reference")
+add(GI, B, "step-missing-windows", "catch", log_edit("windows/host-01.stdout.txt", "HOST_FIELD tag=script", "HOST_FIELD tag=scripx"), "the Windows host logged no scripted steps")
+add(GI, B, "mac-log-missing", "catch", lambda ctx: (ctx.p("mac-run-01.log").unlink(), "mac-run-01.log removed")[1], "the Mac run log is missing")
+add(GI, B, "marked-none-spelling", "near", log_edit("mac-run-01.log", "marked=2+0", "marked=5+0"), "an empty marked range at another location on the Mac after the click is still 'no marked text': must pass")
 # ---- sem-tf-placeholder ----
 B = "sem-tf-placeholder"
+add(GS, B, "field-x-2pt", "catch", edit("uia-01.json", bounds_move("Edit", "Name", 5, 0)), "text field published 2 pt (5 px) too far right")
+add(GS, B, "field-y-2pt", "catch", edit("uia-01.json", bounds_move("Edit", "Name", 0, 5)), "text field published 2 pt (5 px) too low")
+add(GS, B, "field-x-0.04pt", "near", edit("uia-01.json", bounds_move("Edit", "Name", 0.1, 0)), "text field published 0.04 pt off in x: inside the 0.05 pt rounding tolerance, must pass")
 add(GS, B, "wrong-name", "catch", edit("uia-01.json", set_key("Edit", "Name", "name", "Nom")), "wrong placeholder/name")
 add(GS, B, "wrong-value", "catch", edit("uia-01.json", set_key("Edit", "Name", "value", "x")), "wrong value")
 add(GS, B, "wrong-role", "catch", edit("uia-01.json", set_key("Edit", "Name", "role", "Text")), "wrong role")

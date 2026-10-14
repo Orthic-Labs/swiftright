@@ -12,12 +12,16 @@ clockGate = {
                "from": 100, "to": 200,                                # progress 0 / 1 as a width (axis x) or height (axis y), points
                "leaf": 2}],                                           # index of the animated component in the Mac AnimationContext value (progress = result[leaf]/value[leaf])
   "extentTolerancePx": 1.0, "progressTolerance": 0.004,
+  "edgeTolerancePx": 1.0,                                              # leading and trailing edge position (default: extentTolerancePx), sr1-decisions #18
   "stripPx": 1                                                         # pixel columns around a fractional edge excluded from the exact pixel comparison
 }
 
-Per (run, frame) the gate has three parts, all reported:
+Per (run, frame) the gate has four parts, all reported:
   extent   |mac extent - windows extent| <= extentTolerancePx, both measured the same way from the capture (coverage-integrated: partial-coverage edge pixels count by coverage).
            The Mac draws a fractional edge with anti-aliasing; the runtime snaps presented frames to the device pixel grid, so the two edges can differ by up to 1 px of extent.
+  edges    |mac edge - windows edge| <= edgeTolerancePx for BOTH the leading and the trailing edge of every tracked shape, each edge read as a coverage-integrated position
+           in capture px (a partial-coverage edge pixel counts by coverage). Extent alone cannot see a bar that is translated with the same width, and the strips below hide
+           the pixels around a differing edge, so the positions themselves are gated; the strips only keep anti-aliasing out of the exact comparison.
   pixels   identical (all channels) everywhere except the strips around the tracked edges that are not on a whole device pixel on the Mac.
   progress SwiftUI's own progress at that step (from the Mac wrapper log: result/value, 1 once the animation has ended, 0 before it began) vs the runtime's presented frame
            (HOST_GEOMETRY, points) as a fraction of from..to; tolerance progressTolerance (snapping alone explains up to 0.5 px / ((to-from) * scale)).
@@ -59,6 +63,7 @@ def main():
     runs = sorted({int(re.match(r"run-(\d+)-f", p.name).group(1)) for p in (out / "mac").glob("run-*-f*.png")})
     tol_e = gate.get("extentTolerancePx", 1.0)
     tol_p = gate.get("progressTolerance", 0.004)
+    tol_edge = gate.get("edgeTolerancePx", tol_e)
     strip = gate.get("stripPx", 1)
     rows, fails = [], 0
     for run in runs:
@@ -66,8 +71,12 @@ def main():
         macframes = {int(m.group(1)): m.group(2) for m in re.finditer(r"MAC_FRAME index=(\d+) (.*)", maclog)}
         for k in range(frames):
             row = dict(run=run, frame=k, t=cfg["clock"][k])
-            mi = Image.open(out / f"mac/run-{run:02d}-f{k:02d}.png").convert("RGB")
-            wi = Image.open(out / f"windows/native-{run:02d}-f{k:02d}.png").convert("RGB")
+            mp, wp = out / f"mac/run-{run:02d}-f{k:02d}.png", out / f"windows/native-{run:02d}-f{k:02d}.png"
+            if not (mp.is_file() and wp.is_file()):   # a missing capture fails the pair cleanly (it used to crash the comparator before it wrote its report)
+                row.update(ok=False, error=f"missing capture: mac {mp.is_file()} windows {wp.is_file()}", tracks=[], hostGeometry=False, pixelsDiffOutsideStrips=None, stripPixels=None)
+                fails += 1; rows.append(row); continue
+            mi = Image.open(mp).convert("RGB")
+            wi = Image.open(wp).convert("RGB")
             hostlog = out / f"windows/host-{run:02d}-f{k:02d}.stdout.txt"
             geom = None
             if hostlog.is_file():
@@ -90,6 +99,9 @@ def main():
                     d = wrun["extent"] - mrun["extent"]
                     t["extentDelta"] = round(d, 4)
                     t["extentOk"] = abs(d) <= tol_e
+                    t["startDelta"] = round(wrun["start"] - mrun["start"], 4)
+                    t["endDelta"] = round(wrun["end"] - mrun["end"], 4)
+                    t["edgesOk"] = abs(t["startDelta"]) <= tol_edge and abs(t["endDelta"]) <= tol_edge   # the rounded deltas: a whole-pixel shift is exactly 1.0, not 1.0000000000000002
                     # strips: every edge that sits on a fractional Mac position (partial-coverage pixel) or differs in either capture
                     for e in ("start", "end"):
                         for run_ in (mrun, wrun):
@@ -99,7 +111,7 @@ def main():
                                 mask.paste(255, (max(0, lo), 0, min(mi.size[0], hi), mi.size[1])) if abs(pos - round(pos)) > 1e-6 or abs(mrun[e] - wrun[e]) > 1e-6 else None
                             else:
                                 mask.paste(255, (0, max(0, lo), mi.size[0], min(mi.size[1], hi))) if abs(pos - round(pos)) > 1e-6 or abs(mrun[e] - wrun[e]) > 1e-6 else None
-                ok = ok and t["extentOk"]
+                ok = ok and t["extentOk"] and t.get("edgesOk", True)
                 # progress: SwiftUI (Mac wrapper log) vs runtime presented frame
                 if geom is not None and "from" in tr:
                     node = nth_node(geom, tr["kind"], tr.get("index", 0))
@@ -133,12 +145,14 @@ def main():
             row["ok"] = ok
             fails += 0 if ok else 1
             rows.append(row)
-    rep = dict(gate="clock", pairs=len(rows), fail=fails, runs=len(runs), frames=frames, rows=rows)
+    rep = dict(gate="clock", edgeTolerancePx=tol_edge, extentTolerancePx=tol_e, pairs=len(rows), fail=fails, runs=len(runs), frames=frames, rows=rows)
     (out / "clock-report.json").write_text(json.dumps(rep, indent=1))
     for r in rows:
         if r["run"] == runs[0] or not r["ok"]:
             tt = r["tracks"][0] if r["tracks"] else {}
-            print(f"  clock run {r['run']:02d} f{r['frame']:02d} t={r['t']:<5} {'ok  ' if r['ok'] else 'FAIL'} extentΔ={tt.get('extentDelta')} progress mac={tt.get('progress', {}).get('mac')} win={tt.get('progress', {}).get('win')} "
+            if "error" in r:
+                print(f"  clock run {r['run']:02d} f{r['frame']:02d} FAIL {r['error']}"); continue
+            print(f"  clock run {r['run']:02d} f{r['frame']:02d} t={r['t']:<5} {'ok  ' if r['ok'] else 'FAIL'} extentΔ={tt.get('extentDelta')} edgeΔ start={tt.get('startDelta')} end={tt.get('endDelta')} progress mac={tt.get('progress', {}).get('mac')} win={tt.get('progress', {}).get('win')} "
                   f"pixelsOutsideStrips={r['pixelsDiffOutsideStrips']} (strip px {r['stripPixels']})")
     print(f"clock gate: pairs={len(rows)} ok={len(rows) - fails} fail={fails}")
     sys.exit(0 if fails == 0 else 1)

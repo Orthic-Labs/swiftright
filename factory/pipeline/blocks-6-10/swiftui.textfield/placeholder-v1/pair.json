@@ -15,7 +15,12 @@
    "role",
    "name",
    "value",
-   "enabled"
+   "enabled",
+   "boundsY",
+   "boundsX"
+  ],
+  "boundsXRoles": [
+   "textfield"
   ],
   "scope": "main",
   "roles": [
@@ -31,7 +36,11 @@
     325,
     85
    ]
-  ]
+  ],
+  "firstInkYTolerancePx": 2,
+  "baselineTolerancePx": 2,
+  "inkCentreYTolerancePx": 0.5,
+  "yToleranceReason": "measured over the 20 captured runs of every bezeled TextField case (dy,dbaseline px, Windows minus Mac): (2,-2) (2,-1) (1,-2) (1,-1), constant across runs: Windows draws the body font at 12 pt and the Mac at 13 pt (decision 2), so the glyphs are shorter and, with the line centred on both sides, the top sits 1-2 px lower and the baseline 1-2 px higher; the mid-point of the two stays within 0.5 px"
  },
  "steps": [
   {

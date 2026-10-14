@@ -37,7 +37,7 @@ def recompare(ctx, timeout=300):
 
 
 REPORTS = {"pixel": "report.json", "text": "text-report.json", "text-colour": "text-colour-report.json", "button": "button-report.json", "control": "control-report.json",
-           "list": "list-report.json", "semantic": "semantic-report.json", "clock": "clock-report.json", "image": "image-report.json", "text-origin": "textorigin-report.json"}
+           "list": "list-report.json", "semantic": "semantic-report.json", "clock": "clock-report.json", "image": "image-report.json", "text-origin": "textorigin-report.json", "ime": "ime-report.json"}
 
 
 def failed_reports(ctx):
@@ -51,7 +51,7 @@ def failed_reports(ctx):
             j = json.loads(p.read_text())
         except Exception:
             out.append(gate); continue
-        bad = (j.get("fail", 0) > 0) if gate in ("pixel", "clock", "text-origin") else (j.get("fail", 0) > 0) if gate == "semantic" else (j.get("gatePassed", 0) < j.get("pairs", 0))
+        bad = (j.get("fail", 0) > 0) if gate in ("pixel", "clock", "text-origin", "ime") else (j.get("fail", 0) > 0) if gate == "semantic" else (j.get("gatePassed", 0) < j.get("pairs", 0))
         if bad:
             out.append(gate)
     return out

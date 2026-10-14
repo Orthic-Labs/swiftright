@@ -41,12 +41,13 @@ A few minutes (about 360 subprocess runs). Python with Pillow (`factory/requirem
 | text | `factory/tools/pair_text_report.py` | glyph-region ink bbox within 1 px, exact outside the region (decision 2, block 4) |
 | text-colour | `factory/tools/pair_textcolour_report.py` | strongest ink colour within 24/255 per channel (decisions 2, 10, 11; A1; D1) |
 | button | `factory/tools/pair_button_report.py` | push Button height/y, caps, flat bands, label centre and ink (decision 11; A1-A3) |
-| control | `factory/tools/pair_control_report.py` | labelled Toggle control size/y/edges, label centre (decisions 7, 8) |
+| control | `factory/tools/pair_control_report.py` | labelled Toggle control size/y/edges, label centre (1 px), row leading x, label first ink x, label-to-control gap (decisions 7, 8, 16) |
 | list | `factory/tools/pair_list_report.py` | List rows, text, order, selection, frames within 1 px, label ink (A6-A9) |
-| semantic | `factory/tools/pair_semantic_report.py` | UIA vs AX: role, name, value, toggle, enabled, dialogs, order, count (F3; B4-B6, D4-D7, A4) |
-| clock | `factory/tools/pair_clock_report.py` | F1 manual clock: extent (C2 1 px; spring 2 px), pixels outside strips, progress (C1-C10) |
+| semantic | `factory/tools/pair_semantic_report.py` | UIA vs AX: role, name, value, toggle, enabled, dialogs, order, count, static default button from the host log (F3; B4-B6, D4-D7, A4; decision 17) |
+| ime | `factory/tools/pair_ime_report.py` | IME marked range, selected range and composed text per step, Windows HOST_FIELD log vs Mac MAC_FACT log (decision 15) |
+| clock | `factory/tools/pair_clock_report.py` | F1 manual clock: extent, leading and trailing edge position (C2 1 px; spring 2 px; decision 18), pixels outside strips, progress (C1-C10) |
 | image | `factory/tools/pair_image_report.py` | Image(systemName:) frame, ink bbox, tint (decision 3) |
-| text-origin | `factory/tools/pair_textorigin_report.py` | TextField first ink x, selection colour and start, caret (decisions 12, 13) |
+| text-origin | `factory/tools/pair_textorigin_report.py` | TextField first ink x and y, baseline, selection colour and start, caret (decisions 12, 13, 14) |
 | multi-run | `factory/tools/pair.py --recompare over N runs` | the case verdict is every run passing: one bad run of three must fail |
 
 ## Every mutation
@@ -112,7 +113,17 @@ Base = fixture id (see `fixtures.py` for its case and run). All edits are to the
 | text-gate | `centring-y-beyond` | catch | vertical offset 1 px beyond the tolerance |
 | text-gate | `text-missing` | catch | a missing element: the text is gone |
 | text-gate | `ink-colour-light-grey` | catch | label ink colour shifted to light grey (luminance 190) |
-| text-gate | `ink-colour-dark-red` | catch | label ink colour shifted to dark red (documented exclusion: text gate claims ink bbox and positions only; colour is gated by pair_textcolour_report.py in other cases (docs/sr1-decisions.md items 2 and 11)) |
+
+### text-colour
+
+| Base | Mutation | Kind | What it seeds |
+|---|---|---|---|
+| text-gate | `ink-colour-dark-red` | catch | label ink colour shifted to dark red (the text-colour gate runs beside the text gate, decision 19) |
+
+### text
+
+| Base | Mutation | Kind | What it seeds |
+|---|---|---|---|
 | text-gate | `aa-noise-inside-region` | near | anti-aliasing differences inside the glyph region (reported, never gated) |
 | text-gate | `pixel-outside-region` | catch | a pixel outside the glyph region 1 level off |
 
@@ -125,38 +136,53 @@ Base = fixture id (see `fixtures.py` for its case and run). All edits are to the
 | tc-red | `r0-ink-+40` | catch | label ink colour shifted by 40 levels |
 | tc-red | `r0-wrong-colour` | catch | wrong ink colour (re-tinted to the accent blue) |
 | tc-red | `r0-missing-text` | catch | a missing element |
-| tc-red | `r0-origin-offset-2pt` | catch | text origin 2 pt (5 px) off inside its excluded region (documented exclusion: decision 2: glyph pixels excluded from the pixel gate; the colour gate reads only the strongest ink pixel) |
-| tc-red | `r0-centring-y-2pt` | catch | text 2 pt (5 px) off vertically inside its excluded region (documented exclusion: decision 2: glyph pixels excluded from the pixel gate; the colour gate reads only the strongest ink pixel) |
+| tc-red | `r0-origin-offset-2pt` | catch | text origin 2 pt (5 px) off inside its excluded region (decision 19 gates the line's position) |
+| tc-red | `r0-origin-offset-2pt-left` | catch | text origin 2 pt (5 px) off to the left inside its excluded region |
+| tc-red | `r0-centring-y-2pt` | catch | text 2 pt (5 px) off vertically inside its excluded region |
+| tc-red | `r0-centring-y-up-2pt` | catch | text 2 pt (5 px) too high inside its excluded region |
+| tc-red | `r0-centring-y-2px` | catch | text 2 px (about 1 pt) too low (the mid-point of first ink y and baseline is gated to 0.5 px) |
 | tc-red | `text-moved-out-of-exclusions` | catch | text moved out of every excluded region (the pixel gate sees it) |
 | tc-fg | `r0-ink-just-beyond` | catch | ink colour 1 level beyond the 24 tolerance |
 | tc-fg | `r0-ink-at-tolerance` | near | ink colour exactly at the 24 tolerance: must pass |
 | tc-fg | `r0-ink-+40` | catch | label ink colour shifted by 40 levels |
 | tc-fg | `r0-wrong-colour` | catch | wrong ink colour (re-tinted to the accent blue) |
 | tc-fg | `r0-missing-text` | catch | a missing element |
-| tc-fg | `r0-origin-offset-2pt` | catch | text origin 2 pt (5 px) off inside its excluded region (documented exclusion: decision 2: glyph pixels excluded from the pixel gate; the colour gate reads only the strongest ink pixel) |
-| tc-fg | `r0-centring-y-2pt` | catch | text 2 pt (5 px) off vertically inside its excluded region (documented exclusion: decision 2: glyph pixels excluded from the pixel gate; the colour gate reads only the strongest ink pixel) |
+| tc-fg | `r0-origin-offset-2pt` | catch | text origin 2 pt (5 px) off inside its excluded region (decision 19 gates the line's position) |
+| tc-fg | `r0-origin-offset-2pt-left` | catch | text origin 2 pt (5 px) off to the left inside its excluded region |
+| tc-fg | `r0-centring-y-2pt` | catch | text 2 pt (5 px) off vertically inside its excluded region |
+| tc-fg | `r0-centring-y-up-2pt` | catch | text 2 pt (5 px) too high inside its excluded region |
+| tc-fg | `r0-centring-y-2px` | catch | text 2 px (about 1 pt) too low (the mid-point of first ink y and baseline is gated to 0.5 px) |
 | tc-fg | `r1-ink-just-beyond` | catch | ink colour 1 level beyond the 24 tolerance |
 | tc-fg | `r1-ink-at-tolerance` | near | ink colour exactly at the 24 tolerance: must pass |
 | tc-fg | `r1-ink-+40` | catch | label ink colour shifted by 40 levels |
 | tc-fg | `r1-wrong-colour` | catch | wrong ink colour (re-tinted to the accent blue) |
 | tc-fg | `r1-missing-text` | catch | a missing element |
-| tc-fg | `r1-origin-offset-2pt` | catch | text origin 2 pt (5 px) off inside its excluded region (documented exclusion: decision 2: glyph pixels excluded from the pixel gate; the colour gate reads only the strongest ink pixel) |
-| tc-fg | `r1-centring-y-2pt` | catch | text 2 pt (5 px) off vertically inside its excluded region (documented exclusion: decision 2: glyph pixels excluded from the pixel gate; the colour gate reads only the strongest ink pixel) |
+| tc-fg | `r1-origin-offset-2pt` | catch | text origin 2 pt (5 px) off inside its excluded region (decision 19 gates the line's position) |
+| tc-fg | `r1-origin-offset-2pt-left` | catch | text origin 2 pt (5 px) off to the left inside its excluded region |
+| tc-fg | `r1-centring-y-2pt` | catch | text 2 pt (5 px) off vertically inside its excluded region |
+| tc-fg | `r1-centring-y-up-2pt` | catch | text 2 pt (5 px) too high inside its excluded region |
+| tc-fg | `r1-centring-y-2px` | catch | text 2 px (about 1 pt) too low (the mid-point of first ink y and baseline is gated to 0.5 px) |
 | tc-fg | `text-moved-out-of-exclusions` | catch | text moved out of every excluded region (the pixel gate sees it) |
 | tc-dark | `r0-ink-just-beyond` | catch | ink colour 1 level beyond the 24 tolerance |
 | tc-dark | `r0-ink-at-tolerance` | near | ink colour exactly at the 24 tolerance: must pass |
 | tc-dark | `r0-ink-+40` | catch | label ink colour shifted by 40 levels |
 | tc-dark | `r0-wrong-colour` | catch | wrong ink colour (re-tinted to the accent blue) |
 | tc-dark | `r0-missing-text` | catch | a missing element |
-| tc-dark | `r0-origin-offset-2pt` | catch | text origin 2 pt (5 px) off inside its excluded region (documented exclusion: decision 2: glyph pixels excluded from the pixel gate; the colour gate reads only the strongest ink pixel) |
-| tc-dark | `r0-centring-y-2pt` | catch | text 2 pt (5 px) off vertically inside its excluded region (documented exclusion: decision 2: glyph pixels excluded from the pixel gate; the colour gate reads only the strongest ink pixel) |
+| tc-dark | `r0-origin-offset-2pt` | catch | text origin 2 pt (5 px) off inside its excluded region (decision 19 gates the line's position) |
+| tc-dark | `r0-origin-offset-2pt-left` | catch | text origin 2 pt (5 px) off to the left inside its excluded region |
+| tc-dark | `r0-centring-y-2pt` | catch | text 2 pt (5 px) off vertically inside its excluded region |
+| tc-dark | `r0-centring-y-up-2pt` | catch | text 2 pt (5 px) too high inside its excluded region |
+| tc-dark | `r0-centring-y-2px` | catch | text 2 px (about 1 pt) too low (the mid-point of first ink y and baseline is gated to 0.5 px) |
 | tc-dark | `r3-ink-just-beyond` | catch | ink colour 1 level beyond the 24 tolerance |
 | tc-dark | `r3-ink-at-tolerance` | near | ink colour exactly at the 24 tolerance: must pass |
 | tc-dark | `r3-ink-+40` | catch | label ink colour shifted by 40 levels |
 | tc-dark | `r3-wrong-colour` | catch | wrong ink colour (re-tinted to the accent blue) |
 | tc-dark | `r3-missing-text` | catch | a missing element |
-| tc-dark | `r3-origin-offset-2pt` | catch | text origin 2 pt (5 px) off inside its excluded region (documented exclusion: decision 2: glyph pixels excluded from the pixel gate; the colour gate reads only the strongest ink pixel) |
-| tc-dark | `r3-centring-y-2pt` | catch | text 2 pt (5 px) off vertically inside its excluded region (documented exclusion: decision 2: glyph pixels excluded from the pixel gate; the colour gate reads only the strongest ink pixel) |
+| tc-dark | `r3-origin-offset-2pt` | catch | text origin 2 pt (5 px) off inside its excluded region (decision 19 gates the line's position) |
+| tc-dark | `r3-origin-offset-2pt-left` | catch | text origin 2 pt (5 px) off to the left inside its excluded region |
+| tc-dark | `r3-centring-y-2pt` | catch | text 2 pt (5 px) off vertically inside its excluded region |
+| tc-dark | `r3-centring-y-up-2pt` | catch | text 2 pt (5 px) too high inside its excluded region |
+| tc-dark | `r3-centring-y-2px` | catch | text 2 px (about 1 pt) too low (the mid-point of first ink y and baseline is gated to 0.5 px) |
 | tc-dark | `text-moved-out-of-exclusions` | catch | text moved out of every excluded region (the pixel gate sees it) |
 
 ### button
@@ -230,32 +256,38 @@ Base = fixture id (see `fixtures.py` for its case and run). All edits are to the
 | ctl-switch | `control-height-1px` | catch | control one pixel shorter (wrong size) |
 | ctl-switch | `missing-control` | catch | a missing element: the control is gone |
 | ctl-switch | `label-missing` | catch | a missing element: the label is gone |
-| ctl-switch | `label-centre-beyond` | catch | label centring offset 1 px beyond the 3 px tolerance |
-| ctl-switch | `label-centre-near` | near | label centring offset at the 3 px tolerance: must pass |
+| ctl-switch | `label-centre-beyond` | catch | label centring offset 1 px beyond the tolerance |
+| ctl-switch | `label-centre-near` | near | label centring offset at the tolerance: must pass |
 | ctl-switch | `label-origin-2pt-y` | catch | label 2 pt (5 px) off vertically |
-| ctl-switch | `label-origin-3px-x` | near | label 3 px further right (label advance: reported only) |
-| ctl-switch | `label-origin-2pt-x` | catch | label text origin 2 pt (5 px) off horizontally (label advance is reported, never gated) (documented exclusion: docs/sr1-decisions.md item 2 and pair_control_report.py: dx and the label pixels are reported only) |
+| ctl-switch | `label-origin-3px-x` | catch | label 3 px further right (the label's first ink x is gated, tolerance 0) |
+| ctl-switch | `label-origin-1px-x` | catch | label 1 px further right |
+| ctl-switch | `label-origin-2pt-x` | catch | label text origin 2 pt (5 px) off horizontally (label advance is reported, never gated) |
 | ctl-switch | `wrong-state-colour` | catch | wrong toggle state: the on colour replaced by a grey |
 | ctl-switch | `flat-colour+1` | catch | control flat colour 1 level off |
 | ctl-switch | `edge-pixel+33` | catch | one control edge pixel 33 levels off |
 | ctl-switch | `edge-pixel+32` | near | one control edge pixel exactly 32 levels off: must pass |
-| ctl-switch | `control-x-2pt` | catch | control 2 pt (5 px) off horizontally (documented exclusion: docs/sr1-decisions.md item 2 and pair_control_report.py: the control is compared after translating by the measured dx (the label-advance difference); dx is reported only) |
+| ctl-switch | `control-x-2pt` | catch | control 2 pt (5 px) off horizontally |
+| ctl-switch | `control-x-1px-left` | catch | control 1 px off in x relative to its label (switch: gap tolerance 1 px, the measured side bearing; checkbox: 0) |
+| ctl-switch | `control-x-5px-away-from-label` | catch | control 5 px further from the Mac position |
 | ctl-checkbox | `control-y-at-tolerance` | near | control y offset exactly at its tolerance: must pass |
 | ctl-checkbox | `control-y-beyond` | catch | control y offset 1 px beyond its tolerance |
 | ctl-checkbox | `control-y-2pt` | catch | control 2 pt (5 px) too low |
 | ctl-checkbox | `control-height-1px` | catch | control one pixel shorter (wrong size) |
 | ctl-checkbox | `missing-control` | catch | a missing element: the control is gone |
 | ctl-checkbox | `label-missing` | catch | a missing element: the label is gone |
-| ctl-checkbox | `label-centre-beyond` | catch | label centring offset 1 px beyond the 3 px tolerance |
-| ctl-checkbox | `label-centre-near` | near | label centring offset at the 3 px tolerance: must pass |
+| ctl-checkbox | `label-centre-beyond` | catch | label centring offset 1 px beyond the tolerance |
+| ctl-checkbox | `label-centre-near` | near | label centring offset at the tolerance: must pass |
 | ctl-checkbox | `label-origin-2pt-y` | catch | label 2 pt (5 px) off vertically |
-| ctl-checkbox | `label-origin-3px-x` | near | label 3 px further right (label advance: reported only) |
-| ctl-checkbox | `label-origin-2pt-x` | catch | label text origin 2 pt (5 px) off horizontally (label advance is reported, never gated) (documented exclusion: docs/sr1-decisions.md item 2 and pair_control_report.py: dx and the label pixels are reported only) |
+| ctl-checkbox | `label-origin-3px-x` | catch | label 3 px further right (the label's first ink x is gated, tolerance 0) |
+| ctl-checkbox | `label-origin-1px-x` | catch | label 1 px further right |
+| ctl-checkbox | `label-origin-2pt-x` | catch | label text origin 2 pt (5 px) off horizontally (label advance is reported, never gated) |
 | ctl-checkbox | `wrong-state-colour` | catch | wrong toggle state: the on colour replaced by a grey |
 | ctl-checkbox | `flat-colour+1` | catch | control flat colour 1 level off |
 | ctl-checkbox | `edge-pixel+33` | catch | one control edge pixel 33 levels off |
 | ctl-checkbox | `edge-pixel+32` | near | one control edge pixel exactly 32 levels off: must pass |
-| ctl-checkbox | `control-x-2pt` | catch | control 2 pt (5 px) off horizontally (documented exclusion: docs/sr1-decisions.md item 2 and pair_control_report.py: the control is compared after translating by the measured dx (the label-advance difference); dx is reported only) |
+| ctl-checkbox | `control-x-2pt` | catch | control 2 pt (5 px) off horizontally |
+| ctl-checkbox | `control-x-1px-right` | catch | control 1 px off in x relative to its label (switch: gap tolerance 1 px, the measured side bearing; checkbox: 0) |
+| ctl-checkbox | `control-x-5px-away-from-label` | catch | control 5 px further from the Mac position |
 
 ### semantic
 
@@ -269,7 +301,11 @@ Base = fixture id (see `fixtures.py` for its case and run). All edits are to the
 | sem-click | `wrong-name` | catch | a wrong button name |
 | sem-click | `order-swapped` | catch | tree order swapped |
 | sem-click | `name-whitespace` | near | internal whitespace differs (the comparator collapses it) |
-| sem-click | `bounds-30pt` | catch | button 30 pt out of place (documented exclusion: the case's semanticGate.fields omits bounds (boundsTolerancePt is implemented but no shipped case lists bounds)) |
+| sem-click | `bounds-30pt-x` | catch | button 30 pt out of place in x (its centre is gated, decision 17) |
+| sem-click | `bounds-x-2pt` | catch | button published 2 pt (5 px) off in x |
+| sem-click | `bounds-y-2pt` | catch | button published 2 pt (5 px) too low |
+| sem-click | `bounds-y-30pt` | catch | button published 30 pt too low |
+| sem-click | `bounds-text-y-2pt` | catch | the count text published 2 pt too low |
 | sem-click | `focus-flag` | catch | wrong focus owner (UIA flag) (documented exclusion: docs/sr1-status.md block 14 caveat and sr1-decisions D7: UIA keyboard focus is false in the Sandbox; focus is gated through @FocusState text, not the UIA flag) |
 | sem-binding | `wrong-toggle-state-c1` | catch | wrong toggle state |
 | sem-binding | `wrong-toggle-state-c2` | catch | wrong toggle state |
@@ -286,11 +322,18 @@ Base = fixture id (see `fixtures.py` for its case and run). All edits are to the
 | sem-alert-three | `dialog-message` | catch | wrong message text |
 | sem-alert-three | `dialog-missing` | catch | no dialog shown |
 | sem-alert-three | `dialog-double` | catch | two dialogs shown |
-| sem-alert-three | `default-button-wrong` | catch | wrong default button: keyboard focus on Third (Mac default is First) (documented exclusion: docs/sr1-decisions.md D6: the default button cannot be read from UIA focus in the Sandbox; it is gated by behaviour (Enter runs the Mac default), so the static 'default' field is not listed in any alert case) |
+| sem-alert-three | `default-button-wrong` | catch | wrong default button: the Windows TaskDialog is asked to default to Third (Mac default is First); host log HOST_DIALOG_REQUEST default=2 |
+| sem-alert-three | `default-button-wrong-cancel` | catch | wrong default button: Cancel |
+| sem-alert-three | `default-button-none` | catch | no default button requested |
+| sem-alert-three | `default-index-out-of-range` | catch | default index beyond the buttons |
+| sem-alert-three | `default-request-missing` | catch | the host log records no dialog request |
+| sem-alert-three | `default-button-uia-focus` | catch | wrong default button: UIA keyboard focus on Third (documented exclusion: docs/sr1-status.md block 14 caveat and sr1-decisions D7: UIA keyboard focus is false in the Sandbox; focus is gated through @FocusState text, not the UIA flag) |
 | sem-alert-default | `enter-ran-wrong-button` | catch | wrong default button: Enter ran 'Don't save' (nothing happened) instead of 'Save' |
 | sem-alert-default | `enter-ignored` | catch | wrong default button: Enter did not dismiss the dialog |
 | sem-alert-default | `button-set-wrong` | catch | wrong button set |
-| sem-alert-default | `default-button-wrong` | catch | wrong default button: focus on Cancel (documented exclusion: docs/sr1-decisions.md D6: gated by behaviour (the Enter case above), not by a static flag) |
+| sem-alert-default | `default-button-wrong` | catch | wrong default button: the Windows TaskDialog defaults to Cancel (Mac default is Save) |
+| sem-alert-confirm | `destructive-default` | catch | the destructive Delete button is the Windows default (the Mac has none and Cancel is the Escape button) |
+| sem-alert-confirm | `default-button-none` | catch | no default button requested |
 | sem-focus-tab | `wrong-focus-owner-text` | catch | wrong focus owner: the @FocusState text names the other field |
 | sem-focus-tab | `wrong-focus-owner-t5` | catch | wrong focus owner after the last Tab |
 | sem-focus-tab | `wrong-value` | catch | wrong field value |
@@ -300,9 +343,31 @@ Base = fixture id (see `fixtures.py` for its case and run). All edits are to the
 | sem-ime | `wrong-value` | catch | wrong value: composition text differs |
 | sem-ime | `value-uncommitted` | catch | wrong value: composition not shown |
 | sem-ime | `missing-field` | catch | a missing node |
+
+### ime
+
+| Base | Mutation | Kind | What it seeds |
+|---|---|---|---|
 | sem-ime | `marked-range-windows` | catch | wrong marked-text range on Windows (host HOST_FIELD log: marked=0+2, Mac marks 2+2) |
 | sem-ime | `marked-range-mac` | catch | wrong marked-text range on the Mac reference (MAC_FACT log) |
 | sem-ime | `marked-lost-windows` | catch | marked range lost on Windows (composition committed early) |
+| sem-ime | `marked-appears-on-mac-click` | catch | marked text present on the Mac before any composition |
+| sem-ime | `marked-length-windows` | catch | marked range one unit short on Windows |
+| sem-ime | `selection-windows` | catch | selected range wrong on Windows (caret inside the marked text) |
+| sem-ime | `selection-mac` | catch | selected range wrong on the Mac reference |
+| sem-ime | `text-windows` | catch | composed string differs on Windows |
+| sem-ime | `text-mac` | catch | composed string differs on the Mac reference |
+| sem-ime | `step-missing-windows` | catch | the Windows host logged no scripted steps |
+| sem-ime | `mac-log-missing` | catch | the Mac run log is missing |
+| sem-ime | `marked-none-spelling` | near | an empty marked range at another location on the Mac after the click is still 'no marked text': must pass |
+
+### semantic
+
+| Base | Mutation | Kind | What it seeds |
+|---|---|---|---|
+| sem-tf-placeholder | `field-x-2pt` | catch | text field published 2 pt (5 px) too far right |
+| sem-tf-placeholder | `field-y-2pt` | catch | text field published 2 pt (5 px) too low |
+| sem-tf-placeholder | `field-x-0.04pt` | near | text field published 0.04 pt off in x: inside the 0.05 pt rounding tolerance, must pass |
 | sem-tf-placeholder | `wrong-name` | catch | wrong placeholder/name |
 | sem-tf-placeholder | `wrong-value` | catch | wrong value |
 | sem-tf-placeholder | `wrong-role` | catch | wrong role |
@@ -379,6 +444,9 @@ Base = fixture id (see `fixtures.py` for its case and run). All edits are to the
 | clk-spring | `extent+near` | near | extent 0.08 px inside the 2 px tolerance: must pass |
 | clk-spring | `extent-near` | near | extent 0.08 px inside the 2 px tolerance, narrower: must pass |
 | clk-spring | `extent-1.2px-passes` | near | extent 1.2 px (beyond a 1 px gate, inside the spring's 2 px) |
+| clk-spring | `bar-translate-x-3px` | catch | frame 1: the bar 3 px right (edges 3 px off, beyond the spring's named 2 px) |
+| clk-spring | `bar-translate-x-2px-at-tolerance` | near | frame 1: the bar 2 px right: exactly the spring's named 2 px edge tolerance (the same tolerance as its extent): must pass |
+| clk-spring | `bar-translate-x-5px` | catch | frame 1: the bar 2 pt (5 px) right |
 | clk-spring | `frame-out-of-sequence` | catch | a frame out of sequence |
 | clk-spring | `timing-progress-beyond` | catch | runtime progress just beyond progressTolerance 0.005 |
 | clk-spring | `timing-progress-near` | near | runtime progress just inside progressTolerance: must pass |
@@ -423,7 +491,11 @@ Base = fixture id (see `fixtures.py` for its case and run). All edits are to the
 | to-filled | `origin-2pt-right` | catch | text origin 2 pt (5 px) too far right |
 | to-filled | `origin-1px` | catch | text origin 1 px off (tolerance is 0) |
 | to-filled | `origin--1px` | catch | text origin 1 px left |
-| to-filled | `centring-y-2pt` | catch | text 2 pt (5 px) too low (centring) (documented exclusion: decision 12 gates x (first ink, selection start, caret); the text rect stays excluded from the pixel gate (decision 2) and no gate reads the text's y) |
+| to-filled | `centring-y-2pt` | catch | text 2 pt (5 px) too low (centring) |
+| to-filled | `centring-y-up-2pt` | catch | text 2 pt (5 px) too high |
+| to-filled | `centring-y-1px` | catch | text 1 px too low (the mid-point of first ink y and baseline is gated to 0.5 px) |
+| to-filled | `centring-y-1pt` | catch | text 2 px (about 1 pt) too low |
+| to-filled | `origin-2pt-down-right` | catch | text 2 pt (5 px) off in both x and y |
 | to-filled | `text-missing` | catch | a missing element: the text is gone |
 | to-filled | `right-clip-differs` | near | text clipped/truncated differently on the right (first ink unchanged) |
 | to-selected | `selection-colour+1` | catch | selection colour one level off (179,215,254) |
@@ -437,6 +509,8 @@ Base = fixture id (see `fixtures.py` for its case and run). All edits are to the
 | to-selected | `selection-end-5px` | near | selection end 5 px shorter (glyph advances, Segoe vs SF: reported only) |
 | to-selected | `selection-height-2px` | near | selection 2 rows shorter (line height, reported only) |
 | to-selected | `unselected-field-origin-2pt` | catch | the second (unselected) field's text 2 pt left |
+| to-caret | `y-up-1px-inside-measured-envelope` | near | text 1 px higher: first ink y delta 1, baseline delta -2: inside the measured envelope of the other bezeled cases, must pass |
+| to-caret | `centring-y-2pt` | catch | text 2 pt (5 px) too low in an empty focused field |
 | to-caret | `caret+1px` | catch | caret 1 px right of the Mac insertion point |
 | to-caret | `caret-1px` | catch | caret 1 px left |
 | to-caret | `caret+5px` | catch | caret 2 pt (5 px) right (text origin offset) |
@@ -452,8 +526,8 @@ Base = fixture id (see `fixtures.py` for its case and run). All edits are to the
 | btn-bordered | `button/y-shift-1px@run3of3` | catch | 1 px vertical shift of the button (y tolerance 0) in 1 of 3 runs |
 | btn-bordered | `button/label-ink-at-tolerance@run3of3` | near | label ink colour exactly 40 levels from the Mac: must pass in 1 of 3 runs |
 | btn-bordered | `button/label-ink-just-beyond@run3of3` | catch | label ink colour 41 levels from the Mac (tolerance 40) in 1 of 3 runs |
-| ctl-switch | `control/label-centre-near@run3of3` | near | label centring offset at the 3 px tolerance: must pass in 1 of 3 runs |
-| ctl-switch | `control/label-centre-beyond@run3of3` | catch | label centring offset 1 px beyond the 3 px tolerance in 1 of 3 runs |
+| ctl-switch | `control/label-centre-near@run3of3` | near | label centring offset at the tolerance: must pass in 1 of 3 runs |
+| ctl-switch | `control/label-centre-beyond@run3of3` | catch | label centring offset 1 px beyond the tolerance in 1 of 3 runs |
 | list-arrow | `list/row-order@run3of3` | catch | row order: two rows swapped in 1 of 3 runs |
 | list-arrow | `list/row-frame-y-at-tolerance@run3of3` | near | row frame y at rowTolerancePx: must pass in 1 of 3 runs |
 | list-arrow | `list/selection-moved@run3of3` | catch | wrong selection: another row selected in 1 of 3 runs |
@@ -467,4 +541,4 @@ Base = fixture id (see `fixtures.py` for its case and run). All edits are to the
 | tc-red | `text-colour/r0-ink-just-beyond@run3of3` | catch | ink colour 1 level beyond the 24 tolerance in 1 of 3 runs |
 | tc-red | `text-colour/r0-ink-at-tolerance@run3of3` | near | ink colour exactly at the 24 tolerance: must pass in 1 of 3 runs |
 
-358 mutations in total.
+411 mutations in total.

@@ -22,6 +22,16 @@
      325
     ]
    }
-  ]
+  ],
+  "position": {
+   "align": "centre",
+   "firstInkYTolerancePx": 2,
+   "baselineTolerancePx": 2,
+   "inkCentreYTolerancePx": 0.5,
+   "firstInkXTolerancePx": 0,
+   "inkCentreXTolerancePx": 1.5,
+   "reason": "measured over the committed runs of every text-colour case with ink = at least 15% of the strongest ink's contrast (Windows minus Mac, px): first glyph top +1..+2, baseline -1..-2 (the mid-point of the two stays within 0.5); centred text: ink centre x -1.5..+1.5; leading text: first ink x 0. Windows draws the body font at 12 pt and the Mac at 13 pt (decision 2), so the glyphs are shorter and the advance narrower, but the line is placed the same way",
+   "coverage": 0.15
+  }
  }
 }

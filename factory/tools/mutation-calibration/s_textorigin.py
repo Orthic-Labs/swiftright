@@ -1,4 +1,4 @@
-"""Text-origin gate (sr1-decisions #12): pair_textorigin_report.py: first ink x, selection colour and start x, caret x, for bezeled TextField cases."""
+"""Text-origin gate (sr1-decisions #12, #14): pair_textorigin_report.py: first ink x, first ink y, baseline, selection colour and start x, caret x, for bezeled TextField cases."""
 from core import M
 from mutlib import *
 import pair_textorigin_report as T
@@ -117,7 +117,11 @@ add(B, "origin-2pt-left", "catch", move_text(0, -5, 0), "text origin 2 pt (5 px)
 add(B, "origin-2pt-right", "catch", move_text(0, 5, 0), "text origin 2 pt (5 px) too far right")
 add(B, "origin-1px", "catch", move_text(0, 1, 0), "text origin 1 px off (tolerance is 0)")
 add(B, "origin--1px", "catch", move_text(0, -1, 0), "text origin 1 px left")
-add(B, "centring-y-2pt", "catch", move_text(0, 0, 5), "text 2 pt (5 px) too low (centring)", design="decision 12 gates x (first ink, selection start, caret); the text rect stays excluded from the pixel gate (decision 2) and no gate reads the text's y")
+add(B, "centring-y-2pt", "catch", move_text(0, 0, 5), "text 2 pt (5 px) too low (centring)")
+add(B, "centring-y-up-2pt", "catch", move_text(0, 0, -5), "text 2 pt (5 px) too high")
+add(B, "centring-y-1px", "catch", move_text(0, 0, 1), "text 1 px too low (the mid-point of first ink y and baseline is gated to 0.5 px)")
+add(B, "centring-y-1pt", "catch", move_text(0, 0, 2), "text 2 px (about 1 pt) too low")
+add(B, "origin-2pt-down-right", "catch", move_text(0, 5, 5), "text 2 pt (5 px) off in both x and y")
 add(B, "text-missing", "catch", missing_ink(0), "a missing element: the text is gone")
 add(B, "right-clip-differs", "near", clip_right(0), "text clipped/truncated differently on the right (first ink unchanged)")
 # to-selected: Tab/FocusState focus selects the whole text (field 0 selected, field 1 not)
@@ -133,6 +137,9 @@ add(B, "origin-2pt-left", "catch", move_text(0, -5, 0), "text origin 2 pt (5 px)
 add(B, "selection-end-5px", "near", sel_end(0, 5), "selection end 5 px shorter (glyph advances, Segoe vs SF: reported only)")
 add(B, "selection-height-2px", "near", sel_height(0, 2), "selection 2 rows shorter (line height, reported only)")
 add(B, "unselected-field-origin-2pt", "catch", move_text(1, -5, 0), "the second (unselected) field's text 2 pt left")
+B = "to-caret"
+add(B, "y-up-1px-inside-measured-envelope", "near", move_text(0, 0, -1), "text 1 px higher: first ink y delta 1, baseline delta -2: inside the measured envelope of the other bezeled cases, must pass")
+add(B, "centring-y-2pt", "catch", move_text(0, 0, 5), "text 2 pt (5 px) too low in an empty focused field")
 # to-caret: empty focused field, Mac insertion point read from MAC_FACT caretXpx
 B = "to-caret"
 add(B, "caret+1px", "catch", caret_move(1), "caret 1 px right of the Mac insertion point")

@@ -12,6 +12,11 @@ The gate comes from <case>/pair.json "semanticGate":
     "ignoreNames": ["Close"],                         // element names dropped on both sides
     "roleMap":  {"AXSheet": "dialog"},                // case overrides of the Mac/Windows role -> normalised role table
     "boundsTolerancePt": 1.0,                         // only with "bounds" in fields: max |difference| of x, y, w, h in points, relative to the window client area
+    // sr1-decisions #17: "boundsY" (main window only): y and height of every kept element within boundsYTolerancePt (default 0.05: measured 0.0 on every element of every
+    // committed run, the layout rows agree to the point); "boundsX" (main window only): x of the elements whose role is in boundsXRoles (default: all) within
+    // boundsXTolerancePt (default 0.05); "boundsCentreX" (main window only): the centre x (x + width / 2) of the elements whose role is in boundsCentreXRoles within
+    // boundsCentreXTolerancePt (default 0.05; a push button measured 0.2) for centred elements, whose left edge and width follow the label's advance (Segoe vs SF, decision 2): the
+    // centring is gated, the width never is.
     "dialogs":  {"count": 1},                         // optional: number of extra windows both sides must show
     "focus":    "element",                            // "element": the process-focused element (name, role) is compared as a field of the report
     "phases":   ["open", ""]                          // dump labels to compare (default [""] = the final dump): windows/uia-NN-<label>.json against mac/ax-NN-<label>.json
@@ -19,10 +24,16 @@ The gate comes from <case>/pair.json "semanticGate":
 "dialogs": {"count": N} may be {"open": 1, "": 0} to give a count per phase. Field "default": a Mac dialog button that is the Return (default) button must hold the keyboard
 focus of the Windows dialog (a Mac dialog without a default button gates nothing: a task dialog always has one). Field "dialogTitle": the Windows dialog title equals the Mac
 alert's message text.
+Field "defaultButton" (sr1-decisions #17): the STATIC default button. UIA cannot report it (keyboard focus is false in the Sandbox, decision D7), but the Windows host log
+(windows/host-NN.stdout.txt) records what it asked the TaskDialog for: `HOST_DIALOG_REQUEST ... buttons=A|B|C default=<index>`. The Mac AX dump marks the Return button
+(`default`) and the Escape button (`cancel`). The Nth request is compared with the Nth dialog: the button the Windows request names as default must be the Mac's default
+button; when the Mac has none (the first button is the cancel or the destructive one, D5) it must be the Mac's cancel button (a TaskDialog always has one, and the
+destructive action must never be it); when the Mac has neither nothing gates. A missing request in the host log, or a missing default index, fails. Enter still gates the
+behaviour (default-enter-v1); this gates the flag itself.
 Normalised element: role, name, value, enabled, focus, toggle (on|off|mixed|null), bounds [x,y,w,h] pt relative to the window content origin. Elements are compared
 as the depth-first sequence of the kept elements of each window group; a missing/extra element or a differing gated field fails the run.
 """
-import json, sys
+import json, re, sys
 from pathlib import Path
 
 IGNORED_ROLES = {"titlebar", "menubar", "menuitem", "window", "group", "pane", "unknown", "scrollbar", "thumb"}
@@ -160,7 +171,23 @@ def compare_lists(label, a, b, cfg):
         for f in fields:
             if f in ("count", "order"):
                 continue
-            if f == "bounds":
+            if f in ("boundsY", "boundsX", "boundsCentreX"):
+                if not label.startswith("main") or (f == "boundsX" and x["role"] not in cfg.get("boundsXRoles", [x["role"]])) or (f == "boundsCentreX" and x["role"] not in cfg.get("boundsCentreXRoles", [])):
+                    continue   # the Mac alert and the TaskDialog have nothing comparable in position; only the main window's layout is
+                bx, by = x["bounds"], y["bounds"]
+                if bx is None or by is None:
+                    if bx != by:
+                        mm.append(dict(where=f"{label}[{i}]", field=f, windows=bx, mac=by))
+                    continue
+                t = float(cfg.get({"boundsY": "boundsYTolerancePt", "boundsX": "boundsXTolerancePt", "boundsCentreX": "boundsCentreXTolerancePt"}[f], 0.05))
+                if f == "boundsCentreX":
+                    wv, mv = [bx[0] + bx[2] / 2], [by[0] + by[2] / 2]
+                else:
+                    pairs = ((1, 3) if f == "boundsY" else (0,))
+                    wv, mv = [bx[k] for k in pairs], [by[k] for k in pairs]
+                if max(abs(p - q) for p, q in zip(wv, mv)) > t:
+                    mm.append(dict(where=f"{label}[{i}]", field=f, windows=wv, mac=mv, tolerancePt=t, role=x["role"], name=x["name"]))
+            elif f == "bounds":
                 bx, by = x["bounds"], y["bounds"]
                 if bx is None or by is None:
                     if bx != by:
@@ -177,7 +204,33 @@ def compare_lists(label, a, b, cfg):
     return mm
 
 
-def compare_run(win_doc, mac_doc, cfg, phase=""):
+def host_dialog_requests(path):
+    """The HOST_DIALOG_REQUEST lines of one Windows host log, in order: [{kind, title, buttons[], default(int|None)}]. The log is OEM/ANSI text, read losslessly (latin-1)."""
+    if not path.is_file():
+        return None
+    out = []
+    for m in re.finditer(r"HOST_DIALOG_REQUEST id=\S+ node=\S+ kind=(\S+) title=(.*?) buttons=(.*?) default=(-?\d+|none)\s*$", path.read_bytes().decode("latin-1"), re.M):
+        out.append(dict(kind=m.group(1), title=m.group(2), buttons=m.group(3).split("|"), default=None if m.group(4) == "none" else int(m.group(4))))
+    return out
+
+
+def default_button_mismatch(label, req, mac_buttons):
+    """-> mismatch dict or None. req = the Windows request (or None), mac_buttons = the kept Mac button elements of the dialog."""
+    mac_default = [b["name"] for b in mac_buttons if b.get("default")]
+    mac_cancel = [b["name"] for b in mac_buttons if b.get("cancel")]
+    expected = mac_default[0] if mac_default else (mac_cancel[0] if mac_cancel else None)
+    if req is None:
+        return dict(where=label, field="defaultButton", windows="no HOST_DIALOG_REQUEST in the host log", mac=expected)
+    d = req["default"]
+    win = req["buttons"][d] if d is not None and 0 <= d < len(req["buttons"]) else None
+    if win is None:
+        return dict(where=label, field="defaultButton", windows=f"default index {d} of {req['buttons']}", mac=expected)
+    if expected is not None and win != expected:
+        return dict(where=label, field="defaultButton", windows=win, mac=expected, rule="Mac default button" if mac_default else "Mac has no default: the cancel button")
+    return None
+
+
+def compare_run(win_doc, mac_doc, cfg, phase="", host_dialogs=None):
     rm = cfg.get("roleMap", {})
     w, m = win_groups(win_doc, rm), mac_groups(mac_doc, rm)
     scope = cfg.get("scope", "all")
@@ -200,6 +253,11 @@ def compare_run(win_doc, mac_doc, cfg, phase=""):
             if "dialogTitle" in cfg.get("fields", []) and da["title"] != db["title"]:
                 mm.append(dict(where=f"dialog{i}", field="dialogTitle", windows=da["title"], mac=db["title"]))
             mm += compare_lists(f"dialog{i}", a, b, cfg)
+            if "defaultButton" in cfg.get("fields", []):
+                req = host_dialogs[i] if host_dialogs is not None and i < len(host_dialogs) else None
+                dm = default_button_mismatch(f"dialog{i}", req, [e for e in b if e["role"] == "button"])
+                if dm:
+                    mm.append(dm)
     if cfg.get("focus") == "element":
         fa, fb = w["focused"], m["focused"]
         key = lambda f: None if not f else (clean(f.get("name")), WIN_ROLE.get(f.get("role"), MAC_ROLE.get(f.get("role"), f.get("role"))))
@@ -224,7 +282,7 @@ def main():
             wp, mp = out / f"windows/uia-{i:02d}{suffix}.json", out / f"mac/ax-{i:02d}{suffix}.json"
             if not (wp.is_file() and mp.is_file()):
                 err = f"missing dump (phase '{phase}') windows={wp.is_file()} mac={mp.is_file()}"; break
-            pm, pinfo = compare_run(json.loads(wp.read_text(encoding="utf-8-sig")), json.loads(mp.read_text(encoding="utf-8-sig")), cfg, phase)
+            pm, pinfo = compare_run(json.loads(wp.read_text(encoding="utf-8-sig")), json.loads(mp.read_text(encoding="utf-8-sig")), cfg, phase, host_dialog_requests(out / f"windows/host-{i:02d}.stdout.txt"))
             mm += [dict(m, phase=phase) for m in pm]; info[phase or "final"] = pinfo
         if err:
             rows.append(dict(run=i, verdict="fail", error=err)); continue

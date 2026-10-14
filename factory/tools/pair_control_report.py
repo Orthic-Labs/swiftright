@@ -2,11 +2,17 @@
 """Control gate for a paired Mac/Windows run of a LABELLED control (Toggle with its label), where the label text differs by decision 2
 (Segoe UI vs SF: a different advance width) and the control therefore sits at a different x. usage: pair_control_report.py <case-dir> <runs/<ts> dir>
 
-<case>/pair.json supplies {"controlGate": {"minControlHeightPx": 50, "controlYTolerancePx": 0, "labelCentreTolerancePx": 3, "edgeAA": 32}}. Per run it GATES:
+<case>/pair.json supplies {"controlGate": {"minControlHeightPx": 50, "controlYTolerancePx": 0, "labelCentreTolerancePx": 1, "edgeAA": 32,
+"leadingXTolerancePx": 0, "labelLeadingXTolerancePx": 0, "controlGapTolerancePx": 1}}. Per run it GATES:
  1. the control (the columns whose ink spans at least minControlHeightPx rows, i.e. the switch or box, never a text line) has the same width and
     height on both sides and the same y (within controlYTolerancePx);
  2. the control, translated by the measured dx, passes the factory edge gate against the Mac (flat colours exact, edges within edgeAA/255);
  3. the label is one line of ink left of the control (right of it for a checkbox) whose vertical centre agrees within labelCentreTolerancePx.
+ 4. x (sr1-decisions #16): the LEADING edge of the whole row (the leftmost ink: the label's first ink column for a switch, the box for a checkbox) is equal within
+    leadingXTolerancePx (default 0); the label's first ink column is equal within labelLeadingXTolerancePx (default 0); the label and the control sit on the same
+    side of each other, and the ink-to-control gap (the label ink edge nearest the control to the control's edge) agrees within controlGapTolerancePx (default 0).
+    The gap is the one place the label's width enters: it is the layout spacing plus the side bearing of the label's last glyph (Segoe vs SF), so a non-zero value is
+    measured (the switch: 1 px) and a control that is nudged relative to its label by more than that fails. The label's TRAILING edge is never gated.
 It REPORTS, never gates: dx (the label advance difference), both label ink boxes, and the number of label pixels that differ."""
 import json, sys
 from pathlib import Path
@@ -79,6 +85,7 @@ def main():
     cfg = json.loads((case / "pair.json").read_text())["controlGate"]
     min_h, tol, aa = int(cfg.get("minControlHeightPx", 50)), int(cfg.get("labelCentreTolerancePx", 3)), int(cfg.get("edgeAA", 32))
     ytol = int(cfg.get("controlYTolerancePx", 0))
+    lead_tol, lab_tol, gap_tol = (int(cfg.get(k, 0)) for k in ("leadingXTolerancePx", "labelLeadingXTolerancePx", "controlGapTolerancePx"))
     rows = []
     for mac in sorted((out / "mac").glob("run-*.png")):
         n = mac.stem.split("-")[1]
@@ -105,21 +112,34 @@ def main():
         if lm is None or lw is None:   # the case declares a label: finding none fails loudly, never passes
             row["error"] = f"no label ink beside the control (mac={lm} windows={lw})"
         label_ok = lm is not None and lw is not None and abs((lm[1] + lm[3]) / 2 - (lw[1] + lw[3]) / 2) <= tol
+        # x: leading edge of the row, label first ink column, label/control side and the ink-to-control gap
+        x_ok, x_why, xinfo = False, [], {}
+        if lm is not None and lw is not None:
+            lead_m, lead_w = min(mb[0], lm[0]), min(wb[0], lw[0])
+            left_m, left_w = lm[2] <= mb[0], lw[2] <= wb[0]          # the label is left of the control
+            gap_m = mb[0] - lm[2] if left_m else lm[0] - mb[2]
+            gap_w = wb[0] - lw[2] if left_w else lw[0] - wb[2]
+            xinfo = dict(leadingX=dict(mac=lead_m, windows=lead_w), labelLeadingX=dict(mac=lm[0], windows=lw[0]), labelLeftOfControl=dict(mac=left_m, windows=left_w), controlGap=dict(mac=gap_m, windows=gap_w))
+            if left_m != left_w: x_why.append(f"label side differs (left of the control: mac {left_m}, windows {left_w})")
+            if abs(lead_w - lead_m) > lead_tol: x_why.append(f"row leading x differs by {lead_w - lead_m} px (mac {lead_m}, windows {lead_w}, tolerance {lead_tol})")
+            if abs(lw[0] - lm[0]) > lab_tol: x_why.append(f"label first ink x differs by {lw[0] - lm[0]} px (mac {lm[0]}, windows {lw[0]}, tolerance {lab_tol})")
+            if abs(gap_w - gap_m) > gap_tol: x_why.append(f"label-to-control gap differs by {gap_w - gap_m} px (mac {gap_m}, windows {gap_w}, tolerance {gap_tol})")
+            x_ok = not x_why
         diff_px = None
         if lm and lw:
             x0, y0, x1, y1 = min(lm[0], lw[0]), min(lm[1], lw[1]), max(lm[2], lw[2]), max(lm[3], lw[3])
             d = ImageChops.difference(im.crop((x0, y0, x1, y1)), iw.crop((x0, y0, x1, y1))).convert("L").point(lambda v: 255 if v else 0)
             diff_px = sum(1 for p in d.getdata() if p) if not hasattr(d, "get_flattened_data") else sum(1 for p in d.get_flattened_data() if p)
-        row.update(ok=same_size and gate_ok and label_ok and 'error' not in row, controlBBox=dict(mac=mb, windows=wb, dxWindowsMinusMac=dx, dyWindowsMinusMac=wb[1] - mb[1]), sameSizeAndY=same_size,
+        row.update(ok=same_size and gate_ok and label_ok and x_ok and 'error' not in row, xGate=dict(ok=x_ok, why=x_why, **xinfo), controlBBox=dict(mac=mb, windows=wb, dxWindowsMinusMac=dx, dyWindowsMinusMac=wb[1] - mb[1]), sameSizeAndY=same_size,
                    controlGate=gate, labelInkBBox=dict(mac=lm, windows=lw, centreToleranceOk=label_ok), labelDifferingPixelsReported=diff_px)
     ok = sum(1 for r in rows if r.get("ok"))
-    rep = dict(case=case.name, run=out.name, pairs=len(rows), gatePassed=ok, gate="control size equal, y within %d px; control (translated by dx) exact with edge-aa<=%d; label vertical centre within %d px; label pixels reported only" % (ytol, aa, tol), rows=rows)
+    rep = dict(case=case.name, run=out.name, pairs=len(rows), gatePassed=ok, gate="control size equal, y within %d px; control (translated by dx) exact with edge-aa<=%d; label vertical centre within %d px; row leading x, label first ink x (tolerances %d, %d px) and label-to-control gap (%d px); label pixels reported only" % (ytol, aa, tol, lead_tol, lab_tol, gap_tol), rows=rows)
     (out / "control-report.json").write_text(json.dumps(rep, indent=1))
     dxs = sorted({r["controlBBox"]["dxWindowsMinusMac"] for r in rows if "controlBBox" in r})
     worst = max((r["controlGate"]["maxInBand"] for r in rows if "controlGate" in r), default=None)
     print(f"{case.name}: pairs={len(rows)} control-gate={ok}/{len(rows)} dx(label advance difference)={dxs} control max-in-band={worst} out-of-band={sorted({r['controlGate']['outOfBandDiff'] for r in rows if 'controlGate' in r})}")
     for r in rows:
-        if not r.get("ok"): print("  run", r["run"], {k: v for k, v in r.items() if k in ("error", "sameSizeAndY", "labelInkBBox")})
+        if not r.get("ok"): print("  run", r["run"], {k: v for k, v in r.items() if k in ("error", "sameSizeAndY", "labelInkBBox", "xGate")})
     sys.exit(0 if rows and ok == len(rows) else 1)
 
 

@@ -20,5 +20,20 @@
   ],
   "edgeTolerancePx": 1,
   "ink": "half-coverage (luminance<=127)"
+ },
+ "textColourGate": {
+  "tolerance": 24,
+  "regions": [
+   {
+    "name": "Tinos text",
+    "rect": [
+     0,
+     5,
+     297,
+     53
+    ]
+   }
+  ],
+  "note": "the same font bytes on both sides (positions and bbox are gated by textGate); the strongest ink pixel measured (39,39,39) on the Mac and (31,31,31) on Windows (DirectWrite grayscale vs CoreText), 8 levels apart, inside the standard 24"
  }
 }
