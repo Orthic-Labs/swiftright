@@ -210,6 +210,9 @@ enum ModifierSpec {
     case presentation(PresentationPayload)
     case keyboardShortcut(KeyEquivalent, EventModifiers)
     case accessibilityLabel(String)
+    /// SR1 round 4 (block swiftui.list-row-style): `.listRowSeparator(_:)` and `.listRowBackground(_:)`, read by the host from the row's subtree.
+    case listRowSeparator(Visibility)
+    case listRowBackground(ListRowBackground)
 
     /// "modifier." plus `name`, as resolved records show it (static strings, no allocation per commit).
     var kindName: String {
@@ -236,6 +239,8 @@ enum ModifierSpec {
             return payload.kind == .alert ? "modifier.alert" : "modifier.confirmationDialog"
         case .keyboardShortcut: return "modifier.keyboardShortcut"
         case .accessibilityLabel: return "modifier.accessibilityLabel"
+        case .listRowSeparator: return "modifier.listRowSeparator"
+        case .listRowBackground: return "modifier.listRowBackground"
         }
     }
 
@@ -263,6 +268,8 @@ enum ModifierSpec {
             return payload.kind == .alert ? "alert" : "confirmationDialog"
         case .keyboardShortcut: return "keyboardShortcut"
         case .accessibilityLabel: return "accessibilityLabel"
+        case .listRowSeparator: return "listRowSeparator"
+        case .listRowBackground: return "listRowBackground"
         }
     }
 }
@@ -740,6 +747,28 @@ public struct ResolvedNode: Equatable, Sendable {
     public let isDefaultButton: Bool
     /// List nodes only: the `.listStyle` type metadata; nil when none applies.
     public let listStyle: String?
+    /// Modifier nodes of `.listRowSeparator` / `.listRowBackground` only: what the modifier asks of its List row (the host reads it from the row's subtree).
+    public var rowStyle: ListRowStyle? = nil
+}
+
+/// What `.listRowSeparator(_:)` and `.listRowBackground(_:)` ask of a List row.
+public struct ListRowStyle: Equatable, Sendable {
+    /// `.listRowSeparator(.hidden)`; nil when this modifier does not set the separator.
+    public var separatorHidden: Bool?
+    /// `.listRowBackground(_:)`: true when the modifier set a background (also when it is nil, which removes it).
+    public var setsBackground: Bool
+    /// The resolved fill when the background is a Color or a rectangle filled with a Color; nil for `listRowBackground(nil)`.
+    public var background: ResolvedColor?
+    /// The background is some other view (not a Color or a filled Rectangle): the host does not draw it and says so.
+    public var backgroundUnsupported: Bool
+    public init(separatorHidden: Bool? = nil, setsBackground: Bool = false, background: ResolvedColor? = nil, backgroundUnsupported: Bool = false) {
+        self.separatorHidden = separatorHidden; self.setsBackground = setsBackground; self.background = background; self.backgroundUnsupported = backgroundUnsupported
+    }
+}
+
+/// The argument of `.listRowBackground`, resolved when the modifier is built.
+struct ListRowBackground {
+    let style: ListRowStyle
 }
 
 extension ResolvedNode {
@@ -749,7 +778,7 @@ extension ResolvedNode {
                      selection: selection, marked: marked, children: children, labelsHidden: labelsHidden, toggleStyle: toggleStyle,
                      fieldStyle: fieldStyle, placeholder: placeholder, accessibility: accessibility, style: style, image: image,
                      imageSizing: imageSizing, color: color, shapeStorage: shapeStorage, menu: menu, presentation: presentation, shortcut: shortcut,
-                     buttonStyle: buttonStyle, isDefaultButton: isDefaultButton, listStyle: listStyle)
+                     buttonStyle: buttonStyle, isDefaultButton: isDefaultButton, listStyle: listStyle, rowStyle: rowStyle)
     }
 }
 
@@ -1824,6 +1853,9 @@ public final class Graph {
         }
         var listStyle: String?
         if case .stack(let spec) = kind, spec.name == "List" { listStyle = node.environment.listStyleMetadata }
+        var rowStyle: ListRowStyle?
+        if case .modifier(.listRowSeparator(let visibility)) = kind { rowStyle = ListRowStyle(separatorHidden: visibility == .hidden) }
+        if case .modifier(.listRowBackground(let background)) = kind { rowStyle = background.style }
         var shortcut: ResolvedShortcut?
         if case .modifier(.keyboardShortcut(let key, let modifiers)) = kind {
             shortcut = ResolvedShortcut(
@@ -1857,7 +1889,8 @@ public final class Graph {
             shortcut: shortcut,
             buttonStyle: buttonStyle,
             isDefaultButton: isDefaultButton,
-            listStyle: listStyle
+            listStyle: listStyle,
+            rowStyle: rowStyle
         )
     }
 

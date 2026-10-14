@@ -170,6 +170,23 @@ extension View {
         Modified(content: self, spec: .tag(AnyHashable(tag)))
     }
 
+    /// Shows or hides the separator under this List row. Apple: https://developer.apple.com/documentation/swiftui/view/listrowseparator(_:edges:)
+    public func listRowSeparator(_ visibility: Visibility, edges: VerticalEdge.Set = .all) -> some View {
+        Modified(content: self, spec: .listRowSeparator(visibility))
+    }
+
+    /// Replaces the background of this List row; a Color or a Rectangle filled with a Color is drawn, another view is reported unsupported by the host.
+    /// Apple: https://developer.apple.com/documentation/swiftui/view/listrowbackground(_:)
+    public func listRowBackground<V: View>(_ view: V?) -> some View {
+        var style = ListRowStyle(setsBackground: true)
+        if let view {
+            if let color = view as? Color { style.background = color.resolvedColor }
+            else if let primitive = view as? PrimitiveView, case .shape(let shape) = primitive.nodeKind, shape.geometry == .rectangle, shape.paint?.kind == .fill { style.background = shape.paint?.color }
+            else { style.backgroundUnsupported = true }
+        }
+        return Modified(content: self, spec: .listRowBackground(ListRowBackground(style: style)))
+    }
+
     /// Overrides the accessibility label of this view. Apple: https://developer.apple.com/documentation/swiftui/view/accessibilitylabel(_:)
     public func accessibilityLabel(_ label: String) -> some View {
         Modified(content: self, spec: .accessibilityLabel(label))

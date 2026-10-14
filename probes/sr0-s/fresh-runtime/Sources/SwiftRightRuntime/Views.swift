@@ -630,3 +630,16 @@ public enum Edge: Int8, CaseIterable, Sendable {
         public static let all: Set = [.top, .leading, .bottom, .trailing]
     }
 }
+
+/// The vertical edges of a row (`listRowSeparator(_:edges:)`). Apple: https://developer.apple.com/documentation/swiftui/verticaledge
+public enum VerticalEdge: Int8, CaseIterable, Sendable {
+    case top, bottom
+
+    public struct Set: OptionSet, Sendable {
+        public let rawValue: Int8
+        public init(rawValue: Int8) { self.rawValue = rawValue }
+        public static let top = Set(rawValue: 1)
+        public static let bottom = Set(rawValue: 2)
+        public static let all: Set = [.top, .bottom]
+    }
+}

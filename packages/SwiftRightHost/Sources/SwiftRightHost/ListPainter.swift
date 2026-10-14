@@ -25,6 +25,26 @@ public enum ListPainter {
         public var rect: Rect
         public var isSelected: Bool
         public var isEnabled: Bool
+        /// `.listRowSeparator(.hidden)` on the row's content: its bottom separator is not drawn.
+        public var separatorHidden = false
+        /// `.listRowBackground(_:)`: the row's own background (nil: the list's). `backgroundUnsupported`: some other view, which fails visibly.
+        public var background: ResolvedColor? = nil
+        public var backgroundUnsupported = false
+    }
+
+    /// The row modifiers of a row: the `listRowSeparator` / `listRowBackground` modifier nodes on the single-child chain below the row's top node (a `.tag` or another
+    /// modifier may wrap them), the outermost winning.
+    static func rowStyle(of child: ResolvedNode) -> (separatorHidden: Bool?, setsBackground: Bool, background: ResolvedColor?, unsupported: Bool) {
+        var separatorHidden: Bool?, setsBackground = false, background: ResolvedColor?, unsupported = false
+        var node: ResolvedNode? = child
+        while let n = node {
+            if let s = n.rowStyle {
+                if separatorHidden == nil { separatorHidden = s.separatorHidden }
+                if !setsBackground, s.setsBackground { setsBackground = true; background = s.background; unsupported = s.backgroundUnsupported }
+            }
+            node = n.children.count == 1 ? n.children[0] : nil
+        }
+        return (separatorHidden, setsBackground, background, unsupported)
     }
 
     /// The full-width rectangle of every row (direct child) of a List, top to bottom, in window pixels, from the layout rules (`ListMetrics`): edges at
@@ -37,7 +57,9 @@ public enum ListPainter {
         for child in list.children {
             cursor += Float(ListMetrics.rowHeight(forContent: CGFloat(child.frame.height)))
             let next = (bounds.y + cursor * scale).rounded(.toNearestOrAwayFromZero)
-            out.append(Row(rect: Rect(x: bounds.x, y: edge, w: bounds.w, h: next - edge), isSelected: child.accessibility.isSelected, isEnabled: child.accessibility.isEnabled))
+            let style = rowStyle(of: child)
+            out.append(Row(rect: Rect(x: bounds.x, y: edge, w: bounds.w, h: next - edge), isSelected: child.accessibility.isSelected, isEnabled: child.accessibility.isEnabled,
+                           separatorHidden: style.separatorHidden ?? false, background: style.background, backgroundUnsupported: style.unsupported))
             edge = next
         }
         return out
@@ -57,9 +79,20 @@ public enum ListPainter {
         let thickness = scale                       // 1 pt
         let whole = thickness.rounded(.down), partial = thickness - whole
         let rgb = separatorRGB
-        for (i, row) in rows.enumerated() where i < rows.count - 1 && !row.isSelected && !rows[i + 1].isSelected {
+        // A row background (`.listRowBackground`) fills the whole row rectangle (the list's inset above the first row stays the list's own).
+        for row in rows {
+            if row.backgroundUnsupported { throw HostPaintError.unsupportedNode("listRowBackground (only a Color or a Rectangle filled with a Color is drawn)") }
+            if let fill = row.background { out.append(.rect(row.rect, color: try HostPaint.rgba(fill, opacity: 1))) }
+        }
+        for (i, row) in rows.enumerated() where i < rows.count - 1 && !row.isSelected && !rows[i + 1].isSelected && !row.separatorHidden {
             let x = bounds.x + inset, w = max(0, bounds.w - inset - right)
             let bottom = row.rect.y + row.rect.h
+            if row.background != nil {
+                // over a coloured row the separator is the translucent black it is (alpha 25/255, as the Divider), not the flat grey that equals it over white
+                out.append(.rect(Rect(x: x, y: bottom - whole, w: w, h: whole), color: 0x00000019))
+                if partial > 0 { out.append(.rect(Rect(x: x, y: bottom - whole - 1, w: w, h: 1), color: UInt32((25 * partial).rounded()))) }
+                continue
+            }
             out.append(.rect(Rect(x: x, y: bottom - whole, w: w, h: whole), color: rgb << 8 | 0xff))
             if partial > 0 {
                 let c = UInt32((255 - (255 - Float(rgb & 255)) * partial).rounded())
@@ -78,7 +111,7 @@ public enum ListPainter {
     }
 
     public static func highlight(for row: Row, listBounds: Rect, look: ListLook, scale: Float, active: Bool) -> Highlight? {
-        guard row.isSelected else { return nil }
+        guard row.isSelected, row.background == nil else { return nil }   // a row background replaces the selection highlight (measured: the highlight is not drawn over it)
         let rgb = selectionColor(active: active, isEnabled: row.isEnabled)
         if look == .plain { return .flat(row.rect, rgb << 8 | 0xff) }
         let inset = selectionInsetPoints * scale
