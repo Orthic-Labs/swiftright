@@ -1,0 +1,58 @@
+{
+ "case": "two-lines-v1",
+ "run": "20261015-040537",
+ "pairs": 1,
+ "gatePassed": 1,
+ "glyphRegion": [
+  94,
+  229,
+  333,
+  380
+ ],
+ "gate": "exact outside glyph region; half-coverage ink bbox within 1 px per edge; AA diff pixels reported only",
+ "rows": [
+  {
+   "run": 1,
+   "ok": true,
+   "outsideGlyphRegionDifferingPixels": 0,
+   "inkBBoxHalfCoverage": {
+    "mac": [
+     101,
+     236,
+     327,
+     373
+    ],
+    "windows": [
+     101,
+     236,
+     327,
+     374
+    ],
+    "deltaWindowsMinusMac": [
+     0,
+     0,
+     0,
+     1
+    ],
+    "tolerancePx": 1,
+    "match": true
+   },
+   "inkBBoxAnyCoverageReported": {
+    "mac": [
+     100,
+     235,
+     327,
+     374
+    ],
+    "windows": [
+     101,
+     235,
+     328,
+     374
+    ]
+   },
+   "aaDifferingPixelsInGlyphRegion": 6956,
+   "aaMaxChannelDiff": 224
+  }
+ ]
+}

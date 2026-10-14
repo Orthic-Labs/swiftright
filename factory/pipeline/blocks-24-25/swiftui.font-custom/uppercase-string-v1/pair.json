@@ -1,0 +1,42 @@
+{
+ "textGate": {
+  "helper": "factory/tools/pair_text_report.py",
+  "rect": [
+   70,
+   65,
+   597,
+   112
+  ],
+  "edgeTolerancePx": 1,
+  "ink": "half-coverage (luminance<=127)"
+ },
+ "macArgs": [
+  "--fonts",
+  "/Volumes/D/claude/swiftright/factory/resources/fonts/Tinos-Regular.ttf"
+ ],
+ "excludeRects": [
+  {
+   "name": "glyph region [70, 65, 597, 112] (ink bbox mac [76, 71, 591, 106]); AA only (DirectWrite grayscale vs CoreText, same font bytes); gated by factory/tools/pair_text_report.py: exact outside, half-coverage ink bbox within 1 px",
+   "rect": [
+    70,
+    65,
+    597,
+    112
+   ]
+  }
+ ],
+ "textColourGate": {
+  "tolerance": 24,
+  "regions": [
+   {
+    "name": "custom font text",
+    "rect": [
+     70,
+     65,
+     597,
+     112
+    ]
+   }
+  ]
+ }
+}

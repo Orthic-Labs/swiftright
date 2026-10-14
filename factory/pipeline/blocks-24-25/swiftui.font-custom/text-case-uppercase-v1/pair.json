@@ -1,0 +1,63 @@
+{
+ "textGate": {
+  "helper": "factory/tools/pair_text_report.py",
+  "rect": [
+   69,
+   65,
+   597,
+   197
+  ],
+  "edgeTolerancePx": 1,
+  "ink": "half-coverage (luminance<=127)"
+ },
+ "semanticGate": {
+  "fields": [
+   "role",
+   "name",
+   "enabled",
+   "count",
+   "order"
+  ],
+  "scope": "main",
+  "phases": [
+   ""
+  ]
+ },
+ "steps": [
+  {
+   "op": "wait",
+   "ms": 600
+  }
+ ],
+ "macArgs": [
+  "--steps",
+  "[{\"op\":\"wait\",\"ms\":600}]",
+  "--fonts",
+  "/Volumes/D/claude/swiftright/factory/resources/fonts/Tinos-Regular.ttf"
+ ],
+ "excludeRects": [
+  {
+   "name": "glyph region [69, 65, 597, 197] (ink bbox mac [75, 71, 591, 191]); AA only (DirectWrite grayscale vs CoreText, same font bytes); gated by factory/tools/pair_text_report.py: exact outside, half-coverage ink bbox within 1 px",
+   "rect": [
+    69,
+    65,
+    597,
+    197
+   ]
+  }
+ ],
+ "textColourGate": {
+  "tolerance": 24,
+  "regions": [
+   {
+    "name": "custom font text",
+    "rect": [
+     69,
+     65,
+     597,
+     197
+    ]
+   }
+  ]
+ }
+}

@@ -1,0 +1,211 @@
+{
+ "semanticGate": {
+  "fields": [
+   "role",
+   "name",
+   "enabled",
+   "count",
+   "order"
+  ],
+  "scope": "main",
+  "phases": [
+   "start",
+   "inner",
+   "other",
+   "swap",
+   "old",
+   "new",
+   ""
+  ]
+ },
+ "phaseShots": [
+  "start",
+  "inner",
+  "other",
+  "swap",
+  "old",
+  "new"
+ ],
+ "excludeRects": [
+  {
+   "name": "inner text glyph region (Segoe UI vs SF, sr1-decisions #2); gated by the semantic tree",
+   "rect": [
+    200,
+    50,
+    700,
+    100
+   ]
+  },
+  {
+   "name": "button row 0 width and label glyphs (Segoe UI vs SF, decision 2/11); the artwork is gated by swiftui.button, its action by the tree and the squares",
+   "rect": [
+    100,
+    100,
+    700,
+    180
+   ]
+  },
+  {
+   "name": "button row 1 width and label glyphs (Segoe UI vs SF, decision 2/11); the artwork is gated by swiftui.button, its action by the tree and the squares",
+   "rect": [
+    100,
+    180,
+    700,
+    260
+   ]
+  },
+  {
+   "name": "button row 2 width and label glyphs (Segoe UI vs SF, decision 2/11); the artwork is gated by swiftui.button, its action by the tree and the squares",
+   "rect": [
+    100,
+    260,
+    700,
+    340
+   ]
+  },
+  {
+   "name": "button row 3 width and label glyphs (Segoe UI vs SF, decision 2/11); the artwork is gated by swiftui.button, its action by the tree and the squares",
+   "rect": [
+    100,
+    340,
+    700,
+    420
+   ]
+  }
+ ],
+ "steps": [
+  {
+   "op": "wait",
+   "ms": 700
+  },
+  {
+   "op": "wait",
+   "ms": 200
+  },
+  {
+   "op": "dump",
+   "label": "start"
+  },
+  {
+   "op": "wait",
+   "ms": 250
+  },
+  {
+   "op": "shot",
+   "label": "start"
+  },
+  {
+   "op": "click",
+   "x": 400,
+   "y": 140
+  },
+  {
+   "op": "wait",
+   "ms": 450
+  },
+  {
+   "op": "dump",
+   "label": "inner"
+  },
+  {
+   "op": "wait",
+   "ms": 250
+  },
+  {
+   "op": "shot",
+   "label": "inner"
+  },
+  {
+   "op": "click",
+   "x": 400,
+   "y": 220
+  },
+  {
+   "op": "wait",
+   "ms": 450
+  },
+  {
+   "op": "dump",
+   "label": "other"
+  },
+  {
+   "op": "wait",
+   "ms": 250
+  },
+  {
+   "op": "shot",
+   "label": "other"
+  },
+  {
+   "op": "click",
+   "x": 400,
+   "y": 300
+  },
+  {
+   "op": "wait",
+   "ms": 450
+  },
+  {
+   "op": "dump",
+   "label": "swap"
+  },
+  {
+   "op": "wait",
+   "ms": 250
+  },
+  {
+   "op": "shot",
+   "label": "swap"
+  },
+  {
+   "op": "click",
+   "x": 400,
+   "y": 380
+  },
+  {
+   "op": "wait",
+   "ms": 450
+  },
+  {
+   "op": "dump",
+   "label": "old"
+  },
+  {
+   "op": "wait",
+   "ms": 250
+  },
+  {
+   "op": "shot",
+   "label": "old"
+  },
+  {
+   "op": "click",
+   "x": 400,
+   "y": 140
+  },
+  {
+   "op": "wait",
+   "ms": 450
+  },
+  {
+   "op": "dump",
+   "label": "new"
+  },
+  {
+   "op": "wait",
+   "ms": 250
+  },
+  {
+   "op": "shot",
+   "label": "new"
+  },
+  {
+   "op": "wait",
+   "ms": 200
+  }
+ ],
+ "macArgs": [
+  "--steps",
+  "[{\"op\":\"wait\",\"ms\":700},{\"op\":\"wait\",\"ms\":200},{\"op\":\"dump\",\"label\":\"start\"},{\"op\":\"wait\",\"ms\":250},{\"op\":\"shot\",\"label\":\"start\"},{\"op\":\"click\",\"x\":400,\"y\":140},{\"op\":\"wait\",\"ms\":450},{\"op\":\"dump\",\"label\":\"inner\"},{\"op\":\"wait\",\"ms\":250},{\"op\":\"shot\",\"label\":\"inner\"},{\"op\":\"click\",\"x\":400,\"y\":220},{\"op\":\"wait\",\"ms\":450},{\"op\":\"dump\",\"label\":\"other\"},{\"op\":\"wait\",\"ms\":250},{\"op\":\"shot\",\"label\":\"other\"},{\"op\":\"click\",\"x\":400,\"y\":300},{\"op\":\"wait\",\"ms\":450},{\"op\":\"dump\",\"label\":\"swap\"},{\"op\":\"wait\",\"ms\":250},{\"op\":\"shot\",\"label\":\"swap\"},{\"op\":\"click\",\"x\":400,\"y\":380},{\"op\":\"wait\",\"ms\":450},{\"op\":\"dump\",\"label\":\"old\"},{\"op\":\"wait\",\"ms\":250},{\"op\":\"shot\",\"label\":\"old\"},{\"op\":\"click\",\"x\":400,\"y\":140},{\"op\":\"wait\",\"ms\":450},{\"op\":\"dump\",\"label\":\"new\"},{\"op\":\"wait\",\"ms\":250},{\"op\":\"shot\",\"label\":\"new\"},{\"op\":\"wait\",\"ms\":200}]"
+ ]
+}

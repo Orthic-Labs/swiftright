@@ -1,0 +1,58 @@
+{
+ "case": "sizes-v1",
+ "run": "20261015-042635",
+ "pairs": 1,
+ "gatePassed": 1,
+ "glyphRegion": [
+  69,
+  61,
+  410,
+  280
+ ],
+ "gate": "exact outside glyph region; half-coverage ink bbox within 1 px per edge; AA diff pixels reported only",
+ "rows": [
+  {
+   "run": 1,
+   "ok": true,
+   "outsideGlyphRegionDifferingPixels": 0,
+   "inkBBoxHalfCoverage": {
+    "mac": [
+     75,
+     67,
+     404,
+     274
+    ],
+    "windows": [
+     76,
+     67,
+     404,
+     275
+    ],
+    "deltaWindowsMinusMac": [
+     1,
+     0,
+     0,
+     1
+    ],
+    "tolerancePx": 1,
+    "match": true
+   },
+   "inkBBoxAnyCoverageReported": {
+    "mac": [
+     75,
+     67,
+     405,
+     274
+    ],
+    "windows": [
+     75,
+     66,
+     404,
+     275
+    ]
+   },
+   "aaDifferingPixelsInGlyphRegion": 9682,
+   "aaMaxChannelDiff": 224
+  }
+ ]
+}

@@ -29,7 +29,24 @@ NUM2ID = {1: "swiftui.shapes.fill-stroke", 2: "swiftui.image", 3: "swiftui.stack
           10: "swiftui.preference-key", 11: "swiftui.button", 12: "swiftui.binding",
           13: "swiftui.textfield", 14: "swiftui.focus-state", 15: "swiftui.ime-marked-text",
           16: "swiftui.list", 17: "swiftui.alert", 18: "swiftui.animation",
-          19: "swiftui.opacity-transition", 20: "swiftui.color-scheme"}
+          19: "swiftui.opacity-transition", 20: "swiftui.color-scheme",
+          21: "swiftui.observation", 22: "swiftui.task-asyncstream", 23: "swiftui.spacer-divider",
+          24: "swiftui.list-row-style", 25: "swiftui.font-custom"}
+
+# Round-4 blocks (requested by the Pulse hub track): passed at N=20 on their stage, no independent review yet. Provisional use only; remove a block from this set
+# when its review lands and docs/sr1-status.md records it.
+ROUND4_CAVEATS = {
+    "swiftui.observation": ["No `.environment(model)` / `@Environment(Model.self)`; a `@Bindable` binding is proven through a Button, not a click on a Toggle.",
+                            "A view whose inputs and environment did not change keeps its body (SwiftUI rule); the comparison is conservative: a closure or Binding field always re-runs the body."],
+    "swiftui.task-asyncstream": ["Events are pumped by clicks, not timers: no `Task.sleep` timing is gated.", "A cancelled task's code after its loop still runs (as in SwiftUI)."],
+    "swiftui.spacer-divider": ["Divider is proven in the light appearance only (the dark Divider throws); Spacer/Divider not proven inside List, ScrollView or LazyVStack.",
+                               "Spacer(minLength: nil) is 8 pt and a default stack spacing is 0 beside a Spacer (measured)."],
+    "swiftui.list-row-style": ["`.listStyle(.sidebar)` is not delivered; `.listRowBackground` draws a Color or a Rectangle filled with a Color only (another view fails visibly).",
+                               "`listRowSeparator(edges:)` is accepted; top and bottom are not told apart. A row background replaces the selection highlight."],
+    "swiftui.font-custom": ["Proven on bundled Tinos Regular only; the hub's real display font (Tanker, licence unconfirmed) is not bundled or gated.", "`.tracking`/`.kerning`, other weights and a 28 pt title are not delivered; text frames must be the line height plus a multiple of 4 pt (Windows text-run matching on half-pixel ties).",
+                             "Glyph pixels are gated by the text gate (ink box within 1 px), not exact (DirectWrite vs CoreText)."],
+}
+PENDING_REVIEW = {"swiftui.observation", "swiftui.task-asyncstream", "swiftui.spacer-divider", "swiftui.list-row-style", "swiftui.font-custom"}
 
 # Hand-set status. The status doc still reads "delivered" for 13-15; the TextField text-origin fix
 # (docs/sr1-decisions.md decision 12, an Oracle finding) is being rerun, so none is delivered yet.
@@ -106,9 +123,9 @@ def parse_status():
             continue
         cells = [c.strip() for c in line.strip().strip("|").split("|")]
         m = re.match(r"(\d+|pixel-ties)\b", cells[0])
-        if m and len(cells) >= 5:
+        if m and len(cells) >= 4:
             key = int(m.group(1)) if m.group(1).isdigit() else "pixel-ties"
-            rows[key] = {"verdict": cells[3], "caveats": cells[4]}
+            rows[key] = {"verdict": cells[3], "caveats": cells[4] if len(cells) > 4 else ""}
     gaps = re.search(r"^Known gaps: (.*)$", text, re.M)
     return date, rows, gaps.group(1).strip() if gaps else ""
 
@@ -150,6 +167,9 @@ def build():
                            (re.search(r"/runs/(\d{8})-", c["out"]).group(1) for c in cases if c.get("out"))})
         passed = sum(1 for c in cases if c["exit"] == 0)
         status = "not-delivered" if passed != len(cases) else ("delivered-with-caveats" if gen or win else "delivered")
+        if bid in PENDING_REVIEW and passed == len(cases):
+            status = "delivered-pending-review"
+            gen = gen + ROUND4_CAVEATS.get(bid, [])
         e = {"block": bid, "statusDocBlock": num, "status": status,
              "cases": sorted(c["case"] for c in cases), "casesPassingDecidingGate": f"{passed}/{len(cases)}",
              "apis": {"fromManifest": manifest_apis(mblocks[bid]) if bid in mblocks else [],
@@ -169,7 +189,7 @@ def build():
             "sources": ["factory/pipeline/consolidation/consolidation-table.json", "factory/registry/manifest.json",
                         "docs/sr1-status.md", "factory/pipeline/consolidation/results.jsonl", "Witness.swift of each case"],
             "statusDate": sdate,
-            "statusValues": ["delivered", "delivered-with-caveats", "not-delivered", "in-progress"],
+            "statusValues": ["delivered", "delivered-with-caveats", "delivered-pending-review", "not-delivered", "in-progress"],
             "apisNotCovered": {"hint": "Any SwiftUI API not listed under a block is not proven. See docs/pulse-notch-demand-map.md "
                                        "for the notch's SwiftUI APIs that no delivered block covers.",
                                "see": "docs/pulse-notch-demand-map.md"},

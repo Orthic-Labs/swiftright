@@ -1145,6 +1145,282 @@
         "text": "exact 9/9 (ruler, centered-origin, layout)"
       },
       "windowsDifferences": []
+    },
+    {
+      "apis": {
+        "fromCaseSources": {
+          "modifiersAndMembers": [
+            "append",
+            "blue",
+            "fill",
+            "frame",
+            "gray",
+            "green",
+            "orange",
+            "purple",
+            "red",
+            "toggle"
+          ],
+          "types": [
+            "Button",
+            "Color",
+            "ForEach",
+            "HStack",
+            "Rectangle",
+            "Text",
+            "VStack"
+          ]
+        },
+        "fromManifest": [
+          "Bindable",
+          "Bindable.Observation",
+          "Bindable.dynamicMember",
+          "Bindable.projectedValue",
+          "Bindable.wrappedValue",
+          "Observation.Observable"
+        ]
+      },
+      "block": "swiftui.observation",
+      "cases": [
+        "blocks-21-23/swiftui.observation/bindable-binding-v1",
+        "blocks-21-23/swiftui.observation/collection-of-models-v1",
+        "blocks-21-23/swiftui.observation/computed-dependency-v1",
+        "blocks-21-23/swiftui.observation/independent-readers-v1",
+        "blocks-21-23/swiftui.observation/nested-models-v1",
+        "blocks-21-23/swiftui.observation/property-render-v1"
+      ],
+      "casesPassingDecidingGate": "6/6",
+      "caveats": [
+        "No `.environment(model)` / `@Environment(Model.self)`; a `@Bindable` binding is proven through a Button, not a click on a Toggle.",
+        "A view whose inputs and environment did not change keeps its body (SwiftUI rule); the comparison is conservative: a closure or Binding field always re-runs the body."
+      ],
+      "stage": "618b2e8cb-133bd776",
+      "status": "delivered-pending-review",
+      "statusDocBlock": 21,
+      "verdict": {
+        "date": "2026-10-15",
+        "runDates": [
+          "2026-10-15"
+        ],
+        "source": "docs/sr1-status.md table + factory/pipeline/consolidation/consolidation-table.json",
+        "text": "640/640 pairs, 120/120 semantic, on `618b2e8cb-133bd776` (**delivered-pending-review**)"
+      },
+      "windowsDifferences": []
+    },
+    {
+      "apis": {
+        "fromCaseSources": {
+          "modifiersAndMembers": [
+            "append",
+            "blue",
+            "continuation",
+            "fill",
+            "frame",
+            "gray",
+            "green",
+            "makeStream",
+            "red",
+            "stream",
+            "task",
+            "yield"
+          ],
+          "types": [
+            "AsyncStream",
+            "Button",
+            "Color",
+            "ForEach",
+            "HStack",
+            "Rectangle",
+            "Text",
+            "VStack"
+          ]
+        },
+        "fromManifest": [
+          "View.task"
+        ]
+      },
+      "block": "swiftui.task-asyncstream",
+      "cases": [
+        "blocks-21-23/swiftui.task-asyncstream/cancel-on-disappear-v1",
+        "blocks-21-23/swiftui.task-asyncstream/ordering-burst-v1",
+        "blocks-21-23/swiftui.task-asyncstream/ordering-clicks-v1",
+        "blocks-21-23/swiftui.task-asyncstream/stream-drives-state-v1",
+        "blocks-21-23/swiftui.task-asyncstream/stream-finish-v1",
+        "blocks-21-23/swiftui.task-asyncstream/task-id-restart-v1"
+      ],
+      "casesPassingDecidingGate": "6/6",
+      "caveats": [
+        "Events are pumped by clicks, not timers: no `Task.sleep` timing is gated.",
+        "A cancelled task's code after its loop still runs (as in SwiftUI)."
+      ],
+      "stage": "618b2e8cb-133bd776",
+      "status": "delivered-pending-review",
+      "statusDocBlock": 22,
+      "verdict": {
+        "date": "2026-10-15",
+        "runDates": [
+          "2026-10-15"
+        ],
+        "source": "docs/sr1-status.md table + factory/pipeline/consolidation/consolidation-table.json",
+        "text": "680/680 pairs, 120/120 semantic, on `618b2e8cb-133bd776` (**delivered-pending-review**)"
+      },
+      "windowsDifferences": []
+    },
+    {
+      "apis": {
+        "fromCaseSources": {
+          "modifiersAndMembers": [
+            "fill",
+            "frame",
+            "overlay"
+          ],
+          "types": [
+            "Color",
+            "Divider",
+            "HStack",
+            "Rectangle",
+            "Spacer",
+            "VStack",
+            "ZStack"
+          ]
+        },
+        "fromManifest": [
+          "Divider",
+          "Spacer",
+          "Spacer.minLength"
+        ]
+      },
+      "block": "swiftui.spacer-divider",
+      "cases": [
+        "blocks-21-23/swiftui.spacer-divider/divider-colour-v1",
+        "blocks-21-23/swiftui.spacer-divider/divider-horizontal-v1",
+        "blocks-21-23/swiftui.spacer-divider/divider-over-colour-v1",
+        "blocks-21-23/swiftui.spacer-divider/divider-spacing-v1",
+        "blocks-21-23/swiftui.spacer-divider/divider-ties-v1",
+        "blocks-21-23/swiftui.spacer-divider/divider-vertical-fill-v1",
+        "blocks-21-23/swiftui.spacer-divider/divider-vertical-v1",
+        "blocks-21-23/swiftui.spacer-divider/spacer-default-length-v1",
+        "blocks-21-23/swiftui.spacer-divider/spacer-fixed-frame-v1",
+        "blocks-21-23/swiftui.spacer-divider/spacer-flexible-v1",
+        "blocks-21-23/swiftui.spacer-divider/spacer-hstack-v1",
+        "blocks-21-23/swiftui.spacer-divider/spacer-minlength-v1",
+        "blocks-21-23/swiftui.spacer-divider/spacer-spacing-v1",
+        "blocks-21-23/swiftui.spacer-divider/spacer-ties-v1",
+        "blocks-21-23/swiftui.spacer-divider/spacer-vstack-v1"
+      ],
+      "casesPassingDecidingGate": "15/15",
+      "caveats": [
+        "Divider is proven in the light appearance only (the dark Divider throws); Spacer/Divider not proven inside List, ScrollView or LazyVStack.",
+        "Spacer(minLength: nil) is 8 pt and a default stack spacing is 0 beside a Spacer (measured)."
+      ],
+      "stage": "618b2e8cb-133bd776",
+      "status": "delivered-pending-review",
+      "statusDocBlock": 23,
+      "verdict": {
+        "date": "2026-10-15",
+        "runDates": [
+          "2026-10-15"
+        ],
+        "source": "docs/sr1-status.md table + factory/pipeline/consolidation/consolidation-table.json",
+        "text": "300/300 pairs exact, on `618b2e8cb-133bd776` (**delivered-pending-review**)"
+      },
+      "windowsDifferences": []
+    },
+    {
+      "apis": {
+        "fromCaseSources": {
+          "modifiersAndMembers": [
+            "fill",
+            "frame",
+            "listRowBackground",
+            "listRowSeparator",
+            "listStyle",
+            "tag"
+          ],
+          "types": [
+            "Color",
+            "ForEach",
+            "List",
+            "Rectangle",
+            "Text"
+          ]
+        },
+        "fromManifest": []
+      },
+      "block": "swiftui.list-row-style",
+      "cases": [
+        "blocks-24-25/swiftui.list-row-style/bg-colour-v1",
+        "blocks-24-25/swiftui.list-row-style/bg-view-v1",
+        "blocks-24-25/swiftui.list-row-style/plain-bg-colour-v1",
+        "blocks-24-25/swiftui.list-row-style/plain-selected-bg-v1",
+        "blocks-24-25/swiftui.list-row-style/plain-sep-hidden-v1",
+        "blocks-24-25/swiftui.list-row-style/selected-bg-v1",
+        "blocks-24-25/swiftui.list-row-style/sep-hidden-all-v1",
+        "blocks-24-25/swiftui.list-row-style/sep-hidden-some-v1"
+      ],
+      "casesPassingDecidingGate": "8/8",
+      "caveats": [
+        "`.listStyle(.sidebar)` is not delivered; `.listRowBackground` draws a Color or a Rectangle filled with a Color only (another view fails visibly).",
+        "`listRowSeparator(edges:)` is accepted; top and bottom are not told apart. A row background replaces the selection highlight."
+      ],
+      "stage": "8bf89d2dc-aa6cd909",
+      "status": "delivered-pending-review",
+      "statusDocBlock": 24,
+      "verdict": {
+        "date": "2026-10-15",
+        "runDates": [
+          "2026-10-15"
+        ],
+        "source": "docs/sr1-status.md table + factory/pipeline/consolidation/consolidation-table.json",
+        "text": "160/160 pairs, on `8bf89d2dc-aa6cd909` (**delivered-pending-review**; `.listStyle(.sidebar)` NOT delivered, decision E13)"
+      },
+      "windowsDifferences": []
+    },
+    {
+      "apis": {
+        "fromCaseSources": {
+          "modifiersAndMembers": [
+            "custom",
+            "font",
+            "foregroundStyle",
+            "frame",
+            "textCase"
+          ],
+          "types": [
+            "Color",
+            "Text",
+            "VStack"
+          ]
+        },
+        "fromManifest": []
+      },
+      "block": "swiftui.font-custom",
+      "cases": [
+        "blocks-24-25/swiftui.font-custom/colour-v1",
+        "blocks-24-25/swiftui.font-custom/sizes-v1",
+        "blocks-24-25/swiftui.font-custom/text-case-uppercase-v1",
+        "blocks-24-25/swiftui.font-custom/title-32-v1",
+        "blocks-24-25/swiftui.font-custom/two-lines-v1",
+        "blocks-24-25/swiftui.font-custom/uppercase-string-v1"
+      ],
+      "casesPassingDecidingGate": "6/6",
+      "caveats": [
+        "Proven on bundled Tinos Regular only; the hub's real display font (Tanker, licence unconfirmed) is not bundled or gated.",
+        "`.tracking`/`.kerning`, other weights and a 28 pt title are not delivered; text frames must be the line height plus a multiple of 4 pt (Windows text-run matching on half-pixel ties).",
+        "Glyph pixels are gated by the text gate (ink box within 1 px), not exact (DirectWrite vs CoreText)."
+      ],
+      "stage": "8bf89d2dc-aa6cd909",
+      "status": "delivered-pending-review",
+      "statusDocBlock": 25,
+      "verdict": {
+        "date": "2026-10-15",
+        "runDates": [
+          "2026-10-15"
+        ],
+        "source": "docs/sr1-status.md table + factory/pipeline/consolidation/consolidation-table.json",
+        "text": "120/120 pairs on bundled Tinos, on `8bf89d2dc-aa6cd909` (**delivered-pending-review**; the hub's real display font, `.tracking` and a 28 pt title NOT delivered, decisions E12, E14)"
+      },
+      "windowsDifferences": []
     }
   ],
   "generator": "factory/tools/proven-controls/generate.py",
@@ -1161,6 +1437,7 @@
   "statusValues": [
     "delivered",
     "delivered-with-caveats",
+    "delivered-pending-review",
     "not-delivered",
     "in-progress"
   ]
