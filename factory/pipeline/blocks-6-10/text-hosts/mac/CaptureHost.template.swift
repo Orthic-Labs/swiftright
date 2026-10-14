@@ -113,6 +113,15 @@ final class StepRunner {
     }
 }
 
+/// A SwiftUI `.switch` Toggle (NSSwitch) redraws its knob and track from a display-link animation after a click; a window that is never on a display never
+/// ticks it, so the layers keep the state from before the click while `state` and the accessibility value are already new (measured on derived-click-v1:
+/// state 0, knob layers still at the "on" x). Flipping a switch's state and restoring it, with a run-loop turn after each, makes SwiftUI redraw it settled.
+/// A programmatic change sends no action (one binding setter call per click, counted), so nothing but pixels changes. No-op without switches.
+@MainActor func settleSwitches(_ root: NSView) {
+    func all(_ v: NSView) -> [NSSwitch] { (v as? NSSwitch).map { [$0] } ?? v.subviews.flatMap(all) }
+    for sw in all(root) { let st = sw.state; sw.state = st == .on ? .off : .on; spin(0.2); sw.state = st; spin(0.3) }
+}
+
 @MainActor
 func capture(_ witness: AnyView, width: CGFloat, height: CGFloat, to path: String, ax: String?) throws {
     if ax != nil { AXDump.enableInProcessAccessibility() }
@@ -134,7 +143,7 @@ func capture(_ witness: AnyView, width: CGFloat, height: CGFloat, to path: Strin
     host.layoutSubtreeIfNeeded()
     host.displayIfNeeded()
     spin(@@SETTLE@@)
-    if let steps { StepRunner(window: window, host: host, height: height, ax: ax).run(steps) }
+    if let steps { StepRunner(window: window, host: host, height: height, ax: ax).run(steps); settleSwitches(host) }
     host.layoutSubtreeIfNeeded()
     host.displayIfNeeded()
     let pixelsWide = Int((width * captureScale).rounded()), pixelsHigh = Int((height * captureScale).rounded())

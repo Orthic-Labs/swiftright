@@ -271,18 +271,21 @@ def compare(out, runs, exclusions=(), frames=0):
 
 
 def semantic_gate(case, out):
-    """Cases whose pair.json declares a semantic gate (imageFrame: Image(systemName:) frame/ink/tint; textGate: glyph-region ink bbox) run its report tool.
+    """Cases whose pair.json declares a semantic gate (imageFrame: Image(systemName:) frame/ink/tint; textGate: glyph-region ink bbox) run its report tool; "textOriginGate" adds the text-origin gate (pair_textorigin_report.py).
     Returns None when the case declares none, else whether the semantic gate passed."""
     pj = case / "pair.json"
     if not pj.is_file():
         return None
     cfg = json.loads(pj.read_text())
     tool = "pair_list_report.py" if "listGate" in cfg else "pair_semantic_report.py" if "semanticGate" in cfg else "pair_clock_report.py" if "clockGate" in cfg else "pair_image_report.py" if "imageFrame" in cfg else "pair_control_report.py" if "controlGate" in cfg else "pair_button_report.py" if "buttonGate" in cfg else "pair_textcolour_report.py" if "textColourGate" in cfg else "pair_text_report.py" if "textGate" in cfg else None
-    if not tool:
-        return None
-    r = subprocess.run([sys.executable, str(Path(__file__).resolve().parent / tool), str(case), str(out)], capture_output=True, text=True)
-    print(r.stdout + r.stderr, end="")
-    return r.returncode == 0
+    results = []
+    for t in [tool] + (["pair_textorigin_report.py"] if "textOriginGate" in cfg else []):   # the text-origin gate (sr1-decisions #12) runs beside whichever gate decides
+        if not t:
+            continue
+        r = subprocess.run([sys.executable, str(Path(__file__).resolve().parent / t), str(case), str(out)], capture_output=True, text=True)
+        print(r.stdout + r.stderr, end="")
+        results.append(r.returncode == 0)
+    return all(results) if results else None
 
 
 def semantic_decides(case):

@@ -43,15 +43,19 @@ public extension TextFieldStyle where Self == PlainTextFieldStyle {
 /// Geometry of a TextField, in points (macOS: `AppKitTextField` frame and its `NSSimpleLabel`, measured).
 public enum TextFieldMetrics {
     public enum Artwork: Equatable, Sendable {
-        /// The bezel of `.automatic`, `.roundedBorder` and `.squareBorder`: a 24 pt field whose text sits 4 pt in; the 1 pt border is drawn
-        /// outside the frame.
+        /// The bezel of `.automatic`, `.roundedBorder` and `.squareBorder`: a 24 pt field whose cell content rect is 4 pt in (the ideal width) and
+        /// whose text starts 6 pt in (cell inset 4 + the field editor's 2 pt line-fragment padding); the 1 pt border is drawn outside the frame.
         case bezel
         /// `.plain`: the text alone, 16 pt tall, no inset.
         case plain
     }
 
     public static let bezelHeight: CGFloat = 24
+    /// NSTextFieldCell drawing-rect inset (all four sides, regular control size): sets the ideal width (text + 2 x 4) and the text's vertical inset.
     public static let bezelTextInset: CGFloat = 4
+    /// Where the text itself starts and is clipped, from each side: `bezelTextInset` + the field editor's `lineFragmentPadding` (2). Measured on
+    /// the macOS captures (selection highlight starts 6 pt in) and read from AppKit (`factory/tools/appkit-probe`).
+    public static let bezelTextOrigin: CGFloat = 6
     public static let plainHeight: CGFloat = 16
     /// The bezel's border width, drawn outside the field frame.
     public static let bezelBorderWidth: CGFloat = 1
@@ -61,9 +65,14 @@ public enum TextFieldMetrics {
         style == String(describing: PlainTextFieldStyle.self) ? .plain : .bezel
     }
 
-    /// Horizontal text inset of an artwork.
+    /// Horizontal inset of the cell's content rect (layout: ideal width = text + 2 x this).
     public static func textInset(_ artwork: Artwork) -> CGFloat {
         artwork == .bezel ? bezelTextInset : 0
+    }
+
+    /// Horizontal distance from the field's edge to where its text starts and is clipped.
+    public static func textOrigin(_ artwork: Artwork) -> CGFloat {
+        artwork == .bezel ? bezelTextOrigin : 0
     }
 }
 

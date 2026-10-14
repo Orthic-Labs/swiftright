@@ -7,8 +7,11 @@ public enum TextFieldColors {
     public static let text: UInt32 = 0x212121ff
     public static let placeholder: UInt32 = 0x767676ff
     public static let plainPlaceholder: UInt32 = 0x404040ff
-    /// Selection highlight and caret: reported state, not gated (the pixel gate runs on an unfocused field).
-    public static let selection: UInt32 = 0x99c9efff
+    /// Selection highlight: NSColor.selectedTextBackgroundColor in the aqua appearance (accent (0,122,255) at 30% over white = (179,215,255)), the
+    /// emphasized colour the Mac captures show (the field editor is first responder in a key-appearance window). Read from AppKit by
+    /// `factory/tools/appkit-probe`. Dark appearance (63,99,139) and the unemphasized grey (220) are not painted.
+    public static let selection: UInt32 = 0xb3d7ffff
+    /// Caret: reported state.
     public static let caret: UInt32 = 0x111111ff
 }
 
@@ -86,7 +89,7 @@ extension ResolvedNodePainter {
         let isPlaceholder = shown.isEmpty
         let content = isPlaceholder ? (node.placeholder ?? "") : shown
         let isFocused = focusedFieldID == node.id
-        let inset = Float(TextFieldMetrics.textInset(artwork)) * scale
+        let inset = Float(TextFieldMetrics.textOrigin(artwork)) * scale
         let clip = Rect(x: bounds.x + inset, y: bounds.y, w: max(0, bounds.w - 2 * inset), h: bounds.h)
         if !content.isEmpty {
             let color: UInt32
