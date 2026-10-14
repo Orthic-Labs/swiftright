@@ -1,0 +1,93 @@
+# MarkdownUI 2.4.1 against the SwiftRight runtime on Windows: unique compiler errors (variant B: SwiftUI shim over SwiftRightRuntime, NetworkImage stubbed)
+# source: swift build (6.4.0+Asserts, x86_64-unknown-windows-msvc), stage 09e184945-cc18ed0f; file:line:col: message
+
+Sources/MarkdownUI/Extensibility/AssetImageProvider.swift:40:35: cannot find type 'PlatformImage' in scope
+Sources/MarkdownUI/Extensibility/AssetImageProvider.swift:69:35: cannot find type 'PlatformImage' in scope
+Sources/MarkdownUI/Extensibility/ImageProvider.swift:30:37: cannot find type 'AnyView' in scope
+Sources/MarkdownUI/Theme/BlockStyle/BlockConfiguration.swift:10:17: type 'BlockConfiguration.Label' does not conform to protocol 'View'
+Sources/MarkdownUI/Theme/BlockStyle/BlockConfiguration.swift:15:22: cannot find type 'AnyView' in scope
+Sources/MarkdownUI/Theme/BlockStyle/BlockStyle.swift:41:40: cannot find type 'AnyView' in scope
+Sources/MarkdownUI/Theme/BlockStyle/BlockStyle.swift:49:50: cannot find type 'AnyView' in scope
+Sources/MarkdownUI/Theme/BlockStyle/CodeBlockConfiguration.swift:9:17: type 'CodeBlockConfiguration.Label' does not conform to protocol 'View'
+Sources/MarkdownUI/Theme/BlockStyle/CodeBlockConfiguration.swift:14:22: cannot find type 'AnyView' in scope
+Sources/MarkdownUI/Theme/BlockStyle/TableBackgroundStyle.swift:31:50: cannot find type 'AnyShapeStyle' in scope
+Sources/MarkdownUI/Theme/BlockStyle/TableBorderStyle.swift:41:27: cannot find type 'StrokeStyle' in scope
+Sources/MarkdownUI/Theme/BlockStyle/TableBorderStyle.swift:51:18: cannot find type 'StrokeStyle' in scope
+Sources/MarkdownUI/Theme/BlockStyle/TableCellConfiguration.swift:9:17: type 'TableCellConfiguration.Label' does not conform to protocol 'View'
+Sources/MarkdownUI/Theme/BlockStyle/TableCellConfiguration.swift:14:22: cannot find type 'AnyView' in scope
+Sources/MarkdownUI/Theme/TextStyle/Styles/FontProperties.swift:100:26: 'Width' is not a member type of struct 'SwiftRightRuntime.Font'
+Sources/MarkdownUI/Theme/TextStyle/Styles/FontProperties.swift:137:17: 'Width' is not a member type of struct 'SwiftRightRuntime.Font'
+Sources/MarkdownUI/Theme/TextStyle/Styles/FontPropertiesAttribute.swift:14:18: cannot find type 'SwiftUIAttributes' in scope
+Sources/MarkdownUI/Theme/TextStyle/Styles/FontWidth.swift:6:27: 'Width' is not a member type of struct 'SwiftRightRuntime.Font'
+Sources/MarkdownUI/Theme/TextStyle/Styles/FontWidth.swift:10:29: 'Width' is not a member type of struct 'SwiftRightRuntime.Font'
+Sources/MarkdownUI/Theme/TextStyle/Styles/StrikethroughStyle.swift:5:31: 'LineStyle' is not a member type of struct 'SwiftRightRuntime.Text'
+Sources/MarkdownUI/Theme/TextStyle/Styles/StrikethroughStyle.swift:9:33: 'LineStyle' is not a member type of struct 'SwiftRightRuntime.Text'
+Sources/MarkdownUI/Theme/TextStyle/Styles/UnderlineStyle.swift:5:31: 'LineStyle' is not a member type of struct 'SwiftRightRuntime.Text'
+Sources/MarkdownUI/Theme/TextStyle/Styles/UnderlineStyle.swift:9:33: 'LineStyle' is not a member type of struct 'SwiftRightRuntime.Text'
+Sources/MarkdownUI/Theme/Theme+Basic.swift:109:10: value of type 'some View' has no member 'fixedSize'
+Sources/MarkdownUI/Theme/Theme+DocC.swift:108:8: value of type 'ScrollView<Content>' has no member 'background'
+Sources/MarkdownUI/Theme/Theme+DocC.swift:139:10: value of type 'some View' has no member 'fixedSize'
+Sources/MarkdownUI/Theme/Theme+DocC.swift:145:10: generic parameter 'Overlay' could not be inferred
+Sources/MarkdownUI/Theme/Theme+DocC.swift:145:18: missing argument label 'alignment:' in call
+Sources/MarkdownUI/Theme/Theme+DocC.swift:145:24: cannot convert value of type 'Color' to expected argument type 'Alignment'
+Sources/MarkdownUI/Theme/Theme+DocC.swift:145:28: missing argument for parameter 'content' in call
+Sources/MarkdownUI/Theme/Theme+GitHub.swift:36:23: value of type 'BlockConfiguration.Label' has no member 'label'
+Sources/MarkdownUI/Theme/Theme+GitHub.swift:49:23: value of type 'BlockConfiguration.Label' has no member 'label'
+Sources/MarkdownUI/Theme/Theme+GitHub.swift:111:8: value of type 'HStack<TupleView<(some View, some View)>>' has no member 'fixedSize'
+Sources/MarkdownUI/Theme/Theme+GitHub.swift:124:8: value of type 'ScrollView<Content>' has no member 'background'
+Sources/MarkdownUI/Theme/Theme+GitHub.swift:134:10: value of type 'Image' has no member 'symbolRenderingMode'
+Sources/MarkdownUI/Theme/Theme+GitHub.swift:156:10: value of type 'some View' has no member 'fixedSize'
+Sources/MarkdownUI/Theme/Theme+GitHub.swift:164:10: generic parameter 'Overlay' could not be inferred
+Sources/MarkdownUI/Theme/Theme+GitHub.swift:164:18: missing argument label 'alignment:' in call
+Sources/MarkdownUI/Theme/Theme+GitHub.swift:164:24: cannot convert value of type 'Color' to expected argument type 'Alignment'
+Sources/MarkdownUI/Theme/Theme+GitHub.swift:164:30: missing argument for parameter 'content' in call
+Sources/MarkdownUI/Theme/Theme.swift:122:47: call to main actor-isolated static method 'buildBlock' in a synchronous nonisolated context [#ActorIsolatedCall]
+Sources/MarkdownUI/Theme/Theme.swift:122:49: call to main actor-isolated static method 'buildExpression' in a synchronous nonisolated context [#ActorIsolatedCall]
+Sources/MarkdownUI/Theme/Theme.swift:163:57: call to main actor-isolated static method 'buildBlock' in a synchronous nonisolated context [#ActorIsolatedCall]
+Sources/MarkdownUI/Theme/Theme.swift:163:59: call to main actor-isolated static method 'buildExpression' in a synchronous nonisolated context [#ActorIsolatedCall]
+Sources/MarkdownUI/Theme/Theme.swift:166:58: call to main actor-isolated static method 'buildBlock' in a synchronous nonisolated context [#ActorIsolatedCall]
+Sources/MarkdownUI/Theme/Theme.swift:166:60: call to main actor-isolated static method 'buildExpression' in a synchronous nonisolated context [#ActorIsolatedCall]
+Sources/MarkdownUI/Theme/Theme.swift:169:61: call to main actor-isolated static method 'buildBlock' in a synchronous nonisolated context [#ActorIsolatedCall]
+Sources/MarkdownUI/Theme/Theme.swift:169:63: call to main actor-isolated static method 'buildExpression' in a synchronous nonisolated context [#ActorIsolatedCall]
+Sources/MarkdownUI/Theme/Theme.swift:172:53: call to main actor-isolated static method 'buildBlock' in a synchronous nonisolated context [#ActorIsolatedCall]
+Sources/MarkdownUI/Theme/Theme.swift:172:55: call to main actor-isolated static method 'buildExpression' in a synchronous nonisolated context [#ActorIsolatedCall]
+Sources/MarkdownUI/Theme/Theme.swift:175:52: call to main actor-isolated static method 'buildBlock' in a synchronous nonisolated context [#ActorIsolatedCall]
+Sources/MarkdownUI/Theme/Theme.swift:175:54: call to main actor-isolated static method 'buildExpression' in a synchronous nonisolated context [#ActorIsolatedCall]
+Sources/MarkdownUI/Theme/Theme.swift:178:56: call to main actor-isolated static method 'buildBlock' in a synchronous nonisolated context [#ActorIsolatedCall]
+Sources/MarkdownUI/Theme/Theme.swift:178:58: call to main actor-isolated static method 'buildExpression' in a synchronous nonisolated context [#ActorIsolatedCall]
+Sources/MarkdownUI/Theme/Theme.swift:190:53: call to main actor-isolated static method 'buildBlock' in a synchronous nonisolated context [#ActorIsolatedCall]
+Sources/MarkdownUI/Theme/Theme.swift:190:55: call to main actor-isolated static method 'buildExpression' in a synchronous nonisolated context [#ActorIsolatedCall]
+Sources/MarkdownUI/Theme/Theme.swift:193:61: call to main actor-isolated static method 'buildBlock' in a synchronous nonisolated context [#ActorIsolatedCall]
+Sources/MarkdownUI/Theme/Theme.swift:193:63: call to main actor-isolated static method 'buildExpression' in a synchronous nonisolated context [#ActorIsolatedCall]
+Sources/MarkdownUI/Theme/Theme.swift:196:41: call to main actor-isolated static method 'buildBlock' in a synchronous nonisolated context [#ActorIsolatedCall]
+Sources/MarkdownUI/Theme/Theme.swift:196:43: call to main actor-isolated initializer 'init()' in a synchronous nonisolated context [#ActorIsolatedCall]
+Sources/MarkdownUI/Theme/Theme.swift:196:43: call to main actor-isolated static method 'buildExpression' in a synchronous nonisolated context [#ActorIsolatedCall]
+Sources/MarkdownUI/Utility/Deprecations.swift:7:27: 'URLSession' is unavailable: This type has moved to the FoundationNetworking module. Import that module to use it.
+Sources/MarkdownUI/Utility/Deprecations.swift:7:41: type 'URLSession' (aka 'AnyObject') has no member 'shared'
+Sources/MarkdownUI/Utility/Deprecations.swift:7:41: value of type '_' expected to be instance of class or class-constrained type
+Sources/MarkdownUI/Utility/Deprecations.swift:14:27: 'URLSession' is unavailable: This type has moved to the FoundationNetworking module. Import that module to use it.
+Sources/MarkdownUI/Utility/Deprecations.swift:14:41: type 'URLSession' (aka 'AnyObject') has no member 'shared'
+Sources/MarkdownUI/Utility/Deprecations.swift:14:41: value of type '_' expected to be instance of class or class-constrained type
+Sources/MarkdownUI/Utility/Deprecations.swift:395:29: 'TextStyle' is not a member type of struct 'SwiftRightRuntime.Font'
+Sources/MarkdownUI/Views/Blocks/BlockSequence.swift:9:16: value of type 'EnvironmentValues' has no member 'multilineTextAlignment'
+Sources/MarkdownUI/Views/Blocks/BlockSequence.swift:59:11: cannot find type 'TextAlignment' in scope
+Sources/MarkdownUI/Views/Blocks/ListItemView.swift:50:35: an enum with no cases cannot declare a raw type
+Sources/MarkdownUI/Views/Blocks/ListItemView.swift:50:35: cannot find type 'AlignmentID' in scope
+Sources/MarkdownUI/Views/Blocks/ListItemView.swift:51:42: cannot find type 'ViewDimensions' in scope
+Sources/MarkdownUI/Views/Blocks/ListItemView.swift:57:34: 'VerticalAlignment' initializer is inaccessible due to 'internal' protection level
+Sources/MarkdownUI/Views/Blocks/ListItemView.swift:57:39: cannot convert value of type 'VerticalAlignment.CenterOfFirstLine.Type' to expected argument type 'VerticalAlignment.Kind'
+Sources/MarkdownUI/Views/Blocks/ListItemView.swift:57:39: missing argument label 'kind:' in call
+Sources/MarkdownUI/Views/Blocks/ListItemView.swift:60:25: cannot find type 'LabelStyle' in scope
+Sources/MarkdownUI/Views/Blocks/ListItemView.swift:61:32: cannot find type 'Configuration' in scope
+Sources/MarkdownUI/Views/Blocks/TableBounds.swift:20:31: cannot find type 'Anchor' in scope
+Sources/MarkdownUI/Views/Blocks/TableBounds.swift:21:12: cannot find type 'GeometryProxy' in scope
+Sources/MarkdownUI/Views/Blocks/TableBounds.swift:119:16: type 'TableCellBoundsPreference' does not conform to protocol 'PreferenceKey'
+Sources/MarkdownUI/Views/Blocks/TableBounds.swift:120:45: cannot find type 'Anchor' in scope
+Sources/MarkdownUI/Views/Blocks/TableBounds.swift:123:35: cannot find type 'Anchor' in scope
+Sources/MarkdownUI/Views/Blocks/TableBounds.swift:124:39: cannot find type 'Anchor' in scope
+Sources/MarkdownUI/Views/Inlines/ImageView.swift:66:30: cannot find type 'ViewModifier' in scope
+Sources/MarkdownUI/Views/Inlines/ImageView.swift:68:16: value of type 'EnvironmentValues' has no member 'openURL'
+Sources/MarkdownUI/Views/Inlines/ImageView.swift:78:22: cannot find type 'Content' in scope
+Sources/MarkdownUI/Views/Markdown.swift:287:40: cannot find type 'ViewModifier' in scope
+Sources/MarkdownUI/Views/Markdown.swift:288:4: unknown attribute 'ScaledMetric'
+Sources/MarkdownUI/Views/Markdown.swift:294:22: cannot find type 'Content' in scope
