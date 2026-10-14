@@ -1,0 +1,47 @@
+{
+ "nowLocal": "2026-10-14T17:43:08.7837403+05:30",
+ "nowUtc": "2026-10-14T12:13:08.7936576Z",
+ "tz": "India Standard Time",
+ "packages": [
+  "0.1.0.0:Modified, NeedsRemediation"
+ ],
+ "task": {
+  "name": "OrthicLabs.SliceApp_j3cejpx244dcr-Repair",
+  "state": "Ready",
+  "lastRun": "2026-10-14T17:42:45.0000000+05:30",
+  "lastResult": 0,
+  "nextRun": "2026-10-14T17:48:04.0000000+05:30",
+  "triggers": [
+   "MSFT_TaskEventTrigger",
+   "MSFT_TaskLogonTrigger",
+   "MSFT_TaskTimeTrigger 2026-10-14T17:48:04"
+  ]
+ },
+ "guardDir": "C:\\Users\\WDAGUtilityAccount\\AppData\\Local\\SliceApp\\repair",
+ "guardFileSha256": "5abc0a4d72ae851be349c082482c99c9b7ec73ffe0a04117e2cde535f0ba37e5",
+ "retry.json": "{\r\n    \"attempt\":  2,\r\n    \"firstFailureEpoch\":  1791979845,\r\n    \"nextEpoch\":  1791980284,\r\n    \"delayMinutes\":  5,\r\n    \"reason\":  \"repair failed\"\r\n}",
+ "last-result.json": "{\r\n    \"status\":  \"failed\",\r\n    \"code\":  1,\r\n    \"mode\":  \"repair\",\r\n    \"timeUtc\":  \"2026-10-14T12:13:06.2033251Z\",\r\n    \"guardVersion\":  2,\r\n    \"guardSha256\":  \"5abc0a4d72ae851be349c082482c99c9b7ec73ffe0a04117e2cde535f0ba37e5\",\r\n    \"guardSha256Lf\":  \"5abc0a4d72ae851be349c082482c99c9b7ec73ffe0a04117e2cde535f0ba37e5\",\r\n    \"detail\":  \"FAILED: package still 0.1.0.0:Modified, NeedsRemediation. Reasons: feed unreachable: Unable to connect to the remote server | msix unreachable: Unable to connect to the remote server\",\r\n    \"attemptLaunched\":  false,\r\n    \"launchFailure\":  \"no installer started: feed unreachable: Unable to connect to the remote server | msix unreachable: Unable to connect to the remote server\",\r\n    \"nextRetryUtc\":  \"2026-10-14T12:18:04.0000000Z\",\r\n    \"retryAttempt\":  2\r\n}",
+ "install-result.json": "{\r\n    \"status\":  \"installed\",\r\n    \"code\":  0,\r\n    \"mode\":  \"install\",\r\n    \"timeUtc\":  \"2026-10-14T12:08:53.9566501Z\",\r\n    \"guardVersion\":  2,\r\n    \"guardSha256\":  \"5abc0a4d72ae851be349c082482c99c9b7ec73ffe0a04117e2cde535f0ba37e5\",\r\n    \"guardSha256Lf\":  \"5abc0a4d72ae851be349c082482c99c9b7ec73ffe0a04117e2cde535f0ba37e5\",\r\n    \"detail\":  \"task OrthicLabs.SliceApp_j3cejpx244dcr-Repair registered\"\r\n}",
+ "install-attempt.json": null,
+ "install-launch-failure.json": null,
+ "guard.json": "{\r\n    \"guardVersion\":  2,\r\n    \"pfn\":  \"OrthicLabs.SliceApp_j3cejpx244dcr\",\r\n    \"name\":  \"OrthicLabs.SliceApp\",\r\n    \"publisher\":  \"CN=Damned Ventures LLC, O=Damned Ventures LLC, L=new york, S=New York, C=US\",\r\n    \"feed\":  \"https://localhost:8443/sliceapp/SliceApp.appinstaller\",\r\n    \"msix\":  \"https://localhost:8443/sliceapp/SliceApp_0.1.0.0_x64.msix\",\r\n    \"task\":  \"OrthicLabs.SliceApp_j3cejpx244dcr-Repair\",\r\n    \"dir\":  \"C:\\\\Users\\\\WDAGUtilityAccount\\\\AppData\\\\Local\\\\SliceApp\\\\repair\",\r\n    \"installedUtc\":  \"2026-10-14T12:08:53.7709423Z\"\r\n}",
+ "repairLog": [
+  "2026-10-14T12:08:49Z [app] installer started (script changed, guard.json missing or task missing)",
+  "2026-10-14T17:38:53.921+05:30 [install] task OrthicLabs.SliceApp_j3cejpx244dcr-Repair registered; identity=OrthicLabs.SliceApp / CN=Damned Ventures LLC, O=Damned Ventures LLC, L=new york, S=New York, C=US; feed=https://localhost:8443/sliceapp/SliceApp.appinstaller msix=https://localhost:8443/sliceapp/SliceApp_0.1.0.0_x64.msix",
+  "2026-10-14T17:40:28.847+05:30 [repair] guard sha256 5abc0a4d72ae851be349c082482c99c9b7ec73ffe0a04117e2cde535f0ba37e5 (lf 5abc0a4d72ae851be349c082482c99c9b7ec73ffe0a04117e2cde535f0ba37e5)",
+  "2026-10-14T17:40:29.039+05:30 [repair] package NOT healthy: 0.1.0.0:Modified, NeedsRemediation; letting the deployment service settle",
+  "2026-10-14T17:40:41.683+05:30 [repair] feed unreachable, skipping -AppInstallerFile: https://localhost:8443/sliceapp/SliceApp.appinstaller : Unable to connect to the remote server",
+  "2026-10-14T17:40:41.699+05:30 [repair] downloading https://localhost:8443/sliceapp/SliceApp_0.1.0.0_x64.msix",
+  "2026-10-14T17:40:45.727+05:30 [repair] msix unreachable, skipping -Path: https://localhost:8443/sliceapp/SliceApp_0.1.0.0_x64.msix : Unable to connect to the remote server",
+  "2026-10-14T17:40:49.363+05:30 [repair] retry 1 scheduled in 2 min at 2026-10-14T17:42:45",
+  "2026-10-14T17:40:49.484+05:30 [repair] FAILED: package still 0.1.0.0:Modified, NeedsRemediation. Reasons: feed unreachable: Unable to connect to the remote server | msix unreachable: Unable to connect to the remote server. A retry is scheduled (see retry.json); manual: Settings > Apps > Advanced options > Repair.",
+  "2026-10-14T17:42:47.225+05:30 [repair] guard sha256 5abc0a4d72ae851be349c082482c99c9b7ec73ffe0a04117e2cde535f0ba37e5 (lf 5abc0a4d72ae851be349c082482c99c9b7ec73ffe0a04117e2cde535f0ba37e5)",
+  "2026-10-14T17:42:47.564+05:30 [repair] package NOT healthy: 0.1.0.0:Modified, NeedsRemediation; letting the deployment service settle",
+  "2026-10-14T17:43:00.259+05:30 [repair] feed unreachable, skipping -AppInstallerFile: https://localhost:8443/sliceapp/SliceApp.appinstaller : Unable to connect to the remote server",
+  "2026-10-14T17:43:00.291+05:30 [repair] downloading https://localhost:8443/sliceapp/SliceApp_0.1.0.0_x64.msix",
+  "2026-10-14T17:43:04.322+05:30 [repair] msix unreachable, skipping -Path: https://localhost:8443/sliceapp/SliceApp_0.1.0.0_x64.msix : Unable to connect to the remote server",
+  "2026-10-14T17:43:06.189+05:30 [repair] retry 2 scheduled in 5 min at 2026-10-14T17:48:04",
+  "2026-10-14T17:43:06.232+05:30 [repair] FAILED: package still 0.1.0.0:Modified, NeedsRemediation. Reasons: feed unreachable: Unable to connect to the remote server | msix unreachable: Unable to connect to the remote server. A retry is scheduled (see retry.json); manual: Settings > Apps > Advanced options > Repair."
+ ],
+ "feedUp": false
+}

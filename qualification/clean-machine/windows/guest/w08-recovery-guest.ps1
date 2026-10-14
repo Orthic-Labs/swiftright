@@ -50,8 +50,8 @@ $IsT2 = ($Method -like 'tier2-*')
 $NoGuard = (-not $IsT2 -and $Method -ne 'settings-probe')   # baselines of the pre-guard recoveries run with the guard task removed
 $Variant = ''
 if ($Method -in 'tier2-feed-down', 'tier2-stale', 'tier2-wrongid', 'tier2-corrupt') { $Variant = $Method.Substring(6) }
-if ($Method -eq 'tier2-uninstall-retry') { $Variant = 'feed-down' }
-$BadThenRestore = ($Variant -in 'feed-down', 'wrongid', 'corrupt')
+if ($Method -in 'tier2-uninstall-retry', 'tier2-feed-down-long') { $Variant = 'feed-down' }
+$BadThenRestore = ($Variant -in 'feed-down', 'wrongid', 'corrupt') -and $Method -ne 'tier2-feed-down-long'   # tier2-feed-down-long: the feed stays down (the worker keeps the state; see job-w08.ps1 keepState)
 $PathInstall = ($Method -like '*-path')   # old version installed with Add-AppxPackage -Path (no App Installer association) and no feed served: the W08 offline scenario
 $PkgName = 'OrthicLabs.SliceApp'
 $OldVersion = '0.1.0.0'
@@ -741,7 +741,7 @@ try {
             # backoff: the installer failed less than 24 h ago (marker on disk): a launch must not spawn it again
             Start-Sleep -Seconds 5
             Remove-GuardTask
-            $scriptBytes = [IO.File]::ReadAllBytes((Join-Path (Get-GuardDir) 'repair-guard.ps1')) + [byte[]](10)
+            $scriptBytes = [IO.File]::ReadAllBytes((Join-Path (Get-GuardDir) 'repair-guard.ps1')); if ($scriptBytes.Length -eq 0 -or $scriptBytes[-1] -ne 10) { $scriptBytes = $scriptBytes + [byte[]](10) }   # the app now writes the final LF; older builds did not
             $sha = ([BitConverter]::ToString([Security.Cryptography.SHA256]::Create().ComputeHash($scriptBytes)) -replace '-', '').ToLower()
             [IO.File]::WriteAllText((Join-Path (Get-GuardDir) 'install-attempt.json'), ('{"epoch":' + [DateTimeOffset]::UtcNow.ToUnixTimeSeconds() + ',"sha256":"' + $sha + '"}'), $Utf8)
             $g.marker_sha256 = $sha
@@ -851,7 +851,7 @@ try {
             }
             Stop-Settings
         }
-        { $_ -in 'tier2-repair', 'tier2-feed-down', 'tier2-stale', 'tier2-wrongid', 'tier2-corrupt', 'tier2-mutex', 'tier2-killclient' } {
+        { $_ -in 'tier2-repair', 'tier2-feed-down', 'tier2-stale', 'tier2-wrongid', 'tier2-corrupt', 'tier2-mutex', 'tier2-killclient', 'tier2-feed-down-long' } {
             $rec.command = 'NO action of ours on the guard (never started by hand): wait for the repair guard task (' + $script:Pfn + '-Repair, event 751 / logon / its own retry), then launch via explorer shell:AppsFolder' + $(if ($Variant) { '; condition applied at the cancel: ' + $Variant } else { '' })
             L ('recovery: ' + $rec.command)
             $rec.manual_task_start = $false
@@ -1008,6 +1008,13 @@ try {
     $rec.appx_events = Get-AppxEvents $evStart 30
     L ('recovery result: ' + $rec.result + ' package now ' + (Get-PkgText))
     Save-Result
+    if ($Method -eq 'tier2-feed-down-long') {
+        # long-run retry test: leave the package NeedsRemediation and the feed down; the guard walks its retry ladder on its own. No post-state launch.
+        $R.long_run = [ordered]@{ started_utc = (Get-Date).ToUniversalTime().ToString('o'); package = Get-PkgText; feed_up = (Test-FeedUp); guard = Get-GuardState }
+        L 'long-run: state left in place (feed down, package NeedsRemediation)'
+        Save-Result
+        return
+    }
 
     # ---- post state
     Start-Sleep -Seconds 5

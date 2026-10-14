@@ -1,0 +1,147 @@
+{
+    "kind":  "w08",
+    "method":  "tier2-feed-down-long",
+    "ok":  true,
+    "needs_fresh_sandbox":  false,
+    "clean_before":  {
+                         "clean":  true,
+                         "verify":  {
+                                        "packages":  [
+
+                                                     ],
+                                        "tasks":  [
+
+                                                  ],
+                                        "certs":  [
+
+                                                  ],
+                                        "sslcert_8443":  false,
+                                        "app_data":  false,
+                                        "feed_dir":  false,
+                                        "processes":  [
+
+                                                      ]
+                                    },
+                         "steps":  [
+                                       "ok   stop feed servers",
+                                       "ok   stop app + settings",
+                                       "ok   remove repair scheduled tasks",
+                                       "ok   remove package (all users, then current user)",
+                                       "ok   remove signer + feed certificates",
+                                       "ok   remove http sslcert bindings 8443",
+                                       "ok   remove app data + feed + harness temp"
+                                   ]
+                     },
+    "clean_after":  {
+                        "kept":  "keepState: the W08 package state is left in place on purpose (long-run retry test); the next w08 / w08-reset job destroys it",
+                        "clean":  null
+                    },
+    "signer_thumbprint":  "79ED27C027BFE6FBABC7D9C3F2926E05491EAE5F",
+    "old_sha256":  "fb0767c253116c4c9f559e13174c8bad581edff1a96e31ab22963c8e49e51dba",
+    "new_sha256":  "dded378ad3f2fe30bfbc64c6ffb5ac8d22880e8a752014ddd28ac21922ef1160",
+    "guest_sha256_original":  "53febe5966af4fdf8cb727b6fc0950db10b9de2a96da59c277bef93f4974afb2",
+    "stop_computer_calls_patched":  1,
+    "harness_exit":  0,
+    "harness_seconds":  166.5,
+    "harness_errors":  [
+
+                       ],
+    "induction":  {
+                      "success":  true,
+                      "attempts_total":  1,
+                      "genuine_cancels":  1,
+                      "completed_anyway":  0,
+                      "setup_failed":  0,
+                      "winning_delay_ms":  360,
+                      "winning_failed_state":  "RegistrationChanged"
+                  },
+    "pre_recovery_package":  "0.1.0.0:Modified, NeedsRemediation",
+    "recovery":  {
+                     "command":  "NO action of ours on the guard (never started by hand): wait for the repair guard task (OrthicLabs.SliceApp_j3cejpx244dcr-Repair, event 751 / logon / its own retry), then launch via explorer shell:AppsFolder; condition applied at the cancel: feed-down",
+                     "manual_task_start":  false,
+                     "timeline":  [
+                                      "+7.6s 0.1.0.0:Modified, NeedsRemediation"
+                                  ],
+                     "seconds_to_package_ok_from_cancel":  null,
+                     "guard_after":  {
+                                         "task_name":  "OrthicLabs.SliceApp_j3cejpx244dcr-Repair",
+                                         "task_exists":  true,
+                                         "task_state":  "Ready",
+                                         "last_run":  "10/14/2026 17:26:43",
+                                         "last_result":  0,
+                                         "triggers":  [
+                                                          "MSFT_TaskEventTrigger \u003cQueryList\u003e\u003cQuery Id=\"0\" Path=\"Microsoft-Windows-AppXDeploymentServer/Operational\"\u003e\u003cSelect Path=\"Microsoft-Windows-AppXDeploymentServer/Operational\"\u003e*[System[(EventID=751)]]\u003c/Select\u003e\u003c/Query\u003e\u003c/QueryList\u003e",
+                                                          "MSFT_TaskLogonTrigger",
+                                                          "MSFT_TaskTimeTrigger"
+                                                      ],
+                                         "action":  "%SystemRoot%\\System32\\conhost.exe --headless powershell.exe -NoProfile -NonInteractive -ExecutionPolicy Bypass -WindowStyle Hidden -File \"C:\\Users\\WDAGUtilityAccount\\AppData\\Local\\SliceApp\\repair\\repair-guard.ps1\" -EventRecordID $(EventRecordID)",
+                                         "run_as":  "WDAGUtilityAccount Interactive Limited",
+                                         "dir_exists":  true,
+                                         "files":  [
+                                                       "guard.json 551",
+                                                       "install-result.json 404",
+                                                       "last-result.json 801",
+                                                       "repair-guard.ps1 29518",
+                                                       "repair.log 1621",
+                                                       "retry.json 151"
+                                                   ],
+                                         "guard_json":  "{ \"guardVersion\": 2, \"pfn\": \"OrthicLabs.SliceApp_j3cejpx244dcr\", \"name\": \"OrthicLabs.SliceApp\", \"publisher\": \"CN=Damned Ventures LLC, O=Damned Ventures LLC, L=new york, S=New York, C=US\", \"feed\": \"https://localhost:8443/sliceapp/SliceApp.appinstaller\", \"msix\": \"https://localhost:8443/sliceapp/SliceApp_0.1.0.0_x64.msix\", \"task\": \"OrthicLabs.SliceApp_j3cejpx244dcr-Repair\", \"dir\": \"C:\\\\Users\\\\WDAGUtilityAccount\\\\AppData\\\\Local\\\\SliceApp\\\\repair\", \"installedUtc\": \"2026-10-14T11:56:39.0811856Z\" }",
+                                         "repair_log":  [
+                                                            "2026-10-14T11:56:35Z [app] installer started (script changed, guard.json missing or task missing)",
+                                                            "2026-10-14T17:26:39.207+05:30 [install] task OrthicLabs.SliceApp_j3cejpx244dcr-Repair registered; identity=OrthicLabs.SliceApp / CN=Damned Ventures LLC, O=Damned Ventures LLC, L=new york, S=New York, C=US; feed=https://localhost:8443/sliceapp/SliceApp.appinstaller msix=https://localhost:8443/sliceapp/SliceApp_0.1.0.0_x64.msix",
+                                                            "2026-10-14T17:26:45.966+05:30 [repair] guard sha256 5abc0a4d72ae851be349c082482c99c9b7ec73ffe0a04117e2cde535f0ba37e5 (lf 5abc0a4d72ae851be349c082482c99c9b7ec73ffe0a04117e2cde535f0ba37e5)",
+                                                            "2026-10-14T17:26:46.243+05:30 [repair] package NOT healthy: 0.1.0.0:Modified, NeedsRemediation; letting the deployment service settle",
+                                                            "2026-10-14T17:26:58.877+05:30 [repair] feed unreachable, skipping -AppInstallerFile: https://localhost:8443/sliceapp/SliceApp.appinstaller : Unable to connect to the remote server",
+                                                            "2026-10-14T17:26:58.892+05:30 [repair] downloading https://localhost:8443/sliceapp/SliceApp_0.1.0.0_x64.msix",
+                                                            "2026-10-14T17:27:03.018+05:30 [repair] msix unreachable, skipping -Path: https://localhost:8443/sliceapp/SliceApp_0.1.0.0_x64.msix : Unable to connect to the remote server",
+                                                            "2026-10-14T17:27:04.714+05:30 [repair] retry 1 scheduled in 2 min at 2026-10-14T17:29:03",
+                                                            "2026-10-14T17:27:04.740+05:30 [repair] FAILED: package still 0.1.0.0:Modified, NeedsRemediation. Reasons: feed unreachable: Unable to connect to the remote server | msix unreachable: Unable to connect to the remote server. A retry is scheduled (see retry.json); manual: Settings \u003e Apps \u003e Advanced options \u003e Repair."
+                                                        ],
+                                         "last-result.json":  "{ \"status\": \"failed\", \"code\": 1, \"mode\": \"repair\", \"timeUtc\": \"2026-10-14T11:57:04.7203492Z\", \"guardVersion\": 2, \"guardSha256\": \"5abc0a4d72ae851be349c082482c99c9b7ec73ffe0a04117e2cde535f0ba37e5\", \"guardSha256Lf\": \"5abc0a4d72ae851be349c082482c99c9b7ec73ffe0a04117e2cde535f0ba37e5\", \"detail\": \"FAILED: package still 0.1.0.0:Modified, NeedsRemediation. Reasons: feed unreachable: Unable to connect to the remote server | msix unreachable: Unable to connect to the remote server\", \"attemptLaunched\": false, \"launchFailure\": \"no installer started: feed unreachable: Unable to connect to the remote server | msix unreachable: Unable to connect to the remote server\", \"nextRetryUtc\": \"2026-10-14T11:59:03.0000000Z\", \"retryAttempt\": 1 }",
+                                         "retry.json":  "{ \"attempt\": 1, \"firstFailureEpoch\": 1791979023, \"nextEpoch\": 1791979143, \"delayMinutes\": 2, \"reason\": \"repair failed\" }",
+                                         "install-result.json":  "{ \"status\": \"installed\", \"code\": 0, \"mode\": \"install\", \"timeUtc\": \"2026-10-14T11:56:39.2415986Z\", \"guardVersion\": 2, \"guardSha256\": \"5abc0a4d72ae851be349c082482c99c9b7ec73ffe0a04117e2cde535f0ba37e5\", \"guardSha256Lf\": \"5abc0a4d72ae851be349c082482c99c9b7ec73ffe0a04117e2cde535f0ba37e5\", \"detail\": \"task OrthicLabs.SliceApp_j3cejpx244dcr-Repair registered\" }",
+                                         "install-attempt.json":  null
+                                     },
+                     "other_app_installed_at_end":  false,
+                     "result":  "package 0.1.0.0:Modified, NeedsRemediation; seconds to Ok from cancel ",
+                     "seconds":  113.7,
+                     "feed_requests_during":  0,
+                     "appx_events":  [
+                                         "20:14:57.209 id=939 Information: Appxsvc lifecycle transition to Starting (Checkpoint=2)",
+                                         "20:14:57.418 id=682 Information: All inbox manifest cache entries were deleted.",
+                                         "20:14:57.479 id=633 Information: PreRegisterPackage 1527c705-839a-4832-9118-54d4Bd6a0c89_10.0.19640.1000_neutral_neutral_cw5n1h2txyewy, IsInstalled=false, Options=ImmediatePriorityRequest,PreRegisterIndexing.",
+                                         "20:14:57.481 id=607 Information: Deployment PreRegisterPackage operation on package 1527c705-839a-4832-9118-54d4Bd6a0c89_10.0.19640.1000_neutral_neutral_cw5n1h2txyewy has been de-queued and is running for user SID S-1-5-18.",
+                                         "20:14:57.488 id=854 Information: Successfully added the following uri(s) to be processed: C:\\Windows\\SystemApps\\Microsoft.Windows.FilePicker_cw5n1h2txyewy\\AppxManifest.xml.",
+                                         "20:14:57.505 id=574 Information: Preferred package version for package family is changing. Current preferred version is: NULL. New preferred version will be: 1527c705-839a-4832-9118-54d4Bd6a0c89_10.0.19640.1000_neutral_neutral_cw5n1h",
+                                         "20:14:57.533 id=855 Information: Finished resolving action lists. DeploymentRequest action lists: addPackageList: 1527c705-839a-4832-9118-54d4Bd6a0c89_10.0.19640.1000_neutral_neutral_cw5n1h2txyewy.",
+                                         "20:14:57.736 id=617 Verbose: Successfully updated the status for package 1527c705-839a-4832-9118-54d4Bd6a0c89_10.0.19640.1000_neutral_neutral_cw5n1h2txyewy and user S-1-5-18 (Clear=0x10000C00, Set=0x0).",
+                                         "20:14:57.736 id=400 Information: Deployment PreRegisterPackage operation with target volume C: on Package 1527c705-839a-4832-9118-54d4Bd6a0c89_10.0.19640.1000_neutral_neutral_cw5n1h2txyewy from: finished successfully.",
+                                         "20:14:57.745 id=613 Information: Performance summary of Deployment PreRegisterPackage operation on Package 1527c705-839a-4832-9118-54d4Bd6a0c89_10.0.19640.1000_neutral_neutral_cw5n1h2txyewy: Overall time: 265 ms (Active time: 265 ms)",
+                                         "20:14:57.755 id=633 Information: PreRegisterPackage c5e2524a-ea46-4f67-841f-6a9465d9d515_10.0.26100.1_neutral_neutral_cw5n1h2txyewy, IsInstalled=false, Options=ImmediatePriorityRequest,PreRegisterIndexing.",
+                                         "20:14:57.756 id=607 Information: Deployment PreRegisterPackage operation on package c5e2524a-ea46-4f67-841f-6a9465d9d515_10.0.26100.1_neutral_neutral_cw5n1h2txyewy has been de-queued and is running for user SID S-1-5-18.",
+                                         "20:14:57.765 id=854 Information: Successfully added the following uri(s) to be processed: C:\\Windows\\SystemApps\\Microsoft.Windows.FileExplorer_cw5n1h2txyewy\\AppxManifest.xml.",
+                                         "20:14:57.772 id=574 Information: Preferred package version for package family is changing. Current preferred version is: NULL. New preferred version will be: c5e2524a-ea46-4f67-841f-6a9465d9d515_10.0.26100.1_neutral_neutral_cw5n1h2tx",
+                                         "20:14:57.783 id=855 Information: Finished resolving action lists. DeploymentRequest action lists: addPackageList: c5e2524a-ea46-4f67-841f-6a9465d9d515_10.0.26100.1_neutral_neutral_cw5n1h2txyewy.",
+                                         "20:14:57.853 id=617 Verbose: Successfully updated the status for package c5e2524a-ea46-4f67-841f-6a9465d9d515_10.0.26100.1_neutral_neutral_cw5n1h2txyewy and user S-1-5-18 (Clear=0x10000C00, Set=0x0).",
+                                         "20:14:57.853 id=400 Information: Deployment PreRegisterPackage operation with target volume C: on Package c5e2524a-ea46-4f67-841f-6a9465d9d515_10.0.26100.1_neutral_neutral_cw5n1h2txyewy from: finished successfully.",
+                                         "20:14:57.861 id=613 Information: Performance summary of Deployment PreRegisterPackage operation on Package c5e2524a-ea46-4f67-841f-6a9465d9d515_10.0.26100.1_neutral_neutral_cw5n1h2txyewy: Overall time: 109 ms (Active time: 109 ms) En",
+                                         "20:14:57.869 id=633 Information: PreRegisterPackage E2A4F912-2574-4A75-9BB0-0D023378592B_10.0.19640.1000_neutral_neutral_cw5n1h2txyewy, IsInstalled=false, Options=ImmediatePriorityRequest,PreRegisterIndexing.",
+                                         "20:14:57.870 id=607 Information: Deployment PreRegisterPackage operation on package E2A4F912-2574-4A75-9BB0-0D023378592B_10.0.19640.1000_neutral_neutral_cw5n1h2txyewy has been de-queued and is running for user SID S-1-5-18.",
+                                         "20:14:57.878 id=854 Information: Successfully added the following uri(s) to be processed: C:\\Windows\\SystemApps\\Microsoft.Windows.AppResolverUX_cw5n1h2txyewy\\AppxManifest.xml.",
+                                         "20:14:57.885 id=574 Information: Preferred package version for package family is changing. Current preferred version is: NULL. New preferred version will be: E2A4F912-2574-4A75-9BB0-0D023378592B_10.0.19640.1000_neutral_neutral_cw5n1h",
+                                         "20:14:57.895 id=855 Information: Finished resolving action lists. DeploymentRequest action lists: addPackageList: E2A4F912-2574-4A75-9BB0-0D023378592B_10.0.19640.1000_neutral_neutral_cw5n1h2txyewy.",
+                                         "20:14:57.962 id=617 Verbose: Successfully updated the status for package E2A4F912-2574-4A75-9BB0-0D023378592B_10.0.19640.1000_neutral_neutral_cw5n1h2txyewy and user S-1-5-18 (Clear=0x10000C00, Set=0x0).",
+                                         "20:14:57.962 id=400 Information: Deployment PreRegisterPackage operation with target volume C: on Package E2A4F912-2574-4A75-9BB0-0D023378592B_10.0.19640.1000_neutral_neutral_cw5n1h2txyewy from: finished successfully.",
+                                         "20:14:57.972 id=613 Information: Performance summary of Deployment PreRegisterPackage operation on Package E2A4F912-2574-4A75-9BB0-0D023378592B_10.0.19640.1000_neutral_neutral_cw5n1h2txyewy: Overall time: 110 ms (Active time: 110 ms)",
+                                         "20:14:57.981 id=633 Information: PreRegisterPackage F46D4000-FD22-4DB4-AC8E-4E1DDDE828FE_10.0.26100.1_neutral_neutral_cw5n1h2txyewy, IsInstalled=false, Options=ImmediatePriorityRequest,PreRegisterIndexing.",
+                                         "20:14:57.981 id=607 Information: Deployment PreRegisterPackage operation on package F46D4000-FD22-4DB4-AC8E-4E1DDDE828FE_10.0.26100.1_neutral_neutral_cw5n1h2txyewy has been de-queued and is running for user SID S-1-5-18.",
+                                         "20:14:57.989 id=854 Information: Successfully added the following uri(s) to be processed: C:\\Windows\\SystemApps\\Microsoft.Windows.AddSuggestedFoldersToLibraryDialog_cw5n1h2txyewy\\AppxManifest.xml.",
+                                         "20:14:57.996 id=574 Information: Preferred package version for package family is changing. Current preferred version is: NULL. New preferred version will be: F46D4000-FD22-4DB4-AC8E-4E1DDDE828FE_10.0.26100.1_neutral_neutral_cw5n1h2tx"
+                                     ]
+                 },
+    "post":  {
+
+             },
+    "pass":  true,
+    "reason":  "finished"
+}

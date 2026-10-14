@@ -1,0 +1,29 @@
+17:38:28.933 w08-recovery guest start, method tier2-feed-down-long, host 4F604C52-1BDE-4, os 10.0.26100.0
+17:38:30.014 default routes: 1
+17:38:30.208 signer imported to TrustedPeople
+17:38:30.966 feed server pid 4292
+17:38:39.500 feed up (0.1.0.0 feed)
+17:38:39.514 cancel offsets from delays.txt: 360,330
+17:38:39.517 attempt 1 delay +360 ms
+17:38:55.408 marker written, rows.json sha F21E445F9EEAB91C54E95E3F870586C8BFB56E702367BCCA99CF19E818CE947C
+17:38:56.902 guard registered by the first launch: True
+17:39:04.472   -> old-ok registered=0.1.0.0:Ok op_after=2 failed_state=StageUserDataProcessed 
+17:39:04.571 attempt 2 delay +330 ms
+17:39:10.172 feed server pid 3296
+17:39:34.054   -> old-ok registered=0.1.0.0:Ok op_after=2 failed_state=Staged 
+17:39:34.070 attempt 3 delay +360 ms
+17:39:39.529 feed server pid 6660
+17:40:03.189   -> old-ok registered=0.1.0.0:Ok op_after=2 failed_state=StageUserDataProcessed 
+17:40:03.193 attempt 4 delay +330 ms
+17:40:08.810 feed server pid 6512
+17:40:32.800   -> NEEDS-REMEDIATION registered=0.1.0.0:Modified, NeedsRemediation op_after=2 failed_state=RegistrationChanged 
+17:40:32.955 appinstaller association after induction: 0.1.0.0 -> https://localhost:8443/sliceapp/SliceApp.appinstaller | after install of the winning attempt: 0.1.0.0 -> https://localhost:8443/sliceapp/SliceApp.appinstaller
+17:40:33.026 pre-recovery: package=0.1.0.0:Modified, NeedsRemediation (no launch attempt before the method)
+17:40:33.109 recovery: NO action of ours on the guard (never started by hand): wait for the repair guard task (OrthicLabs.SliceApp_j3cejpx244dcr-Repair, event 751 / logon / its own retry), then launch via explorer shell:AppsFolder; condition applied at the cancel: feed-down
+17:42:27.426 recovery result: package 0.1.0.0:Modified, NeedsRemediation; seconds to Ok from cancel  package now 0.1.0.0:Modified, NeedsRemediation
+17:42:32.450 long-run: state left in place (feed down, package NeedsRemediation)
+17:42:32.450 finally: begin
+17:42:32.465 finally: result saved
+17:42:32.505 finally: logs copied
+17:42:32.532 finally: DONE written, stopping computer
+17:42:40.555 guest shutdown suppressed by the long-lived worker

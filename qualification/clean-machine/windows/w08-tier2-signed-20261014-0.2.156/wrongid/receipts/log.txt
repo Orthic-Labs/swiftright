@@ -1,0 +1,25 @@
+16:46:14.907 w08-recovery guest start, method tier2-wrongid, host 4F604C52-1BDE-4, os 10.0.26100.0
+16:46:16.080 default routes: 1
+16:46:16.316 signer imported to TrustedPeople
+16:46:16.763 feed server pid 2752
+16:46:25.242 feed up (0.1.0.0 feed)
+16:46:25.254 cancel offsets from delays.txt: 360,330
+16:46:25.257 attempt 1 delay +360 ms
+16:46:39.606 marker written, rows.json sha 30C1DECDBB45D33B5E8875EDBF57AA01161DB516281FC80F176346338FB517B1
+16:46:41.490 guard registered by the first launch: True
+16:46:49.402   -> NEEDS-REMEDIATION registered=0.1.0.0:Modified, NeedsRemediation op_after=2 failed_state=RegistrationChanged 
+16:46:49.656 appinstaller association after induction: 0.1.0.0 -> https://localhost:8443/sliceapp/SliceApp.appinstaller | after install of the winning attempt: 0.1.0.0 -> https://localhost:8443/sliceapp/SliceApp.appinstaller
+16:46:49.735 pre-recovery: package=0.1.0.0:Modified, NeedsRemediation (no launch attempt before the method)
+16:46:49.805 recovery: NO action of ours on the guard (never started by hand): wait for the repair guard task (OrthicLabs.SliceApp_j3cejpx244dcr-Repair, event 751 / logon / its own retry), then launch via explorer shell:AppsFolder; condition applied at the cancel: wrongid
+16:47:43.500 feed restored at +61.5 s (feed files restored); package 0.1.0.0:Modified, NeedsRemediation
+16:49:09.548 bad-then-restore: package while bad 0.1.0.0:Modified, NeedsRemediation; explicit failure logged True; recovered by the guard retry True (85.2 s after the restore)
+16:49:10.305 recovery result: package 0.1.1.0:Ok; seconds to Ok from cancel 146.7 package now 0.1.1.0:Ok
+16:49:21.819 post: package=0.1.1.0:Ok launched=True version=0.1.1.0 banner=True marker_in_file=True marker_ui=True
+16:49:22.053 screenshot post.jpg 2732x1631
+16:49:22.057 post screenshot done
+16:49:22.063 feed tail read
+16:49:22.065 finally: begin
+16:49:22.069 finally: result saved
+16:49:22.079 finally: logs copied
+16:49:22.090 finally: DONE written, stopping computer
+16:49:30.090 guest shutdown suppressed by the long-lived worker

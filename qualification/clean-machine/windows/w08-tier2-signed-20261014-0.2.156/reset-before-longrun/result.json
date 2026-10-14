@@ -1,0 +1,66 @@
+{
+    "kind":  "w08",
+    "method":  "",
+    "ok":  true,
+    "needs_fresh_sandbox":  false,
+    "clean_before":  {
+                         "clean":  true,
+                         "verify":  {
+                                        "packages":  [
+
+                                                     ],
+                                        "tasks":  [
+
+                                                  ],
+                                        "certs":  [
+
+                                                  ],
+                                        "sslcert_8443":  false,
+                                        "app_data":  false,
+                                        "feed_dir":  false,
+                                        "processes":  [
+
+                                                      ]
+                                    },
+                         "steps":  [
+                                       "ok   stop feed servers",
+                                       "ok   stop app + settings",
+                                       "ok   remove repair scheduled tasks",
+                                       "ok   remove package (all users, then current user)",
+                                       "ok   remove signer + feed certificates",
+                                       "ok   remove http sslcert bindings 8443",
+                                       "ok   remove app data + feed + harness temp"
+                                   ]
+                     },
+    "clean_after":  {
+                        "clean":  true,
+                        "verify":  {
+                                       "packages":  [
+
+                                                    ],
+                                       "tasks":  [
+
+                                                 ],
+                                       "certs":  [
+
+                                                 ],
+                                       "sslcert_8443":  false,
+                                       "app_data":  false,
+                                       "feed_dir":  false,
+                                       "processes":  [
+
+                                                     ]
+                                   },
+                        "steps":  [
+                                      "ok   stop feed servers",
+                                      "ok   stop app + settings",
+                                      "ok   remove repair scheduled tasks",
+                                      "ok   remove package (all users, then current user)",
+                                      "ok   remove signer + feed certificates",
+                                      "ok   remove http sslcert bindings 8443",
+                                      "ok   remove app data + feed + harness temp"
+                                  ]
+                    },
+    "signer_thumbprint":  "233F86CA36845B203E19B3B9CB558560F56909D8",
+    "reason":  "finished"
+}

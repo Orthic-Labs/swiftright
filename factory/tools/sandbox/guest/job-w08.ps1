@@ -57,6 +57,9 @@ function Save([string]$Why) {
     [IO.File]::WriteAllText("$JobDir\result.json", (ConvertTo-Json -InputObject $res -Depth 10), $Utf8)
 }
 
+# A long-run retry test (keepState) leaves the package NeedsRemediation with the feed down on purpose; any other w08 / w08-reset job would destroy it (Reset-W08State runs before and after every job).
+$LongRunLock = 'C:\sbq\state\longrun-active.json'
+if ((Test-Path -LiteralPath $LongRunLock) -and -not $A.breakLongRun) { $res.refused = $true; $res.error = 'refused: the W08 long-run retry test is active (' + $LongRunLock + '); pass breakLongRun only when the test is finished or abandoned'; Save 'refused'; exit 0 }
 try {
     # signer thumbprint (public cert out of the old package's signature) so the cleanup can remove exactly that cert
     $pkgSub = $(if ($A.pkgDir) { [string]$A.pkgDir } else { 'pkgs' })
@@ -119,13 +122,18 @@ try {
             'tier2-mutex' { $res.pass = [bool]($recovered -and $rc.mutex_second_run_busy) }
             { $_ -in 'tier2-feed-down', 'tier2-wrongid', 'tier2-corrupt' } { $res.pass = [bool]($recovered -and $rc.failed_explicitly -and $rc.recovered_by_retry -and -not $rc.other_app_installed_at_end -and $rc.snapshot_before_restore.rows_sha_equals_written) }
             { $_ -in 'tier2-uninstall', 'tier2-uninstall-retry', 'tier2-healthy', 'tier2-task-deleted' } { $res.pass = [bool]$rc.pass }
+            'tier2-feed-down-long' { $res.pass = [bool]($hr.long_run -and $hr.long_run.package -match 'NeedsRemediation' -and -not $hr.long_run.feed_up) }
         }
     }
     }
 } catch { $res.error = $_.Exception.Message; $res.ok = $false }
 finally {
+    if ($A.keepState -and $res.pass) { try { [IO.File]::WriteAllText($LongRunLock, (ConvertTo-Json @{ started_utc = (Get-Date).ToUniversalTime().ToString('o'); job = (Split-Path -Leaf $JobDir); note = 'W08 long-run retry test: do not run w08 / w08-reset; see qualification/clean-machine/windows/w08-tier2-signed-20261014-0.2.156/longrun' }), $Utf8) } catch { } }
+    if ($A.keepState) { $res.clean_after = @{ clean = $null; kept = 'keepState: the W08 package state is left in place on purpose (long-run retry test); the next w08 / w08-reset job destroys it' } }
+    else {
     try { $ra = Reset-W08State; $res.clean_after = $ra } catch { $res.clean_after = @{ clean = $false; error = $_.Exception.Message } }
     if ($res.clean_after -and -not $res.clean_after.clean) { $res.needs_fresh_sandbox = $true }
+    }
     Save 'finished'
 }
 exit 0

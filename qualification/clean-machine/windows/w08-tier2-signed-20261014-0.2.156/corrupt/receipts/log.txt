@@ -1,0 +1,29 @@
+16:51:41.494 w08-recovery guest start, method tier2-corrupt, host 4F604C52-1BDE-4, os 10.0.26100.0
+16:51:42.667 default routes: 1
+16:51:42.992 signer imported to TrustedPeople
+16:51:43.660 feed server pid 3384
+16:51:52.609 feed up (0.1.0.0 feed)
+16:51:52.626 cancel offsets from delays.txt: 360,330
+16:51:52.637 attempt 1 delay +360 ms
+16:52:07.733 marker written, rows.json sha D9EA8082126A4E1FA8CCB7F5576F5222380A6B3BB681D709F640F94482E48D5C
+16:52:10.057 guard registered by the first launch: True
+16:52:18.329   -> completed-anyway registered=0.1.1.0:Ok op_after=2 failed_state=DeQueued 
+16:52:18.467 attempt 2 delay +330 ms
+16:52:34.941   -> old-ok registered=0.1.0.0:Ok op_after=2 failed_state=StageUserDataProcessed 
+16:52:34.952 attempt 3 delay +360 ms
+16:52:50.639   -> NEEDS-REMEDIATION registered=0.1.0.0:Modified, NeedsRemediation op_after=2 failed_state=RegistrationChanged 
+16:52:50.813 appinstaller association after induction: 0.1.0.0 -> https://localhost:8443/sliceapp/SliceApp.appinstaller | after install of the winning attempt: 0.1.0.0 -> https://localhost:8443/sliceapp/SliceApp.appinstaller
+16:52:50.884 pre-recovery: package=0.1.0.0:Modified, NeedsRemediation (no launch attempt before the method)
+16:52:50.958 recovery: NO action of ours on the guard (never started by hand): wait for the repair guard task (OrthicLabs.SliceApp_j3cejpx244dcr-Repair, event 751 / logon / its own retry), then launch via explorer shell:AppsFolder; condition applied at the cancel: corrupt
+16:53:44.818 feed restored at +61.1 s (feed files restored); package 0.1.0.0:Modified, NeedsRemediation
+16:55:13.947 bad-then-restore: package while bad 0.1.0.0:Modified, NeedsRemediation; explicit failure logged True; recovered by the guard retry True (88.3 s after the restore)
+16:55:14.574 recovery result: package 0.1.1.0:Ok; seconds to Ok from cancel 149.4 package now 0.1.1.0:Ok
+16:55:26.163 post: package=0.1.1.0:Ok launched=True version=0.1.1.0 banner=True marker_in_file=True marker_ui=True
+16:55:26.427 screenshot post.jpg 2732x1631
+16:55:26.427 post screenshot done
+16:55:26.450 feed tail read
+16:55:26.454 finally: begin
+16:55:26.474 finally: result saved
+16:55:26.490 finally: logs copied
+16:55:26.541 finally: DONE written, stopping computer
+16:55:34.545 guest shutdown suppressed by the long-lived worker

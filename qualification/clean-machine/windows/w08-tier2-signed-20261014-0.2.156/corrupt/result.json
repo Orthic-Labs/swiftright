@@ -1,0 +1,295 @@
+{
+    "kind":  "w08",
+    "method":  "tier2-corrupt",
+    "ok":  true,
+    "needs_fresh_sandbox":  false,
+    "clean_before":  {
+                         "clean":  true,
+                         "verify":  {
+                                        "packages":  [
+
+                                                     ],
+                                        "tasks":  [
+
+                                                  ],
+                                        "certs":  [
+
+                                                  ],
+                                        "sslcert_8443":  false,
+                                        "app_data":  false,
+                                        "feed_dir":  false,
+                                        "processes":  [
+
+                                                      ]
+                                    },
+                         "steps":  [
+                                       "ok   stop feed servers",
+                                       "ok   stop app + settings",
+                                       "ok   remove repair scheduled tasks",
+                                       "ok   remove package (all users, then current user)",
+                                       "ok   remove signer + feed certificates",
+                                       "ok   remove http sslcert bindings 8443",
+                                       "ok   remove app data + feed + harness temp"
+                                   ]
+                     },
+    "clean_after":  {
+                        "clean":  true,
+                        "verify":  {
+                                       "packages":  [
+
+                                                    ],
+                                       "tasks":  [
+
+                                                 ],
+                                       "certs":  [
+
+                                                 ],
+                                       "sslcert_8443":  false,
+                                       "app_data":  false,
+                                       "feed_dir":  false,
+                                       "processes":  [
+
+                                                     ]
+                                   },
+                        "steps":  [
+                                      "ok   stop feed servers",
+                                      "ok   stop app + settings",
+                                      "ok   remove repair scheduled tasks",
+                                      "ok   remove package (all users, then current user)",
+                                      "ok   remove signer + feed certificates",
+                                      "ok   remove http sslcert bindings 8443",
+                                      "ok   remove app data + feed + harness temp"
+                                  ]
+                    },
+    "signer_thumbprint":  "79ED27C027BFE6FBABC7D9C3F2926E05491EAE5F",
+    "old_sha256":  "fb0767c253116c4c9f559e13174c8bad581edff1a96e31ab22963c8e49e51dba",
+    "new_sha256":  "dded378ad3f2fe30bfbc64c6ffb5ac8d22880e8a752014ddd28ac21922ef1160",
+    "guest_sha256_original":  "099ac93a2844dda9712cce1a27aacd79950b1ea7627e167b888369cb2bb03f6b",
+    "stop_computer_calls_patched":  1,
+    "harness_exit":  0,
+    "harness_seconds":  235.3,
+    "harness_errors":  [
+
+                       ],
+    "induction":  {
+                      "success":  true,
+                      "attempts_total":  3,
+                      "genuine_cancels":  2,
+                      "completed_anyway":  1,
+                      "setup_failed":  0,
+                      "winning_delay_ms":  360,
+                      "winning_failed_state":  "RegistrationChanged"
+                  },
+    "pre_recovery_package":  "0.1.0.0:Modified, NeedsRemediation",
+    "recovery":  {
+                     "command":  "NO action of ours on the guard (never started by hand): wait for the repair guard task (OrthicLabs.SliceApp_j3cejpx244dcr-Repair, event 751 / logon / its own retry), then launch via explorer shell:AppsFolder; condition applied at the cancel: corrupt",
+                     "manual_task_start":  false,
+                     "timeline":  [
+                                      "+7.3s 0.1.0.0:Modified, NeedsRemediation",
+                                      "+149.4s 0.1.1.0:Ok"
+                                  ],
+                     "snapshot_before_restore":  {
+                                                     "at_s":  60.3,
+                                                     "package":  "0.1.0.0:Modified, NeedsRemediation",
+                                                     "guard":  {
+                                                                   "task_name":  "OrthicLabs.SliceApp_j3cejpx244dcr-Repair",
+                                                                   "task_exists":  true,
+                                                                   "task_state":  "Ready",
+                                                                   "last_run":  "10/14/2026 16:52:44",
+                                                                   "last_result":  0,
+                                                                   "triggers":  [
+                                                                                    "MSFT_TaskEventTrigger \u003cQueryList\u003e\u003cQuery Id=\"0\" Path=\"Microsoft-Windows-AppXDeploymentServer/Operational\"\u003e\u003cSelect Path=\"Microsoft-Windows-AppXDeploymentServer/Operational\"\u003e*[System[(EventID=751)]]\u003c/Select\u003e\u003c/Query\u003e\u003c/QueryList\u003e",
+                                                                                    "MSFT_TaskLogonTrigger",
+                                                                                    "MSFT_TaskTimeTrigger"
+                                                                                ],
+                                                                   "action":  "%SystemRoot%\\System32\\conhost.exe --headless powershell.exe -NoProfile -NonInteractive -ExecutionPolicy Bypass -WindowStyle Hidden -File \"C:\\Users\\WDAGUtilityAccount\\AppData\\Local\\SliceApp\\repair\\repair-guard.ps1\" -EventRecordID $(EventRecordID)",
+                                                                   "run_as":  "WDAGUtilityAccount Interactive Limited",
+                                                                   "dir_exists":  true,
+                                                                   "files":  [
+                                                                                 "guard.json 551",
+                                                                                 "install-result.json 404",
+                                                                                 "last-result.json 1145",
+                                                                                 "repair-guard.ps1 29518",
+                                                                                 "repair.log 2548",
+                                                                                 "retry.json 188"
+                                                                             ],
+                                                                   "guard_json":  "{ \"guardVersion\": 2, \"pfn\": \"OrthicLabs.SliceApp_j3cejpx244dcr\", \"name\": \"OrthicLabs.SliceApp\", \"publisher\": \"CN=Damned Ventures LLC, O=Damned Ventures LLC, L=new york, S=New York, C=US\", \"feed\": \"https://localhost:8443/sliceapp/SliceApp.appinstaller\", \"msix\": \"https://localhost:8443/sliceapp/SliceApp_0.1.0.0_x64.msix\", \"task\": \"OrthicLabs.SliceApp_j3cejpx244dcr-Repair\", \"dir\": \"C:\\\\Users\\\\WDAGUtilityAccount\\\\AppData\\\\Local\\\\SliceApp\\\\repair\", \"installedUtc\": \"2026-10-14T11:22:07.5027373Z\" }",
+                                                                   "repair_log":  [
+                                                                                      "2026-10-14T11:22:02Z [app] installer started (script changed, guard.json missing or task missing)",
+                                                                                      "2026-10-14T16:52:07.727+05:30 [install] task OrthicLabs.SliceApp_j3cejpx244dcr-Repair registered; identity=OrthicLabs.SliceApp / CN=Damned Ventures LLC, O=Damned Ventures LLC, L=new york, S=New York, C=US; feed=https://localhost:8443/sliceapp/SliceApp.appinstaller msix=https://localhost:8443/sliceapp/SliceApp_0.1.0.0_x64.msix",
+                                                                                      "2026-10-14T16:52:46.460+05:30 [repair] guard sha256 5abc0a4d72ae851be349c082482c99c9b7ec73ffe0a04117e2cde535f0ba37e5 (lf 5abc0a4d72ae851be349c082482c99c9b7ec73ffe0a04117e2cde535f0ba37e5)",
+                                                                                      "2026-10-14T16:52:46.672+05:30 [repair] package NOT healthy: 0.1.0.0:Modified, NeedsRemediation; letting the deployment service settle",
+                                                                                      "2026-10-14T16:52:55.398+05:30 [repair] Add-AppxPackage -AppInstallerFile https://localhost:8443/sliceapp/SliceApp.appinstaller (declares 0.1.1.0)",
+                                                                                      "2026-10-14T16:52:55.639+05:30 [repair] -AppInstallerFile failed: Deployment failed with HRESULT: 0x8007000D, The data is invalid.",
+                                                                                      "",
+                                                                                      "The data is invalid.",
+                                                                                      "",
+                                                                                      "error 0x8007000D: Opening the package from location SliceApp_0.1.1.0_x64.msix failed.",
+                                                                                      "",
+                                                                                      "NOTE: For additional information, look for [ActivityId] a17b33db-5b79-0001-9ef8-8ba1795bdd01 in the Event Log or use the command line Get-AppPackageLog -ActivityID a17b33db-5b79-0001-9ef8-8ba1795bdd01",
+                                                                                      " | DeploymentError,Microsoft.Windows.Appx.PackageManager.Commands.AddAppxPackageCommand",
+                                                                                      "2026-10-14T16:52:55.669+05:30 [repair] downloading https://localhost:8443/sliceapp/SliceApp_0.1.1.0_x64.msix",
+                                                                                      "2026-10-14T16:52:58.762+05:30 [repair] REFUSED msix: corrupt or unreadable package: Exception calling \"OpenRead\" with \"1\" argument(s): \"End of Central Directory record could not be found.\"",
+                                                                                      "2026-10-14T16:53:00.573+05:30 [repair] retry 1 scheduled in 2 min at 2026-10-14T16:54:58",
+                                                                                      "2026-10-14T16:53:00.616+05:30 [repair] FAILED: package still 0.1.0.0:Modified, NeedsRemediation. Reasons: -AppInstallerFile failed: Deployment failed with HRESULT: 0x8007000D, The data is invalid.",
+                                                                                      "",
+                                                                                      "The data is invalid.",
+                                                                                      "",
+                                                                                      "error 0x8007000D: Opening the package from location SliceApp_0.1.1.0_x64.msix failed.",
+                                                                                      "",
+                                                                                      "NOTE: For additional information, look for [ActivityId] a17b33db-5b79-0001-9ef8-8ba1795bdd01 in the Event Log or use the command line Get-AppPackageLog -ActivityID a17b33db-5b79-0001-9ef8-8ba1795bdd01",
+                                                                                      " | msix corrupt: Exception calling \"OpenRead\" with \"1\" argument(s): \"End of Central Directory record could not be found.\". A retry is scheduled (see retry.json); manual: Settings \u003e Apps \u003e Advanced options \u003e Repair."
+                                                                                  ],
+                                                                   "last-result.json":  "{ \"status\": \"failed\", \"code\": 1, \"mode\": \"repair\", \"timeUtc\": \"2026-10-14T11:23:00.5854947Z\", \"guardVersion\": 2, \"guardSha256\": \"5abc0a4d72ae851be349c082482c99c9b7ec73ffe0a04117e2cde535f0ba37e5\", \"guardSha256Lf\": \"5abc0a4d72ae851be349c082482c99c9b7ec73ffe0a04117e2cde535f0ba37e5\", \"detail\": \"FAILED: package still 0.1.0.0:Modified, NeedsRemediation. Reasons: -AppInstallerFile failed: Deployment failed with HRESULT: 0x8007000D, The data is invalid.\\r\\n\\r\\nThe data is invalid.\\r\\n\\nerror 0x8007000D: Opening the package from location SliceApp_0.1.1.0_x64.msix failed.\\n\\nNOTE: For additional information, look for [ActivityId] a17b33db-5b79-0001-9ef8-8ba1795bdd01 in the Event Log or use the command line Get-AppPackageLog -ActivityID a17b33db-5b79-0001-9ef8-8ba1795bdd01\\n | msix corrupt: Exception calling \\\"OpenRead\\\" with \\\"1\\\" argument(s): \\\"End of Central Directory record could not be found.\\\"\", \"attemptLaunched\": true, \"launchFailure\": \"\", \"lastLaunchUtc\": \"2026-10-14T11:22:58.0000000Z\", \"nextRetryUtc\": \"2026-10-14T11:24:58.0000000Z\", \"retryAttempt\": 1 }",
+                                                                   "retry.json":  "{ \"attempt\": 1, \"firstFailureEpoch\": 1791976978, \"nextEpoch\": 1791977098, \"delayMinutes\": 2, \"reason\": \"repair failed\", \"lastLaunchEpoch\": 1791976978 }",
+                                                                   "install-result.json":  "{ \"status\": \"installed\", \"code\": 0, \"mode\": \"install\", \"timeUtc\": \"2026-10-14T11:22:07.7887175Z\", \"guardVersion\": 2, \"guardSha256\": \"5abc0a4d72ae851be349c082482c99c9b7ec73ffe0a04117e2cde535f0ba37e5\", \"guardSha256Lf\": \"5abc0a4d72ae851be349c082482c99c9b7ec73ffe0a04117e2cde535f0ba37e5\", \"detail\": \"task OrthicLabs.SliceApp_j3cejpx244dcr-Repair registered\" }",
+                                                                   "install-attempt.json":  null
+                                                               },
+                                                     "other_app_installed":  false,
+                                                     "rows_sha_equals_written":  true
+                                                 },
+                     "restore":  "feed files restored",
+                     "restored_at_s":  61.1,
+                     "seconds_to_package_ok_from_cancel":  149.4,
+                     "guard_after":  {
+                                         "task_name":  "OrthicLabs.SliceApp_j3cejpx244dcr-Repair",
+                                         "task_exists":  true,
+                                         "task_state":  "Running",
+                                         "last_run":  "10/14/2026 16:54:58",
+                                         "last_result":  267009,
+                                         "triggers":  [
+                                                          "MSFT_TaskEventTrigger \u003cQueryList\u003e\u003cQuery Id=\"0\" Path=\"Microsoft-Windows-AppXDeploymentServer/Operational\"\u003e\u003cSelect Path=\"Microsoft-Windows-AppXDeploymentServer/Operational\"\u003e*[System[(EventID=751)]]\u003c/Select\u003e\u003c/Query\u003e\u003c/QueryList\u003e",
+                                                          "MSFT_TaskLogonTrigger",
+                                                          "MSFT_TaskTimeTrigger"
+                                                      ],
+                                         "action":  "%SystemRoot%\\System32\\conhost.exe --headless powershell.exe -NoProfile -NonInteractive -ExecutionPolicy Bypass -WindowStyle Hidden -File \"C:\\Users\\WDAGUtilityAccount\\AppData\\Local\\SliceApp\\repair\\repair-guard.ps1\" -EventRecordID $(EventRecordID)",
+                                         "run_as":  "WDAGUtilityAccount Interactive Limited",
+                                         "dir_exists":  true,
+                                         "files":  [
+                                                       "guard.json 551",
+                                                       "install-result.json 404",
+                                                       "last-result.json 1145",
+                                                       "repair-guard.ps1 29518",
+                                                       "repair.log 3018"
+                                                   ],
+                                         "guard_json":  "{ \"guardVersion\": 2, \"pfn\": \"OrthicLabs.SliceApp_j3cejpx244dcr\", \"name\": \"OrthicLabs.SliceApp\", \"publisher\": \"CN=Damned Ventures LLC, O=Damned Ventures LLC, L=new york, S=New York, C=US\", \"feed\": \"https://localhost:8443/sliceapp/SliceApp.appinstaller\", \"msix\": \"https://localhost:8443/sliceapp/SliceApp_0.1.0.0_x64.msix\", \"task\": \"OrthicLabs.SliceApp_j3cejpx244dcr-Repair\", \"dir\": \"C:\\\\Users\\\\WDAGUtilityAccount\\\\AppData\\\\Local\\\\SliceApp\\\\repair\", \"installedUtc\": \"2026-10-14T11:22:07.5027373Z\" }",
+                                         "repair_log":  [
+                                                            "2026-10-14T11:22:02Z [app] installer started (script changed, guard.json missing or task missing)",
+                                                            "2026-10-14T16:52:07.727+05:30 [install] task OrthicLabs.SliceApp_j3cejpx244dcr-Repair registered; identity=OrthicLabs.SliceApp / CN=Damned Ventures LLC, O=Damned Ventures LLC, L=new york, S=New York, C=US; feed=https://localhost:8443/sliceapp/SliceApp.appinstaller msix=https://localhost:8443/sliceapp/SliceApp_0.1.0.0_x64.msix",
+                                                            "2026-10-14T16:52:46.460+05:30 [repair] guard sha256 5abc0a4d72ae851be349c082482c99c9b7ec73ffe0a04117e2cde535f0ba37e5 (lf 5abc0a4d72ae851be349c082482c99c9b7ec73ffe0a04117e2cde535f0ba37e5)",
+                                                            "2026-10-14T16:52:46.672+05:30 [repair] package NOT healthy: 0.1.0.0:Modified, NeedsRemediation; letting the deployment service settle",
+                                                            "2026-10-14T16:52:55.398+05:30 [repair] Add-AppxPackage -AppInstallerFile https://localhost:8443/sliceapp/SliceApp.appinstaller (declares 0.1.1.0)",
+                                                            "2026-10-14T16:52:55.639+05:30 [repair] -AppInstallerFile failed: Deployment failed with HRESULT: 0x8007000D, The data is invalid.",
+                                                            "",
+                                                            "The data is invalid.",
+                                                            "",
+                                                            "error 0x8007000D: Opening the package from location SliceApp_0.1.1.0_x64.msix failed.",
+                                                            "",
+                                                            "NOTE: For additional information, look for [ActivityId] a17b33db-5b79-0001-9ef8-8ba1795bdd01 in the Event Log or use the command line Get-AppPackageLog -ActivityID a17b33db-5b79-0001-9ef8-8ba1795bdd01",
+                                                            " | DeploymentError,Microsoft.Windows.Appx.PackageManager.Commands.AddAppxPackageCommand",
+                                                            "2026-10-14T16:52:55.669+05:30 [repair] downloading https://localhost:8443/sliceapp/SliceApp_0.1.1.0_x64.msix",
+                                                            "2026-10-14T16:52:58.762+05:30 [repair] REFUSED msix: corrupt or unreadable package: Exception calling \"OpenRead\" with \"1\" argument(s): \"End of Central Directory record could not be found.\"",
+                                                            "2026-10-14T16:53:00.573+05:30 [repair] retry 1 scheduled in 2 min at 2026-10-14T16:54:58",
+                                                            "2026-10-14T16:53:00.616+05:30 [repair] FAILED: package still 0.1.0.0:Modified, NeedsRemediation. Reasons: -AppInstallerFile failed: Deployment failed with HRESULT: 0x8007000D, The data is invalid.",
+                                                            "",
+                                                            "The data is invalid.",
+                                                            "",
+                                                            "error 0x8007000D: Opening the package from location SliceApp_0.1.1.0_x64.msix failed.",
+                                                            "",
+                                                            "NOTE: For additional information, look for [ActivityId] a17b33db-5b79-0001-9ef8-8ba1795bdd01 in the Event Log or use the command line Get-AppPackageLog -ActivityID a17b33db-5b79-0001-9ef8-8ba1795bdd01",
+                                                            " | msix corrupt: Exception calling \"OpenRead\" with \"1\" argument(s): \"End of Central Directory record could not be found.\". A retry is scheduled (see retry.json); manual: Settings \u003e Apps \u003e Advanced options \u003e Repair.",
+                                                            "2026-10-14T16:55:00.501+05:30 [repair] guard sha256 5abc0a4d72ae851be349c082482c99c9b7ec73ffe0a04117e2cde535f0ba37e5 (lf 5abc0a4d72ae851be349c082482c99c9b7ec73ffe0a04117e2cde535f0ba37e5)",
+                                                            "2026-10-14T16:55:00.856+05:30 [repair] package NOT healthy: 0.1.0.0:Modified, NeedsRemediation; letting the deployment service settle",
+                                                            "2026-10-14T16:55:09.564+05:30 [repair] Add-AppxPackage -AppInstallerFile https://localhost:8443/sliceapp/SliceApp.appinstaller (declares 0.1.1.0)"
+                                                        ],
+                                         "last-result.json":  "{ \"status\": \"failed\", \"code\": 1, \"mode\": \"repair\", \"timeUtc\": \"2026-10-14T11:23:00.5854947Z\", \"guardVersion\": 2, \"guardSha256\": \"5abc0a4d72ae851be349c082482c99c9b7ec73ffe0a04117e2cde535f0ba37e5\", \"guardSha256Lf\": \"5abc0a4d72ae851be349c082482c99c9b7ec73ffe0a04117e2cde535f0ba37e5\", \"detail\": \"FAILED: package still 0.1.0.0:Modified, NeedsRemediation. Reasons: -AppInstallerFile failed: Deployment failed with HRESULT: 0x8007000D, The data is invalid.\\r\\n\\r\\nThe data is invalid.\\r\\n\\nerror 0x8007000D: Opening the package from location SliceApp_0.1.1.0_x64.msix failed.\\n\\nNOTE: For additional information, look for [ActivityId] a17b33db-5b79-0001-9ef8-8ba1795bdd01 in the Event Log or use the command line Get-AppPackageLog -ActivityID a17b33db-5b79-0001-9ef8-8ba1795bdd01\\n | msix corrupt: Exception calling \\\"OpenRead\\\" with \\\"1\\\" argument(s): \\\"End of Central Directory record could not be found.\\\"\", \"attemptLaunched\": true, \"launchFailure\": \"\", \"lastLaunchUtc\": \"2026-10-14T11:22:58.0000000Z\", \"nextRetryUtc\": \"2026-10-14T11:24:58.0000000Z\", \"retryAttempt\": 1 }",
+                                         "retry.json":  null,
+                                         "install-result.json":  "{ \"status\": \"installed\", \"code\": 0, \"mode\": \"install\", \"timeUtc\": \"2026-10-14T11:22:07.7887175Z\", \"guardVersion\": 2, \"guardSha256\": \"5abc0a4d72ae851be349c082482c99c9b7ec73ffe0a04117e2cde535f0ba37e5\", \"guardSha256Lf\": \"5abc0a4d72ae851be349c082482c99c9b7ec73ffe0a04117e2cde535f0ba37e5\", \"detail\": \"task OrthicLabs.SliceApp_j3cejpx244dcr-Repair registered\" }",
+                                         "install-attempt.json":  null
+                                     },
+                     "other_app_installed_at_end":  false,
+                     "package_while_bad":  "0.1.0.0:Modified, NeedsRemediation",
+                     "ok_before_restore":  false,
+                     "failed_explicitly":  true,
+                     "retry_scheduled_logged":  true,
+                     "recovered_by_retry":  true,
+                     "seconds_ok_after_restore":  88.3,
+                     "task_last_result":  267009,
+                     "result":  "package 0.1.1.0:Ok; seconds to Ok from cancel 149.4",
+                     "seconds":  143,
+                     "feed_requests_during":  70,
+                     "appx_events":  [
+                                         "16:52:55.415 id=603 Information: Started deployment AddFromAppInstallerOperation operation on a package with main parameter SliceApp.appinstaller and Options 0 and 0. See http://go.microsoft.com/fwlink/?LinkId=235160 for help diagnos",
+                                         "16:52:55.575 id=465 Error: error 0x8007000D: Opening the package from location SliceApp_0.1.1.0_x64.msix failed.",
+                                         "16:52:55.576 id=497 Error: Error 0x80070002: Opening the Msixvc package from location SliceApp_0.1.1.0_x64.msix failed. Please check whether the Msixvc support services are installed.",
+                                         "16:52:55.576 id=651 Error: Appinstaller operation failed with error code 0x8007000D. Detail: The data is invalid. ",
+                                         "16:52:55.576 id=404 Error: AppX Deployment operation failed for package https://localhost:8443/sliceapp/SliceApp.appinstaller with error 0x8007000D. The specific error text for this failure is: error 0x8007000D: Opening the pac",
+                                         "16:55:09.625 id=603 Information: Started deployment AddFromAppInstallerOperation operation on a package with main parameter SliceApp.appinstaller and Options 0 and 0. See http://go.microsoft.com/fwlink/?LinkId=235160 for help diagnos",
+                                         "16:55:11.690 id=10002 Verbose: Creating Resiliency File C:\\ProgramData\\Microsoft\\Windows\\AppRepository\\b3c5ae11-b394-4d49-9ccf-153331b3c78c_S-1-5-21-2047949552-857980807-821054962-504_27.rslc for Add Operation on Package OrthicLabs",
+                                         "16:55:11.692 id=607 Information: Deployment Add operation on package OrthicLabs.SliceApp_0.1.1.0_x64__j3cejpx244dcr has been de-queued and is running for user SID S-1-5-21-2047949552-857980807-821054962-504.",
+                                         "16:55:11.693 id=854 Information: Successfully added the following uri(s) to be processed: https://localhost:8443/sliceapp/SliceApp_0.1.1.0_x64.msix.",
+                                         "16:55:11.708 id=574 Information: Preferred package version for package family is changing. Current preferred version is: OrthicLabs.SliceApp_0.1.0.0_x64__j3cejpx244dcr. New preferred version will be: OrthicLabs.SliceApp_0.1.1.0_x64__",
+                                         "16:55:11.714 id=855 Information: Finished resolving action lists. DeploymentRequest action lists: updateList: OrthicLabs.SliceApp_0.1.0.0_x64__j3cejpx244dcr is updating to OrthicLabs.SliceApp_0.1.1.0_x64__j3cejpx244dcr.",
+                                         "16:55:12.335 id=617 Verbose: Successfully updated the status for package OrthicLabs.SliceApp_0.1.0.0_x64__j3cejpx244dcr and user S-1-5-21-2047949552-857980807-821054962-504 (Clear=0x0, Set=0x20).",
+                                         "16:55:12.338 id=617 Verbose: Successfully updated the status for package OrthicLabs.SliceApp_0.1.1.0_x64__j3cejpx244dcr and user S-1-5-21-2047949552-857980807-821054962-504 (Clear=0x0, Set=0x20).",
+                                         "16:55:12.474 id=617 Verbose: Successfully updated the status for package OrthicLabs.SliceApp_0.1.1.0_x64__j3cejpx244dcr and user S-1-5-21-2047949552-857980807-821054962-504 (Clear=0x0, Set=0x20).",
+                                         "16:55:12.509 id=617 Verbose: Successfully updated the status for package OrthicLabs.SliceApp_0.1.0.0_x64__j3cejpx244dcr and user S-1-5-21-2047949552-857980807-821054962-504 (Clear=0xFFFFFFFF, Set=0x0).",
+                                         "16:55:12.513 id=5507 Verbose: OrthicLabs.SliceApp_0.1.1.0_x64__j3cejpx244dcr : C:\\Program Files\\WindowsApps\\OrthicLabs.SliceApp_0.1.1.0_x64__j3cejpx244dcr\\microsoft.system.package.metadata\\S-1-5-21-2047949552-857980807-821054962-5",
+                                         "16:55:12.513 id=5507 Verbose: OrthicLabs.SliceApp_0.1.1.0_x64__j3cejpx244dcr : C:\\Program Files\\WindowsApps\\OrthicLabs.SliceApp_0.1.1.0_x64__j3cejpx244dcr\\microsoft.system.package.metadata\\Resources.????????.pri : No shared merged",
+                                         "16:55:12.513 id=5507 Verbose: OrthicLabs.SliceApp_0.1.1.0_x64__j3cejpx244dcr : C:\\Program Files\\WindowsApps\\OrthicLabs.SliceApp_0.1.1.0_x64__j3cejpx244dcr\\microsoft.system.package.metadata\\S-1-5-21-2047949552-857980807-821054962-5",
+                                         "16:55:12.513 id=5507 Verbose: OrthicLabs.SliceApp_0.1.1.0_x64__j3cejpx244dcr : C:\\Program Files\\WindowsApps\\OrthicLabs.SliceApp_0.1.1.0_x64__j3cejpx244dcr\\microsoft.system.package.metadata\\Resources.????????.pri : No shared merged",
+                                         "16:55:12.635 id=617 Verbose: Successfully updated the status for package OrthicLabs.SliceApp_0.1.1.0_x64__j3cejpx244dcr and user S-1-5-21-2047949552-857980807-821054962-504 (Clear=0x20, Set=0x0).",
+                                         "16:55:12.635 id=617 Verbose: Successfully updated the status for package OrthicLabs.SliceApp_0.1.1.0_x64__j3cejpx244dcr and user S-1-5-21-2047949552-857980807-821054962-504 (Clear=0x20, Set=0x0).",
+                                         "16:55:12.641 id=617 Verbose: Successfully updated the status for package OrthicLabs.SliceApp_0.1.1.0_x64__j3cejpx244dcr and user S-1-5-21-2047949552-857980807-821054962-504 (Clear=0x10000C00, Set=0x0).",
+                                         "16:55:12.649 id=400 Information: Deployment Add operation with target volume C: on Package OrthicLabs.SliceApp_0.1.1.0_x64__j3cejpx244dcr from: (SliceApp_0.1.1.0_x64.msix) finished successfully.",
+                                         "16:55:12.663 id=472 Verbose: Moving package folder \\\\?\\C:\\Program Files\\WindowsApps\\OrthicLabs.SliceApp_0.1.0.0_x64__j3cejpx244dcr to \\\\?\\C:\\Program Files\\WindowsApps\\Deleted\\OrthicLabs.SliceApp_0.1.0.0_x64__j3cejpx244dcr746d03f7",
+                                         "16:55:12.688 id=613 Information: Performance summary of Deployment Add operation on Package OrthicLabs.SliceApp_0.1.1.0_x64__j3cejpx244dcr: Overall time: 1125 ms (Active time: 1125 ms) Enqueue cost: 125 ms Dequeue delay: 0 ms Bundle ",
+                                         "20:14:57.209 id=939 Information: Appxsvc lifecycle transition to Starting (Checkpoint=2)",
+                                         "20:14:57.418 id=682 Information: All inbox manifest cache entries were deleted.",
+                                         "20:14:57.479 id=633 Information: PreRegisterPackage 1527c705-839a-4832-9118-54d4Bd6a0c89_10.0.19640.1000_neutral_neutral_cw5n1h2txyewy, IsInstalled=false, Options=ImmediatePriorityRequest,PreRegisterIndexing.",
+                                         "20:14:57.481 id=607 Information: Deployment PreRegisterPackage operation on package 1527c705-839a-4832-9118-54d4Bd6a0c89_10.0.19640.1000_neutral_neutral_cw5n1h2txyewy has been de-queued and is running for user SID S-1-5-18.",
+                                         "20:14:57.488 id=854 Information: Successfully added the following uri(s) to be processed: C:\\Windows\\SystemApps\\Microsoft.Windows.FilePicker_cw5n1h2txyewy\\AppxManifest.xml."
+                                     ]
+                 },
+    "post":  {
+                 "tag":  "tier2-corrupt",
+                 "package":  "0.1.1.0:Ok",
+                 "package_detail":  {
+                                        "version":  "0.1.1.0",
+                                        "status":  "Ok",
+                                        "full_name":  "OrthicLabs.SliceApp_0.1.1.0_x64__j3cejpx244dcr",
+                                        "install_location":  "C:\\Program Files\\WindowsApps\\orthiclabs.sliceapp_0.1.1.0_x64__j3cejpx244dcr",
+                                        "is_partially_staged":  "False",
+                                        "user_install_state":  ""
+                                    },
+                 "appinstaller_assoc":  "0.1.1.0 -\u003e https://localhost:8443/sliceapp/SliceApp.appinstaller",
+                 "needs_remediation":  false,
+                 "marker_in_file_before_launch":  true,
+                 "rows_sha_before_launch":  "D9EA8082126A4E1FA8CCB7F5576F5222380A6B3BB681D709F640F94482E48D5C",
+                 "rows_sha_equals_written":  true,
+                 "launch":  {
+                                "tag":  "tier2-corrupt-launch",
+                                "launched":  true,
+                                "pid":  4664,
+                                "window_name":  "SliceApp",
+                                "exe_path":  "C:\\Program Files\\WindowsApps\\OrthicLabs.SliceApp_0.1.1.0_x64__j3cejpx244dcr\\SliceApp.exe",
+                                "running_version":  "0.1.1.0",
+                                "seconds":  1.6,
+                                "processes_without_window":  0,
+                                "top_windows":  [
+                                                    "class=Zed::Window name=[SliceApp] pid=0",
+                                                    "class=ConsoleWindowClass name=[Administrator: Windows PowerShell] pid=6768"
+                                                ]
+                            },
+                 "marker_row_shown_in_ui":  true,
+                 "ui_row_count":  6,
+                 "closed_for_log_read":  true,
+                 "log_banner_for_pid":  true,
+                 "log_tail":  "slice-app: log opened 2026-10-14T11:22:02Z pid=1908 exe=C:\\Program Files\\WindowsApps\\OrthicLabs.SliceApp_0.1.0.0_x64__j3cejpx244dcr\\SliceApp.exe | slice-app: log opened 2026-10-14T11:25:20Z pid=4664 exe=C:\\Program Files\\WindowsApps\\OrthicLabs.SliceApp_0.1.1.0_x64__j3cejpx244dcr\\SliceApp.exe",
+                 "marker_in_file_after":  true,
+                 "rows_sha_after":  "D9EA8082126A4E1FA8CCB7F5576F5222380A6B3BB681D709F640F94482E48D5C",
+                 "rows_sha_equals_written_after":  true
+             },
+    "pass":  true,
+    "reason":  "finished"
+}

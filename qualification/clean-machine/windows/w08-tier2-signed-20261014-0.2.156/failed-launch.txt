@@ -1,0 +1,49 @@
+done {'ok': True, 'exit_code': 0, 'kind': 'command'}
+﻿JSON-BEGIN
+{
+    "startedUtc":  "2026-10-14T11:55:19.9879571Z",
+    "oldSha256":  "fb0767c253116c4c9f559e13174c8bad581edff1a96e31ab22963c8e49e51dba",
+    "installed":  "0.1.0.0:Ok",
+    "acl_before":  "C:\\Windows\\System32\\WindowsPowerShell\\v1.0\\powershell.exe NT SERVICE\\TrustedInstaller:(F) |                                                           BUILTIN\\Administrators:(RX) |                                                           NT AUTHORITY\\SYSTEM:(RX) |                                                           BUILTIN\\Users:(RX) |                                                           APPLICATION PACKAGE AUTHORITY\\ALL APPLICATION PACKAGES:(RX) |                                                           APPLICATION PACKAGE AUTHORITY\\ALL RESTRICTED APPLICATION PACKAGES:(RX) |  | Successfully processed 1 files; Failed processing 0 files",
+    "acl_denied":  "C:\\Windows\\System32\\WindowsPowerShell\\v1.0\\powershell.exe 4F604C52-1BDE-4\\WDAGUtilityAccount:(DENY)(X) |                                                           NT SERVICE\\TrustedInstaller:(F) |                                                           BUILTIN\\Administrators:(RX) |                                                           NT AUTHORITY\\SYSTEM:(RX) |                                                           BUILTIN\\Users:(RX) |                                                           APPLICATION PACKAGE AUTHORITY\\ALL APPLICATION PACKAGES:(RX) |                                                           APPLICATION PACKAGE AUTHORITY\\ALL RESTRICTED APPLICATION PACKAGES:(RX) |  | Successfully processed 1 files; Failed processing 0 files",
+    "phase1_failure_logged":  true,
+    "phase1":  {
+                   "files":  [
+                                 "install-launch-failure.json",
+                                 "repair-guard.ps1",
+                                 "repair.log"
+                             ],
+                   "installAttemptJson":  null,
+                   "installLaunchFailureJson":  "{\"epoch\":1791978925,\"sha256\":\"5abc0a4d72ae851be349c082482c99c9b7ec73ffe0a04117e2cde535f0ba37e5\",\"launchFailure\":\"CreateProcessW failed, error 5\"}",
+                   "taskRegistered":  false,
+                   "repairLog":  [
+                                     "2026-10-14T11:55:25Z [app] installer launch failed: CreateProcessW failed, error 5 (no attempt marker written; the next launch retries)"
+                                 ]
+               },
+    "acl_restored":  "C:\\Windows\\System32\\WindowsPowerShell\\v1.0\\powershell.exe NT SERVICE\\TrustedInstaller:(F) |                                                           BUILTIN\\Administrators:(RX) |                                                           NT AUTHORITY\\SYSTEM:(RX) |                                                           BUILTIN\\Users:(RX) |                                                           APPLICATION PACKAGE AUTHORITY\\ALL APPLICATION PACKAGES:(RX) |                                                           APPLICATION PACKAGE AUTHORITY\\ALL RESTRICTED APPLICATION PACKAGES:(RX) |  | Successfully processed 1 files; Failed processing 0 files",
+    "phase2_task_registered":  true,
+    "phase2":  {
+                   "files":  [
+                                 "guard.json",
+                                 "install-result.json",
+                                 "repair-guard.ps1",
+                                 "repair.log"
+                             ],
+                   "installAttemptJson":  null,
+                   "installLaunchFailureJson":  null,
+                   "taskRegistered":  true,
+                   "repairLog":  [
+                                     "2026-10-14T11:55:25Z [app] installer launch failed: CreateProcessW failed, error 5 (no attempt marker written; the next launch retries)",
+                                     "2026-10-14T11:55:29Z [app] installer started (script changed, guard.json missing or task missing)",
+                                     "2026-10-14T17:25:31.491+05:30 [install] no App Installer feed known: repair can only use a recorded msix uri",
+                                     "2026-10-14T17:25:32.777+05:30 [install] task OrthicLabs.SliceApp_j3cejpx244dcr-Repair registered; identity=OrthicLabs.SliceApp / CN=Damned Ventures LLC, O=Damned Ventures LLC, L=new york, S=New York, C=US; feed=(none) msix=(none)"
+                                 ]
+               },
+    "phase2_install_result":  "{ \"status\": \"installed\", \"code\": 0, \"mode\": \"install\", \"timeUtc\": \"2026-10-14T11:55:32.7859931Z\", \"guardVersion\": 2, \"guardSha256\": \"5abc0a4d72ae851be349c082482c99c9b7ec73ffe0a04117e2cde535f0ba37e5\", \"guardSha256Lf\": \"5abc0a4d72ae851be349c082482c99c9b7ec73ffe0a04117e2cde535f0ba37e5\", \"detail\": \"task OrthicLabs.SliceApp_j3cejpx244dcr-Repair registered\" }",
+    "acl_final":  "C:\\Windows\\System32\\WindowsPowerShell\\v1.0\\powershell.exe NT SERVICE\\TrustedInstaller:(F) |                                                           BUILTIN\\Administrators:(RX) |                                                           NT AUTHORITY\\SYSTEM:(RX) |                                                           BUILTIN\\Users:(RX) |                                                           APPLICATION PACKAGE AUTHORITY\\ALL APPLICATION PACKAGES:(RX) |                                                           APPLICATION PACKAGE AUTHORITY\\ALL RESTRICTED APPLICATION PACKAGES:(RX) |  | Successfully processed 1 files; Failed processing 0 files",
+    "powershell_spawn_works":  true,
+    "endedUtc":  "2026-10-14T11:55:41.0950184Z"
+}
+JSON-END
+Cannot process the XML from the 'Error' stream of 'C:\Windows\System32\WindowsPowerShell\v1.0\powershell.exe': Cannot process names because no TypeNames were found for referenceId C:\Windows\System32\WindowsPowerShell\v1.0\powershell.exe: Access is denied. C:\Windows\System32\WindowsPowerShell\v1.0\powershell.exe: Access is denied. 0. Line 1, position 30705.
+
