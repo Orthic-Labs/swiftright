@@ -133,7 +133,24 @@ def mac(case, name, runs, out, clock=None):
         sh([str(cache / "bin/host"), "--observe", *(["--scale", "2.5"] if scale_flag[0] else []), "--scratch-root", str(scratch)],
            log=out / f"mac-run-{i:02d}.log", timeout=120)
         shutil.move(str(scratch / "client.png"), mdir / f"run-{i:02d}.png")
+    mac_provenance(out)
     print(f"mac capture {runs}/{runs} ok", flush=True)
+
+
+def mac_provenance(out):
+    """Bind the Mac reference to the OS it was captured on (a SwiftUI release can change animation behaviour, and the attached screens change displayScale): sw_vers, the Xcode toolchain and the clock host's MAC_ENV line go to build.json under "mac"."""
+    def run(*c):
+        try: return subprocess.run(c, capture_output=True, text=True, timeout=30).stdout.strip()
+        except Exception: return ""
+    info = dict(osVersion=run("/usr/bin/sw_vers", "-productVersion"), osBuild=run("/usr/bin/sw_vers", "-buildVersion"),
+                swiftc=(run("/usr/bin/xcrun", "swiftc", "--version").splitlines() or [""])[0])
+    for lg in sorted(out.glob("mac-run-*.log")):
+        m = re.search(r"^MAC_ENV (.*)$", lg.read_text(errors="replace"), re.M)
+        if m: info["clockHost"] = m.group(1); break
+    bj = out / "build.json"
+    d = json.loads(bj.read_text()) if bj.is_file() else {}
+    d["mac"] = info
+    bj.write_text(json.dumps(d, indent=1))
 
 
 def load_exclusions(case, cli):
@@ -277,7 +294,7 @@ def compare(out, runs, exclusions=(), frames=0, phases=()):
 
 
 def semantic_gate(case, out):
-    """Cases whose pair.json declares a semantic gate (imageFrame: Image(systemName:) frame/ink/tint; textGate: glyph-region ink bbox) run its report tool; "textOriginGate" adds the text-origin gate (pair_textorigin_report.py).
+    """Cases whose pair.json declares a semantic gate (imageFrame: Image(systemName:) frame/ink/tint; textGate: glyph-region ink bbox) run its report tool; "textOriginGate" adds the text-origin gate (pair_textorigin_report.py), "imeGate" the IME marked/selected range gate (pair_ime_report.py).
     Returns None when the case declares none, else whether the semantic gate passed."""
     pj = case / "pair.json"
     if not pj.is_file():
@@ -285,7 +302,7 @@ def semantic_gate(case, out):
     cfg = json.loads(pj.read_text())
     tool = "pair_list_report.py" if "listGate" in cfg else "pair_semantic_report.py" if "semanticGate" in cfg else "pair_clock_report.py" if "clockGate" in cfg else "pair_image_report.py" if "imageFrame" in cfg else "pair_control_report.py" if "controlGate" in cfg else "pair_button_report.py" if "buttonGate" in cfg else "pair_textcolour_report.py" if "textColourGate" in cfg else "pair_text_report.py" if "textGate" in cfg else None
     results = []
-    for t in [tool] + (["pair_textorigin_report.py"] if "textOriginGate" in cfg else []):   # the text-origin gate (sr1-decisions #12) runs beside whichever gate decides
+    for t in [tool] + (["pair_textorigin_report.py"] if "textOriginGate" in cfg else []) + (["pair_ime_report.py"] if "imeGate" in cfg else []):   # the text-origin (sr1-decisions #12) and IME marked-range (#15) gates run beside whichever gate decides
         if not t:
             continue
         r = subprocess.run([sys.executable, str(Path(__file__).resolve().parent / t), str(case), str(out)], capture_output=True, text=True)

@@ -85,10 +85,17 @@ struct ClockCaptureHost {
         try FileManager.default.createDirectory(atPath: out, withIntermediateDirectories: true)
         // The first animate call fixes the animation's start, so the clock reads times[0] from before the witness appears.
         ManualClock.now = times[0]
+        // SwiftUI's built-in spring ends when the remaining displacement is under ONE DEVICE PIXEL (1 / displayScale pt: the default spring on a 150 pt
+        // move ends at 0.58 s at scale 1, 0.65 s at 2, 0.68 s at 2.5), and `displayScale` otherwise comes from whatever screen the Mac happens to have attached
+        // (a headless 1920x1080 at 1x, a Retina panel at 2x). The reference is therefore pinned (decision C11): default 1, the runtime's headless default.
+        let displayScale = Double(value("--display-scale") ?? "1") ?? 1
         let root = ZStack(alignment: .center) { Witness_anim_linear_width() }
             .frame(width: 320, height: 240, alignment: .center)
             .background(Color.white)
             .environment(\.colorScheme, .light)
+            .environment(\.displayScale, displayScale)
+        let screens = NSScreen.screens.map { "\(Int($0.frame.width))x\(Int($0.frame.height))@\($0.backingScaleFactor)x" }.joined(separator: ",")
+        print("MAC_ENV os=\(ProcessInfo.processInfo.operatingSystemVersionString) pinnedDisplayScale=\(displayScale) screens=[\(screens)]")
         let host = NSHostingView(rootView: root)
         host.frame = NSRect(x: 0, y: 0, width: 320, height: 240)
         let window = NSWindow(contentRect: host.frame, styleMask: [.borderless], backing: .buffered, defer: false)
