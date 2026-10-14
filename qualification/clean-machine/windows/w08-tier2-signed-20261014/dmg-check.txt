@@ -1,0 +1,13 @@
+Mac read-only DMG check, 2026-10-14 (no launch of the app; mounted -nobrowse -readonly from the internal disk)
+file: SliceApp_0.1.0_arm64.dmg  sha256 9698efc56a137bd83e29a17790c3e92f6d38d75acad8f1130a90f18a306f0be4  (CI run 38535084834, signed-macos artifact)
+hdiutil verify: checksum is VALID
+spctl -a -t open --context context:primary-signature -vv: accepted; source=Notarized Developer ID; origin=Developer ID Application: Adrian D'souza (6KLGD3LLKF)
+codesign --verify --verbose=2 (dmg): valid on disk; satisfies its Designated Requirement
+codesign -dvv (dmg): Authority Developer ID Application: Adrian D'souza (6KLGD3LLKF) > Developer ID Certification Authority > Apple Root CA; TeamIdentifier 6KLGD3LLKF; Timestamp 14 Oct 2026 2:03:03 PM
+xcrun stapler validate (dmg): The validate action worked!
+mounted image: Applications, SliceApp.app
+codesign --verify --deep --strict (SliceApp.app): valid on disk; satisfies its Designated Requirement
+spctl -a -t exec -vv (SliceApp.app): accepted; source=Notarized Developer ID; origin=Developer ID Application: Adrian D'souza (6KLGD3LLKF)
+xcrun stapler validate (SliceApp.app): The validate action worked!
+codesign -dvv (SliceApp.app): Identifier dev.orthic.sliceapp; flags 0x10000(runtime); TeamIdentifier 6KLGD3LLKF
+image ejected afterwards.

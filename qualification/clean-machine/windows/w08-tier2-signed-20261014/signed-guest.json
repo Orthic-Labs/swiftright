@@ -1,0 +1,85 @@
+﻿{
+    "started":  "2026-10-14T14:22:34.7542446+05:30",
+    "msix_sha256":  "2ef9dc7b6f89000bf9a01ff58e318e4a55fe91cf80f037dfec95c29e66a74050",
+    "os":  "10.0.26100.0",
+    "signature_status":  "Valid",
+    "signer":  "CN=Damned Ventures LLC, O=Damned Ventures LLC, L=new york, S=New York, C=US",
+    "signer_thumbprint":  "79ED27C027BFE6FBABC7D9C3F2926E05491EAE5F",
+    "timestamper":  "CN=Microsoft Public RSA Time Stamping Authority, OU=nShield TSS ESN:A500-05E0-D947, OU=Microsoft America Operations, O=Microsoft Corporation, L=Redmond, S=Washington, C=US",
+    "install_seconds":  1.8,
+    "package":  {
+                    "full":  "OrthicLabs.SliceApp_0.1.0.0_x64__j3cejpx244dcr",
+                    "version":  "0.1.0.0",
+                    "status":  "Ok",
+                    "publisher":  "CN=Damned Ventures LLC, O=Damned Ventures LLC, L=new york, S=New York, C=US",
+                    "signatureKind":  "Developer",
+                    "install":  "C:\\Program Files\\WindowsApps\\OrthicLabs.SliceApp_0.1.0.0_x64__j3cejpx244dcr"
+                },
+    "trusted_people_has_signer":  false,
+    "packaged_activation":  {
+                                "process_found":  true,
+                                "pid":  3028,
+                                "path":  "C:\\Program Files\\WindowsApps\\OrthicLabs.SliceApp_0.1.0.0_x64__j3cejpx244dcr\\SliceApp.exe",
+                                "window_title":  "SliceApp",
+                                "window_visible":  true,
+                                "window_size":  "653 x 515",
+                                "distinct_colors_sampled":  21581,
+                                "black_fraction":  0.013,
+                                "rendered":  true,
+                                "close_sent":  true,
+                                "exited_within_20s":  true,
+                                "crash_events":  [
+
+                                                 ]
+                            },
+    "guard_registration":  {
+                               "task_name":  "OrthicLabs.SliceApp_j3cejpx244dcr-Repair",
+                               "seconds_to_register":  2.1,
+                               "task_registered":  true,
+                               "triggers":  [
+                                                "MSFT_TaskEventTrigger",
+                                                "MSFT_TaskLogonTrigger"
+                                            ],
+                               "action":  "%SystemRoot%\\System32\\conhost.exe --headless powershell.exe -NoProfile -NonInteractive -ExecutionPolicy Bypass -WindowStyle Hidden -File \"C:\\Users\\WDAGUtilityAccount\\AppData\\Local\\SliceApp\\repair\\repair-guard.ps1\"",
+                               "run_as":  "WDAGUtilityAccount Interactive Limited",
+                               "guard_script_sha256":  "b116809eed59983e0f126308e5a2181c9fce1fdef98816fc99f455accc9c1b34",
+                               "guard_pin_sha256":  "3df2415f19db8dfaffad1714b105434236310f9e84e10616855f96ae58cf634b",
+                               "guard_matches_pin":  false,
+                               "guard_json":  "{ \"guardVersion\": 2, \"pfn\": \"OrthicLabs.SliceApp_j3cejpx244dcr\", \"name\": \"OrthicLabs.SliceApp\", \"publisher\": \"CN=Damned Ventures LLC, O=Damned Ventures LLC, L=new york, S=New York, C=US\", \"feed\": \"\", \"msix\": \"\", \"task\": \"OrthicLabs.SliceApp_j3cejpx244dcr-Repair\", \"dir\": \"C:\\\\Users\\\\WDAGUtilityAccount\\\\AppData\\\\Local\\\\SliceApp\\\\repair\", \"installedUtc\": \"2026-10-14T08:52:45.0464444Z\" }"
+                           },
+    "control_healthy":  {
+                            "last_result":  {
+                                                "status":  "healthy",
+                                                "code":  0,
+                                                "mode":  "repair",
+                                                "timeUtc":  "2026-10-14T08:52:50.9989160Z",
+                                                "guardVersion":  2,
+                                                "detail":  "package healthy: 0.1.0.0:Ok"
+                                            },
+                            "seconds":  2.6,
+                            "package_before":  "OrthicLabs.SliceApp_0.1.0.0_x64__j3cejpx244dcr:Ok",
+                            "package_after":  "OrthicLabs.SliceApp_0.1.0.0_x64__j3cejpx244dcr:Ok",
+                            "add_appx_logged":  false,
+                            "pass":  true
+                        },
+    "control_task_deleted":  {
+                                 "task_deleted":  true,
+                                 "task_reregistered":  true,
+                                 "seconds_to_reregister":  4.6,
+                                 "pass":  true
+                             },
+    "control_uninstall":  {
+                              "rows_exists_before":  true,
+                              "rows_sha_before":  "40b2a634b1d73b900c422e5a33812b809acdd64f3133ff22d406cf6cfa8af2cf",
+                              "package_removed":  true,
+                              "task_exists_right_after_remove":  true,
+                              "task_gone":  true,
+                              "repair_dir_gone":  true,
+                              "seconds_to_cleanup":  15.9,
+                              "rows_exists_after":  true,
+                              "rows_sha_after":  "40b2a634b1d73b900c422e5a33812b809acdd64f3133ff22d406cf6cfa8af2cf",
+                              "pass":  true
+                          },
+    "final_package_present":  false,
+    "finished":  "2026-10-14T14:23:16.1083933+05:30"
+}

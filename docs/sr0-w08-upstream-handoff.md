@@ -87,3 +87,7 @@ Not proven here, and what contract closure still needs:
 3. The retry schedule beyond the first retry (+5, +15, +60, hourly, 24 h cut-off) is exercised by reading the script and the first retry only; a long-run test would take hours.
 4. A real (non-Sandbox) Windows machine, including a locked-down one where `schtasks` or Task Scheduler is policy-blocked (the guard then does nothing and the 24 h installer backoff applies).
 5. Independent review (Oracle) of this work; it has not been performed.
+
+## Release-signed pair check (2026-10-14, CI run 38535084834)
+
+Release-signed MSIX 0.1.0.0 (`2ef9dc7b...4050`) installs in the Sandbox on platform trust; package smoke, guard registration, healthy / task-deleted / uninstall controls PASS; signed DMG `9698efc5...0be4` notarized and stapled (read-only Mac checks). The positive repair and the update-based negative controls are NOT run: only one version is release-signed, and a cancelled update needs a newer one (a version 0.1.1 `release-candidate` run with signing would supply it; not dispatched, needs authorization). Receipt: `qualification/clean-machine/windows/w08-tier2-signed-20261014/RECEIPT.md`. W08 stays open.

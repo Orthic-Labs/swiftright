@@ -53,7 +53,7 @@ Current tuple 12 candidate: source closure `4b1ca6d0fb89963ee20cd5bd7adf8b7c8b9b
 |---|---|---|
 | 1 | Tuple 12 stage | Fresh canonical `sr0-r12` stage with transferred no-delete scripts, parse receipt, admitted renderer/source-closure hashes & full member receipt; recovery receipt records one-job success, while fresh canonical stage & qualification receipts remain required |
 | 2 | R9 Narrator speech content | Adrian listens later at Dell, about 2 min |
-| 3 | W08 repair-helper decision | Upstream RightKit repair-helper installed, exercised against `Modified, NeedsRemediation`, relaunch & data-integrity receipt; current 0.2.151 availability is not proof |
+| 3 | W08 repair-helper decision | Upstream RightKit repair-helper installed, exercised against `Modified, NeedsRemediation`, relaunch & data-integrity receipt; current 0.2.151 availability is not proof; 14 Oct 2026: release-signed MSIX 0.1.0.0 (run 38535084834, `2ef9dc7b...`) installs on platform trust, packaged launch renders, guard registers and its healthy / task-deleted / uninstall controls pass in the Sandbox, DMG notarized and stapled; positive repair still NOT run (only one release-signed version exists, an update needs 0.1.1.0): `qualification/clean-machine/windows/w08-tier2-signed-20261014/RECEIPT.md` |
 | 4 | Tuple 12 qualification | Matrix/native/workload/package receipts, then 20 Mac & 20 Windows recordings per config with tuple12 hashes |
 | 5 | R11 freeze | Held until W08, tuple12 qualification & required decisions close; no freeze approval exists |
 | 6 | New Mac recorder signing | HELD until signer owner supplies process-level no-prompt proof; approved package signing remains short-lived Azure certificate reissue |
