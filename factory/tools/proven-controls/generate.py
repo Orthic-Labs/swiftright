@@ -17,8 +17,10 @@ from pathlib import Path
 
 ROOT = Path(__file__).resolve().parents[3]
 OUT = ROOT / "docs" / "proven-controls.json"
-TABLE = ROOT / "factory/pipeline/consolidation/consolidation-table.json"
+TABLE = ROOT / "factory/pipeline/consolidation/consolidation-table.json"      # rounds 4 and 5 (blocks 21 and up)
 RESULTS = ROOT / "factory/pipeline/consolidation/results.jsonl"
+CLOSURE_TABLE = ROOT / "factory/pipeline/closure/closure-table.json"          # the final closure run of blocks 1-20 and the pixel-ties (one stage)
+CLOSURE_RESULTS = ROOT / "factory/pipeline/closure/results.jsonl"
 MANIFEST = ROOT / "factory/registry/manifest.json"
 STATUS = ROOT / "docs/sr1-status.md"
 
@@ -31,7 +33,10 @@ NUM2ID = {1: "swiftui.shapes.fill-stroke", 2: "swiftui.image", 3: "swiftui.stack
           16: "swiftui.list", 17: "swiftui.alert", 18: "swiftui.animation",
           19: "swiftui.opacity-transition", 20: "swiftui.color-scheme",
           21: "swiftui.observation", 22: "swiftui.task-asyncstream", 23: "swiftui.spacer-divider",
-          24: "swiftui.list-row-style", 25: "swiftui.font-custom"}
+          24: "swiftui.list-row-style", 25: "swiftui.font-custom",
+          26: "swiftui.text-views", 27: "swiftui.layout-priority", 28: "swiftui.system-font", 29: "swiftui.system-symbols",
+          30: "swiftui.continuous-shape-large", 31: "swiftui.paint-states", 32: "swiftui.accessibility", 33: "swiftui.baseline-alignment",
+          34: "swiftui.textfield-axis", 35: "swiftui.image-data", 36: "swiftui.button-dark"}
 
 # Round-4 blocks (requested by the Pulse hub track): passed at N=20 on their stage, no independent review yet. Provisional use only; remove a block from this set
 # when its review lands and docs/sr1-status.md records it.
@@ -46,20 +51,29 @@ ROUND4_CAVEATS = {
     "swiftui.font-custom": ["Proven on bundled Tinos Regular only; the hub's real display font (Tanker, licence unconfirmed) is not bundled or gated.", "`.tracking`/`.kerning`, other weights and a 28 pt title are not delivered; text frames must be the line height plus a multiple of 4 pt (Windows text-run matching on half-pixel ties).",
                              "Glyph pixels are gated by the text gate (ink box within 1 px), not exact (DirectWrite vs CoreText)."],
 }
-PENDING_REVIEW = {"swiftui.observation", "swiftui.task-asyncstream", "swiftui.spacer-divider", "swiftui.list-row-style", "swiftui.font-custom"}
-
-# Hand-set status. The status doc still reads "delivered" for 13-15; the TextField text-origin fix
-# (docs/sr1-decisions.md decision 12, an Oracle finding) is being rerun, so none is delivered yet.
-# Remove an override once docs/sr1-status.md records the rerun verdict.
-_REASON_INH = "Inherits the swiftui.textfield fix: its cases drive TextField and are also gated by the text-origin gate; not delivered until blocks 13-15 are rerun."
-OVERRIDES = {
-    "swiftui.textfield": {"status": "in-progress",
-        "statusReason": "NOT-DELIVERED pending the current fix: TextField text-origin/caret repair and text-origin gate "
-                        "(docs/sr1-decisions.md decision 12, closing an Oracle finding); blocks 13-15 are being rerun. "
-                        "The earlier semantic-only result (120/120) is superseded."},
-    "swiftui.focus-state": {"status": "in-progress", "statusReason": _REASON_INH, "inherits": "swiftui.textfield"},
-    "swiftui.ime-marked-text": {"status": "in-progress", "statusReason": _REASON_INH, "inherits": "swiftui.textfield"},
+# Round-5 blocks (closing the Pulse hub's Windows gaps, factory/pipeline/blocks-26-34): passed at N=20 on their stage, no independent review yet.
+ROUND5_CAVEATS = {
+    "swiftui.text-views": ["`AnyView` is transparent: a bare AnyView cannot be a graph root (wrap it in a user view).", "`Text(verbatim:)` has no localisation lookup (the runtime has none)."],
+    "swiftui.layout-priority": ["A priority set beneath `padding` or a frame modifier does not forward (measured); only HStack/VStack distribution is proven, not Layout protocol containers."],
+    "swiftui.system-font": ["Segoe UI at the requested size: Windows lines are 1-3 pt taller from 15 pt up and glyphs a little larger; the text position gate carries measured tolerances (decision F1).",
+                            "`Font.width` is carried, not drawn; serif, rounded and monospaced designs are refused; `lineLimit(n)` truncation falls back to the ellipsis alone when nothing fits (macOS clips instead)."],
+    "swiftui.system-symbols": ["Shapes are Segoe Fluent Icons, never gated (12 weak mappings); regular, semibold and bold font-sized symbols only; only star.fill keeps a resizable layout.", "Sizes between the measured ones are interpolated."],
+    "swiftui.continuous-shape-large": ["The anti-aliasing differs from Apple's on large-radius shoulders: named edge-AA tolerances 130-220 (decision F4); a stroked pill is NOT delivered (SwiftUI's stroker draws ticks)."],
+    "swiftui.paint-states": ["Light and dark Divider and transparent fills only; a bordered Button under `.opacity` is still refused."],
+    "swiftui.accessibility": ["`accessibilityHint` is accepted but not published (no ABI field); `accessibilityValue` on a Text, and the header and link traits, are NOT delivered (decision F10)."],
+    "swiftui.baseline-alignment": ["Pixels are report-only: the baseline relation to the Mac decides (Segoe UI and SF baselines differ in absolute position); HStack only."],
+    "swiftui.textfield-axis": ["`axis: .vertical` is the single-line field: no growth over several lines and no wrapping (decision F9)."],
+    "swiftui.image-data": ["PNG and ICO only through the Swift decoder (the wave-0 WIC/ImageIO service exists behind `ImageDecoder.backend = .system`); no Adam7; the scaled-down box filter differs from CoreGraphics by a named tolerance.", "Windows-vs-Mac decode is exact for sRGB-untagged 8-bit data only."],
+    "swiftui.button-dark": ["Bordered Button under `.opacity` and a foreground style on a bordered Button are not modelled; the dark corner outline is the light one."],
 }
+ROUND4_CAVEATS.update(ROUND5_CAVEATS)
+PENDING_REVIEW = {"swiftui.observation", "swiftui.task-asyncstream", "swiftui.spacer-divider", "swiftui.list-row-style", "swiftui.font-custom"} | set(ROUND5_CAVEATS)
+
+# Blocks 1-20 (final closure run, docs/sr1-status.md): every case passed its deciding gate on one stage; none is independently reviewed yet.
+PENDING_REVIEW |= {NUM2ID[n] for n in range(1, 21)}
+
+# No hand-set status: the closure run reran blocks 13-15 (text-origin fix, decision 12) and every block 1-20 is derived from its cases (delivered-pending-review).
+OVERRIDES = {}
 WIN_KEYS = re.compile(r"Windows|Segoe|Sandbox|hardware|narrower|focus ring|TSF|\bIME\b|UIA|Mac side|Mac's|\bSF\b|scale 2\.5|light only|measured in light", re.I)
 NOT_SWIFTUI = set("""Int Int8 Int16 Int32 Int64 UInt Double Float CGFloat CGSize CGPoint CGRect String Bool Array Dictionary Set
 Optional Character Void Any AnyObject Self Date Data URL UUID Never Result Error Task DispatchQueue Foundation TimeInterval
@@ -139,15 +153,25 @@ def split_caveats(cell):
 
 
 def build():
-    table = json.loads(TABLE.read_text())
+    def top(r):
+        n = r["block"].split()[0]
+        return int(n) if n.isdigit() else n
+    table = [r for r in json.loads(CLOSURE_TABLE.read_text())["rows"] if not (isinstance(top(r), int) and top(r) > 20)] + \
+            [r for r in json.loads(TABLE.read_text()) if isinstance(top(r), int) and top(r) > 20]
     manifest = json.loads(MANIFEST.read_text())
     mblocks = {b["id"]: b for b in manifest["blocks"]}
     sdate, rows, gaps = parse_status()
     stages = {}
-    for line in RESULTS.read_text().splitlines():
+    cstage = json.loads(CLOSURE_TABLE.read_text())["stage"]
+    cases_closure = {r["case"] for r in table if not (isinstance(top(r), int) and top(r) > 20)}
+    for line in RESULTS.read_text().splitlines():            # rounds 4 and 5: every stage the case was recorded on
         r = json.loads(line)
-        if r.get("done"):
+        if r.get("done") and r["case"] not in cases_closure:
             stages.setdefault(r["case"], set()).add(r["stage"])
+    for line in CLOSURE_RESULTS.read_text().splitlines():    # blocks 1-20: the single closure stage
+        r = json.loads(line)
+        if r.get("done") and r["stage"] == cstage:
+            stages.setdefault(r["case"], set()).add(cstage)
     bycase = {}
     for r in table:
         num = r["block"].split()[0]
@@ -175,7 +199,7 @@ def build():
              "apis": {"fromManifest": manifest_apis(mblocks[bid]) if bid in mblocks else [],
                       "fromCaseSources": {"types": sorted(types), "modifiersAndMembers": sorted(mods)}},
              "verdict": {"text": row["verdict"],
-                         "source": "docs/sr1-status.md table + factory/pipeline/consolidation/consolidation-table.json",
+                         "source": "docs/sr1-status.md table + factory/pipeline/closure/closure-table.json (blocks 1-20) / consolidation-table.json (blocks 21+)",
                          "date": sdate, "runDates": rundates},
              "stage": stg[0] if len(stg) == 1 else stg,
              "caveats": gen, "windowsDifferences": win}
@@ -186,8 +210,8 @@ def build():
             e["caveats"] = [ov["statusReason"]] + e["caveats"]
         entries.append(e)
     return {"generator": "factory/tools/proven-controls/generate.py", "schema": 1,
-            "sources": ["factory/pipeline/consolidation/consolidation-table.json", "factory/registry/manifest.json",
-                        "docs/sr1-status.md", "factory/pipeline/consolidation/results.jsonl", "Witness.swift of each case"],
+            "sources": ["factory/pipeline/closure/closure-table.json", "factory/pipeline/consolidation/consolidation-table.json", "factory/registry/manifest.json",
+                        "docs/sr1-status.md", "factory/pipeline/consolidation/results.jsonl", "factory/pipeline/closure/results.jsonl", "Witness.swift of each case"],
             "statusDate": sdate,
             "statusValues": ["delivered", "delivered-with-caveats", "delivered-pending-review", "not-delivered", "in-progress"],
             "apisNotCovered": {"hint": "Any SwiftUI API not listed under a block is not proven. See docs/pulse-notch-demand-map.md "
