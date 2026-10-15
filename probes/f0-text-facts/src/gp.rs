@@ -235,7 +235,7 @@ fn rows_for(page: &str) -> Vec<Row> {
                         list.iter().map(|s| s.to_string()).collect(),
                     ));
                 }
-                r.push(row(label, text, f, 20.0));
+                r.push(row(label, text, f, 16.0));
             };
             let g = "Ab \u{03B2}\u{03B3}";
             let j = "Ab \u{3042}\u{6F22}";
@@ -338,6 +338,29 @@ fn rows_for(page: &str) -> Vec<Row> {
             let mut f = base("Tinos");
             feat(&mut f, &[("tnum", 1)]);
             r.push(row("Tinos tnum=1", "AVAWAY To Wa 1111 0000", f, 20.0));
+        }
+        "k2" => {
+            let t = "AVAWAY To Wa 1111 0000 1010";
+            let cfgs: [(&str, &str, &[(&str, u32)]); 11] = [
+                ("Tinos default", "Tinos", &[]),
+                ("Tinos kern=1", "Tinos", &[("kern", 1)]),
+                ("Tinos kern=0", "Tinos", &[("kern", 0)]),
+                ("SUVText default", "Segoe UI Variable Text", &[]),
+                ("SUVText kern=1", "Segoe UI Variable Text", &[("kern", 1)]),
+                ("SUVText kern=0", "Segoe UI Variable Text", &[("kern", 0)]),
+                ("SUVText tnum=1", "Segoe UI Variable Text", &[("tnum", 1)]),
+                ("SUVText pnum=1", "Segoe UI Variable Text", &[("pnum", 1)]),
+                ("Sitka Text default", "Sitka Text", &[]),
+                ("Sitka Text tnum=1", "Sitka Text", &[("tnum", 1)]),
+                ("Sitka Text pnum=1", "Sitka Text", &[("pnum", 1)]),
+            ];
+            for (label, fam, tags) in cfgs {
+                let mut f = mk(fam, 400., false);
+                if !tags.is_empty() {
+                    feat(&mut f, tags);
+                }
+                r.push(row(label, t, f, 14.0));
+            }
         }
         "sz1" | "sz2" => {
             let sizes: &[f32] = if page == "sz1" {
@@ -455,6 +478,34 @@ fn paint_glyphs(
     }
 }
 
+/// (size, frame height, line height) per row; tops accumulate from 20 pt like the blocks-f0 witnesses.
+fn e14_rows(page: &str) -> Option<Vec<(f32, f32, f32)>> {
+    match page {
+        "e14a" => Some(vec![
+            (24., 30., 26.),
+            (26., 33., 29.),
+            (27., 34., 30.),
+            (28., 35., 31.),
+            (29., 36., 32.),
+        ]),
+        "e14b" => Some(vec![
+            (30., 37., 33.),
+            (31., 39., 35.),
+            (32., 40., 36.),
+            (36., 44., 40.),
+            (20., 26., 22.),
+        ]),
+        "e14c" => Some(vec![
+            (28., 31., 31.),
+            (28., 32., 31.),
+            (28., 33., 31.),
+            (28., 34., 31.),
+            (28., 35., 31.),
+        ]),
+        _ => None,
+    }
+}
+
 fn paint_page(page: &str, bounds: Bounds<Pixels>, window: &mut Window, cx: &mut App) {
     window.paint_quad(fill(bounds, white()));
     let first = !TRACED.swap(true, Ordering::SeqCst);
@@ -467,6 +518,38 @@ fn paint_page(page: &str, bounds: Bounds<Pixels>, window: &mut Window, cx: &mut 
     }
     let label_font = mk("Segoe UI", 400., false);
     let grey = hsla(0.0, 0.0, 0.35, 1.0);
+    if let Some(rows) = e14_rows(page) {
+        // The product path for a custom-font title: the host puts the Text node at the frame's top plus (frame - lh) / 2 and the renderer paints
+        // the shaped line with line height lh (lh = round(ascent) + round(descent) of hhea, decision E12). Same arithmetic here, whole-point tops.
+        let fams = ["Tinos", "SRProbeTinosNoHint", "SRProbeTinosGasp"];
+        for (ci, fam) in fams.iter().enumerate() {
+            let f = mk(fam, 400., false);
+            let mut top = 20.0f32;
+            for (size, frame, lh) in rows.iter().copied() {
+                let line = shape(window, "Pulse Hub", &f, size);
+                let asc: f32 = line.ascent.into();
+                let desc: f32 = line.descent.into();
+                let oy = top + (frame - lh) / 2.0;
+                let ox = 4.0 + ci as f32 * 140.0;
+                let baseline_logical = oy + (lh - asc - desc) / 2.0 + asc;
+                if first {
+                    eprintln!(
+                        "E14 page={page} family=[{fam}] size={size} frame={frame} lh={lh} top={top} origin_y={oy} ascent={asc:.4} descent={desc:.4} baseline_logical={baseline_logical:.4} baseline_phys={:.3} floor_phys={}",
+                        baseline_logical * scale,
+                        (baseline_logical * scale).floor()
+                    );
+                }
+                let _ = line.paint(
+                    point(bounds.origin.x + px(ox), bounds.origin.y + px(oy)),
+                    px(lh),
+                    window,
+                    cx,
+                );
+                top += frame;
+            }
+        }
+        return;
+    }
     if page == "snap" {
         // Tinos 28 and Segoe UI Variable 28 at ten y fractions: where does the baseline land? Column i has origin.y = 12 + i/10.
         for (fi, fam) in ["Tinos", "Segoe UI Variable"].iter().enumerate() {
@@ -474,9 +557,9 @@ fn paint_page(page: &str, bounds: Bounds<Pixels>, window: &mut Window, cx: &mut 
             for i in 0..10 {
                 let oy = 12.0 + fi as f32 * 100.0 + i as f32 * 0.1;
                 let ox = 8.0 + i as f32 * 40.0;
-                let line = shape(window, "Hxg", &f, 28.0);
+                let line = shape(window, "H", &f, 28.0);
                 if first && i == 0 {
-                    trace_line(page, &format!("{fam} 28px"), &f, "Hxg", &line, window);
+                    trace_line(page, &format!("{fam} 28px"), &f, "H", &line, window);
                 }
                 let asc: f32 = line.ascent.into();
                 let desc: f32 = line.descent.into();

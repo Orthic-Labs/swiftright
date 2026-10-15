@@ -26,6 +26,8 @@ struct Cell {
     rect: RECT,
     alpha: Vec<u8>,
     sum: u64,
+    /// half-coverage (alpha >= 128) box relative to the baseline origin: [left, top, right, bottom)
+    half: Option<[i32; 4]>,
 }
 
 struct Sheet {
@@ -236,6 +238,9 @@ unsafe fn render_text(
         DWRITE_RENDERING_MODE1_OUTLINE => DWRITE_RENDERING_MODE1_NATURAL_SYMMETRIC,
         m => m,
     };
+    if let Some(g) = gf_override {
+        grid_fit_mode = g;
+    }
     let analysis = factory.CreateGlyphRunAnalysis(
         &glyph_run,
         Some(&transform),
@@ -254,7 +259,29 @@ unsafe fn render_text(
         analysis.CreateAlphaTexture(DWRITE_TEXTURE_ALIASED_1x1, &rect, &mut alpha)?;
     }
     let sum = alpha.iter().map(|a| *a as u64).sum();
-    Ok(Cell { rect, alpha, sum })
+    let mut half: Option<[i32; 4]> = None;
+    for y in 0..h {
+        for x in 0..w {
+            if alpha[y * w + x] >= 128 {
+                let (px, py) = (rect.left + x as i32, rect.top + y as i32);
+                half = Some(match half {
+                    None => [px, py, px + 1, py + 1],
+                    Some(b) => [
+                        b[0].min(px),
+                        b[1].min(py),
+                        b[2].max(px + 1),
+                        b[3].max(py + 1),
+                    ],
+                });
+            }
+        }
+    }
+    Ok(Cell {
+        rect,
+        alpha,
+        sum,
+        half,
+    })
 }
 
 fn cell_line(tag: &str, c: &Cell) -> String {
@@ -443,7 +470,7 @@ unsafe fn run_inner(out: &str) -> windows::core::Result<()> {
                 });
             }
             match res.CreateFontFace(DWRITE_FONT_SIMULATIONS_NONE, &vals) {
-                Ok(fv) => match render_text(&factory, &fv, text, size, scale) {
+                Ok(fv) => match render_text(&factory, &fv, text, size, scale, None) {
                     Ok(c) => {
                         say!("{}", cell_line(&format!("family=[{fam}] wght={w} opsz=default text={text:?} size={size}dip scale={scale}"), &c));
                         sheet.blit(col_x, row_y + 40, &c);
@@ -470,7 +497,7 @@ unsafe fn run_inner(out: &str) -> windows::core::Result<()> {
                     },
                 ];
                 match res.CreateFontFace(DWRITE_FONT_SIMULATIONS_NONE, &vals) {
-                    Ok(fv) => match render_text(&factory, &fv, text, size, scale) {
+                    Ok(fv) => match render_text(&factory, &fv, text, size, scale, None) {
                         Ok(c) => {
                             say!("{}", cell_line(&format!("family=[{fam}] wght=400 opsz={o} text={text:?} size={size}dip scale={scale}"), &c));
                             sheet.blit(col_x, row_y + 40, &c);
@@ -509,7 +536,7 @@ unsafe fn run_inner(out: &str) -> windows::core::Result<()> {
             ("bold+oblique", DWRITE_FONT_SIMULATIONS(3)),
         ] {
             match r.CreateFontFaceWithSimulations(sim) {
-                Ok(f) => match render_text(&factory, &f, "Hamburg", 20.0, 2.5) {
+                Ok(f) => match render_text(&factory, &f, "Hamburg", 20.0, 2.5, None) {
                     Ok(c) => {
                         say!(
                             "{}",
@@ -652,6 +679,31 @@ unsafe fn run_inner(out: &str) -> windows::core::Result<()> {
             )?;
             let r = an.GetAlphaTextureBounds(DWRITE_TEXTURE_ALIASED_1x1)?;
             say!("DWSNAP baseline_origin_y_dip={oy:.1} (phys {:.2}) rm={} gf={} bounds_top={} bounds_bottom={} height={}", oy, rm.0, gf.0, r.top, r.bottom, r.bottom - r.top);
+        }
+    }
+    // 6. Does hinting explain the 28 pt ink box? "Pulse Hub" at scale 2.5: gpui's grid-fit mode (recommended) against grid fit DISABLED,
+    // for the original Tinos, a copy with the hinting program removed and a copy whose gasp table asks for no grid fit.
+    say!("DWSECTION 6 ink box of 'Pulse Hub' by grid-fit mode (half = alpha >= 128, rows relative to the baseline; height = bottom - top)");
+    for fam in ["Tinos", "SRProbeTinosNoHint", "SRProbeTinosGasp"] {
+        let Some(face) = first_face(&priv_set, fam, 400) else {
+            say!("DWINK family=[{fam}] not found");
+            continue;
+        };
+        for sz in [
+            20.0f32, 24.0, 26.0, 27.0, 28.0, 29.0, 30.0, 31.0, 32.0, 36.0,
+        ] {
+            for (name, gf) in [
+                ("recommended", None),
+                ("disabled", Some(DWRITE_GRID_FIT_MODE_DISABLED)),
+            ] {
+                match render_text(&factory, &face, "Pulse Hub", sz, 2.5, gf) {
+                    Ok(c) => {
+                        let h = c.half.map(|b| b[3] - b[1]);
+                        say!("DWINK family=[{fam}] size={sz} grid_fit={name} half={:?} half_height={:?} any=[{},{}] any_height={}", c.half, h, c.rect.top, c.rect.bottom, c.rect.bottom - c.rect.top);
+                    }
+                    Err(e) => say!("DWERR ink {fam} {sz} {name}: {e:?}"),
+                }
+            }
         }
     }
     say!("DWDONE");
