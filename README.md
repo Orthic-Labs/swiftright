@@ -57,7 +57,7 @@ SwiftRight owns UI semantics & Swift adapters; RightKit supplies existing shared
 
 ## Licence
 
-No licence has been chosen yet. Until a licence file is added, all rights are reserved; the source is published for reading.
+SwiftRight is licensed under the [Apache License 2.0](LICENSE). Third-party components keep their own licences; see [NOTICE](NOTICE).
 
 ---
 
