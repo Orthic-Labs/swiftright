@@ -12,7 +12,7 @@
   client.py window min|offscreen|bottom  set the Sandbox client window state (min = minimised; offscreen = not minimised, never visible)
 
 Jobs are JSON files in the Dell queue; results come back from results\\<id>\\ (scp). Build stays on the Dell host over SSH (swift build opens no windows)."""
-import argparse, json, subprocess, sys, time
+import argparse, json, os, subprocess, sys, time
 from pathlib import Path
 
 HERE = Path(__file__).resolve().parent
@@ -109,7 +109,8 @@ def run_job(kind, args, dest, timeout_sec=600):
     if not worker_up():
         sys.exit("sandbox worker is not running (heartbeat stale): start it with `client.py start` (once per day; never per run)")
     jid = submit(kind, args, timeout_sec)
-    st = wait(jid, timeout_sec + 30)
+    # SANDBOX_QUEUE_WAIT_S: extra seconds this client waits for a busy shared queue (the jobs of other lanes run first); the job's own run limit is unchanged
+    st = wait(jid, timeout_sec + 30 + int(os.environ.get("SANDBOX_QUEUE_WAIT_S", "0")))
     fetch(jid, dest)
     return jid, st, result(jid, dest)
 
