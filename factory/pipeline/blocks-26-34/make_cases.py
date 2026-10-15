@@ -406,14 +406,14 @@ def full(name, typename, content, dark=False):
 
 # transparent fills must leave what is beneath them untouched (Color.clear, alpha 0 and 0.001, the hit area under a plain Button) and draw nothing of their own
 TRANSPARENT = """            VStack(spacing: 0) {
-                Rectangle().fill(Color.red).frame(width: 300, height: 30)
-                ZStack { Rectangle().fill(Color.blue).frame(width: 300, height: 30); Color.clear.frame(width: 300, height: 30) }
-                ZStack { Rectangle().fill(Color.green).frame(width: 300, height: 30); Rectangle().fill(Color.black.opacity(0.001)).frame(width: 300, height: 30) }
-                ZStack { Rectangle().fill(Color.orange).frame(width: 300, height: 30); Color.red.opacity(0).frame(width: 300, height: 30) }
-                ZStack { Rectangle().fill(Color.purple).frame(width: 300, height: 30); Rectangle().fill(Color.clear).frame(width: 150, height: 30) }
-                ZStack { Rectangle().fill(Color.gray).frame(width: 300, height: 30); Color.black.opacity(0.01).frame(width: 300, height: 30) }
-                Button { } label: { ZStack { Color.black.opacity(0.001); Rectangle().fill(Color.pink).frame(width: 40, height: 20) }.frame(width: 300, height: 30) }.buttonStyle(.plain)
-                Color.clear.frame(width: 300, height: 30)
+                Rectangle().fill(Color.red).frame(width: 300, height: 26)
+                ZStack { Rectangle().fill(Color.blue).frame(width: 300, height: 26); Color.clear.frame(width: 300, height: 26) }
+                ZStack { Rectangle().fill(Color.green).frame(width: 300, height: 26); Rectangle().fill(Color.black.opacity(0.001)).frame(width: 300, height: 26) }
+                ZStack { Rectangle().fill(Color.orange).frame(width: 300, height: 26); Color.red.opacity(0).frame(width: 300, height: 26) }
+                ZStack { Rectangle().fill(Color.purple).frame(width: 300, height: 26); Rectangle().fill(Color.clear).frame(width: 150, height: 26) }
+                ZStack { Rectangle().fill(Color.gray).frame(width: 300, height: 26); Color.black.opacity(0.01).frame(width: 300, height: 26) }
+                Button { } label: { ZStack { Color.black.opacity(0.001); Rectangle().fill(Color.pink).frame(width: 40, height: 20) }.frame(width: 300, height: 26) }.buttonStyle(.plain)
+                Color.clear.frame(width: 300, height: 26)
             }.padding(10)"""
 full("transparent-fills-v1", PS + "transparent", TRANSPARENT)
 full("transparent-fills-dark-v1", PS + "transparent_dark", TRANSPARENT, dark=True)
@@ -511,12 +511,13 @@ def row(text, mods="", h=20):
     return f'            Text("{text}"){mods}.frame(width: 240, height: {h}, alignment: .leading)'
 
 
+# NOT delivered (decision F8): `accessibilityValue` on a Text or a combined element (UIA names a text element from its value, so the Windows name becomes the value),
+# and the header and link traits (the renderer ABI has no heading or link role; the Mac publishes AXHeading and AXLink).
 ax("value-v1", "\n".join([
-    row("Volume", '.accessibilityValue("50 percent")'),
     row("Plain"),
     '            Rectangle().fill(Color.red).frame(width: 240, height: 20).accessibilityLabel("Level").accessibilityValue("high")',
     '            Button("Go") { }.accessibilityValue("ready").frame(width: 240, height: 32)',
-]), rows=[(0, 20, 0), (20, 40, 0), (60, 92, 0)])
+]), rows=[(0, 20, 0), (40, 72, 0)])
 ax("hidden-v1", "\n".join([
     row("Visible one"),
     row("Hidden text", ".accessibilityHidden(true)"),
@@ -530,17 +531,14 @@ ax("element-v1", "\n".join([
     '            HStack(spacing: 0) { Text("Swap").frame(width: 100, height: 20, alignment: .leading); Text("0 MB").frame(width: 100, height: 20, alignment: .leading) }.accessibilityElement(children: .ignore).accessibilityLabel("Swap usage")',
     '            HStack(spacing: 0) { Text("Disk").frame(width: 100, height: 20, alignment: .leading); Text("40 GB").frame(width: 100, height: 20, alignment: .leading) }.accessibilityElement(children: .contain)',
     '            HStack(spacing: 0) { Text("CPU").frame(width: 100, height: 20, alignment: .leading); Text("12 %").frame(width: 100, height: 20, alignment: .leading) }',
-    '            HStack(spacing: 0) { Text("Net").frame(width: 100, height: 20, alignment: .leading); Text("3 Mb/s").frame(width: 100, height: 20, alignment: .leading) }.accessibilityElement(children: .combine).accessibilityValue("fast")',
-]), rows=[(0, 20, 0), (20, 40, 0), (40, 60, 0), (60, 80, 0), (80, 100, 0)])
+]), rows=[(0, 20, 0), (20, 40, 0), (40, 60, 0), (60, 80, 0)])
 ax("traits-v1", "\n".join([
-    row("Heading text", ".accessibilityAddTraits(.isHeader)"),
     row("Static text", ".accessibilityAddTraits(.isStaticText)"),
     '            Rectangle().fill(Color.blue).frame(width: 240, height: 20).accessibilityLabel("Chart").accessibilityAddTraits(.isImage)',
     '            Button("Selected") { }.accessibilityAddTraits(.isSelected).frame(width: 240, height: 32)',
     '            Button("Chosen") { }.accessibilityAddTraits([.isSelected, .isButton]).frame(width: 240, height: 32)',
-    row("Link text", ".accessibilityAddTraits(.isLink)"),
     row("Live text", ".accessibilityAddTraits(.updatesFrequently)"),
-]), rows=[(0, 20, 0), (20, 40, 0), (60, 92, 0), (92, 124, 0), (124, 144, 0), (144, 164, 0)])
+]), rows=[(0, 20, 0), (40, 72, 0), (72, 104, 0), (104, 124, 0)])
 ax("hint-v1", "\n".join([
     '            Button("Run") { }.accessibilityHint("Starts the scan").frame(width: 240, height: 32)',
     row("Label only", '.accessibilityLabel("Custom name").accessibilityHint("A hint")'),

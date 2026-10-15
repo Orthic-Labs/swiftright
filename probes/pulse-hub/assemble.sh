@@ -13,4 +13,5 @@ for m in RightKitEngine RightKitHub RightKitHubQA CRightKitEngine; do cp -R "$K/
 rm "$S/CRightKitEngine/shim.c"; cp "$HERE/stubs/rkp_stubs.c" "$S/CRightKitEngine/"
 for m in PulseHub PulseHubFixtures; do cp -R "$SRC/mac/Hub/Sources/$m" "$S/$m"; done
 mkdir -p "$S/FactoryProbe"; cp "$HERE"/host/*.swift "$S/FactoryProbe/"
+if [ "${R5:-0}" = 1 ]; then cp "$HERE/r5/ProbeBundle.swift" "$S/PulseHub/"; cp "$HERE/r5/main.swift" "$S/FactoryProbe/main.swift"; fi
 if [ "${R5:-0}" != 1 ]; then python3 "$HERE/bypass.py" "$DEST"; fi
