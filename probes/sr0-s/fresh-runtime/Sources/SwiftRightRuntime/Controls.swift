@@ -52,12 +52,42 @@ public enum ImageReference: Hashable, Sendable {
     case system(String)
     /// An asset name, as `Image(_:)` takes it.
     case named(String)
+    /// Decoded pixels with the scale they are drawn at, as `Image(decorative:scale:)` takes them.
+    case pixels(RGBAImage, scale: CGFloat)
 
     public var name: String {
         switch self {
         case .system(let name), .named(let name): return name
+        case .pixels(let image, _): return "pixels:\(image.width)x\(image.height)"
         }
     }
+}
+
+/// A decoded raster: straight-alpha (non-premultiplied) RGBA8, row-major, top row first, no row padding.
+/// Equality and hashing use the content id (a 64-bit FNV-1a of the dimensions and bytes), so comparing two images never scans the pixels.
+public struct RGBAImage: Hashable, Sendable {
+    public let width: Int
+    public let height: Int
+    public let rgba: [UInt8]
+    /// Stable across processes and runs: equal pixels give an equal id.
+    public let contentID: UInt64
+
+    /// Nil when a dimension is not positive or `rgba.count != width * height * 4`.
+    public init?(width: Int, height: Int, rgba: [UInt8]) {
+        guard width > 0, height > 0, width <= 1 << 20, height <= 1 << 20, rgba.count == width * height * 4 else { return nil }
+        self.width = width
+        self.height = height
+        self.rgba = rgba
+        var hash: UInt64 = 0xcbf29ce484222325
+        func mix(_ byte: UInt8) { hash = (hash ^ UInt64(byte)) &* 0x100000001b3 }
+        for shift in stride(from: 0, to: 64, by: 8) { mix(UInt8(truncatingIfNeeded: UInt64(width) >> UInt64(shift))) }
+        for shift in stride(from: 0, to: 64, by: 8) { mix(UInt8(truncatingIfNeeded: UInt64(height) >> UInt64(shift))) }
+        rgba.withUnsafeBufferPointer { for byte in $0 { mix(byte) } }
+        contentID = hash
+    }
+
+    public static func == (a: RGBAImage, b: RGBAImage) -> Bool { a.contentID == b.contentID && a.width == b.width && a.height == b.height }
+    public func hash(into hasher: inout Hasher) { hasher.combine(contentID); hasher.combine(width); hasher.combine(height) }
 }
 
 /// Image resize details resolved for a host renderer.
@@ -102,6 +132,10 @@ public struct Image: View, PrimitiveView {
 
     /// Apple: https://developer.apple.com/documentation/swiftui/image/init(_:)
     public init(_ name: String) { reference = .named(name) }
+
+    /// Draws decoded pixels. The intrinsic size is the pixel size divided by `scale` (points); the image is not resizable until `.resizable()`.
+    /// Apple: https://developer.apple.com/documentation/swiftui/image/init(decorative:scale:orientation:)
+    public init(decorative image: RGBAImage, scale: CGFloat = 1) { reference = .pixels(image, scale: scale > 0 ? scale : 1) }
 
     /// Lets image content resize to proposed dimensions.
     /// Apple: https://developer.apple.com/documentation/swiftui/image/resizable(capInsets:resizingMode:)

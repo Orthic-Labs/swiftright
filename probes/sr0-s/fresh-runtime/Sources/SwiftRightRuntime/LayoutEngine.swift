@@ -115,10 +115,15 @@ extension Graph {
                 height: finiteLength(proposal.height) ?? measured.height
             )
         case .image(let spec):
-            let ideal = imageIntrinsicSize(spec.reference)
-            guard spec.sizing.isResizable else { return imageFontIntrinsicSize(spec.reference, node.environment.font) ?? ideal }
+            var ideal = imageIntrinsicSize(spec.reference)
+            var pixelSized = false
+            if case .pixels(let image, let scale) = spec.reference {   // intrinsic size is the pixel size in points; no host hook
+                ideal = LayoutSize(width: CGFloat(image.width) / scale, height: CGFloat(image.height) / scale)
+                pixelSized = true
+            }
+            guard spec.sizing.isResizable else { return pixelSized ? ideal : (imageFontIntrinsicSize(spec.reference, node.environment.font) ?? ideal) }
             if spec.sizing.scalesToFit {
-                let ideal = imageFitIntrinsicSize(spec.reference) ?? ideal
+                let ideal = pixelSized ? ideal : (imageFitIntrinsicSize(spec.reference) ?? ideal)
                 guard ideal.width > 0, ideal.height > 0 else {
                     return LayoutSize(width: finiteLength(proposal.width) ?? ideal.width,
                                       height: finiteLength(proposal.height) ?? ideal.height)
