@@ -1421,6 +1421,45 @@
         "text": "120/120 pairs on bundled Tinos, on `8bf89d2dc-aa6cd909` (**delivered-pending-review**; the hub's real display font, `.tracking` and a 28 pt title NOT delivered, decisions E12, E14)"
       },
       "windowsDifferences": []
+    },
+    {
+      "apis": {
+        "fromCaseSources": {
+          "modifiersAndMembers": [
+            "bold",
+            "custom",
+            "font",
+            "italic",
+            "system",
+            "weight"
+          ],
+          "types": [
+            "Font",
+            "Text"
+          ]
+        },
+        "fromManifest": []
+      },
+      "block": "foundations.font-metrics",
+      "cases": [],
+      "casesPassingDecidingGate": "n/a (a measurement tool, no paired case)",
+      "caveats": [
+        "Mac measurements only (macOS 27.0.1, build 26A434), scale 1 and 2.5; not yet used by the runtime text path (block F2 wires it) and not compared with Windows.",
+        "One-line Text only: multi-line text, lineSpacing, lineLimit, Dynamic Type, Font.width, tracking and kerning are not measured.",
+        "Apple's HIG line heights disagree with the Mac measurement for largeTitle (31 vs 32), title2 (21 vs 22) and title3 (19 vs 20); caption2 is Medium 10 pt on the Mac."
+      ],
+      "stage": "working tree (tool, table and tests; no stage)",
+      "status": "delivered-pending-review",
+      "statusDocBlock": "F1",
+      "verdict": {
+        "date": "2026-10-15",
+        "runDates": [
+          "2026-10-15"
+        ],
+        "source": "docs/sr1-status.md table + factory/tools/font-metrics/evidence/determinism-20261015.log",
+        "text": "font-metrics tool deterministic over 20 separate runs (sha256 2e2aecd54af19e6783441339b7fdd653753734ed15ae1c472cc8196c51371ad4); generated table loads and matches spot values (FontMetricTableTests 8/8) (**delivered-pending-review**; decisions G20-G29)"
+      },
+      "windowsDifferences": []
     }
   ],
   "generator": "factory/tools/proven-controls/generate.py",
