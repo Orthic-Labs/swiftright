@@ -554,8 +554,9 @@ fn on_pointer(action: u32, p: gpui::Point<Pixels>, m: &gpui::Modifiers, clicks: 
 
 /// Rev 0.9: a pointer move (hover, drag) for a host that asked for them. The hit node is the one under the pointer; `left_down`
 /// says the primary button is held. Identical consecutive positions are dropped.
+static LAST_MOVE: std::sync::Mutex<(i64, i64, bool)> = std::sync::Mutex::new((i64::MIN, i64::MIN, false));
+
 fn on_pointer_move(p: gpui::Point<Pixels>, left_down: bool, m: &gpui::Modifiers, scale: f32) {
-    static LAST: std::sync::Mutex<(i64, i64, bool)> = std::sync::Mutex::new((i64::MIN, i64::MIN, false));
     if !POINTER_MOVES.load(SeqCst) {
         return;
     }
@@ -565,7 +566,7 @@ fn on_pointer_move(p: gpui::Point<Pixels>, left_down: bool, m: &gpui::Modifiers,
     }
     let x = f32::from(p.x) * scale;
     let y = f32::from(p.y) * scale;
-    if let Ok(mut last) = LAST.lock() {
+    if let Ok(mut last) = LAST_MOVE.lock() {
         let key = (x.round() as i64, y.round() as i64, left_down);
         if *last == key {
             return;
@@ -588,6 +589,9 @@ fn on_pointer_move(p: gpui::Point<Pixels>, left_down: bool, m: &gpui::Modifiers,
 fn on_pointer_left() {
     if !POINTER_MOVES.load(SeqCst) {
         return;
+    }
+    if let Ok(mut last) = LAST_MOVE.lock() {
+        *last = (i64::MIN, i64::MIN, false);
     }
     let win = LIVE_WINDOW.load(SeqCst);
     if win == 0 {
@@ -1254,6 +1258,11 @@ unsafe extern "system" fn ime_subclass_proc(hwnd: *mut c_void, msg: u32, w: usiz
         return 0;
     }
     let out = DefSubclassProc(hwnd, msg, w, l);
+    // Rev 0.9 (decision H3): the pointer left the window (WM_MOUSELEAVE: GPUI's own tracking, or one posted by a driver) ends every hover. GPUI's element hover state does not
+    // always follow a leave that arrives without a move, so the host is told directly (only when it asked for pointer moves).
+    if msg == 0x02A3 {
+        on_pointer_left();
+    }
     match msg {
         WM_IME_SETCONTEXT | WM_IME_NOTIFY | WM_IME_STARTCOMPOSITION | WM_IME_ENDCOMPOSITION | WM_IME_COMPOSITION => {
             // Evidence for the next desktop run: which IME messages arrive, and what they carry.
