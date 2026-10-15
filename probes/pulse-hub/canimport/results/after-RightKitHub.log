@@ -1,0 +1,268 @@
+﻿swift.exe : warning: 'pkg': found 1 file(s) which are unhandled; explicitly declare them as resources or exclude from 
+the target
+At D:\Claude\swiftright\.sandbox-build-canimport.ps1:17 char:3
++   & "$tc\swift.exe" build --package-path "$w\$v\pkg" --scratch-path " ...
++   ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    + CategoryInfo          : NotSpecified: (warning: 'pkg':...from the target:String) [], RemoteException
+    + FullyQualifiedErrorId : NativeCommandError
+ 
+    D:\Claude\swiftright\.work\pulse-hub-3e8b6b29-canimport\after\pkg\Sources\PulseHub\Resources\Tanker-400.woff2
+Building for debugging...
+[Computing dependencies]
+[Provisioning 4ΓÇë/ΓÇë12]
+[Pre-planning 1ΓÇë/ΓÇë245]
+[Planning deferred tasks]
+[Constructing 1ΓÇë/ΓÇë528]
+[50ΓÇë/ΓÇë95]
+[51ΓÇë/ΓÇë96]
+[55ΓÇë/ΓÇë103] RightKitEngine
+[57ΓÇë/ΓÇë115] SwiftRightBridge
+[58ΓÇë/ΓÇë136] SwiftRightRuntime
+[58ΓÇë/ΓÇë136] SwiftRightBridge
+[66ΓÇë/ΓÇë136] RightKitEngine
+C:\Users\adrds\AppData\Local\Programs\Swift\Platforms\6.4.0\Windows.platform\Developer\SDKs\Windows.sdk\usr\lib\swift\w
+indows\WinSDK.swiftmodule\x86_64-unknown-windows-msvc.swiftmodule:1:1: warning: reference to type 
+'wchar_t' broken by a context change; 'wchar_t' was expected to be in '_Builtin_stddef', but now a candidate is found 
+only in 'SwiftShims'
+
+1 | _Builtin_stddef.wchar_t
+
+  | |- warning: reference to type 'wchar_t' broken by a context change; 'wchar_t' was 
+expected to be in '_Builtin_stddef', but now a candidate is found only in 'SwiftShims'
+
+  | |- note: the type was expected to be found in module '_Builtin_stddef' at 'C:\Users\adrd
+s\AppData\Local\Programs\Swift\Toolchains\6.4.0+Asserts\usr\lib\swift\clang\include\module.modulemap'
+
+  | |- note: the type was actually found in module 'SwiftShims' at 'C:\Users\adrds\AppData\L
+ocal\Programs\Swift\Platforms\6.4.0\Windows.platform\Developer\SDKs\Windows.sdk\usr\lib\swift\shims\module.modulemap'[
+0;0m
+
+  | `- note: declarations in the clang module '_Builtin_stddef' may be hidden by clang 
+preprocessor macros
+
+<unknown>:0: note: attempting to recover from the previous modularization issue
+
+
+[71ΓÇë/ΓÇë136] SwiftRightRuntime
+D:\Claude\swiftright\.work\pulse-hub-3e8b6b29-canimport\after\pkg\Sources\RightKitEngine\NativeBridge.swift:281:43: 
+warning: 'strdup' is deprecated: The POSIX name for this item is deprecated. Instead, use the ISO C and 
+C++ conformant name: _strdup. See online help for details. 
+[#]8;;https://docs.swift.org/compiler/documentation/diagnostics/deprecated-declaration\DeprecatedDeclaration]8;;\]
+
+279 |         pointers.reserveCapacity(strings.count)
+
+280 |         for string in strings {
+
+281 |             pointers.append(UnsafePointer(strdup(string)))
+
+    |                                           `- warning: 'strdup' is deprecated: The 
+POSIX name for this item is deprecated. Instead, use the ISO C and C++ conformant name: _strdup. See online help for 
+details. 
+[#]8;;https://docs.swift.org/compiler/documentation/diagnostics/deprecated-declaration\DeprecatedDeclaration]8;;\]
+
+282 |         }
+
+283 |         defer {
+
+
+
+C:\Users\adrds\AppData\Local\Programs\Swift\Platforms\6.4.0\Windows.platform\Developer\SDKs\Windows.sdk\usr\lib\swift\w
+indows\WinSDK.swiftmodule\x86_64-unknown-windows-msvc.swiftmodule:1:1: warning: reference to type 
+'wchar_t' broken by a context change; 'wchar_t' was expected to be in '_Builtin_stddef', but now a candidate is found 
+only in 'SwiftShims'
+
+1 | _Builtin_stddef.wchar_t
+
+  | |- warning: reference to type 'wchar_t' broken by a context change; 'wchar_t' was 
+expected to be in '_Builtin_stddef', but now a candidate is found only in 'SwiftShims'
+
+  | |- note: the type was expected to be found in module '_Builtin_stddef' at 'C:\Users\adrd
+s\AppData\Local\Programs\Swift\Toolchains\6.4.0+Asserts\usr\lib\swift\clang\include\module.modulemap'
+
+  | |- note: the type was actually found in module 'SwiftShims' at 'C:\Users\adrds\AppData\L
+ocal\Programs\Swift\Platforms\6.4.0\Windows.platform\Developer\SDKs\Windows.sdk\usr\lib\swift\shims\module.modulemap'[
+0;0m
+
+  | `- note: declarations in the clang module '_Builtin_stddef' may be hidden by clang 
+preprocessor macros
+
+<unknown>:0: note: attempting to recover from the previous modularization issue
+
+
+
+[#DeprecatedDeclaration]: <https://docs.swift.org/compiler/documentation/diagnostics/deprecated-declaration>
+
+
+[72ΓÇë/ΓÇë136] SwiftRightRuntime
+[73ΓÇë/ΓÇë136] SwiftRightRuntime
+[74ΓÇë/ΓÇë136] SwiftRightRuntime
+[75ΓÇë/ΓÇë136] SwiftRightRuntime
+[77ΓÇë/ΓÇë136] SwiftRightRuntime
+[83ΓÇë/ΓÇë136] SwiftRightRuntime
+[84ΓÇë/ΓÇë136] SwiftRightRuntime
+[85ΓÇë/ΓÇë136] SwiftRightRuntime
+D:\Claude\swiftright\.factory-work\product-stage\3d3c6f5c2-0a0d1f39\probes\sr0-s\fresh-runtime\Sources\SwiftRightRuntim
+e\WindowsSystemImageProvider.swift:114:13: warning: variable 'units' was never mutated; consider 
+changing to 'let' constant 
+[#]8;;https://docs.swift.org/compiler/documentation/diagnostics/variable-never-mutated\VariableNeverMutated]8;;\]
+
+112 |         defer { _ = DeleteDC(dc) }
+
+113 |         let fontHeight = Int32(max(request.targetWidth, request.targetHeight))
+
+114 |         var units = Array(request.providerFamily.utf16) + [0]
+
+    |             `- warning: variable 'units' was never mutated; consider changing to 
+'let' constant 
+[#]8;;https://docs.swift.org/compiler/documentation/diagnostics/variable-never-mutated\VariableNeverMutated]8;;\]
+
+115 |         let font: HFONT? = units.withUnsafeBufferPointer { family in
+
+116 |             CreateFontW(-fontHeight, 0, 0, 0, Int32(FW_NORMAL), 0, 0, 0,
+
+
+
+[#VariableNeverMutated]: <https://docs.swift.org/compiler/documentation/diagnostics/variable-never-mutated>
+
+
+[86ΓÇë/ΓÇë136] SwiftRightRuntime
+[87ΓÇë/ΓÇë136] SwiftRightRuntime-product
+[88ΓÇë/ΓÇë136] SwiftRightRuntime-product
+[89ΓÇë/ΓÇë136] SwiftUI
+[90ΓÇë/ΓÇë136] SwiftUI
+[92ΓÇë/ΓÇë136] SwiftRightRuntime
+[93ΓÇë/ΓÇë136] SwiftRightRuntime
+[95ΓÇë/ΓÇë136] SwiftRightBridge
+[96ΓÇë/ΓÇë136] SwiftRightBridge
+[97ΓÇë/ΓÇë136] SwiftRightBridge
+[98ΓÇë/ΓÇë136] SwiftRightBridge-product
+[100ΓÇë/ΓÇë137] SwiftRightRuntime
+[102ΓÇë/ΓÇë137] SwiftRightBridge
+[103ΓÇë/ΓÇë137] SwiftRightHost
+[106ΓÇë/ΓÇë137] SwiftRightBridge
+[107ΓÇë/ΓÇë137] SwiftRightBridge
+[108ΓÇë/ΓÇë137] SwiftRightBridge
+[108ΓÇë/ΓÇë137] RightKitEngine
+[110ΓÇë/ΓÇë137] RightKitEngine
+[111ΓÇë/ΓÇë137] RightKitEngine
+[112ΓÇë/ΓÇë137] RightKitEngine
+[116ΓÇë/ΓÇë141] SwiftUI
+[123ΓÇë/ΓÇë142]
+[125ΓÇë/ΓÇë163] SwiftRightHost
+[127ΓÇë/ΓÇë163] SwiftRightHost
+[127ΓÇë/ΓÇë163] RightKitEngine
+[128ΓÇë/ΓÇë165] SwiftUI
+[129ΓÇë/ΓÇë165] SwiftUI
+[129ΓÇë/ΓÇë165] SwiftRightHost
+D:\Claude\swiftright\.factory-work\product-stage\3d3c6f5c2-0a0d1f39\packages\SwiftRightHost\Sources\SwiftRightHost\Slid
+erArtwork.swift:83:14: warning: immutable value 'thumbW' was never used; consider replacing with '_' or 
+removing it [#]8;;https://docs.swift.org/compiler/documentation/diagnostics/no-usage\NoUsage]8;;\]
+
+ 81 |         let margin = marginPX(scale: scale)
+
+ 82 |         let outW = widthPX + 2 * margin, outH = heightPX + 2 * margin
+
+ 83 |         let (thumbW, thumbH) = thumbPX(scale: scale)
+
+    |              `- warning: immutable value 'thumbW' was never used; consider replacing 
+with '_' or removing it 
+[#]8;;https://docs.swift.org/compiler/documentation/diagnostics/no-usage\NoUsage]8;;\]
+
+ 84 |         let trackH = exact ? SliderArtworkData.trackHeightPX : max(1, Int((14 * k).rounded()))
+
+ 85 |         let trackTop = (heightPX - trackH) / 2
+
+
+
+[#NoUsage]: <https://docs.swift.org/compiler/documentation/diagnostics/no-usage>
+
+
+[133ΓÇë/ΓÇë165] SwiftRightHost
+[139ΓÇë/ΓÇë165] SwiftRightHost
+[140ΓÇë/ΓÇë165] SwiftRightHost
+[141ΓÇë/ΓÇë165] SwiftRightHost
+[142ΓÇë/ΓÇë165] SwiftRightHost-product
+[143ΓÇë/ΓÇë165] SwiftRightHost-product
+[144ΓÇë/ΓÇë165] SwiftRightHost-product
+D:\Claude\swiftright\.factory-work\product-stage\3d3c6f5c2-0a0d1f39\packages\SwiftRightHost\Sources\SwiftRightHost\Reso
+lvedNodePainter.swift:181:17: warning: variable 'childInButton' was never mutated; consider changing to 
+'let' constant 
+[#]8;;https://docs.swift.org/compiler/documentation/diagnostics/variable-never-mutated\VariableNeverMutated]8;;\]
+
+179 |             var childA11y = a11y
+
+180 |             var childHidden = hidden
+
+181 |             var childInButton = inButton
+
+    |                 `- warning: variable 'childInButton' was never mutated; consider 
+changing to 'let' constant 
+[#]8;;https://docs.swift.org/compiler/documentation/diagnostics/variable-never-mutated\VariableNeverMutated]8;;\]
+
+182 |             if n.kind.hasPrefix("modifier.accessibility") {
+
+183 |                 let acc = n.accessibility
+
+
+
+[#VariableNeverMutated]: <https://docs.swift.org/compiler/documentation/diagnostics/variable-never-mutated>
+
+
+[147ΓÇë/ΓÇë165] SwiftRightHost
+[148ΓÇë/ΓÇë165] SwiftRightHost
+[150ΓÇë/ΓÇë165] SwiftRightHost
+[151ΓÇë/ΓÇë165] SwiftRightHost
+[156ΓÇë/ΓÇë166]
+[157ΓÇë/ΓÇë166] RightKitHub
+[160ΓÇë/ΓÇë187] RightKitHub
+[162ΓÇë/ΓÇë188] SwiftRightHost
+D:\Claude\swiftright\.work\pulse-hub-3e8b6b29-canimport\after\pkg\Sources\RightKitHub\CanImportProbe.swift:3:10: 
+warning: CANIMPORT_RESULT RightKitHub canImport(SwiftRightHost)=true
+
+1 | // canImport probe (probes/pulse-hub/canimport/Sources/*/probe.swift), mounted inside RightKitHub for 
+this measurement only.
+
+2 | #if canImport(SwiftRightHost)
+
+3 | #warning("CANIMPORT_RESULT RightKitHub canImport(SwiftRightHost)=true")
+
+  |          `- warning: CANIMPORT_RESULT RightKitHub canImport(SwiftRightHost)=true
+
+4 | #else
+
+5 | #warning("CANIMPORT_RESULT RightKitHub canImport(SwiftRightHost)=false")
+[163ΓÇë/ΓÇë188] RightKitHub
+
+
+D:\Claude\swiftright\.work\pulse-hub-3e8b6b29-canimport\after\pkg\Sources\RightKitHub\CanImportProbe.swift:3:10: 
+warning: CANIMPORT_RESULT RightKitHub canImport(SwiftRightHost)=true
+
+1 | // canImport probe (probes/pulse-hub/canimport/Sources/*/probe.swift), mounted inside RightKitHub for 
+this measurement only.
+
+2 | #if canImport(SwiftRightHost)
+
+3 | #warning("CANIMPORT_RESULT RightKitHub canImport(SwiftRightHost)=true")
+
+  |          `- warning: CANIMPORT_RESULT RightKitHub canImport(SwiftRightHost)=true
+
+4 | #else
+
+5 | #warning("CANIMPORT_RESULT RightKitHub canImport(SwiftRightHost)=false")
+
+
+[166ΓÇë/ΓÇë188] RightKitHub
+[175ΓÇë/ΓÇë188] RightKitHub
+[175ΓÇë/ΓÇë188] SwiftRightHost
+[177ΓÇë/ΓÇë188] RightKitHub
+[178ΓÇë/ΓÇë188] RightKitHub
+[181ΓÇë/ΓÇë188] RightKitHub
+[182ΓÇë/ΓÇë188] RightKitHub
+[183ΓÇë/ΓÇë188] RightKitHub
+[184ΓÇë/ΓÇë188] RightKitHub
+[185ΓÇë/ΓÇë188] RightKitHub
+[186ΓÇë/ΓÇë188]
+[186ΓÇë/ΓÇë188] RightKitHub
+[187ΓÇë/ΓÇë189] RightKitHub
+[189ΓÇë/ΓÇë189] RightKitHub
+Build complete! (64.85 secs)
