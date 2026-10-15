@@ -134,8 +134,11 @@ def main():
         for g in cfg.get("baselineAlign", []):
             btol = float(g.get("tolerancePx", 1))   # (not `tol`: that is the colour tolerance of every later run)
             mo, mv = baseline_align(im, g["items"], btol); wo, wv = baseline_align(iw, g["items"], btol)
-            row["regions"].append(dict(name=g["name"], mac=mv, windows=wv, ok=mo and wo, baselineAlign=dict(tolerancePx=btol, macOk=mo, windowsOk=wo)))
-            ok &= mo and wo
+            # the relation must be the Mac's: each item's baseline relative to the first item's equals the Mac's within btol (for the usual case, every baseline equal, that is "all within btol of the first";
+            # a nested stack whose shape sits off the text baseline on the Mac must sit equally off it on Windows)
+            same = all(v is not None for v in mv + wv) and all(abs((w - wv[0]) - (m - mv[0])) <= btol for m, w in zip(mv, wv))
+            row["regions"].append(dict(name=g["name"], mac=mv, windows=wv, ok=same, baselineAlign=dict(tolerancePx=btol, relationEqualToMac=same, macAllAligned=mo, windowsAllAligned=wo)))
+            ok &= same
         row["ok"] = ok
     passed = sum(1 for r in rows if r["ok"])
     (out / "text-colour-report.json").write_text(json.dumps(dict(case=case.name, run=out.name, pairs=len(rows), gatePassed=passed, tolerance=tol, rows=rows), indent=1))
