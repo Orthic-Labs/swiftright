@@ -1,0 +1,68 @@
+# F0 renderer text facts probe (docs/probes/f0-renderer-text-facts.md): builds probes/f0-text-facts, a standalone Windows exe that links
+# the same gpui =0.2.2 the renderer links. NOT the renderer: render-windows.yml and its artifact are untouched. Public repository, so it is
+# built only here (local cargo is blocked). Read-only permissions, no secrets, no signing, no publication. The exe is a diagnostic: it is
+# never staged as a renderer and never shipped.
+name: probe-f0-text
+
+on:
+  push:
+    branches: [master]
+    paths:
+      - "probes/f0-text-facts/**"
+      - ".github/workflows/probe-f0-text.yml"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: probe-f0-text-${{ github.ref }}
+  cancel-in-progress: false
+
+jobs:
+  probe:
+    runs-on: windows-2025
+    timeout-minutes: 90
+    defaults:
+      run:
+        shell: pwsh
+        working-directory: probes/f0-text-facts
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          sparse-checkout: probes/f0-text-facts
+          sparse-checkout-cone-mode: true
+      - uses: Swatinem/rust-cache@6323deb102c322ba6fcbdcafc7e3dddab59af2b6 # v2.9.2
+        with:
+          workspaces: |
+            probes/f0-text-facts -> target
+          cache-on-failure: true
+      - name: Toolchain
+        run: |
+          rustc --version
+          cargo --version
+      - name: Build
+        run: |
+          cargo build --release --target x86_64-pc-windows-msvc *> "$env:RUNNER_TEMP\cargo-build.log"
+          $code = $LASTEXITCODE
+          Get-Content "$env:RUNNER_TEMP\cargo-build.log" -Tail 80
+          exit $code
+      - name: Collect
+        run: |
+          $out = Join-Path $env:RUNNER_TEMP "probe-out"
+          New-Item -ItemType Directory -Force $out | Out-Null
+          $exe = "target\x86_64-pc-windows-msvc\release\f0-text-facts.exe"
+          Copy-Item $exe $out
+          Copy-Item -Recurse "fonts" (Join-Path $out "fonts")
+          Copy-Item "Cargo.lock" (Join-Path $out "Cargo.lock.after-build")
+          Copy-Item "$env:RUNNER_TEMP\cargo-build.log" $out
+          $hash = (Get-FileHash $exe -Algorithm SHA256).Hash.ToLower()
+          "$hash  f0-text-facts.exe" | Set-Content (Join-Path $out "f0-text-facts.exe.sha256")
+          "commit=$env:GITHUB_SHA`nrustc=$(rustc --version)" | Set-Content (Join-Path $out "build-info.txt")
+          Write-Host "f0-text-facts.exe sha256=$hash"
+      - uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4
+        with:
+          name: f0-text-facts-${{ github.sha }}
+          path: ${{ runner.temp }}/probe-out
+          retention-days: 30
+          if-no-files-found: error

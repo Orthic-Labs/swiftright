@@ -1,0 +1,23 @@
+[package]
+name = "f0-text-facts"
+version = "0.0.1"
+edition = "2021"
+publish = false
+
+# F0 renderer text facts probe (docs/probes/f0-renderer-text-facts.md). A standalone Windows exe, NOT the renderer:
+# it links the same gpui =0.2.2 (DirectWrite) the renderer links and asks it, then asks DirectWrite directly, what text
+# features can be reached. It changes no product behaviour and is built by .github/workflows/probe-f0-text.yml only.
+# Cargo.lock started from render/swiftright-render/Cargo.lock (same pins).
+[[bin]]
+name = "f0-text-facts"
+path = "src/main.rs"
+
+[dependencies]
+
+[target.'cfg(windows)'.dependencies]
+gpui = "=0.2.2"
+log = "=0.4.34"
+# Same version gpui 0.2.2 resolves to (Cargo.lock). DirectWrite is already enabled by gpui; named here because this crate uses it directly.
+windows = { version = "=0.61.3", features = ["Win32_Graphics_DirectWrite", "Win32_Foundation", "Win32_Graphics_Gdi"] }
+
+[workspace]
