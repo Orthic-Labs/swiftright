@@ -10,6 +10,8 @@ public struct NodeEmission {
     public var structural: Bool
     /// The bounds the node is upserted under (hit-testing and the accessibility rectangle) when they are not the node's frame: a Slider's is its control, not its labels.
     public var bounds: Rect? = nil
+    /// The node's own painting is clipped to this rectangle (a Text whose run is wider than the frame it was given: the Mac clips to the frame, decision L1).
+    public var clipTo: Rect? = nil
 }
 
 /// Resolved tree -> ABI paint. One painter per window: it owns the renderer image handles of continuous shapes
@@ -206,7 +208,8 @@ public final class ResolvedNodePainter {
             // The renderer resets its clip stack per node, so a scrolled-out part of a descendant is clipped by wrapping the node's own
             // primitives in the scroll frame (intersected for nested scroll views).
             var primitives = emission.primitives
-            if let clip, !primitives.isEmpty { primitives = [.clipPush(clip)] + primitives + [.clipPop] }
+            let paintClip: Rect? = emission.clipTo.map { Self.intersection(clip, $0) } ?? clip
+            if let paintClip, !primitives.isEmpty { primitives = [.clipPush(paintClip)] + primitives + [.clipPop] }
             nodes.append(NodeUpsert(id: id, parent: parent, order: order, flags: emission.flags, bounds: nodeBounds, primitives: primitives, semantic: emission.semantic))
             let childClip = Self.clipsContent(n.kind) ? Self.intersection(clip, bounds) : clip
             // A Button's label takes the button's label colour (grey when the button is disabled) unless the label sets its own.
@@ -279,9 +282,11 @@ public final class ResolvedNodePainter {
                 ?? (node.style.colorScheme == .dark || node.opacity != 1 ? try HostPaint.rgba(.semantic("label"), opacity: node.opacity, scheme: node.style.colorScheme) : nil)
             let run = try color.map { try text.run(text: string, font: node.style.font, bounds: bounds, color: $0) }
                 ?? text.run(text: string, font: node.style.font, bounds: bounds)
-            return NodeEmission(primitives: [.text(run, x: bounds.x, y: bounds.y)],
+            var emission = NodeEmission(primitives: [.text(run, x: bounds.x, y: bounds.y)],
                                 semantic: SemanticNode(role: .staticText, label: string, identifier: node.id, disabled: !node.accessibility.isEnabled),
                                 flags: [], structural: false)
+            if text.runOverflows(text: string, font: node.style.font, bounds: bounds) { emission.clipTo = bounds }
+            return emission
 
         case "Rectangle", "RoundedRectangle", "Circle":
             switch try ShapePainter.plan(node, bounds: bounds, scale: scale) {

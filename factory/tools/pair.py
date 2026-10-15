@@ -344,7 +344,7 @@ def semantic_gate(case, out):
     if not pj.is_file():
         return None
     cfg = json.loads(pj.read_text())
-    tool = "pair_list_report.py" if "listGate" in cfg else "pair_semantic_report.py" if "semanticGate" in cfg else "pair_clock_report.py" if "clockGate" in cfg else "pair_image_report.py" if "imageFrame" in cfg else "pair_control_report.py" if "controlGate" in cfg else "pair_button_report.py" if "buttonGate" in cfg else "pair_textcolour_report.py" if "textColourGate" in cfg else "pair_text_report.py" if "textGate" in cfg else None
+    tool = "pair_list_report.py" if "listGate" in cfg else "pair_semantic_report.py" if "semanticGate" in cfg else "pair_clock_report.py" if "clockGate" in cfg else "pair_image_report.py" if "imageFrame" in cfg else "pair_control_report.py" if "controlGate" in cfg else "pair_button_report.py" if "buttonGate" in cfg else "pair_textcolour_report.py" if "textColourGate" in cfg else "pair_text_report.py" if "textGate" in cfg else "pair_blocks_report.py" if "blockGate" in cfg else None
     results = []
     for t in [tool] + (["pair_textorigin_report.py"] if "textOriginGate" in cfg else []) + (["pair_ime_report.py"] if "imeGate" in cfg else []) + (["pair_textcolour_report.py"] if "textColourGate" in cfg and tool != "pair_textcolour_report.py" else []) + (["pair_text_report.py"] if "textGate" in cfg and tool != "pair_text_report.py" else []) + (["symbol-metrics/pair_symbols_report.py"] if "symbolGate" in cfg else []) + (["pair_alpha_report.py"] if "alphaGate" in cfg else []):   # the text-origin (sr1-decisions #12) and IME marked-range (#15) gates run beside whichever gate decides
         if not t:
@@ -358,7 +358,7 @@ def semantic_gate(case, out):
 def semantic_decides(case):
     """Cases whose pixels differ by design inside regions the exclusions cannot name (Image(systemName:) glyphs; a labelled control whose x follows the label's width): the semantic gate alone decides."""
     cfg = json.loads((case / "pair.json").read_text())
-    return "clockGate" in cfg or "imageFrame" in cfg or "controlGate" in cfg or cfg.get("semanticGate", {}).get("pixels") == "report-only" or "buttonGate" in cfg or "symbolGate" in cfg or "alphaGate" in cfg   # round 5 block 29: the symbol gate (frame, ink box, tint, exact outside the cells) decides; glyph shapes are reported
+    return "clockGate" in cfg or "imageFrame" in cfg or "controlGate" in cfg or cfg.get("semanticGate", {}).get("pixels") == "report-only" or "buttonGate" in cfg or "symbolGate" in cfg or "alphaGate" in cfg or "blockGate" in cfg   # round 5 block 29: the symbol gate (frame, ink box, tint, exact outside the cells) decides; glyph shapes are reported
 
 
 def recorded_scale_guard(out, strict):

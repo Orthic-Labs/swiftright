@@ -55,6 +55,8 @@ public protocol TextRunSource: AnyObject {
     func naturalRun(text: String, font: Font?, color: UInt32) throws -> NaturalTextRun?
     /// Per-character cells of a run (physical px, relative to the line start), for caret and selection geometry; empty when unavailable.
     func cells(of run: TextRunHandle) -> [CharCell]
+    /// True when the retained run for these bounds is wider than the frame the runtime gave it (a Text offered less than its glyphs need): the painter then clips the run to the frame.
+    func runOverflows(text: String, font: Font?, bounds: Rect) -> Bool
 }
 
 /// A natural-size run: the handle and its pixel extent.
@@ -69,6 +71,7 @@ public struct NaturalTextRun {
 extension TextRunSource {
     public func naturalRun(text: String, font: Font?, color: UInt32) throws -> NaturalTextRun? { nil }
     public func cells(of run: TextRunHandle) -> [CharCell] { [] }
+    public func runOverflows(text: String, font: Font?, bounds: Rect) -> Bool { false }
 
     /// A source without per-run colour paints every run in its one colour.
     public func run(text: String, font: Font?, bounds: Rect, color: UInt32) throws -> TextRunHandle {
@@ -413,6 +416,11 @@ public final class BridgeTextMeasurer: TextMeasurer, TextRunSource {
     }
 
     public func cells(of run: TextRunHandle) -> [CharCell] { (try? bridge.cells(of: run)) ?? [] }
+
+    public func runOverflows(text: String, font: Font?, bounds: Rect) -> Bool {
+        guard let match = try? retainedMatch(text: text, font: font, bounds: bounds) else { return false }
+        return match.value.width > bounds.w + 1   // more than a pixel of rounding
+    }
 
     public func releaseAll() {
         retained.values.forEach { _ = bridge.release($0.run) }
