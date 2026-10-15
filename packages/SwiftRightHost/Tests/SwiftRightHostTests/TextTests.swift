@@ -24,9 +24,10 @@ final class TextRequestAdapterTests: XCTestCase {
         TextMeasureRequest(text: text, fontID: font?.id ?? "body", proposedWidth: width, scale: 2.5, fontMetadata: font?.metadata, lineLimit: limit)
     }
 
-    func testBodyTextUsesTheLiveBodyProfile() throws {
+    func testBodyTextIs13DIPWithTheMacLineHeight() throws {
+        // decision G40: body is 13 DIP point-for-point with the Mac, whatever the Windows message font profile says (12 DIP here)
         let m = try TextRequestAdapter.shapingRequest(for: req("+", width: 40), body: body, fonts: nil, scale: 2.5, textColor: 0x1f1f1fff)
-        XCTAssertEqual(m.fontFamily, "Segoe UI"); XCTAssertEqual(m.fontSize, 12); XCTAssertEqual(m.lineHeight, 16); XCTAssertEqual(m.maxWidth, 100)
+        XCTAssertEqual(m.fontFamily, "Segoe UI Variable Text"); XCTAssertEqual(m.fontSize, 13); XCTAssertEqual(m.lineHeight, 16); XCTAssertEqual(m.weight, 400); XCTAssertEqual(m.maxWidth, 100)
     }
 
     func testCustomFontResolvesThroughTheBundledLibraryWithCoreTextLineHeight() throws {
@@ -44,7 +45,8 @@ final class TextRequestAdapterTests: XCTestCase {
         XCTAssertThrowsError(try TextRequestAdapter.shapingRequest(for: req("x", font: Font.custom("Tinos", size: 12)), body: body, fonts: nil, scale: 1, textColor: 0))
         XCTAssertThrowsError(try TextRequestAdapter.shapingRequest(for: req("x", limit: 0), body: body, fonts: nil, scale: 1, textColor: 0)) {
             XCTAssertEqual($0 as? TextMeasureError, .unsupportedLineLimit(0)) }
-        XCTAssertThrowsError(try TextRequestAdapter.shapingRequest(for: req("x", font: .system(size: 14, weight: .bold, design: .serif)), body: body, fonts: nil, scale: 1, textColor: 0))
+        XCTAssertThrowsError(try TextRequestAdapter.shapingRequest(for: req("x", font: .system(size: 14, weight: .bold, design: .serif)), body: body, fonts: nil, scale: 2, textColor: 0)) {
+            XCTAssertEqual($0 as? TextMeasureError, .unsupportedScale(2)) }
         XCTAssertThrowsError(try TextRequestAdapter.shapingRequest(for: req("x", font: Font.custom("Tinos", size: 0)), body: body, fonts: FakeFonts(), scale: 1, textColor: 0)) {
             XCTAssertEqual($0 as? TextMeasureError, .invalidPointSize) }
     }
@@ -80,7 +82,7 @@ final class TextMeasureErrorDescriptionTests: XCTestCase {
     func testEveryCaseDescribesItselfWithoutRecursing() {
         let all: [TextMeasureError] = [.unsupportedFont("system(13)"), .unsupportedLineLimit(3), .customFontNotBundled("Tanker"),
             .customFontMetricsUnavailable("Tanker"), .invalidPointSize, .measurementCacheBound, .sourceTooLong, .invalidWidth,
-            .multilineWithoutBound, .noCandidateFits]
+            .multilineWithoutBound, .noCandidateFits, .unsupportedScale(2), .systemFontMetricsUnavailable("size 8")]
         for e in all {
             let d = e.description
             XCTAssertTrue(d.hasPrefix("TextMeasure: "), d)
@@ -92,41 +94,36 @@ final class TextMeasureErrorDescriptionTests: XCTestCase {
 }
 
 
-/// Round 5, block swiftui.system-font: `Font.system(size:weight:)` and the text styles reach the shaper as the platform body family at the requested size and weight.
+/// Round 5, block swiftui.system-font, rewritten by F2 (decisions G40, G70+): `Font.system(size:weight:)` and the text styles reach the shaper as a Segoe UI Variable
+/// family at the requested size and weight with the Mac's line height from the F1 table. The full F2 matrix is in `SystemFontMappingTests`.
 final class SystemFontAdapterTests: XCTestCase {
-    // Segoe UI: hhea ascent 2210, descent 514 over 2048 units
     private let body = BodyFontProfile(family: "Segoe UI", weight: 400, fontSizeDIP: 12, lineHeightDIP: 16, ascentEm: 2210.0 / 2048, descentEm: 514.0 / 2048)
-    private func req(_ font: Font, text: String = "Overview", limit: Int? = nil, width: CGFloat? = nil) -> TextMeasureRequest {
-        TextMeasureRequest(text: text, fontID: font.id, proposedWidth: width, scale: 2.5, fontMetadata: font.metadata, lineLimit: limit)
+    private func req(_ font: Font, text: String = "Overview", limit: Int? = nil, width: CGFloat? = nil, scale: CGFloat = 2.5) -> TextMeasureRequest {
+        TextMeasureRequest(text: text, fontID: font.id, proposedWidth: width, scale: scale, fontMetadata: font.metadata, lineLimit: limit)
     }
-    private func shape(_ font: Font, limit: Int? = nil, width: CGFloat? = nil) throws -> MeasureRequest {
-        try TextRequestAdapter.shapingRequest(for: req(font, limit: limit, width: width), body: body, fonts: nil, scale: 2.5, textColor: 0x1f1f1fff)
+    private func shape(_ font: Font, limit: Int? = nil, width: CGFloat? = nil, scale: Float = 2.5) throws -> MeasureRequest {
+        try TextRequestAdapter.shapingRequest(for: req(font, limit: limit, width: width, scale: CGFloat(scale)), body: body, fonts: nil, scale: scale, textColor: 0x1f1f1fff)
     }
 
-    func testSystemFontIsTheBodyFamilyAtTheRequestedSizeAndWeight() throws {
+    func testSystemFontIsASegoeVariableFamilyAtTheRequestedSizeAndWeightWithTheMacLine() throws {
         let m = try shape(Font.system(size: 18, weight: .semibold))
-        XCTAssertEqual(m.fontFamily, "Segoe UI"); XCTAssertEqual(m.fontSize, 18); XCTAssertEqual(m.weight, 600)
-        XCTAssertEqual(m.lineHeight, (18 * 2210.0 / 2048).rounded().asFloat + (18 * 514.0 / 2048).rounded().asFloat)   // CoreText rule over the face's own metrics: 19 + 5
+        XCTAssertEqual(m.fontFamily, "Segoe UI Variable Text"); XCTAssertEqual(m.fontSize, 18); XCTAssertEqual(m.weight, 600)
+        XCTAssertEqual(m.lineHeight, Float(FontMetricTable.shared.system(size: 18, scale: 2.5)!.height))   // the Mac table, not round(ascent) + round(descent)
         XCTAssertEqual(try shape(Font.system(size: 11.5)).fontSize, 11.5)
+        XCTAssertEqual(try shape(Font.system(size: 11.5)).fontFamily, "Segoe UI Variable Small")
         XCTAssertEqual(try shape(Font.system(size: 12)).weight, 400)
-        XCTAssertEqual(try shape(Font.system(size: 12, weight: .regular).weight(.heavy)).weight, 800)
+        XCTAssertEqual(try shape(Font.system(size: 12, weight: .regular).weight(.heavy)).weight, 900)   // static Segoe UI Black, reported adapted
     }
 
-    func testAllNineWeightsMapToTheirClass() throws {
-        let expected: [(Font.Weight, UInt32)] = [(.ultraLight, 100), (.thin, 200), (.light, 300), (.regular, 400), (.medium, 500), (.semibold, 600), (.bold, 700), (.heavy, 800), (.black, 900)]
-        for (w, v) in expected { XCTAssertEqual(try shape(Font.system(size: 13, weight: w)).weight, v, "\(w)") }
-    }
-
-    func testTextStylesScaleAroundTheBodyFont() throws {
+    func testTextStylesAreThePointForPointMacSizes() throws {
         let b = try shape(.body)
-        XCTAssertEqual(b.fontSize, 12); XCTAssertEqual(b.lineHeight, 16)   // the platform body font exactly
-        let t = try shape(.title)
-        XCTAssertEqual(t.fontSize, 22 * 12 / 13, accuracy: 0.001); XCTAssertEqual(t.weight, 400)
+        XCTAssertEqual(b.fontSize, 13); XCTAssertEqual(b.lineHeight, 16)
+        XCTAssertEqual(try shape(.title).fontSize, 22); XCTAssertEqual(try shape(.title).weight, 400)   // no 12/13 scaling any more
         XCTAssertEqual(try shape(.headline).weight, 700)
         XCTAssertEqual(try shape(.headline.weight(.regular)).weight, 400)
-        XCTAssertEqual(try shape(.caption).fontSize, 10 * 12 / 13, accuracy: 0.001)
+        XCTAssertEqual(try shape(.caption).fontSize, 10)
         XCTAssertEqual(try shape(.body.weight(.bold)).weight, 700)
-        XCTAssertEqual(try shape(.body.weight(.bold)).fontSize, 12)
+        XCTAssertEqual(try shape(.body.weight(.bold)).fontSize, 13)
     }
 
     func testWidthIsCarriedAndDrawsAlike() throws {
@@ -134,12 +131,14 @@ final class SystemFontAdapterTests: XCTestCase {
         XCTAssertNotEqual(Font.system(size: 14).width(.expanded), Font.system(size: 14))
     }
 
-    func testOtherDesignsAreRefusedNotSubstituted() {
-        XCTAssertThrowsError(try shape(Font.system(size: 14, weight: .regular, design: .monospaced))) { XCTAssertEqual($0 as? TextMeasureError, .unsupportedFont(Font.system(size: 14, weight: .regular, design: .monospaced).id)) }
-        XCTAssertThrowsError(try shape(Font.system(size: 14, weight: .regular, design: .rounded)))
+    func testDesignsAreMappedNotRefused() throws {
+        XCTAssertEqual(try shape(Font.system(size: 14, weight: .regular, design: .monospaced)).fontFamily, "Cascadia Mono")
+        XCTAssertEqual(try shape(Font.system(size: 14, weight: .regular, design: .serif)).fontFamily, "Sitka Text")
+        XCTAssertEqual(try shape(Font.system(size: 14, weight: .regular, design: .rounded)).fontFamily, "Segoe UI Variable Text")
         XCTAssertNoThrow(try shape(Font.system(size: 14, weight: .regular, design: .default)))
         XCTAssertThrowsError(try shape(Font.system(size: 0)))
         XCTAssertThrowsError(try shape(Font.system(size: 1000)))
+        XCTAssertThrowsError(try shape(Font.system(size: 8))) { XCTAssertTrue(String(describing: $0).contains("systemFontMetricsUnavailable")) }   // outside the measured 9 to 40 pt
     }
 
     func testLineLimitAboveOneIsAccepted() throws {

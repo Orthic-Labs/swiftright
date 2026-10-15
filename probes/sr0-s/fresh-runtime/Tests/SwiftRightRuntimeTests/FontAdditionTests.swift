@@ -173,3 +173,35 @@ private func firstFont(in node: ResolvedNode?) -> Font? {
     }
     return nil
 }
+
+/// Block F2: `Font.bold()` (a text style's emphasized weight, decision G25) and `Font.monospacedDigit()` are carried as metadata for the measurer.
+final class FontEmphasisMetadataTests: XCTestCase {
+    func testBoldOnATextStyleIsEmphasizedNotWeightBold() {
+        let m = Font.body.bold().metadata
+        XCTAssertEqual(m?.isEmphasized, true); XCTAssertNil(m?.weight); XCTAssertEqual(m?.textStyle, "body")
+        XCTAssertNotEqual(Font.body.bold(), Font.body.weight(.bold))
+        XCTAssertNotEqual(Font.body.bold(), Font.body)
+    }
+
+    func testBoldOnASizedFontIsWeightBold() {
+        XCTAssertEqual(Font.system(size: 13).bold().metadata?.weight, .bold)
+        XCTAssertEqual(Font.system(size: 13).bold().metadata?.isEmphasized, false)
+        XCTAssertEqual(Font.custom("Tinos", size: 13).bold().metadata?.weight, .bold)
+    }
+
+    func testAWeightAfterBoldWins() {
+        let m = Font.body.bold().weight(.light).metadata
+        XCTAssertEqual(m?.weight, .light); XCTAssertEqual(m?.isEmphasized, false)
+        XCTAssertEqual(Font.body.weight(.light).bold().metadata?.isEmphasized, true)
+        XCTAssertNil(Font.body.weight(.light).bold().metadata?.weight)
+    }
+
+    func testMonospacedDigitIsCarriedThroughOtherModifiers() {
+        let f = Font.system(size: 15, weight: .semibold).monospacedDigit()
+        XCTAssertEqual(f.metadata?.monospacedDigit, true)
+        XCTAssertEqual(f.weight(.bold).metadata?.monospacedDigit, true)
+        XCTAssertEqual(f.width(.expanded).metadata?.monospacedDigit, true)
+        XCTAssertEqual(Font.body.bold().monospacedDigit().metadata?.isEmphasized, true)
+        XCTAssertNotEqual(f, Font.system(size: 15, weight: .semibold))
+    }
+}

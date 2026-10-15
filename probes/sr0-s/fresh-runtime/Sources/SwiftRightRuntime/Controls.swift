@@ -345,9 +345,17 @@ public struct Font: Hashable, Sendable {
         public let textStyle: String?
         /// `Font.width(_:)`, nil unless one was set.
         public let width: Width?
+        /// `Font.bold()` on a text style: the style's emphasized weight (macOS: title3, body, callout, ... semibold; headline heavy; caption medium), not `.bold`. False when a
+        /// weight was set after it.
+        public let isEmphasized: Bool
+        /// `Font.monospacedDigit()`: tabular figures (the OpenType `tnum` feature on Windows).
+        public let monospacedDigit: Bool
 
         public init(familyName: String? = nil, pointSize: CGFloat? = nil, weight: Weight? = nil,
-                    design: Design? = nil, isCustom: Bool = false, textStyle: String? = nil, width: Width? = nil) {
+                    design: Design? = nil, isCustom: Bool = false, textStyle: String? = nil, width: Width? = nil,
+                    isEmphasized: Bool = false, monospacedDigit: Bool = false) {
+            self.isEmphasized = isEmphasized
+            self.monospacedDigit = monospacedDigit
             self.familyName = familyName
             self.pointSize = pointSize
             self.weight = weight
@@ -448,7 +456,7 @@ public struct Font: Hashable, Sendable {
     public func weight(_ weight: Font.Weight) -> Font {
         let metadata = self.metadata.map {
             Metadata(familyName: $0.familyName, pointSize: $0.pointSize, weight: weight, design: $0.design, isCustom: $0.isCustom,
-                     textStyle: $0.textStyle, width: $0.width)
+                     textStyle: $0.textStyle, width: $0.width, isEmphasized: false, monospacedDigit: $0.monospacedDigit)
         }
         if let metadata { return Font(id: "\(id)|weight(\(weight.rawValue))", metadata: metadata) }
         return Font(id: "\(id)|weight(\(weight.rawValue))")
@@ -459,7 +467,26 @@ public struct Font: Hashable, Sendable {
         let base = metadata ?? Metadata()
         return Font(id: "\(id)|width(\(width.name))",
                     metadata: Metadata(familyName: base.familyName, pointSize: base.pointSize, weight: base.weight, design: base.design, isCustom: base.isCustom,
-                                       textStyle: base.textStyle, width: width))
+                                       textStyle: base.textStyle, width: width, isEmphasized: base.isEmphasized, monospacedDigit: base.monospacedDigit))
+    }
+
+    /// Apple: https://developer.apple.com/documentation/swiftui/font/bold(). On a text style this is the style's emphasized weight (measured on macOS 27, decision G25), on a
+    /// sized system or custom font it is `.bold`.
+    public func bold() -> Font {
+        let base = metadata ?? Metadata()
+        if base.textStyle != nil && !base.isCustom {
+            return Font(id: "\(id)|bold()", metadata: Metadata(familyName: base.familyName, pointSize: base.pointSize, weight: nil, design: base.design, isCustom: false,
+                                                               textStyle: base.textStyle, width: base.width, isEmphasized: true, monospacedDigit: base.monospacedDigit))
+        }
+        return weight(.bold)
+    }
+
+    /// Apple: https://developer.apple.com/documentation/swiftui/font/monospaceddigit(). Tabular figures.
+    public func monospacedDigit() -> Font {
+        let base = metadata ?? Metadata()
+        return Font(id: "\(id)|monospacedDigit", metadata: Metadata(familyName: base.familyName, pointSize: base.pointSize, weight: base.weight, design: base.design,
+                                                                  isCustom: base.isCustom, textStyle: base.textStyle, width: base.width,
+                                                                  isEmphasized: base.isEmphasized, monospacedDigit: true))
     }
 }
 
