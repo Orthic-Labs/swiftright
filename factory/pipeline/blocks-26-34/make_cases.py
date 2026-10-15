@@ -575,7 +575,7 @@ def baseline_case(name, items, align="firstTextBaseline", extra_rows="", h=60):
         if kind == "text": regions.append({"name": f"item {k}", "rect": r, "align": "leading"})
     ex = [{"name": f"item {k} glyph region (Segoe UI vs SF, decision 2); gated by the baseline relation and the colour gate", "rect": it["rect"]} for k, it in enumerate(align_items) if it["kind"] == "text"]
     CASES["swiftui.baseline-alignment/" + name]["pair"] = {"textColourGate": {"tolerance": 40, "regions": regions, "baselineAlign": [{"name": "baselines", "items": align_items, "tolerancePx": 1}]},
-                                                          "excludeRects": ex, "semanticGate": {"fields": ["role", "name", "count", "order"], "scope": "main", "phases": [""]}}
+                                                          "excludeRects": ex, "semanticGate": {"fields": ["role", "name", "count", "order"], "scope": "main", "phases": [""], "pixels": "report-only"}}   # report-only: the shapes beside the text sit on the text baseline, whose absolute y differs between Segoe UI and SF (F3); the baseline relation decides
     CASES["swiftui.baseline-alignment/" + name]["steps"] = [{"op": "wait", "ms": 600}]
 
 

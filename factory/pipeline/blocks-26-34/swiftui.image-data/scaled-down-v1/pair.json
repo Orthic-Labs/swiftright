@@ -1,0 +1,51 @@
+{
+ "semanticGate": {
+  "fields": [
+   "role",
+   "name",
+   "count",
+   "order",
+   "bounds"
+  ],
+  "scope": "main",
+  "phases": [
+   "start",
+   ""
+  ],
+  "boundsTolerancePt": 0.05
+ },
+ "phaseShots": [
+  "start"
+ ],
+ "edgeAATolerance": {
+  "levels": 64,
+  "reason": "box filter (Windows) vs CoreGraphics interpolation (Mac) on a downscaled image, measured 15 Oct 2026 on this case at scale 2.5: max 64/255 on the 1 px ring edges of the 40 -> 30 px palette image, <= 43 on the 40 -> 20 and 40 -> 25 px checker/diagonal image, <= 3 on the smooth gradients; position and size match exactly (the gate's frame check); N=1 measurement, widen only with N=20 evidence"
+ },
+ "hazeTolerance": 0,
+ "steps": [
+  {
+   "op": "wait",
+   "ms": 700
+  },
+  {
+   "op": "dump",
+   "label": "start"
+  },
+  {
+   "op": "wait",
+   "ms": 250
+  },
+  {
+   "op": "shot",
+   "label": "start"
+  },
+  {
+   "op": "wait",
+   "ms": 200
+  }
+ ],
+ "macArgs": [
+  "--steps",
+  "[{\"op\":\"wait\",\"ms\":700},{\"op\":\"dump\",\"label\":\"start\"},{\"op\":\"wait\",\"ms\":250},{\"op\":\"shot\",\"label\":\"start\"},{\"op\":\"wait\",\"ms\":200}]"
+ ]
+}
