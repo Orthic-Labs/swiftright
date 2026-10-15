@@ -139,11 +139,11 @@ jobs:
         with:
           python-version: "3.12"
       - run: python -m pip install --disable-pip-version-check pillow==11.3.0
-      # Swift for Windows: the toolchain the factory uses (6.4.0). Unverified on a hosted runner until the first run.
+      # Swift for Windows: 6.3.1 is the nearest swift.org release (6.4 has no release installer yet; the factory Dell toolchain is 6.4.0+Asserts). Measured difference, not a tolerance change.
       - uses: compnerd/gha-setup-swift@581df1ffa3f3e786ddc73ff37364ee231f9644c5 # v0.3.0
         with:
-          branch: swift-6.4-release
-          tag: 6.4-RELEASE
+          branch: swift-6.3.1-release
+          tag: 6.3.1-RELEASE
       - name: Toolchain
         run: swift --version
       - name: Stage the product tree (git archive HEAD)

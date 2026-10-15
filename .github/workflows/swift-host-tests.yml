@@ -56,8 +56,8 @@ jobs:
           fetch-depth: 1
       - uses: compnerd/gha-setup-swift@581df1ffa3f3e786ddc73ff37364ee231f9644c5 # v0.3.0
         with:
-          branch: swift-6.4-release
-          tag: 6.4-RELEASE
+          branch: swift-6.3.1-release
+          tag: 6.3.1-RELEASE
       - name: Toolchain
         run: swift --version
       - name: swift test (SwiftRightHost, Windows)
