@@ -8,6 +8,8 @@ public struct NodeEmission {
     public var semantic: SemanticNode?
     public var flags: NodeFlags
     public var structural: Bool
+    /// The bounds the node is upserted under (hit-testing and the accessibility rectangle) when they are not the node's frame: a Slider's is its control, not its labels.
+    public var bounds: Rect? = nil
 }
 
 /// Resolved tree -> ABI paint. One painter per window: it owns the renderer image handles of continuous shapes
@@ -200,7 +202,7 @@ public final class ResolvedNodePainter {
             }
             if hidden { emission.semantic = nil }
             // A List row is hit anywhere along its width, not only where its content is.
-            let nodeBounds = row?.rect ?? bounds
+            let nodeBounds = row?.rect ?? emission.bounds ?? bounds
             // The renderer resets its clip stack per node, so a scrolled-out part of a descendant is clipped by wrapping the node's own
             // primitives in the scroll frame (intersected for nested scroll views).
             var primitives = emission.primitives
@@ -315,7 +317,7 @@ public final class ResolvedNodePainter {
                                                        disabled: !plan.isEnabled),
                                 flags: [.hitTarget], structural: false)
 
-        case "Slider":
+        case "SliderControl":
             let plan = try SliderPainter.plan(node, bounds: bounds, scale: scale)
             let handle = try images.registerImage(width: UInt32(plan.image.width), height: UInt32(plan.image.height), rgba: plan.image.rgba, stride: 0)
             if let stale = pendingShapeImages[id] { _ = images.release(stale) }
@@ -325,7 +327,7 @@ public final class ResolvedNodePainter {
             return NodeEmission(primitives: [.image(handle, plan.placement)],
                                 semantic: SemanticNode(role: .slider, label: node.accessibility.label ?? "", value: node.accessibility.value ?? "",
                                                        actions: plan.isEnabled ? [.focus] : [], identifier: node.id, disabled: !plan.isEnabled, range: range),
-                                flags: plan.isEnabled ? [.hitTarget, .focusable] : [.hitTarget], structural: false)
+                                flags: plan.isEnabled ? [.hitTarget, .focusable] : [.hitTarget], structural: false, bounds: plan.controlBounds)
 
         case "Button":
             let plan = try ButtonPainter.plan(node, bounds: bounds, scale: scale)

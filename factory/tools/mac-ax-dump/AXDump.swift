@@ -58,6 +58,11 @@ enum AXDump {
         if let label, !label.isEmpty { d["name"] = label }
         if let v = number(get(object, "accessibilityValue")) { d["value"] = v }
         if let placeholder = string(get(object, "accessibilityPlaceholderValue")), !placeholder.isEmpty { d["placeholder"] = placeholder }
+        // a slider's range (round 6 block 37): AXMinValue / AXMaxValue, compared with the UIA RangeValue Minimum / Maximum
+        if string(get(object, "accessibilityRole")) == "AXSlider" {
+            if let lo = number(get(object, "accessibilityMinValue")) { d["min"] = lo }
+            if let hi = number(get(object, "accessibilityMaxValue")) { d["max"] = hi }
+        }
         d["enabled"] = (get(object, "accessibilityEnabled", getter: "isAccessibilityEnabled") as? Bool) ?? true
         d["focus"] = (get(object, "accessibilityFocused", getter: "isAccessibilityFocused") as? Bool) ?? false
         if let id = string(get(object, "accessibilityIdentifier")), !id.isEmpty { d["id"] = id }

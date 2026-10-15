@@ -1990,7 +1990,6 @@ public final class Graph {
             value = binding.wrappedValue ? "1" : "0"
         case .slider(let spec):
             role = "slider"
-            label = titleOf(node)
             value = Self.sliderValueText(spec.clamped(spec.read()))
         case .image(let spec):
             role = "image"
@@ -2080,7 +2079,7 @@ public final class Graph {
         case .scroll, .scrollView: return "ScrollView"
         case .modifier(let spec): return spec.kindName
         case .toggle: return "Toggle"
-        case .slider: return "Slider"
+        case .slider: return "SliderControl"
         case .image: return "Image"
         case .color: return "Color"
         case .shape(let shape):

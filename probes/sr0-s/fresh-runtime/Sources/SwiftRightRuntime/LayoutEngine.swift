@@ -198,8 +198,8 @@ extension Graph {
             return LayoutSize(width: width ?? content.width, height: height ?? content.height)
         case .toggle:
             return measureToggle(node, proposal)
-        case .slider(let spec):
-            return measureSlider(node, spec, proposal)
+        case .slider:
+            return measureSlider(proposal)
         case .button:
             return measureButton(node, proposal)
         case .user, .modifier, .menu:
@@ -304,8 +304,8 @@ extension Graph {
             placeGroup(node, in: contentRect, proposal: contentProposal)
         case .toggle:
             placeToggle(node, in: rect, proposal: proposal)
-        case .slider(let spec):
-            placeSlider(node, spec, in: rect)
+        case .slider:
+            placeSlider(node, in: rect)
         case .button:
             placeButton(node, in: rect, proposal: proposal)
         case .user, .modifier, .menu:
@@ -394,48 +394,16 @@ extension Graph {
 
     // MARK: Slider
 
-    /// The label and the value labels of a slider node, in the order `Slider.nodeContent` makes them.
-    private func sliderParts(_ node: Node, _ spec: SliderSpec) -> (label: Node?, minimum: Node?, maximum: Node?) {
-        let kids = childNodes(node)
-        var index = 0
-        var label: Node?, minimum: Node?, maximum: Node?
-        if spec.hasLabel, index < kids.count { label = kids[index]; index += 1 }
-        if spec.hasValueLabels, index + 1 < kids.count { minimum = kids[index]; maximum = kids[index + 1] }
-        return (label, minimum, maximum)
+    /// The control alone: as wide as it is offered (its ideal width, 30 pt, when nothing is proposed) and 16 pt high.
+    private func measureSlider(_ proposal: ProposedViewSize) -> LayoutSize {
+        // like SwiftUI's, a slider can take any width: an unbounded proposal (a stack asking how flexible it is) reports an unbounded width, so a stack gives it what its
+        // siblings leave (macOS: HStack { Text; Slider; Text } gives the slider the rest)
+        if let width = proposal.width, width == .infinity { return LayoutSize(width: .infinity, height: SliderSpec.height) }
+        return LayoutSize(width: finiteLength(proposal.width) ?? SliderSpec.idealTrackWidth, height: SliderSpec.height)
     }
 
-    private func measureSlider(_ node: Node, _ spec: SliderSpec, _ proposal: ProposedViewSize) -> LayoutSize {
-        let parts = sliderParts(node, spec)
-        func size(_ n: Node?) -> LayoutSize { n.map { measure($0, ProposedViewSize(width: nil, height: nil)) } ?? .zero }
-        let label = size(parts.label), minimum = size(parts.minimum), maximum = size(parts.maximum)
-        var ideal = SliderSpec.idealTrackWidth
-        if parts.label != nil { ideal += label.width + SliderSpec.labelSpacing }
-        if parts.minimum != nil { ideal += minimum.width + maximum.width + 2 * SliderSpec.valueLabelSpacing }
-        let height = max(SliderSpec.height, label.height, minimum.height, maximum.height)
-        // a slider takes the width it is offered (its ideal width when nothing is proposed)
-        return LayoutSize(width: finiteLength(proposal.width) ?? ideal, height: height)
-    }
-
-    private func placeSlider(_ node: Node, _ spec: SliderSpec, in rect: LayoutRect) {
-        let parts = sliderParts(node, spec)
-        let rowY = rect.minY + (rect.height - SliderSpec.height) / 2
-        var x = rect.minX
-        var right = rect.maxX
-        func put(_ child: Node?, atX x: CGFloat) -> CGFloat {
-            guard let child else { return 0 }
-            let size = measure(child, ProposedViewSize(width: nil, height: nil))
-            place(child, in: LayoutRect(x: x, y: rowY + (SliderSpec.height - size.height) / 2, width: size.width, height: size.height), proposal: ProposedViewSize(width: nil, height: nil))
-            return size.width
-        }
-        if let label = parts.label { x += put(label, atX: x) + SliderSpec.labelSpacing }
-        if let minimum = parts.minimum { x += put(minimum, atX: x) + SliderSpec.valueLabelSpacing }
-        if let maximum = parts.maximum {
-            let size = measure(maximum, ProposedViewSize(width: nil, height: nil))
-            right -= size.width
-            _ = put(maximum, atX: right)
-            right -= SliderSpec.valueLabelSpacing
-        }
-        node.sliderTrack = snapToPixelGrid(LayoutRect(x: x, y: rowY, width: max(0, right - x), height: SliderSpec.height), scale: scale)
+    private func placeSlider(_ node: Node, in rect: LayoutRect) {
+        node.sliderTrack = snapToPixelGrid(LayoutRect(x: rect.minX, y: rect.minY + (rect.height - SliderSpec.height) / 2, width: rect.width, height: SliderSpec.height), scale: scale)
     }
 
     private func placeGroup(_ node: Node, in rect: LayoutRect, proposal: ProposedViewSize) {

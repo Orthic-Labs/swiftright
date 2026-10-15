@@ -161,6 +161,8 @@ public struct SliderPaintPlan {
     public var lower: Double, upper: Double
     public var smallChange: Double, largeChange: Double
     public var isFocused: Bool
+    /// The control's frame in window pixels (what the node is hit-tested and published under; labels are outside it).
+    public var controlBounds: Rect
 }
 
 public enum SliderPainter {
@@ -179,6 +181,7 @@ public enum SliderPainter {
                                placement: Rect(x: Float(track.x) + dx - Float(margin) + imageGuardBand, y: Float(track.y) + dy - Float(margin) + imageGuardBand,
                                                w: Float(image.width) - 2 * imageGuardBand, h: Float(image.height) - 2 * imageGuardBand),
                                isEnabled: node.accessibility.isEnabled, value: slider.value, lower: slider.lower, upper: slider.upper,
-                               smallChange: slider.smallChange, largeChange: slider.largeChange, isFocused: slider.isFocused)
+                               smallChange: slider.smallChange, largeChange: slider.largeChange, isFocused: slider.isFocused,
+                               controlBounds: Rect(x: Float(track.x) + dx, y: Float(track.y) + dy, w: Float(track.width), h: Float(track.height)))
     }
 }

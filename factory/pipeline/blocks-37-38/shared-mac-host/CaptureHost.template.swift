@@ -104,6 +104,43 @@ final class Driver {
         return CGRect(x: w.origin.x, y: host.bounds.height - (w.origin.y + w.height), width: w.width, height: w.height)
     }
 
+    func sliders(_ o: NSObject, _ out: inout [NSObject], depth: Int = 0) {
+        if role(o) == "AXSlider" { out.append(o) }
+        if depth < 12 { for c in children(o) { sliders(c, &out, depth: depth + 1) } }
+    }
+
+    func number(_ o: NSObject, _ key: String) -> Double? { o.responds(to: Selector(key)) ? (o.value(forKey: key) as? NSNumber)?.doubleValue : nil }
+    func isEnabled(_ o: NSObject) -> Bool { !(o.responds(to: Selector("isAccessibilityEnabled")) && (o.value(forKey: "accessibilityEnabled") as? Bool) == false) }
+
+    /// The slider the keyboard is in (round 6 block 37): the one a click or drag last acted on.
+    var focusedSlider: NSObject?
+
+    func sliderAt(_ pt: CGPoint) -> NSObject? {
+        var all: [NSObject] = []
+        sliders(host, &all)
+        return all.first(where: { self.frame($0)?.contains(pt) ?? false })
+    }
+
+    /// Where a pointer at `x` puts a slider's value: the thumb's centre follows the pointer (the control's 20 pt thumb travels `width - 20`), less the grab offset of a drag
+    /// that began on the thumb. AppKit drops synthetic mouse events for a window that is not on screen (measured), so the value is set through the accessibility value (what
+    /// a click or drag ends up doing); a stepped slider snaps it itself (measured: nearest multiple of the step from the lower bound).
+    func sliderValue(_ s: NSObject, atX x: Double, grab: Double) -> Double? {
+        guard let f = frame(s), let lo = number(s, "accessibilityMinValue"), let hi = number(s, "accessibilityMaxValue") else { return nil }
+        let t = min(max((x - grab - Double(f.minX) - 10) / max(1, Double(f.width) - 20), 0), 1)
+        return lo + t * (hi - lo)
+    }
+
+    func setSliderValue(_ s: NSObject, _ v: Double) {
+        _ = s.perform(NSSelectorFromString("setAccessibilityValue:"), with: NSNumber(value: v))
+    }
+
+    /// The grab offset of a press at x: from the thumb's centre when the press is on the thumb (the AXValueIndicator child), else 0 (the thumb jumps).
+    func sliderGrab(_ s: NSObject, atX x: Double) -> Double {
+        guard let thumb = children(s).first, let tf = frame(thumb) else { return 0 }
+        let centre = Double(tf.midX)
+        return abs(x - centre) <= 10 ? x - centre : 0
+    }
+
     func buttons(_ o: NSObject, _ out: inout [NSObject], depth: Int = 0) {
         if role(o) == "AXButton" { out.append(o) }
         if depth < 12 { for c in children(o) { buttons(c, &out, depth: depth + 1) } }
@@ -134,7 +171,43 @@ final class Driver {
                 return
             }
         }
+        if let s = sliderAt(pt) {
+            guard isEnabled(s) else { return }
+            focusedSlider = s
+            if let v = sliderValue(s, atX: Double(pt.x), grab: sliderGrab(s, atX: Double(pt.x))) { setSliderValue(s, v) }
+            return
+        }
         try pressButton(where: { self.frame($0)?.contains(pt) ?? false })
+    }
+
+    /// A drag on a slider: press at (x0, y0), release at (x1, y1); the value follows the pointer from the grab point (round 6 block 37).
+    func drag(from p0: CGPoint, to p1: CGPoint) throws {
+        guard let s = sliderAt(p0) else { throw NSError(domain: "MacHost", code: 11, userInfo: [NSLocalizedDescriptionKey: "no slider at the drag start"]) }
+        guard isEnabled(s) else { return }
+        focusedSlider = s
+        let grab = sliderGrab(s, atX: Double(p0.x))
+        if let v = sliderValue(s, atX: Double(p1.x), grab: grab) { setSliderValue(s, v) }
+    }
+
+    /// An arrow key / Home / End / PageUp / PageDown on the slider that holds the keyboard. The arrows are the accessibility increment and decrement (measured: a tenth of the
+    /// range, or the step); the key itself cannot be delivered offscreen (the window is never key), so this is the stand-in.
+    func sliderKey(_ name: String) -> Bool {
+        guard let s = focusedSlider, isEnabled(s), let lo = number(s, "accessibilityMinValue"), let hi = number(s, "accessibilityMaxValue") else { return false }
+        let v = number(s, "accessibilityValue") ?? lo
+        switch name {
+        case "Left", "Down": _ = (s as AnyObject).accessibilityPerformDecrement?()
+        case "Right", "Up": _ = (s as AnyObject).accessibilityPerformIncrement?()
+        case "Home": setSliderValue(s, lo)
+        case "End": setSliderValue(s, hi)
+        case "PageUp", "PageDown":
+            // a tenth of the range, never less than one arrow step (one arrow step: what an increment changes)
+            _ = (s as AnyObject).accessibilityPerformIncrement?(); let one = (number(s, "accessibilityValue") ?? v) - v
+            setSliderValue(s, v)
+            let large = max(abs(one), (hi - lo) / 10)
+            setSliderValue(s, v + (name == "PageUp" ? large : -large))
+        default: return false
+        }
+        return true
     }
 
     /// Drops the selected row `delta` places away (below its neighbour for +1) through the outline view's drag-and-drop data source, as a drag would: the
@@ -189,6 +262,7 @@ final class Driver {
         let (code, chars): (UInt16, String) = Self.keyCodes[name] ?? (0, name.lowercased())
         let ev = NSEvent.keyEvent(with: .keyDown, location: .zero, modifierFlags: flags, timestamp: ProcessInfo.processInfo.systemUptime, windowNumber: window.windowNumber,
                                   context: nil, characters: chars, charactersIgnoringModifiers: chars, isARepeat: false, keyCode: code)!
+        if ["Left", "Right", "Up", "Down", "Home", "End", "PageUp", "PageDown"].contains(name), focusedSlider != nil, sliderKey(name) { return }
         if name == "Tab" { if flags.contains(.shift) { window.selectPreviousKeyView(nil) } else { window.selectNextKeyView(nil) }; return }
         if let tv = table(), name == "PageDown" || name == "PageUp" {
             // PageUp/PageDown: the model route to onMove, as on the Windows host: drop the selected row one place below / above its neighbour through the table's drag-and-drop
@@ -215,6 +289,11 @@ func runSteps(_ steps: [[String: Any]], driver: Driver, png: String, ax: String?
             switch op {
             case "click": try driver.click(px: (s["x"] as? NSNumber)?.doubleValue ?? 0, py: (s["y"] as? NSNumber)?.doubleValue ?? 0, mods: mods)
             case "key": try driver.key(s["key"] as? String ?? "", mods: mods)
+            case "drag":
+                let sc = Double(captureScale)
+                func n(_ k: String) -> Double { (s[k] as? NSNumber)?.doubleValue ?? 0 }
+                try driver.drag(from: CGPoint(x: n("x0") / sc, y: n("y0") / sc), to: CGPoint(x: n("x1") / sc, y: n("y1") / sc))
+            case "move", "leave": break      // pointer moves: hover (block 38) has its own driver hook
             case "char": for ch in (s["text"] as? String ?? "") { try driver.key(String(ch), mods: []) }
             case "invoke":
                 let name = s["name"] as? String ?? ""

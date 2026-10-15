@@ -6,7 +6,7 @@ Mac capture host with factory/tools/mac-ax-dump/AXDump.swift; no AX API across p
 
 The gate comes from <case>/pair.json "semanticGate":
   {
-    "fields":   ["role","name","toggle","enabled","focus","value","bounds","order","count"],  // what gates; anything not listed is reported only
+    "fields":   ["role","name","toggle","enabled","focus","value","bounds","order","count","range"],   // "range": slider RangeValue (value, min, max; with "smallChange": the declared SmallChange)  // what gates; anything not listed is reported only
     "scope":    "main" | "dialog" | "all",           // main window tree, the extra windows (TaskDialog / sheet / NSAlert), or both (default all)
     "roles":    ["button", ...],                      // optional: compare only elements whose normalised role is listed (default: everything except IGNORED_ROLES)
     "ignoreNames": ["Close"],                         // element names dropped on both sides
@@ -83,9 +83,16 @@ def flatten_win(node, origin, scale, role_map, out, depth=0):
     bounds = None if not b else [round((b[0] - origin[0]) / scale, 2), round((b[1] - origin[1]) / scale, 2), round(b[2] / scale, 2), round(b[3] / scale, 2)]
     value = node.get("value")
     out.append(dict(role=role, name=clean(node.get("name")), value=None if toggle else clean(value), enabled=bool(node.get("enabled", True)), focus=bool(node.get("focus")),
-                    toggle=toggle, bounds=bounds, depth=depth, raw=node.get("role")))
+                    toggle=toggle, bounds=bounds, depth=depth, raw=node.get("role"), range=node.get("range")))
     for c in node.get("children", []):
         flatten_win(c, origin, scale, role_map, out, depth + 1)
+
+
+def _num(v):
+    try:
+        return None if v is None else float(v)
+    except (TypeError, ValueError):
+        return None
 
 
 def flatten_mac(node, role_map, out, depth=0):
@@ -103,7 +110,8 @@ def flatten_mac(node, role_map, out, depth=0):
         name = node.get("placeholder")
     out.append(dict(role=role, name=clean(name), value=None if toggle else clean(value) if value is not None else None,
                     enabled=bool(node.get("enabled", True)), focus=bool(node.get("focus")), toggle=toggle, bounds=node.get("bounds"), depth=depth, raw=key,
-                    default=bool(node.get("default")), cancel=bool(node.get("cancel")), destructive=bool(node.get("destructive"))))
+                    default=bool(node.get("default")), cancel=bool(node.get("cancel")), destructive=bool(node.get("destructive")),
+                    range=(dict(value=_num(node.get("value")), minimum=_num(node.get("min")), maximum=_num(node.get("max"))) if r == "AXSlider" else None)))
     for c in node.get("children", []):
         flatten_mac(c, role_map, out, depth + 1)
 
@@ -160,6 +168,7 @@ def compare_lists(label, a, b, cfg):
     fields = cfg.get("fields", ["role", "name", "toggle", "enabled"])
     tol = float(cfg.get("boundsTolerancePt", 1.0))
     mm = []
+    slider_ordinal = 0
     if "count" in fields and len(a) != len(b):
         mm.append(dict(where=label, field="count", windows=len(a), mac=len(b)))
     for i in range(max(len(a), len(b))):
@@ -194,12 +203,29 @@ def compare_lists(label, a, b, cfg):
                         mm.append(dict(where=f"{label}[{i}]", field="bounds", windows=bx, mac=by))
                 elif max(abs(p - q) for p, q in zip(bx, by)) > tol:
                     mm.append(dict(where=f"{label}[{i}]", field="bounds", windows=bx, mac=by, tolerancePt=tol))
+            elif f == "range":
+                # a slider's range (round 6 block 37): the UIA RangeValue (value, Minimum, Maximum) against the Mac's AXValue / AXMinValue / AXMaxValue, and SmallChange against the
+                # case's declared `smallChange` (a number, or a list with one per slider in tree order; the Mac's accessibility increment measured in decision H5: the step, else a tenth of the range)
+                if x["role"] != "slider" and y["role"] != "slider":
+                    continue
+                wr, mr = x.get("range"), y.get("range")
+                if wr is None or mr is None:
+                    mm.append(dict(where=f"{label}[{i}]", field="range", windows=wr, mac=mr)); continue
+                for k in ("value", "minimum", "maximum"):
+                    if wr.get(k) is None or mr.get(k) is None or abs(float(wr[k]) - float(mr[k])) > 1e-6:
+                        mm.append(dict(where=f"{label}[{i}]", field=f"range.{k}", windows=wr.get(k), mac=mr.get(k)))
+                small = cfg.get("smallChange")
+                if isinstance(small, list):      # one declared SmallChange per slider, in tree order
+                    small = small[slider_ordinal] if slider_ordinal < len(small) else None
+                slider_ordinal += 1
+                if small is not None and (wr.get("smallChange") is None or abs(float(wr["smallChange"]) - float(small)) > 1e-6):
+                    mm.append(dict(where=f"{label}[{i}]", field="range.smallChange", windows=wr.get("smallChange"), declared=small))
             elif f == "default":
                 if y.get("default") and not x.get("focus"):
                     mm.append(dict(where=f"{label}[{i}]", field="default", windows="not focused", mac="default (Return) button", name=y["name"]))
             elif f == "name" and "nameRoles" in cfg and x["role"] not in cfg["nameRoles"]:
                 continue   # names gate only for the listed roles (a hidden-label control has no name on the Mac)
-            elif x.get(f) != y.get(f):
+            elif (x.get(f) or None) != (y.get(f) or None) if f == "name" else x.get(f) != y.get(f):   # an element with no name is "" on Windows and absent on the Mac
                 mm.append(dict(where=f"{label}[{i}]", field=f, windows=x.get(f), mac=y.get(f), role=(x["role"], y["role"])))
     return mm
 

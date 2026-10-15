@@ -18,8 +18,6 @@ struct SliderSpec {
     let upper: Double
     let step: Double?
     let onEditing: (Bool) -> Void
-    let hasLabel: Bool
-    let hasValueLabels: Bool
 
     /// Control height and thumb width, in points.
     static let height: CGFloat = 16
@@ -29,6 +27,13 @@ struct SliderSpec {
     static let valueLabelSpacing: CGFloat = 4
 
     var span: Double { upper - lower }
+
+    /// A press on a value label: the bound goes to the lower / upper bound (between `onEditingChanged(true)` and `(false)`).
+    func setBound(upper top: Bool) {
+        onEditing(true)
+        write(top ? upper : lower)
+        onEditing(false)
+    }
 
     func clamped(_ v: Double) -> Double {
         guard v.isFinite else { return lower }
@@ -68,8 +73,19 @@ public struct ResolvedSlider: Equatable, Sendable {
     public var fraction: Double { upper > lower ? (value - lower) / (upper - lower) : 0 }
 }
 
+/// The control itself (track and thumb): a primitive node of kind `.slider`, a leaf.
 @MainActor
-public struct Slider<Label: View, ValueLabel: View>: View, PrimitiveView {
+struct SliderControl: View, PrimitiveView {
+    let spec: SliderSpec
+    @MainActor var body: Never { return fatalError("primitive view has no body") }
+    var nodeKind: NodeKind { .slider(spec) }
+    var nodeContent: (any View)? { nil }
+}
+
+/// The Slider of SwiftUI: a leading label, the control, and the value labels at its ends, in one row (`HStack`, 8 pt after the label, 4 pt either side of the
+/// control for the value labels; measured on macOS 27). The value labels are plain buttons (macOS publishes them as buttons, and a press sets the bound).
+@MainActor
+public struct Slider<Label: View, ValueLabel: View>: View {
     let spec: SliderSpec
     let label: Label?
     let minimumValueLabel: ValueLabel?
@@ -79,25 +95,29 @@ public struct Slider<Label: View, ValueLabel: View>: View, PrimitiveView {
                                  label: Label?, minimumValueLabel: ValueLabel?, maximumValueLabel: ValueLabel?) where V.Stride: BinaryFloatingPoint {
         spec = SliderSpec(read: { Double(value.wrappedValue) }, write: { value.wrappedValue = V($0) },
                           lower: Double(bounds.lowerBound), upper: Double(bounds.upperBound), step: step.map { Double($0) },
-                          onEditing: onEditingChanged, hasLabel: label != nil, hasValueLabels: minimumValueLabel != nil)
+                          onEditing: onEditingChanged)
         self.label = label
         self.minimumValueLabel = minimumValueLabel
         self.maximumValueLabel = maximumValueLabel
     }
 
-    @MainActor public var body: Never { return fatalError("primitive view has no body") }
-    var nodeKind: NodeKind { .slider(spec) }
-    var nodeContent: (any View)? {
-        // children in order: the label, the minimum value label, the maximum value label (those that exist)
-        var listed: [any View] = []
-        if let label { listed.append(label) }
-        if let minimumValueLabel, let maximumValueLabel {
-            listed.append(minimumValueLabel.font(Font.system(size: 11)).foregroundStyle(Color.secondary))
-            listed.append(maximumValueLabel.font(Font.system(size: 11)).foregroundStyle(Color.secondary))
+    @ViewBuilder @MainActor public var body: some View {
+        if label == nil && minimumValueLabel == nil {
+            SliderControl(spec: spec)     // alone: the control itself, so a stack around the slider sees it as flexible
+        } else {
+        HStack(spacing: 0) {
+            if let label { label.padding(.trailing, SliderSpec.labelSpacing) }
+            if let minimumValueLabel {
+                Button(action: { spec.setBound(upper: false) }) { minimumValueLabel.font(Font.system(size: 11)).foregroundStyle(Color.secondary) }
+                    .buttonStyle(.plain).padding(.trailing, SliderSpec.valueLabelSpacing)
+            }
+            SliderControl(spec: spec)
+            if let maximumValueLabel {
+                Button(action: { spec.setBound(upper: true) }) { maximumValueLabel.font(Font.system(size: 11)).foregroundStyle(Color.secondary) }
+                    .buttonStyle(.plain).padding(.leading, SliderSpec.valueLabelSpacing)
+            }
         }
-        if listed.isEmpty { return nil }
-        if listed.count == 1 { return listed[0] }
-        return TupleView<[any View]>(value: listed, listed: listed)
+        }
     }
 }
 
@@ -143,10 +163,6 @@ extension Slider {
                                         @ViewBuilder label: () -> Label) where V.Stride: BinaryFloatingPoint {
         self.init(value: value, bounds: bounds, step: V(step), onEditingChanged: onEditingChanged, label: label(), minimumValueLabel: minimumValueLabel(), maximumValueLabel: maximumValueLabel())
     }
-}
-
-extension Slider: @MainActor LabeledControl {
-    var titleView: any View { label ?? EmptyView() }
 }
 
 // MARK: - Interaction (the host routes pointer, keys and accessibility actions here)

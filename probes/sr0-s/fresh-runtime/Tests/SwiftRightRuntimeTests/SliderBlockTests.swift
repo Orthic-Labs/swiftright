@@ -38,7 +38,7 @@ final class SliderBlockTests: XCTestCase {
         graph.flush()
         return graph
     }
-    private func slider(_ g: Graph) -> ResolvedNode? { everyNode(g.snapshot()).first { $0.kind == "Slider" } }
+    private func slider(_ g: Graph) -> ResolvedNode? { everyNode(g.snapshot()).first { $0.kind == "SliderControl" } }
 
     func testGeometryIsTheMeasuredOne() throws {
         let g = make(Plain(box: Box()))
@@ -61,7 +61,7 @@ final class SliderBlockTests: XCTestCase {
         XCTAssertEqual(Graph.thumbOffsetPixels(fraction: 1, trackPixelWidth: 500, thumbPixels: 50), 450)
     }
 
-    func testIdealWidthIsThirtyAndLabelsAreMeasuredSizes() throws {
+    func testIdealWidthIsThirty() throws {
         let box = Box()
         let alone = make(Slider(value: Binding(get: { box.value }, set: { box.value = $0 }), in: 0...100))
         XCTAssertEqual(try XCTUnwrap(slider(alone)).frame.width, 30)
@@ -69,18 +69,36 @@ final class SliderBlockTests: XCTestCase {
     }
 
     func testLabelsSitAtTheEndsAndTheTrackTakesTheRest() throws {
-        let g = make(Labelled(box: Box()))
+        let box = Box()
+        let g = make(Labelled(box: box))
+        let all = everyNode(g.snapshot())
         let n = try XCTUnwrap(slider(g))
         let s = try XCTUnwrap(n.slider)
-        XCTAssertEqual(n.frame.width, 240)
-        XCTAssertEqual(n.children.count, 3)
-        let label = n.children[0], lo = n.children[1], hi = n.children[2]
-        XCTAssertEqual(label.frame.minX, n.frame.minX)
+        let label = try XCTUnwrap(all.first { $0.kind == "Text" && $0.text == "Volume" })
+        let buttons = all.filter { $0.kind == "Button" }
+        XCTAssertEqual(buttons.count, 2)
+        let lo = buttons[0], hi = buttons[1]
+        XCTAssertEqual(label.frame.minX, 0, accuracy: 0.5)
         XCTAssertEqual(lo.frame.minX, label.frame.maxX + 8, accuracy: 0.5)
         XCTAssertEqual(s.trackFrame.minX, lo.frame.maxX + 4, accuracy: 0.5)
         XCTAssertEqual(hi.frame.minX, s.trackFrame.maxX + 4, accuracy: 0.5)
-        XCTAssertEqual(hi.frame.maxX, n.frame.maxX, accuracy: 0.5)
-        XCTAssertEqual(n.accessibility.label, "Volume")
+        XCTAssertEqual(hi.frame.maxX, 240, accuracy: 0.5)
+        XCTAssertEqual(n.frame.width, s.trackFrame.width, accuracy: 0.5)
+        XCTAssertEqual(lo.accessibility.role, "button")
+        // a press on the value labels sets the bounds
+        XCTAssertTrue(g.tapButton(hi.id)); XCTAssertEqual(box.value, 100)
+        XCTAssertTrue(g.tapButton(lo.id)); XCTAssertEqual(box.value, 0)
+    }
+
+    func testSliderInARowTakesTheRest() throws {
+        let box = Box()
+        let g = make(HStack { Text("A"); Slider(value: Binding(get: { box.value }, set: { box.value = $0 }), in: 0...100); Text("B") }.frame(width: 240))
+        let s = try XCTUnwrap(slider(g))
+        let texts = everyNode(g.snapshot()).filter { $0.kind == "Text" }
+        XCTAssertEqual(texts.count, 2)
+        XCTAssertEqual(s.frame.minX, texts[0].frame.maxX + 8, accuracy: 0.5)
+        XCTAssertEqual(s.frame.maxX + 8, texts[1].frame.minX, accuracy: 0.5)
+        XCTAssertEqual(texts[1].frame.maxX, 240, accuracy: 0.5)
     }
 
     func testPressOnTheTrackPutsTheThumbCentreThere() throws {
