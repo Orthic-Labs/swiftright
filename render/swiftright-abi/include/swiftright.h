@@ -1146,10 +1146,11 @@ SWR_API swr_status swr_measure_text_v08(const swr_measure_request_v08 *req, swr_
  * entry is SWR_RUNFACE_UNRESOLVED with an empty family. UI thread. */
 SWR_API swr_status swr_text_run_faces(swr_text_run run, swr_run_face *faces, uint32_t cap, uint32_t *count);
 
-/* Face the request would resolve to (weight snapped to a named instance, width in percent, 0 =
- * 100). Bundled families answer from the registered bytes, installed ones from DirectWrite. Does
- * not need a window and may run on any thread (it never touches gpui). An unknown family is
- * SWR_OK with flags 0 (FOUND clear). */
+/* Face the request would resolve to (weight snapped to a named instance). width_pct is accepted
+ * for the final signature and IGNORED (the normal-width face answers: gpui has no width axis).
+ * Bundled families answer from the registered bytes, installed ones from DirectWrite. Does not
+ * need a window and may run on any thread (it never touches gpui). An unknown family is SWR_OK
+ * with flags 0 (FOUND clear) and source SWR_FONT_SRC_FALLBACK. */
 SWR_API swr_status swr_font_face_metrics(const uint8_t *family, uint32_t family_len, uint32_t weight,
                                          uint32_t width_pct, uint32_t italic, swr_face_metrics *out);
 

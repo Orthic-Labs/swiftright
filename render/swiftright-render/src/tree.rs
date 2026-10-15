@@ -794,7 +794,7 @@ mod tests {
     fn measured() -> Arc<Measured> {
         Arc::new(Measured {
             text: "x".into(), wrapped: vec![], cells: vec![], lines: vec![], width: 8.0, height: 24.0, first_baseline: 18.0,
-            last_baseline: 18.0, line_height_dip: 24.0, scale: 1.0, char_count: 1, key: 1,
+            last_baseline: 18.0, line_height_dip: 24.0, scale: 1.0, char_count: 1, key: 1, ext: Default::default(),
         })
     }
 

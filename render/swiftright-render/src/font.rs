@@ -23,6 +23,11 @@ pub struct FontMeta {
     pub face_count: u32,
     /// hhea ascent / descent in em (CoreText's ascent and descent for the face); None when the table is absent.
     pub hhea_em: Option<(f32, f32)>,
+    /// Rev 0.8: the face is italic or oblique (OS/2 fsSelection bit 0 or 9, head macStyle bit 1).
+    pub italic: bool,
+    /// Rev 0.8: PostScript name (name ID 6) and version string (name ID 5), empty when absent.
+    pub ps_name: String,
+    pub version: String,
 }
 
 fn be16(b: &[u8], o: usize) -> Option<u16> {
@@ -34,7 +39,7 @@ fn be32(b: &[u8], o: usize) -> Option<u32> {
 }
 
 /// Finds `tag` in the table directory of the face at `face_off`; returns (offset, length), bounds-checked.
-fn table(b: &[u8], face_off: usize, tag: &[u8; 4]) -> Option<(usize, usize)> {
+pub(crate) fn table(b: &[u8], face_off: usize, tag: &[u8; 4]) -> Option<(usize, usize)> {
     let n = be16(b, face_off.checked_add(4)?)? as usize;
     for i in 0..n {
         let rec = face_off.checked_add(12)?.checked_add(i.checked_mul(16)?)?;
@@ -97,6 +102,44 @@ fn family_name(b: &[u8], face_off: usize) -> Option<String> {
     best.map(|(_, s)| s)
 }
 
+/// The best-ranked string of one name ID (Windows/Unicode records preferred over Macintosh ones).
+fn name_id_string(b: &[u8], face_off: usize, want: u16) -> Option<String> {
+    let (off, len) = table(b, face_off, b"name")?;
+    let t = &b[off..off + len];
+    let count = be16(t, 2)? as usize;
+    let str_off = be16(t, 4)? as usize;
+    let mut best: Option<(u8, String)> = None;
+    for i in 0..count {
+        let r = 6 + i * 12;
+        let platform = be16(t, r)?;
+        let lang = be16(t, r + 4)?;
+        let name_id = be16(t, r + 6)?;
+        if name_id != want {
+            continue;
+        }
+        let slen = be16(t, r + 8)? as usize;
+        let soff = be16(t, r + 10)? as usize;
+        let s_start = str_off.checked_add(soff)?;
+        let Some(raw) = t.get(s_start..s_start.checked_add(slen)?) else { continue };
+        let Some(s) = decode_name(raw, platform) else { continue };
+        if s.is_empty() {
+            continue;
+        }
+        let rank = match platform { 3 => if lang == 0x409 { 0 } else { 1 }, 0 => 2, _ => 3 };
+        if best.as_ref().map_or(true, |(r0, _)| rank < *r0) {
+            best = Some((rank, s));
+        }
+    }
+    best.map(|(_, s)| s)
+}
+
+/// Italic or oblique per OS/2 fsSelection (bit 0 italic, bit 9 oblique) or head macStyle (bit 1).
+fn is_italic(b: &[u8], face_off: usize) -> bool {
+    let fs = table(b, face_off, b"OS/2").and_then(|(o, l)| if l >= 64 { be16(b, o + 62) } else { None }).unwrap_or(0);
+    let mac = table(b, face_off, b"head").and_then(|(o, l)| if l >= 46 { be16(b, o + 44) } else { None }).unwrap_or(0);
+    fs & 0x1 != 0 || fs & 0x200 != 0 || mac & 0x2 != 0
+}
+
 /// Validates the sfnt container and extracts the family, weight class and face count.
 /// Anything that is not a TrueType/OpenType font (or a TrueType collection of them) is `E_BAD_ARG`.
 pub fn parse(b: &[u8]) -> Result<FontMeta, Status> {
@@ -145,7 +188,10 @@ pub fn parse(b: &[u8]) -> Result<FontMeta, Status> {
         let desc = be16(b, h + 6)? as i16 as f32;
         (upm > 0.0 && asc > 0.0).then(|| (asc / upm, desc.abs() / upm))
     })();
-    Ok(FontMeta { family, weight, face_count: faces, hhea_em })
+    let italic = is_italic(b, first);
+    let ps_name = name_id_string(b, first, 6).unwrap_or_default();
+    let version = name_id_string(b, first, 5).unwrap_or_default();
+    Ok(FontMeta { family, weight, face_count: faces, hhea_em, italic, ps_name, version })
 }
 
 // ------------------------------------------------------------------ SHA-256
@@ -209,6 +255,8 @@ pub struct Entry {
     pub handle: u64,
     pub meta: FontMeta,
     pub sha256: [u8; 32],
+    /// The registered bytes (leaked for the life of the process by swr_font_register); None in unit tests.
+    pub bytes: Option<&'static [u8]>,
 }
 
 #[derive(Default)]
@@ -257,9 +305,22 @@ impl Registry {
     /// are slot + 1 in the low 32 bits with generation 1 in the high 32 bits; they never go stale.
     pub fn add(&mut self, meta: FontMeta, sha256: [u8; 32]) -> Entry {
         let handle = (1u64 << 32) | (self.entries.len() as u64 + 1);
-        let e = Entry { handle, meta, sha256 };
+        let e = Entry { handle, meta, sha256, bytes: None };
         self.entries.push(e.clone());
         e
+    }
+
+    /// Records the retained bytes of a registered font (rev 0.8 face metrics read their tables).
+    pub fn attach_bytes(&mut self, handle: u64, bytes: &'static [u8]) {
+        if let Some(e) = self.entries.iter_mut().find(|e| e.handle == handle) {
+            e.bytes = Some(bytes);
+        }
+    }
+
+    /// Every registered face of `family` (case-insensitive): a family can span several files (Regular, Bold, Italic).
+    pub fn family_entries(&self, family: &str) -> Vec<Entry> {
+        let k = key(family);
+        self.entries.iter().filter(|e| key(&e.meta.family) == k).cloned().collect()
     }
 
     /// Where `family` will be shaped from. `system_listed` asks the text system whether it lists the family.
@@ -331,6 +392,9 @@ mod tests {
         assert_eq!(m.family, "Tinos");
         assert_eq!(m.weight, 400);
         assert_eq!(m.face_count, 1);
+        assert!(!m.italic, "Tinos Regular is upright");
+        assert_eq!(m.ps_name, "Tinos-Regular");
+        assert_eq!(m.version, "Version 1.340; ttfautohint (v1.8.4.16-eb64)");
     }
 
     #[test]

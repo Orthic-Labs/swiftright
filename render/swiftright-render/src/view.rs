@@ -577,6 +577,49 @@ impl Render for RootView {
     }
 }
 
+/// Paints one shaped paragraph glyph by glyph, `track_dip` further right per glyph cluster since the start of its visual
+/// line. The positions are `WrappedLine::paint`'s own (gpui text_system/line.rs paint_line, left aligned, no decorations): the
+/// first glyph of a wrapped line sits at the origin, the line moves down by `line_height`, and the baseline is half-leading +
+/// ascent below the line top. Emoji go through `paint_emoji`, everything else through `paint_glyph`.
+fn paint_tracked(wl: &gpui::WrappedLine, origin: gpui::Point<Pixels>, line_height: Pixels, track_dip: f32, color: u32, window: &mut Window) {
+    let layout = &wl.unwrapped_layout;
+    let baseline_y = (line_height - layout.ascent - layout.descent) / 2. + layout.ascent;
+    let c: gpui::Hsla = gpui::Rgba::from(gpui::rgba(color)).into();
+    let lines = wl.wrap_boundaries.len() as f32 + 1.0;
+    let bounds = Bounds::new(origin, size(layout.width, line_height * lines));
+    window.paint_layer(bounds, |window| {
+        let mut wraps = wl.wrap_boundaries.iter().peekable();
+        let mut line_top = origin.y;
+        let mut line_start_x = px(0.0);
+        let mut ordinal = 0usize;
+        let mut prev_index: Option<usize> = None;
+        for (run_ix, run) in layout.runs.iter().enumerate() {
+            for (glyph_ix, g) in run.glyphs.iter().enumerate() {
+                if wraps.peek().map_or(false, |b| b.run_ix == run_ix && b.glyph_ix == glyph_ix) {
+                    wraps.next();
+                    line_top += line_height;
+                    line_start_x = g.position.x;
+                    ordinal = 0;
+                    prev_index = None;
+                }
+                // A cluster (several glyphs for one index) counts once.
+                if let Some(p) = prev_index {
+                    if p != g.index {
+                        ordinal += 1;
+                    }
+                }
+                prev_index = Some(g.index);
+                let o = point(origin.x + (g.position.x - line_start_x) + px(track_dip * ordinal as f32), line_top + baseline_y);
+                if g.is_emoji {
+                    let _ = window.paint_emoji(o, run.font_id, g.id, layout.font_size);
+                } else {
+                    let _ = window.paint_glyph(o, run.font_id, g.id, layout.font_size, c);
+                }
+            }
+        }
+    });
+}
+
 fn masked(window: &mut Window, clip: Option<Bounds<Pixels>>, f: impl FnOnce(&mut Window)) {
     match clip {
         Some(b) => window.with_content_mask(Some(ContentMask { bounds: b }), f),
@@ -643,9 +686,15 @@ fn paint_tree(
                             origin.x + px((*x + tx.0) * inv),
                             origin.y + px((*y + *top + tx.1) * inv),
                         );
-                        masked(window, clip, |w| {
-                            let _ = wl.paint(o, lh, TextAlign::Left, None, w, cx);
-                        });
+                        if run.ext.track_dip != 0.0 {
+                            // Rev 0.8 tracking: shape with gpui, paint every glyph at its layout position plus the tracking
+                            // (G14: Window::paint_glyph is public). Tracking 0 keeps the unchanged path above.
+                            masked(window, clip, |w| paint_tracked(wl, o, lh, run.ext.track_dip, run.ext.color, w));
+                        } else {
+                            masked(window, clip, |w| {
+                                let _ = wl.paint(o, lh, TextAlign::Left, None, w, cx);
+                            });
+                        }
                     }
                 }
                 Prim::Image { r, radius, img } => {

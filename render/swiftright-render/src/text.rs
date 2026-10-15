@@ -8,7 +8,7 @@ use std::hash::{Hash, Hasher};
 use std::sync::atomic::{AtomicU64, Ordering::SeqCst};
 use std::sync::Arc;
 
-use gpui::{font, px, FontWeight, Hsla, Rgba, SharedString, TextRun, WindowTextSystem, WrappedLine};
+use gpui::{font, px, Font, FontFallbacks, FontFeatures, FontStyle, FontWeight, Hsla, Rgba, SharedString, TextRun, WindowTextSystem, WrappedLine};
 
 use crate::abi::*;
 
@@ -33,6 +33,53 @@ pub struct Measured {
     pub scale: f32,
     pub char_count: u32,
     pub key: u64,
+    /// Rev 0.8: what the face resolver decided and what the shaper produced, for painting and `swr_text_run_faces`.
+    pub ext: MeasuredExt,
+}
+
+/// One shaped sub-run (same gpui font id) of a `Measured` text, recorded at shaping time.
+#[derive(Clone, Debug, Default)]
+pub struct RunRec {
+    pub font_id: usize,
+    /// The requested font (the face the request resolved to), not a fallback.
+    pub primary: bool,
+    /// Byte range in the run text.
+    pub utf8_start: u32,
+    pub utf8_len: u32,
+    pub glyphs: u32,
+    /// Glyphs with id 0 (.notdef).
+    pub notdef: u32,
+    pub emoji: bool,
+    pub advance_px: f32,
+    pub ascent_px: f32,
+    pub descent_px: f32,
+    /// First character of the sub-run and its glyph id, to name a fallback face.
+    pub first_char: u32,
+    pub first_gid: u32,
+}
+
+/// The face request behind a run (rev 0.8; the 0.6 path leaves the defaults).
+#[derive(Clone, Debug, Default)]
+pub struct FaceReq {
+    pub family: String,
+    /// The weight handed to gpui and the italic flag it got.
+    pub weight: f32,
+    pub italic: bool,
+    /// SIMFLAG_* the shaper applies to the primary face (predicted by the policy).
+    pub sim: u32,
+    /// System fallback families the shaper was given.
+    pub fallbacks: Vec<String>,
+}
+
+#[derive(Clone, Debug, Default)]
+pub struct MeasuredExt {
+    pub runs: Vec<RunRec>,
+    pub face: FaceReq,
+    /// tracking + kerning, DIP added after every glyph cluster; 0 paints through `WrappedLine::paint` as before.
+    pub track_dip: f32,
+    /// 0xRRGGBBAA, for glyph-positioned painting.
+    pub color: u32,
+    pub font_size: f32,
 }
 
 /// Generation-tagged slab of retained, owner-freed objects (shaped runs, images). Handle:
@@ -141,7 +188,25 @@ impl<T> Slab<T> {
     }
 }
 
+/// Rev 0.8 request extension, already validated and resolved by the face policy (src/faces.rs).
+#[derive(Clone, Debug, Default, PartialEq)]
+pub struct Ext {
+    /// The weight gpui is asked for (a named instance, or the raw request when a simulation is wanted).
+    pub weight: f32,
+    pub italic: bool,
+    /// SIMFLAG_* predicted by the policy.
+    pub sim: u32,
+    pub features: Vec<(String, u32)>,
+    /// System families only.
+    pub fallbacks: Vec<String>,
+    /// tracking_dip + kerning_dip.
+    pub track_dip: f32,
+    /// The face's baseline this far below the line top, DIP.
+    pub baseline_dip: Option<f32>,
+}
+
 pub struct Request<'a> {
+    pub ext: Option<&'a Ext>,
     pub text: &'a str,
     pub family: &'a str,
     pub locale: &'a str,
@@ -166,6 +231,17 @@ pub fn cache_key(r: &Request) -> u64 {
     r.line_height.to_bits().hash(&mut h);
     r.scale.to_bits().hash(&mut h);
     r.max_width.max(0.0).to_bits().hash(&mut h);
+    // Rev 0.8: a request with an extension is a different shaping; a 0.6 request keeps its 0.6 key.
+    if let Some(e) = r.ext {
+        1u8.hash(&mut h);
+        e.weight.to_bits().hash(&mut h);
+        e.italic.hash(&mut h);
+        e.sim.hash(&mut h);
+        e.features.hash(&mut h);
+        e.fallbacks.hash(&mut h);
+        e.track_dip.to_bits().hash(&mut h);
+        e.baseline_dip.map(f32::to_bits).hash(&mut h);
+    }
     h.finish()
 }
 
@@ -224,6 +300,42 @@ pub(crate) fn baseline_placement(line_height: f32, ascent: f32, descent: f32, ct
     (target * scale, (target - gpui) * scale)
 }
 
+/// The gpui `Font` of a request. Rev 0.8: weight, italic, OpenType features (the host sends kern=1 on every Windows run: gpui
+/// leaves kerning off by default, G15) and system fallback families go through unchanged.
+pub fn build_font(r: &Request) -> Font {
+    let mut f = font(r.family.to_string());
+    f.weight = FontWeight(r.weight as f32);
+    if let Some(e) = r.ext {
+        f.weight = FontWeight(e.weight);
+        if e.italic {
+            f.style = FontStyle::Italic;
+        }
+        if !e.features.is_empty() {
+            f.features = FontFeatures(Arc::new(e.features.clone()));
+        }
+        if !e.fallbacks.is_empty() {
+            f.fallbacks = Some(FontFallbacks::from_fonts(e.fallbacks.clone()));
+        }
+    }
+    f
+}
+
+/// Baseline placement with a host-supplied baseline (rev 0.8 `baseline_offset_dip`): no rounding, the number is the baseline.
+pub(crate) fn exact_baseline_placement(line_height: f32, ascent: f32, descent: f32, target_dip: f32, scale: f32) -> (f32, f32) {
+    let gpui = (line_height - (ascent + descent)) / 2.0 + ascent;
+    (target_dip * scale, (target_dip - gpui) * scale)
+}
+
+/// Ordinal of the glyph cluster that contains byte `b`, given the sorted unique cluster start offsets of a paragraph.
+pub(crate) fn cluster_ordinal(starts: &[usize], b: usize) -> usize {
+    starts.partition_point(|&s| s <= b).saturating_sub(1)
+}
+
+/// The id of a gpui `GlyphId` (its field is crate private; Debug prints `GlyphId(n)`).
+fn glyph_id_of(g: &gpui::ShapedGlyph) -> u32 {
+    format!("{:?}", g.id).trim_start_matches("GlyphId(").trim_end_matches(')').parse().unwrap_or(0)
+}
+
 /// Shapes `r.text` with GPUI's text system. Rev 0.6: '\n' splits paragraphs.
 pub fn shape(ts: &WindowTextSystem, r: &Request, key: u64) -> Result<Measured, Status> {
     let scale = r.scale;
@@ -232,6 +344,7 @@ pub fn shape(ts: &WindowTextSystem, r: &Request, key: u64) -> Result<Measured, S
     let chars: Vec<char> = r.text.chars().collect();
 
     if r.text.is_empty() {
+        let empty_baseline = r.ext.and_then(|e| e.baseline_dip).map_or(lh * scale * 0.8, |b| b * scale);
         return Ok(Measured {
             text: String::new(),
             wrapped: Vec::new(),
@@ -241,22 +354,23 @@ pub fn shape(ts: &WindowTextSystem, r: &Request, key: u64) -> Result<Measured, S
                 utf8_len: 0,
                 width: 0.0,
                 top: 0.0,
-                baseline: lh * scale * 0.8,
+                baseline: empty_baseline,
                 reserved: 0.0,
             }],
             width: 0.0,
             height: lh * scale,
-            first_baseline: lh * scale * 0.8,
-            last_baseline: lh * scale * 0.8,
+            first_baseline: empty_baseline,
+            last_baseline: empty_baseline,
             line_height_dip: lh,
             scale,
             char_count: 0,
             key,
+            ext: MeasuredExt { track_dip: r.ext.map_or(0.0, |e| e.track_dip), color: r.color, font_size: r.font_size, face: face_req(r), ..Default::default() },
         });
     }
 
-    let mut f = font(r.family.to_string());
-    f.weight = FontWeight(r.weight as f32);
+    let f = build_font(r);
+    let primary_font = f.clone();
     let color: Hsla = Rgba::from(gpui::rgba(r.color)).into();
     let run = TextRun {
         len: r.text.len(),
@@ -298,12 +412,44 @@ pub fn shape(ts: &WindowTextSystem, r: &Request, key: u64) -> Result<Measured, S
         has_break: bool,
     }
     let mut pend: Vec<Pending> = Vec::new();
+    let t_px = r.ext.map_or(0.0, |e| e.track_dip) * scale; // tracking + kerning, physical px per glyph cluster
+    let primary_id = ts.resolve_font(&primary_font).0;
+    let mut run_recs: Vec<RunRec> = Vec::new();
 
     for (pi, wl) in shaped.into_iter().enumerate() {
         let ptext = paragraph_texts[pi];
         let layout = wl.unwrapped_layout.clone();
         if asc_desc.is_none() && !ptext.is_empty() {
             asc_desc = Some((f32::from(layout.ascent), f32::from(layout.descent)));
+        }
+        // Rev 0.8: glyph cluster starts (tracking is added per cluster) and one record per shaped sub-run (same gpui font id).
+        let mut cluster_starts: Vec<usize> = layout.runs.iter().flat_map(|run| run.glyphs.iter().map(|g| g.index)).collect();
+        cluster_starts.sort_unstable();
+        cluster_starts.dedup();
+        for (ri, run) in layout.runs.iter().enumerate() {
+            let Some(first) = run.glyphs.first() else { continue };
+            let next_x = layout
+                .runs
+                .get(ri + 1)
+                .and_then(|n| n.glyphs.first())
+                .map_or(f32::from(layout.width), |g| f32::from(g.position.x));
+            let lo = run.glyphs.iter().map(|g| g.index).min().unwrap_or(0);
+            let hi = run.glyphs.iter().map(|g| g.index).max().unwrap_or(0);
+            let hi_len = ptext.get(hi..).and_then(|t| t.chars().next()).map_or(1, |c| c.len_utf8());
+            run_recs.push(RunRec {
+                font_id: run.font_id.0,
+                primary: run.font_id.0 == primary_id,
+                utf8_start: (para_base + lo) as u32,
+                utf8_len: (hi + hi_len - lo) as u32,
+                glyphs: run.glyphs.len() as u32,
+                notdef: run.glyphs.iter().filter(|g| glyph_id_of(g) == 0).count() as u32,
+                emoji: run.glyphs.iter().any(|g| g.is_emoji),
+                advance_px: (next_x - f32::from(first.position.x)) * scale,
+                ascent_px: f32::from(ts.ascent(run.font_id, layout.font_size)) * scale,
+                descent_px: f32::from(ts.descent(run.font_id, layout.font_size)) * scale,
+                first_char: ptext.get(first.index..).and_then(|t| t.chars().next()).map_or(0, |c| c as u32),
+                first_gid: glyph_id_of(first),
+            });
         }
 
         // GPUI convention: each wrap-boundary glyph is the first glyph of the next visual line.
@@ -327,8 +473,10 @@ pub fn shape(ts: &WindowTextSystem, r: &Request, key: u64) -> Result<Measured, S
                 line_width.push(0.0);
             }
             let xs = line_start_x[line];
-            let x0 = (f32::from(layout.x_for_index(byte)) - xs) * scale;
-            let x1 = (f32::from(layout.x_for_index(byte + len)) - xs) * scale;
+            // Tracking: every cluster before this one on the visual line moved by t_px; this cluster's cell includes its own.
+            let n_before = cluster_ordinal(&cluster_starts, byte).saturating_sub(cluster_ordinal(&cluster_starts, line_first_byte[line])) as f32;
+            let x0 = (f32::from(layout.x_for_index(byte)) - xs) * scale + t_px * n_before;
+            let x1 = (f32::from(layout.x_for_index(byte + len)) - xs) * scale + t_px * (n_before + 1.0);
             if x1 > line_width[line] {
                 line_width[line] = x1;
             }
@@ -393,9 +541,13 @@ pub fn shape(ts: &WindowTextSystem, r: &Request, key: u64) -> Result<Measured, S
                 .and_then(|reg| reg.hhea_em(r.family))
                 .map(|(a, _)| a * r.font_size)
                 .unwrap_or(ascent);
-            baseline_placement(lh, ascent, descent, ct_ascent, scale)
+            match r.ext.and_then(|e| e.baseline_dip) {
+                // A host-supplied baseline is the baseline, not rounded and not derived from the face.
+                Some(target) => exact_baseline_placement(lh, ascent, descent, target, scale),
+                None => baseline_placement(lh, ascent, descent, ct_ascent, scale),
+            }
         }
-        None => (lh * scale * 0.8, 0.0),
+        None => (r.ext.and_then(|e| e.baseline_dip).map_or(lh * scale * 0.8, |b| b * scale), 0.0),
     };
     if paint_dy != 0.0 {
         for (_, top) in wrapped.iter_mut() {
@@ -428,7 +580,21 @@ pub fn shape(ts: &WindowTextSystem, r: &Request, key: u64) -> Result<Measured, S
         scale,
         char_count: chars.len() as u32,
         key,
+        ext: MeasuredExt {
+            runs: run_recs,
+            face: face_req(r),
+            track_dip: r.ext.map_or(0.0, |e| e.track_dip),
+            color: r.color,
+            font_size: r.font_size,
+        },
     })
+}
+
+fn face_req(r: &Request) -> FaceReq {
+    match r.ext {
+        Some(e) => FaceReq { family: r.family.to_string(), weight: e.weight, italic: e.italic, sim: e.sim, fallbacks: e.fallbacks.clone() },
+        None => FaceReq { family: r.family.to_string(), weight: r.weight as f32, italic: false, sim: 0, fallbacks: Vec::new() },
+    }
 }
 
 #[cfg(test)]
