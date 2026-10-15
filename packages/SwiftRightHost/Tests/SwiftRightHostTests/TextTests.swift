@@ -74,3 +74,19 @@ final class SingleLineTextTests: XCTestCase {
             XCTAssertEqual($0 as? TextMeasureError, .sourceTooLong) }
     }
 }
+
+/// `TextMeasureError.description` once interpolated `self` and called itself: the first measurement failure overflowed the stack.
+final class TextMeasureErrorDescriptionTests: XCTestCase {
+    func testEveryCaseDescribesItselfWithoutRecursing() {
+        let all: [TextMeasureError] = [.unsupportedFont("system(13)"), .unsupportedLineLimit(3), .customFontNotBundled("Tanker"),
+            .customFontMetricsUnavailable("Tanker"), .invalidPointSize, .measurementCacheBound, .sourceTooLong, .invalidWidth,
+            .multilineWithoutBound, .noCandidateFits]
+        for e in all {
+            let d = e.description
+            XCTAssertTrue(d.hasPrefix("TextMeasure: "), d)
+            XCTAssertEqual(String(describing: e), d)
+            XCTAssertEqual("\(e)", d)
+        }
+        XCTAssertEqual(TextMeasureError.unsupportedFont("system(13)").description, "TextMeasure: unsupportedFont(system(13))")
+    }
+}

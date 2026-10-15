@@ -73,7 +73,21 @@ public enum TextMeasureError: Error, Equatable, CustomStringConvertible {
     case multilineWithoutBound
     case noCandidateFits
 
-    public var description: String { "TextMeasure: \(self)" }
+    /// Spelled out case by case: interpolating `self` here would call `description` again and overflow the stack on the first failure.
+    public var description: String {
+        switch self {
+        case .unsupportedFont(let id): return "TextMeasure: unsupportedFont(\(id))"
+        case .unsupportedLineLimit(let n): return "TextMeasure: unsupportedLineLimit(\(n))"
+        case .customFontNotBundled(let name): return "TextMeasure: customFontNotBundled(\(name))"
+        case .customFontMetricsUnavailable(let name): return "TextMeasure: customFontMetricsUnavailable(\(name))"
+        case .invalidPointSize: return "TextMeasure: invalidPointSize"
+        case .measurementCacheBound: return "TextMeasure: measurementCacheBound"
+        case .sourceTooLong: return "TextMeasure: sourceTooLong"
+        case .invalidWidth: return "TextMeasure: invalidWidth"
+        case .multilineWithoutBound: return "TextMeasure: multilineWithoutBound"
+        case .noCandidateFits: return "TextMeasure: noCandidateFits"
+        }
+    }
 }
 
 /// How one runtime text request becomes a bridge shaping request. Pure (no renderer), so every font rule is testable.
