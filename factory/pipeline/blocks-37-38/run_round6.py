@@ -6,7 +6,7 @@ import json, re, subprocess, sys, time
 from pathlib import Path
 HERE = Path(__file__).resolve().parent; PIPE = HERE.parent
 RENDERER = r"D:\Claude\swiftright\.factory-work\inputs\renderer-0.9-5c48bb72\swiftright_render.dll"   # ABI 0.9 (decisions H1, H3): slider RangeValue, pointer moves; CI run 38718233163, sha256 ce1ec655...
-LABELS = {"swiftui.slider": "37 slider", "swiftui.on-hover": "38 on-hover"}
+LABELS = {"swiftui.slider": "37 slider", "swiftui.on-hover": "38 on-hover", "swiftui.uia-walk": "39 uia-walk", "swiftui.compat": "41 compat", "../blocks-6-10/swiftui.ime-traps": "40 ime-traps"}
 
 
 def main():
@@ -26,7 +26,7 @@ def main():
         if not (HERE / group).is_dir(): continue
         for c in sorted((HERE / group).iterdir()):
             if c.name.startswith("probe"): continue
-            case = f"blocks-37-38/{group}/{c.name}"
+            case = f"blocks-37-38/{group}/{c.name}" if not group.startswith("..") else f"blocks-6-10/{group.split('/')[-1]}/{c.name}"
             if not (c / "mac-source").is_dir() or (case, n) in done or (only and only not in case): continue
             t = time.time()
             if "--recompare" in sys.argv:

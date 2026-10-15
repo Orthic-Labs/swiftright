@@ -1,0 +1,26 @@
+{
+ "semanticGate": {
+  "fields": [
+   "role",
+   "name",
+   "value",
+   "enabled"
+  ],
+  "scope": "main",
+  "roles": [
+   "textfield",
+   "text"
+  ],
+  "pixels": "report-only"
+ },
+ "steps": [
+  {
+   "op": "wait",
+   "ms": 2200
+  }
+ ],
+ "macArgs": [
+  "--steps",
+  "[{\"op\":\"click\",\"x\":150,\"y\":55},{\"op\":\"wait\",\"ms\":250},{\"op\":\"ime\",\"action\":\"commit\",\"text\":\"\\u65e5\\u672c\\u8a9e\"},{\"op\":\"key\",\"key\":\"Left\",\"mods\":[\"shift\"]},{\"op\":\"key\",\"key\":\"Left\",\"mods\":[\"shift\"]},{\"op\":\"ime\",\"action\":\"compose\",\"text\":\"\\u307b\\u3093\\u3054\"},{\"op\":\"ime\",\"action\":\"commit\",\"text\":\"\\u672c\\u8a9e\"},{\"op\":\"wait\",\"ms\":250}]"
+ ]
+}

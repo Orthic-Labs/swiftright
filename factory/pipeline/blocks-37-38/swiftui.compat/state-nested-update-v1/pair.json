@@ -1,0 +1,32 @@
+{
+ "phaseShots": [
+  "settled"
+ ],
+ "hazeTolerance": 0,
+ "steps": [
+  {
+   "op": "wait",
+   "ms": 700
+  },
+  {
+   "op": "dump",
+   "label": "settled"
+  },
+  {
+   "op": "wait",
+   "ms": 250
+  },
+  {
+   "op": "shot",
+   "label": "settled"
+  },
+  {
+   "op": "wait",
+   "ms": 150
+  }
+ ],
+ "macArgs": [
+  "--steps",
+  "[{\"op\":\"wait\",\"ms\":700},{\"op\":\"dump\",\"label\":\"settled\"},{\"op\":\"wait\",\"ms\":250},{\"op\":\"shot\",\"label\":\"settled\"},{\"op\":\"wait\",\"ms\":150}]"
+ ]
+}

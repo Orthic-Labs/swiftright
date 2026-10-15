@@ -1,0 +1,38 @@
+{
+ "semanticGate": {
+  "fields": [
+   "role",
+   "name",
+   "enabled",
+   "toggle",
+   "value",
+   "count",
+   "order"
+  ],
+  "scope": "main",
+  "pixels": "report-only",
+  "ignoreNames": []
+ },
+ "steps": [
+  {
+   "op": "wait",
+   "ms": 700
+  },
+  {
+   "op": "key",
+   "key": "Tab"
+  },
+  {
+   "op": "wait",
+   "ms": 300
+  },
+  {
+   "op": "wait",
+   "ms": 200
+  }
+ ],
+ "macArgs": [
+  "--steps",
+  "[{\"op\":\"wait\",\"ms\":700},{\"op\":\"key\",\"key\":\"Tab\"},{\"op\":\"wait\",\"ms\":300},{\"op\":\"wait\",\"ms\":200}]"
+ ]
+}

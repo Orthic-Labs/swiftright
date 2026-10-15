@@ -456,6 +456,174 @@ pixel_case("swiftui.on-hover/tap-container-v1", "Witness_bt_all", PRELUDE + "\n"
     ("start", []), ("top", [ck(100, 15)]), ("bottom", [ck(100, 45)]), ("outside", [ck(100, 70)]), ("again", [ck(10, 10)]),
 ])
 
+# =====================================================================================================================================================================
+# item 3c: a UIA walk over every delivered control kind (role, name, state flags, value; the full tree is walked with every pattern read, so a node that crashes the walk fails the run)
+# =====================================================================================================================================================================
+UIA = "Witness_uia_"
+walk_a = f"""struct {UIA}a: View {{
+    @State private var on = true
+    @State private var off = false
+    @State private var text = "Hello"
+    @State private var v = 40.0
+    var body: some View {{
+        VStack(alignment: .leading, spacing: 6) {{
+            Text("Title")
+            HStack(spacing: 8) {{ Button("Add") {{ }}; Button("Plain") {{ }}.buttonStyle(.plain); Button("Off") {{ }}.disabled(true) }}
+            Toggle("Switch", isOn: $on).toggleStyle(.switch)
+            Toggle("Check", isOn: $off)
+            TextField("Name", text: $text).frame(width: 160)
+            Slider(value: $v, in: 0...100).frame(width: 160)
+            Divider().frame(width: 160)
+            Toggle("Disabled", isOn: $on).toggleStyle(.switch).disabled(true)
+        }}.frame(width: 240, height: 200, alignment: .topLeading)
+    }}
+}}"""
+walk_b = f"""struct {UIA}b: View {{
+    @State private var sel: Int? = 1
+    var body: some View {{
+        VStack(alignment: .leading, spacing: 6) {{
+            HStack(spacing: 8) {{ Image(systemName: "star.fill").frame(width: 16, height: 16); Text("Star") }}
+            Image(systemName: "gear").frame(width: 16, height: 16).accessibilityLabel("Settings")
+            Text("Hidden").accessibilityHidden(true)
+            Slider(value: .constant(0.5), in: 0...1) {{ Text("Level") }}
+            List(selection: $sel) {{ Text("One").tag(1); Text("Two").tag(2); Text("Three").tag(3) }}.frame(width: 180, height: 90)
+        }}.frame(width: 240, height: 200, alignment: .topLeading)
+    }}
+}}"""
+for nm, tn, body in (("a", UIA + "a", walk_a), ("b", UIA + "b", walk_b)):
+    case(f"swiftui.uia-walk/controls-{nm}-v1", tn, body,
+         {"semanticGate": {"fields": ["role", "name", "enabled", "toggle", "value", "count", "order"], "scope": "main", "pixels": "report-only", "ignoreNames": []}},
+         [{"op": "wait", "ms": 700}, {"op": "key", "key": "Tab"}, {"op": "wait", "ms": 300}, {"op": "wait", "ms": 200}])
+
+
+# =====================================================================================================================================================================
+# item 3a: a first batch of OpenSwiftUI's compatibility tests (MIT, github.com/OpenSwiftUIProject/OpenSwiftUI Tests/OpenSwiftUICompatibilityTests: the test view bodies and
+# their expectations, not their source; the host there is a platform hosting controller with timers, here a Button or onAppear drives the same state change and the counts they
+# `confirm()` are drawn as one square per count so the paired pixels carry them). Not ported: EquatableView (the upstream count is 1...3 across runs, "FIXME: CI sometimes 1 / 2 / 3")
+# and animation completion (`withAnimation(_:completionCriteria:_:completion:)` is not in the runtime inventory: recorded as not delivered, decision H9).
+# =====================================================================================================================================================================
+CP = r'''#if !os(Windows)
+import Observation
+#endif
+
+@Observable final class CompatProbe {
+    var a = 0
+    var b = 0
+    var tasks = 0
+    var values: [Int] = []
+    var changes: [[Int]] = []
+}
+nonisolated(unsafe) let cp = CompatProbe()
+
+struct CountStrip: View {
+    let n: Int
+    let color: Color
+    var body: some View {
+        HStack(spacing: 2) { ForEach(0..<8, id: \.self) { i in Rectangle().fill(i < n ? color : Color(white: 0.88)).frame(width: 8, height: 8) } }
+    }
+}
+
+'''
+CO = "Witness_co_"
+compat_id = CP + r'''struct Witness_co_id: View {
+    @State private var showRed = false
+    var body: some View {
+        VStack(alignment: .leading, spacing: 8) {
+            Button("Toggle") { showRed.toggle() }.frame(width: 100, height: 28)
+            // id AFTER onAppear: a new id is a new view, so its onAppear runs again (counts 1, 2, 3)
+            HStack(spacing: 8) {
+                Color(red: showRed ? 1 : 0, green: 0, blue: showRed ? 0 : 1).frame(width: 40, height: 20).onAppear { cp.a += 1 }.id(showRed)
+                CountStrip(n: cp.a, color: Color.green)
+            }
+            // id BEFORE onAppear: the onAppear belongs to the outer view, which keeps its identity (count stays 1)
+            HStack(spacing: 8) {
+                Color(red: showRed ? 1 : 0, green: 0, blue: showRed ? 0 : 1).frame(width: 40, height: 20).id(showRed).onAppear { cp.b += 1 }
+                CountStrip(n: cp.b, color: Color.orange)
+            }
+        }.frame(width: 240, height: 200, alignment: .topLeading)
+    }
+}'''
+BTN_Y = 14
+case("swiftui.compat/id-modifier-order-v1", CO + "id", compat_id, {"phaseShots": ["start", "toggle", "toggle-again", "toggle-third"], "hazeTolerance": 0,
+     "excludeRects": [{"name": "button label glyphs (Segoe UI vs SF, decision 2/11)", "rect": [round(OX * SCALE), round(OY * SCALE), round((OX + 100) * SCALE), round((OY + 28) * SCALE)]}]},
+     sl_phases([("start", []), ("toggle", [{"op": "invoke", "name": "Toggle"}]), ("toggle-again", [{"op": "invoke", "name": "Toggle"}]), ("toggle-third", [{"op": "invoke", "name": "Toggle"}])])[0])
+
+compat_state = CP + r'''struct Witness_co_state: View {
+    @State private var value = 0
+    var body: some View {
+        let _ = cp.values.append(value)
+        VStack(alignment: .leading, spacing: 8) {
+            Color.white.frame(width: 20, height: 10)
+                .onAppear {
+                    value = 1
+                    value = 2
+                    withAnimation { value = 3; value = 4 }
+                }
+                .onChange(of: value) { oldValue, newValue in cp.changes.append([oldValue, newValue]) }
+            // the values the body saw, one bar per evaluation (width 12 pt x value + 4): upstream expects [0, 2, 4]
+            HStack(spacing: 2) { ForEach(0..<cp.values.count, id: \.self) { i in Rectangle().fill(Color.green).frame(width: CGFloat(cp.values[i]) * 12 + 4, height: 10) } }
+            // the onChange pairs, a bar for the old value above a bar for the new: upstream expects [[0, 2], [2, 4]]
+            HStack(spacing: 6) { ForEach(0..<cp.changes.count, id: \.self) { i in VStack(spacing: 2) { Rectangle().fill(Color.orange).frame(width: CGFloat(cp.changes[i][0]) * 12 + 4, height: 8); Rectangle().fill(Color.purple).frame(width: CGFloat(cp.changes[i][1]) * 12 + 4, height: 8) } } }
+        }.frame(width: 240, height: 200, alignment: .topLeading)
+    }
+}'''
+case("swiftui.compat/state-nested-update-v1", CO + "state", compat_state, {"phaseShots": ["settled"], "hazeTolerance": 0},
+     sl_phases([("settled", [])])[0])
+
+compat_task = CP + r'''struct Witness_co_task: View {
+    @State private var value = 0
+    var body: some View {
+        VStack(alignment: .leading, spacing: 8) {
+            Button("Bump") { value += 1 }.frame(width: 100, height: 28)
+            HStack(spacing: 8) {
+                Color.red.frame(width: 40, height: 20).task(id: value) { cp.tasks += 1 }
+                CountStrip(n: cp.tasks, color: Color.blue)
+            }
+        }.frame(width: 240, height: 200, alignment: .topLeading)
+    }
+}'''
+case("swiftui.compat/task-id-v1", CO + "task", compat_task, {"phaseShots": ["start", "bump", "bump-again"], "hazeTolerance": 0,
+     "excludeRects": [{"name": "button label glyphs (Segoe UI vs SF, decision 2/11)", "rect": [round(OX * SCALE), round(OY * SCALE), round((OX + 100) * SCALE), round((OY + 28) * SCALE)]}]},
+     sl_phases([("start", []), ("bump", [{"op": "invoke", "name": "Bump"}]), ("bump-again", [{"op": "invoke", "name": "Bump"}])])[0])
+
+compat_env = CP + r'''private struct CustomValueKey: EnvironmentKey { static let defaultValue = 0 }
+extension EnvironmentValues {
+    var customValue: Int { get { self[CustomValueKey.self] } set { self[CustomValueKey.self] = newValue } }
+}
+
+struct Witness_co_envsub: View {
+    @Environment(\.customValue) private var value
+    var body: some View { Rectangle().fill(Color.red).frame(width: CGFloat(value) * 20 + 10, height: 14) }
+}
+
+struct Witness_co_env: View {
+    var body: some View {
+        VStack(alignment: .leading, spacing: 8) {
+            Witness_co_envsub()                                        // the default (0): 10 pt wide
+            Witness_co_envsub().environment(\.customValue, 1)           // upstream: the subview reads 1 (30 pt)
+            Witness_co_envsub().environment(\.customValue, 2).environment(\.customValue, 3)   // the nearest write wins: 2 (50 pt)
+            VStack(spacing: 4) { Witness_co_envsub(); Witness_co_envsub().environment(\.customValue, 4) }.environment(\.customValue, 1)   // 30 pt and 90 pt
+        }.frame(width: 240, height: 200, alignment: .topLeading)
+    }
+}'''
+case("swiftui.compat/environment-key-v1", CO + "env", compat_env, {"phaseShots": ["start"], "hazeTolerance": 0}, sl_phases([("start", [])])[0])
+
+compat_any = r'''struct Witness_co_any: View {
+    @State private var swap = false
+    var body: some View {
+        VStack(alignment: .leading, spacing: 8) {
+            Button("Swap") { swap.toggle() }.frame(width: 100, height: 28)
+            // AnyView(EmptyView()) is a view with no content; AnyView of a changing concrete type
+            AnyView(EmptyView()).frame(width: 40, height: 10)
+            (swap ? AnyView(Color.green.frame(width: 40, height: 20)) : AnyView(Color.blue.frame(width: 60, height: 12)))
+            Color.gray.frame(width: 80, height: 6)
+        }.frame(width: 240, height: 200, alignment: .topLeading)
+    }
+}'''
+case("swiftui.compat/any-view-v1", CO + "any", compat_any, {"phaseShots": ["start", "swap", "swap-back"], "hazeTolerance": 0,
+     "excludeRects": [{"name": "button label glyphs (Segoe UI vs SF, decision 2/11)", "rect": [round(OX * SCALE), round(OY * SCALE), round((OX + 100) * SCALE), round((OY + 28) * SCALE)]}]},
+     sl_phases([("start", []), ("swap", [{"op": "invoke", "name": "Swap"}]), ("swap-back", [{"op": "invoke", "name": "Swap"}])])[0])
+
 def main():
     only = sys.argv[1:]
     for name, c in CASES.items():

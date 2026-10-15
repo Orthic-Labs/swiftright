@@ -277,6 +277,10 @@ struct HostPlacement {
             if let id = graph.focusedTextFieldID, let s = graph.textInput(id) { ok = s.setSelection(UTF16Range(location: (step["offset"] as? Int) ?? 0, length: (step["length"] as? Int) ?? 0)); graph.flush() } else { ok = false }
         case "compose":
             ok = focusedNode.map { input.replaceAndMark(node: $0, range: nil, text: Array(text.utf16), newSelection: nil) } ?? false
+        case "composeAt":
+            // compose over an explicit UTF-16 range [start, end) (block 15 traps: an invalid or inverted region must be refused, never crash)
+            let span = UTF16Span(start: UInt32(truncatingIfNeeded: (step["start"] as? Int) ?? 0), end: UInt32(truncatingIfNeeded: (step["end"] as? Int) ?? 0))
+            ok = focusedNode.map { input.replaceAndMark(node: $0, range: span, text: Array(text.utf16), newSelection: nil) } ?? false
         case "commit":
             ok = focusedNode.map { input.replace(node: $0, range: nil, text: Array(text.utf16)) } ?? false
         case "cancel":

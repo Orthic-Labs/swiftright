@@ -1,0 +1,93 @@
+{
+ "phaseShots": [
+  "start",
+  "bump",
+  "bump-again"
+ ],
+ "hazeTolerance": 0,
+ "excludeRects": [
+  {
+   "name": "button label glyphs (Segoe UI vs SF, decision 2/11)",
+   "rect": [
+    100,
+    50,
+    350,
+    120
+   ]
+  }
+ ],
+ "steps": [
+  {
+   "op": "wait",
+   "ms": 700
+  },
+  {
+   "op": "dump",
+   "label": "start"
+  },
+  {
+   "op": "wait",
+   "ms": 250
+  },
+  {
+   "op": "shot",
+   "label": "start"
+  },
+  {
+   "op": "wait",
+   "ms": 150
+  },
+  {
+   "op": "invoke",
+   "name": "Bump"
+  },
+  {
+   "op": "wait",
+   "ms": 450
+  },
+  {
+   "op": "dump",
+   "label": "bump"
+  },
+  {
+   "op": "wait",
+   "ms": 250
+  },
+  {
+   "op": "shot",
+   "label": "bump"
+  },
+  {
+   "op": "wait",
+   "ms": 150
+  },
+  {
+   "op": "invoke",
+   "name": "Bump"
+  },
+  {
+   "op": "wait",
+   "ms": 450
+  },
+  {
+   "op": "dump",
+   "label": "bump-again"
+  },
+  {
+   "op": "wait",
+   "ms": 250
+  },
+  {
+   "op": "shot",
+   "label": "bump-again"
+  },
+  {
+   "op": "wait",
+   "ms": 150
+  }
+ ],
+ "macArgs": [
+  "--steps",
+  "[{\"op\":\"wait\",\"ms\":700},{\"op\":\"dump\",\"label\":\"start\"},{\"op\":\"wait\",\"ms\":250},{\"op\":\"shot\",\"label\":\"start\"},{\"op\":\"wait\",\"ms\":150},{\"op\":\"invoke\",\"name\":\"Bump\"},{\"op\":\"wait\",\"ms\":450},{\"op\":\"dump\",\"label\":\"bump\"},{\"op\":\"wait\",\"ms\":250},{\"op\":\"shot\",\"label\":\"bump\"},{\"op\":\"wait\",\"ms\":150},{\"op\":\"invoke\",\"name\":\"Bump\"},{\"op\":\"wait\",\"ms\":450},{\"op\":\"dump\",\"label\":\"bump-again\"},{\"op\":\"wait\",\"ms\":250},{\"op\":\"shot\",\"label\":\"bump-again\"},{\"op\":\"wait\",\"ms\":150}]"
+ ]
+}

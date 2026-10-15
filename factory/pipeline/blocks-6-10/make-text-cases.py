@@ -159,6 +159,41 @@ struct Witness_focus_programmatic: View {
     imecase("ime-cancel-v1", [{"op": "focus", "field": 0}, {"op": "compose", "text": "ni"}, {"op": "cancel"}], [{"op": "ime", "action": "compose", "text": "ni"}, {"op": "ime", "action": "cancel"}])
     imecase("ime-recompose-v1", [{"op": "focus", "field": 0}, {"op": "compose", "text": "n"}, {"op": "compose", "text": "ni"}, {"op": "compose", "text": "\u4f60"}],
             [{"op": "ime", "action": "compose", "text": "n"}, {"op": "ime", "action": "compose", "text": "ni"}, {"op": "ime", "action": "compose", "text": "\u4f60"}])
+    # --- block 40 swiftui.ime-traps (round 6 item 3b; docs/prior-art.md section 7 failures of mature stacks). Same drivers as block 15 (in-process TextStore script on Windows,
+    # NSTextInputClient on the Mac field editor): the real Microsoft IME, TSF candidate windows and reconversion UI need hardware and are NOT exercised.
+    two = '''struct Witness_imet: View {
+    @State private var a = "ab"
+    @State private var b = "xy"
+    var body: some View {
+        VStack(alignment: .leading, spacing: 8) {
+            TextField("First", text: $a).textFieldStyle(.roundedBorder)
+            TextField("Second", text: $b).textFieldStyle(.roundedBorder)
+            Text("bound: \\(a) | \\(b)")
+        }.frame(width: 120).padding(10)
+    }
+}'''
+    def trap(name, script, mac, note):
+        wt = "Witness_imet_" + name.split("-")[1] + name.split("-")[2].replace("v1", "") if name.count("-") > 2 else "Witness_imet_" + name.split("-")[1]
+        wt = "Witness_imet_" + "".join(ch for ch in name if ch.isalnum())
+        case("swiftui.ime-traps", name, two.replace("Witness_imet", wt), wt, win_steps=[wait(2200)], script=script,
+             mac_steps=[{"op": "click", "x": 150, "y": 55}, wait(250)] + mac + [wait(250)], sem=dict(SEM, pixels="report-only"), origin=None, note=note)
+    # composition must not leak into the next field when focus moves (Flutter 191196): the first field's marked text is resolved, the second field starts clean
+    trap("imet-focuschange-v1", [{"op": "focus", "field": 0}, {"op": "compose", "text": "ni"}, {"op": "focus", "field": 1}, {"op": "compose", "text": "hao"}, {"op": "commit", "text": "\u597d"}],
+         [{"op": "ime", "action": "compose", "text": "ni"}, {"op": "click", "x": 150, "y": 135}, wait(250), {"op": "ime", "action": "compose", "text": "hao"}, {"op": "ime", "action": "commit", "text": "\u597d"}], "flutter-191196")
+    # Hangul syllables built jamo by jamo, each syllable committed: none is lost (Flutter 189491)
+    trap("imet-hangul-v1", [{"op": "focus", "field": 0}, {"op": "compose", "text": "\u314e"}, {"op": "compose", "text": "\ud558"}, {"op": "compose", "text": "\ud55c"}, {"op": "commit", "text": "\ud55c"},
+                            {"op": "compose", "text": "\u3131"}, {"op": "compose", "text": "\uadf8"}, {"op": "compose", "text": "\uae00"}, {"op": "commit", "text": "\uae00"}],
+         [{"op": "ime", "action": "compose", "text": "\u314e"}, {"op": "ime", "action": "compose", "text": "\ud558"}, {"op": "ime", "action": "compose", "text": "\ud55c"}, {"op": "ime", "action": "commit", "text": "\ud55c"},
+          {"op": "ime", "action": "compose", "text": "\u3131"}, {"op": "ime", "action": "compose", "text": "\uadf8"}, {"op": "ime", "action": "compose", "text": "\uae00"}, {"op": "ime", "action": "commit", "text": "\uae00"}], "flutter-189491")
+    # Japanese reconversion: committed text is selected and composed again, then committed (Avalonia 21249, Flutter 74547); the selection comes from shift+Left on both sides
+    trap("imet-reconvert-v1", [{"op": "focus", "field": 0}, {"op": "commit", "text": "\u65e5\u672c\u8a9e"}, {"op": "key", "name": "Left", "mods": ["shift"]}, {"op": "key", "name": "Left", "mods": ["shift"]},
+                               {"op": "compose", "text": "\u307b\u3093\u3054"}, {"op": "commit", "text": "\u672c\u8a9e"}],
+         [{"op": "ime", "action": "commit", "text": "\u65e5\u672c\u8a9e"}, {"op": "key", "key": "Left", "mods": ["shift"]}, {"op": "key", "key": "Left", "mods": ["shift"]},
+          {"op": "ime", "action": "compose", "text": "\u307b\u3093\u3054"}, {"op": "ime", "action": "commit", "text": "\u672c\u8a9e"}], "avalonia-21249, flutter-74547")
+    # an invalid composing region (Compose 1.12.0 crash): beyond the text, and inverted. Windows: the store refuses it, nothing changes, no crash. The Mac field editor is not asked (AppKit
+    # raises for a replacement range outside the text), so only the in-process side is exercised here; the Mac reference is the plain "ab" value of the unchanged field.
+    trap("imet-badregion-v1", [{"op": "focus", "field": 0}, {"op": "composeAt", "text": "zz", "start": 99, "end": 120}, {"op": "composeAt", "text": "zz", "start": 2, "end": 0}, {"op": "compose", "text": "ok"}, {"op": "cancel"}],
+         [{"op": "ime", "action": "compose", "text": "ok"}, {"op": "ime", "action": "cancel"}], "compose-1.12.0")
     return out
 
 
