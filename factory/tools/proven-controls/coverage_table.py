@@ -29,7 +29,7 @@ def build():
              "Grades: **A** delivered and independently reviewed; **B** delivered with caveats; **C** delivered, passed N=20 paired gates, not yet reviewed; **D** in progress; **E** not delivered.",
              "The grade is the best block's; read that block's caveats in `docs/proven-controls.json` before relying on an argument combination. An API not listed here is not proven.", "",
              "| API | Grade | Proven by | Cases passing |", "| --- | --- | --- | --- |"]
-    for a in sorted(best, key=lambda x: (best[x][0], x.lower())):
+    for a in sorted(best, key=lambda x: (best[x][0], x.lower(), x)):   # total order: names differing only in case must not tie (set order)
         g, blk, n = best[a]
         lines.append(f"| `{a}` | {g} | {blk} | {n} |")
     counts = {}

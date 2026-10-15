@@ -5,7 +5,7 @@ consolidation/run_all.py, so the consolidation table and docs/proven-controls.js
 import json, re, subprocess, sys, time
 from pathlib import Path
 HERE = Path(__file__).resolve().parent; PIPE = HERE.parent
-RENDERER = r"D:\Claude\swiftright\.factory-work\inputs\renderer-0.9-5c48bb72\swiftright_render.dll"   # ABI 0.9 (decisions H1, H3): slider RangeValue, pointer moves; CI run 38718233163, sha256 ce1ec655...
+RENDERER = r"D:\Claude\swiftright\.factory-work\inputs\renderer-0.9-925df9f3\swiftright_render.dll"   # ABI 0.9 at 925df9f3a: slider range (H1), pointer moves (H3), WM_MOUSELEAVE ends hover (H3, the interact `leave` step needs it); the 5c48bb72 build predates the leave fix
 LABELS = {"swiftui.slider": "37 slider", "swiftui.on-hover": "38 on-hover", "swiftui.uia-walk": "39 uia-walk", "swiftui.compat": "41 compat", "../blocks-6-10/swiftui.ime-traps": "40 ime-traps"}
 
 

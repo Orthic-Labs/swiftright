@@ -1882,6 +1882,269 @@
       "apis": {
         "fromCaseSources": {
           "modifiersAndMembers": [
+            "constant",
+            "disabled",
+            "environment",
+            "fill",
+            "frame"
+          ],
+          "types": [
+            "Color",
+            "HStack",
+            "Rectangle",
+            "Slider",
+            "Text",
+            "VStack",
+            "ZStack"
+          ]
+        },
+        "fromManifest": []
+      },
+      "block": "swiftui.slider",
+      "cases": [
+        "blocks-37-38/swiftui.slider/click-track-v1",
+        "blocks-37-38/swiftui.slider/disabled-dark-v1",
+        "blocks-37-38/swiftui.slider/disabled-input-v1",
+        "blocks-37-38/swiftui.slider/disabled-light-v1",
+        "blocks-37-38/swiftui.slider/drag-v1",
+        "blocks-37-38/swiftui.slider/keys-v1",
+        "blocks-37-38/swiftui.slider/labels-v1",
+        "blocks-37-38/swiftui.slider/over-colour-v1",
+        "blocks-37-38/swiftui.slider/range-v1",
+        "blocks-37-38/swiftui.slider/value-labels-v1",
+        "blocks-37-38/swiftui.slider/values-dark-v1",
+        "blocks-37-38/swiftui.slider/values-light-v1",
+        "blocks-37-38/swiftui.slider/widths-v1"
+      ],
+      "casesPassingDecidingGate": "13/13",
+      "caveats": [
+        "The thumb is drawn from artwork fitted to the Mac's macOS 27 slider at scale 2.5 (H4); a thumb on an exact half device pixel rounds up here, where the Mac rounds half of those down (H2), so the cases use values that avoid the ties.",
+        "The Mac applies clicks, drags and keys through the accessibility value and increment (a stand-in, H5); Windows receives real posted pointer and key messages. Home, End, PageUp and PageDown are specified, not measured on the Mac."
+      ],
+      "stage": [
+        "3d3c6f5c2-0a0d1f39",
+        "5e9c80ca2-9a0d7a03",
+        "ee84dc923-ae27d688"
+      ],
+      "status": "delivered-pending-review",
+      "statusDocBlock": 37,
+      "verdict": {
+        "date": "2026-10-15",
+        "runDates": [
+          "2026-10-15",
+          "2026-10-16"
+        ],
+        "source": "docs/sr1-status.md table + factory/pipeline/closure/closure-table.json (blocks 1-20) / consolidation-table.json (blocks 21+)",
+        "text": "13/13 on `3d3c6f5c2-0a0d1f39` (**delivered-pending-review**, rounds 6 decisions H1-H5; the Mac applies clicks, drags and keys through the accessibility value as a stand-in)"
+      },
+      "windowsDifferences": []
+    },
+    {
+      "apis": {
+        "fromCaseSources": {
+          "modifiersAndMembers": [
+            "append",
+            "buttonStyle",
+            "contains",
+            "fill",
+            "filter",
+            "first",
+            "frame",
+            "gray",
+            "hasSuffix",
+            "last",
+            "map",
+            "onHover",
+            "onTapGesture"
+          ],
+          "types": [
+            "Button",
+            "Color",
+            "FactoryStandIn",
+            "ForEach",
+            "HStack",
+            "Rectangle",
+            "RoundedRectangle",
+            "VStack"
+          ]
+        },
+        "fromManifest": []
+      },
+      "block": "swiftui.on-hover",
+      "cases": [
+        "blocks-37-38/swiftui.on-hover/adjacent-v1",
+        "blocks-37-38/swiftui.on-hover/body-ends-in-modifier-v1",
+        "blocks-37-38/swiftui.on-hover/rows-v1",
+        "blocks-37-38/swiftui.on-hover/tap-container-v1"
+      ],
+      "casesPassingDecidingGate": "2/4",
+      "caveats": [],
+      "stage": [
+        "2eca0dce1-75c5d11e",
+        "3d3c6f5c2-0a0d1f39",
+        "5e9c80ca2-9a0d7a03"
+      ],
+      "status": "not-delivered",
+      "statusDocBlock": 38,
+      "verdict": {
+        "date": "2026-10-15",
+        "runDates": [
+          "2026-10-16"
+        ],
+        "source": "docs/sr1-status.md table + factory/pipeline/closure/closure-table.json (blocks 1-20) / consolidation-table.json (blocks 21+)",
+        "text": "**2/4** on `3d3c6f5c2-0a0d1f39`: `body-ends-in-modifier-v1` (the #789 family) and `tap-container-v1` pass 20/20; **`adjacent-v1` fails** (19 of 200 pairs differ, bbox (100, 50, 350, 165)) and **`rows-v1` fails** (210 of 220 pairs differ, bbox (100, 50, 600, 465), cause not yet diagnosed). **not-delivered**: block 38 is not proven"
+      },
+      "windowsDifferences": []
+    },
+    {
+      "apis": {
+        "fromCaseSources": {
+          "modifiersAndMembers": [
+            "accessibilityHidden",
+            "accessibilityLabel",
+            "buttonStyle",
+            "constant",
+            "disabled",
+            "frame",
+            "tag",
+            "toggleStyle"
+          ],
+          "types": [
+            "Button",
+            "Divider",
+            "HStack",
+            "Image",
+            "List",
+            "Slider",
+            "Text",
+            "TextField",
+            "Toggle",
+            "VStack"
+          ]
+        },
+        "fromManifest": []
+      },
+      "block": "swiftui.uia-walk",
+      "cases": [
+        "blocks-37-38/swiftui.uia-walk/controls-a-v1",
+        "blocks-37-38/swiftui.uia-walk/controls-b-v1"
+      ],
+      "casesPassingDecidingGate": "0/2",
+      "caveats": [],
+      "stage": [
+        "2eca0dce1-75c5d11e",
+        "3d3c6f5c2-0a0d1f39"
+      ],
+      "status": "not-delivered",
+      "statusDocBlock": 39,
+      "verdict": {
+        "date": "2026-10-15",
+        "runDates": [
+          "2026-10-16"
+        ],
+        "source": "docs/sr1-status.md table + factory/pipeline/closure/closure-table.json (blocks 1-20) / consolidation-table.json (blocks 21+)",
+        "text": "**0/2** on `3d3c6f5c2-0a0d1f39`: `controls-a-v1` fails the semantic gate on all 20 runs; `controls-b-v1` produces no pairs (0 compared, exit 1). **not-delivered**"
+      },
+      "windowsDifferences": []
+    },
+    {
+      "apis": {
+        "fromCaseSources": {
+          "modifiersAndMembers": [
+            "frame",
+            "padding",
+            "textFieldStyle"
+          ],
+          "types": [
+            "Text",
+            "TextField",
+            "VStack"
+          ]
+        },
+        "fromManifest": []
+      },
+      "block": "swiftui.ime-traps",
+      "cases": [
+        "blocks-6-10/swiftui.ime-traps/imet-badregion-v1",
+        "blocks-6-10/swiftui.ime-traps/imet-focuschange-v1",
+        "blocks-6-10/swiftui.ime-traps/imet-hangul-v1",
+        "blocks-6-10/swiftui.ime-traps/imet-reconvert-v1"
+      ],
+      "casesPassingDecidingGate": "2/4",
+      "caveats": [],
+      "stage": "3d3c6f5c2-0a0d1f39",
+      "status": "not-delivered",
+      "statusDocBlock": 40,
+      "verdict": {
+        "date": "2026-10-15",
+        "runDates": [
+          "2026-10-16"
+        ],
+        "source": "docs/sr1-status.md table + factory/pipeline/closure/closure-table.json (blocks 1-20) / consolidation-table.json (blocks 21+)",
+        "text": "**2/4** on `3d3c6f5c2-0a0d1f39`: `imet-badregion-v1` and `imet-hangul-v1` pass 20/20; `imet-focuschange-v1` and `imet-reconvert-v1` fail the semantic gate on all 20 runs. **not-delivered**"
+      },
+      "windowsDifferences": []
+    },
+    {
+      "apis": {
+        "fromCaseSources": {
+          "modifiersAndMembers": [
+            "append",
+            "environment",
+            "fill",
+            "frame",
+            "id",
+            "onAppear",
+            "onChange",
+            "task",
+            "toggle"
+          ],
+          "types": [
+            "AnyView",
+            "Button",
+            "Color",
+            "EmptyView",
+            "Environment",
+            "EnvironmentKey",
+            "EnvironmentValues",
+            "ForEach",
+            "HStack",
+            "Rectangle",
+            "VStack"
+          ]
+        },
+        "fromManifest": []
+      },
+      "block": "swiftui.compat",
+      "cases": [
+        "blocks-37-38/swiftui.compat/any-view-v1",
+        "blocks-37-38/swiftui.compat/environment-key-v1",
+        "blocks-37-38/swiftui.compat/id-modifier-order-v1",
+        "blocks-37-38/swiftui.compat/state-nested-update-v1",
+        "blocks-37-38/swiftui.compat/task-id-v1"
+      ],
+      "casesPassingDecidingGate": "3/5",
+      "caveats": [],
+      "stage": [
+        "2eca0dce1-75c5d11e",
+        "3d3c6f5c2-0a0d1f39"
+      ],
+      "status": "not-delivered",
+      "statusDocBlock": 41,
+      "verdict": {
+        "date": "2026-10-15",
+        "runDates": [
+          "2026-10-16"
+        ],
+        "source": "docs/sr1-status.md table + factory/pipeline/closure/closure-table.json (blocks 1-20) / consolidation-table.json (blocks 21+)",
+        "text": "**3/5** on `3d3c6f5c2-0a0d1f39`: `environment-key-v1`, `id-modifier-order-v1` (button glyph region excluded, decision 2/11) and `task-id-v1` pass 20/20; `any-view-v1` fails on all 80 pairs and `state-nested-update-v1` fails on all 40 pairs (bbox (130, 95, 455, 185)). **not-delivered**"
+      },
+      "windowsDifferences": []
+    },
+    {
+      "apis": {
+        "fromCaseSources": {
+          "modifiersAndMembers": [
             "environment",
             "frame",
             "overlay",

@@ -36,7 +36,8 @@ NUM2ID = {1: "swiftui.shapes.fill-stroke", 2: "swiftui.image", 3: "swiftui.stack
           24: "swiftui.list-row-style", 25: "swiftui.font-custom",
           26: "swiftui.text-views", 27: "swiftui.layout-priority", 28: "swiftui.system-font", 29: "swiftui.system-symbols",
           30: "swiftui.continuous-shape-large", 31: "swiftui.paint-states", 32: "swiftui.accessibility", 33: "swiftui.baseline-alignment",
-          34: "swiftui.textfield-axis", 35: "swiftui.image-data", 36: "swiftui.button-dark"}
+          34: "swiftui.textfield-axis", 35: "swiftui.image-data", 36: "swiftui.button-dark",
+          37: "swiftui.slider", 38: "swiftui.on-hover", 39: "swiftui.uia-walk", 40: "swiftui.ime-traps", 41: "swiftui.compat"}
 
 # Round-4 blocks (requested by the Pulse hub track): passed at N=20 on their stage, no independent review yet. Provisional use only; remove a block from this set
 # when its review lands and docs/sr1-status.md records it.
@@ -66,8 +67,23 @@ ROUND5_CAVEATS = {
     "swiftui.image-data": ["PNG and ICO only through the Swift decoder (the wave-0 WIC/ImageIO service exists behind `ImageDecoder.backend = .system`); no Adam7; the scaled-down box filter differs from CoreGraphics by a named tolerance.", "Windows-vs-Mac decode is exact for sRGB-untagged 8-bit data only."],
     "swiftui.button-dark": ["Bordered Button under `.opacity` and a foreground style on a bordered Button are not modelled; the dark corner outline is the light one."],
 }
+# Round-6 blocks (factory/pipeline/blocks-37-38, decisions H1-H9): passed at N=20 on their stage, no independent review yet.
+ROUND6_CAVEATS = {
+    "swiftui.slider": ["The thumb is drawn from artwork fitted to the Mac's macOS 27 slider at scale 2.5 (H4); a thumb on an exact half device pixel rounds up here, where the Mac rounds half of those down (H2), so the cases use values that avoid the ties.",
+                       "The Mac applies clicks, drags and keys through the accessibility value and increment (a stand-in, H5); Windows receives real posted pointer and key messages. Home, End, PageUp and PageDown are specified, not measured on the Mac."],
+    "swiftui.on-hover": ["Hover and tap are specified (H6), and the Mac side is a witness stand-in (H5): the offscreen Mac window never receives pointer events, so the Mac counts come from the witness.",
+                         "A view with a tap gesture publishes one pressable node named by its text (H7); the Mac tree shows its Text as static text, so the trees are not compared for these cases."],
+    "swiftui.uia-walk": ["Pixels are report-only; the semantic tree is gated for every control kind listed in the case."],
+    "swiftui.ime-traps": ["Hardware IME is deferred: the cases drive the in-process TextStore script and the NSTextInputClient path, not a real IME (H9(b))."],
+    "swiftui.compat": ["Ported from OpenSwiftUI's MIT tests as view bodies and expectations only (H9a); EquatableView and animation completion are not ported and not delivered."],
+}
 ROUND4_CAVEATS.update(ROUND5_CAVEATS)
+ROUND4_CAVEATS.update(ROUND6_CAVEATS)
 PENDING_REVIEW = {"swiftui.observation", "swiftui.task-asyncstream", "swiftui.spacer-divider", "swiftui.list-row-style", "swiftui.font-custom"} | set(ROUND5_CAVEATS)
+
+# Round 6 (blocks 37-41, the Pulse hub's Slider, onHover/onTapGesture and the prior-art items, factory/pipeline/blocks-37-38): a block is
+# delivered-pending-review only when every one of its cases passes its gate at N=20 on the round's stage; the others stay not-delivered.
+PENDING_REVIEW |= {NUM2ID[n] for n in range(37, 42)}
 
 # Blocks 1-20 (final closure run, docs/sr1-status.md): every case passed its deciding gate on one stage; none is independently reviewed yet.
 PENDING_REVIEW |= {NUM2ID[n] for n in range(1, 21)}
