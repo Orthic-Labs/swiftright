@@ -309,18 +309,22 @@
         "blocks-6-10/swiftui.toggle/switch-on-v1"
       ],
       "casesPassingDecidingGate": "6/6",
-      "caveats": [],
+      "caveats": [
+        "Reopened 16 October (F2 rebaseline, decision G70): fresh N=3 captures on stage fc4a39a89 fail by 1 px at tolerance 0 (textorigin first-ink or control-label x); the earlier passing captures are not on disk. Failing cases: toggle switch-labelled-on-v1, checkbox-labelled-on-v1."
+      ],
       "review": "oracle 2026-10-15",
       "stage": "6459bb8cd-d243b1c9",
-      "status": "delivered",
+      "status": "not-delivered",
       "statusDocBlock": 7,
+      "statusFromSources": "delivered",
+      "statusReason": "Reopened 16 October (F2 rebaseline, decision G70): fresh N=3 captures on stage fc4a39a89 fail by 1 px at tolerance 0 (textorigin first-ink or control-label x); the earlier passing captures are not on disk. Failing cases: toggle switch-labelled-on-v1, checkbox-labelled-on-v1.",
       "verdict": {
         "date": "2026-10-15",
         "runDates": [
           "2026-10-15"
         ],
         "source": "docs/sr1-status.md table + factory/pipeline/closure/closure-table.json (blocks 1-20) / consolidation-table.json (blocks 21+)",
-        "text": "6/6 jobs pass their deciding gates, 18 runs at N=3, on `6459bb8cd-d243b1c9` (**delivered**; Mac scale guard OK on every run)"
+        "text": "6/6 jobs pass their deciding gates, 18 runs at N=3, on `6459bb8cd-d243b1c9` (**not-delivered**; labelled switch and checkbox fail, F2 rebaseline (3cb231a98, stage fc4a39a89, decision G70): fresh N=3 captures fail by 1 px; the earlier passing captures are not on disk. **not-delivered** until these pass again)"
       },
       "windowsDifferences": []
     },
@@ -648,18 +652,22 @@
         "blocks-6-10/swiftui.textfield/submit-v1"
       ],
       "casesPassingDecidingGate": "7/7",
-      "caveats": [],
+      "caveats": [
+        "Reopened 16 October (F2 rebaseline, decision G70): fresh N=3 captures on stage fc4a39a89 fail by 1 px at tolerance 0 (textorigin first-ink or control-label x); the earlier passing captures are not on disk. Failing cases: textfield automatic-style-v1, caret-empty-v1, filled-truncated-v1, placeholder-v1, plain-v1, prompt-v1."
+      ],
       "review": "oracle 2026-10-15",
       "stage": "6459bb8cd-d243b1c9",
-      "status": "delivered",
+      "status": "not-delivered",
       "statusDocBlock": 13,
+      "statusFromSources": "delivered",
+      "statusReason": "Reopened 16 October (F2 rebaseline, decision G70): fresh N=3 captures on stage fc4a39a89 fail by 1 px at tolerance 0 (textorigin first-ink or control-label x); the earlier passing captures are not on disk. Failing cases: textfield automatic-style-v1, caret-empty-v1, filled-truncated-v1, placeholder-v1, plain-v1, prompt-v1.",
       "verdict": {
         "date": "2026-10-15",
         "runDates": [
           "2026-10-15"
         ],
         "source": "docs/sr1-status.md table + factory/pipeline/closure/closure-table.json (blocks 1-20) / consolidation-table.json (blocks 21+)",
-        "text": "7/7 jobs pass their deciding gates, 140 runs at N=20, on `6459bb8cd-d243b1c9` (**delivered**; Mac scale guard OK on every run)"
+        "text": "7/7 jobs pass their deciding gates, 140 runs at N=20, on `6459bb8cd-d243b1c9` (**not-delivered**; six cases fail, F2 rebaseline (3cb231a98, stage fc4a39a89, decision G70): fresh N=3 captures fail by 1 px; the earlier passing captures are not on disk. **not-delivered** until these pass again)"
       },
       "windowsDifferences": []
     },
@@ -1047,18 +1055,22 @@
         "blocks-17-20/swiftui.color-scheme/text-dark-v1"
       ],
       "casesPassingDecidingGate": "12/12",
-      "caveats": [],
+      "caveats": [
+        "Reopened 16 October (F2 rebaseline, decision G70): fresh N=3 captures on stage fc4a39a89 fail by 1 px at tolerance 0 (textorigin first-ink or control-label x); the earlier passing captures are not on disk. Failing cases: color-scheme text-dark-v1."
+      ],
       "review": "oracle 2026-10-15",
       "stage": "6459bb8cd-d243b1c9",
-      "status": "delivered",
+      "status": "not-delivered",
       "statusDocBlock": 20,
+      "statusFromSources": "delivered",
+      "statusReason": "Reopened 16 October (F2 rebaseline, decision G70): fresh N=3 captures on stage fc4a39a89 fail by 1 px at tolerance 0 (textorigin first-ink or control-label x); the earlier passing captures are not on disk. Failing cases: color-scheme text-dark-v1.",
       "verdict": {
         "date": "2026-10-15",
         "runDates": [
           "2026-10-15"
         ],
         "source": "docs/sr1-status.md table + factory/pipeline/closure/closure-table.json (blocks 1-20) / consolidation-table.json (blocks 21+)",
-        "text": "12/12 jobs pass their deciding gates, 240 runs at N=20, on `6459bb8cd-d243b1c9` (**delivered**; Mac scale guard OK on every run)"
+        "text": "12/12 jobs pass their deciding gates, 240 runs at N=20, on `6459bb8cd-d243b1c9` (**not-delivered**; text-dark fails, F2 rebaseline (3cb231a98, stage fc4a39a89, decision G70): fresh N=3 captures fail by 1 px; the earlier passing captures are not on disk. **not-delivered** until these pass again)"
       },
       "windowsDifferences": []
     },
@@ -1771,19 +1783,22 @@
       ],
       "casesPassingDecidingGate": "2/2",
       "caveats": [
+        "Reopened 16 October (F2 rebaseline, decision G70): fresh N=3 captures on stage fc4a39a89 fail by 1 px at tolerance 0 (textorigin first-ink or control-label x); the earlier passing captures are not on disk. Failing cases: textfield-axis plain-v1.",
         "`axis: .vertical` is the single-line field: no growth over several lines and no wrapping (decision F9)."
       ],
       "review": "oracle 2026-10-15",
       "stage": "9080b3139-e685b237",
-      "status": "delivered-with-caveats",
+      "status": "not-delivered",
       "statusDocBlock": 34,
+      "statusFromSources": "delivered-with-caveats",
+      "statusReason": "Reopened 16 October (F2 rebaseline, decision G70): fresh N=3 captures on stage fc4a39a89 fail by 1 px at tolerance 0 (textorigin first-ink or control-label x); the earlier passing captures are not on disk. Failing cases: textfield-axis plain-v1.",
       "verdict": {
         "date": "2026-10-15",
         "runDates": [
           "2026-10-15"
         ],
         "source": "docs/sr1-status.md table + factory/pipeline/closure/closure-table.json (blocks 1-20) / consolidation-table.json (blocks 21+)",
-        "text": "40/40 on `9080b3139-e685b237` (**delivered-with-caveats**; `axis: .vertical` is the single-line field, decision F9)"
+        "text": "40/40 on `9080b3139-e685b237` (**not-delivered**; plain fails, F2 rebaseline (3cb231a98, stage fc4a39a89, decision G70): fresh N=3 captures fail by 1 px; the earlier passing captures are not on disk. **not-delivered** until these pass again; `axis: .vertical` is the single-line field, decision F9)"
       },
       "windowsDifferences": []
     },
@@ -2043,7 +2058,8 @@
       "caveats": [],
       "stage": [
         "2eca0dce1-75c5d11e",
-        "3d3c6f5c2-0a0d1f39"
+        "3d3c6f5c2-0a0d1f39",
+        "9bb0901ce-1b3bcd83"
       ],
       "status": "not-delivered",
       "statusDocBlock": 39,
@@ -2234,7 +2250,7 @@
       "caveats": [
         "Oracle is SwiftUI's ImageRenderer at scale 2.5 (decision G50, provisional), not the on-screen NSHostingView path; on-screen confirmation is pending the Mac being free.",
         "Fitted filters per level (G52): none nearest; low and default bilinear; medium bilinear after 2x2 box halvings; high the same halvings with a Mitchell-Netravali cubic (B 0.72, C 0.12), an extra beyond the five named filters.",
-        "ratios-checker PASSES only after decision G60: the 3x medium 1 px checker cell has a per-channel mean residual of 0.88 (max 1 level) that the filter does not model exactly; the tolerance (mean 0.9, from the calibration including 1 px checker pages) absorbs it. This is a named limit, not a fit.",
+        "ratios-checker PASSES only after decision G73: the 3x medium 1 px checker cell has a per-channel mean residual of 0.88 (max 1 level) that the filter does not model exactly; the tolerance (mean 0.9, from the calibration including 1 px checker pages) absorbs it. The residual is 0.878, which passes only because it rounds to 0.9. This is a named limit, not a fit.",
         "Odd-sized sources reduced by more than 2:1 are not reproduced (G53). `.high` at 1:1 smooths on the Mac, so 1:1 is exact only for none, low, medium and default.",
         "A named Mac-side corner artifact (macCornerSpill, G55) is allowed one pixel above the rect with antialiased fractional origins; it is counted and reported.",
         "The transient live-resize path (isLiveResizing) is unit-tested only; there is no settled-capture gate for it. aspectRatio is an Image modifier only."
@@ -2248,7 +2264,7 @@
           "2026-10-15"
         ],
         "source": "docs/sr1-status.md I2 row + factory/pipeline/blocks-w1-i2/evidence",
-        "text": "10/10 gate cases pass at N=20 (**delivered-pending-review**; decisions G50-G60); checker pass rests on the calibrated tolerance widened by G60"
+        "text": "10/10 gate cases pass at N=20 (**delivered-pending-review**; decisions G50-G59 and G73); checker pass rests on the calibrated tolerance widened by G73"
       },
       "windowsDifferences": []
     }

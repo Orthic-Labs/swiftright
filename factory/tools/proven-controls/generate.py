@@ -108,8 +108,16 @@ REVIEWED["swiftui.slider"] = {"review": "oracle 2026-10-16 (block 37: PASS-WITH-
 PENDING_REVIEW -= set(REVIEWED)
 
 # No hand-set status: the closure run reran blocks 13-15 (text-origin fix, decision 12) and every block 1-20 is derived from its cases (delivered-pending-review).
+# Reopened 16 October on the F2 rebaseline (3cb231a98, factory/pipeline/blocks-w1-f2/rebaseline-final-verdicts.json, stage fc4a39a89, decision G70): these blocks
+# had passed on captures that are no longer on disk, and fresh N=3 captures fail them by 1 px (textorigin first ink or control label x at tolerance 0).
+NOT_DELIVERED_1PX = ("Reopened 16 October (F2 rebaseline, decision G70): fresh N=3 captures on stage fc4a39a89 fail by 1 px at tolerance 0 "
+                     "(textorigin first-ink or control-label x); the earlier passing captures are not on disk. Failing cases: ")
 OVERRIDES = {
     "swiftui.system-font": {"status": "not-delivered", "statusReason": "Reopened 16 October (decision G71): the blanket tolerance was replaced by per-row tolerances, which fail the independent block 28 gate on the final renderer (styles-large passes; 8 of 9 cases fail; unfitted sizes and weights, undersampled rows)."},
+    "swiftui.textfield": {"status": "not-delivered", "statusReason": NOT_DELIVERED_1PX + "textfield automatic-style-v1, caret-empty-v1, filled-truncated-v1, placeholder-v1, plain-v1, prompt-v1."},
+    "swiftui.toggle": {"status": "not-delivered", "statusReason": NOT_DELIVERED_1PX + "toggle switch-labelled-on-v1, checkbox-labelled-on-v1."},
+    "swiftui.color-scheme": {"status": "not-delivered", "statusReason": NOT_DELIVERED_1PX + "color-scheme text-dark-v1."},
+    "swiftui.textfield-axis": {"status": "not-delivered", "statusReason": NOT_DELIVERED_1PX + "textfield-axis plain-v1."},
 }
 WIN_KEYS = re.compile(r"Windows|Segoe|Sandbox|hardware|narrower|focus ring|TSF|\bIME\b|UIA|Mac side|Mac's|\bSF\b|scale 2\.5|light only|measured in light", re.I)
 NOT_SWIFTUI = set("""Int Int8 Int16 Int32 Int64 UInt Double Float CGFloat CGSize CGPoint CGRect String Bool Array Dictionary Set

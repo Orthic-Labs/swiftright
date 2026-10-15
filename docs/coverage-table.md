@@ -22,7 +22,6 @@ The grade is the best block's; read that block's caveats in `docs/proven-control
 | `AnyTransition.opacity` | A | swiftui.opacity-transition | 7/7 |
 | `append` | A | swiftui.binding | 4/4 |
 | `at` | A | swiftui.animation | 7/7 |
-| `BackgroundStyle` | A | swiftui.color-scheme | 12/12 |
 | `Binding` | A | swiftui.binding | 4/4 |
 | `Binding.animation` | A | swiftui.binding | 4/4 |
 | `Binding.constant` | A | swiftui.binding | 4/4 |
@@ -43,12 +42,6 @@ The grade is the best block's; read that block's caveats in `docs/proven-control
 | `buttonStyle` | A | swiftui.button | 19/19 |
 | `Circle` | A | swiftui.stack-overlay | 1/1 |
 | `Color` | A | swiftui.shapes.fill-stroke | 5/5 |
-| `Color.accent` | A | swiftui.color-scheme | 12/12 |
-| `Color.primary` | A | swiftui.color-scheme | 12/12 |
-| `Color.secondary` | A | swiftui.color-scheme | 12/12 |
-| `ColorScheme` | A | swiftui.color-scheme | 12/12 |
-| `ColorScheme.dark` | A | swiftui.color-scheme | 12/12 |
-| `ColorScheme.light` | A | swiftui.color-scheme | 12/12 |
 | `confirmationDialog` | A | swiftui.alert | 9/9 |
 | `constant` | A | swiftui.binding | 4/4 |
 | `custom` | A | swiftui.text.bundled-font | 1/1 |
@@ -60,9 +53,7 @@ The grade is the best block's; read that block's caveats in `docs/proven-control
 | `easeIn` | A | swiftui.binding | 4/4 |
 | `easeInOut` | A | swiftui.animation | 7/7 |
 | `EdgeInsets` | A | swiftui.padding-frame | 5/5 |
-| `Environment` | A | swiftui.color-scheme | 12/12 |
 | `environment` | A | swiftui.shapes.fill-stroke | 5/5 |
-| `EnvironmentValues.colorScheme` | A | swiftui.color-scheme | 12/12 |
 | `FactoryAnim` | A | swiftui.animation | 7/7 |
 | `FactoryClock` | A | swiftui.animation | 7/7 |
 | `fill` | A | swiftui.stack-overlay | 1/1 |
@@ -89,7 +80,7 @@ The grade is the best block's; read that block's caveats in `docs/proven-control
 | `keyboardShortcut` | A | swiftui.button | 19/19 |
 | `KeyboardShortcut.cancelAction` | A | swiftui.button | 19/19 |
 | `KeyboardShortcut.defaultAction` | A | swiftui.button | 19/19 |
-| `labelsHidden` | A | swiftui.toggle | 6/6 |
+| `labelsHidden` | A | swiftui.disabled | 9/9 |
 | `Layout` | A | swiftui.custom-layout | 2/2 |
 | `Layout.Cache` | A | swiftui.custom-layout | 2/2 |
 | `Layout.makeCache` | A | swiftui.custom-layout | 2/2 |
@@ -113,7 +104,6 @@ The grade is the best block's; read that block's caveats in `docs/proven-control
 | `onDelete` | A | swiftui.list | 13/13 |
 | `onMove` | A | swiftui.list | 13/13 |
 | `onPreferenceChange` | A | swiftui.preference-key | 2/2 |
-| `onSubmit` | A | swiftui.textfield | 7/7 |
 | `opacity` | A | swiftui.opacity-transition | 7/7 |
 | `overlay` | A | swiftui.stack-overlay | 1/1 |
 | `padding` | A | swiftui.padding-frame | 5/5 |
@@ -125,7 +115,6 @@ The grade is the best block's; read that block's caveats in `docs/proven-control
 | `PreferenceKey.ExpressibleByNilLiteral` | A | swiftui.preference-key | 2/2 |
 | `PreferenceKey.reduce` | A | swiftui.preference-key | 2/2 |
 | `PreferenceKey.Value` | A | swiftui.preference-key | 2/2 |
-| `preferredColorScheme` | A | swiftui.color-scheme | 12/12 |
 | `PrimitiveButtonStyle.A0` | A | swiftui.button | 19/19 |
 | `ProposedViewSize` | A | swiftui.custom-layout | 2/2 |
 | `Rectangle` | A | swiftui.shapes.fill-stroke | 5/5 |
@@ -142,25 +131,18 @@ The grade is the best block's; read that block's caveats in `docs/proven-control
 | `Shape` | A | swiftui.shapes.fill-stroke | 5/5 |
 | `Shape.fill` | A | swiftui.shapes.fill-stroke | 5/5 |
 | `Shape.stroke` | A | swiftui.shapes.fill-stroke | 5/5 |
-| `ShapeStyle.A0` | A | swiftui.color-scheme | 12/12 |
 | `State` | A | swiftui.binding | 4/4 |
 | `State.projectedValue` | A | swiftui.binding | 4/4 |
 | `stroke` | A | swiftui.shapes.fill-stroke | 5/5 |
-| `SubmitTriggers` | A | swiftui.textfield | 7/7 |
-| `SubmitTriggers.text` | A | swiftui.textfield | 7/7 |
 | `SwiftRightRuntime` | A | swiftui.custom-layout | 2/2 |
 | `tag` | A | swiftui.list | 13/13 |
 | `Text` | A | swiftui.stack-overlay | 1/1 |
 | `Text.font` | A | swiftui.text.bundled-font | 1/1 |
 | `Text.verbatim` | A | swiftui.text.bundled-font | 1/1 |
-| `TextField` | A | swiftui.textfield | 7/7 |
-| `TextFieldStyle` | A | swiftui.textfield | 7/7 |
-| `textFieldStyle` | A | swiftui.textfield | 7/7 |
-| `TextFieldStyle.A0` | A | swiftui.textfield | 7/7 |
-| `Toggle` | A | swiftui.toggle | 6/6 |
-| `Toggle.A4` | A | swiftui.toggle | 6/6 |
-| `Toggle.isOn` | A | swiftui.toggle | 6/6 |
-| `toggleStyle` | A | swiftui.toggle | 6/6 |
+| `TextField` | A | swiftui.focus-state | 4/4 |
+| `textFieldStyle` | A | swiftui.focus-state | 4/4 |
+| `Toggle` | A | swiftui.disabled | 9/9 |
+| `toggleStyle` | A | swiftui.disabled | 9/9 |
 | `Transaction` | A | swiftui.binding | 4/4 |
 | `transaction` | A | swiftui.binding | 4/4 |
 | `Transaction.disablesAnimations` | A | swiftui.animation | 7/7 |
@@ -174,12 +156,9 @@ The grade is the best block's; read that block's caveats in `docs/proven-control
 | `View.frame` | A | swiftui.padding-frame | 5/5 |
 | `View.keyboardShortcut` | A | swiftui.button | 19/19 |
 | `View.listStyle` | A | swiftui.list | 13/13 |
-| `View.onSubmit` | A | swiftui.textfield | 7/7 |
 | `View.opacity` | A | swiftui.opacity-transition | 7/7 |
 | `View.overlay` | A | swiftui.stack-overlay | 1/1 |
 | `View.padding` | A | swiftui.padding-frame | 5/5 |
-| `View.preferredColorScheme` | A | swiftui.color-scheme | 12/12 |
-| `View.textFieldStyle` | A | swiftui.textfield | 7/7 |
 | `View.transition` | A | swiftui.opacity-transition | 7/7 |
 | `VStack` | A | swiftui.scroll-view | 4/4 |
 | `withAnimation.` | A | swiftui.animation | 7/7 |
@@ -224,13 +203,12 @@ The grade is the best block's; read that block's caveats in `docs/proven-control
 | `Spacer` | B | swiftui.spacer-divider | 15/15 |
 | `Spacer.minLength` | B | swiftui.spacer-divider | 15/15 |
 | `stream` | B | swiftui.task-asyncstream | 6/6 |
-| `system` | B | swiftui.system-font | 9/9 |
+| `system` | B | swiftui.system-symbols | 9/9 |
 | `task` | B | swiftui.task-asyncstream | 6/6 |
 | `textCase` | B | swiftui.font-custom | 6/6 |
 | `toggle` | B | swiftui.observation | 6/6 |
 | `View.task` | B | swiftui.task-asyncstream | 6/6 |
 | `ViewModifier` | B | swiftui.text-views | 8/8 |
-| `weight` | B | swiftui.system-font | 9/9 |
 | `yield` | B | swiftui.task-asyncstream | 6/6 |
 | `antialiased` | C | foundations.image-layout | 10/10 at N=20 (200 pairs); negative controls: 3 of 4 fail on both cases, straight-alpha fails on the alpha case |
 | `aspectRatio` | C | foundations.image-layout | 10/10 at N=20 (200 pairs); negative controls: 3 of 4 fail on both cases, straight-alpha fails on the alpha case |
@@ -238,10 +216,19 @@ The grade is the best block's; read that block's caveats in `docs/proven-control
 | `interpolation` | C | foundations.image-layout | 10/10 at N=20 (200 pairs); negative controls: 3 of 4 fail on both cases, straight-alpha fails on the alpha case |
 | `layoutPriority` | C | swiftui.layout-priority | 6/6 |
 | `scaledToFill` | C | foundations.image-layout | 10/10 at N=20 (200 pairs); negative controls: 3 of 4 fail on both cases, straight-alpha fails on the alpha case |
+| `BackgroundStyle` | E | swiftui.color-scheme | 12/12 |
+| `Color.accent` | E | swiftui.color-scheme | 12/12 |
+| `Color.primary` | E | swiftui.color-scheme | 12/12 |
+| `Color.secondary` | E | swiftui.color-scheme | 12/12 |
+| `ColorScheme` | E | swiftui.color-scheme | 12/12 |
+| `ColorScheme.dark` | E | swiftui.color-scheme | 12/12 |
+| `ColorScheme.light` | E | swiftui.color-scheme | 12/12 |
 | `contains` | E | swiftui.on-hover | 2/4 |
 | `EmptyView` | E | swiftui.compat | 3/5 |
+| `Environment` | E | swiftui.color-scheme | 12/12 |
 | `EnvironmentKey` | E | swiftui.compat | 3/5 |
 | `EnvironmentValues` | E | swiftui.compat | 3/5 |
+| `EnvironmentValues.colorScheme` | E | swiftui.color-scheme | 12/12 |
 | `FactoryStandIn` | E | swiftui.on-hover | 2/4 |
 | `filter` | E | swiftui.on-hover | 2/4 |
 | `first` | E | swiftui.on-hover | 2/4 |
@@ -249,6 +236,19 @@ The grade is the best block's; read that block's caveats in `docs/proven-control
 | `last` | E | swiftui.on-hover | 2/4 |
 | `onChange` | E | swiftui.compat | 3/5 |
 | `onHover` | E | swiftui.on-hover | 2/4 |
+| `onSubmit` | E | swiftui.textfield | 7/7 |
 | `onTapGesture` | E | swiftui.on-hover | 2/4 |
+| `preferredColorScheme` | E | swiftui.color-scheme | 12/12 |
+| `ShapeStyle.A0` | E | swiftui.color-scheme | 12/12 |
+| `SubmitTriggers` | E | swiftui.textfield | 7/7 |
+| `SubmitTriggers.text` | E | swiftui.textfield | 7/7 |
+| `TextFieldStyle` | E | swiftui.textfield | 7/7 |
+| `TextFieldStyle.A0` | E | swiftui.textfield | 7/7 |
+| `Toggle.A4` | E | swiftui.toggle | 6/6 |
+| `Toggle.isOn` | E | swiftui.toggle | 6/6 |
+| `View.onSubmit` | E | swiftui.textfield | 7/7 |
+| `View.preferredColorScheme` | E | swiftui.color-scheme | 12/12 |
+| `View.textFieldStyle` | E | swiftui.textfield | 7/7 |
+| `weight` | E | swiftui.system-font | 9/9 |
 
-Totals: A: 181, B: 44, C: 6, E: 12 (243 APIs).
+Totals: A: 160, B: 43, C: 6, E: 34 (243 APIs).

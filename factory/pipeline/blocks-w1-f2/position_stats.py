@@ -7,7 +7,7 @@ A row is keyed by its canonical font (design, size, weight, suffix): "Font.syste
 Method (the I2 method, split by capture set, not by hand):
   FIT set   = F2 captures (stage fc4a39a89, renderer 0.8, N=20), runs 1-10 of every F2 case. Tolerance per key = ceil(max |delta|) per metric (dc to the next half).
   GATE set  = F2 runs 11-20 (the same cases, the other runs) and the block 28 captures on the same stage and renderer (9 cases, 3 runs each: other witnesses, other text).
-              A key with no fitted tolerance is UNFITTED and its rows are not gated by any tolerance (reported, never given a blanket value).
+              A key with no fitted tolerance is UNFITTED: its rows are gated at 0 px (fail closed, pair_textcolour_report.py:62), never given a blanket value.
 Nothing is tuned on the GATE set. The case-level blanket tolerances are removed from pair.json; each region carries its own "position" tolerances.
 
   position_stats.py --write        fit on the FIT set; write per-region tolerances into every F2 and block 28 pair.json (regions of unfitted keys get none)
@@ -160,7 +160,7 @@ def main():
                 if tol is None: unfit += 1; continue
                 reg["position"] = dict(tol, reason=f"per-row fit (decision G71): {c['keys'][j]}, FIT set F2 runs 1-10 (stage {STAGE}, renderer 0.8)")
             base["reason"] = ("per-row tolerances (decision G71): each region carries its own tolerances fitted on the F2 FIT set (runs 1-10, stage " + STAGE + ", renderer 0.8); "
-                              "unfitted rows carry none and are not gated by a tolerance. The case-level tolerances were removed (they were one blanket set fitted on the judged runs).")
+                              "unfitted rows carry none and are gated at 0 px (fail closed, pair_textcolour_report.py:62). The case-level tolerances were removed (they were one blanket set fitted on the judged runs).")
             tg["position"] = dict(base, align=tg.get("position", {}).get("align", "leading"))
             c["path"].write_text(json.dumps(pj, indent=1) + "\n")
             print(f"{name}: {len(tg['regions']) - unfit} regions with per-row tolerances, {unfit} unfitted")
