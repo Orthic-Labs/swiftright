@@ -27,7 +27,7 @@ DONE = ".lane-done"                         # marker a finished build lane carri
 
 HOME = Path.home()
 INTERNAL = HOME / "Library/Caches/SwiftRightFactory"
-MOVED = Path("/Volumes/D/swiftright-cache-moved")
+MOVED = Path(os.environ.get("SWIFTRIGHT_CACHE_MOVED") or "/Volumes/D/swiftright-cache-moved")   # CI runners set SWIFTRIGHT_CACHE_MOVED (no /Volumes/D there)
 _override = os.environ.get("SWIFTRIGHT_CACHE_ROOT")
 if _override:
     BUILD_ROOT, RUN_ROOT = Path(_override) / "build", Path(_override) / "run"

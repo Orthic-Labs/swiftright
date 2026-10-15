@@ -1,0 +1,244 @@
+# Factory pair sweeps on GitHub runners: long batches (many cases, N runs) sharded one case per job, so
+# cases run in parallel across runners. Hand-written (public repository: builds run only in Actions; docs/rules/public-ci.md).
+# Per case: a Mac job (xcode-27) captures the Mac reference at the pinned scale 2.5 (decision C12, ScalePin.swift) and a Windows job
+# (windows-2025) builds the Windows side against the pinned renderer and captures in the runner's interactive session.
+# A compare job applies pair.py's gates (pixel, semantic, scale guard) and writes results.jsonl beside the runs/ tree.
+# Fetch a run locally with: python3 factory/tools/ci_fetch.py <run-id>   (downloads only; builds nothing).
+# No secrets, no signing, no publication. Read-only repository permissions; actions: read lets the Windows job fetch the pinned renderer artifact.
+name: factory-pairs
+
+on:
+  workflow_dispatch:
+    inputs:
+      cases:
+        description: "Case directories, repository-relative (whitespace or comma separated). Empty: use cases_file."
+        required: false
+        default: ""
+        type: string
+      cases_file:
+        description: "Repository-relative list file, one case per line (# comments allowed). Used when cases is empty."
+        required: false
+        default: ""
+        type: string
+      runs:
+        description: "Runs per case (1-60)"
+        required: true
+        default: "3"
+        type: string
+      max_parallel:
+        description: "Concurrent case jobs per platform"
+        required: false
+        default: "6"
+        type: string
+      renderer_label:
+        description: "Pinned renderer label (factory/tools/ci_pair.py RENDERERS)"
+        required: false
+        default: "renderer-0.9-925df9f3"
+        type: string
+
+permissions:
+  contents: read
+  actions: read
+
+concurrency:
+  group: factory-pairs-${{ github.run_id }}
+  cancel-in-progress: false
+
+jobs:
+  plan:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 10
+    outputs:
+      matrix: ${{ steps.plan.outputs.matrix }}
+      count: ${{ steps.plan.outputs.count }}
+      ts: ${{ steps.plan.outputs.ts }}
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          sparse-checkout: |
+            factory/pipeline
+            factory/tools
+          sparse-checkout-cone-mode: true
+          fetch-depth: 1
+      - id: plan
+        env:
+          CASES: ${{ inputs.cases }}
+          CASES_FILE: ${{ inputs.cases_file }}
+          RUNS: ${{ inputs.runs }}
+        run: python3 factory/tools/ci_pair.py plan
+
+  mac:
+    needs: [plan]
+    if: ${{ needs.plan.outputs.count != '0' }}
+    strategy:
+      fail-fast: false
+      max-parallel: ${{ fromJSON(inputs.max_parallel) }}
+      matrix: ${{ fromJSON(needs.plan.outputs.matrix) }}
+    runs-on: xcode-27
+    timeout-minutes: 240
+    env:
+      SWIFTRIGHT_CACHE_ROOT: ${{ runner.temp }}/swiftright-cache
+      SWIFTRIGHT_CACHE_MOVED: ${{ runner.temp }}/swiftright-cache-moved
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          sparse-checkout: |
+            factory/pipeline
+            factory/tools
+          sparse-checkout-cone-mode: true
+          fetch-depth: 1
+      - uses: actions/setup-python@a26af69be951a213d495a4c3e4e4022e16d87065 # v5
+        with:
+          python-version: "3.12"
+      - run: python3 -m pip install --disable-pip-version-check pillow==11.3.0
+      - name: Record runner
+        run: |
+          sw_vers
+          xcrun swiftc --version
+      - name: Mac capture (pinned scale 2.5)
+        env:
+          CASE: ${{ matrix.case }}
+          RUNS: ${{ inputs.runs }}
+          TS: ${{ needs.plan.outputs.ts }}
+        run: |
+          set -euo pipefail
+          python3 factory/tools/ci_pair.py mac --case "$CASE" --runs "$RUNS" --ts "$TS" --root "$RUNNER_TEMP/pairs"
+      - uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4
+        if: always()
+        with:
+          name: mac-${{ matrix.idx }}
+          path: ${{ runner.temp }}/pairs
+          retention-days: 30
+          if-no-files-found: ignore
+
+  windows:
+    needs: [plan]
+    if: ${{ needs.plan.outputs.count != '0' }}
+    strategy:
+      fail-fast: false
+      max-parallel: ${{ fromJSON(inputs.max_parallel) }}
+      matrix: ${{ fromJSON(needs.plan.outputs.matrix) }}
+    runs-on: windows-2025
+    timeout-minutes: 240
+    defaults:
+      run:
+        shell: bash
+    steps:
+      - name: Enable Windows long paths
+        run: git config --system core.longpaths true
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          sparse-checkout: |
+            packages
+            probes/sr0-s/fresh-runtime
+            factory/pipeline
+            factory/tools
+          sparse-checkout-cone-mode: true
+          fetch-depth: 1
+      - uses: actions/setup-python@a26af69be951a213d495a4c3e4e4022e16d87065 # v5
+        with:
+          python-version: "3.12"
+      - run: python -m pip install --disable-pip-version-check pillow==11.3.0
+      # Swift for Windows: the toolchain the factory uses (6.4.0). Unverified on a hosted runner until the first run.
+      - uses: compnerd/gha-setup-swift@581df1ffa3f3e786ddc73ff37364ee231f9644c5 # v0.3.0
+        with:
+          branch: swift-6.4-release
+          tag: 6.4-RELEASE
+      - name: Toolchain
+        run: swift --version
+      - name: Stage the product tree (git archive HEAD)
+        id: stage
+        run: |
+          set -euo pipefail
+          work="$RUNNER_TEMP/ci-work"
+          mkdir -p "$work"
+          { read -r name; read -r dest; } < <(python factory/tools/ci_pair.py stage --work "$work")
+          echo "name=$name" >> "$GITHUB_OUTPUT"
+          echo "dest=$dest" >> "$GITHUB_OUTPUT"
+          echo "work=$work" >> "$GITHUB_OUTPUT"
+      - name: Pinned renderer (render-windows artifact)
+        id: renderer
+        env:
+          GH_TOKEN: ${{ github.token }}
+          LABEL: ${{ inputs.renderer_label }}
+        run: |
+          set -euo pipefail
+          dll="$(python factory/tools/ci_pair.py renderer --label "$LABEL" --dest "$RUNNER_TEMP/renderer" | tail -n 1)"
+          echo "dll=$dll" >> "$GITHUB_OUTPUT"
+      - name: Windows build and interactive capture
+        env:
+          CASE: ${{ matrix.case }}
+          RUNS: ${{ inputs.runs }}
+          TS: ${{ needs.plan.outputs.ts }}
+          LABEL: ${{ inputs.renderer_label }}
+          STAGE_DIR: ${{ steps.stage.outputs.dest }}
+          WORK: ${{ steps.stage.outputs.work }}
+          DLL: ${{ steps.renderer.outputs.dll }}
+        run: |
+          set -euo pipefail
+          python factory/tools/ci_pair.py windows --case "$CASE" --runs "$RUNS" --ts "$TS" --root "$RUNNER_TEMP/pairs" \
+            --work "$WORK" --stage-dir "$STAGE_DIR" --renderer "$DLL" --renderer-label "$LABEL"
+      - uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4
+        if: always()
+        with:
+          name: windows-${{ matrix.idx }}
+          path: ${{ runner.temp }}/pairs
+          retention-days: 30
+          if-no-files-found: ignore
+
+  compare:
+    needs: [plan, mac, windows]
+    if: ${{ always() && needs.plan.result == 'success' }}
+    runs-on: ubuntu-24.04
+    timeout-minutes: 60
+    env:
+      MATRIX: ${{ needs.plan.outputs.matrix }}
+      RUNS: ${{ inputs.runs }}
+      TS: ${{ needs.plan.outputs.ts }}
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          sparse-checkout: |
+            factory/pipeline
+            factory/tools
+          sparse-checkout-cone-mode: true
+          fetch-depth: 1
+      - uses: actions/setup-python@a26af69be951a213d495a4c3e4e4022e16d87065 # v5
+        with:
+          python-version: "3.12"
+      - run: python3 -m pip install --disable-pip-version-check pillow==11.3.0
+      - uses: actions/download-artifact@d3f86a106a0bac45b974a628896c90dbdf5c8093 # v4
+        continue-on-error: true
+        with:
+          pattern: mac-*
+          merge-multiple: true
+          path: ${{ runner.temp }}/pairs
+      - uses: actions/download-artifact@d3f86a106a0bac45b974a628896c90dbdf5c8093 # v4
+        continue-on-error: true
+        with:
+          pattern: windows-*
+          merge-multiple: true
+          path: ${{ runner.temp }}/pairs
+      - name: Compare every case (pair.py gates)
+        run: |
+          set -uo pipefail
+          pairs="$RUNNER_TEMP/pairs"
+          mkdir -p "$pairs"
+          : > "$pairs/results.jsonl"
+          fail=0
+          while IFS= read -r case; do
+            if python3 factory/tools/ci_pair.py compare --case "$case" --runs "$RUNS" --ts "$TS" --root "$pairs" --results "$pairs/results.jsonl"; then
+              :
+            else
+              fail=1
+            fi
+          done < <(echo "$MATRIX" | python3 -c 'import json,sys; [print(c["case"]) for c in json.load(sys.stdin)["include"]]')
+          cat "$pairs/results.jsonl"
+          exit $fail
+      - uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4
+        if: always()
+        with:
+          name: compare-results
+          path: ${{ runner.temp }}/pairs
+          retention-days: 30
+          if-no-files-found: ignore

@@ -1,0 +1,84 @@
+# Unit tests in Actions (public repository: compile and test only on GitHub runners; docs/rules/public-ci.md).
+# swift test for packages/SwiftRightHost on macOS (xcode-27) and Windows (windows-2025), and the factory Python unittest suites.
+# Hand-written, separate from the right-git managed ci.yml. Read-only permissions; no secrets, no signing, no publication.
+name: swift-host-tests
+
+on:
+  push:
+    branches: [master]
+    paths:
+      - "packages/SwiftRightHost/**"
+      - "packages/SwiftRightBridge/**"
+      - "factory/tools/**"
+      - "factory/tests/**"
+      - ".github/workflows/swift-host-tests.yml"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: swift-host-tests-${{ github.ref }}
+  cancel-in-progress: false
+
+jobs:
+  swift-mac:
+    runs-on: xcode-27
+    timeout-minutes: 120
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          sparse-checkout: |
+            packages
+            probes/sr0-s/fresh-runtime
+          sparse-checkout-cone-mode: true
+          fetch-depth: 1
+      - name: Toolchain
+        run: swift --version
+      - name: swift test (SwiftRightHost, macOS)
+        run: swift test --package-path packages/SwiftRightHost
+
+  swift-windows:
+    runs-on: windows-2025
+    timeout-minutes: 120
+    defaults:
+      run:
+        shell: bash
+    steps:
+      - name: Enable Windows long paths
+        run: git config --system core.longpaths true
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          sparse-checkout: |
+            packages
+            probes/sr0-s/fresh-runtime
+          sparse-checkout-cone-mode: true
+          fetch-depth: 1
+      - uses: compnerd/gha-setup-swift@581df1ffa3f3e786ddc73ff37364ee231f9644c5 # v0.3.0
+        with:
+          branch: swift-6.4-release
+          tag: 6.4-RELEASE
+      - name: Toolchain
+        run: swift --version
+      - name: swift test (SwiftRightHost, Windows)
+        run: swift test --package-path packages/SwiftRightHost
+
+  python-tests:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 30
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          sparse-checkout: |
+            factory/tools
+            factory/tests
+          sparse-checkout-cone-mode: true
+          fetch-depth: 1
+      - uses: actions/setup-python@a26af69be951a213d495a4c3e4e4022e16d87065 # v5
+        with:
+          python-version: "3.12"
+      - run: python3 -m pip install --disable-pip-version-check pillow==11.3.0
+      - name: factory/tools unit tests
+        run: python3 -m unittest discover -s factory/tools -p 'test_*.py' -v
+      - name: factory/tests
+        run: python3 -m unittest factory.tests.test_canonical_json -v
