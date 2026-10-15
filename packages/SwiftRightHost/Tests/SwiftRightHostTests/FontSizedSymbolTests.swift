@@ -10,7 +10,8 @@ final class FontSizedSymbolTests: XCTestCase {
         "exclamationmark.triangle.fill", "externaldrive", "folder", "folder.badge.plus", "gauge.with.dots.needle.33percent", "gearshape",
         "hourglass", "info.circle", "info.circle.fill", "internaldrive", "magnifyingglass", "message", "minus", "minus.square.fill", "network",
         "pencil", "person.crop.circle", "plus", "sidebar.left", "sparkles", "square.dashed", "square.grid.2x2", "square.grid.3x3", "switch.2",
-        "trash", "tray", "xmark", "xmark.circle", "xmark.circle.fill", "xmark.octagon.fill", "app.dashed"]
+        "trash", "tray", "xmark", "xmark.circle", "xmark.circle.fill", "xmark.octagon.fill", "app.dashed",
+        "paintpalette", "bell", "checkmark.circle", "checkmark.circle.fill", "checkmark.square.fill", "link", "waveform.path.ecg", "cpu", "memorychip", "terminal", "textbox"]
 
     private func registry(scale: Double) throws -> SystemImageRegistry {
         let r = try SystemImageRegistry(images: FakeImages(), rasterizer: FakeGlyphs(), log: { _ in })
@@ -20,7 +21,7 @@ final class FontSizedSymbolTests: XCTestCase {
 
     func testEveryHubSymbolIsInTheTableWithAProviderGlyphAndFontSizedLayout() throws {
         let t = try SystemImageTable.standard()
-        XCTAssertEqual(Self.hubSymbols.count, 45)
+        XCTAssertEqual(Self.hubSymbols.count, 56)
         XCTAssertLessThanOrEqual(t.symbols.count, Int(t.providerPolicy.maxSymbols))
         for name in Self.hubSymbols {
             let s = try XCTUnwrap(t.symbols[name], name)
@@ -65,10 +66,10 @@ final class FontSizedSymbolTests: XCTestCase {
         let r = try registry(scale: 2.5)
         let ref = ImageReference.system("gearshape")
         let at13 = try r.raster(for: ref, tint: 0x112233ff, width: 40, height: 40, fontSize: 13)
-        XCTAssertEqual(at13.macInkBox, "2,2,36,36"); XCTAssertEqual(at13.halfCoverageBox, "2,2,36,36"); XCTAssertEqual(at13.deviceInkMatched, "true")
+        XCTAssertEqual(at13.macInkBox, "3,4,36,37"); XCTAssertEqual(at13.halfCoverageBox, "3,4,36,37"); XCTAssertEqual(at13.deviceInkMatched, "true")
         XCTAssertEqual(at13.inkBoxSource, "measured-font-size")
         let at28 = try r.raster(for: ref, tint: 0x112233ff, width: 86, height: 86, fontSize: 28)
-        XCTAssertEqual(at28.macInkBox, "6,6,79,79"); XCTAssertEqual(at28.deviceInkMatched, "true")
+        XCTAssertEqual(at28.macInkBox, "6,7,79,80"); XCTAssertEqual(at28.deviceInkMatched, "true")
         // The tint is the glyph colour.
         XCTAssertEqual(Array(at13.rgba[(20 * 48 + 20) * 4 ..< (20 * 48 + 20) * 4 + 3]), [0x11, 0x22, 0x33])
         // A frame one pixel off the measured one (edge snapping) uses the measured ink fractions, not an override.
@@ -108,5 +109,47 @@ final class FontSizedSymbolTests: XCTestCase {
         XCTAssertThrowsError(try emit(Image(systemName: "chevron.right").resizable().scaledToFit().frame(width: 10, height: 10))) {
             XCTAssertTrue("\($0)".contains("no measured resizable layout"))    // only star.fill has the resizable fit data
         }
+    }
+}
+
+@MainActor
+final class FontSizedSymbolRasterSweepTests: XCTestCase {
+    /// Every hub symbol rasterises at the measured sizes at both scale classes without throwing; the produced half-coverage box is the Mac box.
+    func testEverySymbolRasterisesAtTheBodyAndExplicitSizes() throws {
+        for scale in [1.0, 2.5] {
+            let reg = try SystemImageRegistry(images: FakeImages(), rasterizer: FakeGlyphs(), log: { _ in })
+            reg.scale = scale
+            for name in FontSizedSymbolTests.hubSymbols {
+                for size in [13.0, 28.0] {
+                    let ref = ImageReference.system(name)
+                    let frame = try XCTUnwrap(reg.fontIntrinsicSize(for: ref, font: Font.system(size: CGFloat(size), weight: .regular)), name)
+                    let r: SystemImageRaster
+                    do { r = try reg.raster(for: ref, tint: 0x0088ffff, width: UInt32((Double(frame.width) * scale).rounded()), height: UInt32((Double(frame.height) * scale).rounded()), fontSize: size) }
+                    catch { XCTFail("\(name) \(size) @\(scale): \(error) frame \(frame) ink \(String(describing: reg.table.symbols[name]?.layout?.fontLayout(pointSize: size, scale: scale)?.measured))"); continue }
+                    XCTAssertEqual(r.deviceInkMatched, "true", "\(name) \(size) @\(scale): \(r.macInkBox) vs \(r.halfCoverageBox)")
+                }
+            }
+        }
+    }
+}
+
+@MainActor
+final class SystemImageErrorTextTests: XCTestCase {
+    func testErrorDescriptionDoesNotRecurse() {
+        XCTAssertEqual("\(SystemImageError.emptyCoverage)", "SystemImage: emptyCoverage")
+        XCTAssertEqual("\(SystemImageError.providerEntryMissing("x"))", "SystemImage: providerEntryMissing(x)")
+    }
+}
+
+@MainActor
+final class FontSizedSymbolInsetTests: XCTestCase {
+    func testCanvasMarginGrowsForInkThatOverflowsTheFrameByMoreThanTheDefault() throws {
+        let reg = try SystemImageRegistry(images: FakeImages(), rasterizer: FakeGlyphs(), log: { _ in })
+        reg.scale = 2.5
+        let ref = ImageReference.system("folder.badge.plus")
+        // measured: 28 pt at scale 2.5 is a 96 x 81 px frame with ink to x = 101 (5 px past the frame)
+        XCTAssertEqual(reg.canvasInset(for: ref, fontSize: 28, width: 96, height: 81), 6)
+        XCTAssertEqual(reg.canvasInset(for: ref, fontSize: 13, width: 40, height: 33), Float(SystemImageRegistry.overflowInset))
+        XCTAssertNoThrow(try reg.raster(for: ref, tint: 1, width: 96, height: 81, fontSize: 28))
     }
 }

@@ -17,7 +17,23 @@ public enum SystemImageError: Error, Equatable, CustomStringConvertible {
     case glyphEncodingInvalid(String)
     case targetSizeInvalid
 
-    public var description: String { "SystemImage: \(self)" }
+    public var description: String {
+        switch self {
+        case .invalidDescriptor: return "SystemImage: invalidDescriptor"
+        case .invalidTarget: return "SystemImage: invalidTarget"
+        case .deviceContextUnavailable: return "SystemImage: deviceContextUnavailable"
+        case .fontUnavailable: return "SystemImage: fontUnavailable"
+        case .fontSelectionFailed: return "SystemImage: fontSelectionFailed"
+        case .metricsUnavailable: return "SystemImage: metricsUnavailable"
+        case .glyphUnavailable: return "SystemImage: glyphUnavailable"
+        case .glyphBufferInvalid: return "SystemImage: glyphBufferInvalid"
+        case .emptyCoverage: return "SystemImage: emptyCoverage"
+        case .rasterCompositionFailed: return "SystemImage: rasterCompositionFailed"
+        case .providerEntryMissing(let name): return "SystemImage: providerEntryMissing(\(name))"
+        case .glyphEncodingInvalid(let glyph): return "SystemImage: glyphEncodingInvalid(\(glyph))"
+        case .targetSizeInvalid: return "SystemImage: targetSizeInvalid"
+        }
+    }
 }
 
 /// Native grayscale coverage of one glyph plus the selected face and cell metrics.
@@ -197,10 +213,20 @@ public final class SystemImageRegistry {
         (try? entry(for: reference))?.symbol.foregroundSemantic ?? "black"
     }
 
-    /// Canvas margin (px) around the frame for a symbol with layout metrics.
-    public func canvasInset(for reference: ImageReference) -> Float {
+    /// Canvas margin (px) around the frame for a symbol with layout metrics. A font-sized symbol at a large point size can overflow its frame by more
+    /// than `overflowInset` (folder.badge.plus at 28 pt, scale 2.5: 5 px): the margin then grows to keep every ink pixel (bounded at 16).
+    public func canvasInset(for reference: ImageReference, fontSize: Double? = nil, width: UInt32 = 0, height: UInt32 = 0) -> Float {
         guard let (_, symbol) = try? entry(for: reference), symbol.layout != nil else { return 0 }
-        return Float(Self.overflowInset)
+        return Float(inset(symbol, fontSize: fontSize, width: width, height: height))
+    }
+
+    private func inset(_ symbol: SystemImageTable.Symbol, fontSize: Double?, width: UInt32, height: UInt32) -> UInt32 {
+        guard let layout = symbol.layout else { return 0 }
+        guard let fontSize, width > 0, height > 0, let box = layout.fontDeviceInkBox(pointSize: fontSize, scale: scale, widthPx: width, heightPx: height)?.box else {
+            return Self.overflowInset
+        }
+        let over = max(0, -box.left, -box.top, box.right - Int(width), box.bottom - Int(height))
+        return min(16, max(Self.overflowInset, UInt32(over + 1)))
     }
 
     /// Rasterises the symbol for a frame of `width` x `height` px (pure of the renderer; used by `handle` and by tests).
@@ -221,7 +247,7 @@ public final class SystemImageRegistry {
         } else {
             layout = symbol.layout?.metrics(scale: scale)
         }
-        let inset = symbol.layout == nil ? UInt32(0) : Self.overflowInset
+        let inset = symbol.layout == nil ? UInt32(0) : inset(symbol, fontSize: fontSize, width: width, height: height)
         let oversample = symbol.layout?.sourceOversample ?? 1
         // With Mac layout metrics the glyph is rasterised oversampled and area-resampled onto the symbol's ink rect.
         let canvasW = width + 2 * inset, canvasH = height + 2 * inset

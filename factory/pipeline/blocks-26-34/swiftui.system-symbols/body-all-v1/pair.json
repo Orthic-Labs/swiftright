@@ -1,0 +1,905 @@
+{
+ "semanticGate": {
+  "fields": [
+   "role",
+   "count",
+   "order"
+  ],
+  "scope": "main",
+  "phases": [
+   "start",
+   ""
+  ],
+  "pixels": "report-only"
+ },
+ "phaseShots": [
+  "start"
+ ],
+ "excludeRects": [
+  {
+   "name": "symbol glyph shapes (Segoe Fluent Icons vs SF Symbols, sr1-decisions #3); gated by symbolGate",
+   "rect": [
+    100,
+    50,
+    700,
+    550
+   ]
+  }
+ ],
+ "symbolGate": {
+  "assets": "packages/SwiftRightHost/Assets/SystemImageAssets.json",
+  "scale": 2.5,
+  "outsetPx": 6,
+  "tolerancePx": 0,
+  "tintTolerance": 3,
+  "note": "",
+  "cells": [
+   {
+    "name": "arrow.clockwise",
+    "size": 13,
+    "cellPx": [
+     100,
+     50,
+     160,
+     110
+    ],
+    "tint": [
+     0,
+     136,
+     255
+    ]
+   },
+   {
+    "name": "arrow.down",
+    "size": 13,
+    "cellPx": [
+     160,
+     50,
+     220,
+     110
+    ],
+    "tint": [
+     255,
+     56,
+     60
+    ]
+   },
+   {
+    "name": "arrow.up",
+    "size": 13,
+    "cellPx": [
+     220,
+     50,
+     280,
+     110
+    ],
+    "tint": [
+     52,
+     199,
+     89
+    ]
+   },
+   {
+    "name": "arrow.up.arrow.down",
+    "size": 13,
+    "cellPx": [
+     280,
+     50,
+     340,
+     110
+    ],
+    "tint": [
+     255,
+     141,
+     40
+    ]
+   },
+   {
+    "name": "checkmark",
+    "size": 13,
+    "cellPx": [
+     340,
+     50,
+     400,
+     110
+    ],
+    "tint": [
+     203,
+     48,
+     224
+    ]
+   },
+   {
+    "name": "checkmark.shield",
+    "size": 13,
+    "cellPx": [
+     400,
+     50,
+     460,
+     110
+    ],
+    "tint": [
+     142,
+     142,
+     147
+    ]
+   },
+   {
+    "name": "chevron.down",
+    "size": 13,
+    "cellPx": [
+     460,
+     50,
+     520,
+     110
+    ],
+    "tint": [
+     0,
+     136,
+     255
+    ]
+   },
+   {
+    "name": "chevron.right",
+    "size": 13,
+    "cellPx": [
+     520,
+     50,
+     580,
+     110
+    ],
+    "tint": [
+     255,
+     56,
+     60
+    ]
+   },
+   {
+    "name": "chevron.up",
+    "size": 13,
+    "cellPx": [
+     580,
+     50,
+     640,
+     110
+    ],
+    "tint": [
+     52,
+     199,
+     89
+    ]
+   },
+   {
+    "name": "circle.lefthalf.filled",
+    "size": 13,
+    "cellPx": [
+     640,
+     50,
+     700,
+     110
+    ],
+    "tint": [
+     255,
+     141,
+     40
+    ]
+   },
+   {
+    "name": "clock.arrow.circlepath",
+    "size": 13,
+    "cellPx": [
+     100,
+     110,
+     160,
+     170
+    ],
+    "tint": [
+     255,
+     56,
+     60
+    ]
+   },
+   {
+    "name": "doc",
+    "size": 13,
+    "cellPx": [
+     160,
+     110,
+     220,
+     170
+    ],
+    "tint": [
+     52,
+     199,
+     89
+    ]
+   },
+   {
+    "name": "doc.on.doc",
+    "size": 13,
+    "cellPx": [
+     220,
+     110,
+     280,
+     170
+    ],
+    "tint": [
+     255,
+     141,
+     40
+    ]
+   },
+   {
+    "name": "exclamationmark.triangle",
+    "size": 13,
+    "cellPx": [
+     280,
+     110,
+     340,
+     170
+    ],
+    "tint": [
+     203,
+     48,
+     224
+    ]
+   },
+   {
+    "name": "exclamationmark.triangle.fill",
+    "size": 13,
+    "cellPx": [
+     340,
+     110,
+     400,
+     170
+    ],
+    "tint": [
+     142,
+     142,
+     147
+    ]
+   },
+   {
+    "name": "externaldrive",
+    "size": 13,
+    "cellPx": [
+     400,
+     110,
+     460,
+     170
+    ],
+    "tint": [
+     0,
+     136,
+     255
+    ]
+   },
+   {
+    "name": "folder",
+    "size": 13,
+    "cellPx": [
+     460,
+     110,
+     520,
+     170
+    ],
+    "tint": [
+     255,
+     56,
+     60
+    ]
+   },
+   {
+    "name": "folder.badge.plus",
+    "size": 13,
+    "cellPx": [
+     520,
+     110,
+     580,
+     170
+    ],
+    "tint": [
+     52,
+     199,
+     89
+    ]
+   },
+   {
+    "name": "gauge.with.dots.needle.33percent",
+    "size": 13,
+    "cellPx": [
+     580,
+     110,
+     640,
+     170
+    ],
+    "tint": [
+     255,
+     141,
+     40
+    ]
+   },
+   {
+    "name": "gearshape",
+    "size": 13,
+    "cellPx": [
+     640,
+     110,
+     700,
+     170
+    ],
+    "tint": [
+     203,
+     48,
+     224
+    ]
+   },
+   {
+    "name": "hourglass",
+    "size": 13,
+    "cellPx": [
+     100,
+     170,
+     160,
+     230
+    ],
+    "tint": [
+     52,
+     199,
+     89
+    ]
+   },
+   {
+    "name": "info.circle",
+    "size": 13,
+    "cellPx": [
+     160,
+     170,
+     220,
+     230
+    ],
+    "tint": [
+     255,
+     141,
+     40
+    ]
+   },
+   {
+    "name": "info.circle.fill",
+    "size": 13,
+    "cellPx": [
+     220,
+     170,
+     280,
+     230
+    ],
+    "tint": [
+     203,
+     48,
+     224
+    ]
+   },
+   {
+    "name": "internaldrive",
+    "size": 13,
+    "cellPx": [
+     280,
+     170,
+     340,
+     230
+    ],
+    "tint": [
+     142,
+     142,
+     147
+    ]
+   },
+   {
+    "name": "magnifyingglass",
+    "size": 13,
+    "cellPx": [
+     340,
+     170,
+     400,
+     230
+    ],
+    "tint": [
+     0,
+     136,
+     255
+    ]
+   },
+   {
+    "name": "message",
+    "size": 13,
+    "cellPx": [
+     400,
+     170,
+     460,
+     230
+    ],
+    "tint": [
+     255,
+     56,
+     60
+    ]
+   },
+   {
+    "name": "minus",
+    "size": 13,
+    "cellPx": [
+     460,
+     170,
+     520,
+     230
+    ],
+    "tint": [
+     52,
+     199,
+     89
+    ]
+   },
+   {
+    "name": "minus.square.fill",
+    "size": 13,
+    "cellPx": [
+     520,
+     170,
+     580,
+     230
+    ],
+    "tint": [
+     255,
+     141,
+     40
+    ]
+   },
+   {
+    "name": "network",
+    "size": 13,
+    "cellPx": [
+     580,
+     170,
+     640,
+     230
+    ],
+    "tint": [
+     203,
+     48,
+     224
+    ]
+   },
+   {
+    "name": "pencil",
+    "size": 13,
+    "cellPx": [
+     640,
+     170,
+     700,
+     230
+    ],
+    "tint": [
+     142,
+     142,
+     147
+    ]
+   },
+   {
+    "name": "person.crop.circle",
+    "size": 13,
+    "cellPx": [
+     100,
+     230,
+     160,
+     290
+    ],
+    "tint": [
+     255,
+     141,
+     40
+    ]
+   },
+   {
+    "name": "plus",
+    "size": 13,
+    "cellPx": [
+     160,
+     230,
+     220,
+     290
+    ],
+    "tint": [
+     203,
+     48,
+     224
+    ]
+   },
+   {
+    "name": "sidebar.left",
+    "size": 13,
+    "cellPx": [
+     220,
+     230,
+     280,
+     290
+    ],
+    "tint": [
+     142,
+     142,
+     147
+    ]
+   },
+   {
+    "name": "sparkles",
+    "size": 13,
+    "cellPx": [
+     280,
+     230,
+     340,
+     290
+    ],
+    "tint": [
+     0,
+     136,
+     255
+    ]
+   },
+   {
+    "name": "square.dashed",
+    "size": 13,
+    "cellPx": [
+     340,
+     230,
+     400,
+     290
+    ],
+    "tint": [
+     255,
+     56,
+     60
+    ]
+   },
+   {
+    "name": "square.grid.2x2",
+    "size": 13,
+    "cellPx": [
+     400,
+     230,
+     460,
+     290
+    ],
+    "tint": [
+     52,
+     199,
+     89
+    ]
+   },
+   {
+    "name": "square.grid.3x3",
+    "size": 13,
+    "cellPx": [
+     460,
+     230,
+     520,
+     290
+    ],
+    "tint": [
+     255,
+     141,
+     40
+    ]
+   },
+   {
+    "name": "switch.2",
+    "size": 13,
+    "cellPx": [
+     520,
+     230,
+     580,
+     290
+    ],
+    "tint": [
+     203,
+     48,
+     224
+    ]
+   },
+   {
+    "name": "trash",
+    "size": 13,
+    "cellPx": [
+     580,
+     230,
+     640,
+     290
+    ],
+    "tint": [
+     142,
+     142,
+     147
+    ]
+   },
+   {
+    "name": "tray",
+    "size": 13,
+    "cellPx": [
+     640,
+     230,
+     700,
+     290
+    ],
+    "tint": [
+     0,
+     136,
+     255
+    ]
+   },
+   {
+    "name": "xmark",
+    "size": 13,
+    "cellPx": [
+     100,
+     290,
+     160,
+     350
+    ],
+    "tint": [
+     203,
+     48,
+     224
+    ]
+   },
+   {
+    "name": "xmark.circle",
+    "size": 13,
+    "cellPx": [
+     160,
+     290,
+     220,
+     350
+    ],
+    "tint": [
+     142,
+     142,
+     147
+    ]
+   },
+   {
+    "name": "xmark.circle.fill",
+    "size": 13,
+    "cellPx": [
+     220,
+     290,
+     280,
+     350
+    ],
+    "tint": [
+     0,
+     136,
+     255
+    ]
+   },
+   {
+    "name": "xmark.octagon.fill",
+    "size": 13,
+    "cellPx": [
+     280,
+     290,
+     340,
+     350
+    ],
+    "tint": [
+     255,
+     56,
+     60
+    ]
+   },
+   {
+    "name": "app.dashed",
+    "size": 13,
+    "cellPx": [
+     340,
+     290,
+     400,
+     350
+    ],
+    "tint": [
+     52,
+     199,
+     89
+    ]
+   },
+   {
+    "name": "paintpalette",
+    "size": 13,
+    "cellPx": [
+     400,
+     290,
+     460,
+     350
+    ],
+    "tint": [
+     255,
+     141,
+     40
+    ]
+   },
+   {
+    "name": "bell",
+    "size": 13,
+    "cellPx": [
+     460,
+     290,
+     520,
+     350
+    ],
+    "tint": [
+     203,
+     48,
+     224
+    ]
+   },
+   {
+    "name": "checkmark.circle",
+    "size": 13,
+    "cellPx": [
+     520,
+     290,
+     580,
+     350
+    ],
+    "tint": [
+     142,
+     142,
+     147
+    ]
+   },
+   {
+    "name": "checkmark.circle.fill",
+    "size": 13,
+    "cellPx": [
+     580,
+     290,
+     640,
+     350
+    ],
+    "tint": [
+     0,
+     136,
+     255
+    ]
+   },
+   {
+    "name": "checkmark.square.fill",
+    "size": 13,
+    "cellPx": [
+     640,
+     290,
+     700,
+     350
+    ],
+    "tint": [
+     255,
+     56,
+     60
+    ]
+   },
+   {
+    "name": "link",
+    "size": 13,
+    "cellPx": [
+     100,
+     350,
+     160,
+     410
+    ],
+    "tint": [
+     142,
+     142,
+     147
+    ]
+   },
+   {
+    "name": "waveform.path.ecg",
+    "size": 13,
+    "cellPx": [
+     160,
+     350,
+     220,
+     410
+    ],
+    "tint": [
+     0,
+     136,
+     255
+    ]
+   },
+   {
+    "name": "cpu",
+    "size": 13,
+    "cellPx": [
+     220,
+     350,
+     280,
+     410
+    ],
+    "tint": [
+     255,
+     56,
+     60
+    ]
+   },
+   {
+    "name": "memorychip",
+    "size": 13,
+    "cellPx": [
+     280,
+     350,
+     340,
+     410
+    ],
+    "tint": [
+     52,
+     199,
+     89
+    ]
+   },
+   {
+    "name": "terminal",
+    "size": 13,
+    "cellPx": [
+     340,
+     350,
+     400,
+     410
+    ],
+    "tint": [
+     255,
+     141,
+     40
+    ]
+   },
+   {
+    "name": "textbox",
+    "size": 13,
+    "cellPx": [
+     400,
+     350,
+     460,
+     410
+    ],
+    "tint": [
+     203,
+     48,
+     224
+    ]
+   }
+  ]
+ },
+ "steps": [
+  {
+   "op": "wait",
+   "ms": 700
+  },
+  {
+   "op": "dump",
+   "label": "start"
+  },
+  {
+   "op": "wait",
+   "ms": 250
+  },
+  {
+   "op": "shot",
+   "label": "start"
+  },
+  {
+   "op": "wait",
+   "ms": 200
+  }
+ ],
+ "macArgs": [
+  "--steps",
+  "[{\"op\":\"wait\",\"ms\":700},{\"op\":\"dump\",\"label\":\"start\"},{\"op\":\"wait\",\"ms\":250},{\"op\":\"shot\",\"label\":\"start\"},{\"op\":\"wait\",\"ms\":200}]"
+ ]
+}
