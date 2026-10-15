@@ -535,7 +535,11 @@ fn paint_page(page: &str, bounds: Bounds<Pixels>, window: &mut Window, cx: &mut 
                 let line = shape(window, "Pulse Hub", &f, size);
                 let asc: f32 = line.ascent.into();
                 let desc: f32 = line.descent.into();
-                let oy = top + (frame - lh) / 2.0;
+                // render/swiftright-render/src/text.rs baseline_placement: the renderer shifts the paint origin so GPUI's baseline lands on
+                // round(hhea ascent) DIP below the line top (Tinos hhea ascent 1825 / 2048 em, the same for the unhinted derivatives).
+                let ct_target = (1825.0f32 / 2048.0 * size).round();
+                let gpui_base = (lh - (asc + desc)) / 2.0 + asc;
+                let oy = top + (frame - lh) / 2.0 + (ct_target - gpui_base);
                 let ox = 4.0 + ci as f32 * 140.0;
                 let baseline_logical = oy + (lh - asc - desc) / 2.0 + asc;
                 if first {
