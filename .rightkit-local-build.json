@@ -1,0 +1,7 @@
+{
+  "repository": "Orthic-Labs/swiftright",
+  "allow": "build-test-publish",
+  "approvedBy": "Adrian D'souza",
+  "approved": "2026-10-16",
+  "reason": "Local Mac and Dell builds for iterative, quick work (build, unit tests, single-case reruns). Long sweeps (N=20 batches, regressions) and all signing and publication stay in GitHub Actions; build-test-publish is the only value the RightKit hook reads. CI still runs on push."
+}
