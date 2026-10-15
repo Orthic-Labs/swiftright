@@ -368,6 +368,10 @@ typedef struct swr_primitive {
 #define SWR_ROLE_MENU_ITEM  12
 #define SWR_ROLE_ALERT      13
 #define SWR_ROLE_DIALOG     14
+/* rev 0.9: SLIDER -> Role::Slider / UIA Slider. With a swr_range_entry in the same transaction it also
+ * publishes the UIA RangeValuePattern (Value, Minimum, Maximum, SmallChange, LargeChange). Without one it is
+ * a bare slider (no range). A 0.8 renderer does not know this role (a generic container). */
+#define SWR_ROLE_SLIDER     15
 
 #define SWR_ACT_INVOKE         0x1u
 #define SWR_ACT_FOCUS          0x2u
@@ -1187,6 +1191,64 @@ typedef struct swr_api_v08 swr_api_v08;
 
 /* Requires caller_size >= sizeof(swr_api_v08) else SWR_E_ABI, nothing written. Future revisions append here. */
 SWR_API swr_status swr_get_api_v08(swr_api_v08 *out, uint32_t caller_size);
+
+/* ===========================================================================================
+ * REVISION 0.9 (additive): slider role and numeric range (decision H1).
+ *
+ * Everything above is unchanged. `swr_bootstrap_query`, `_v07` and `_v08` still describe 0.6, 0.7
+ * and 0.8, so a 0.6, 0.7 or 0.8 host runs unchanged on a 0.9 renderer. A 0.9 renderer adds two NEW
+ * exports, swr_bootstrap_query_v09 and swr_get_api_v09; a 0.8 renderer lacks both, and a 0.9 host
+ * then falls back to the 0.8 view with sliders published without a range (typed, never silent).
+ *
+ * The function table is the 0.8 table (22 functions, 184 bytes): swr_get_api_v09 fills a
+ * swr_api_v08. Nothing is added to swr_node or swr_semantic (their sizes are unchanged), because a node array is strided by sizeof(swr_node). The range travels in a TAIL of
+ * the transaction instead: a host that sends struct_size >= sizeof(swr_transaction_v09) supplies a
+ * table of swr_range_entry, one per slider node upserted by that transaction. A smaller transaction
+ * has no table.
+ *
+ * Rules for the table (all-or-nothing with the rest of the commit, SWR_E_BAD_ARG on a breach): each
+ * entry names a node upserted in the same transaction with role SWR_ROLE_SLIDER and has_semantic = 1; at most one
+ * entry per node; value, min, max, step, jump finite; min <= max; value within [min, max];
+ * step >= 0; jump >= 0; flags == 0. An upsert replaces the node's semantics, so a later transaction
+ * that upserts the slider without an entry removes its range.
+ *
+ * Mapping (accesskit 0.25.1 -> accesskit_windows 0.35.1): value -> numeric_value (UIA RangeValue.Value),
+ * min -> min_numeric_value (Minimum), max -> max_numeric_value (Maximum), step -> numeric_value_step
+ * (SmallChange), jump -> numeric_value_jump (LargeChange). The Mac counterpart is NSSlider's
+ * accessibility value/min/max. UIA SetValue and Increment/Decrement on a slider are NOT routed to
+ * the host in 0.9.
+ * ===========================================================================================*/
+#define SWR_ABI_MINOR_V09 9
+
+typedef struct swr_range_entry {
+    swr_node_id id;      /* the slider node, upserted by the same transaction */
+    double      value;
+    double      min;
+    double      max;
+    double      step;    /* UIA SmallChange */
+    double      jump;    /* UIA LargeChange */
+    uint32_t    flags;   /* reserved, 0 */
+    uint32_t    reserved;
+} swr_range_entry;        /* 56 bytes */
+
+typedef struct swr_transaction_v09 {
+    swr_transaction       base;      /* 72 bytes, identical offsets; base.struct_size = sizeof(swr_transaction_v09) */
+    const swr_range_entry *ranges;
+    uint32_t              range_count;   /* at most upsert_count */
+    uint32_t              reserved;
+} swr_transaction_v09;               /* 88 bytes */
+
+/* 0.9 view of swr_bootstrap_info: the 120 bytes of the 0.8 view at identical offsets (abi_minor 9,
+ * api_table_size sizeof(swr_api_v08) = 184, fn_count 22), plus two size words (128 bytes). */
+typedef struct swr_bootstrap_info_v09 {
+    swr_bootstrap_info_v08 v08;
+    uint32_t range_entry_size;           /* 56 */
+    uint32_t transaction_v09_size;       /* 88 */
+} swr_bootstrap_info_v09;
+
+SWR_API swr_status swr_bootstrap_query_v09(swr_bootstrap_info_v09 *out, uint32_t caller_size);
+/* The 0.8 table (SWR_E_ABI when caller_size < sizeof(swr_api_v08)). */
+SWR_API swr_status swr_get_api_v09(swr_api_v08 *out, uint32_t caller_size);
 
 #ifdef __cplusplus
 }

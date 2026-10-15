@@ -1,4 +1,4 @@
-//! `#[repr(C)]` mirrors of render/swiftright-abi/include/swiftright.h (ABI 0.6, 0.7 and 0.8).
+//! `#[repr(C)]` mirrors of render/swiftright-abi/include/swiftright.h (ABI 0.6, 0.7, 0.8 and 0.9).
 //! Compile-time size asserts use the sizes measured with clang on the header.
 
 use std::ffi::{c_char, c_void};
@@ -12,6 +12,10 @@ pub const API_V07_FN_COUNT: u32 = 18;
 /// Rev 0.8 (additive): minor/function count reported ONLY by the `_v08` discovery exports.
 pub const ABI_MINOR_V08: u32 = 8;
 pub const API_V08_FN_COUNT: u32 = 22;
+/// Rev 0.9 (additive): minor reported ONLY by the `_v09` discovery exports (the 0.8 function table is unchanged: 22 functions).
+pub const ABI_MINOR_V09: u32 = 9;
+/// Rev 0.9: AccessKit Role::Slider (UIA Slider; RangeValuePattern when a range entry is sent).
+pub const ROLE_SLIDER: u32 = 15;
 pub const FEATURES_MAX: usize = 16;
 pub const FALLBACKS_MAX: usize = 8;
 pub const FACE_AXES_MAX: usize = 8;
@@ -803,6 +807,42 @@ pub struct BootstrapInfoV08 {
     pub reserved: u32,
 }
 
+/// Rev 0.9 `swr_range_entry` (56 bytes): the numeric range of one slider node of the same transaction.
+#[repr(C)]
+#[derive(Clone, Copy, Default)]
+pub struct RangeEntry {
+    pub id: u64,
+    pub value: f64,
+    pub min: f64,
+    pub max: f64,
+    /// UIA SmallChange (AccessKit numeric_value_step).
+    pub step: f64,
+    /// UIA LargeChange (AccessKit numeric_value_jump).
+    pub jump: f64,
+    pub flags: u32,
+    pub reserved: u32,
+}
+
+/// Rev 0.9 `swr_transaction_v09` (88 bytes): the 72-byte transaction at identical offsets + the range table. A host that sends
+/// `struct_size >= 88` supplies it; a smaller transaction has no ranges.
+#[repr(C)]
+#[derive(Clone, Copy)]
+pub struct TransactionV09 {
+    pub base: Transaction,
+    pub ranges: *const RangeEntry,
+    pub range_count: u32,
+    pub reserved: u32,
+}
+
+/// Rev 0.9 `swr_bootstrap_info_v09` (128 bytes): the 0.8 view at identical offsets (abi_minor 9) + two size words.
+#[repr(C)]
+#[derive(Clone, Copy)]
+pub struct BootstrapInfoV09 {
+    pub v08: BootstrapInfoV08,
+    pub range_entry_size: u32,
+    pub transaction_v09_size: u32,
+}
+
 /// Rev 0.8 `swr_api_v08` (184 bytes): the 18 pointers of `ApiV07` at unchanged offsets + the 0.8 entries.
 #[repr(C)]
 #[derive(Clone, Copy)]
@@ -898,6 +938,12 @@ const _: () = assert!(std::mem::offset_of!(SystemFontEntry, face_count) == 84);
 const _: () = assert!(std::mem::size_of::<SystemFonts>() == 720);
 const _: () = assert!(std::mem::offset_of!(SystemFonts, entries) == 16);
 const _: () = assert!(std::mem::size_of::<BootstrapInfoV08>() == 120);
+const _: () = assert!(std::mem::size_of::<RangeEntry>() == 56);
+const _: () = assert!(std::mem::size_of::<Transaction>() == 72);
+const _: () = assert!(std::mem::size_of::<TransactionV09>() == 88);
+const _: () = assert!(std::mem::offset_of!(TransactionV09, ranges) == 72);
+const _: () = assert!(std::mem::size_of::<BootstrapInfoV09>() == 128);
+const _: () = assert!(std::mem::offset_of!(BootstrapInfoV09, range_entry_size) == 120);
 const _: () = assert!(std::mem::offset_of!(BootstrapInfoV08, measure_request_v08_size) == 96);
 const _: () = assert!(std::mem::offset_of!(BootstrapInfoV08, system_fonts_size) == 112);
 const _: () = assert!(std::mem::size_of::<ApiV08>() == 184);

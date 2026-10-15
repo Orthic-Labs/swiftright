@@ -44,19 +44,35 @@ public extension Bridge {
         let apiV07Raw = GetProcAddress(module, "swr_get_api_v07")
         let bootV08Raw = GetProcAddress(module, "swr_bootstrap_query_v08")
         let apiV08Raw = GetProcAddress(module, "swr_get_api_v08")
+        let bootV09Raw = GetProcAddress(module, "swr_bootstrap_query_v09")
+        let apiV09Raw = GetProcAddress(module, "swr_get_api_v09")
         let revision = try BridgeNegotiation.choose(hasBootstrapV07: bootV07Raw != nil, hasApiV07: apiV07Raw != nil,
                                                     hasBootstrapV08: bootV08Raw != nil, hasApiV08: apiV08Raw != nil,
+                                                    hasBootstrapV09: bootV09Raw != nil, hasApiV09: apiV09Raw != nil,
                                                     minimum: minimumRevision)
-        if revision == .v08, let bootV08Raw, let apiV08Raw {
+        if revision == .v09 || revision == .v08, let bootV08Raw = (revision == .v09 ? bootV09Raw : bootV08Raw),
+           let apiV08Raw = (revision == .v09 ? apiV09Raw : apiV08Raw) {
             typealias BootstrapV08Fn = @convention(c) (UnsafeMutablePointer<swr_bootstrap_info_v08>?, UInt32) -> Int32
+            typealias BootstrapV09Fn = @convention(c) (UnsafeMutablePointer<swr_bootstrap_info_v09>?, UInt32) -> Int32
             typealias GetAPIV08Fn = @convention(c) (UnsafeMutablePointer<swr_api_v08>?, UInt32) -> Int32
-            let boot8 = unsafeBitCast(bootV08Raw, to: BootstrapV08Fn.self)
             var info8 = swr_bootstrap_info_v08()
-            let rc7 = withUnsafeMutablePointer(to: &info8) { boot8($0, UInt32(MemoryLayout<swr_bootstrap_info_v08>.size)) }
-            if rc7 != 0 {
-                throw BridgeError.startup("SWR_STARTUP_ERROR: bootstrap query v08 rejected rc=\(rc7)")
+            if revision == .v09 {
+                let boot9 = unsafeBitCast(bootV08Raw, to: BootstrapV09Fn.self)
+                var info9 = swr_bootstrap_info_v09()
+                let rc9 = withUnsafeMutablePointer(to: &info9) { boot9($0, UInt32(MemoryLayout<swr_bootstrap_info_v09>.size)) }
+                if rc9 != 0 {
+                    throw BridgeError.startup("SWR_STARTUP_ERROR: bootstrap query v09 rejected rc=\(rc9)")
+                }
+                try BridgeNegotiation.validateV09(info9)
+                info8 = info9.v08
+            } else {
+                let boot8 = unsafeBitCast(bootV08Raw, to: BootstrapV08Fn.self)
+                let rc7 = withUnsafeMutablePointer(to: &info8) { boot8($0, UInt32(MemoryLayout<swr_bootstrap_info_v08>.size)) }
+                if rc7 != 0 {
+                    throw BridgeError.startup("SWR_STARTUP_ERROR: bootstrap query v08 rejected rc=\(rc7)")
+                }
+                try BridgeNegotiation.validateV08(info8)
             }
-            try BridgeNegotiation.validateV08(info8)
             let getAPI8 = unsafeBitCast(apiV08Raw, to: GetAPIV08Fn.self)
             var api8 = swr_api_v08()
             let rc8 = withUnsafeMutablePointer(to: &api8) { getAPI8($0, UInt32(MemoryLayout<swr_api_v08>.size)) }
@@ -69,7 +85,7 @@ public extension Bridge {
                 throw BridgeError.startup("SWR_STARTUP_ERROR: 0.8 function table has a null entry")
             }
             return Bridge(api: BridgeNegotiation.baseTable(of: BridgeNegotiation.v07Table(of: api8)),
-                          info: BridgeNegotiation.baseView(of: info8.v07), revision: .v08,
+                          info: BridgeNegotiation.baseView(of: info8.v07), revision: revision,
                           fonts: FontEntryPoints(register: fontRegister, resolve: fontResolve),
                           textExtension: TextExtensionEntryPoints(measure: measure8, runFaces: runFaces,
                                                                   faceMetrics: faceMetrics, systemFontInfo: sysInfo))

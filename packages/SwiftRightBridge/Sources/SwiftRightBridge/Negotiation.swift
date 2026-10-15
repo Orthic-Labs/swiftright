@@ -13,6 +13,7 @@ public enum BridgeRevision: Int, Comparable, CustomStringConvertible {
     case v06 = 6
     case v07 = 7
     case v08 = 8
+    case v09 = 9
     public static func < (a: BridgeRevision, b: BridgeRevision) -> Bool { a.rawValue < b.rawValue }
     public var description: String { "0.\(rawValue)" }
 }
@@ -60,15 +61,51 @@ public enum BridgeNegotiation {
         }
     }
 
+    /// 0.9 negotiation (additive over the 0.8 `choose`): both 0.9 exports present: 0.9; exactly one: refused; neither: the 0.8
+    /// decision applies (a host that demands 0.9 is refused with a typed diagnostic).
+    public static func choose(hasBootstrapV07: Bool, hasApiV07: Bool, hasBootstrapV08: Bool, hasApiV08: Bool,
+                              hasBootstrapV09: Bool, hasApiV09: Bool, minimum: BridgeRevision) throws -> BridgeRevision {
+        switch (hasBootstrapV09, hasApiV09) {
+        case (true, true):
+            return .v09
+        case (true, false):
+            throw BridgeError.startup("SWR_STARTUP_ERROR: missing symbol swr_get_api_v09 (swr_bootstrap_query_v09 present)")
+        case (false, true):
+            throw BridgeError.startup("SWR_STARTUP_ERROR: missing symbol swr_bootstrap_query_v09 (swr_get_api_v09 present)")
+        case (false, false):
+            let lower = try choose(hasBootstrapV07: hasBootstrapV07, hasApiV07: hasApiV07, hasBootstrapV08: hasBootstrapV08,
+                                   hasApiV08: hasApiV08, minimum: min(minimum, .v08))
+            if minimum > lower {
+                throw BridgeError.startup("SWR_STARTUP_ERROR: renderer is ABI \(lower) (no swr_bootstrap_query_v09), host requires \(minimum)")
+            }
+            return lower
+        }
+    }
+
+    /// Validates the 0.9 view BEFORE the table is requested: minor 9, every 0.6 size, the 184-byte 0.8 table, 22 functions, the
+    /// 0.7 and 0.8 size words and the two 0.9 size words.
+    public static func validateV09(_ i: swr_bootstrap_info_v09) throws {
+        try validateV08(i.v08, minor: UInt32(SWR_ABI_MINOR_V09))
+        let extra: [(String, UInt32, Int)] = [
+            ("range_entry", i.range_entry_size, MemoryLayout<swr_range_entry>.size),
+            ("transaction_v09", i.transaction_v09_size, MemoryLayout<swr_transaction_v09>.size),
+        ]
+        for (name, got, want) in extra where Int(got) != want {
+            throw BridgeError.startup("SWR_STARTUP_ERROR: \(name) table size mismatch expected \(want) got \(got)")
+        }
+    }
+
     /// The 0.7 view contained in a 0.8 bootstrap.
     public static func v07View(of i: swr_bootstrap_info_v08) -> swr_bootstrap_info_v07 { i.v07 }
 
     /// Validates the 0.8 view BEFORE the 0.8 table is requested: minor 8, every 0.6 size, the 184-byte table, 22 functions,
     /// the two 0.7 font size words and the five 0.8 struct sizes.
-    public static func validateV08(_ i: swr_bootstrap_info_v08) throws {
+    public static func validateV08(_ i: swr_bootstrap_info_v08) throws { try validateV08(i, minor: UInt32(SWR_ABI_MINOR_V08)) }
+
+    static func validateV08(_ i: swr_bootstrap_info_v08, minor: UInt32) throws {
         let base = baseView(of: i.v07)
         try Bridge.validateIdentity(base,
-                                    minor: UInt32(SWR_ABI_MINOR_V08),
+                                    minor: minor,
                                     apiTableSize: MemoryLayout<swr_api_v08>.size,
                                     fnCount: UInt32(SWR_API_V08_FN_COUNT))
         let extra: [(String, UInt32, Int)] = [

@@ -394,7 +394,20 @@ pub extern "C" fn swr_commit(t: *const Transaction) -> Status {
             return E_STALE_HANDLE;
         }
         let t_start = qpc_now();
-        let r = view::with_ui(|ui| unsafe { tree::commit(&mut ui.tree, &ui.runs, &ui.images, t) });
+        // Rev 0.9: a transaction of struct_size >= sizeof(TransactionV09) carries a range table (slider values).
+        let ranges: &[RangeEntry] = if (t.struct_size as usize) >= std::mem::size_of::<TransactionV09>() {
+            let t9 = unsafe { &*(t as *const Transaction as *const TransactionV09) };
+            match unsafe { tree::slice_of(t9.ranges, t9.range_count) } {
+                Ok(r) => r,
+                Err(e) => {
+                    bump(S_COMMITS_REJ);
+                    return e;
+                }
+            }
+        } else {
+            &[]
+        };
+        let r = view::with_ui(|ui| unsafe { tree::commit_ranges(&mut ui.tree, &ui.runs, &ui.images, t, ranges) });
         PH_TREE.add(qpc_now() - t_start);
         match r {
             Err(e) => {
@@ -901,6 +914,40 @@ pub extern "C" fn swr_bootstrap_query_v08(out: *mut BootstrapInfoV08, caller_siz
         }
         SWR_OK
     })
+}
+
+/// Rev 0.9 discovery (additive): the 0.8 view at identical offsets (abi_minor 9; the 184-byte table and 22 functions are the 0.8 ones)
+/// + the range entry and v09 transaction sizes. The legacy, `_v07` and `_v08` exports are untouched.
+#[no_mangle]
+pub extern "C" fn swr_bootstrap_query_v09(out: *mut BootstrapInfoV09, caller_size: u32) -> Status {
+    guard!({
+        let need = std::mem::size_of::<BootstrapInfoV09>() as u32;
+        if out.is_null() || caller_size < need {
+            return E_BAD_ARG;
+        }
+        let mut v08 = std::mem::MaybeUninit::<BootstrapInfoV08>::uninit();
+        let rc = swr_bootstrap_query_v08(v08.as_mut_ptr(), std::mem::size_of::<BootstrapInfoV08>() as u32);
+        if rc != SWR_OK {
+            return rc;
+        }
+        let mut v08 = unsafe { v08.assume_init() };
+        v08.v07.base.abi_minor = ABI_MINOR_V09;
+        v08.v07.base.struct_size = need;
+        unsafe {
+            *out = BootstrapInfoV09 {
+                v08,
+                range_entry_size: std::mem::size_of::<RangeEntry>() as u32,
+                transaction_v09_size: std::mem::size_of::<TransactionV09>() as u32,
+            };
+        }
+        SWR_OK
+    })
+}
+
+/// Rev 0.9 function table: identical to the 0.8 table (no new functions).
+#[no_mangle]
+pub extern "C" fn swr_get_api_v09(out: *mut ApiV08, caller_size: u32) -> Status {
+    swr_get_api_v08(out, caller_size)
 }
 
 /// Rev 0.8 function table: the 18 legacy/0.7 pointers (same functions) + the four 0.8 entries.

@@ -35,6 +35,7 @@ pub struct AxNode {
     pub actions: u32,
     pub flags: u32,
     pub toggled: u32,
+    pub range: Option<[f64; 5]>,
     pub label: Arc<str>,
     pub value: Arc<str>,
     pub identifier: Arc<str>,
@@ -113,6 +114,8 @@ pub fn build_tree() -> TreeUpdate {
             ROLE_MENU_ITEM => Role::MenuItem,
             ROLE_ALERT => Role::AlertDialog,
             ROLE_DIALOG => Role::Dialog,
+            // Rev 0.9. accesskit Role::Slider -> UIA Slider; with a numeric value accesskit_windows publishes RangeValuePattern.
+            ROLE_SLIDER => Role::Slider,
             _ => Role::GenericContainer,
         };
         let mut node = Node::new(role);
@@ -152,6 +155,14 @@ pub fn build_tree() -> TreeUpdate {
             TOGGLED_ON => node.set_toggled(Toggled::True),
             TOGGLED_MIXED => node.set_toggled(Toggled::Mixed),
             _ => {}
+        }
+        if let Some([value, min, max, step, jump]) = n.range {
+            // UIA RangeValue: Value, Minimum, Maximum, SmallChange (step), LargeChange (jump).
+            node.set_numeric_value(value);
+            node.set_min_numeric_value(min);
+            node.set_max_numeric_value(max);
+            node.set_numeric_value_step(step);
+            node.set_numeric_value_jump(jump);
         }
         if n.flags & SEM_SELECTABLE != 0 {
             node.set_selected(n.flags & SEM_SELECTED != 0);

@@ -22,11 +22,22 @@ public enum NodeRole: UInt32 {
     case none = 0, window, button, staticText, textField, list, listItem, group
     /// ABI rev 0.6. AccessKit roles: CheckBox, Switch, Image, Menu, MenuItem, AlertDialog, Dialog.
     case checkbox = 8, switchControl, image, menu, menuItem, alert, dialog
+    /// ABI rev 0.9 (decision H1). AccessKit Role::Slider / UIA Slider; a `SemanticNode.range` adds the UIA RangeValue pattern.
+    case slider = 15
 }
 
 /// ABI rev 0.6: checked / pressed / on state (AccessKit Toggled, UIA TogglePattern).
 public enum ToggledState: UInt32 {
     case none = 0, off, on, mixed
+}
+
+/// ABI rev 0.9: a slider's numeric range (UIA RangeValue: Value, Minimum, Maximum, SmallChange = `step`, LargeChange = `jump`).
+/// Sent only to a renderer that negotiated 0.9 (`Bridge.supportsSliderRange`); dropped, never guessed, on an older one.
+public struct SliderRange: Equatable {
+    public var value: Double, min: Double, max: Double, step: Double, jump: Double
+    public init(value: Double, min: Double, max: Double, step: Double, jump: Double) {
+        self.value = value; self.min = min; self.max = max; self.step = step; self.jump = jump
+    }
 }
 
 public struct AXActions: OptionSet {
@@ -122,15 +133,17 @@ public struct SemanticNode {
     /// ABI rev 0.6: SWR_SEM_DISABLED. UIA IsEnabled = false and no invoke/toggle/select; the
     /// renderer also swallows pointer presses on a disabled node (event node 0).
     public var disabled: Bool
+    /// ABI rev 0.9: the numeric range of a `.slider` node; nil = none.
+    public var range: SliderRange?
     public init(role: NodeRole, label: String = "", value: String = "", actions: AXActions = [],
                 multiline: Bool = false, runs: [AXTextRun] = [],
                 selection: (anchor: TextSelectionPosition, focus: TextSelectionPosition)? = nil,
                 identifier: String = "", toggled: ToggledState = .none, selected: Bool? = nil,
-                disabled: Bool = false) {
+                disabled: Bool = false, range: SliderRange? = nil) {
         self.role = role; self.label = label; self.value = value; self.actions = actions
         self.multiline = multiline; self.runs = runs; self.selection = selection
         self.identifier = identifier; self.toggled = toggled; self.selected = selected
-        self.disabled = disabled
+        self.disabled = disabled; self.range = range
     }
 }
 

@@ -38,6 +38,8 @@ pub struct Sem {
     pub value: Arc<str>,
     pub identifier: Arc<str>,
     pub toggled: u32,
+    /// Rev 0.9: value, min, max, step, jump of a slider (set from the transaction's range table, never from the node).
+    pub range: Option<[f64; 5]>,
     pub runs: Arc<Vec<SemRun>>,
     pub sel: Option<(u64, u32, u64, u32)>,
 }
@@ -151,7 +153,7 @@ fn dfs_order(nodes: &HashMap<u64, PNode>) -> Vec<u64> {
     out
 }
 
-unsafe fn slice_of<'a, T>(p: *const T, n: u32) -> Result<&'a [T], Status> {
+pub unsafe fn slice_of<'a, T>(p: *const T, n: u32) -> Result<&'a [T], Status> {
     if n == 0 {
         return Ok(&[]);
     }
@@ -347,6 +349,7 @@ unsafe fn convert_sem(s: &Semantic, old: Option<&Sem>) -> Result<Sem, Status> {
         value: arc_str(s.value, s.value_len, old.map(|o| &o.value))?,
         identifier: arc_str(s.identifier, s.identifier_len, old.map(|o| &o.identifier))?,
         toggled: s.toggled,
+        range: None,
         runs,
         sel: if s.flags & SEM_HAS_SELECTION != 0 {
             Some((s.sel_anchor_run, s.sel_anchor_char, s.sel_focus_run, s.sel_focus_char))
@@ -380,6 +383,37 @@ pub unsafe fn commit(
     images: &Slab<TrackedImage>,
     t: &Transaction,
 ) -> Result<AxShared, Status> {
+    commit_ranges(tree, runs, images, t, &[])
+}
+
+/// Rev 0.9: the numeric range of a slider arrives in the transaction's range table. Every entry must name a node upserted by the
+/// same transaction whose role is SWR_ROLE_SLIDER; value, min, max, step and jump must be finite, min <= max, step and jump >= 0
+/// and the value inside [min, max]. Anything else is E_BAD_ARG and nothing is applied.
+fn check_ranges(ranges: &[RangeEntry], ups: &[Node]) -> Result<HashMap<u64, [f64; 5]>, Status> {
+    let mut m: HashMap<u64, [f64; 5]> = HashMap::with_capacity(ranges.len());
+    for r in ranges {
+        let ok = [r.value, r.min, r.max, r.step, r.jump].iter().all(|v| v.is_finite())
+            && r.min <= r.max
+            && r.value >= r.min
+            && r.value <= r.max
+            && r.step >= 0.0
+            && r.jump >= 0.0
+            && r.flags == 0;
+        let slider = ups.iter().any(|n| n.id == r.id && n.has_semantic != 0 && n.semantic.role == ROLE_SLIDER);
+        if !ok || !slider || m.insert(r.id, [r.value, r.min, r.max, r.step, r.jump]).is_some() {
+            return Err(E_BAD_ARG);
+        }
+    }
+    Ok(m)
+}
+
+pub unsafe fn commit_ranges(
+    tree: &mut Tree,
+    runs: &RunSlab,
+    images: &Slab<TrackedImage>,
+    t: &Transaction,
+    ranges: &[RangeEntry],
+) -> Result<AxShared, Status> {
     if t.upsert_count > MAX_UPSERTS || t.remove_count > MAX_REMOVES || t.primitive_count > MAX_PRIMITIVES {
         return Err(E_TOO_LARGE);
     }
@@ -391,6 +425,7 @@ pub unsafe fn commit(
     let prims = slice_of(t.primitives, t.primitive_count)?;
 
     // 1. Convert and check every upsert on its own (no tree access).
+    let range_map = check_ranges(ranges, ups)?;
     let mut seen: HashSet<u64> = HashSet::with_capacity(ups.len());
     let mut fresh: Vec<PNode> = Vec::with_capacity(ups.len());
     for n in ups {
@@ -403,7 +438,10 @@ pub unsafe fn commit(
         }
         let node_prims = convert_prims(&prims[n.prim_offset as usize..end], runs, images)?;
         let old_sem = tree.nodes.get(&n.id).and_then(|o| o.sem.as_ref());
-        let sem = if n.has_semantic != 0 { Some(convert_sem(&n.semantic, old_sem)?) } else { None };
+        let mut sem = if n.has_semantic != 0 { Some(convert_sem(&n.semantic, old_sem)?) } else { None };
+        if let Some(s) = sem.as_mut() {
+            s.range = range_map.get(&n.id).copied();
+        }
         fresh.push(PNode {
             id: n.id,
             parent: n.parent,
@@ -587,6 +625,7 @@ fn build_ax(tree: &Tree) -> AxShared {
             // SWR_SEM_DISABLED is inherited by semantic descendants of a disabled node.
             flags: if tree.is_disabled(n.id) { s.flags | SEM_DISABLED } else { s.flags },
             toggled: s.toggled,
+            range: s.range,
             label: s.label.clone(),
             value: s.value.clone(),
             identifier: s.identifier.clone(),
@@ -827,6 +866,51 @@ mod tests {
         fn below(&mut self, n: u64) -> u64 {
             self.next() % n
         }
+    }
+
+    /// Rev 0.9: a slider node takes its numeric range from the range table of the same transaction; bad entries refuse the
+    /// whole commit and leave the tree as it was.
+    #[test]
+    fn slider_range_table() {
+        let (runs, images) = slabs();
+        let mut tree = Tree::default();
+        let mut tx = Tx::new(1);
+        tx.node(1, 0, 0, 0.0, Some("Watch limit"), 0, 0);
+        tx.nodes[0].semantic.role = ROLE_SLIDER;
+        let good = [RangeEntry { id: 1, value: 40.0, min: 0.0, max: 100.0, step: 1.0, jump: 10.0, flags: 0, reserved: 0 }];
+        let ax = unsafe { commit_ranges(&mut tree, &runs, &images, &tx.raw(), &good) }.unwrap();
+        let n = ax.nodes.iter().find(|n| n.id == 1).unwrap();
+        assert_eq!(n.role, ROLE_SLIDER);
+        assert_eq!(n.range, Some([40.0, 0.0, 100.0, 1.0, 10.0]));
+
+        // A next commit without a table: the node's range is gone (an upsert replaces semantics).
+        let mut tx2 = Tx::new(2);
+        tx2.node(1, 0, 0, 0.0, Some("Watch limit"), 0, 0);
+        tx2.nodes[0].semantic.role = ROLE_SLIDER;
+        let ax = unsafe { commit_ranges(&mut tree, &runs, &images, &tx2.raw(), &[]) }.unwrap();
+        assert_eq!(ax.nodes.iter().find(|n| n.id == 1).unwrap().range, None);
+
+        let cases: [(&str, RangeEntry); 6] = [
+            ("value above max", RangeEntry { id: 1, value: 101.0, min: 0.0, max: 100.0, step: 1.0, jump: 10.0, flags: 0, reserved: 0 }),
+            ("min above max", RangeEntry { id: 1, value: 5.0, min: 10.0, max: 0.0, step: 1.0, jump: 10.0, flags: 0, reserved: 0 }),
+            ("nan", RangeEntry { id: 1, value: f64::NAN, min: 0.0, max: 100.0, step: 1.0, jump: 10.0, flags: 0, reserved: 0 }),
+            ("negative step", RangeEntry { id: 1, value: 5.0, min: 0.0, max: 100.0, step: -1.0, jump: 10.0, flags: 0, reserved: 0 }),
+            ("unknown node", RangeEntry { id: 9, value: 5.0, min: 0.0, max: 100.0, step: 1.0, jump: 10.0, flags: 0, reserved: 0 }),
+            ("flags", RangeEntry { id: 1, value: 5.0, min: 0.0, max: 100.0, step: 1.0, jump: 10.0, flags: 1, reserved: 0 }),
+        ];
+        for (i, (what, e)) in cases.iter().enumerate() {
+            let mut t = Tx::new(10 + i as u64);
+            t.node(1, 0, 0, 0.0, Some("Watch limit"), 0, 0);
+            t.nodes[0].semantic.role = ROLE_SLIDER;
+            let r = unsafe { commit_ranges(&mut tree, &runs, &images, &t.raw(), std::slice::from_ref(e)) };
+            assert_eq!(r.err(), Some(E_BAD_ARG), "{what}");
+        }
+        // A range for a node that is not a slider.
+        let mut t = Tx::new(30);
+        t.node(1, 0, 0, 0.0, Some("Text"), 0, 0);
+        let r = unsafe { commit_ranges(&mut tree, &runs, &images, &t.raw(), &good) };
+        assert_eq!(r.err(), Some(E_BAD_ARG));
+        assert_eq!(tree.version, 2, "refused commits leave the version");
     }
 
     /// Random valid and invalid transactions: the incremental commit and the reference agree on the result, on the

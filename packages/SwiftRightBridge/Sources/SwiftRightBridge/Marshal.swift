@@ -134,6 +134,18 @@ func cTransaction(_ t: Transaction, window: UInt64, arena: Arena) -> swr_transac
     return tx
 }
 
+/// Rev 0.9: the range table of a transaction (one entry per slider node that carries a range).
+func cRanges(_ t: Transaction) -> [swr_range_entry] {
+    var out: [swr_range_entry] = []
+    for n in t.upserts {
+        guard let s = n.semantic, s.role == .slider, let r = s.range else { continue }
+        var e = swr_range_entry()
+        e.id = n.id; e.value = r.value; e.min = r.min; e.max = r.max; e.step = r.step; e.jump = r.jump
+        out.append(e)
+    }
+    return out
+}
+
 func decodeEvent(_ e: swr_event) -> BridgeEvent {
     var ev = e
     let bytes: [UInt8] = withUnsafeBytes(of: &ev.text) { Array($0) }

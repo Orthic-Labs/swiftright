@@ -64,6 +64,9 @@ public final class Bridge {
         self.textExtension = textExtension
     }
 
+    /// Rev 0.9 (decision H1): the renderer honours `SemanticNode.range` (slider RangeValue). False on a 0.6 to 0.8 renderer.
+    public var supportsSliderRange: Bool { revision >= .v09 }
+
     // MARK: bootstrap validation (platform neutral; order as in bridge-faults)
 
     static func archName(_ info: swr_bootstrap_info) -> String {
@@ -490,7 +493,21 @@ public final class BridgeWindow {
         guard let fn = bridge.api.commit else { throw BridgeError.status(-3, "commit") }
         let arena = Arena()
         var tx = cTransaction(t, window: handle, arena: arena)
-        let rc = withUnsafePointer(to: &tx) { fn($0) }
+        let rc: Int32
+        if bridge.supportsSliderRange {
+            // Rev 0.9: the 88-byte transaction carries the range table (possibly empty).
+            let ranges = cRanges(t)
+            var tx9 = swr_transaction_v09()
+            tx9.base = tx
+            tx9.base.struct_size = UInt32(MemoryLayout<swr_transaction_v09>.size)
+            tx9.ranges = arena.array(ranges)
+            tx9.range_count = UInt32(ranges.count)
+            rc = withUnsafePointer(to: &tx9) { p in
+                p.withMemoryRebound(to: swr_transaction.self, capacity: 1) { fn($0) }
+            }
+        } else {
+            rc = withUnsafePointer(to: &tx) { fn($0) }
+        }
         if rc != 0 { throw BridgeError.status(rc, "swr_commit v\(t.version)") }
         lastVersion = t.version
     }
