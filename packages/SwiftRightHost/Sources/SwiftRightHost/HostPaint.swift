@@ -52,6 +52,9 @@ public enum HostPaint {
         switch value {
         case .rgba(let r, let g, let b, let a):
             return try rgba(components: [r, g, b, a], opacity: opacity)
+        case .semanticAlpha(let name, let alpha):
+            guard alpha.isFinite, alpha >= 0, alpha <= 1 else { throw HostPaintError.invalidFillOpacity }
+            return try rgba(.semantic(name), opacity: opacity * alpha, scheme: scheme)
         case .semantic(let name):
             guard opacity.isFinite, opacity >= 0, opacity <= 1 else { throw HostPaintError.invalidFillOpacity }
             let raw = try semantic(name, scheme: scheme)

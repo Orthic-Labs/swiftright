@@ -158,3 +158,19 @@ final class TreeCommitTests: XCTestCase {
         XCTAssertFalse(submitted)
     }
 }
+
+/// Round 5, block swiftui.text-views: `Color.opacity(_:)` returns a Color that carries its alpha to the paint policy.
+@MainActor
+final class ColorOpacityPaintTests: XCTestCase {
+    func testSemanticAlphaMultipliesTheNamedColoursOwnAlpha() throws {
+        XCTAssertEqual(try HostPaint.rgba(.semanticAlpha("system.red", 0.5), opacity: 1), 0xff383c80)
+        XCTAssertEqual(try HostPaint.rgba(Color.black.opacity(0.1).resolvedColor, opacity: 1), 0x0000001a)
+        XCTAssertEqual(try HostPaint.rgba(Color.black.opacity(0.5).opacity(0.5).resolvedColor, opacity: 1), 0x00000040)
+        // the node opacity multiplies on top
+        XCTAssertEqual(try HostPaint.rgba(Color.black.opacity(0.5).resolvedColor, opacity: 0.5), 0x00000040)
+        // `label` is itself translucent (216): the alpha multiplies it
+        XCTAssertEqual(try HostPaint.rgba(Color.primary.opacity(0.5).resolvedColor, opacity: 1) & 255, 108)
+        XCTAssertEqual(try HostPaint.rgba(Color.clear.resolvedColor, opacity: 1), 0)
+        XCTAssertThrowsError(try HostPaint.rgba(.semanticAlpha("black", 1.5), opacity: 1))
+    }
+}

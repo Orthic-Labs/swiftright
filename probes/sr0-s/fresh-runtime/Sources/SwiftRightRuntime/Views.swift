@@ -118,6 +118,8 @@ extension ConditionalContent: ViewContainer {
 @resultBuilder
 public struct ViewBuilder {
     public static func buildBlock() -> EmptyView { EmptyView() }
+    /// One child is returned as it is (SwiftUI's `buildBlock(_:)`), so `Trailing == HubNoTrailing` holds for `{ HubNoTrailing() }`.
+    public static func buildBlock<Content: View>(_ content: Content) -> Content { content }
     public static func buildBlock<each Content: View>(_ content: repeat each Content) -> TupleView<(repeat each Content)> {
         var listed: [any View] = []
         for view in repeat each content { listed.append(view) }
@@ -142,6 +144,9 @@ extension Optional: View where Wrapped: View {
 public struct Text: View, PrimitiveView {
     let string: String
     public init(_ content: String) { string = content }
+    /// Text that is shown as written (no localisation lookup; the runtime has none, so it equals `init(_:)`).
+    /// Apple: https://developer.apple.com/documentation/swiftui/text/init(verbatim:)
+    public init(verbatim content: String) { string = content }
     @MainActor public var body: Never { return fatalError("primitive view has no body") }
     var nodeKind: NodeKind { .text(string) }
     var nodeContent: (any View)? { nil }
@@ -647,5 +652,70 @@ public enum VerticalEdge: Int8, CaseIterable, Sendable {
         public static let top = Set(rawValue: 1)
         public static let bottom = Set(rawValue: 2)
         public static let all: Set = [.top, .bottom]
+    }
+}
+
+
+// MARK: - AnyView, View.id, ViewModifier
+
+/// A type-erased view. It is transparent: the wrapped view's own node takes its place, one level down under an `.erased` segment, so a different wrapped type is a
+/// different node (state is not carried across types, as in SwiftUI).
+/// Apple: https://developer.apple.com/documentation/swiftui/anyview
+public struct AnyView: View {
+    nonisolated(unsafe) let wrapped: any View
+    nonisolated public init<V: View>(_ view: V) { wrapped = view }
+    nonisolated public init<V: View>(erasing view: V) { wrapped = view }
+    @MainActor public var body: Never { return fatalError("AnyView has no body") }
+}
+
+extension AnyView: ViewContainer {
+    var supportsRefreshSkip: Bool { false }
+    @MainActor func parts() -> [(Segment, any View)] { [(.erased, wrapped)] }
+}
+
+/// `View.id(_:)`: the view's identity is the value, so a new value replaces the view (its `@State` restarts, its `onAppear` runs again).
+struct IdentifiedView<Content: View>: View, ViewContainer {
+    let content: Content
+    let id: AnyHashable
+    @MainActor public var body: Never { return fatalError("IdentifiedView has no body") }
+    var supportsRefreshSkip: Bool { false }
+    @MainActor func parts() -> [(Segment, any View)] { [(.identified(id), content)] }
+}
+
+extension View {
+    /// Apple: https://developer.apple.com/documentation/swiftui/view/id(_:)
+    public func id<ID: Hashable>(_ id: ID) -> some View {
+        IdentifiedView(content: self, id: AnyHashable(id))
+    }
+}
+
+/// What `ViewModifier.body(content:)` receives: the modified view, transparent in the tree.
+public struct _ViewModifier_Content<Modifier>: View, ViewContainer {
+    let wrapped: any View
+    @MainActor public var body: Never { return fatalError("ViewModifier content has no body") }
+    var supportsRefreshSkip: Bool { false }
+    @MainActor func parts() -> [(Segment, any View)] { [(.erased, wrapped)] }
+}
+
+/// Apple: https://developer.apple.com/documentation/swiftui/viewmodifier
+@MainActor @preconcurrency
+public protocol ViewModifier {
+    associatedtype Body: View
+    typealias Content = _ViewModifier_Content<Self>
+    @ViewBuilder @MainActor func body(content: Content) -> Body
+}
+
+/// The view `.modifier(_:)` makes: its body is the modifier's body around the content. It is a user view, so the modifier's work (its own conditions, its
+/// modifiers) is evaluated in the tree under this node.
+struct ModifiedContentView<Modifier: ViewModifier, Base: View>: View {
+    let modifier: Modifier
+    let base: Base
+    @MainActor var body: some View { modifier.body(content: _ViewModifier_Content(wrapped: base)) }
+}
+
+extension View {
+    /// Apple: https://developer.apple.com/documentation/swiftui/view/modifier(_:)
+    public func modifier<M: ViewModifier>(_ modifier: M) -> some View {
+        ModifiedContentView(modifier: modifier, base: self)
     }
 }

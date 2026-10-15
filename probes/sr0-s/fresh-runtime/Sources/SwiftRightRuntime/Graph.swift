@@ -32,6 +32,8 @@ enum Segment: Hashable, CustomStringConvertible {
     case branch(Int)         // ConditionalContent arm
     case optional            // Optional<View> presence
     case keyed(AnyHashable)  // ForEach explicit id
+    case identified(AnyHashable) // `.id(_:)`: a different value is a different view (state is not carried over)
+    case erased              // AnyView / ViewModifier content: the erased view's own type names the next segment
 
     var description: String {
         switch self {
@@ -40,6 +42,8 @@ enum Segment: Hashable, CustomStringConvertible {
         case .branch(let i): return "branch\(i)"
         case .optional: return "opt"
         case .keyed(let value): return "[\(value)]"
+        case .identified(let value): return "id(\(value))"
+        case .erased: return "any"
         }
     }
 
@@ -50,6 +54,8 @@ enum Segment: Hashable, CustomStringConvertible {
         case (.branch(let a), .branch(let b)): return a == b
         case (.optional, .optional): return true
         case (.keyed(let a), .keyed(let b)): return a == b
+        case (.identified(let a), .identified(let b)): return a == b
+        case (.erased, .erased): return true
         default: return false
         }
     }
@@ -64,6 +70,8 @@ enum Segment: Hashable, CustomStringConvertible {
         case .branch(let i): return i &+ 0x2_0000_0003
         case .optional: return 0x3_0000_0007
         case .keyed(let value): return value.hashValue
+        case .identified(let value): return value.hashValue &+ 0x4_0000_000b
+        case .erased: return 0x5_0000_000d
         }
     }
 }
@@ -210,6 +218,8 @@ enum ModifierSpec {
     case presentation(PresentationPayload)
     case keyboardShortcut(KeyEquivalent, EventModifiers)
     case accessibilityLabel(String)
+    /// SR1 round 5 (block swiftui.layout-priority): `.layoutPriority(_:)`, read by the stack that lays out this view (through wrappers that pass their child through).
+    case layoutPriority(Double)
     /// SR1 round 4 (block swiftui.list-row-style): `.listRowSeparator(_:)` and `.listRowBackground(_:)`, read by the host from the row's subtree.
     case listRowSeparator(Visibility)
     case listRowBackground(ListRowBackground)
@@ -239,6 +249,7 @@ enum ModifierSpec {
             return payload.kind == .alert ? "modifier.alert" : "modifier.confirmationDialog"
         case .keyboardShortcut: return "modifier.keyboardShortcut"
         case .accessibilityLabel: return "modifier.accessibilityLabel"
+        case .layoutPriority: return "modifier.layoutPriority"
         case .listRowSeparator: return "modifier.listRowSeparator"
         case .listRowBackground: return "modifier.listRowBackground"
         }
@@ -268,6 +279,7 @@ enum ModifierSpec {
             return payload.kind == .alert ? "alert" : "confirmationDialog"
         case .keyboardShortcut: return "keyboardShortcut"
         case .accessibilityLabel: return "accessibilityLabel"
+        case .layoutPriority: return "layoutPriority"
         case .listRowSeparator: return "listRowSeparator"
         case .listRowBackground: return "listRowBackground"
         }

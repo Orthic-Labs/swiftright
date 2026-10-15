@@ -203,6 +203,18 @@ let dividerThickness: CGFloat = 1
 public enum ResolvedColor: Hashable, Sendable {
     case semantic(String)
     case rgba(Double, Double, Double, Double)
+    /// A semantic colour at a fixed opacity (`Color.primary.opacity(0.5)`), multiplied into the colour's own alpha by the host.
+    case semanticAlpha(String, Double)
+
+    /// This colour times `alpha` (clamped to 0...1).
+    func multiplied(by alpha: Double) -> ResolvedColor {
+        let a = min(max(alpha, 0), 1)
+        switch self {
+        case .rgba(let r, let g, let b, let o): return .rgba(r, g, b, o * a)
+        case .semantic(let name): return .semanticAlpha(name, a)
+        case .semanticAlpha(let name, let o): return .semanticAlpha(name, o * a)
+        }
+    }
 }
 
 /// Apple: https://developer.apple.com/documentation/swiftui/shapestyle
@@ -221,6 +233,18 @@ public struct Color: ShapeStyle, Hashable, Sendable {
     init(semantic name: String) {
         resolvedColor = .semantic(name)
     }
+}
+
+extension Color {
+    init(resolved: ResolvedColor) { resolvedColor = resolved }
+
+    /// A fully transparent colour. Apple: https://developer.apple.com/documentation/swiftui/color/clear
+    public static var clear: Color { Color(semantic: "clear") }
+
+    /// This colour at `opacity` times its own. Returns a `Color`, not a view, so it is usable as a fill (`.fill(Color.black.opacity(0.1))`); the `View.opacity`
+    /// modifier stays for every other view.
+    /// Apple: https://developer.apple.com/documentation/swiftui/color/opacity(_:)
+    public func opacity(_ opacity: Double) -> Color { Color(resolved: resolvedColor.multiplied(by: opacity)) }
 }
 
 extension Color: View, PrimitiveView {
@@ -243,6 +267,7 @@ extension ShapeStyle where Self == Color {
     public static var gray: Color { Color(semantic: "system.gray") }
     public static var black: Color { Color(semantic: "black") }
     public static var white: Color { Color(semantic: "white") }
+    public static var clear: Color { Color(semantic: "clear") }
 }
 
 /// A font, as SwiftUI names it. `id` is the resolved identifier used by text measurement.

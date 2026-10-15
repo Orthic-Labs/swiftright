@@ -114,6 +114,12 @@ extension View {
         Modified(content: self, spec: .opacity(value))
     }
 
+    /// Gives this view priority over its siblings when a stack divides the space it has: higher priorities are offered space first.
+    /// Apple: https://developer.apple.com/documentation/swiftui/view/layoutpriority(_:)
+    public func layoutPriority(_ value: Double) -> some View {
+        Modified(content: self, spec: .layoutPriority(value))
+    }
+
     public func animation<V: Equatable>(_ animation: Animation?, value: V) -> some View {
         Modified(content: self, spec: .animation(AnyEquatable(value), animation))
     }

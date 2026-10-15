@@ -52,6 +52,8 @@ public struct State<Value>: DynamicPropertyStorage {
     let cell: StateCell<Value>
 
     public init(wrappedValue: Value) { cell = StateCell(wrappedValue) }
+    /// Apple: https://developer.apple.com/documentation/swiftui/state/init(initialvalue:)
+    public init(initialValue: Value) { cell = StateCell(initialValue) }
 
     @MainActor
     public var wrappedValue: Value {
