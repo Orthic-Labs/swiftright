@@ -1551,6 +1551,60 @@
         "text": "139/139 decode cases, 20/20 identical Windows runs (run.bin sha256 724f49818af416807d3198f5abff892d5a0f46c4eae3a6b0bb9228880a7041ce) (**delivered-pending-review**; decisions G30-G39)"
       },
       "windowsDifferences": []
+    },
+    {
+      "apis": {
+        "fromCaseSources": {
+          "modifiersAndMembers": [
+            "buttonStyle",
+            "fill",
+            "frame",
+            "opacity",
+            "padding"
+          ],
+          "types": [
+            "Button",
+            "Color",
+            "HStack",
+            "Image",
+            "Layout",
+            "Rectangle",
+            "Spacer",
+            "ZStack"
+          ]
+        },
+        "fromManifest": []
+      },
+      "block": "foundations.alpha-contract",
+      "cases": [
+        "blocks-t0/swiftui.alpha/clear-fills-v1",
+        "blocks-t0/swiftui.alpha/rect-ramp-v1",
+        "blocks-t0/swiftui.alpha/rect-black-ramp-v1",
+        "blocks-t0/swiftui.alpha/image-ramp-v1",
+        "blocks-t0/swiftui.alpha/image-black-ramp-v1",
+        "blocks-t0/swiftui.alpha/alpha0-rgb-v1",
+        "blocks-t0/swiftui.alpha/red-50-v1",
+        "blocks-t0/swiftui.alpha/hub-hit-area-v1"
+      ],
+      "casesPassingDecidingGate": "8/8 at N=20 (160/160 pairs)",
+      "caveats": [
+        "The deciding gate is the analytic composite (factory/tools/pair_alpha_report.py): Windows within 1 level of bg*(1-a)+fg*a, alpha 0, alpha 255 and the background exact; the Mac is reported against the same model, not part of the verdict.",
+        "Windows differs from the Mac by at most 1 level on 30000 pixels in rect-ramp-v1 and image-ramp-v1 (the Mac rounds a partial blend differently); both stay within 1 of the analytic value.",
+        "Images are drawn 1:1 (registered size = device size); a GPU-scaled image (bilinear on straight alpha, edge fringes) is not covered here: I2 owns it.",
+        "R12 (opaque-black transparent fill) did not reproduce on the unpatched path with either staged renderer; the hub-era cause was not isolated (decision G2). The host's alpha-0 drop of c18c4a0d8 is removed, so the cases exercise the renderer."
+      ],
+      "stage": "d25d7672c-23d3d490 (git archive of commit d25d7672c); renderer 0.7 baseline 82513ae0c1e2",
+      "status": "delivered-pending-review",
+      "statusDocBlock": "T0",
+      "verdict": {
+        "date": "2026-10-15",
+        "runDates": [
+          "2026-10-15"
+        ],
+        "source": "docs/sr1-status.md table + factory/pipeline/blocks-t0/swiftui.alpha/*/runs",
+        "text": "8/8 cases, 160/160 pairs pass the alpha gate (**delivered-pending-review**; decisions G1-G9)"
+      },
+      "windowsDifferences": []
     }
   ],
   "generator": "factory/tools/proven-controls/generate.py",
