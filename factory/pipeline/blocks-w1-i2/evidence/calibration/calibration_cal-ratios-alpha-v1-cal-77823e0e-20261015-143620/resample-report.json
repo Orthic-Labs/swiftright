@@ -1,0 +1,2359 @@
+{
+ "case": "cal-ratios-alpha-v1",
+ "run": "20261015-143620",
+ "runs": 3,
+ "calibrate": true,
+ "perLevel": {
+  "none": {
+   "max": 170,
+   "meanMax": 1.2973,
+   "cells": 21
+  },
+  "low": {
+   "max": 1,
+   "meanMax": 0.099,
+   "cells": 54
+  },
+  "medium": {
+   "max": 1,
+   "meanMax": 0.1094,
+   "cells": 27
+  },
+  "high": {
+   "max": 2,
+   "meanMax": 0.1406,
+   "cells": 30
+  }
+ },
+ "gate": {
+  "tolerance": null,
+  "reason": null
+ },
+ "rows": [
+  {
+   "run": "01",
+   "ok": false,
+   "frame": {
+    "outsideDiff": 0,
+    "outsideNotGround": 0,
+    "edgeMismatch": 12
+   },
+   "violations": [
+    "exact: alpha none ratio 1.0: max 1 (must be 0)",
+    "edge: cell alpha none ratio 1.25: 1 edge pixels differ in coverage, first [(197, 44)]",
+    "edge: cell alpha none ratio 1.5: 1 edge pixels differ in coverage, first [(248, 53)]",
+    "exact: alpha none ratio 2.0: max 1 (must be 0)",
+    "edge: cell alpha none ratio 2.5: 1 edge pixels differ in coverage, first [(437, 89)]",
+    "exact: alpha none ratio 3.0: max 1 (must be 0)",
+    "exact: alpha low ratio 1.0: max 1 (must be 0)",
+    "edge: cell alpha medium ratio 0.33: 1 edge pixels differ in coverage, first [(4, 241)]",
+    "exact: alpha medium ratio 1.0: max 1 (must be 0)",
+    "edge: cell alpha high ratio 1.25: 1 edge pixels differ in coverage, first [(195, 345)]",
+    "edge: cell alpha high ratio 1.5: 4 edge pixels differ in coverage, first [(266, 398), (260, 345), (252, 345)]",
+    "edge: cell alpha high ratio 2.5: 1 edge pixels differ in coverage, first [(466, 434)]"
+   ],
+   "cells": [
+    {
+     "family": "alpha",
+     "level": "none",
+     "ratio": 0.33,
+     "mode": null,
+     "rect": [
+      0,
+      0,
+      16,
+      12
+     ],
+     "cls": "resampled",
+     "max": 1,
+     "mean": 0.099
+    },
+    {
+     "family": "alpha",
+     "level": "none",
+     "ratio": 0.5,
+     "mode": null,
+     "rect": [
+      16,
+      0,
+      40,
+      18
+     ],
+     "cls": "resampled",
+     "max": 1,
+     "mean": 0.0926
+    },
+    {
+     "family": "alpha",
+     "level": "none",
+     "ratio": 0.66,
+     "mode": null,
+     "rect": [
+      41,
+      0,
+      73,
+      24
+     ],
+     "cls": "resampled",
+     "max": 1,
+     "mean": 0.0872
+    },
+    {
+     "family": "alpha",
+     "level": "none",
+     "ratio": 0.8,
+     "mode": null,
+     "rect": [
+      74,
+      0,
+      112,
+      29
+     ],
+     "cls": "resampled",
+     "max": 9,
+     "mean": 0.343
+    },
+    {
+     "family": "alpha",
+     "level": "none",
+     "ratio": 1.0,
+     "mode": null,
+     "rect": [
+      112,
+      0,
+      160,
+      36
+     ],
+     "cls": "exact",
+     "max": 1,
+     "mean": 0.0949
+    },
+    {
+     "family": "alpha",
+     "level": "none",
+     "ratio": 1.25,
+     "mode": null,
+     "rect": [
+      160,
+      0,
+      220,
+      45
+     ],
+     "cls": "resampled",
+     "max": 170,
+     "mean": 1.2363
+    },
+    {
+     "family": "alpha",
+     "level": "none",
+     "ratio": 1.5,
+     "mode": null,
+     "rect": [
+      220,
+      0,
+      292,
+      54
+     ],
+     "cls": "resampled",
+     "max": 170,
+     "mean": 1.2973
+    },
+    {
+     "family": "alpha",
+     "level": "none",
+     "ratio": 2.0,
+     "mode": null,
+     "rect": [
+      293,
+      0,
+      389,
+      72
+     ],
+     "cls": "exact",
+     "max": 1,
+     "mean": 0.0949
+    },
+    {
+     "family": "alpha",
+     "level": "none",
+     "ratio": 2.5,
+     "mode": null,
+     "rect": [
+      390,
+      0,
+      510,
+      90
+     ],
+     "cls": "resampled",
+     "max": 170,
+     "mean": 0.7816
+    },
+    {
+     "family": "alpha",
+     "level": "none",
+     "ratio": 3.0,
+     "mode": null,
+     "rect": [
+      510,
+      0,
+      654,
+      108
+     ],
+     "cls": "exact",
+     "max": 1,
+     "mean": 0.0949
+    },
+    {
+     "family": "alpha",
+     "level": "low",
+     "ratio": 0.33,
+     "mode": null,
+     "rect": [
+      0,
+      115,
+      16,
+      127
+     ],
+     "cls": "resampled",
+     "max": 1,
+     "mean": 0.099
+    },
+    {
+     "family": "alpha",
+     "level": "low",
+     "ratio": 0.5,
+     "mode": null,
+     "rect": [
+      16,
+      115,
+      40,
+      133
+     ],
+     "cls": "resampled",
+     "max": 1,
+     "mean": 0.0671
+    },
+    {
+     "family": "alpha",
+     "level": "low",
+     "ratio": 0.66,
+     "mode": null,
+     "rect": [
+      41,
+      115,
+      73,
+      139
+     ],
+     "cls": "resampled",
+     "max": 1,
+     "mean": 0.056
+    },
+    {
+     "family": "alpha",
+     "level": "low",
+     "ratio": 0.8,
+     "mode": null,
+     "rect": [
+      74,
+      115,
+      112,
+      144
+     ],
+     "cls": "resampled",
+     "max": 1,
+     "mean": 0.0635
+    },
+    {
+     "family": "alpha",
+     "level": "low",
+     "ratio": 1.0,
+     "mode": null,
+     "rect": [
+      112,
+      115,
+      160,
+      151
+     ],
+     "cls": "exact",
+     "max": 1,
+     "mean": 0.0949
+    },
+    {
+     "family": "alpha",
+     "level": "low",
+     "ratio": 1.25,
+     "mode": null,
+     "rect": [
+      160,
+      115,
+      220,
+      160
+     ],
+     "cls": "resampled",
+     "max": 1,
+     "mean": 0.0644
+    },
+    {
+     "family": "alpha",
+     "level": "low",
+     "ratio": 1.5,
+     "mode": null,
+     "rect": [
+      220,
+      115,
+      292,
+      169
+     ],
+     "cls": "resampled",
+     "max": 1,
+     "mean": 0.071
+    },
+    {
+     "family": "alpha",
+     "level": "low",
+     "ratio": 2.0,
+     "mode": null,
+     "rect": [
+      293,
+      115,
+      389,
+      187
+     ],
+     "cls": "resampled",
+     "max": 1,
+     "mean": 0.0631
+    },
+    {
+     "family": "alpha",
+     "level": "low",
+     "ratio": 2.5,
+     "mode": null,
+     "rect": [
+      390,
+      115,
+      510,
+      205
+     ],
+     "cls": "resampled",
+     "max": 1,
+     "mean": 0.0622
+    },
+    {
+     "family": "alpha",
+     "level": "low",
+     "ratio": 3.0,
+     "mode": null,
+     "rect": [
+      510,
+      115,
+      654,
+      223
+     ],
+     "cls": "resampled",
+     "max": 1,
+     "mean": 0.0668
+    },
+    {
+     "family": "alpha",
+     "level": "medium",
+     "ratio": 0.33,
+     "mode": null,
+     "rect": [
+      0,
+      230,
+      16,
+      242
+     ],
+     "cls": "resampled",
+     "max": 1,
+     "mean": 0.1094
+    },
+    {
+     "family": "alpha",
+     "level": "medium",
+     "ratio": 0.5,
+     "mode": null,
+     "rect": [
+      16,
+      230,
+      40,
+      248
+     ],
+     "cls": "resampled",
+     "max": 1,
+     "mean": 0.0671
+    },
+    {
+     "family": "alpha",
+     "level": "medium",
+     "ratio": 0.66,
+     "mode": null,
+     "rect": [
+      41,
+      230,
+      73,
+      254
+     ],
+     "cls": "resampled",
+     "max": 1,
+     "mean": 0.056
+    },
+    {
+     "family": "alpha",
+     "level": "medium",
+     "ratio": 0.8,
+     "mode": null,
+     "rect": [
+      74,
+      230,
+      112,
+      259
+     ],
+     "cls": "resampled",
+     "max": 1,
+     "mean": 0.0635
+    },
+    {
+     "family": "alpha",
+     "level": "medium",
+     "ratio": 1.0,
+     "mode": null,
+     "rect": [
+      112,
+      230,
+      160,
+      266
+     ],
+     "cls": "exact",
+     "max": 1,
+     "mean": 0.0949
+    },
+    {
+     "family": "alpha",
+     "level": "medium",
+     "ratio": 1.25,
+     "mode": null,
+     "rect": [
+      160,
+      230,
+      220,
+      275
+     ],
+     "cls": "resampled",
+     "max": 1,
+     "mean": 0.0644
+    },
+    {
+     "family": "alpha",
+     "level": "medium",
+     "ratio": 1.5,
+     "mode": null,
+     "rect": [
+      220,
+      230,
+      292,
+      284
+     ],
+     "cls": "resampled",
+     "max": 1,
+     "mean": 0.071
+    },
+    {
+     "family": "alpha",
+     "level": "medium",
+     "ratio": 2.0,
+     "mode": null,
+     "rect": [
+      293,
+      230,
+      389,
+      302
+     ],
+     "cls": "resampled",
+     "max": 1,
+     "mean": 0.0631
+    },
+    {
+     "family": "alpha",
+     "level": "medium",
+     "ratio": 2.5,
+     "mode": null,
+     "rect": [
+      390,
+      230,
+      510,
+      320
+     ],
+     "cls": "resampled",
+     "max": 1,
+     "mean": 0.0622
+    },
+    {
+     "family": "alpha",
+     "level": "medium",
+     "ratio": 3.0,
+     "mode": null,
+     "rect": [
+      510,
+      230,
+      654,
+      338
+     ],
+     "cls": "resampled",
+     "max": 1,
+     "mean": 0.0668
+    },
+    {
+     "family": "alpha",
+     "level": "high",
+     "ratio": 0.33,
+     "mode": null,
+     "rect": [
+      0,
+      345,
+      16,
+      357
+     ],
+     "cls": "resampled",
+     "max": 1,
+     "mean": 0.1406
+    },
+    {
+     "family": "alpha",
+     "level": "high",
+     "ratio": 0.5,
+     "mode": null,
+     "rect": [
+      16,
+      345,
+      40,
+      363
+     ],
+     "cls": "resampled",
+     "max": 1,
+     "mean": 0.0671
+    },
+    {
+     "family": "alpha",
+     "level": "high",
+     "ratio": 0.66,
+     "mode": null,
+     "rect": [
+      41,
+      345,
+      73,
+      369
+     ],
+     "cls": "resampled",
+     "max": 1,
+     "mean": 0.0651
+    },
+    {
+     "family": "alpha",
+     "level": "high",
+     "ratio": 0.8,
+     "mode": null,
+     "rect": [
+      74,
+      345,
+      112,
+      374
+     ],
+     "cls": "resampled",
+     "max": 2,
+     "mean": 0.0799
+    },
+    {
+     "family": "alpha",
+     "level": "high",
+     "ratio": 1.0,
+     "mode": null,
+     "rect": [
+      112,
+      345,
+      160,
+      381
+     ],
+     "cls": "resampled",
+     "max": 2,
+     "mean": 0.0706
+    },
+    {
+     "family": "alpha",
+     "level": "high",
+     "ratio": 1.25,
+     "mode": null,
+     "rect": [
+      160,
+      345,
+      220,
+      390
+     ],
+     "cls": "resampled",
+     "max": 1,
+     "mean": 0.0763
+    },
+    {
+     "family": "alpha",
+     "level": "high",
+     "ratio": 1.5,
+     "mode": null,
+     "rect": [
+      220,
+      345,
+      292,
+      399
+     ],
+     "cls": "resampled",
+     "max": 1,
+     "mean": 0.0581
+    },
+    {
+     "family": "alpha",
+     "level": "high",
+     "ratio": 2.0,
+     "mode": null,
+     "rect": [
+      293,
+      345,
+      389,
+      417
+     ],
+     "cls": "resampled",
+     "max": 1,
+     "mean": 0.0758
+    },
+    {
+     "family": "alpha",
+     "level": "high",
+     "ratio": 2.5,
+     "mode": null,
+     "rect": [
+      390,
+      345,
+      510,
+      435
+     ],
+     "cls": "resampled",
+     "max": 2,
+     "mean": 0.0739
+    },
+    {
+     "family": "alpha",
+     "level": "high",
+     "ratio": 3.0,
+     "mode": null,
+     "rect": [
+      510,
+      345,
+      654,
+      453
+     ],
+     "cls": "resampled",
+     "max": 2,
+     "mean": 0.0783
+    },
+    {
+     "family": "alpha",
+     "level": "default",
+     "ratio": 0.33,
+     "mode": null,
+     "rect": [
+      0,
+      460,
+      16,
+      472
+     ],
+     "cls": "resampled",
+     "max": 1,
+     "mean": 0.099
+    },
+    {
+     "family": "alpha",
+     "level": "default",
+     "ratio": 0.5,
+     "mode": null,
+     "rect": [
+      16,
+      460,
+      40,
+      478
+     ],
+     "cls": "resampled",
+     "max": 1,
+     "mean": 0.0671
+    },
+    {
+     "family": "alpha",
+     "level": "default",
+     "ratio": 0.66,
+     "mode": null,
+     "rect": [
+      41,
+      460,
+      73,
+      484
+     ],
+     "cls": "resampled",
+     "max": 1,
+     "mean": 0.056
+    },
+    {
+     "family": "alpha",
+     "level": "default",
+     "ratio": 0.8,
+     "mode": null,
+     "rect": [
+      74,
+      460,
+      112,
+      489
+     ],
+     "cls": "resampled",
+     "max": 1,
+     "mean": 0.0635
+    },
+    {
+     "family": "alpha",
+     "level": "default",
+     "ratio": 1.0,
+     "mode": null,
+     "rect": [
+      112,
+      460,
+      160,
+      496
+     ],
+     "cls": "exact",
+     "max": 1,
+     "mean": 0.0949
+    },
+    {
+     "family": "alpha",
+     "level": "default",
+     "ratio": 1.25,
+     "mode": null,
+     "rect": [
+      160,
+      460,
+      220,
+      505
+     ],
+     "cls": "resampled",
+     "max": 1,
+     "mean": 0.0644
+    },
+    {
+     "family": "alpha",
+     "level": "default",
+     "ratio": 1.5,
+     "mode": null,
+     "rect": [
+      220,
+      460,
+      292,
+      514
+     ],
+     "cls": "resampled",
+     "max": 1,
+     "mean": 0.071
+    },
+    {
+     "family": "alpha",
+     "level": "default",
+     "ratio": 2.0,
+     "mode": null,
+     "rect": [
+      293,
+      460,
+      389,
+      532
+     ],
+     "cls": "resampled",
+     "max": 1,
+     "mean": 0.0631
+    },
+    {
+     "family": "alpha",
+     "level": "default",
+     "ratio": 2.5,
+     "mode": null,
+     "rect": [
+      390,
+      460,
+      510,
+      550
+     ],
+     "cls": "resampled",
+     "max": 1,
+     "mean": 0.0622
+    },
+    {
+     "family": "alpha",
+     "level": "default",
+     "ratio": 3.0,
+     "mode": null,
+     "rect": [
+      510,
+      460,
+      654,
+      568
+     ],
+     "cls": "resampled",
+     "max": 1,
+     "mean": 0.0667
+    }
+   ]
+  },
+  {
+   "run": "02",
+   "ok": false,
+   "frame": {
+    "outsideDiff": 0,
+    "outsideNotGround": 0,
+    "edgeMismatch": 12
+   },
+   "violations": [
+    "exact: alpha none ratio 1.0: max 1 (must be 0)",
+    "edge: cell alpha none ratio 1.25: 1 edge pixels differ in coverage, first [(197, 44)]",
+    "edge: cell alpha none ratio 1.5: 1 edge pixels differ in coverage, first [(248, 53)]",
+    "exact: alpha none ratio 2.0: max 1 (must be 0)",
+    "edge: cell alpha none ratio 2.5: 1 edge pixels differ in coverage, first [(437, 89)]",
+    "exact: alpha none ratio 3.0: max 1 (must be 0)",
+    "exact: alpha low ratio 1.0: max 1 (must be 0)",
+    "edge: cell alpha medium ratio 0.33: 1 edge pixels differ in coverage, first [(4, 241)]",
+    "exact: alpha medium ratio 1.0: max 1 (must be 0)",
+    "edge: cell alpha high ratio 1.25: 1 edge pixels differ in coverage, first [(195, 345)]",
+    "edge: cell alpha high ratio 1.5: 4 edge pixels differ in coverage, first [(266, 398), (260, 345), (252, 345)]",
+    "edge: cell alpha high ratio 2.5: 1 edge pixels differ in coverage, first [(466, 434)]"
+   ],
+   "cells": [
+    {
+     "family": "alpha",
+     "level": "none",
+     "ratio": 0.33,
+     "mode": null,
+     "rect": [
+      0,
+      0,
+      16,
+      12
+     ],
+     "cls": "resampled",
+     "max": 1,
+     "mean": 0.099
+    },
+    {
+     "family": "alpha",
+     "level": "none",
+     "ratio": 0.5,
+     "mode": null,
+     "rect": [
+      16,
+      0,
+      40,
+      18
+     ],
+     "cls": "resampled",
+     "max": 1,
+     "mean": 0.0926
+    },
+    {
+     "family": "alpha",
+     "level": "none",
+     "ratio": 0.66,
+     "mode": null,
+     "rect": [
+      41,
+      0,
+      73,
+      24
+     ],
+     "cls": "resampled",
+     "max": 1,
+     "mean": 0.0872
+    },
+    {
+     "family": "alpha",
+     "level": "none",
+     "ratio": 0.8,
+     "mode": null,
+     "rect": [
+      74,
+      0,
+      112,
+      29
+     ],
+     "cls": "resampled",
+     "max": 9,
+     "mean": 0.343
+    },
+    {
+     "family": "alpha",
+     "level": "none",
+     "ratio": 1.0,
+     "mode": null,
+     "rect": [
+      112,
+      0,
+      160,
+      36
+     ],
+     "cls": "exact",
+     "max": 1,
+     "mean": 0.0949
+    },
+    {
+     "family": "alpha",
+     "level": "none",
+     "ratio": 1.25,
+     "mode": null,
+     "rect": [
+      160,
+      0,
+      220,
+      45
+     ],
+     "cls": "resampled",
+     "max": 170,
+     "mean": 1.2363
+    },
+    {
+     "family": "alpha",
+     "level": "none",
+     "ratio": 1.5,
+     "mode": null,
+     "rect": [
+      220,
+      0,
+      292,
+      54
+     ],
+     "cls": "resampled",
+     "max": 170,
+     "mean": 1.2973
+    },
+    {
+     "family": "alpha",
+     "level": "none",
+     "ratio": 2.0,
+     "mode": null,
+     "rect": [
+      293,
+      0,
+      389,
+      72
+     ],
+     "cls": "exact",
+     "max": 1,
+     "mean": 0.0949
+    },
+    {
+     "family": "alpha",
+     "level": "none",
+     "ratio": 2.5,
+     "mode": null,
+     "rect": [
+      390,
+      0,
+      510,
+      90
+     ],
+     "cls": "resampled",
+     "max": 170,
+     "mean": 0.7816
+    },
+    {
+     "family": "alpha",
+     "level": "none",
+     "ratio": 3.0,
+     "mode": null,
+     "rect": [
+      510,
+      0,
+      654,
+      108
+     ],
+     "cls": "exact",
+     "max": 1,
+     "mean": 0.0949
+    },
+    {
+     "family": "alpha",
+     "level": "low",
+     "ratio": 0.33,
+     "mode": null,
+     "rect": [
+      0,
+      115,
+      16,
+      127
+     ],
+     "cls": "resampled",
+     "max": 1,
+     "mean": 0.099
+    },
+    {
+     "family": "alpha",
+     "level": "low",
+     "ratio": 0.5,
+     "mode": null,
+     "rect": [
+      16,
+      115,
+      40,
+      133
+     ],
+     "cls": "resampled",
+     "max": 1,
+     "mean": 0.0671
+    },
+    {
+     "family": "alpha",
+     "level": "low",
+     "ratio": 0.66,
+     "mode": null,
+     "rect": [
+      41,
+      115,
+      73,
+      139
+     ],
+     "cls": "resampled",
+     "max": 1,
+     "mean": 0.056
+    },
+    {
+     "family": "alpha",
+     "level": "low",
+     "ratio": 0.8,
+     "mode": null,
+     "rect": [
+      74,
+      115,
+      112,
+      144
+     ],
+     "cls": "resampled",
+     "max": 1,
+     "mean": 0.0635
+    },
+    {
+     "family": "alpha",
+     "level": "low",
+     "ratio": 1.0,
+     "mode": null,
+     "rect": [
+      112,
+      115,
+      160,
+      151
+     ],
+     "cls": "exact",
+     "max": 1,
+     "mean": 0.0949
+    },
+    {
+     "family": "alpha",
+     "level": "low",
+     "ratio": 1.25,
+     "mode": null,
+     "rect": [
+      160,
+      115,
+      220,
+      160
+     ],
+     "cls": "resampled",
+     "max": 1,
+     "mean": 0.0644
+    },
+    {
+     "family": "alpha",
+     "level": "low",
+     "ratio": 1.5,
+     "mode": null,
+     "rect": [
+      220,
+      115,
+      292,
+      169
+     ],
+     "cls": "resampled",
+     "max": 1,
+     "mean": 0.071
+    },
+    {
+     "family": "alpha",
+     "level": "low",
+     "ratio": 2.0,
+     "mode": null,
+     "rect": [
+      293,
+      115,
+      389,
+      187
+     ],
+     "cls": "resampled",
+     "max": 1,
+     "mean": 0.0631
+    },
+    {
+     "family": "alpha",
+     "level": "low",
+     "ratio": 2.5,
+     "mode": null,
+     "rect": [
+      390,
+      115,
+      510,
+      205
+     ],
+     "cls": "resampled",
+     "max": 1,
+     "mean": 0.0622
+    },
+    {
+     "family": "alpha",
+     "level": "low",
+     "ratio": 3.0,
+     "mode": null,
+     "rect": [
+      510,
+      115,
+      654,
+      223
+     ],
+     "cls": "resampled",
+     "max": 1,
+     "mean": 0.0668
+    },
+    {
+     "family": "alpha",
+     "level": "medium",
+     "ratio": 0.33,
+     "mode": null,
+     "rect": [
+      0,
+      230,
+      16,
+      242
+     ],
+     "cls": "resampled",
+     "max": 1,
+     "mean": 0.1094
+    },
+    {
+     "family": "alpha",
+     "level": "medium",
+     "ratio": 0.5,
+     "mode": null,
+     "rect": [
+      16,
+      230,
+      40,
+      248
+     ],
+     "cls": "resampled",
+     "max": 1,
+     "mean": 0.0671
+    },
+    {
+     "family": "alpha",
+     "level": "medium",
+     "ratio": 0.66,
+     "mode": null,
+     "rect": [
+      41,
+      230,
+      73,
+      254
+     ],
+     "cls": "resampled",
+     "max": 1,
+     "mean": 0.056
+    },
+    {
+     "family": "alpha",
+     "level": "medium",
+     "ratio": 0.8,
+     "mode": null,
+     "rect": [
+      74,
+      230,
+      112,
+      259
+     ],
+     "cls": "resampled",
+     "max": 1,
+     "mean": 0.0635
+    },
+    {
+     "family": "alpha",
+     "level": "medium",
+     "ratio": 1.0,
+     "mode": null,
+     "rect": [
+      112,
+      230,
+      160,
+      266
+     ],
+     "cls": "exact",
+     "max": 1,
+     "mean": 0.0949
+    },
+    {
+     "family": "alpha",
+     "level": "medium",
+     "ratio": 1.25,
+     "mode": null,
+     "rect": [
+      160,
+      230,
+      220,
+      275
+     ],
+     "cls": "resampled",
+     "max": 1,
+     "mean": 0.0644
+    },
+    {
+     "family": "alpha",
+     "level": "medium",
+     "ratio": 1.5,
+     "mode": null,
+     "rect": [
+      220,
+      230,
+      292,
+      284
+     ],
+     "cls": "resampled",
+     "max": 1,
+     "mean": 0.071
+    },
+    {
+     "family": "alpha",
+     "level": "medium",
+     "ratio": 2.0,
+     "mode": null,
+     "rect": [
+      293,
+      230,
+      389,
+      302
+     ],
+     "cls": "resampled",
+     "max": 1,
+     "mean": 0.0631
+    },
+    {
+     "family": "alpha",
+     "level": "medium",
+     "ratio": 2.5,
+     "mode": null,
+     "rect": [
+      390,
+      230,
+      510,
+      320
+     ],
+     "cls": "resampled",
+     "max": 1,
+     "mean": 0.0622
+    },
+    {
+     "family": "alpha",
+     "level": "medium",
+     "ratio": 3.0,
+     "mode": null,
+     "rect": [
+      510,
+      230,
+      654,
+      338
+     ],
+     "cls": "resampled",
+     "max": 1,
+     "mean": 0.0668
+    },
+    {
+     "family": "alpha",
+     "level": "high",
+     "ratio": 0.33,
+     "mode": null,
+     "rect": [
+      0,
+      345,
+      16,
+      357
+     ],
+     "cls": "resampled",
+     "max": 1,
+     "mean": 0.1406
+    },
+    {
+     "family": "alpha",
+     "level": "high",
+     "ratio": 0.5,
+     "mode": null,
+     "rect": [
+      16,
+      345,
+      40,
+      363
+     ],
+     "cls": "resampled",
+     "max": 1,
+     "mean": 0.0671
+    },
+    {
+     "family": "alpha",
+     "level": "high",
+     "ratio": 0.66,
+     "mode": null,
+     "rect": [
+      41,
+      345,
+      73,
+      369
+     ],
+     "cls": "resampled",
+     "max": 1,
+     "mean": 0.0651
+    },
+    {
+     "family": "alpha",
+     "level": "high",
+     "ratio": 0.8,
+     "mode": null,
+     "rect": [
+      74,
+      345,
+      112,
+      374
+     ],
+     "cls": "resampled",
+     "max": 2,
+     "mean": 0.0799
+    },
+    {
+     "family": "alpha",
+     "level": "high",
+     "ratio": 1.0,
+     "mode": null,
+     "rect": [
+      112,
+      345,
+      160,
+      381
+     ],
+     "cls": "resampled",
+     "max": 2,
+     "mean": 0.0706
+    },
+    {
+     "family": "alpha",
+     "level": "high",
+     "ratio": 1.25,
+     "mode": null,
+     "rect": [
+      160,
+      345,
+      220,
+      390
+     ],
+     "cls": "resampled",
+     "max": 1,
+     "mean": 0.0763
+    },
+    {
+     "family": "alpha",
+     "level": "high",
+     "ratio": 1.5,
+     "mode": null,
+     "rect": [
+      220,
+      345,
+      292,
+      399
+     ],
+     "cls": "resampled",
+     "max": 1,
+     "mean": 0.0581
+    },
+    {
+     "family": "alpha",
+     "level": "high",
+     "ratio": 2.0,
+     "mode": null,
+     "rect": [
+      293,
+      345,
+      389,
+      417
+     ],
+     "cls": "resampled",
+     "max": 1,
+     "mean": 0.0758
+    },
+    {
+     "family": "alpha",
+     "level": "high",
+     "ratio": 2.5,
+     "mode": null,
+     "rect": [
+      390,
+      345,
+      510,
+      435
+     ],
+     "cls": "resampled",
+     "max": 2,
+     "mean": 0.0739
+    },
+    {
+     "family": "alpha",
+     "level": "high",
+     "ratio": 3.0,
+     "mode": null,
+     "rect": [
+      510,
+      345,
+      654,
+      453
+     ],
+     "cls": "resampled",
+     "max": 2,
+     "mean": 0.0783
+    },
+    {
+     "family": "alpha",
+     "level": "default",
+     "ratio": 0.33,
+     "mode": null,
+     "rect": [
+      0,
+      460,
+      16,
+      472
+     ],
+     "cls": "resampled",
+     "max": 1,
+     "mean": 0.099
+    },
+    {
+     "family": "alpha",
+     "level": "default",
+     "ratio": 0.5,
+     "mode": null,
+     "rect": [
+      16,
+      460,
+      40,
+      478
+     ],
+     "cls": "resampled",
+     "max": 1,
+     "mean": 0.0671
+    },
+    {
+     "family": "alpha",
+     "level": "default",
+     "ratio": 0.66,
+     "mode": null,
+     "rect": [
+      41,
+      460,
+      73,
+      484
+     ],
+     "cls": "resampled",
+     "max": 1,
+     "mean": 0.056
+    },
+    {
+     "family": "alpha",
+     "level": "default",
+     "ratio": 0.8,
+     "mode": null,
+     "rect": [
+      74,
+      460,
+      112,
+      489
+     ],
+     "cls": "resampled",
+     "max": 1,
+     "mean": 0.0635
+    },
+    {
+     "family": "alpha",
+     "level": "default",
+     "ratio": 1.0,
+     "mode": null,
+     "rect": [
+      112,
+      460,
+      160,
+      496
+     ],
+     "cls": "exact",
+     "max": 1,
+     "mean": 0.0949
+    },
+    {
+     "family": "alpha",
+     "level": "default",
+     "ratio": 1.25,
+     "mode": null,
+     "rect": [
+      160,
+      460,
+      220,
+      505
+     ],
+     "cls": "resampled",
+     "max": 1,
+     "mean": 0.0644
+    },
+    {
+     "family": "alpha",
+     "level": "default",
+     "ratio": 1.5,
+     "mode": null,
+     "rect": [
+      220,
+      460,
+      292,
+      514
+     ],
+     "cls": "resampled",
+     "max": 1,
+     "mean": 0.071
+    },
+    {
+     "family": "alpha",
+     "level": "default",
+     "ratio": 2.0,
+     "mode": null,
+     "rect": [
+      293,
+      460,
+      389,
+      532
+     ],
+     "cls": "resampled",
+     "max": 1,
+     "mean": 0.0631
+    },
+    {
+     "family": "alpha",
+     "level": "default",
+     "ratio": 2.5,
+     "mode": null,
+     "rect": [
+      390,
+      460,
+      510,
+      550
+     ],
+     "cls": "resampled",
+     "max": 1,
+     "mean": 0.0622
+    },
+    {
+     "family": "alpha",
+     "level": "default",
+     "ratio": 3.0,
+     "mode": null,
+     "rect": [
+      510,
+      460,
+      654,
+      568
+     ],
+     "cls": "resampled",
+     "max": 1,
+     "mean": 0.0667
+    }
+   ]
+  },
+  {
+   "run": "03",
+   "ok": false,
+   "frame": {
+    "outsideDiff": 0,
+    "outsideNotGround": 0,
+    "edgeMismatch": 12
+   },
+   "violations": [
+    "exact: alpha none ratio 1.0: max 1 (must be 0)",
+    "edge: cell alpha none ratio 1.25: 1 edge pixels differ in coverage, first [(197, 44)]",
+    "edge: cell alpha none ratio 1.5: 1 edge pixels differ in coverage, first [(248, 53)]",
+    "exact: alpha none ratio 2.0: max 1 (must be 0)",
+    "edge: cell alpha none ratio 2.5: 1 edge pixels differ in coverage, first [(437, 89)]",
+    "exact: alpha none ratio 3.0: max 1 (must be 0)",
+    "exact: alpha low ratio 1.0: max 1 (must be 0)",
+    "edge: cell alpha medium ratio 0.33: 1 edge pixels differ in coverage, first [(4, 241)]",
+    "exact: alpha medium ratio 1.0: max 1 (must be 0)",
+    "edge: cell alpha high ratio 1.25: 1 edge pixels differ in coverage, first [(195, 345)]",
+    "edge: cell alpha high ratio 1.5: 4 edge pixels differ in coverage, first [(266, 398), (260, 345), (252, 345)]",
+    "edge: cell alpha high ratio 2.5: 1 edge pixels differ in coverage, first [(466, 434)]"
+   ],
+   "cells": [
+    {
+     "family": "alpha",
+     "level": "none",
+     "ratio": 0.33,
+     "mode": null,
+     "rect": [
+      0,
+      0,
+      16,
+      12
+     ],
+     "cls": "resampled",
+     "max": 1,
+     "mean": 0.099
+    },
+    {
+     "family": "alpha",
+     "level": "none",
+     "ratio": 0.5,
+     "mode": null,
+     "rect": [
+      16,
+      0,
+      40,
+      18
+     ],
+     "cls": "resampled",
+     "max": 1,
+     "mean": 0.0926
+    },
+    {
+     "family": "alpha",
+     "level": "none",
+     "ratio": 0.66,
+     "mode": null,
+     "rect": [
+      41,
+      0,
+      73,
+      24
+     ],
+     "cls": "resampled",
+     "max": 1,
+     "mean": 0.0872
+    },
+    {
+     "family": "alpha",
+     "level": "none",
+     "ratio": 0.8,
+     "mode": null,
+     "rect": [
+      74,
+      0,
+      112,
+      29
+     ],
+     "cls": "resampled",
+     "max": 9,
+     "mean": 0.343
+    },
+    {
+     "family": "alpha",
+     "level": "none",
+     "ratio": 1.0,
+     "mode": null,
+     "rect": [
+      112,
+      0,
+      160,
+      36
+     ],
+     "cls": "exact",
+     "max": 1,
+     "mean": 0.0949
+    },
+    {
+     "family": "alpha",
+     "level": "none",
+     "ratio": 1.25,
+     "mode": null,
+     "rect": [
+      160,
+      0,
+      220,
+      45
+     ],
+     "cls": "resampled",
+     "max": 170,
+     "mean": 1.2363
+    },
+    {
+     "family": "alpha",
+     "level": "none",
+     "ratio": 1.5,
+     "mode": null,
+     "rect": [
+      220,
+      0,
+      292,
+      54
+     ],
+     "cls": "resampled",
+     "max": 170,
+     "mean": 1.2973
+    },
+    {
+     "family": "alpha",
+     "level": "none",
+     "ratio": 2.0,
+     "mode": null,
+     "rect": [
+      293,
+      0,
+      389,
+      72
+     ],
+     "cls": "exact",
+     "max": 1,
+     "mean": 0.0949
+    },
+    {
+     "family": "alpha",
+     "level": "none",
+     "ratio": 2.5,
+     "mode": null,
+     "rect": [
+      390,
+      0,
+      510,
+      90
+     ],
+     "cls": "resampled",
+     "max": 170,
+     "mean": 0.7816
+    },
+    {
+     "family": "alpha",
+     "level": "none",
+     "ratio": 3.0,
+     "mode": null,
+     "rect": [
+      510,
+      0,
+      654,
+      108
+     ],
+     "cls": "exact",
+     "max": 1,
+     "mean": 0.0949
+    },
+    {
+     "family": "alpha",
+     "level": "low",
+     "ratio": 0.33,
+     "mode": null,
+     "rect": [
+      0,
+      115,
+      16,
+      127
+     ],
+     "cls": "resampled",
+     "max": 1,
+     "mean": 0.099
+    },
+    {
+     "family": "alpha",
+     "level": "low",
+     "ratio": 0.5,
+     "mode": null,
+     "rect": [
+      16,
+      115,
+      40,
+      133
+     ],
+     "cls": "resampled",
+     "max": 1,
+     "mean": 0.0671
+    },
+    {
+     "family": "alpha",
+     "level": "low",
+     "ratio": 0.66,
+     "mode": null,
+     "rect": [
+      41,
+      115,
+      73,
+      139
+     ],
+     "cls": "resampled",
+     "max": 1,
+     "mean": 0.056
+    },
+    {
+     "family": "alpha",
+     "level": "low",
+     "ratio": 0.8,
+     "mode": null,
+     "rect": [
+      74,
+      115,
+      112,
+      144
+     ],
+     "cls": "resampled",
+     "max": 1,
+     "mean": 0.0635
+    },
+    {
+     "family": "alpha",
+     "level": "low",
+     "ratio": 1.0,
+     "mode": null,
+     "rect": [
+      112,
+      115,
+      160,
+      151
+     ],
+     "cls": "exact",
+     "max": 1,
+     "mean": 0.0949
+    },
+    {
+     "family": "alpha",
+     "level": "low",
+     "ratio": 1.25,
+     "mode": null,
+     "rect": [
+      160,
+      115,
+      220,
+      160
+     ],
+     "cls": "resampled",
+     "max": 1,
+     "mean": 0.0644
+    },
+    {
+     "family": "alpha",
+     "level": "low",
+     "ratio": 1.5,
+     "mode": null,
+     "rect": [
+      220,
+      115,
+      292,
+      169
+     ],
+     "cls": "resampled",
+     "max": 1,
+     "mean": 0.071
+    },
+    {
+     "family": "alpha",
+     "level": "low",
+     "ratio": 2.0,
+     "mode": null,
+     "rect": [
+      293,
+      115,
+      389,
+      187
+     ],
+     "cls": "resampled",
+     "max": 1,
+     "mean": 0.0631
+    },
+    {
+     "family": "alpha",
+     "level": "low",
+     "ratio": 2.5,
+     "mode": null,
+     "rect": [
+      390,
+      115,
+      510,
+      205
+     ],
+     "cls": "resampled",
+     "max": 1,
+     "mean": 0.0622
+    },
+    {
+     "family": "alpha",
+     "level": "low",
+     "ratio": 3.0,
+     "mode": null,
+     "rect": [
+      510,
+      115,
+      654,
+      223
+     ],
+     "cls": "resampled",
+     "max": 1,
+     "mean": 0.0668
+    },
+    {
+     "family": "alpha",
+     "level": "medium",
+     "ratio": 0.33,
+     "mode": null,
+     "rect": [
+      0,
+      230,
+      16,
+      242
+     ],
+     "cls": "resampled",
+     "max": 1,
+     "mean": 0.1094
+    },
+    {
+     "family": "alpha",
+     "level": "medium",
+     "ratio": 0.5,
+     "mode": null,
+     "rect": [
+      16,
+      230,
+      40,
+      248
+     ],
+     "cls": "resampled",
+     "max": 1,
+     "mean": 0.0671
+    },
+    {
+     "family": "alpha",
+     "level": "medium",
+     "ratio": 0.66,
+     "mode": null,
+     "rect": [
+      41,
+      230,
+      73,
+      254
+     ],
+     "cls": "resampled",
+     "max": 1,
+     "mean": 0.056
+    },
+    {
+     "family": "alpha",
+     "level": "medium",
+     "ratio": 0.8,
+     "mode": null,
+     "rect": [
+      74,
+      230,
+      112,
+      259
+     ],
+     "cls": "resampled",
+     "max": 1,
+     "mean": 0.0635
+    },
+    {
+     "family": "alpha",
+     "level": "medium",
+     "ratio": 1.0,
+     "mode": null,
+     "rect": [
+      112,
+      230,
+      160,
+      266
+     ],
+     "cls": "exact",
+     "max": 1,
+     "mean": 0.0949
+    },
+    {
+     "family": "alpha",
+     "level": "medium",
+     "ratio": 1.25,
+     "mode": null,
+     "rect": [
+      160,
+      230,
+      220,
+      275
+     ],
+     "cls": "resampled",
+     "max": 1,
+     "mean": 0.0644
+    },
+    {
+     "family": "alpha",
+     "level": "medium",
+     "ratio": 1.5,
+     "mode": null,
+     "rect": [
+      220,
+      230,
+      292,
+      284
+     ],
+     "cls": "resampled",
+     "max": 1,
+     "mean": 0.071
+    },
+    {
+     "family": "alpha",
+     "level": "medium",
+     "ratio": 2.0,
+     "mode": null,
+     "rect": [
+      293,
+      230,
+      389,
+      302
+     ],
+     "cls": "resampled",
+     "max": 1,
+     "mean": 0.0631
+    },
+    {
+     "family": "alpha",
+     "level": "medium",
+     "ratio": 2.5,
+     "mode": null,
+     "rect": [
+      390,
+      230,
+      510,
+      320
+     ],
+     "cls": "resampled",
+     "max": 1,
+     "mean": 0.0622
+    },
+    {
+     "family": "alpha",
+     "level": "medium",
+     "ratio": 3.0,
+     "mode": null,
+     "rect": [
+      510,
+      230,
+      654,
+      338
+     ],
+     "cls": "resampled",
+     "max": 1,
+     "mean": 0.0668
+    },
+    {
+     "family": "alpha",
+     "level": "high",
+     "ratio": 0.33,
+     "mode": null,
+     "rect": [
+      0,
+      345,
+      16,
+      357
+     ],
+     "cls": "resampled",
+     "max": 1,
+     "mean": 0.1406
+    },
+    {
+     "family": "alpha",
+     "level": "high",
+     "ratio": 0.5,
+     "mode": null,
+     "rect": [
+      16,
+      345,
+      40,
+      363
+     ],
+     "cls": "resampled",
+     "max": 1,
+     "mean": 0.0671
+    },
+    {
+     "family": "alpha",
+     "level": "high",
+     "ratio": 0.66,
+     "mode": null,
+     "rect": [
+      41,
+      345,
+      73,
+      369
+     ],
+     "cls": "resampled",
+     "max": 1,
+     "mean": 0.0651
+    },
+    {
+     "family": "alpha",
+     "level": "high",
+     "ratio": 0.8,
+     "mode": null,
+     "rect": [
+      74,
+      345,
+      112,
+      374
+     ],
+     "cls": "resampled",
+     "max": 2,
+     "mean": 0.0799
+    },
+    {
+     "family": "alpha",
+     "level": "high",
+     "ratio": 1.0,
+     "mode": null,
+     "rect": [
+      112,
+      345,
+      160,
+      381
+     ],
+     "cls": "resampled",
+     "max": 2,
+     "mean": 0.0706
+    },
+    {
+     "family": "alpha",
+     "level": "high",
+     "ratio": 1.25,
+     "mode": null,
+     "rect": [
+      160,
+      345,
+      220,
+      390
+     ],
+     "cls": "resampled",
+     "max": 1,
+     "mean": 0.0763
+    },
+    {
+     "family": "alpha",
+     "level": "high",
+     "ratio": 1.5,
+     "mode": null,
+     "rect": [
+      220,
+      345,
+      292,
+      399
+     ],
+     "cls": "resampled",
+     "max": 1,
+     "mean": 0.0581
+    },
+    {
+     "family": "alpha",
+     "level": "high",
+     "ratio": 2.0,
+     "mode": null,
+     "rect": [
+      293,
+      345,
+      389,
+      417
+     ],
+     "cls": "resampled",
+     "max": 1,
+     "mean": 0.0758
+    },
+    {
+     "family": "alpha",
+     "level": "high",
+     "ratio": 2.5,
+     "mode": null,
+     "rect": [
+      390,
+      345,
+      510,
+      435
+     ],
+     "cls": "resampled",
+     "max": 2,
+     "mean": 0.0739
+    },
+    {
+     "family": "alpha",
+     "level": "high",
+     "ratio": 3.0,
+     "mode": null,
+     "rect": [
+      510,
+      345,
+      654,
+      453
+     ],
+     "cls": "resampled",
+     "max": 2,
+     "mean": 0.0783
+    },
+    {
+     "family": "alpha",
+     "level": "default",
+     "ratio": 0.33,
+     "mode": null,
+     "rect": [
+      0,
+      460,
+      16,
+      472
+     ],
+     "cls": "resampled",
+     "max": 1,
+     "mean": 0.099
+    },
+    {
+     "family": "alpha",
+     "level": "default",
+     "ratio": 0.5,
+     "mode": null,
+     "rect": [
+      16,
+      460,
+      40,
+      478
+     ],
+     "cls": "resampled",
+     "max": 1,
+     "mean": 0.0671
+    },
+    {
+     "family": "alpha",
+     "level": "default",
+     "ratio": 0.66,
+     "mode": null,
+     "rect": [
+      41,
+      460,
+      73,
+      484
+     ],
+     "cls": "resampled",
+     "max": 1,
+     "mean": 0.056
+    },
+    {
+     "family": "alpha",
+     "level": "default",
+     "ratio": 0.8,
+     "mode": null,
+     "rect": [
+      74,
+      460,
+      112,
+      489
+     ],
+     "cls": "resampled",
+     "max": 1,
+     "mean": 0.0635
+    },
+    {
+     "family": "alpha",
+     "level": "default",
+     "ratio": 1.0,
+     "mode": null,
+     "rect": [
+      112,
+      460,
+      160,
+      496
+     ],
+     "cls": "exact",
+     "max": 1,
+     "mean": 0.0949
+    },
+    {
+     "family": "alpha",
+     "level": "default",
+     "ratio": 1.25,
+     "mode": null,
+     "rect": [
+      160,
+      460,
+      220,
+      505
+     ],
+     "cls": "resampled",
+     "max": 1,
+     "mean": 0.0644
+    },
+    {
+     "family": "alpha",
+     "level": "default",
+     "ratio": 1.5,
+     "mode": null,
+     "rect": [
+      220,
+      460,
+      292,
+      514
+     ],
+     "cls": "resampled",
+     "max": 1,
+     "mean": 0.071
+    },
+    {
+     "family": "alpha",
+     "level": "default",
+     "ratio": 2.0,
+     "mode": null,
+     "rect": [
+      293,
+      460,
+      389,
+      532
+     ],
+     "cls": "resampled",
+     "max": 1,
+     "mean": 0.0631
+    },
+    {
+     "family": "alpha",
+     "level": "default",
+     "ratio": 2.5,
+     "mode": null,
+     "rect": [
+      390,
+      460,
+      510,
+      550
+     ],
+     "cls": "resampled",
+     "max": 1,
+     "mean": 0.0622
+    },
+    {
+     "family": "alpha",
+     "level": "default",
+     "ratio": 3.0,
+     "mode": null,
+     "rect": [
+      510,
+      460,
+      654,
+      568
+     ],
+     "cls": "resampled",
+     "max": 1,
+     "mean": 0.0667
+    }
+   ]
+  }
+ ]
+}

@@ -1,0 +1,4791 @@
+{
+ "excluded": [],
+ "case": "one-to-one-none-int-v1",
+ "run": "20261015-153839",
+ "runs": 20,
+ "calibrate": false,
+ "perLevel": {},
+ "gate": {
+  "tolerance": {
+   "low": {
+    "resampleMaxPerChannel": 1,
+    "resampleMeanPerChannel": 0.7
+   },
+   "high": {
+    "resampleMaxPerChannel": 8,
+    "resampleMeanPerChannel": 1.95
+   },
+   "medium": {
+    "resampleMaxPerChannel": 1,
+    "resampleMeanPerChannel": 0.7
+   },
+   "none": {
+    "resampleMaxPerChannel": 1,
+    "resampleMeanPerChannel": 0.15
+   }
+  },
+  "reason": "Windows pipeline (host resample in Float, 8-bit straight alpha, GPU blend) against the Mac ImageRenderer on the CALIBRATION image set (swiftui.image-calibration, 3 runs of each page): per level the maximum per-pixel per-channel difference and the largest per-cell mean over every resampled cell, rounded up once (max to the next integer, mean to the next 0.05). The gating set (swiftui.image-layout) is different images and sizes. Excluded: nearest ties and odd sides reduced more than 2:1 at medium/high (not reproducible, G51 G53). Wave 1 block I2, docs/sr1-decisions.md G52 G56."
+ },
+ "rows": [
+  {
+   "cornerSpill": 2,
+   "run": "01",
+   "ok": true,
+   "frame": {
+    "outsideDiff": 0,
+    "outsideNotGround": 0,
+    "edgeMismatch": 0
+   },
+   "violations": [],
+   "cells": [
+    {
+     "family": "photo",
+     "level": "none",
+     "ratio": 1,
+     "mode": null,
+     "rect": [
+      0,
+      0,
+      24,
+      18
+     ],
+     "cls": "exact",
+     "max": 0,
+     "mean": 0.0
+    },
+    {
+     "family": "photo",
+     "level": "none",
+     "ratio": 2,
+     "mode": null,
+     "rect": [
+      24,
+      0,
+      72,
+      36
+     ],
+     "cls": "exact",
+     "max": 0,
+     "mean": 0.0
+    },
+    {
+     "family": "photo",
+     "level": "none",
+     "ratio": 3,
+     "mode": null,
+     "rect": [
+      73,
+      0,
+      145,
+      54
+     ],
+     "cls": "exact",
+     "max": 0,
+     "mean": 0.0
+    },
+    {
+     "family": "lineart",
+     "level": "none",
+     "ratio": 1,
+     "mode": null,
+     "rect": [
+      0,
+      115,
+      24,
+      133
+     ],
+     "cls": "exact",
+     "max": 0,
+     "mean": 0.0
+    },
+    {
+     "family": "lineart",
+     "level": "none",
+     "ratio": 2,
+     "mode": null,
+     "rect": [
+      24,
+      115,
+      72,
+      151
+     ],
+     "cls": "exact",
+     "max": 0,
+     "mean": 0.0
+    },
+    {
+     "family": "lineart",
+     "level": "none",
+     "ratio": 3,
+     "mode": null,
+     "rect": [
+      73,
+      115,
+      145,
+      169
+     ],
+     "cls": "exact",
+     "max": 0,
+     "mean": 0.0
+    },
+    {
+     "family": "text",
+     "level": "none",
+     "ratio": 1,
+     "mode": null,
+     "rect": [
+      0,
+      230,
+      24,
+      248
+     ],
+     "cls": "exact",
+     "max": 0,
+     "mean": 0.0
+    },
+    {
+     "family": "text",
+     "level": "none",
+     "ratio": 2,
+     "mode": null,
+     "rect": [
+      24,
+      230,
+      72,
+      266
+     ],
+     "cls": "exact",
+     "max": 0,
+     "mean": 0.0
+    },
+    {
+     "family": "text",
+     "level": "none",
+     "ratio": 3,
+     "mode": null,
+     "rect": [
+      73,
+      230,
+      145,
+      284
+     ],
+     "cls": "exact",
+     "max": 0,
+     "mean": 0.0
+    },
+    {
+     "family": "alpha",
+     "level": "none",
+     "ratio": 1,
+     "mode": null,
+     "rect": [
+      0,
+      345,
+      24,
+      363
+     ],
+     "cls": "exact",
+     "max": 1,
+     "mean": 0.1852
+    },
+    {
+     "family": "alpha",
+     "level": "none",
+     "ratio": 2,
+     "mode": null,
+     "rect": [
+      24,
+      345,
+      72,
+      381
+     ],
+     "cls": "exact",
+     "max": 1,
+     "mean": 0.1852
+    },
+    {
+     "family": "alpha",
+     "level": "none",
+     "ratio": 3,
+     "mode": null,
+     "rect": [
+      73,
+      345,
+      145,
+      399
+     ],
+     "cls": "exact",
+     "max": 1,
+     "mean": 0.1852
+    },
+    {
+     "family": "checker",
+     "level": "none",
+     "ratio": 1,
+     "mode": null,
+     "rect": [
+      0,
+      460,
+      24,
+      478
+     ],
+     "cls": "exact",
+     "max": 0,
+     "mean": 0.0
+    },
+    {
+     "family": "checker",
+     "level": "none",
+     "ratio": 2,
+     "mode": null,
+     "rect": [
+      24,
+      460,
+      72,
+      496
+     ],
+     "cls": "exact",
+     "max": 0,
+     "mean": 0.0
+    },
+    {
+     "family": "checker",
+     "level": "none",
+     "ratio": 3,
+     "mode": null,
+     "rect": [
+      73,
+      460,
+      145,
+      514
+     ],
+     "cls": "exact",
+     "max": 0,
+     "mean": 0.0
+    }
+   ]
+  },
+  {
+   "cornerSpill": 2,
+   "run": "02",
+   "ok": true,
+   "frame": {
+    "outsideDiff": 0,
+    "outsideNotGround": 0,
+    "edgeMismatch": 0
+   },
+   "violations": [],
+   "cells": [
+    {
+     "family": "photo",
+     "level": "none",
+     "ratio": 1,
+     "mode": null,
+     "rect": [
+      0,
+      0,
+      24,
+      18
+     ],
+     "cls": "exact",
+     "max": 0,
+     "mean": 0.0
+    },
+    {
+     "family": "photo",
+     "level": "none",
+     "ratio": 2,
+     "mode": null,
+     "rect": [
+      24,
+      0,
+      72,
+      36
+     ],
+     "cls": "exact",
+     "max": 0,
+     "mean": 0.0
+    },
+    {
+     "family": "photo",
+     "level": "none",
+     "ratio": 3,
+     "mode": null,
+     "rect": [
+      73,
+      0,
+      145,
+      54
+     ],
+     "cls": "exact",
+     "max": 0,
+     "mean": 0.0
+    },
+    {
+     "family": "lineart",
+     "level": "none",
+     "ratio": 1,
+     "mode": null,
+     "rect": [
+      0,
+      115,
+      24,
+      133
+     ],
+     "cls": "exact",
+     "max": 0,
+     "mean": 0.0
+    },
+    {
+     "family": "lineart",
+     "level": "none",
+     "ratio": 2,
+     "mode": null,
+     "rect": [
+      24,
+      115,
+      72,
+      151
+     ],
+     "cls": "exact",
+     "max": 0,
+     "mean": 0.0
+    },
+    {
+     "family": "lineart",
+     "level": "none",
+     "ratio": 3,
+     "mode": null,
+     "rect": [
+      73,
+      115,
+      145,
+      169
+     ],
+     "cls": "exact",
+     "max": 0,
+     "mean": 0.0
+    },
+    {
+     "family": "text",
+     "level": "none",
+     "ratio": 1,
+     "mode": null,
+     "rect": [
+      0,
+      230,
+      24,
+      248
+     ],
+     "cls": "exact",
+     "max": 0,
+     "mean": 0.0
+    },
+    {
+     "family": "text",
+     "level": "none",
+     "ratio": 2,
+     "mode": null,
+     "rect": [
+      24,
+      230,
+      72,
+      266
+     ],
+     "cls": "exact",
+     "max": 0,
+     "mean": 0.0
+    },
+    {
+     "family": "text",
+     "level": "none",
+     "ratio": 3,
+     "mode": null,
+     "rect": [
+      73,
+      230,
+      145,
+      284
+     ],
+     "cls": "exact",
+     "max": 0,
+     "mean": 0.0
+    },
+    {
+     "family": "alpha",
+     "level": "none",
+     "ratio": 1,
+     "mode": null,
+     "rect": [
+      0,
+      345,
+      24,
+      363
+     ],
+     "cls": "exact",
+     "max": 1,
+     "mean": 0.1852
+    },
+    {
+     "family": "alpha",
+     "level": "none",
+     "ratio": 2,
+     "mode": null,
+     "rect": [
+      24,
+      345,
+      72,
+      381
+     ],
+     "cls": "exact",
+     "max": 1,
+     "mean": 0.1852
+    },
+    {
+     "family": "alpha",
+     "level": "none",
+     "ratio": 3,
+     "mode": null,
+     "rect": [
+      73,
+      345,
+      145,
+      399
+     ],
+     "cls": "exact",
+     "max": 1,
+     "mean": 0.1852
+    },
+    {
+     "family": "checker",
+     "level": "none",
+     "ratio": 1,
+     "mode": null,
+     "rect": [
+      0,
+      460,
+      24,
+      478
+     ],
+     "cls": "exact",
+     "max": 0,
+     "mean": 0.0
+    },
+    {
+     "family": "checker",
+     "level": "none",
+     "ratio": 2,
+     "mode": null,
+     "rect": [
+      24,
+      460,
+      72,
+      496
+     ],
+     "cls": "exact",
+     "max": 0,
+     "mean": 0.0
+    },
+    {
+     "family": "checker",
+     "level": "none",
+     "ratio": 3,
+     "mode": null,
+     "rect": [
+      73,
+      460,
+      145,
+      514
+     ],
+     "cls": "exact",
+     "max": 0,
+     "mean": 0.0
+    }
+   ]
+  },
+  {
+   "cornerSpill": 2,
+   "run": "03",
+   "ok": true,
+   "frame": {
+    "outsideDiff": 0,
+    "outsideNotGround": 0,
+    "edgeMismatch": 0
+   },
+   "violations": [],
+   "cells": [
+    {
+     "family": "photo",
+     "level": "none",
+     "ratio": 1,
+     "mode": null,
+     "rect": [
+      0,
+      0,
+      24,
+      18
+     ],
+     "cls": "exact",
+     "max": 0,
+     "mean": 0.0
+    },
+    {
+     "family": "photo",
+     "level": "none",
+     "ratio": 2,
+     "mode": null,
+     "rect": [
+      24,
+      0,
+      72,
+      36
+     ],
+     "cls": "exact",
+     "max": 0,
+     "mean": 0.0
+    },
+    {
+     "family": "photo",
+     "level": "none",
+     "ratio": 3,
+     "mode": null,
+     "rect": [
+      73,
+      0,
+      145,
+      54
+     ],
+     "cls": "exact",
+     "max": 0,
+     "mean": 0.0
+    },
+    {
+     "family": "lineart",
+     "level": "none",
+     "ratio": 1,
+     "mode": null,
+     "rect": [
+      0,
+      115,
+      24,
+      133
+     ],
+     "cls": "exact",
+     "max": 0,
+     "mean": 0.0
+    },
+    {
+     "family": "lineart",
+     "level": "none",
+     "ratio": 2,
+     "mode": null,
+     "rect": [
+      24,
+      115,
+      72,
+      151
+     ],
+     "cls": "exact",
+     "max": 0,
+     "mean": 0.0
+    },
+    {
+     "family": "lineart",
+     "level": "none",
+     "ratio": 3,
+     "mode": null,
+     "rect": [
+      73,
+      115,
+      145,
+      169
+     ],
+     "cls": "exact",
+     "max": 0,
+     "mean": 0.0
+    },
+    {
+     "family": "text",
+     "level": "none",
+     "ratio": 1,
+     "mode": null,
+     "rect": [
+      0,
+      230,
+      24,
+      248
+     ],
+     "cls": "exact",
+     "max": 0,
+     "mean": 0.0
+    },
+    {
+     "family": "text",
+     "level": "none",
+     "ratio": 2,
+     "mode": null,
+     "rect": [
+      24,
+      230,
+      72,
+      266
+     ],
+     "cls": "exact",
+     "max": 0,
+     "mean": 0.0
+    },
+    {
+     "family": "text",
+     "level": "none",
+     "ratio": 3,
+     "mode": null,
+     "rect": [
+      73,
+      230,
+      145,
+      284
+     ],
+     "cls": "exact",
+     "max": 0,
+     "mean": 0.0
+    },
+    {
+     "family": "alpha",
+     "level": "none",
+     "ratio": 1,
+     "mode": null,
+     "rect": [
+      0,
+      345,
+      24,
+      363
+     ],
+     "cls": "exact",
+     "max": 1,
+     "mean": 0.1852
+    },
+    {
+     "family": "alpha",
+     "level": "none",
+     "ratio": 2,
+     "mode": null,
+     "rect": [
+      24,
+      345,
+      72,
+      381
+     ],
+     "cls": "exact",
+     "max": 1,
+     "mean": 0.1852
+    },
+    {
+     "family": "alpha",
+     "level": "none",
+     "ratio": 3,
+     "mode": null,
+     "rect": [
+      73,
+      345,
+      145,
+      399
+     ],
+     "cls": "exact",
+     "max": 1,
+     "mean": 0.1852
+    },
+    {
+     "family": "checker",
+     "level": "none",
+     "ratio": 1,
+     "mode": null,
+     "rect": [
+      0,
+      460,
+      24,
+      478
+     ],
+     "cls": "exact",
+     "max": 0,
+     "mean": 0.0
+    },
+    {
+     "family": "checker",
+     "level": "none",
+     "ratio": 2,
+     "mode": null,
+     "rect": [
+      24,
+      460,
+      72,
+      496
+     ],
+     "cls": "exact",
+     "max": 0,
+     "mean": 0.0
+    },
+    {
+     "family": "checker",
+     "level": "none",
+     "ratio": 3,
+     "mode": null,
+     "rect": [
+      73,
+      460,
+      145,
+      514
+     ],
+     "cls": "exact",
+     "max": 0,
+     "mean": 0.0
+    }
+   ]
+  },
+  {
+   "cornerSpill": 2,
+   "run": "04",
+   "ok": true,
+   "frame": {
+    "outsideDiff": 0,
+    "outsideNotGround": 0,
+    "edgeMismatch": 0
+   },
+   "violations": [],
+   "cells": [
+    {
+     "family": "photo",
+     "level": "none",
+     "ratio": 1,
+     "mode": null,
+     "rect": [
+      0,
+      0,
+      24,
+      18
+     ],
+     "cls": "exact",
+     "max": 0,
+     "mean": 0.0
+    },
+    {
+     "family": "photo",
+     "level": "none",
+     "ratio": 2,
+     "mode": null,
+     "rect": [
+      24,
+      0,
+      72,
+      36
+     ],
+     "cls": "exact",
+     "max": 0,
+     "mean": 0.0
+    },
+    {
+     "family": "photo",
+     "level": "none",
+     "ratio": 3,
+     "mode": null,
+     "rect": [
+      73,
+      0,
+      145,
+      54
+     ],
+     "cls": "exact",
+     "max": 0,
+     "mean": 0.0
+    },
+    {
+     "family": "lineart",
+     "level": "none",
+     "ratio": 1,
+     "mode": null,
+     "rect": [
+      0,
+      115,
+      24,
+      133
+     ],
+     "cls": "exact",
+     "max": 0,
+     "mean": 0.0
+    },
+    {
+     "family": "lineart",
+     "level": "none",
+     "ratio": 2,
+     "mode": null,
+     "rect": [
+      24,
+      115,
+      72,
+      151
+     ],
+     "cls": "exact",
+     "max": 0,
+     "mean": 0.0
+    },
+    {
+     "family": "lineart",
+     "level": "none",
+     "ratio": 3,
+     "mode": null,
+     "rect": [
+      73,
+      115,
+      145,
+      169
+     ],
+     "cls": "exact",
+     "max": 0,
+     "mean": 0.0
+    },
+    {
+     "family": "text",
+     "level": "none",
+     "ratio": 1,
+     "mode": null,
+     "rect": [
+      0,
+      230,
+      24,
+      248
+     ],
+     "cls": "exact",
+     "max": 0,
+     "mean": 0.0
+    },
+    {
+     "family": "text",
+     "level": "none",
+     "ratio": 2,
+     "mode": null,
+     "rect": [
+      24,
+      230,
+      72,
+      266
+     ],
+     "cls": "exact",
+     "max": 0,
+     "mean": 0.0
+    },
+    {
+     "family": "text",
+     "level": "none",
+     "ratio": 3,
+     "mode": null,
+     "rect": [
+      73,
+      230,
+      145,
+      284
+     ],
+     "cls": "exact",
+     "max": 0,
+     "mean": 0.0
+    },
+    {
+     "family": "alpha",
+     "level": "none",
+     "ratio": 1,
+     "mode": null,
+     "rect": [
+      0,
+      345,
+      24,
+      363
+     ],
+     "cls": "exact",
+     "max": 1,
+     "mean": 0.1852
+    },
+    {
+     "family": "alpha",
+     "level": "none",
+     "ratio": 2,
+     "mode": null,
+     "rect": [
+      24,
+      345,
+      72,
+      381
+     ],
+     "cls": "exact",
+     "max": 1,
+     "mean": 0.1852
+    },
+    {
+     "family": "alpha",
+     "level": "none",
+     "ratio": 3,
+     "mode": null,
+     "rect": [
+      73,
+      345,
+      145,
+      399
+     ],
+     "cls": "exact",
+     "max": 1,
+     "mean": 0.1852
+    },
+    {
+     "family": "checker",
+     "level": "none",
+     "ratio": 1,
+     "mode": null,
+     "rect": [
+      0,
+      460,
+      24,
+      478
+     ],
+     "cls": "exact",
+     "max": 0,
+     "mean": 0.0
+    },
+    {
+     "family": "checker",
+     "level": "none",
+     "ratio": 2,
+     "mode": null,
+     "rect": [
+      24,
+      460,
+      72,
+      496
+     ],
+     "cls": "exact",
+     "max": 0,
+     "mean": 0.0
+    },
+    {
+     "family": "checker",
+     "level": "none",
+     "ratio": 3,
+     "mode": null,
+     "rect": [
+      73,
+      460,
+      145,
+      514
+     ],
+     "cls": "exact",
+     "max": 0,
+     "mean": 0.0
+    }
+   ]
+  },
+  {
+   "cornerSpill": 2,
+   "run": "05",
+   "ok": true,
+   "frame": {
+    "outsideDiff": 0,
+    "outsideNotGround": 0,
+    "edgeMismatch": 0
+   },
+   "violations": [],
+   "cells": [
+    {
+     "family": "photo",
+     "level": "none",
+     "ratio": 1,
+     "mode": null,
+     "rect": [
+      0,
+      0,
+      24,
+      18
+     ],
+     "cls": "exact",
+     "max": 0,
+     "mean": 0.0
+    },
+    {
+     "family": "photo",
+     "level": "none",
+     "ratio": 2,
+     "mode": null,
+     "rect": [
+      24,
+      0,
+      72,
+      36
+     ],
+     "cls": "exact",
+     "max": 0,
+     "mean": 0.0
+    },
+    {
+     "family": "photo",
+     "level": "none",
+     "ratio": 3,
+     "mode": null,
+     "rect": [
+      73,
+      0,
+      145,
+      54
+     ],
+     "cls": "exact",
+     "max": 0,
+     "mean": 0.0
+    },
+    {
+     "family": "lineart",
+     "level": "none",
+     "ratio": 1,
+     "mode": null,
+     "rect": [
+      0,
+      115,
+      24,
+      133
+     ],
+     "cls": "exact",
+     "max": 0,
+     "mean": 0.0
+    },
+    {
+     "family": "lineart",
+     "level": "none",
+     "ratio": 2,
+     "mode": null,
+     "rect": [
+      24,
+      115,
+      72,
+      151
+     ],
+     "cls": "exact",
+     "max": 0,
+     "mean": 0.0
+    },
+    {
+     "family": "lineart",
+     "level": "none",
+     "ratio": 3,
+     "mode": null,
+     "rect": [
+      73,
+      115,
+      145,
+      169
+     ],
+     "cls": "exact",
+     "max": 0,
+     "mean": 0.0
+    },
+    {
+     "family": "text",
+     "level": "none",
+     "ratio": 1,
+     "mode": null,
+     "rect": [
+      0,
+      230,
+      24,
+      248
+     ],
+     "cls": "exact",
+     "max": 0,
+     "mean": 0.0
+    },
+    {
+     "family": "text",
+     "level": "none",
+     "ratio": 2,
+     "mode": null,
+     "rect": [
+      24,
+      230,
+      72,
+      266
+     ],
+     "cls": "exact",
+     "max": 0,
+     "mean": 0.0
+    },
+    {
+     "family": "text",
+     "level": "none",
+     "ratio": 3,
+     "mode": null,
+     "rect": [
+      73,
+      230,
+      145,
+      284
+     ],
+     "cls": "exact",
+     "max": 0,
+     "mean": 0.0
+    },
+    {
+     "family": "alpha",
+     "level": "none",
+     "ratio": 1,
+     "mode": null,
+     "rect": [
+      0,
+      345,
+      24,
+      363
+     ],
+     "cls": "exact",
+     "max": 1,
+     "mean": 0.1852
+    },
+    {
+     "family": "alpha",
+     "level": "none",
+     "ratio": 2,
+     "mode": null,
+     "rect": [
+      24,
+      345,
+      72,
+      381
+     ],
+     "cls": "exact",
+     "max": 1,
+     "mean": 0.1852
+    },
+    {
+     "family": "alpha",
+     "level": "none",
+     "ratio": 3,
+     "mode": null,
+     "rect": [
+      73,
+      345,
+      145,
+      399
+     ],
+     "cls": "exact",
+     "max": 1,
+     "mean": 0.1852
+    },
+    {
+     "family": "checker",
+     "level": "none",
+     "ratio": 1,
+     "mode": null,
+     "rect": [
+      0,
+      460,
+      24,
+      478
+     ],
+     "cls": "exact",
+     "max": 0,
+     "mean": 0.0
+    },
+    {
+     "family": "checker",
+     "level": "none",
+     "ratio": 2,
+     "mode": null,
+     "rect": [
+      24,
+      460,
+      72,
+      496
+     ],
+     "cls": "exact",
+     "max": 0,
+     "mean": 0.0
+    },
+    {
+     "family": "checker",
+     "level": "none",
+     "ratio": 3,
+     "mode": null,
+     "rect": [
+      73,
+      460,
+      145,
+      514
+     ],
+     "cls": "exact",
+     "max": 0,
+     "mean": 0.0
+    }
+   ]
+  },
+  {
+   "cornerSpill": 2,
+   "run": "06",
+   "ok": true,
+   "frame": {
+    "outsideDiff": 0,
+    "outsideNotGround": 0,
+    "edgeMismatch": 0
+   },
+   "violations": [],
+   "cells": [
+    {
+     "family": "photo",
+     "level": "none",
+     "ratio": 1,
+     "mode": null,
+     "rect": [
+      0,
+      0,
+      24,
+      18
+     ],
+     "cls": "exact",
+     "max": 0,
+     "mean": 0.0
+    },
+    {
+     "family": "photo",
+     "level": "none",
+     "ratio": 2,
+     "mode": null,
+     "rect": [
+      24,
+      0,
+      72,
+      36
+     ],
+     "cls": "exact",
+     "max": 0,
+     "mean": 0.0
+    },
+    {
+     "family": "photo",
+     "level": "none",
+     "ratio": 3,
+     "mode": null,
+     "rect": [
+      73,
+      0,
+      145,
+      54
+     ],
+     "cls": "exact",
+     "max": 0,
+     "mean": 0.0
+    },
+    {
+     "family": "lineart",
+     "level": "none",
+     "ratio": 1,
+     "mode": null,
+     "rect": [
+      0,
+      115,
+      24,
+      133
+     ],
+     "cls": "exact",
+     "max": 0,
+     "mean": 0.0
+    },
+    {
+     "family": "lineart",
+     "level": "none",
+     "ratio": 2,
+     "mode": null,
+     "rect": [
+      24,
+      115,
+      72,
+      151
+     ],
+     "cls": "exact",
+     "max": 0,
+     "mean": 0.0
+    },
+    {
+     "family": "lineart",
+     "level": "none",
+     "ratio": 3,
+     "mode": null,
+     "rect": [
+      73,
+      115,
+      145,
+      169
+     ],
+     "cls": "exact",
+     "max": 0,
+     "mean": 0.0
+    },
+    {
+     "family": "text",
+     "level": "none",
+     "ratio": 1,
+     "mode": null,
+     "rect": [
+      0,
+      230,
+      24,
+      248
+     ],
+     "cls": "exact",
+     "max": 0,
+     "mean": 0.0
+    },
+    {
+     "family": "text",
+     "level": "none",
+     "ratio": 2,
+     "mode": null,
+     "rect": [
+      24,
+      230,
+      72,
+      266
+     ],
+     "cls": "exact",
+     "max": 0,
+     "mean": 0.0
+    },
+    {
+     "family": "text",
+     "level": "none",
+     "ratio": 3,
+     "mode": null,
+     "rect": [
+      73,
+      230,
+      145,
+      284
+     ],
+     "cls": "exact",
+     "max": 0,
+     "mean": 0.0
+    },
+    {
+     "family": "alpha",
+     "level": "none",
+     "ratio": 1,
+     "mode": null,
+     "rect": [
+      0,
+      345,
+      24,
+      363
+     ],
+     "cls": "exact",
+     "max": 1,
+     "mean": 0.1852
+    },
+    {
+     "family": "alpha",
+     "level": "none",
+     "ratio": 2,
+     "mode": null,
+     "rect": [
+      24,
+      345,
+      72,
+      381
+     ],
+     "cls": "exact",
+     "max": 1,
+     "mean": 0.1852
+    },
+    {
+     "family": "alpha",
+     "level": "none",
+     "ratio": 3,
+     "mode": null,
+     "rect": [
+      73,
+      345,
+      145,
+      399
+     ],
+     "cls": "exact",
+     "max": 1,
+     "mean": 0.1852
+    },
+    {
+     "family": "checker",
+     "level": "none",
+     "ratio": 1,
+     "mode": null,
+     "rect": [
+      0,
+      460,
+      24,
+      478
+     ],
+     "cls": "exact",
+     "max": 0,
+     "mean": 0.0
+    },
+    {
+     "family": "checker",
+     "level": "none",
+     "ratio": 2,
+     "mode": null,
+     "rect": [
+      24,
+      460,
+      72,
+      496
+     ],
+     "cls": "exact",
+     "max": 0,
+     "mean": 0.0
+    },
+    {
+     "family": "checker",
+     "level": "none",
+     "ratio": 3,
+     "mode": null,
+     "rect": [
+      73,
+      460,
+      145,
+      514
+     ],
+     "cls": "exact",
+     "max": 0,
+     "mean": 0.0
+    }
+   ]
+  },
+  {
+   "cornerSpill": 2,
+   "run": "07",
+   "ok": true,
+   "frame": {
+    "outsideDiff": 0,
+    "outsideNotGround": 0,
+    "edgeMismatch": 0
+   },
+   "violations": [],
+   "cells": [
+    {
+     "family": "photo",
+     "level": "none",
+     "ratio": 1,
+     "mode": null,
+     "rect": [
+      0,
+      0,
+      24,
+      18
+     ],
+     "cls": "exact",
+     "max": 0,
+     "mean": 0.0
+    },
+    {
+     "family": "photo",
+     "level": "none",
+     "ratio": 2,
+     "mode": null,
+     "rect": [
+      24,
+      0,
+      72,
+      36
+     ],
+     "cls": "exact",
+     "max": 0,
+     "mean": 0.0
+    },
+    {
+     "family": "photo",
+     "level": "none",
+     "ratio": 3,
+     "mode": null,
+     "rect": [
+      73,
+      0,
+      145,
+      54
+     ],
+     "cls": "exact",
+     "max": 0,
+     "mean": 0.0
+    },
+    {
+     "family": "lineart",
+     "level": "none",
+     "ratio": 1,
+     "mode": null,
+     "rect": [
+      0,
+      115,
+      24,
+      133
+     ],
+     "cls": "exact",
+     "max": 0,
+     "mean": 0.0
+    },
+    {
+     "family": "lineart",
+     "level": "none",
+     "ratio": 2,
+     "mode": null,
+     "rect": [
+      24,
+      115,
+      72,
+      151
+     ],
+     "cls": "exact",
+     "max": 0,
+     "mean": 0.0
+    },
+    {
+     "family": "lineart",
+     "level": "none",
+     "ratio": 3,
+     "mode": null,
+     "rect": [
+      73,
+      115,
+      145,
+      169
+     ],
+     "cls": "exact",
+     "max": 0,
+     "mean": 0.0
+    },
+    {
+     "family": "text",
+     "level": "none",
+     "ratio": 1,
+     "mode": null,
+     "rect": [
+      0,
+      230,
+      24,
+      248
+     ],
+     "cls": "exact",
+     "max": 0,
+     "mean": 0.0
+    },
+    {
+     "family": "text",
+     "level": "none",
+     "ratio": 2,
+     "mode": null,
+     "rect": [
+      24,
+      230,
+      72,
+      266
+     ],
+     "cls": "exact",
+     "max": 0,
+     "mean": 0.0
+    },
+    {
+     "family": "text",
+     "level": "none",
+     "ratio": 3,
+     "mode": null,
+     "rect": [
+      73,
+      230,
+      145,
+      284
+     ],
+     "cls": "exact",
+     "max": 0,
+     "mean": 0.0
+    },
+    {
+     "family": "alpha",
+     "level": "none",
+     "ratio": 1,
+     "mode": null,
+     "rect": [
+      0,
+      345,
+      24,
+      363
+     ],
+     "cls": "exact",
+     "max": 1,
+     "mean": 0.1852
+    },
+    {
+     "family": "alpha",
+     "level": "none",
+     "ratio": 2,
+     "mode": null,
+     "rect": [
+      24,
+      345,
+      72,
+      381
+     ],
+     "cls": "exact",
+     "max": 1,
+     "mean": 0.1852
+    },
+    {
+     "family": "alpha",
+     "level": "none",
+     "ratio": 3,
+     "mode": null,
+     "rect": [
+      73,
+      345,
+      145,
+      399
+     ],
+     "cls": "exact",
+     "max": 1,
+     "mean": 0.1852
+    },
+    {
+     "family": "checker",
+     "level": "none",
+     "ratio": 1,
+     "mode": null,
+     "rect": [
+      0,
+      460,
+      24,
+      478
+     ],
+     "cls": "exact",
+     "max": 0,
+     "mean": 0.0
+    },
+    {
+     "family": "checker",
+     "level": "none",
+     "ratio": 2,
+     "mode": null,
+     "rect": [
+      24,
+      460,
+      72,
+      496
+     ],
+     "cls": "exact",
+     "max": 0,
+     "mean": 0.0
+    },
+    {
+     "family": "checker",
+     "level": "none",
+     "ratio": 3,
+     "mode": null,
+     "rect": [
+      73,
+      460,
+      145,
+      514
+     ],
+     "cls": "exact",
+     "max": 0,
+     "mean": 0.0
+    }
+   ]
+  },
+  {
+   "cornerSpill": 2,
+   "run": "08",
+   "ok": true,
+   "frame": {
+    "outsideDiff": 0,
+    "outsideNotGround": 0,
+    "edgeMismatch": 0
+   },
+   "violations": [],
+   "cells": [
+    {
+     "family": "photo",
+     "level": "none",
+     "ratio": 1,
+     "mode": null,
+     "rect": [
+      0,
+      0,
+      24,
+      18
+     ],
+     "cls": "exact",
+     "max": 0,
+     "mean": 0.0
+    },
+    {
+     "family": "photo",
+     "level": "none",
+     "ratio": 2,
+     "mode": null,
+     "rect": [
+      24,
+      0,
+      72,
+      36
+     ],
+     "cls": "exact",
+     "max": 0,
+     "mean": 0.0
+    },
+    {
+     "family": "photo",
+     "level": "none",
+     "ratio": 3,
+     "mode": null,
+     "rect": [
+      73,
+      0,
+      145,
+      54
+     ],
+     "cls": "exact",
+     "max": 0,
+     "mean": 0.0
+    },
+    {
+     "family": "lineart",
+     "level": "none",
+     "ratio": 1,
+     "mode": null,
+     "rect": [
+      0,
+      115,
+      24,
+      133
+     ],
+     "cls": "exact",
+     "max": 0,
+     "mean": 0.0
+    },
+    {
+     "family": "lineart",
+     "level": "none",
+     "ratio": 2,
+     "mode": null,
+     "rect": [
+      24,
+      115,
+      72,
+      151
+     ],
+     "cls": "exact",
+     "max": 0,
+     "mean": 0.0
+    },
+    {
+     "family": "lineart",
+     "level": "none",
+     "ratio": 3,
+     "mode": null,
+     "rect": [
+      73,
+      115,
+      145,
+      169
+     ],
+     "cls": "exact",
+     "max": 0,
+     "mean": 0.0
+    },
+    {
+     "family": "text",
+     "level": "none",
+     "ratio": 1,
+     "mode": null,
+     "rect": [
+      0,
+      230,
+      24,
+      248
+     ],
+     "cls": "exact",
+     "max": 0,
+     "mean": 0.0
+    },
+    {
+     "family": "text",
+     "level": "none",
+     "ratio": 2,
+     "mode": null,
+     "rect": [
+      24,
+      230,
+      72,
+      266
+     ],
+     "cls": "exact",
+     "max": 0,
+     "mean": 0.0
+    },
+    {
+     "family": "text",
+     "level": "none",
+     "ratio": 3,
+     "mode": null,
+     "rect": [
+      73,
+      230,
+      145,
+      284
+     ],
+     "cls": "exact",
+     "max": 0,
+     "mean": 0.0
+    },
+    {
+     "family": "alpha",
+     "level": "none",
+     "ratio": 1,
+     "mode": null,
+     "rect": [
+      0,
+      345,
+      24,
+      363
+     ],
+     "cls": "exact",
+     "max": 1,
+     "mean": 0.1852
+    },
+    {
+     "family": "alpha",
+     "level": "none",
+     "ratio": 2,
+     "mode": null,
+     "rect": [
+      24,
+      345,
+      72,
+      381
+     ],
+     "cls": "exact",
+     "max": 1,
+     "mean": 0.1852
+    },
+    {
+     "family": "alpha",
+     "level": "none",
+     "ratio": 3,
+     "mode": null,
+     "rect": [
+      73,
+      345,
+      145,
+      399
+     ],
+     "cls": "exact",
+     "max": 1,
+     "mean": 0.1852
+    },
+    {
+     "family": "checker",
+     "level": "none",
+     "ratio": 1,
+     "mode": null,
+     "rect": [
+      0,
+      460,
+      24,
+      478
+     ],
+     "cls": "exact",
+     "max": 0,
+     "mean": 0.0
+    },
+    {
+     "family": "checker",
+     "level": "none",
+     "ratio": 2,
+     "mode": null,
+     "rect": [
+      24,
+      460,
+      72,
+      496
+     ],
+     "cls": "exact",
+     "max": 0,
+     "mean": 0.0
+    },
+    {
+     "family": "checker",
+     "level": "none",
+     "ratio": 3,
+     "mode": null,
+     "rect": [
+      73,
+      460,
+      145,
+      514
+     ],
+     "cls": "exact",
+     "max": 0,
+     "mean": 0.0
+    }
+   ]
+  },
+  {
+   "cornerSpill": 2,
+   "run": "09",
+   "ok": true,
+   "frame": {
+    "outsideDiff": 0,
+    "outsideNotGround": 0,
+    "edgeMismatch": 0
+   },
+   "violations": [],
+   "cells": [
+    {
+     "family": "photo",
+     "level": "none",
+     "ratio": 1,
+     "mode": null,
+     "rect": [
+      0,
+      0,
+      24,
+      18
+     ],
+     "cls": "exact",
+     "max": 0,
+     "mean": 0.0
+    },
+    {
+     "family": "photo",
+     "level": "none",
+     "ratio": 2,
+     "mode": null,
+     "rect": [
+      24,
+      0,
+      72,
+      36
+     ],
+     "cls": "exact",
+     "max": 0,
+     "mean": 0.0
+    },
+    {
+     "family": "photo",
+     "level": "none",
+     "ratio": 3,
+     "mode": null,
+     "rect": [
+      73,
+      0,
+      145,
+      54
+     ],
+     "cls": "exact",
+     "max": 0,
+     "mean": 0.0
+    },
+    {
+     "family": "lineart",
+     "level": "none",
+     "ratio": 1,
+     "mode": null,
+     "rect": [
+      0,
+      115,
+      24,
+      133
+     ],
+     "cls": "exact",
+     "max": 0,
+     "mean": 0.0
+    },
+    {
+     "family": "lineart",
+     "level": "none",
+     "ratio": 2,
+     "mode": null,
+     "rect": [
+      24,
+      115,
+      72,
+      151
+     ],
+     "cls": "exact",
+     "max": 0,
+     "mean": 0.0
+    },
+    {
+     "family": "lineart",
+     "level": "none",
+     "ratio": 3,
+     "mode": null,
+     "rect": [
+      73,
+      115,
+      145,
+      169
+     ],
+     "cls": "exact",
+     "max": 0,
+     "mean": 0.0
+    },
+    {
+     "family": "text",
+     "level": "none",
+     "ratio": 1,
+     "mode": null,
+     "rect": [
+      0,
+      230,
+      24,
+      248
+     ],
+     "cls": "exact",
+     "max": 0,
+     "mean": 0.0
+    },
+    {
+     "family": "text",
+     "level": "none",
+     "ratio": 2,
+     "mode": null,
+     "rect": [
+      24,
+      230,
+      72,
+      266
+     ],
+     "cls": "exact",
+     "max": 0,
+     "mean": 0.0
+    },
+    {
+     "family": "text",
+     "level": "none",
+     "ratio": 3,
+     "mode": null,
+     "rect": [
+      73,
+      230,
+      145,
+      284
+     ],
+     "cls": "exact",
+     "max": 0,
+     "mean": 0.0
+    },
+    {
+     "family": "alpha",
+     "level": "none",
+     "ratio": 1,
+     "mode": null,
+     "rect": [
+      0,
+      345,
+      24,
+      363
+     ],
+     "cls": "exact",
+     "max": 1,
+     "mean": 0.1852
+    },
+    {
+     "family": "alpha",
+     "level": "none",
+     "ratio": 2,
+     "mode": null,
+     "rect": [
+      24,
+      345,
+      72,
+      381
+     ],
+     "cls": "exact",
+     "max": 1,
+     "mean": 0.1852
+    },
+    {
+     "family": "alpha",
+     "level": "none",
+     "ratio": 3,
+     "mode": null,
+     "rect": [
+      73,
+      345,
+      145,
+      399
+     ],
+     "cls": "exact",
+     "max": 1,
+     "mean": 0.1852
+    },
+    {
+     "family": "checker",
+     "level": "none",
+     "ratio": 1,
+     "mode": null,
+     "rect": [
+      0,
+      460,
+      24,
+      478
+     ],
+     "cls": "exact",
+     "max": 0,
+     "mean": 0.0
+    },
+    {
+     "family": "checker",
+     "level": "none",
+     "ratio": 2,
+     "mode": null,
+     "rect": [
+      24,
+      460,
+      72,
+      496
+     ],
+     "cls": "exact",
+     "max": 0,
+     "mean": 0.0
+    },
+    {
+     "family": "checker",
+     "level": "none",
+     "ratio": 3,
+     "mode": null,
+     "rect": [
+      73,
+      460,
+      145,
+      514
+     ],
+     "cls": "exact",
+     "max": 0,
+     "mean": 0.0
+    }
+   ]
+  },
+  {
+   "cornerSpill": 2,
+   "run": "10",
+   "ok": true,
+   "frame": {
+    "outsideDiff": 0,
+    "outsideNotGround": 0,
+    "edgeMismatch": 0
+   },
+   "violations": [],
+   "cells": [
+    {
+     "family": "photo",
+     "level": "none",
+     "ratio": 1,
+     "mode": null,
+     "rect": [
+      0,
+      0,
+      24,
+      18
+     ],
+     "cls": "exact",
+     "max": 0,
+     "mean": 0.0
+    },
+    {
+     "family": "photo",
+     "level": "none",
+     "ratio": 2,
+     "mode": null,
+     "rect": [
+      24,
+      0,
+      72,
+      36
+     ],
+     "cls": "exact",
+     "max": 0,
+     "mean": 0.0
+    },
+    {
+     "family": "photo",
+     "level": "none",
+     "ratio": 3,
+     "mode": null,
+     "rect": [
+      73,
+      0,
+      145,
+      54
+     ],
+     "cls": "exact",
+     "max": 0,
+     "mean": 0.0
+    },
+    {
+     "family": "lineart",
+     "level": "none",
+     "ratio": 1,
+     "mode": null,
+     "rect": [
+      0,
+      115,
+      24,
+      133
+     ],
+     "cls": "exact",
+     "max": 0,
+     "mean": 0.0
+    },
+    {
+     "family": "lineart",
+     "level": "none",
+     "ratio": 2,
+     "mode": null,
+     "rect": [
+      24,
+      115,
+      72,
+      151
+     ],
+     "cls": "exact",
+     "max": 0,
+     "mean": 0.0
+    },
+    {
+     "family": "lineart",
+     "level": "none",
+     "ratio": 3,
+     "mode": null,
+     "rect": [
+      73,
+      115,
+      145,
+      169
+     ],
+     "cls": "exact",
+     "max": 0,
+     "mean": 0.0
+    },
+    {
+     "family": "text",
+     "level": "none",
+     "ratio": 1,
+     "mode": null,
+     "rect": [
+      0,
+      230,
+      24,
+      248
+     ],
+     "cls": "exact",
+     "max": 0,
+     "mean": 0.0
+    },
+    {
+     "family": "text",
+     "level": "none",
+     "ratio": 2,
+     "mode": null,
+     "rect": [
+      24,
+      230,
+      72,
+      266
+     ],
+     "cls": "exact",
+     "max": 0,
+     "mean": 0.0
+    },
+    {
+     "family": "text",
+     "level": "none",
+     "ratio": 3,
+     "mode": null,
+     "rect": [
+      73,
+      230,
+      145,
+      284
+     ],
+     "cls": "exact",
+     "max": 0,
+     "mean": 0.0
+    },
+    {
+     "family": "alpha",
+     "level": "none",
+     "ratio": 1,
+     "mode": null,
+     "rect": [
+      0,
+      345,
+      24,
+      363
+     ],
+     "cls": "exact",
+     "max": 1,
+     "mean": 0.1852
+    },
+    {
+     "family": "alpha",
+     "level": "none",
+     "ratio": 2,
+     "mode": null,
+     "rect": [
+      24,
+      345,
+      72,
+      381
+     ],
+     "cls": "exact",
+     "max": 1,
+     "mean": 0.1852
+    },
+    {
+     "family": "alpha",
+     "level": "none",
+     "ratio": 3,
+     "mode": null,
+     "rect": [
+      73,
+      345,
+      145,
+      399
+     ],
+     "cls": "exact",
+     "max": 1,
+     "mean": 0.1852
+    },
+    {
+     "family": "checker",
+     "level": "none",
+     "ratio": 1,
+     "mode": null,
+     "rect": [
+      0,
+      460,
+      24,
+      478
+     ],
+     "cls": "exact",
+     "max": 0,
+     "mean": 0.0
+    },
+    {
+     "family": "checker",
+     "level": "none",
+     "ratio": 2,
+     "mode": null,
+     "rect": [
+      24,
+      460,
+      72,
+      496
+     ],
+     "cls": "exact",
+     "max": 0,
+     "mean": 0.0
+    },
+    {
+     "family": "checker",
+     "level": "none",
+     "ratio": 3,
+     "mode": null,
+     "rect": [
+      73,
+      460,
+      145,
+      514
+     ],
+     "cls": "exact",
+     "max": 0,
+     "mean": 0.0
+    }
+   ]
+  },
+  {
+   "cornerSpill": 2,
+   "run": "11",
+   "ok": true,
+   "frame": {
+    "outsideDiff": 0,
+    "outsideNotGround": 0,
+    "edgeMismatch": 0
+   },
+   "violations": [],
+   "cells": [
+    {
+     "family": "photo",
+     "level": "none",
+     "ratio": 1,
+     "mode": null,
+     "rect": [
+      0,
+      0,
+      24,
+      18
+     ],
+     "cls": "exact",
+     "max": 0,
+     "mean": 0.0
+    },
+    {
+     "family": "photo",
+     "level": "none",
+     "ratio": 2,
+     "mode": null,
+     "rect": [
+      24,
+      0,
+      72,
+      36
+     ],
+     "cls": "exact",
+     "max": 0,
+     "mean": 0.0
+    },
+    {
+     "family": "photo",
+     "level": "none",
+     "ratio": 3,
+     "mode": null,
+     "rect": [
+      73,
+      0,
+      145,
+      54
+     ],
+     "cls": "exact",
+     "max": 0,
+     "mean": 0.0
+    },
+    {
+     "family": "lineart",
+     "level": "none",
+     "ratio": 1,
+     "mode": null,
+     "rect": [
+      0,
+      115,
+      24,
+      133
+     ],
+     "cls": "exact",
+     "max": 0,
+     "mean": 0.0
+    },
+    {
+     "family": "lineart",
+     "level": "none",
+     "ratio": 2,
+     "mode": null,
+     "rect": [
+      24,
+      115,
+      72,
+      151
+     ],
+     "cls": "exact",
+     "max": 0,
+     "mean": 0.0
+    },
+    {
+     "family": "lineart",
+     "level": "none",
+     "ratio": 3,
+     "mode": null,
+     "rect": [
+      73,
+      115,
+      145,
+      169
+     ],
+     "cls": "exact",
+     "max": 0,
+     "mean": 0.0
+    },
+    {
+     "family": "text",
+     "level": "none",
+     "ratio": 1,
+     "mode": null,
+     "rect": [
+      0,
+      230,
+      24,
+      248
+     ],
+     "cls": "exact",
+     "max": 0,
+     "mean": 0.0
+    },
+    {
+     "family": "text",
+     "level": "none",
+     "ratio": 2,
+     "mode": null,
+     "rect": [
+      24,
+      230,
+      72,
+      266
+     ],
+     "cls": "exact",
+     "max": 0,
+     "mean": 0.0
+    },
+    {
+     "family": "text",
+     "level": "none",
+     "ratio": 3,
+     "mode": null,
+     "rect": [
+      73,
+      230,
+      145,
+      284
+     ],
+     "cls": "exact",
+     "max": 0,
+     "mean": 0.0
+    },
+    {
+     "family": "alpha",
+     "level": "none",
+     "ratio": 1,
+     "mode": null,
+     "rect": [
+      0,
+      345,
+      24,
+      363
+     ],
+     "cls": "exact",
+     "max": 1,
+     "mean": 0.1852
+    },
+    {
+     "family": "alpha",
+     "level": "none",
+     "ratio": 2,
+     "mode": null,
+     "rect": [
+      24,
+      345,
+      72,
+      381
+     ],
+     "cls": "exact",
+     "max": 1,
+     "mean": 0.1852
+    },
+    {
+     "family": "alpha",
+     "level": "none",
+     "ratio": 3,
+     "mode": null,
+     "rect": [
+      73,
+      345,
+      145,
+      399
+     ],
+     "cls": "exact",
+     "max": 1,
+     "mean": 0.1852
+    },
+    {
+     "family": "checker",
+     "level": "none",
+     "ratio": 1,
+     "mode": null,
+     "rect": [
+      0,
+      460,
+      24,
+      478
+     ],
+     "cls": "exact",
+     "max": 0,
+     "mean": 0.0
+    },
+    {
+     "family": "checker",
+     "level": "none",
+     "ratio": 2,
+     "mode": null,
+     "rect": [
+      24,
+      460,
+      72,
+      496
+     ],
+     "cls": "exact",
+     "max": 0,
+     "mean": 0.0
+    },
+    {
+     "family": "checker",
+     "level": "none",
+     "ratio": 3,
+     "mode": null,
+     "rect": [
+      73,
+      460,
+      145,
+      514
+     ],
+     "cls": "exact",
+     "max": 0,
+     "mean": 0.0
+    }
+   ]
+  },
+  {
+   "cornerSpill": 2,
+   "run": "12",
+   "ok": true,
+   "frame": {
+    "outsideDiff": 0,
+    "outsideNotGround": 0,
+    "edgeMismatch": 0
+   },
+   "violations": [],
+   "cells": [
+    {
+     "family": "photo",
+     "level": "none",
+     "ratio": 1,
+     "mode": null,
+     "rect": [
+      0,
+      0,
+      24,
+      18
+     ],
+     "cls": "exact",
+     "max": 0,
+     "mean": 0.0
+    },
+    {
+     "family": "photo",
+     "level": "none",
+     "ratio": 2,
+     "mode": null,
+     "rect": [
+      24,
+      0,
+      72,
+      36
+     ],
+     "cls": "exact",
+     "max": 0,
+     "mean": 0.0
+    },
+    {
+     "family": "photo",
+     "level": "none",
+     "ratio": 3,
+     "mode": null,
+     "rect": [
+      73,
+      0,
+      145,
+      54
+     ],
+     "cls": "exact",
+     "max": 0,
+     "mean": 0.0
+    },
+    {
+     "family": "lineart",
+     "level": "none",
+     "ratio": 1,
+     "mode": null,
+     "rect": [
+      0,
+      115,
+      24,
+      133
+     ],
+     "cls": "exact",
+     "max": 0,
+     "mean": 0.0
+    },
+    {
+     "family": "lineart",
+     "level": "none",
+     "ratio": 2,
+     "mode": null,
+     "rect": [
+      24,
+      115,
+      72,
+      151
+     ],
+     "cls": "exact",
+     "max": 0,
+     "mean": 0.0
+    },
+    {
+     "family": "lineart",
+     "level": "none",
+     "ratio": 3,
+     "mode": null,
+     "rect": [
+      73,
+      115,
+      145,
+      169
+     ],
+     "cls": "exact",
+     "max": 0,
+     "mean": 0.0
+    },
+    {
+     "family": "text",
+     "level": "none",
+     "ratio": 1,
+     "mode": null,
+     "rect": [
+      0,
+      230,
+      24,
+      248
+     ],
+     "cls": "exact",
+     "max": 0,
+     "mean": 0.0
+    },
+    {
+     "family": "text",
+     "level": "none",
+     "ratio": 2,
+     "mode": null,
+     "rect": [
+      24,
+      230,
+      72,
+      266
+     ],
+     "cls": "exact",
+     "max": 0,
+     "mean": 0.0
+    },
+    {
+     "family": "text",
+     "level": "none",
+     "ratio": 3,
+     "mode": null,
+     "rect": [
+      73,
+      230,
+      145,
+      284
+     ],
+     "cls": "exact",
+     "max": 0,
+     "mean": 0.0
+    },
+    {
+     "family": "alpha",
+     "level": "none",
+     "ratio": 1,
+     "mode": null,
+     "rect": [
+      0,
+      345,
+      24,
+      363
+     ],
+     "cls": "exact",
+     "max": 1,
+     "mean": 0.1852
+    },
+    {
+     "family": "alpha",
+     "level": "none",
+     "ratio": 2,
+     "mode": null,
+     "rect": [
+      24,
+      345,
+      72,
+      381
+     ],
+     "cls": "exact",
+     "max": 1,
+     "mean": 0.1852
+    },
+    {
+     "family": "alpha",
+     "level": "none",
+     "ratio": 3,
+     "mode": null,
+     "rect": [
+      73,
+      345,
+      145,
+      399
+     ],
+     "cls": "exact",
+     "max": 1,
+     "mean": 0.1852
+    },
+    {
+     "family": "checker",
+     "level": "none",
+     "ratio": 1,
+     "mode": null,
+     "rect": [
+      0,
+      460,
+      24,
+      478
+     ],
+     "cls": "exact",
+     "max": 0,
+     "mean": 0.0
+    },
+    {
+     "family": "checker",
+     "level": "none",
+     "ratio": 2,
+     "mode": null,
+     "rect": [
+      24,
+      460,
+      72,
+      496
+     ],
+     "cls": "exact",
+     "max": 0,
+     "mean": 0.0
+    },
+    {
+     "family": "checker",
+     "level": "none",
+     "ratio": 3,
+     "mode": null,
+     "rect": [
+      73,
+      460,
+      145,
+      514
+     ],
+     "cls": "exact",
+     "max": 0,
+     "mean": 0.0
+    }
+   ]
+  },
+  {
+   "cornerSpill": 2,
+   "run": "13",
+   "ok": true,
+   "frame": {
+    "outsideDiff": 0,
+    "outsideNotGround": 0,
+    "edgeMismatch": 0
+   },
+   "violations": [],
+   "cells": [
+    {
+     "family": "photo",
+     "level": "none",
+     "ratio": 1,
+     "mode": null,
+     "rect": [
+      0,
+      0,
+      24,
+      18
+     ],
+     "cls": "exact",
+     "max": 0,
+     "mean": 0.0
+    },
+    {
+     "family": "photo",
+     "level": "none",
+     "ratio": 2,
+     "mode": null,
+     "rect": [
+      24,
+      0,
+      72,
+      36
+     ],
+     "cls": "exact",
+     "max": 0,
+     "mean": 0.0
+    },
+    {
+     "family": "photo",
+     "level": "none",
+     "ratio": 3,
+     "mode": null,
+     "rect": [
+      73,
+      0,
+      145,
+      54
+     ],
+     "cls": "exact",
+     "max": 0,
+     "mean": 0.0
+    },
+    {
+     "family": "lineart",
+     "level": "none",
+     "ratio": 1,
+     "mode": null,
+     "rect": [
+      0,
+      115,
+      24,
+      133
+     ],
+     "cls": "exact",
+     "max": 0,
+     "mean": 0.0
+    },
+    {
+     "family": "lineart",
+     "level": "none",
+     "ratio": 2,
+     "mode": null,
+     "rect": [
+      24,
+      115,
+      72,
+      151
+     ],
+     "cls": "exact",
+     "max": 0,
+     "mean": 0.0
+    },
+    {
+     "family": "lineart",
+     "level": "none",
+     "ratio": 3,
+     "mode": null,
+     "rect": [
+      73,
+      115,
+      145,
+      169
+     ],
+     "cls": "exact",
+     "max": 0,
+     "mean": 0.0
+    },
+    {
+     "family": "text",
+     "level": "none",
+     "ratio": 1,
+     "mode": null,
+     "rect": [
+      0,
+      230,
+      24,
+      248
+     ],
+     "cls": "exact",
+     "max": 0,
+     "mean": 0.0
+    },
+    {
+     "family": "text",
+     "level": "none",
+     "ratio": 2,
+     "mode": null,
+     "rect": [
+      24,
+      230,
+      72,
+      266
+     ],
+     "cls": "exact",
+     "max": 0,
+     "mean": 0.0
+    },
+    {
+     "family": "text",
+     "level": "none",
+     "ratio": 3,
+     "mode": null,
+     "rect": [
+      73,
+      230,
+      145,
+      284
+     ],
+     "cls": "exact",
+     "max": 0,
+     "mean": 0.0
+    },
+    {
+     "family": "alpha",
+     "level": "none",
+     "ratio": 1,
+     "mode": null,
+     "rect": [
+      0,
+      345,
+      24,
+      363
+     ],
+     "cls": "exact",
+     "max": 1,
+     "mean": 0.1852
+    },
+    {
+     "family": "alpha",
+     "level": "none",
+     "ratio": 2,
+     "mode": null,
+     "rect": [
+      24,
+      345,
+      72,
+      381
+     ],
+     "cls": "exact",
+     "max": 1,
+     "mean": 0.1852
+    },
+    {
+     "family": "alpha",
+     "level": "none",
+     "ratio": 3,
+     "mode": null,
+     "rect": [
+      73,
+      345,
+      145,
+      399
+     ],
+     "cls": "exact",
+     "max": 1,
+     "mean": 0.1852
+    },
+    {
+     "family": "checker",
+     "level": "none",
+     "ratio": 1,
+     "mode": null,
+     "rect": [
+      0,
+      460,
+      24,
+      478
+     ],
+     "cls": "exact",
+     "max": 0,
+     "mean": 0.0
+    },
+    {
+     "family": "checker",
+     "level": "none",
+     "ratio": 2,
+     "mode": null,
+     "rect": [
+      24,
+      460,
+      72,
+      496
+     ],
+     "cls": "exact",
+     "max": 0,
+     "mean": 0.0
+    },
+    {
+     "family": "checker",
+     "level": "none",
+     "ratio": 3,
+     "mode": null,
+     "rect": [
+      73,
+      460,
+      145,
+      514
+     ],
+     "cls": "exact",
+     "max": 0,
+     "mean": 0.0
+    }
+   ]
+  },
+  {
+   "cornerSpill": 2,
+   "run": "14",
+   "ok": true,
+   "frame": {
+    "outsideDiff": 0,
+    "outsideNotGround": 0,
+    "edgeMismatch": 0
+   },
+   "violations": [],
+   "cells": [
+    {
+     "family": "photo",
+     "level": "none",
+     "ratio": 1,
+     "mode": null,
+     "rect": [
+      0,
+      0,
+      24,
+      18
+     ],
+     "cls": "exact",
+     "max": 0,
+     "mean": 0.0
+    },
+    {
+     "family": "photo",
+     "level": "none",
+     "ratio": 2,
+     "mode": null,
+     "rect": [
+      24,
+      0,
+      72,
+      36
+     ],
+     "cls": "exact",
+     "max": 0,
+     "mean": 0.0
+    },
+    {
+     "family": "photo",
+     "level": "none",
+     "ratio": 3,
+     "mode": null,
+     "rect": [
+      73,
+      0,
+      145,
+      54
+     ],
+     "cls": "exact",
+     "max": 0,
+     "mean": 0.0
+    },
+    {
+     "family": "lineart",
+     "level": "none",
+     "ratio": 1,
+     "mode": null,
+     "rect": [
+      0,
+      115,
+      24,
+      133
+     ],
+     "cls": "exact",
+     "max": 0,
+     "mean": 0.0
+    },
+    {
+     "family": "lineart",
+     "level": "none",
+     "ratio": 2,
+     "mode": null,
+     "rect": [
+      24,
+      115,
+      72,
+      151
+     ],
+     "cls": "exact",
+     "max": 0,
+     "mean": 0.0
+    },
+    {
+     "family": "lineart",
+     "level": "none",
+     "ratio": 3,
+     "mode": null,
+     "rect": [
+      73,
+      115,
+      145,
+      169
+     ],
+     "cls": "exact",
+     "max": 0,
+     "mean": 0.0
+    },
+    {
+     "family": "text",
+     "level": "none",
+     "ratio": 1,
+     "mode": null,
+     "rect": [
+      0,
+      230,
+      24,
+      248
+     ],
+     "cls": "exact",
+     "max": 0,
+     "mean": 0.0
+    },
+    {
+     "family": "text",
+     "level": "none",
+     "ratio": 2,
+     "mode": null,
+     "rect": [
+      24,
+      230,
+      72,
+      266
+     ],
+     "cls": "exact",
+     "max": 0,
+     "mean": 0.0
+    },
+    {
+     "family": "text",
+     "level": "none",
+     "ratio": 3,
+     "mode": null,
+     "rect": [
+      73,
+      230,
+      145,
+      284
+     ],
+     "cls": "exact",
+     "max": 0,
+     "mean": 0.0
+    },
+    {
+     "family": "alpha",
+     "level": "none",
+     "ratio": 1,
+     "mode": null,
+     "rect": [
+      0,
+      345,
+      24,
+      363
+     ],
+     "cls": "exact",
+     "max": 1,
+     "mean": 0.1852
+    },
+    {
+     "family": "alpha",
+     "level": "none",
+     "ratio": 2,
+     "mode": null,
+     "rect": [
+      24,
+      345,
+      72,
+      381
+     ],
+     "cls": "exact",
+     "max": 1,
+     "mean": 0.1852
+    },
+    {
+     "family": "alpha",
+     "level": "none",
+     "ratio": 3,
+     "mode": null,
+     "rect": [
+      73,
+      345,
+      145,
+      399
+     ],
+     "cls": "exact",
+     "max": 1,
+     "mean": 0.1852
+    },
+    {
+     "family": "checker",
+     "level": "none",
+     "ratio": 1,
+     "mode": null,
+     "rect": [
+      0,
+      460,
+      24,
+      478
+     ],
+     "cls": "exact",
+     "max": 0,
+     "mean": 0.0
+    },
+    {
+     "family": "checker",
+     "level": "none",
+     "ratio": 2,
+     "mode": null,
+     "rect": [
+      24,
+      460,
+      72,
+      496
+     ],
+     "cls": "exact",
+     "max": 0,
+     "mean": 0.0
+    },
+    {
+     "family": "checker",
+     "level": "none",
+     "ratio": 3,
+     "mode": null,
+     "rect": [
+      73,
+      460,
+      145,
+      514
+     ],
+     "cls": "exact",
+     "max": 0,
+     "mean": 0.0
+    }
+   ]
+  },
+  {
+   "cornerSpill": 2,
+   "run": "15",
+   "ok": true,
+   "frame": {
+    "outsideDiff": 0,
+    "outsideNotGround": 0,
+    "edgeMismatch": 0
+   },
+   "violations": [],
+   "cells": [
+    {
+     "family": "photo",
+     "level": "none",
+     "ratio": 1,
+     "mode": null,
+     "rect": [
+      0,
+      0,
+      24,
+      18
+     ],
+     "cls": "exact",
+     "max": 0,
+     "mean": 0.0
+    },
+    {
+     "family": "photo",
+     "level": "none",
+     "ratio": 2,
+     "mode": null,
+     "rect": [
+      24,
+      0,
+      72,
+      36
+     ],
+     "cls": "exact",
+     "max": 0,
+     "mean": 0.0
+    },
+    {
+     "family": "photo",
+     "level": "none",
+     "ratio": 3,
+     "mode": null,
+     "rect": [
+      73,
+      0,
+      145,
+      54
+     ],
+     "cls": "exact",
+     "max": 0,
+     "mean": 0.0
+    },
+    {
+     "family": "lineart",
+     "level": "none",
+     "ratio": 1,
+     "mode": null,
+     "rect": [
+      0,
+      115,
+      24,
+      133
+     ],
+     "cls": "exact",
+     "max": 0,
+     "mean": 0.0
+    },
+    {
+     "family": "lineart",
+     "level": "none",
+     "ratio": 2,
+     "mode": null,
+     "rect": [
+      24,
+      115,
+      72,
+      151
+     ],
+     "cls": "exact",
+     "max": 0,
+     "mean": 0.0
+    },
+    {
+     "family": "lineart",
+     "level": "none",
+     "ratio": 3,
+     "mode": null,
+     "rect": [
+      73,
+      115,
+      145,
+      169
+     ],
+     "cls": "exact",
+     "max": 0,
+     "mean": 0.0
+    },
+    {
+     "family": "text",
+     "level": "none",
+     "ratio": 1,
+     "mode": null,
+     "rect": [
+      0,
+      230,
+      24,
+      248
+     ],
+     "cls": "exact",
+     "max": 0,
+     "mean": 0.0
+    },
+    {
+     "family": "text",
+     "level": "none",
+     "ratio": 2,
+     "mode": null,
+     "rect": [
+      24,
+      230,
+      72,
+      266
+     ],
+     "cls": "exact",
+     "max": 0,
+     "mean": 0.0
+    },
+    {
+     "family": "text",
+     "level": "none",
+     "ratio": 3,
+     "mode": null,
+     "rect": [
+      73,
+      230,
+      145,
+      284
+     ],
+     "cls": "exact",
+     "max": 0,
+     "mean": 0.0
+    },
+    {
+     "family": "alpha",
+     "level": "none",
+     "ratio": 1,
+     "mode": null,
+     "rect": [
+      0,
+      345,
+      24,
+      363
+     ],
+     "cls": "exact",
+     "max": 1,
+     "mean": 0.1852
+    },
+    {
+     "family": "alpha",
+     "level": "none",
+     "ratio": 2,
+     "mode": null,
+     "rect": [
+      24,
+      345,
+      72,
+      381
+     ],
+     "cls": "exact",
+     "max": 1,
+     "mean": 0.1852
+    },
+    {
+     "family": "alpha",
+     "level": "none",
+     "ratio": 3,
+     "mode": null,
+     "rect": [
+      73,
+      345,
+      145,
+      399
+     ],
+     "cls": "exact",
+     "max": 1,
+     "mean": 0.1852
+    },
+    {
+     "family": "checker",
+     "level": "none",
+     "ratio": 1,
+     "mode": null,
+     "rect": [
+      0,
+      460,
+      24,
+      478
+     ],
+     "cls": "exact",
+     "max": 0,
+     "mean": 0.0
+    },
+    {
+     "family": "checker",
+     "level": "none",
+     "ratio": 2,
+     "mode": null,
+     "rect": [
+      24,
+      460,
+      72,
+      496
+     ],
+     "cls": "exact",
+     "max": 0,
+     "mean": 0.0
+    },
+    {
+     "family": "checker",
+     "level": "none",
+     "ratio": 3,
+     "mode": null,
+     "rect": [
+      73,
+      460,
+      145,
+      514
+     ],
+     "cls": "exact",
+     "max": 0,
+     "mean": 0.0
+    }
+   ]
+  },
+  {
+   "cornerSpill": 2,
+   "run": "16",
+   "ok": true,
+   "frame": {
+    "outsideDiff": 0,
+    "outsideNotGround": 0,
+    "edgeMismatch": 0
+   },
+   "violations": [],
+   "cells": [
+    {
+     "family": "photo",
+     "level": "none",
+     "ratio": 1,
+     "mode": null,
+     "rect": [
+      0,
+      0,
+      24,
+      18
+     ],
+     "cls": "exact",
+     "max": 0,
+     "mean": 0.0
+    },
+    {
+     "family": "photo",
+     "level": "none",
+     "ratio": 2,
+     "mode": null,
+     "rect": [
+      24,
+      0,
+      72,
+      36
+     ],
+     "cls": "exact",
+     "max": 0,
+     "mean": 0.0
+    },
+    {
+     "family": "photo",
+     "level": "none",
+     "ratio": 3,
+     "mode": null,
+     "rect": [
+      73,
+      0,
+      145,
+      54
+     ],
+     "cls": "exact",
+     "max": 0,
+     "mean": 0.0
+    },
+    {
+     "family": "lineart",
+     "level": "none",
+     "ratio": 1,
+     "mode": null,
+     "rect": [
+      0,
+      115,
+      24,
+      133
+     ],
+     "cls": "exact",
+     "max": 0,
+     "mean": 0.0
+    },
+    {
+     "family": "lineart",
+     "level": "none",
+     "ratio": 2,
+     "mode": null,
+     "rect": [
+      24,
+      115,
+      72,
+      151
+     ],
+     "cls": "exact",
+     "max": 0,
+     "mean": 0.0
+    },
+    {
+     "family": "lineart",
+     "level": "none",
+     "ratio": 3,
+     "mode": null,
+     "rect": [
+      73,
+      115,
+      145,
+      169
+     ],
+     "cls": "exact",
+     "max": 0,
+     "mean": 0.0
+    },
+    {
+     "family": "text",
+     "level": "none",
+     "ratio": 1,
+     "mode": null,
+     "rect": [
+      0,
+      230,
+      24,
+      248
+     ],
+     "cls": "exact",
+     "max": 0,
+     "mean": 0.0
+    },
+    {
+     "family": "text",
+     "level": "none",
+     "ratio": 2,
+     "mode": null,
+     "rect": [
+      24,
+      230,
+      72,
+      266
+     ],
+     "cls": "exact",
+     "max": 0,
+     "mean": 0.0
+    },
+    {
+     "family": "text",
+     "level": "none",
+     "ratio": 3,
+     "mode": null,
+     "rect": [
+      73,
+      230,
+      145,
+      284
+     ],
+     "cls": "exact",
+     "max": 0,
+     "mean": 0.0
+    },
+    {
+     "family": "alpha",
+     "level": "none",
+     "ratio": 1,
+     "mode": null,
+     "rect": [
+      0,
+      345,
+      24,
+      363
+     ],
+     "cls": "exact",
+     "max": 1,
+     "mean": 0.1852
+    },
+    {
+     "family": "alpha",
+     "level": "none",
+     "ratio": 2,
+     "mode": null,
+     "rect": [
+      24,
+      345,
+      72,
+      381
+     ],
+     "cls": "exact",
+     "max": 1,
+     "mean": 0.1852
+    },
+    {
+     "family": "alpha",
+     "level": "none",
+     "ratio": 3,
+     "mode": null,
+     "rect": [
+      73,
+      345,
+      145,
+      399
+     ],
+     "cls": "exact",
+     "max": 1,
+     "mean": 0.1852
+    },
+    {
+     "family": "checker",
+     "level": "none",
+     "ratio": 1,
+     "mode": null,
+     "rect": [
+      0,
+      460,
+      24,
+      478
+     ],
+     "cls": "exact",
+     "max": 0,
+     "mean": 0.0
+    },
+    {
+     "family": "checker",
+     "level": "none",
+     "ratio": 2,
+     "mode": null,
+     "rect": [
+      24,
+      460,
+      72,
+      496
+     ],
+     "cls": "exact",
+     "max": 0,
+     "mean": 0.0
+    },
+    {
+     "family": "checker",
+     "level": "none",
+     "ratio": 3,
+     "mode": null,
+     "rect": [
+      73,
+      460,
+      145,
+      514
+     ],
+     "cls": "exact",
+     "max": 0,
+     "mean": 0.0
+    }
+   ]
+  },
+  {
+   "cornerSpill": 2,
+   "run": "17",
+   "ok": true,
+   "frame": {
+    "outsideDiff": 0,
+    "outsideNotGround": 0,
+    "edgeMismatch": 0
+   },
+   "violations": [],
+   "cells": [
+    {
+     "family": "photo",
+     "level": "none",
+     "ratio": 1,
+     "mode": null,
+     "rect": [
+      0,
+      0,
+      24,
+      18
+     ],
+     "cls": "exact",
+     "max": 0,
+     "mean": 0.0
+    },
+    {
+     "family": "photo",
+     "level": "none",
+     "ratio": 2,
+     "mode": null,
+     "rect": [
+      24,
+      0,
+      72,
+      36
+     ],
+     "cls": "exact",
+     "max": 0,
+     "mean": 0.0
+    },
+    {
+     "family": "photo",
+     "level": "none",
+     "ratio": 3,
+     "mode": null,
+     "rect": [
+      73,
+      0,
+      145,
+      54
+     ],
+     "cls": "exact",
+     "max": 0,
+     "mean": 0.0
+    },
+    {
+     "family": "lineart",
+     "level": "none",
+     "ratio": 1,
+     "mode": null,
+     "rect": [
+      0,
+      115,
+      24,
+      133
+     ],
+     "cls": "exact",
+     "max": 0,
+     "mean": 0.0
+    },
+    {
+     "family": "lineart",
+     "level": "none",
+     "ratio": 2,
+     "mode": null,
+     "rect": [
+      24,
+      115,
+      72,
+      151
+     ],
+     "cls": "exact",
+     "max": 0,
+     "mean": 0.0
+    },
+    {
+     "family": "lineart",
+     "level": "none",
+     "ratio": 3,
+     "mode": null,
+     "rect": [
+      73,
+      115,
+      145,
+      169
+     ],
+     "cls": "exact",
+     "max": 0,
+     "mean": 0.0
+    },
+    {
+     "family": "text",
+     "level": "none",
+     "ratio": 1,
+     "mode": null,
+     "rect": [
+      0,
+      230,
+      24,
+      248
+     ],
+     "cls": "exact",
+     "max": 0,
+     "mean": 0.0
+    },
+    {
+     "family": "text",
+     "level": "none",
+     "ratio": 2,
+     "mode": null,
+     "rect": [
+      24,
+      230,
+      72,
+      266
+     ],
+     "cls": "exact",
+     "max": 0,
+     "mean": 0.0
+    },
+    {
+     "family": "text",
+     "level": "none",
+     "ratio": 3,
+     "mode": null,
+     "rect": [
+      73,
+      230,
+      145,
+      284
+     ],
+     "cls": "exact",
+     "max": 0,
+     "mean": 0.0
+    },
+    {
+     "family": "alpha",
+     "level": "none",
+     "ratio": 1,
+     "mode": null,
+     "rect": [
+      0,
+      345,
+      24,
+      363
+     ],
+     "cls": "exact",
+     "max": 1,
+     "mean": 0.1852
+    },
+    {
+     "family": "alpha",
+     "level": "none",
+     "ratio": 2,
+     "mode": null,
+     "rect": [
+      24,
+      345,
+      72,
+      381
+     ],
+     "cls": "exact",
+     "max": 1,
+     "mean": 0.1852
+    },
+    {
+     "family": "alpha",
+     "level": "none",
+     "ratio": 3,
+     "mode": null,
+     "rect": [
+      73,
+      345,
+      145,
+      399
+     ],
+     "cls": "exact",
+     "max": 1,
+     "mean": 0.1852
+    },
+    {
+     "family": "checker",
+     "level": "none",
+     "ratio": 1,
+     "mode": null,
+     "rect": [
+      0,
+      460,
+      24,
+      478
+     ],
+     "cls": "exact",
+     "max": 0,
+     "mean": 0.0
+    },
+    {
+     "family": "checker",
+     "level": "none",
+     "ratio": 2,
+     "mode": null,
+     "rect": [
+      24,
+      460,
+      72,
+      496
+     ],
+     "cls": "exact",
+     "max": 0,
+     "mean": 0.0
+    },
+    {
+     "family": "checker",
+     "level": "none",
+     "ratio": 3,
+     "mode": null,
+     "rect": [
+      73,
+      460,
+      145,
+      514
+     ],
+     "cls": "exact",
+     "max": 0,
+     "mean": 0.0
+    }
+   ]
+  },
+  {
+   "cornerSpill": 2,
+   "run": "18",
+   "ok": true,
+   "frame": {
+    "outsideDiff": 0,
+    "outsideNotGround": 0,
+    "edgeMismatch": 0
+   },
+   "violations": [],
+   "cells": [
+    {
+     "family": "photo",
+     "level": "none",
+     "ratio": 1,
+     "mode": null,
+     "rect": [
+      0,
+      0,
+      24,
+      18
+     ],
+     "cls": "exact",
+     "max": 0,
+     "mean": 0.0
+    },
+    {
+     "family": "photo",
+     "level": "none",
+     "ratio": 2,
+     "mode": null,
+     "rect": [
+      24,
+      0,
+      72,
+      36
+     ],
+     "cls": "exact",
+     "max": 0,
+     "mean": 0.0
+    },
+    {
+     "family": "photo",
+     "level": "none",
+     "ratio": 3,
+     "mode": null,
+     "rect": [
+      73,
+      0,
+      145,
+      54
+     ],
+     "cls": "exact",
+     "max": 0,
+     "mean": 0.0
+    },
+    {
+     "family": "lineart",
+     "level": "none",
+     "ratio": 1,
+     "mode": null,
+     "rect": [
+      0,
+      115,
+      24,
+      133
+     ],
+     "cls": "exact",
+     "max": 0,
+     "mean": 0.0
+    },
+    {
+     "family": "lineart",
+     "level": "none",
+     "ratio": 2,
+     "mode": null,
+     "rect": [
+      24,
+      115,
+      72,
+      151
+     ],
+     "cls": "exact",
+     "max": 0,
+     "mean": 0.0
+    },
+    {
+     "family": "lineart",
+     "level": "none",
+     "ratio": 3,
+     "mode": null,
+     "rect": [
+      73,
+      115,
+      145,
+      169
+     ],
+     "cls": "exact",
+     "max": 0,
+     "mean": 0.0
+    },
+    {
+     "family": "text",
+     "level": "none",
+     "ratio": 1,
+     "mode": null,
+     "rect": [
+      0,
+      230,
+      24,
+      248
+     ],
+     "cls": "exact",
+     "max": 0,
+     "mean": 0.0
+    },
+    {
+     "family": "text",
+     "level": "none",
+     "ratio": 2,
+     "mode": null,
+     "rect": [
+      24,
+      230,
+      72,
+      266
+     ],
+     "cls": "exact",
+     "max": 0,
+     "mean": 0.0
+    },
+    {
+     "family": "text",
+     "level": "none",
+     "ratio": 3,
+     "mode": null,
+     "rect": [
+      73,
+      230,
+      145,
+      284
+     ],
+     "cls": "exact",
+     "max": 0,
+     "mean": 0.0
+    },
+    {
+     "family": "alpha",
+     "level": "none",
+     "ratio": 1,
+     "mode": null,
+     "rect": [
+      0,
+      345,
+      24,
+      363
+     ],
+     "cls": "exact",
+     "max": 1,
+     "mean": 0.1852
+    },
+    {
+     "family": "alpha",
+     "level": "none",
+     "ratio": 2,
+     "mode": null,
+     "rect": [
+      24,
+      345,
+      72,
+      381
+     ],
+     "cls": "exact",
+     "max": 1,
+     "mean": 0.1852
+    },
+    {
+     "family": "alpha",
+     "level": "none",
+     "ratio": 3,
+     "mode": null,
+     "rect": [
+      73,
+      345,
+      145,
+      399
+     ],
+     "cls": "exact",
+     "max": 1,
+     "mean": 0.1852
+    },
+    {
+     "family": "checker",
+     "level": "none",
+     "ratio": 1,
+     "mode": null,
+     "rect": [
+      0,
+      460,
+      24,
+      478
+     ],
+     "cls": "exact",
+     "max": 0,
+     "mean": 0.0
+    },
+    {
+     "family": "checker",
+     "level": "none",
+     "ratio": 2,
+     "mode": null,
+     "rect": [
+      24,
+      460,
+      72,
+      496
+     ],
+     "cls": "exact",
+     "max": 0,
+     "mean": 0.0
+    },
+    {
+     "family": "checker",
+     "level": "none",
+     "ratio": 3,
+     "mode": null,
+     "rect": [
+      73,
+      460,
+      145,
+      514
+     ],
+     "cls": "exact",
+     "max": 0,
+     "mean": 0.0
+    }
+   ]
+  },
+  {
+   "cornerSpill": 2,
+   "run": "19",
+   "ok": true,
+   "frame": {
+    "outsideDiff": 0,
+    "outsideNotGround": 0,
+    "edgeMismatch": 0
+   },
+   "violations": [],
+   "cells": [
+    {
+     "family": "photo",
+     "level": "none",
+     "ratio": 1,
+     "mode": null,
+     "rect": [
+      0,
+      0,
+      24,
+      18
+     ],
+     "cls": "exact",
+     "max": 0,
+     "mean": 0.0
+    },
+    {
+     "family": "photo",
+     "level": "none",
+     "ratio": 2,
+     "mode": null,
+     "rect": [
+      24,
+      0,
+      72,
+      36
+     ],
+     "cls": "exact",
+     "max": 0,
+     "mean": 0.0
+    },
+    {
+     "family": "photo",
+     "level": "none",
+     "ratio": 3,
+     "mode": null,
+     "rect": [
+      73,
+      0,
+      145,
+      54
+     ],
+     "cls": "exact",
+     "max": 0,
+     "mean": 0.0
+    },
+    {
+     "family": "lineart",
+     "level": "none",
+     "ratio": 1,
+     "mode": null,
+     "rect": [
+      0,
+      115,
+      24,
+      133
+     ],
+     "cls": "exact",
+     "max": 0,
+     "mean": 0.0
+    },
+    {
+     "family": "lineart",
+     "level": "none",
+     "ratio": 2,
+     "mode": null,
+     "rect": [
+      24,
+      115,
+      72,
+      151
+     ],
+     "cls": "exact",
+     "max": 0,
+     "mean": 0.0
+    },
+    {
+     "family": "lineart",
+     "level": "none",
+     "ratio": 3,
+     "mode": null,
+     "rect": [
+      73,
+      115,
+      145,
+      169
+     ],
+     "cls": "exact",
+     "max": 0,
+     "mean": 0.0
+    },
+    {
+     "family": "text",
+     "level": "none",
+     "ratio": 1,
+     "mode": null,
+     "rect": [
+      0,
+      230,
+      24,
+      248
+     ],
+     "cls": "exact",
+     "max": 0,
+     "mean": 0.0
+    },
+    {
+     "family": "text",
+     "level": "none",
+     "ratio": 2,
+     "mode": null,
+     "rect": [
+      24,
+      230,
+      72,
+      266
+     ],
+     "cls": "exact",
+     "max": 0,
+     "mean": 0.0
+    },
+    {
+     "family": "text",
+     "level": "none",
+     "ratio": 3,
+     "mode": null,
+     "rect": [
+      73,
+      230,
+      145,
+      284
+     ],
+     "cls": "exact",
+     "max": 0,
+     "mean": 0.0
+    },
+    {
+     "family": "alpha",
+     "level": "none",
+     "ratio": 1,
+     "mode": null,
+     "rect": [
+      0,
+      345,
+      24,
+      363
+     ],
+     "cls": "exact",
+     "max": 1,
+     "mean": 0.1852
+    },
+    {
+     "family": "alpha",
+     "level": "none",
+     "ratio": 2,
+     "mode": null,
+     "rect": [
+      24,
+      345,
+      72,
+      381
+     ],
+     "cls": "exact",
+     "max": 1,
+     "mean": 0.1852
+    },
+    {
+     "family": "alpha",
+     "level": "none",
+     "ratio": 3,
+     "mode": null,
+     "rect": [
+      73,
+      345,
+      145,
+      399
+     ],
+     "cls": "exact",
+     "max": 1,
+     "mean": 0.1852
+    },
+    {
+     "family": "checker",
+     "level": "none",
+     "ratio": 1,
+     "mode": null,
+     "rect": [
+      0,
+      460,
+      24,
+      478
+     ],
+     "cls": "exact",
+     "max": 0,
+     "mean": 0.0
+    },
+    {
+     "family": "checker",
+     "level": "none",
+     "ratio": 2,
+     "mode": null,
+     "rect": [
+      24,
+      460,
+      72,
+      496
+     ],
+     "cls": "exact",
+     "max": 0,
+     "mean": 0.0
+    },
+    {
+     "family": "checker",
+     "level": "none",
+     "ratio": 3,
+     "mode": null,
+     "rect": [
+      73,
+      460,
+      145,
+      514
+     ],
+     "cls": "exact",
+     "max": 0,
+     "mean": 0.0
+    }
+   ]
+  },
+  {
+   "cornerSpill": 2,
+   "run": "20",
+   "ok": true,
+   "frame": {
+    "outsideDiff": 0,
+    "outsideNotGround": 0,
+    "edgeMismatch": 0
+   },
+   "violations": [],
+   "cells": [
+    {
+     "family": "photo",
+     "level": "none",
+     "ratio": 1,
+     "mode": null,
+     "rect": [
+      0,
+      0,
+      24,
+      18
+     ],
+     "cls": "exact",
+     "max": 0,
+     "mean": 0.0
+    },
+    {
+     "family": "photo",
+     "level": "none",
+     "ratio": 2,
+     "mode": null,
+     "rect": [
+      24,
+      0,
+      72,
+      36
+     ],
+     "cls": "exact",
+     "max": 0,
+     "mean": 0.0
+    },
+    {
+     "family": "photo",
+     "level": "none",
+     "ratio": 3,
+     "mode": null,
+     "rect": [
+      73,
+      0,
+      145,
+      54
+     ],
+     "cls": "exact",
+     "max": 0,
+     "mean": 0.0
+    },
+    {
+     "family": "lineart",
+     "level": "none",
+     "ratio": 1,
+     "mode": null,
+     "rect": [
+      0,
+      115,
+      24,
+      133
+     ],
+     "cls": "exact",
+     "max": 0,
+     "mean": 0.0
+    },
+    {
+     "family": "lineart",
+     "level": "none",
+     "ratio": 2,
+     "mode": null,
+     "rect": [
+      24,
+      115,
+      72,
+      151
+     ],
+     "cls": "exact",
+     "max": 0,
+     "mean": 0.0
+    },
+    {
+     "family": "lineart",
+     "level": "none",
+     "ratio": 3,
+     "mode": null,
+     "rect": [
+      73,
+      115,
+      145,
+      169
+     ],
+     "cls": "exact",
+     "max": 0,
+     "mean": 0.0
+    },
+    {
+     "family": "text",
+     "level": "none",
+     "ratio": 1,
+     "mode": null,
+     "rect": [
+      0,
+      230,
+      24,
+      248
+     ],
+     "cls": "exact",
+     "max": 0,
+     "mean": 0.0
+    },
+    {
+     "family": "text",
+     "level": "none",
+     "ratio": 2,
+     "mode": null,
+     "rect": [
+      24,
+      230,
+      72,
+      266
+     ],
+     "cls": "exact",
+     "max": 0,
+     "mean": 0.0
+    },
+    {
+     "family": "text",
+     "level": "none",
+     "ratio": 3,
+     "mode": null,
+     "rect": [
+      73,
+      230,
+      145,
+      284
+     ],
+     "cls": "exact",
+     "max": 0,
+     "mean": 0.0
+    },
+    {
+     "family": "alpha",
+     "level": "none",
+     "ratio": 1,
+     "mode": null,
+     "rect": [
+      0,
+      345,
+      24,
+      363
+     ],
+     "cls": "exact",
+     "max": 1,
+     "mean": 0.1852
+    },
+    {
+     "family": "alpha",
+     "level": "none",
+     "ratio": 2,
+     "mode": null,
+     "rect": [
+      24,
+      345,
+      72,
+      381
+     ],
+     "cls": "exact",
+     "max": 1,
+     "mean": 0.1852
+    },
+    {
+     "family": "alpha",
+     "level": "none",
+     "ratio": 3,
+     "mode": null,
+     "rect": [
+      73,
+      345,
+      145,
+      399
+     ],
+     "cls": "exact",
+     "max": 1,
+     "mean": 0.1852
+    },
+    {
+     "family": "checker",
+     "level": "none",
+     "ratio": 1,
+     "mode": null,
+     "rect": [
+      0,
+      460,
+      24,
+      478
+     ],
+     "cls": "exact",
+     "max": 0,
+     "mean": 0.0
+    },
+    {
+     "family": "checker",
+     "level": "none",
+     "ratio": 2,
+     "mode": null,
+     "rect": [
+      24,
+      460,
+      72,
+      496
+     ],
+     "cls": "exact",
+     "max": 0,
+     "mean": 0.0
+    },
+    {
+     "family": "checker",
+     "level": "none",
+     "ratio": 3,
+     "mode": null,
+     "rect": [
+      73,
+      460,
+      145,
+      514
+     ],
+     "cls": "exact",
+     "max": 0,
+     "mean": 0.0
+    }
+   ]
+  }
+ ]
+}

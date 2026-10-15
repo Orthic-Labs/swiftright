@@ -1,0 +1,1264 @@
+{
+ "gate": [
+  {
+   "case": "layout/aa-v1",
+   "n": 20,
+   "stage": "cf9d48dab-77823e0e",
+   "tag": "gate-77823e0e",
+   "run": "20261015-152108",
+   "windowsCapture": true,
+   "gateExit": 1,
+   "pairsPassing": 20,
+   "pairs": 20,
+   "perLevel": {
+    "low": {
+     "max": 1,
+     "meanMax": 0.1227,
+     "cells": 240
+    },
+    "high": {
+     "max": 5,
+     "meanMax": 0.7037,
+     "cells": 240
+    }
+   },
+   "violations": [],
+   "excluded": []
+  },
+  {
+   "case": "layout/fill-v1",
+   "n": 20,
+   "stage": "cf9d48dab-77823e0e",
+   "tag": "gate-77823e0e",
+   "run": "20261015-152632",
+   "windowsCapture": true,
+   "gateExit": 1,
+   "pairsPassing": 20,
+   "pairs": 20,
+   "perLevel": {
+    "high": {
+     "max": 2,
+     "meanMax": 0.0488,
+     "cells": 80
+    },
+    "low": {
+     "max": 1,
+     "meanMax": 0.093,
+     "cells": 80
+    },
+    "medium": {
+     "max": 1,
+     "meanMax": 0.1472,
+     "cells": 20
+    }
+   },
+   "violations": [],
+   "excluded": []
+  },
+  {
+   "case": "layout/fit-v1",
+   "n": 20,
+   "stage": "cf9d48dab-77823e0e",
+   "tag": "gate-77823e0e",
+   "run": "20261015-153010",
+   "windowsCapture": true,
+   "gateExit": 0,
+   "pairsPassing": 20,
+   "pairs": 20,
+   "perLevel": {
+    "high": {
+     "max": 1,
+     "meanMax": 0.0486,
+     "cells": 80
+    },
+    "low": {
+     "max": 1,
+     "meanMax": 0.0898,
+     "cells": 80
+    },
+    "medium": {
+     "max": 1,
+     "meanMax": 0.2055,
+     "cells": 20
+    }
+   },
+   "violations": [],
+   "excluded": []
+  },
+  {
+   "case": "layout/mip-v1",
+   "n": 20,
+   "stage": "cf9d48dab-77823e0e",
+   "tag": "gate-77823e0e",
+   "run": "20261015-153356",
+   "windowsCapture": true,
+   "gateExit": 1,
+   "pairsPassing": 20,
+   "pairs": 20,
+   "perLevel": {
+    "medium": {
+     "max": 1,
+     "meanMax": 0.1356,
+     "cells": 160
+    },
+    "high": {
+     "max": 4,
+     "meanMax": 0.7301,
+     "cells": 240
+    }
+   },
+   "violations": [],
+   "excluded": []
+  },
+  {
+   "case": "layout/one-to-one-none-int-v1",
+   "n": 20,
+   "stage": "cf9d48dab-77823e0e",
+   "tag": "gate-77823e0e",
+   "run": "20261015-153839",
+   "windowsCapture": true,
+   "gateExit": 1,
+   "pairsPassing": 20,
+   "pairs": 20,
+   "perLevel": {},
+   "violations": [],
+   "excluded": []
+  },
+  {
+   "case": "layout/ratios-alpha-v1",
+   "n": 20,
+   "stage": "cf9d48dab-77823e0e",
+   "tag": "gate-77823e0e",
+   "run": "20261015-154303",
+   "windowsCapture": true,
+   "gateExit": 1,
+   "pairsPassing": 0,
+   "pairs": 20,
+   "perLevel": {
+    "none": {
+     "max": 1,
+     "meanMax": 0.1071,
+     "cells": 140
+    },
+    "low": {
+     "max": 1,
+     "meanMax": 0.0827,
+     "cells": 180
+    },
+    "medium": {
+     "max": 104,
+     "meanMax": 1.0643,
+     "cells": 140
+    },
+    "high": {
+     "max": 72,
+     "meanMax": 1.0351,
+     "cells": 160
+    }
+   },
+   "violations": [
+    "windows: 463 pixels outside every cell are not the ground",
+    "mac: 463 pixels outside every cell are not the ground",
+    "resampled: alpha medium ratio 0.66: max 104 > 1",
+    "resampled: alpha medium ratio 0.66: mean 1.064 > 0.7",
+    "resampled: alpha high ratio 0.66: max 72 > 8",
+    "windows: 463 pixels outside every cell are not the ground"
+   ],
+   "excluded": []
+  },
+  {
+   "case": "layout/ratios-checker-v1",
+   "n": 20,
+   "stage": "cf9d48dab-77823e0e",
+   "tag": "gate-77823e0e",
+   "run": "20261015-154846",
+   "windowsCapture": true,
+   "gateExit": 1,
+   "pairsPassing": 0,
+   "pairs": 20,
+   "perLevel": {
+    "none": {
+     "max": 0,
+     "meanMax": 0.0,
+     "cells": 140
+    },
+    "low": {
+     "max": 1,
+     "meanMax": 0.8794,
+     "cells": 180
+    },
+    "medium": {
+     "max": 100,
+     "meanMax": 23.731,
+     "cells": 140
+    },
+    "high": {
+     "max": 98,
+     "meanMax": 23.9425,
+     "cells": 160
+    }
+   },
+   "violations": [
+    "windows: 7064 pixels outside every cell are not the ground",
+    "mac: 7065 pixels outside every cell are not the ground",
+    "resampled: checker low ratio 3.0: mean 0.879 > 0.7",
+    "resampled: checker medium ratio 0.66: max 100 > 1",
+    "resampled: checker medium ratio 0.66: mean 23.731 > 0.7",
+    "exact: checker medium ratio 1.0: max 1 (must be 0)"
+   ],
+   "excluded": []
+  },
+  {
+   "case": "layout/ratios-lineart-v1",
+   "n": 20,
+   "stage": "cf9d48dab-77823e0e",
+   "tag": "gate-77823e0e",
+   "run": "20261015-155208",
+   "windowsCapture": true,
+   "gateExit": 1,
+   "pairsPassing": 0,
+   "pairs": 20,
+   "perLevel": {
+    "none": {
+     "max": 0,
+     "meanMax": 0.0,
+     "cells": 140
+    },
+    "low": {
+     "max": 1,
+     "meanMax": 0.1464,
+     "cells": 180
+    },
+    "medium": {
+     "max": 191,
+     "meanMax": 24.6072,
+     "cells": 140
+    },
+    "high": {
+     "max": 101,
+     "meanMax": 15.3723,
+     "cells": 160
+    }
+   },
+   "violations": [
+    "windows: 7059 pixels outside every cell are not the ground",
+    "mac: 7061 pixels outside every cell are not the ground",
+    "edge: cell lineart medium ratio 0.66: 13 edge pixels differ in coverage, first [(0, 261), (0, 279), (19, 260)]",
+    "resampled: lineart medium ratio 0.66: max 191 > 1",
+    "resampled: lineart medium ratio 0.66: mean 24.607 > 0.7",
+    "exact: lineart medium ratio 1.0: max 1 (must be 0)"
+   ],
+   "excluded": []
+  },
+  {
+   "case": "layout/ratios-photo-v1",
+   "n": 20,
+   "stage": "cf9d48dab-77823e0e",
+   "tag": "gate-77823e0e",
+   "run": "20261015-155529",
+   "windowsCapture": true,
+   "gateExit": 1,
+   "pairsPassing": 0,
+   "pairs": 20,
+   "perLevel": {
+    "none": {
+     "max": 0,
+     "meanMax": 0.0,
+     "cells": 140
+    },
+    "low": {
+     "max": 1,
+     "meanMax": 0.0451,
+     "cells": 180
+    },
+    "medium": {
+     "max": 20,
+     "meanMax": 1.9844,
+     "cells": 140
+    },
+    "high": {
+     "max": 18,
+     "meanMax": 1.7173,
+     "cells": 160
+    }
+   },
+   "violations": [
+    "windows: 7064 pixels outside every cell are not the ground",
+    "mac: 7065 pixels outside every cell are not the ground",
+    "resampled: photo medium ratio 0.66: max 20 > 1",
+    "resampled: photo medium ratio 0.66: mean 1.984 > 0.7",
+    "exact: photo medium ratio 1.0: max 1 (must be 0)",
+    "resampled: photo high ratio 0.66: max 18 > 8"
+   ],
+   "excluded": []
+  },
+  {
+   "case": "layout/ratios-text-v1",
+   "n": 20,
+   "stage": "cf9d48dab-77823e0e",
+   "tag": "gate-77823e0e",
+   "run": "20261015-160154",
+   "windowsCapture": true,
+   "gateExit": 1,
+   "pairsPassing": 0,
+   "pairs": 20,
+   "perLevel": {
+    "none": {
+     "max": 0,
+     "meanMax": 0.0,
+     "cells": 140
+    },
+    "low": {
+     "max": 1,
+     "meanMax": 0.2576,
+     "cells": 180
+    },
+    "medium": {
+     "max": 172,
+     "meanMax": 19.2008,
+     "cells": 140
+    },
+    "high": {
+     "max": 124,
+     "meanMax": 13.6355,
+     "cells": 160
+    }
+   },
+   "violations": [
+    "windows: 7053 pixels outside every cell are not the ground",
+    "mac: 7058 pixels outside every cell are not the ground",
+    "resampled: text medium ratio 0.66: max 172 > 1",
+    "resampled: text medium ratio 0.66: mean 19.201 > 0.7",
+    "exact: text medium ratio 1.0: max 1 (must be 0)",
+    "edge: cell text high ratio 0.66: 1 edge pixels differ in coverage, first [(28, 389)]"
+   ],
+   "excluded": []
+  },
+  {
+   "case": "layout/ratios-alpha-v1",
+   "n": 20,
+   "stage": "cf9d48dab-77823e0e",
+   "tag": "gate-ratios",
+   "run": "20261015-162141",
+   "windowsCapture": true,
+   "gateExit": 0,
+   "pairsPassing": 20,
+   "pairs": 20,
+   "perLevel": {
+    "none": {
+     "max": 1,
+     "meanMax": 0.1071,
+     "cells": 140
+    },
+    "low": {
+     "max": 1,
+     "meanMax": 0.0827,
+     "cells": 180
+    },
+    "medium": {
+     "max": 1,
+     "meanMax": 0.0604,
+     "cells": 140
+    },
+    "high": {
+     "max": 2,
+     "meanMax": 0.0753,
+     "cells": 160
+    }
+   },
+   "violations": [],
+   "excluded": []
+  },
+  {
+   "case": "layout/ratios-checker-v1",
+   "n": 20,
+   "stage": "cf9d48dab-77823e0e",
+   "tag": "gate-ratios",
+   "run": "20261015-162640",
+   "windowsCapture": true,
+   "gateExit": 1,
+   "pairsPassing": 0,
+   "pairs": 20,
+   "perLevel": {
+    "none": {
+     "max": 0,
+     "meanMax": 0.0,
+     "cells": 140
+    },
+    "low": {
+     "max": 1,
+     "meanMax": 0.8794,
+     "cells": 180
+    },
+    "medium": {
+     "max": 1,
+     "meanMax": 0.8794,
+     "cells": 140
+    },
+    "high": {
+     "max": 6,
+     "meanMax": 1.9213,
+     "cells": 160
+    }
+   },
+   "violations": [
+    "resampled: checker low ratio 3.0: mean 0.879 > 0.7",
+    "resampled: checker medium ratio 3.0: mean 0.879 > 0.7",
+    "resampled: checker low ratio 3.0: mean 0.879 > 0.7",
+    "resampled: checker medium ratio 3.0: mean 0.879 > 0.7",
+    "resampled: checker low ratio 3.0: mean 0.879 > 0.7",
+    "resampled: checker medium ratio 3.0: mean 0.879 > 0.7"
+   ],
+   "excluded": []
+  },
+  {
+   "case": "layout/ratios-lineart-v1",
+   "n": 20,
+   "stage": "cf9d48dab-77823e0e",
+   "tag": "gate-ratios",
+   "run": "20261015-163231",
+   "windowsCapture": true,
+   "gateExit": 0,
+   "pairsPassing": 20,
+   "pairs": 20,
+   "perLevel": {
+    "none": {
+     "max": 0,
+     "meanMax": 0.0,
+     "cells": 140
+    },
+    "low": {
+     "max": 1,
+     "meanMax": 0.1464,
+     "cells": 180
+    },
+    "medium": {
+     "max": 1,
+     "meanMax": 0.1228,
+     "cells": 140
+    },
+    "high": {
+     "max": 8,
+     "meanMax": 1.0937,
+     "cells": 160
+    }
+   },
+   "violations": [],
+   "excluded": []
+  },
+  {
+   "case": "layout/ratios-photo-v1",
+   "n": 20,
+   "stage": "cf9d48dab-77823e0e",
+   "tag": "gate-ratios",
+   "run": "20261015-163622",
+   "windowsCapture": true,
+   "gateExit": 0,
+   "pairsPassing": 20,
+   "pairs": 20,
+   "perLevel": {
+    "none": {
+     "max": 0,
+     "meanMax": 0.0,
+     "cells": 140
+    },
+    "low": {
+     "max": 1,
+     "meanMax": 0.0451,
+     "cells": 180
+    },
+    "medium": {
+     "max": 1,
+     "meanMax": 0.0389,
+     "cells": 140
+    },
+    "high": {
+     "max": 1,
+     "meanMax": 0.0553,
+     "cells": 160
+    }
+   },
+   "violations": [],
+   "excluded": []
+  },
+  {
+   "case": "layout/ratios-text-v1",
+   "n": 20,
+   "stage": "cf9d48dab-77823e0e",
+   "tag": "gate-ratios",
+   "run": "20261015-163840",
+   "windowsCapture": true,
+   "gateExit": 0,
+   "pairsPassing": 20,
+   "pairs": 20,
+   "perLevel": {
+    "none": {
+     "max": 0,
+     "meanMax": 0.0,
+     "cells": 140
+    },
+    "low": {
+     "max": 1,
+     "meanMax": 0.2576,
+     "cells": 180
+    },
+    "medium": {
+     "max": 1,
+     "meanMax": 0.2576,
+     "cells": 140
+    },
+    "high": {
+     "max": 6,
+     "meanMax": 1.1874,
+     "cells": 160
+    }
+   },
+   "violations": [],
+   "excluded": []
+  }
+ ],
+ "controls": [
+  {
+   "case": "layout/ratios-alpha-v1",
+   "n": 3,
+   "stage": "cf9d48dab-0550c7ac-i2ctl-nearest-high",
+   "tag": "ctl-nearest-high",
+   "run": "20261015-182215",
+   "windowsCapture": true,
+   "gateExit": 1,
+   "pairsPassing": 0,
+   "pairs": 3,
+   "perLevel": {
+    "none": {
+     "max": 1,
+     "meanMax": 0.1071,
+     "cells": 21
+    },
+    "low": {
+     "max": 1,
+     "meanMax": 0.0827,
+     "cells": 27
+    },
+    "medium": {
+     "max": 1,
+     "meanMax": 0.0604,
+     "cells": 21
+    },
+    "high": {
+     "max": 99,
+     "meanMax": 1.0893,
+     "cells": 24
+    }
+   },
+   "violations": [
+    "resampled: alpha high ratio 0.66: max 42 > 8",
+    "resampled: alpha high ratio 0.8: max 45 > 8",
+    "resampled: alpha high ratio 1.0: max 36 > 8",
+    "resampled: alpha high ratio 1.25: max 67 > 8",
+    "resampled: alpha high ratio 1.5: max 56 > 8",
+    "resampled: alpha high ratio 2.0: max 73 > 8"
+   ],
+   "excluded": []
+  },
+  {
+   "case": "layout/ratios-photo-v1",
+   "n": 3,
+   "stage": "cf9d48dab-0550c7ac-i2ctl-nearest-high",
+   "tag": "ctl-nearest-high",
+   "run": "20261015-182821",
+   "windowsCapture": true,
+   "gateExit": 1,
+   "pairsPassing": 0,
+   "pairs": 3,
+   "perLevel": {
+    "none": {
+     "max": 0,
+     "meanMax": 0.0,
+     "cells": 21
+    },
+    "low": {
+     "max": 1,
+     "meanMax": 0.0451,
+     "cells": 27
+    },
+    "medium": {
+     "max": 1,
+     "meanMax": 0.0389,
+     "cells": 21
+    },
+    "high": {
+     "max": 15,
+     "meanMax": 1.96,
+     "cells": 24
+    }
+   },
+   "violations": [
+    "resampled: photo high ratio 0.66: max 11 > 8",
+    "resampled: photo high ratio 0.8: max 14 > 8",
+    "resampled: photo high ratio 1.25: max 14 > 8",
+    "resampled: photo high ratio 1.25: mean 1.960 > 1.95",
+    "resampled: photo high ratio 1.5: max 14 > 8",
+    "resampled: photo high ratio 2.0: max 10 > 8"
+   ],
+   "excluded": []
+  },
+  {
+   "case": "layout/ratios-alpha-v1",
+   "n": 3,
+   "stage": "cf9d48dab-32a811c9-i2ctl-straight-alpha",
+   "tag": "ctl-straight-alpha",
+   "run": "20261015-183853",
+   "windowsCapture": true,
+   "gateExit": 1,
+   "pairsPassing": 0,
+   "pairs": 3,
+   "perLevel": {
+    "none": {
+     "max": 1,
+     "meanMax": 0.1071,
+     "cells": 21
+    },
+    "low": {
+     "max": 9,
+     "meanMax": 0.3714,
+     "cells": 27
+    },
+    "medium": {
+     "max": 9,
+     "meanMax": 0.2294,
+     "cells": 21
+    },
+    "high": {
+     "max": 8,
+     "meanMax": 0.3066,
+     "cells": 24
+    }
+   },
+   "violations": [
+    "resampled: alpha low ratio 0.5: max 8 > 1",
+    "resampled: alpha low ratio 0.66: max 6 > 1",
+    "resampled: alpha low ratio 0.8: max 6 > 1",
+    "resampled: alpha low ratio 1.25: max 7 > 1",
+    "resampled: alpha low ratio 1.5: max 8 > 1",
+    "resampled: alpha low ratio 2.0: max 6 > 1"
+   ],
+   "excluded": []
+  },
+  {
+   "case": "layout/ratios-photo-v1",
+   "n": 3,
+   "stage": "cf9d48dab-32a811c9-i2ctl-straight-alpha",
+   "tag": "ctl-straight-alpha",
+   "run": "20261015-184149",
+   "windowsCapture": true,
+   "gateExit": 0,
+   "pairsPassing": 3,
+   "pairs": 3,
+   "perLevel": {
+    "none": {
+     "max": 0,
+     "meanMax": 0.0,
+     "cells": 21
+    },
+    "low": {
+     "max": 1,
+     "meanMax": 0.0451,
+     "cells": 27
+    },
+    "medium": {
+     "max": 1,
+     "meanMax": 0.0389,
+     "cells": 21
+    },
+    "high": {
+     "max": 1,
+     "meanMax": 0.0553,
+     "cells": 24
+    }
+   },
+   "violations": [],
+   "excluded": []
+  },
+  {
+   "case": "layout/ratios-alpha-v1",
+   "n": 3,
+   "stage": "cf9d48dab-8c5eee44-i2ctl-translate-1px",
+   "tag": "ctl-translate-1px",
+   "run": "20261015-184929",
+   "windowsCapture": true,
+   "gateExit": 1,
+   "pairsPassing": 0,
+   "pairs": 3,
+   "perLevel": {
+    "none": {
+     "max": 150,
+     "meanMax": 5.985,
+     "cells": 21
+    },
+    "low": {
+     "max": 150,
+     "meanMax": 5.9699,
+     "cells": 27
+    },
+    "medium": {
+     "max": 135,
+     "meanMax": 3.2982,
+     "cells": 21
+    },
+    "high": {
+     "max": 122,
+     "meanMax": 3.2437,
+     "cells": 24
+    }
+   },
+   "violations": [
+    "resampled: alpha none ratio 0.33: max 150 > 1",
+    "resampled: alpha none ratio 0.33: mean 5.985 > 0.15",
+    "resampled: alpha none ratio 0.5: max 150 > 1",
+    "resampled: alpha none ratio 0.5: mean 4.721 > 0.15",
+    "resampled: alpha none ratio 0.66: max 150 > 1",
+    "resampled: alpha none ratio 0.66: mean 3.306 > 0.15"
+   ],
+   "excluded": []
+  },
+  {
+   "case": "layout/ratios-photo-v1",
+   "n": 3,
+   "stage": "cf9d48dab-8c5eee44-i2ctl-translate-1px",
+   "tag": "ctl-translate-1px",
+   "run": "20261015-185929",
+   "windowsCapture": true,
+   "gateExit": 1,
+   "pairsPassing": 0,
+   "pairs": 3,
+   "perLevel": {
+    "none": {
+     "max": 117,
+     "meanMax": 13.9286,
+     "cells": 21
+    },
+    "low": {
+     "max": 117,
+     "meanMax": 13.7143,
+     "cells": 27
+    },
+    "medium": {
+     "max": 117,
+     "meanMax": 8.0448,
+     "cells": 21
+    },
+    "high": {
+     "max": 116,
+     "meanMax": 7.9288,
+     "cells": 24
+    }
+   },
+   "violations": [
+    "windows: 1502 pixels outside every cell are not the ground",
+    "edge: cell photo none ratio 0.33: 15 edge pixels differ in coverage, first [(0, 5), (0, 7), (0, 0)]",
+    "resampled: photo none ratio 0.33: max 74 > 1",
+    "resampled: photo none ratio 0.33: mean 13.929 > 0.15",
+    "edge: cell photo none ratio 0.5: 24 edge pixels differ in coverage, first [(47, 7), (47, 16), (19, 18)]",
+    "resampled: photo none ratio 0.5: max 103 > 1"
+   ],
+   "excluded": []
+  },
+  {
+   "case": "layout/ratios-alpha-v1",
+   "n": 3,
+   "stage": "cf9d48dab-4a9436fe-i2ctl-swap-rb",
+   "tag": "ctl-swap-rb",
+   "run": "20261015-190957",
+   "windowsCapture": true,
+   "gateExit": 1,
+   "pairsPassing": 0,
+   "pairs": 3,
+   "perLevel": {
+    "none": {
+     "max": 60,
+     "meanMax": 24.55,
+     "cells": 21
+    },
+    "low": {
+     "max": 60,
+     "meanMax": 23.5338,
+     "cells": 27
+    },
+    "medium": {
+     "max": 60,
+     "meanMax": 23.3766,
+     "cells": 21
+    },
+    "high": {
+     "max": 61,
+     "meanMax": 23.3175,
+     "cells": 24
+    }
+   },
+   "violations": [
+    "resampled: alpha none ratio 0.33: max 60 > 1",
+    "resampled: alpha none ratio 0.33: mean 23.820 > 0.15",
+    "resampled: alpha none ratio 0.5: max 60 > 1",
+    "resampled: alpha none ratio 0.5: mean 24.550 > 0.15",
+    "resampled: alpha none ratio 0.66: max 60 > 1",
+    "resampled: alpha none ratio 0.66: mean 23.476 > 0.15"
+   ],
+   "excluded": []
+  },
+  {
+   "case": "layout/ratios-photo-v1",
+   "n": 3,
+   "stage": "cf9d48dab-4a9436fe-i2ctl-swap-rb",
+   "tag": "ctl-swap-rb",
+   "run": "20261015-192603",
+   "windowsCapture": true,
+   "gateExit": 1,
+   "pairsPassing": 0,
+   "pairs": 3,
+   "perLevel": {
+    "none": {
+     "max": 116,
+     "meanMax": 35.1053,
+     "cells": 21
+    },
+    "low": {
+     "max": 116,
+     "meanMax": 34.3835,
+     "cells": 27
+    },
+    "medium": {
+     "max": 116,
+     "meanMax": 34.3543,
+     "cells": 21
+    },
+    "high": {
+     "max": 114,
+     "meanMax": 34.2576,
+     "cells": 24
+    }
+   },
+   "violations": [
+    "resampled: photo none ratio 0.33: max 115 > 1",
+    "resampled: photo none ratio 0.33: mean 35.105 > 0.15",
+    "resampled: photo none ratio 0.5: max 110 > 1",
+    "resampled: photo none ratio 0.5: mean 34.477 > 0.15",
+    "resampled: photo none ratio 0.66: max 114 > 1",
+    "resampled: photo none ratio 0.66: mean 34.265 > 0.15"
+   ],
+   "excluded": []
+  }
+ ],
+ "calibration": [
+  {
+   "case": "calibration/cal-aa-v1",
+   "n": 3,
+   "stage": "cf9d48dab-77823e0e",
+   "tag": "cal-77823e0e",
+   "run": "20261015-142231",
+   "windowsCapture": false,
+   "gateExit": null,
+   "pairsPassing": 0,
+   "pairs": 0,
+   "perLevel": null,
+   "violations": [],
+   "excluded": []
+  },
+  {
+   "case": "calibration/cal-aa-v1",
+   "n": 3,
+   "stage": "cf9d48dab-77823e0e",
+   "tag": "cal-77823e0e",
+   "run": "20261015-143414",
+   "windowsCapture": true,
+   "gateExit": 0,
+   "pairsPassing": 0,
+   "pairs": 3,
+   "perLevel": {
+    "low": {
+     "max": 1,
+     "meanMax": 0.1389,
+     "cells": 36
+    },
+    "high": {
+     "max": 2,
+     "meanMax": 0.7072,
+     "cells": 36
+    }
+   },
+   "violations": [
+    "mac: 1 pixels outside every cell are not the ground",
+    "edge: cell checker low ratio 0.5: 1 edge pixels differ in coverage, first [(24, 229)]",
+    "edge: cell checker low ratio 1.25: 1 edge pixels differ in coverage, first [(24, 229)]",
+    "mac: 1 pixels outside every cell are not the ground",
+    "edge: cell checker low ratio 0.5: 1 edge pixels differ in coverage, first [(24, 229)]",
+    "edge: cell checker low ratio 1.25: 1 edge pixels differ in coverage, first [(24, 229)]"
+   ],
+   "excluded": []
+  },
+  {
+   "case": "calibration/cal-fill-v1",
+   "n": 3,
+   "stage": "cf9d48dab-77823e0e",
+   "tag": "cal-77823e0e",
+   "run": "20261015-143500",
+   "windowsCapture": true,
+   "gateExit": 0,
+   "pairsPassing": 3,
+   "pairs": 3,
+   "perLevel": {
+    "high": {
+     "max": 2,
+     "meanMax": 0.0492,
+     "cells": 12
+    },
+    "low": {
+     "max": 1,
+     "meanMax": 0.1619,
+     "cells": 12
+    },
+    "medium": {
+     "max": 1,
+     "meanMax": 0.1293,
+     "cells": 3
+    }
+   },
+   "violations": [],
+   "excluded": []
+  },
+  {
+   "case": "calibration/cal-fit-v1",
+   "n": 3,
+   "stage": "cf9d48dab-77823e0e",
+   "tag": "cal-77823e0e",
+   "run": "20261015-143540",
+   "windowsCapture": true,
+   "gateExit": 0,
+   "pairsPassing": 3,
+   "pairs": 3,
+   "perLevel": {
+    "high": {
+     "max": 1,
+     "meanMax": 0.0471,
+     "cells": 12
+    },
+    "low": {
+     "max": 1,
+     "meanMax": 0.122,
+     "cells": 12
+    },
+    "medium": {
+     "max": 1,
+     "meanMax": 0.0401,
+     "cells": 3
+    }
+   },
+   "violations": [],
+   "excluded": []
+  },
+  {
+   "case": "calibration/cal-ratios-alpha-v1",
+   "n": 3,
+   "stage": "cf9d48dab-77823e0e",
+   "tag": "cal-77823e0e",
+   "run": "20261015-143620",
+   "windowsCapture": true,
+   "gateExit": 0,
+   "pairsPassing": 0,
+   "pairs": 3,
+   "perLevel": {
+    "none": {
+     "max": 170,
+     "meanMax": 1.2973,
+     "cells": 21
+    },
+    "low": {
+     "max": 1,
+     "meanMax": 0.099,
+     "cells": 54
+    },
+    "medium": {
+     "max": 1,
+     "meanMax": 0.1094,
+     "cells": 27
+    },
+    "high": {
+     "max": 2,
+     "meanMax": 0.1406,
+     "cells": 30
+    }
+   },
+   "violations": [
+    "exact: alpha none ratio 1.0: max 1 (must be 0)",
+    "edge: cell alpha none ratio 1.25: 1 edge pixels differ in coverage, first [(197, 44)]",
+    "edge: cell alpha none ratio 1.5: 1 edge pixels differ in coverage, first [(248, 53)]",
+    "exact: alpha none ratio 2.0: max 1 (must be 0)",
+    "edge: cell alpha none ratio 2.5: 1 edge pixels differ in coverage, first [(437, 89)]",
+    "exact: alpha none ratio 3.0: max 1 (must be 0)"
+   ],
+   "excluded": []
+  },
+  {
+   "case": "calibration/cal-ratios-checker-v1",
+   "n": 3,
+   "stage": "cf9d48dab-77823e0e",
+   "tag": "cal-77823e0e",
+   "run": "20261015-143726",
+   "windowsCapture": true,
+   "gateExit": 0,
+   "pairsPassing": 3,
+   "pairs": 3,
+   "perLevel": {
+    "none": {
+     "max": 200,
+     "meanMax": 64.0,
+     "cells": 21
+    },
+    "low": {
+     "max": 1,
+     "meanMax": 0.6651,
+     "cells": 54
+    },
+    "medium": {
+     "max": 1,
+     "meanMax": 0.6651,
+     "cells": 27
+    },
+    "high": {
+     "max": 3,
+     "meanMax": 1.9028,
+     "cells": 30
+    }
+   },
+   "violations": [],
+   "excluded": []
+  },
+  {
+   "case": "calibration/cal-ratios-lineart-v1",
+   "n": 3,
+   "stage": "cf9d48dab-77823e0e",
+   "tag": "cal-77823e0e",
+   "run": "20261015-143827",
+   "windowsCapture": true,
+   "gateExit": 0,
+   "pairsPassing": 0,
+   "pairs": 3,
+   "perLevel": {
+    "none": {
+     "max": 255,
+     "meanMax": 36.3349,
+     "cells": 21
+    },
+    "low": {
+     "max": 1,
+     "meanMax": 0.2155,
+     "cells": 54
+    },
+    "medium": {
+     "max": 1,
+     "meanMax": 0.2155,
+     "cells": 27
+    },
+    "high": {
+     "max": 8,
+     "meanMax": 1.4896,
+     "cells": 30
+    }
+   },
+   "violations": [
+    "edge: cell lineart high ratio 0.66: 4 edge pixels differ in coverage, first [(41, 345), (64, 368), (41, 368)]",
+    "edge: cell lineart high ratio 0.66: 4 edge pixels differ in coverage, first [(41, 345), (64, 368), (41, 368)]",
+    "edge: cell lineart high ratio 0.66: 4 edge pixels differ in coverage, first [(41, 345), (64, 368), (41, 368)]"
+   ],
+   "excluded": []
+  },
+  {
+   "case": "calibration/cal-ratios-odd-alpha-v1",
+   "n": 3,
+   "stage": "cf9d48dab-77823e0e",
+   "tag": "cal-77823e0e",
+   "run": "20261015-143907",
+   "windowsCapture": true,
+   "gateExit": 0,
+   "pairsPassing": 0,
+   "pairs": 3,
+   "perLevel": {
+    "none": {
+     "max": 1,
+     "meanMax": 0.1053,
+     "cells": 21
+    },
+    "low": {
+     "max": 1,
+     "meanMax": 0.1111,
+     "cells": 27
+    },
+    "medium": {
+     "max": 100,
+     "meanMax": 2.7812,
+     "cells": 27
+    },
+    "high": {
+     "max": 92,
+     "meanMax": 2.8698,
+     "cells": 30
+    }
+   },
+   "violations": [
+    "exact: alpha none ratio 1.0: max 1 (must be 0)",
+    "exact: alpha none ratio 2.0: max 1 (must be 0)",
+    "exact: alpha none ratio 3.0: max 1 (must be 0)",
+    "exact: alpha low ratio 1.0: max 1 (must be 0)",
+    "edge: cell alpha medium ratio 0.33: 2 edge pixels differ in coverage, first [(4, 231), (11, 231)]",
+    "exact: alpha medium ratio 1.0: max 1 (must be 0)"
+   ],
+   "excluded": []
+  },
+  {
+   "case": "calibration/cal-ratios-odd-lineart-v1",
+   "n": 3,
+   "stage": "cf9d48dab-77823e0e",
+   "tag": "cal-77823e0e",
+   "run": "20261015-144444",
+   "windowsCapture": true,
+   "gateExit": 0,
+   "pairsPassing": 0,
+   "pairs": 3,
+   "perLevel": {
+    "none": {
+     "max": 0,
+     "meanMax": 0.0,
+     "cells": 21
+    },
+    "low": {
+     "max": 1,
+     "meanMax": 0.2269,
+     "cells": 27
+    },
+    "medium": {
+     "max": 141,
+     "meanMax": 33.5781,
+     "cells": 27
+    },
+    "high": {
+     "max": 98,
+     "meanMax": 29.4948,
+     "cells": 30
+    }
+   },
+   "violations": [
+    "edge: cell lineart low ratio 2.5: 1 edge pixels differ in coverage, first [(385, 197)]",
+    "edge: cell lineart medium ratio 0.33: 1 edge pixels differ in coverage, first [(4, 220)]",
+    "edge: cell lineart medium ratio 2.5: 1 edge pixels differ in coverage, first [(385, 307)]",
+    "edge: cell lineart high ratio 2.5: 2 edge pixels differ in coverage, first [(493, 417), (390, 417)]",
+    "edge: cell lineart low ratio 2.5: 1 edge pixels differ in coverage, first [(385, 197)]",
+    "edge: cell lineart medium ratio 0.33: 1 edge pixels differ in coverage, first [(4, 220)]"
+   ],
+   "excluded": []
+  },
+  {
+   "case": "calibration/cal-ratios-odd-photo-v1",
+   "n": 3,
+   "stage": "cf9d48dab-77823e0e",
+   "tag": "cal-77823e0e",
+   "run": "20261015-144524",
+   "windowsCapture": true,
+   "gateExit": 0,
+   "pairsPassing": 3,
+   "pairs": 3,
+   "perLevel": {
+    "none": {
+     "max": 0,
+     "meanMax": 0.0,
+     "cells": 21
+    },
+    "low": {
+     "max": 1,
+     "meanMax": 0.0442,
+     "cells": 27
+    },
+    "medium": {
+     "max": 14,
+     "meanMax": 3.1927,
+     "cells": 27
+    },
+    "high": {
+     "max": 15,
+     "meanMax": 3.0677,
+     "cells": 30
+    }
+   },
+   "violations": [],
+   "excluded": []
+  },
+  {
+   "case": "calibration/cal-ratios-photo-v1",
+   "n": 3,
+   "stage": "cf9d48dab-77823e0e",
+   "tag": "cal-77823e0e",
+   "run": "20261015-144629",
+   "windowsCapture": true,
+   "gateExit": 0,
+   "pairsPassing": 3,
+   "pairs": 3,
+   "perLevel": {
+    "none": {
+     "max": 28,
+     "meanMax": 2.6237,
+     "cells": 21
+    },
+    "low": {
+     "max": 1,
+     "meanMax": 0.1389,
+     "cells": 54
+    },
+    "medium": {
+     "max": 1,
+     "meanMax": 0.1389,
+     "cells": 27
+    },
+    "high": {
+     "max": 1,
+     "meanMax": 0.1389,
+     "cells": 30
+    }
+   },
+   "violations": [],
+   "excluded": []
+  },
+  {
+   "case": "calibration/cal-ratios-text-v1",
+   "n": 3,
+   "stage": "cf9d48dab-77823e0e",
+   "tag": "cal-77823e0e",
+   "run": "20261015-144826",
+   "windowsCapture": true,
+   "gateExit": 0,
+   "pairsPassing": 3,
+   "pairs": 3,
+   "perLevel": {
+    "none": {
+     "max": 230,
+     "meanMax": 22.9527,
+     "cells": 21
+    },
+    "low": {
+     "max": 1,
+     "meanMax": 0.2477,
+     "cells": 54
+    },
+    "medium": {
+     "max": 1,
+     "meanMax": 0.2477,
+     "cells": 27
+    },
+    "high": {
+     "max": 5,
+     "meanMax": 1.015,
+     "cells": 30
+    }
+   },
+   "violations": [],
+   "excluded": []
+  }
+ ]
+}

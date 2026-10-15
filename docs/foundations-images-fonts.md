@@ -105,6 +105,7 @@ Why:
   3. **Tolerance.** The gate is per pixel ≤ `resampleMaxPerChannel` and mean ≤ `resampleMeanPerChannel`, plus exact frame and edge positions. The numbers are the calibration maxima, rounded up once. Each one appears in `pair.json` with `resampleToleranceReason`, like decisions 12-19. The calibration set and the gating set are different images.
   4. **Negative controls** must fail: nearest-neighbour where `.high` is asked; a straight-alpha resample (a dark fringe on an alpha edge); a 1 px translation; a swapped R/B channel.
 - **JPEG** gets its own tolerance, measured the same way between WIC and ImageIO decodes of the corpus. It is stated separately from the resampling tolerance.
+- **Measured in I2 (15 October 2026; decisions G50-G59).** The Mac oracle for interpolation is SwiftUI's `ImageRenderer`, not the `NSHostingView` bitmap path: that path draws all four levels with one bilinear filter. On `ImageRenderer` the fit is: `.none` nearest (floor of the pixel centre), `.low` and the default bilinear, point-sampled (not widened on a reduction), `.medium` the same after 2 x 2 box halvings while the reduction is over 2:1, `.high` those halvings then a cubic with Mitchell-Netravali (B, C) = (0.72, 0.12). None of the five named candidates fits `.high` (best named: triangle, max 112); the parametric cubic does (max 8). `.high` at 1:1 smooths (it is not the identity), so only the other levels are exact at 1:1. The Mac does not use the unsnapped frame as the sample scale: the whole source maps onto the snapped rect.
 
 ### 1.5 AsyncImage
 

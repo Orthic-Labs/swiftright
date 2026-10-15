@@ -1,0 +1,82 @@
+{
+ "resampleGate": {
+  "groundRGB": 128,
+  "resampleTolerance": {
+   "low": {
+    "resampleMaxPerChannel": 1,
+    "resampleMeanPerChannel": 0.7
+   },
+   "high": {
+    "resampleMaxPerChannel": 8,
+    "resampleMeanPerChannel": 1.95
+   },
+   "medium": {
+    "resampleMaxPerChannel": 1,
+    "resampleMeanPerChannel": 0.7
+   },
+   "none": {
+    "resampleMaxPerChannel": 1,
+    "resampleMeanPerChannel": 0.15
+   }
+  },
+  "resampleToleranceReason": "Windows pipeline (host resample in Float, 8-bit straight alpha, GPU blend) against the Mac ImageRenderer on the CALIBRATION image set (swiftui.image-calibration, 3 runs of each page): per level the maximum per-pixel per-channel difference and the largest per-cell mean over every resampled cell, rounded up once (max to the next integer, mean to the next 0.05). The gating set (swiftui.image-layout) is different images and sizes. Excluded: nearest ties and odd sides reduced more than 2:1 at medium/high (not reproducible, G51 G53). Wave 1 block I2, docs/sr1-decisions.md G52 G56.",
+  "resampleFilter": {
+   "none": {
+    "candidate": "nearest",
+    "mean": 0.0172,
+    "max": 1.0,
+    "down": {
+     "mean": 0.016675478898818628,
+     "max": 1.0
+    },
+    "up": {
+     "mean": 0.01780139122007135,
+     "max": 1.0
+    },
+    "cells": 55
+   },
+   "low": {
+    "candidate": "triangle/gamma/point",
+    "mean": 0.0673,
+    "max": 1.0,
+    "down": {
+     "mean": 0.06092544088611583,
+     "max": 1.0
+    },
+    "up": {
+     "mean": 0.08250440168882198,
+     "max": 1.0
+    },
+    "cells": 80
+   },
+   "medium": {
+    "candidate": "triangle/gamma/mip",
+    "mean": 0.0683,
+    "max": 1.0,
+    "down": {
+     "mean": 0.06309732557548413,
+     "max": 1.0
+    },
+    "up": {
+     "mean": 0.08250440168882198,
+     "max": 1.0
+    },
+    "cells": 77
+   },
+   "high": {
+    "candidate": "cubic-fit/gamma/mip",
+    "mean": 0.3772,
+    "max": 8.0,
+    "down": {
+     "mean": 0.33763325548527184,
+     "max": 5.0
+    },
+    "up": {
+     "mean": 0.34633661464121407,
+     "max": 8.0
+    },
+    "cells": 77
+   }
+  }
+ }
+}

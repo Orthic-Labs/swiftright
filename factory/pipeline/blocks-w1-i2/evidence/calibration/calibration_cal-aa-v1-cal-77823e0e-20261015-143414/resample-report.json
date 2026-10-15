@@ -1,0 +1,1152 @@
+{
+ "case": "cal-aa-v1",
+ "run": "20261015-143414",
+ "runs": 3,
+ "calibrate": true,
+ "perLevel": {
+  "low": {
+   "max": 1,
+   "meanMax": 0.1389,
+   "cells": 36
+  },
+  "high": {
+   "max": 2,
+   "meanMax": 0.7072,
+   "cells": 36
+  }
+ },
+ "gate": {
+  "tolerance": null,
+  "reason": null
+ },
+ "rows": [
+  {
+   "run": "01",
+   "ok": false,
+   "frame": {
+    "outsideDiff": 0,
+    "outsideNotGround": 1,
+    "edgeMismatch": 2
+   },
+   "violations": [
+    "mac: 1 pixels outside every cell are not the ground",
+    "edge: cell checker low ratio 0.5: 1 edge pixels differ in coverage, first [(24, 229)]",
+    "edge: cell checker low ratio 1.25: 1 edge pixels differ in coverage, first [(24, 229)]"
+   ],
+   "cells": [
+    {
+     "family": "photo",
+     "level": "low",
+     "ratio": 0.5,
+     "mode": null,
+     "rect": [
+      0,
+      0,
+      24,
+      18
+     ],
+     "cls": "resampled",
+     "max": 1,
+     "mean": 0.1389
+    },
+    {
+     "family": "photo",
+     "level": "low",
+     "ratio": 1.25,
+     "mode": null,
+     "rect": [
+      24,
+      0,
+      84,
+      45
+     ],
+     "cls": "resampled",
+     "max": 1,
+     "mean": 0.0496
+    },
+    {
+     "family": "photo",
+     "level": "low",
+     "ratio": 2.5,
+     "mode": null,
+     "rect": [
+      85,
+      0,
+      205,
+      90
+     ],
+     "cls": "resampled",
+     "max": 1,
+     "mean": 0.0418
+    },
+    {
+     "family": "photo",
+     "level": "low",
+     "ratio": 0.5,
+     "mode": null,
+     "rect": [
+      206,
+      0,
+      230,
+      18
+     ],
+     "cls": "resampled",
+     "max": 1,
+     "mean": 0.1389
+    },
+    {
+     "family": "photo",
+     "level": "low",
+     "ratio": 1.25,
+     "mode": null,
+     "rect": [
+      230,
+      0,
+      290,
+      45
+     ],
+     "cls": "resampled",
+     "max": 1,
+     "mean": 0.0496
+    },
+    {
+     "family": "photo",
+     "level": "low",
+     "ratio": 2.5,
+     "mode": null,
+     "rect": [
+      291,
+      0,
+      411,
+      90
+     ],
+     "cls": "resampled",
+     "max": 1,
+     "mean": 0.0418
+    },
+    {
+     "family": "photo",
+     "level": "high",
+     "ratio": 0.5,
+     "mode": null,
+     "rect": [
+      0,
+      115,
+      24,
+      133
+     ],
+     "cls": "resampled",
+     "max": 1,
+     "mean": 0.1319
+    },
+    {
+     "family": "photo",
+     "level": "high",
+     "ratio": 1.25,
+     "mode": null,
+     "rect": [
+      24,
+      115,
+      84,
+      160
+     ],
+     "cls": "resampled",
+     "max": 1,
+     "mean": 0.0552
+    },
+    {
+     "family": "photo",
+     "level": "high",
+     "ratio": 2.5,
+     "mode": null,
+     "rect": [
+      85,
+      115,
+      205,
+      205
+     ],
+     "cls": "resampled",
+     "max": 1,
+     "mean": 0.0528
+    },
+    {
+     "family": "photo",
+     "level": "high",
+     "ratio": 0.5,
+     "mode": null,
+     "rect": [
+      206,
+      115,
+      230,
+      133
+     ],
+     "cls": "resampled",
+     "max": 1,
+     "mean": 0.1319
+    },
+    {
+     "family": "photo",
+     "level": "high",
+     "ratio": 1.25,
+     "mode": null,
+     "rect": [
+      230,
+      115,
+      290,
+      160
+     ],
+     "cls": "resampled",
+     "max": 1,
+     "mean": 0.0556
+    },
+    {
+     "family": "photo",
+     "level": "high",
+     "ratio": 2.5,
+     "mode": null,
+     "rect": [
+      291,
+      115,
+      411,
+      205
+     ],
+     "cls": "resampled",
+     "max": 1,
+     "mean": 0.0532
+    },
+    {
+     "family": "checker",
+     "level": "low",
+     "ratio": 0.5,
+     "mode": null,
+     "rect": [
+      0,
+      230,
+      24,
+      248
+     ],
+     "cls": "resampled",
+     "max": 0,
+     "mean": 0.0
+    },
+    {
+     "family": "checker",
+     "level": "low",
+     "ratio": 1.25,
+     "mode": null,
+     "rect": [
+      24,
+      230,
+      84,
+      275
+     ],
+     "cls": "resampled",
+     "max": 1,
+     "mean": 0.0652
+    },
+    {
+     "family": "checker",
+     "level": "low",
+     "ratio": 2.5,
+     "mode": null,
+     "rect": [
+      85,
+      230,
+      205,
+      320
+     ],
+     "cls": "resampled",
+     "max": 0,
+     "mean": 0.0
+    },
+    {
+     "family": "checker",
+     "level": "low",
+     "ratio": 0.5,
+     "mode": null,
+     "rect": [
+      206,
+      230,
+      230,
+      248
+     ],
+     "cls": "resampled",
+     "max": 0,
+     "mean": 0.0
+    },
+    {
+     "family": "checker",
+     "level": "low",
+     "ratio": 1.25,
+     "mode": null,
+     "rect": [
+      230,
+      230,
+      290,
+      275
+     ],
+     "cls": "resampled",
+     "max": 1,
+     "mean": 0.0652
+    },
+    {
+     "family": "checker",
+     "level": "low",
+     "ratio": 2.5,
+     "mode": null,
+     "rect": [
+      291,
+      230,
+      411,
+      320
+     ],
+     "cls": "resampled",
+     "max": 0,
+     "mean": 0.0
+    },
+    {
+     "family": "checker",
+     "level": "high",
+     "ratio": 0.5,
+     "mode": null,
+     "rect": [
+      0,
+      345,
+      24,
+      363
+     ],
+     "cls": "resampled",
+     "max": 0,
+     "mean": 0.0
+    },
+    {
+     "family": "checker",
+     "level": "high",
+     "ratio": 1.25,
+     "mode": null,
+     "rect": [
+      24,
+      345,
+      84,
+      390
+     ],
+     "cls": "resampled",
+     "max": 1,
+     "mean": 0.5948
+    },
+    {
+     "family": "checker",
+     "level": "high",
+     "ratio": 2.5,
+     "mode": null,
+     "rect": [
+      85,
+      345,
+      205,
+      435
+     ],
+     "cls": "resampled",
+     "max": 2,
+     "mean": 0.7072
+    },
+    {
+     "family": "checker",
+     "level": "high",
+     "ratio": 0.5,
+     "mode": null,
+     "rect": [
+      206,
+      345,
+      230,
+      363
+     ],
+     "cls": "resampled",
+     "max": 0,
+     "mean": 0.0
+    },
+    {
+     "family": "checker",
+     "level": "high",
+     "ratio": 1.25,
+     "mode": null,
+     "rect": [
+      230,
+      345,
+      290,
+      390
+     ],
+     "cls": "resampled",
+     "max": 1,
+     "mean": 0.5948
+    },
+    {
+     "family": "checker",
+     "level": "high",
+     "ratio": 2.5,
+     "mode": null,
+     "rect": [
+      291,
+      345,
+      411,
+      435
+     ],
+     "cls": "resampled",
+     "max": 2,
+     "mean": 0.7072
+    }
+   ]
+  },
+  {
+   "run": "02",
+   "ok": false,
+   "frame": {
+    "outsideDiff": 0,
+    "outsideNotGround": 1,
+    "edgeMismatch": 2
+   },
+   "violations": [
+    "mac: 1 pixels outside every cell are not the ground",
+    "edge: cell checker low ratio 0.5: 1 edge pixels differ in coverage, first [(24, 229)]",
+    "edge: cell checker low ratio 1.25: 1 edge pixels differ in coverage, first [(24, 229)]"
+   ],
+   "cells": [
+    {
+     "family": "photo",
+     "level": "low",
+     "ratio": 0.5,
+     "mode": null,
+     "rect": [
+      0,
+      0,
+      24,
+      18
+     ],
+     "cls": "resampled",
+     "max": 1,
+     "mean": 0.1389
+    },
+    {
+     "family": "photo",
+     "level": "low",
+     "ratio": 1.25,
+     "mode": null,
+     "rect": [
+      24,
+      0,
+      84,
+      45
+     ],
+     "cls": "resampled",
+     "max": 1,
+     "mean": 0.0496
+    },
+    {
+     "family": "photo",
+     "level": "low",
+     "ratio": 2.5,
+     "mode": null,
+     "rect": [
+      85,
+      0,
+      205,
+      90
+     ],
+     "cls": "resampled",
+     "max": 1,
+     "mean": 0.0418
+    },
+    {
+     "family": "photo",
+     "level": "low",
+     "ratio": 0.5,
+     "mode": null,
+     "rect": [
+      206,
+      0,
+      230,
+      18
+     ],
+     "cls": "resampled",
+     "max": 1,
+     "mean": 0.1389
+    },
+    {
+     "family": "photo",
+     "level": "low",
+     "ratio": 1.25,
+     "mode": null,
+     "rect": [
+      230,
+      0,
+      290,
+      45
+     ],
+     "cls": "resampled",
+     "max": 1,
+     "mean": 0.0496
+    },
+    {
+     "family": "photo",
+     "level": "low",
+     "ratio": 2.5,
+     "mode": null,
+     "rect": [
+      291,
+      0,
+      411,
+      90
+     ],
+     "cls": "resampled",
+     "max": 1,
+     "mean": 0.0418
+    },
+    {
+     "family": "photo",
+     "level": "high",
+     "ratio": 0.5,
+     "mode": null,
+     "rect": [
+      0,
+      115,
+      24,
+      133
+     ],
+     "cls": "resampled",
+     "max": 1,
+     "mean": 0.1319
+    },
+    {
+     "family": "photo",
+     "level": "high",
+     "ratio": 1.25,
+     "mode": null,
+     "rect": [
+      24,
+      115,
+      84,
+      160
+     ],
+     "cls": "resampled",
+     "max": 1,
+     "mean": 0.0552
+    },
+    {
+     "family": "photo",
+     "level": "high",
+     "ratio": 2.5,
+     "mode": null,
+     "rect": [
+      85,
+      115,
+      205,
+      205
+     ],
+     "cls": "resampled",
+     "max": 1,
+     "mean": 0.0528
+    },
+    {
+     "family": "photo",
+     "level": "high",
+     "ratio": 0.5,
+     "mode": null,
+     "rect": [
+      206,
+      115,
+      230,
+      133
+     ],
+     "cls": "resampled",
+     "max": 1,
+     "mean": 0.1319
+    },
+    {
+     "family": "photo",
+     "level": "high",
+     "ratio": 1.25,
+     "mode": null,
+     "rect": [
+      230,
+      115,
+      290,
+      160
+     ],
+     "cls": "resampled",
+     "max": 1,
+     "mean": 0.0556
+    },
+    {
+     "family": "photo",
+     "level": "high",
+     "ratio": 2.5,
+     "mode": null,
+     "rect": [
+      291,
+      115,
+      411,
+      205
+     ],
+     "cls": "resampled",
+     "max": 1,
+     "mean": 0.0532
+    },
+    {
+     "family": "checker",
+     "level": "low",
+     "ratio": 0.5,
+     "mode": null,
+     "rect": [
+      0,
+      230,
+      24,
+      248
+     ],
+     "cls": "resampled",
+     "max": 0,
+     "mean": 0.0
+    },
+    {
+     "family": "checker",
+     "level": "low",
+     "ratio": 1.25,
+     "mode": null,
+     "rect": [
+      24,
+      230,
+      84,
+      275
+     ],
+     "cls": "resampled",
+     "max": 1,
+     "mean": 0.0652
+    },
+    {
+     "family": "checker",
+     "level": "low",
+     "ratio": 2.5,
+     "mode": null,
+     "rect": [
+      85,
+      230,
+      205,
+      320
+     ],
+     "cls": "resampled",
+     "max": 0,
+     "mean": 0.0
+    },
+    {
+     "family": "checker",
+     "level": "low",
+     "ratio": 0.5,
+     "mode": null,
+     "rect": [
+      206,
+      230,
+      230,
+      248
+     ],
+     "cls": "resampled",
+     "max": 0,
+     "mean": 0.0
+    },
+    {
+     "family": "checker",
+     "level": "low",
+     "ratio": 1.25,
+     "mode": null,
+     "rect": [
+      230,
+      230,
+      290,
+      275
+     ],
+     "cls": "resampled",
+     "max": 1,
+     "mean": 0.0652
+    },
+    {
+     "family": "checker",
+     "level": "low",
+     "ratio": 2.5,
+     "mode": null,
+     "rect": [
+      291,
+      230,
+      411,
+      320
+     ],
+     "cls": "resampled",
+     "max": 0,
+     "mean": 0.0
+    },
+    {
+     "family": "checker",
+     "level": "high",
+     "ratio": 0.5,
+     "mode": null,
+     "rect": [
+      0,
+      345,
+      24,
+      363
+     ],
+     "cls": "resampled",
+     "max": 0,
+     "mean": 0.0
+    },
+    {
+     "family": "checker",
+     "level": "high",
+     "ratio": 1.25,
+     "mode": null,
+     "rect": [
+      24,
+      345,
+      84,
+      390
+     ],
+     "cls": "resampled",
+     "max": 1,
+     "mean": 0.5948
+    },
+    {
+     "family": "checker",
+     "level": "high",
+     "ratio": 2.5,
+     "mode": null,
+     "rect": [
+      85,
+      345,
+      205,
+      435
+     ],
+     "cls": "resampled",
+     "max": 2,
+     "mean": 0.7072
+    },
+    {
+     "family": "checker",
+     "level": "high",
+     "ratio": 0.5,
+     "mode": null,
+     "rect": [
+      206,
+      345,
+      230,
+      363
+     ],
+     "cls": "resampled",
+     "max": 0,
+     "mean": 0.0
+    },
+    {
+     "family": "checker",
+     "level": "high",
+     "ratio": 1.25,
+     "mode": null,
+     "rect": [
+      230,
+      345,
+      290,
+      390
+     ],
+     "cls": "resampled",
+     "max": 1,
+     "mean": 0.5948
+    },
+    {
+     "family": "checker",
+     "level": "high",
+     "ratio": 2.5,
+     "mode": null,
+     "rect": [
+      291,
+      345,
+      411,
+      435
+     ],
+     "cls": "resampled",
+     "max": 2,
+     "mean": 0.7072
+    }
+   ]
+  },
+  {
+   "run": "03",
+   "ok": false,
+   "frame": {
+    "outsideDiff": 0,
+    "outsideNotGround": 1,
+    "edgeMismatch": 2
+   },
+   "violations": [
+    "mac: 1 pixels outside every cell are not the ground",
+    "edge: cell checker low ratio 0.5: 1 edge pixels differ in coverage, first [(24, 229)]",
+    "edge: cell checker low ratio 1.25: 1 edge pixels differ in coverage, first [(24, 229)]"
+   ],
+   "cells": [
+    {
+     "family": "photo",
+     "level": "low",
+     "ratio": 0.5,
+     "mode": null,
+     "rect": [
+      0,
+      0,
+      24,
+      18
+     ],
+     "cls": "resampled",
+     "max": 1,
+     "mean": 0.1389
+    },
+    {
+     "family": "photo",
+     "level": "low",
+     "ratio": 1.25,
+     "mode": null,
+     "rect": [
+      24,
+      0,
+      84,
+      45
+     ],
+     "cls": "resampled",
+     "max": 1,
+     "mean": 0.0496
+    },
+    {
+     "family": "photo",
+     "level": "low",
+     "ratio": 2.5,
+     "mode": null,
+     "rect": [
+      85,
+      0,
+      205,
+      90
+     ],
+     "cls": "resampled",
+     "max": 1,
+     "mean": 0.0418
+    },
+    {
+     "family": "photo",
+     "level": "low",
+     "ratio": 0.5,
+     "mode": null,
+     "rect": [
+      206,
+      0,
+      230,
+      18
+     ],
+     "cls": "resampled",
+     "max": 1,
+     "mean": 0.1389
+    },
+    {
+     "family": "photo",
+     "level": "low",
+     "ratio": 1.25,
+     "mode": null,
+     "rect": [
+      230,
+      0,
+      290,
+      45
+     ],
+     "cls": "resampled",
+     "max": 1,
+     "mean": 0.0496
+    },
+    {
+     "family": "photo",
+     "level": "low",
+     "ratio": 2.5,
+     "mode": null,
+     "rect": [
+      291,
+      0,
+      411,
+      90
+     ],
+     "cls": "resampled",
+     "max": 1,
+     "mean": 0.0418
+    },
+    {
+     "family": "photo",
+     "level": "high",
+     "ratio": 0.5,
+     "mode": null,
+     "rect": [
+      0,
+      115,
+      24,
+      133
+     ],
+     "cls": "resampled",
+     "max": 1,
+     "mean": 0.1319
+    },
+    {
+     "family": "photo",
+     "level": "high",
+     "ratio": 1.25,
+     "mode": null,
+     "rect": [
+      24,
+      115,
+      84,
+      160
+     ],
+     "cls": "resampled",
+     "max": 1,
+     "mean": 0.0552
+    },
+    {
+     "family": "photo",
+     "level": "high",
+     "ratio": 2.5,
+     "mode": null,
+     "rect": [
+      85,
+      115,
+      205,
+      205
+     ],
+     "cls": "resampled",
+     "max": 1,
+     "mean": 0.0528
+    },
+    {
+     "family": "photo",
+     "level": "high",
+     "ratio": 0.5,
+     "mode": null,
+     "rect": [
+      206,
+      115,
+      230,
+      133
+     ],
+     "cls": "resampled",
+     "max": 1,
+     "mean": 0.1319
+    },
+    {
+     "family": "photo",
+     "level": "high",
+     "ratio": 1.25,
+     "mode": null,
+     "rect": [
+      230,
+      115,
+      290,
+      160
+     ],
+     "cls": "resampled",
+     "max": 1,
+     "mean": 0.0556
+    },
+    {
+     "family": "photo",
+     "level": "high",
+     "ratio": 2.5,
+     "mode": null,
+     "rect": [
+      291,
+      115,
+      411,
+      205
+     ],
+     "cls": "resampled",
+     "max": 1,
+     "mean": 0.0532
+    },
+    {
+     "family": "checker",
+     "level": "low",
+     "ratio": 0.5,
+     "mode": null,
+     "rect": [
+      0,
+      230,
+      24,
+      248
+     ],
+     "cls": "resampled",
+     "max": 0,
+     "mean": 0.0
+    },
+    {
+     "family": "checker",
+     "level": "low",
+     "ratio": 1.25,
+     "mode": null,
+     "rect": [
+      24,
+      230,
+      84,
+      275
+     ],
+     "cls": "resampled",
+     "max": 1,
+     "mean": 0.0652
+    },
+    {
+     "family": "checker",
+     "level": "low",
+     "ratio": 2.5,
+     "mode": null,
+     "rect": [
+      85,
+      230,
+      205,
+      320
+     ],
+     "cls": "resampled",
+     "max": 0,
+     "mean": 0.0
+    },
+    {
+     "family": "checker",
+     "level": "low",
+     "ratio": 0.5,
+     "mode": null,
+     "rect": [
+      206,
+      230,
+      230,
+      248
+     ],
+     "cls": "resampled",
+     "max": 0,
+     "mean": 0.0
+    },
+    {
+     "family": "checker",
+     "level": "low",
+     "ratio": 1.25,
+     "mode": null,
+     "rect": [
+      230,
+      230,
+      290,
+      275
+     ],
+     "cls": "resampled",
+     "max": 1,
+     "mean": 0.0652
+    },
+    {
+     "family": "checker",
+     "level": "low",
+     "ratio": 2.5,
+     "mode": null,
+     "rect": [
+      291,
+      230,
+      411,
+      320
+     ],
+     "cls": "resampled",
+     "max": 0,
+     "mean": 0.0
+    },
+    {
+     "family": "checker",
+     "level": "high",
+     "ratio": 0.5,
+     "mode": null,
+     "rect": [
+      0,
+      345,
+      24,
+      363
+     ],
+     "cls": "resampled",
+     "max": 0,
+     "mean": 0.0
+    },
+    {
+     "family": "checker",
+     "level": "high",
+     "ratio": 1.25,
+     "mode": null,
+     "rect": [
+      24,
+      345,
+      84,
+      390
+     ],
+     "cls": "resampled",
+     "max": 1,
+     "mean": 0.5948
+    },
+    {
+     "family": "checker",
+     "level": "high",
+     "ratio": 2.5,
+     "mode": null,
+     "rect": [
+      85,
+      345,
+      205,
+      435
+     ],
+     "cls": "resampled",
+     "max": 2,
+     "mean": 0.7072
+    },
+    {
+     "family": "checker",
+     "level": "high",
+     "ratio": 0.5,
+     "mode": null,
+     "rect": [
+      206,
+      345,
+      230,
+      363
+     ],
+     "cls": "resampled",
+     "max": 0,
+     "mean": 0.0
+    },
+    {
+     "family": "checker",
+     "level": "high",
+     "ratio": 1.25,
+     "mode": null,
+     "rect": [
+      230,
+      345,
+      290,
+      390
+     ],
+     "cls": "resampled",
+     "max": 1,
+     "mean": 0.5948
+    },
+    {
+     "family": "checker",
+     "level": "high",
+     "ratio": 2.5,
+     "mode": null,
+     "rect": [
+      291,
+      345,
+      411,
+      435
+     ],
+     "cls": "resampled",
+     "max": 2,
+     "mean": 0.7072
+    }
+   ]
+  }
+ ]
+}

@@ -1919,6 +1919,66 @@
         "text": "3/3 jobs pass their deciding gates, 9 runs at N=3, on `6459bb8cd-d243b1c9` (**delivered**; Mac scale guard OK on every run)"
       },
       "windowsDifferences": []
+    },
+    {
+      "apis": {
+        "fromCaseSources": {
+          "modifiersAndMembers": [
+            "interpolation",
+            "antialiased",
+            "scaledToFill",
+            "aspectRatio",
+            "clipped",
+            "resizable",
+            "scaledToFit",
+            "frame",
+            "padding"
+          ],
+          "types": [
+            "Image",
+            "Color",
+            "Rectangle",
+            "VStack",
+            "HStack",
+            "ZStack"
+          ]
+        },
+        "fromManifest": []
+      },
+      "block": "foundations.image-layout",
+      "cases": [
+        "blocks-w1-i2/swiftui.image-layout/aa-v1",
+        "blocks-w1-i2/swiftui.image-layout/fill-v1",
+        "blocks-w1-i2/swiftui.image-layout/fit-v1",
+        "blocks-w1-i2/swiftui.image-layout/mip-v1",
+        "blocks-w1-i2/swiftui.image-layout/one-to-one-none-int-v1",
+        "blocks-w1-i2/swiftui.image-layout/ratios-alpha-v1",
+        "blocks-w1-i2/swiftui.image-layout/ratios-checker-v1",
+        "blocks-w1-i2/swiftui.image-layout/ratios-lineart-v1",
+        "blocks-w1-i2/swiftui.image-layout/ratios-photo-v1",
+        "blocks-w1-i2/swiftui.image-layout/ratios-text-v1"
+      ],
+      "casesPassingDecidingGate": "9/10 at N=20 (ratios-checker FAILS at 3x medium); negative controls: 3 of 4 fail on both cases, straight-alpha fails on the alpha case",
+      "caveats": [
+        "Oracle is SwiftUI's ImageRenderer at scale 2.5 (decision G50, provisional), not the on-screen NSHostingView path; on-screen confirmation is pending the Mac being free.",
+        "Fitted filters per level (G52): none nearest; low and default bilinear; medium bilinear after 2x2 box halvings; high the same halvings with a Mitchell-Netravali cubic (B 0.72, C 0.12), an extra beyond the five named filters.",
+        "ratios-checker FAILS: the 3x medium 1 px checker cells have a per-cell mean of 0.879 against the calibrated 0.7 (max 1 level). Calibration had no 1 px checker cells; the tolerance was NOT changed after the gate ran.",
+        "Odd-sized sources reduced by more than 2:1 are not reproduced (G53). `.high` at 1:1 smooths on the Mac, so 1:1 is exact only for none, low, medium and default.",
+        "A named Mac-side corner artifact (macCornerSpill, G55) is allowed one pixel above the rect with antialiased fractional origins; it is counted and reported.",
+        "The transient live-resize path (isLiveResizing) is unit-tested only; there is no settled-capture gate for it. aspectRatio is an Image modifier only."
+      ],
+      "stage": "cf9d48dab-77823e0e (git archive of commit cf9d48dab); renderer 0.7 baseline 82513ae0c1e2",
+      "status": "in-progress",
+      "statusDocBlock": "I2",
+      "verdict": {
+        "date": "2026-10-15",
+        "runDates": [
+          "2026-10-15"
+        ],
+        "source": "docs/sr1-status.md I2 row + factory/pipeline/blocks-w1-i2/evidence",
+        "text": "9/10 gate cases pass at N=20; ratios-checker fails the calibrated medium tolerance; block not delivered (decisions G50-G59)"
+      },
+      "windowsDifferences": []
     }
   ],
   "generator": "factory/tools/proven-controls/generate.py",
