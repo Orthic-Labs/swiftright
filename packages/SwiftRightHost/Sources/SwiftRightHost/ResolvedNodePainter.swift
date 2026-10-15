@@ -27,6 +27,10 @@ public final class ResolvedNodePainter {
     private let log: (String) -> Void
     private var shapeImages: [UInt64: ImageHandle] = [:]
     var pendingShapeImages: [UInt64: ImageHandle] = [:]
+    /// Registered pixel images (`Image(decorative:scale:)`), one per content id, painted size and opacity: kept while a committed tree uses them.
+    struct PixelKey: Hashable { var contentID: UInt64; var width: UInt32; var height: UInt32; var alpha: UInt8 }
+    private var pixelImages: [PixelKey: ImageHandle] = [:]
+    private var pendingPixelImages: [PixelKey: ImageHandle] = [:]
     /// The runtime id of the TextField that holds the focus while a commit is painted (`commit(focused:)`); nil when no field is focused.
     var focusedFieldID: String?
     /// True while the keyboard is in a List (the host sets it on a pointer press in the list or a navigation key): a selection then paints in the accent colour,
@@ -41,7 +45,7 @@ public final class ResolvedNodePainter {
         self.images = images; self.scale = scale; self.text = text; self.systemImages = systemImages; self.log = log
     }
 
-    public func beginCommit() { pendingShapeImages = [:]; pendingFieldLayouts = [:] }
+    public func beginCommit() { pendingShapeImages = [:]; pendingPixelImages = [:]; pendingFieldLayouts = [:] }
 
     /// `committed == false` releases the images created for the failed commit and keeps the previous ones.
     public func endCommit(committed: Bool) {
@@ -49,10 +53,14 @@ public final class ResolvedNodePainter {
             fieldLayouts = pendingFieldLayouts
             for (id, handle) in shapeImages where pendingShapeImages[id] != handle { _ = images.release(handle) }
             shapeImages = pendingShapeImages
+            for (key, handle) in pixelImages where pendingPixelImages[key] != handle { _ = images.release(handle) }
+            pixelImages = pendingPixelImages
         } else {
             pendingShapeImages.values.forEach { _ = images.release($0) }
+            for (key, handle) in pendingPixelImages where pixelImages[key] != handle { _ = images.release(handle) }
         }
         pendingShapeImages = [:]
+        pendingPixelImages = [:]
     }
 
     public func releaseAll() {
@@ -60,6 +68,11 @@ public final class ResolvedNodePainter {
         shapeImages = [:]
         pendingShapeImages.values.forEach { _ = images.release($0) }
         pendingShapeImages = [:]
+        var pixelHandles = Set(pixelImages.values)
+        pixelHandles.formUnion(pendingPixelImages.values)
+        pixelHandles.forEach { _ = images.release($0) }
+        pixelImages = [:]
+        pendingPixelImages = [:]
     }
 
     /// A solid backdrop node under the whole tree (the window background).
@@ -331,6 +344,12 @@ public final class ResolvedNodePainter {
             return NodeEmission(primitives: rgba & 0xff == 0 ? [] : [.rect(bounds, color: rgba)], semantic: nil, flags: [], structural: false)
 
         case "Image":
+            if case .pixels(let image, _)? = node.image {
+                return NodeEmission(primitives: [try pixelImagePrimitive(node, image, bounds: bounds)],
+                                    semantic: SemanticNode(role: .image, label: node.accessibility.label ?? "", identifier: node.id,
+                                                           disabled: !node.accessibility.isEnabled),
+                                    flags: [], structural: false)
+            }
             guard let systemImages else { throw HostPaintError.unsupportedNode("Image (no system image registry)") }
             return NodeEmission(primitives: [try systemImagePrimitive(node, bounds: bounds, registry: systemImages)],
                                 semantic: SemanticNode(role: .image, label: node.accessibility.label ?? node.image?.name ?? "", identifier: node.id,
@@ -400,5 +419,35 @@ public final class ResolvedNodePainter {
         log("SYSTEM_IMAGE_FRAME name=\(reference.name) xPX=\(Int(bounds.x)) yPX=\(Int(bounds.y)) widthPX=\(Int(bounds.w)) heightPX=\(Int(bounds.h)) canvasInsetPX=\(Int(inset)) tintRGBA=\(String(format: "%08x", tint))")
         return .image(handle, Rect(x: bounds.x - inset + imageGuardBand, y: bounds.y - inset + imageGuardBand,
                                    w: bounds.w + 2 * inset - 2 * imageGuardBand, h: bounds.h + 2 * inset - 2 * imageGuardBand))
+    }
+
+    /// Decoded pixels painted to fill the node rect. A frame smaller than the image (`.resizable().frame`) is box-filtered to the frame's device-pixel size first,
+    /// so the renderer's own sampling is 1:1 and a shrunk icon is not aliased. Node opacity scales the alpha. Tiled and cap-inset images are refused.
+    private func pixelImagePrimitive(_ node: ResolvedNode, _ image: RGBAImage, bounds: Rect) throws -> Primitive {
+        if let sizing = node.imageSizing {
+            guard sizing.resizingMode == .stretch, sizing.capInsets == EdgeInsets() else {
+                throw HostPaintError.systemImageContractMismatch("pixel images paint stretched only (no tiling, no cap insets)")
+            }
+        }
+        guard bounds.w >= 1, bounds.h >= 1 else { throw HostPaintError.systemImageContractMismatch("empty frame") }
+        guard node.opacity >= 0, node.opacity <= 1 else { throw HostPaintError.invalidFillOpacity }
+        let targetW = Int(bounds.w.rounded()), targetH = Int(bounds.h.rounded())
+        let w = UInt32(min(image.width, max(1, targetW))), h = UInt32(min(image.height, max(1, targetH)))
+        let key = PixelKey(contentID: image.contentID, width: w, height: h, alpha: UInt8((node.opacity * 255).rounded()))
+        let handle: ImageHandle
+        if let known = pendingPixelImages[key] ?? pixelImages[key] {
+            handle = known
+        } else {
+            var source = image
+            if Int(w) != image.width || Int(h) != image.height { source = ImageDecoder.resample(image, width: Int(w), height: Int(h)) }
+            var rgba = source.rgba
+            if key.alpha != 255 {
+                for i in stride(from: 3, to: rgba.count, by: 4) { rgba[i] = UInt8((Int(rgba[i]) * Int(key.alpha) + 127) / 255) }
+            }
+            handle = try images.registerImage(width: UInt32(source.width), height: UInt32(source.height), rgba: rgba, stride: 0)
+        }
+        pendingPixelImages[key] = handle
+        log("PIXEL_IMAGE id=\(String(image.contentID, radix: 16)) source=\(image.width)x\(image.height) registered=\(w)x\(h) xPX=\(Int(bounds.x)) yPX=\(Int(bounds.y)) widthPX=\(Int(bounds.w)) heightPX=\(Int(bounds.h)) alpha=\(key.alpha)")
+        return .image(handle, Rect(x: bounds.x + imageGuardBand, y: bounds.y + imageGuardBand, w: bounds.w - 2 * imageGuardBand, h: bounds.h - 2 * imageGuardBand))
     }
 }
