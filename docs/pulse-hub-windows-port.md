@@ -24,7 +24,7 @@ Pulse at `906d5192` (Pulse main, parity pass), SwiftRight stage `795d1644a-38920
 | G11 | single-child `ViewBuilder` identity | closed (block 26) |
 | G12 | `VerticalAlignment.firstTextBaseline` / `lastTextBaseline` | closed (block 33, F3) |
 | G13, G14 | `Font.Weight.heavy` (nine weights), `Font.width` | closed (block 28, F1); `width` carried, not drawn |
-| G15 | `layoutPriority` | closed (block 27, F11) |
+| G15 | `layoutPriority` | open for Text children: fix db29b0c5e, cases pending |
 | G16, G18 | `View.id`, `ViewModifier` | closed (block 26) |
 | G17 | `TextField(axis:)` | compiles and is the single-line field (block 34, F9); growth over lines not delivered |
 | G19 | `Scene` / `WindowGroup` | shapes only (compile) |

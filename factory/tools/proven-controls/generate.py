@@ -72,6 +72,18 @@ PENDING_REVIEW = {"swiftui.observation", "swiftui.task-asyncstream", "swiftui.sp
 # Blocks 1-20 (final closure run, docs/sr1-status.md): every case passed its deciding gate on one stage; none is independently reviewed yet.
 PENDING_REVIEW |= {NUM2ID[n] for n in range(1, 21)}
 
+# Independent Oracle review of 15 October 2026 (docs/sr1-status.md, "Independent review, 15 October"). Blocks listed here leave
+# PENDING_REVIEW: no caveats -> "delivered"; caveats (kept, merged with the round caveats above) -> "delivered-with-caveats".
+# An optional "status" overrides the derived status (block 27 is narrowed and stays pending).
+REVIEW = "oracle 2026-10-15"
+REVIEWED = {bid: {"review": REVIEW, "caveats": []} for bid in
+            [NUM2ID[n] for n in range(1, 21)] + ["cross-cutting.pixel-ties"] + [NUM2ID[n] for n in list(range(21, 27)) + list(range(28, 37))]}
+REVIEWED["swiftui.text-views"]["caveats"] = ["Text position is ungated (the pixels and the semantic tree are)."]
+REVIEWED["swiftui.system-font"]["caveats"] = ["Weak gate: one blanket tolerance set for every size; `sizes-large-v1`'s tolerance was raised from 3 to 4 after capture (Oracle)."]
+REVIEWED["swiftui.layout-priority"] = {"review": REVIEW, "status": "delivered-pending-review", "caveats": [
+    "narrowed: proven only for non-Text children; Text in priority groups awaits text cases (L1/L3)"]}
+PENDING_REVIEW -= set(REVIEWED)
+
 # No hand-set status: the closure run reran blocks 13-15 (text-origin fix, decision 12) and every block 1-20 is derived from its cases (delivered-pending-review).
 OVERRIDES = {}
 WIN_KEYS = re.compile(r"Windows|Segoe|Sandbox|hardware|narrower|focus ring|TSF|\bIME\b|UIA|Mac side|Mac's|\bSF\b|scale 2\.5|light only|measured in light", re.I)
@@ -191,7 +203,13 @@ def build():
                            (re.search(r"/runs/(\d{8})-", c["out"]).group(1) for c in cases if c.get("out"))})
         passed = sum(1 for c in cases if c["exit"] == 0)
         status = "not-delivered" if passed != len(cases) else ("delivered-with-caveats" if gen or win else "delivered")
-        if bid in PENDING_REVIEW and passed == len(cases):
+        review = None
+        if bid in REVIEWED and passed == len(cases):
+            rv = REVIEWED[bid]
+            review = rv["review"]
+            gen = gen + ROUND4_CAVEATS.get(bid, []) + rv["caveats"]
+            status = rv.get("status") or ("delivered-with-caveats" if gen or win else "delivered")
+        elif bid in PENDING_REVIEW and passed == len(cases):
             status = "delivered-pending-review"
             gen = gen + ROUND4_CAVEATS.get(bid, [])
         e = {"block": bid, "statusDocBlock": num, "status": status,
@@ -203,6 +221,8 @@ def build():
                          "date": sdate, "runDates": rundates},
              "stage": stg[0] if len(stg) == 1 else stg,
              "caveats": gen, "windowsDifferences": win}
+        if review:
+            e["review"] = review
         ov = OVERRIDES.get(bid)
         if ov:
             e["statusFromSources"] = e["status"]
