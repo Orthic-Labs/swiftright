@@ -97,7 +97,15 @@ REVIEWED = {bid: {"review": REVIEW, "caveats": []} for bid in
 REVIEWED["swiftui.text-views"]["caveats"] = ["Text position is ungated (the pixels and the semantic tree are)."]
 REVIEWED["swiftui.system-font"]["caveats"] = ["The blanket tolerance set was replaced by per-row tolerances (decision G71); on the final renderer (fc4a39a89, renderer 0.8) the independent gate fails for 8 of 9 cases."]
 # Text in priority groups: the eight text cases pass at N=20 on stage 3d3c6f5c2-0a0d1f39 (L1-L8); the Oracle narrowing is lifted, the review is not repeated.
-REVIEWED["swiftui.layout-priority"] = {"review": REVIEW, "status": "delivered-pending-review", "caveats": []}
+# Block 27 (16 October): the eight Text cases pass the block gate 8/8 at N=20 on stage 3d3c6f5c2-0a0d1f39 (strict recompare; block-gate.json in each run dir).
+# The Oracle narrowing of 15 October is lifted on those verdicts; the block is not independently re-reviewed.
+REVIEWED["swiftui.layout-priority"] = {"review": "oracle 2026-10-15 (narrowed); narrowing lifted 2026-10-16 on the block-gate verdicts, not re-reviewed", "caveats": [
+    "Text coverage is Tinos-only (`.custom(\"Tinos-Regular\")`); system fonts in priority groups are not covered.",
+    "Three of the eight Text cases (text-labels, text-zero-proposal, line-limit-two) contain no layoutPriority.",
+    "The block gate ignores blocks under 8 px (about 3.2 pt) (pair_blocks_report.py:50).",
+    "The text-priority row-6 Windows capture shows a 1 px red hairline that the gate drops.",
+    "A cut Text gets a 9 pt width tolerance and the x allowance accumulates (pair_blocks_report.py:93, :97, :100), so equal and priority splits of all-cut rows can pass.",
+    "hub-rows is gated at the cut tolerance throughout; its row 2 blue block differs by about 7 px and passes."]}
 # Block 37 slider (Oracle, 16 October 2026: PASS-WITH-CAVEATS). Delivered with caveats; the caveats below are the review's, not a re-run.
 REVIEWED["swiftui.slider"] = {"review": "oracle 2026-10-16 (block 37: PASS-WITH-CAVEATS)", "caveats": [
     "Labels and value labels are checked semantically only (role, name, value, enabled, range, count, order); they have no position gate of their own.",
@@ -197,6 +205,50 @@ def split_caveats(cell):
     return gen, win
 
 
+STATUS_VALUES = ["delivered", "delivered-with-caveats", "delivered-pending-review", "not-delivered", "in-progress"]
+HAND_REQUIRED = ("block", "statusDocBlock", "status", "cases", "verdict", "caveats")
+
+
+def status_doc_ids(text):
+    """The first cell of each docs/sr1-status.md table row ("I2", "7", "pixel-ties"), before the verdict/status separator."""
+    ids = set()
+    for line in text.split("\n---\n")[0].splitlines():
+        if line.startswith("|"):
+            m = re.match(r"([A-Za-z0-9][\w.-]*)\s", line.strip().strip("|").split("|")[0].strip() + " ")
+            if m:
+                ids.add(m.group(1))
+    return ids
+
+
+def validate_hand_entries(entries, generated_ids, status_text, root=ROOT):
+    """Hand entries are verbatim, so each one is checked: required keys, an allowed status, cases and evidence paths that exist,
+    a row in docs/sr1-status.md, and no block id that the generator already emits. Returns a list of violations (empty = valid)."""
+    errors, seen, doc_ids = [], set(), status_doc_ids(status_text)
+    for i, e in enumerate(entries):
+        name = e.get("block", f"entry {i}")
+        for k in HAND_REQUIRED:
+            if k not in e:
+                errors.append(f"{name}: missing {k}")
+        bid = e.get("block")
+        if bid in generated_ids:
+            errors.append(f"{name}: duplicates a generated block id")
+        if bid in seen:
+            errors.append(f"{name}: duplicate hand entry")
+        seen.add(bid)
+        if e.get("status") not in STATUS_VALUES:
+            errors.append(f"{name}: status {e.get('status')!r} is not one of {STATUS_VALUES}")
+        if e.get("statusDocBlock") not in doc_ids:
+            errors.append(f"{name}: no row {e.get('statusDocBlock')!r} in docs/sr1-status.md")
+        for c in e.get("cases", []):
+            if not (root / "factory/pipeline" / c).exists():
+                errors.append(f"{name}: case path does not exist: {c}")
+        for tok in re.findall(r"(?:docs|factory)/\S+", (e.get("verdict") or {}).get("source", "")):
+            tok = tok.rstrip(".,;)")
+            if not (root / tok).exists():
+                errors.append(f"{name}: evidence path does not exist: {tok}")
+    return errors
+
+
 def build():
     def top(r):
         n = r["block"].split()[0]
@@ -263,16 +315,24 @@ def build():
             e.update(ov)
             e["caveats"] = [ov["statusReason"]] + e["caveats"]
         entries.append(e)
+    hand = hand_entries()
     return {"generator": "factory/tools/proven-controls/generate.py", "schema": 1,
             "sources": ["factory/pipeline/closure/closure-table.json", "factory/pipeline/consolidation/consolidation-table.json", "factory/registry/manifest.json",
                         "docs/sr1-status.md", "factory/pipeline/consolidation/results.jsonl", "factory/pipeline/closure/results.jsonl", "Witness.swift of each case"],
             "statusDate": sdate,
-            "statusValues": ["delivered", "delivered-with-caveats", "delivered-pending-review", "not-delivered", "in-progress"],
+            "statusValues": STATUS_VALUES,
             "apisNotCovered": {"hint": "Any SwiftUI API not listed under a block is not proven. See docs/pulse-notch-demand-map.md "
                                        "for the notch's SwiftUI APIs that no delivered block covers.",
                                "see": "docs/pulse-notch-demand-map.md"},
             "knownGapsAll": gaps,
-            "blocks": entries + hand_entries()}
+            "blocks": entries + hand, "_hand": hand, "_generated": [e["block"] for e in entries]}
+
+
+def build_checked():
+    """The document and its violations: hand entries are validated against the generated block ids and docs/sr1-status.md."""
+    doc = build()
+    hand, generated = doc.pop("_hand"), set(doc.pop("_generated"))
+    return doc, validate_hand_entries(hand, generated, STATUS.read_text())
 
 
 def hand_entries():
@@ -281,7 +341,13 @@ def hand_entries():
 
 
 def main(argv):
-    new = json.dumps(build(), indent=2, sort_keys=True, ensure_ascii=False) + "\n"
+    doc, errors = build_checked()
+    if errors:
+        print("hand-entries.json violates the registry rules:", file=sys.stderr)
+        for e in errors:
+            print(f"  {e}", file=sys.stderr)
+        return 1
+    new = json.dumps(doc, indent=2, sort_keys=True, ensure_ascii=False) + "\n"
     if "--check" in argv:
         old = OUT.read_text() if OUT.exists() else ""
         if old != new:

@@ -1453,11 +1453,17 @@
       ],
       "casesPassingDecidingGate": "6/6",
       "caveats": [
-        "A priority set beneath `padding` or a frame modifier does not forward (measured); only HStack/VStack distribution is proven, not Layout protocol containers."
+        "A priority set beneath `padding` or a frame modifier does not forward (measured); only HStack/VStack distribution is proven, not Layout protocol containers.",
+        "Text coverage is Tinos-only (`.custom(\"Tinos-Regular\")`); system fonts in priority groups are not covered.",
+        "Three of the eight Text cases (text-labels, text-zero-proposal, line-limit-two) contain no layoutPriority.",
+        "The block gate ignores blocks under 8 px (about 3.2 pt) (pair_blocks_report.py:50).",
+        "The text-priority row-6 Windows capture shows a 1 px red hairline that the gate drops.",
+        "A cut Text gets a 9 pt width tolerance and the x allowance accumulates (pair_blocks_report.py:93, :97, :100), so equal and priority splits of all-cut rows can pass.",
+        "hub-rows is gated at the cut tolerance throughout; its row 2 blue block differs by about 7 px and passes."
       ],
-      "review": "oracle 2026-10-15",
+      "review": "oracle 2026-10-15 (narrowed); narrowing lifted 2026-10-16 on the block-gate verdicts, not re-reviewed",
       "stage": "3d58196a3-3dc0ffc8",
-      "status": "delivered-pending-review",
+      "status": "delivered-with-caveats",
       "statusDocBlock": 27,
       "verdict": {
         "date": "2026-10-15",
@@ -1465,7 +1471,7 @@
           "2026-10-15"
         ],
         "source": "docs/sr1-status.md table + factory/pipeline/closure/closure-table.json (blocks 1-20) / consolidation-table.json (blocks 21+)",
-        "text": "**delivered-pending-review**. The Oracle narrowing (15 October) is lifted: Text in priority groups now passes N=20 (8/8, decisions L1-L8, probes `probes/layout-rules`, cases `factory/pipeline/blocks-26-34/swiftui.layout-priority/*text*`, `hub-rows`). Priority beneath padding/frame does not forward (unchanged). The review is not repeated."
+        "text": "**delivered-with-caveats** (block-gate verdicts 8/8 at N=20 on the strict recompare, 16 October; caveats in `docs/proven-controls.json`). The Oracle narrowing (15 October) is lifted: Text in priority groups now passes N=20 (8/8, decisions L1-L8, probes `probes/layout-rules`, cases `factory/pipeline/blocks-26-34/swiftui.layout-priority/*text*`, `hub-rows`). Priority beneath padding/frame does not forward (unchanged). The review is not repeated."
       },
       "windowsDifferences": []
     },
@@ -2007,7 +2013,8 @@
       "stage": [
         "2eca0dce1-75c5d11e",
         "3d3c6f5c2-0a0d1f39",
-        "5e9c80ca2-9a0d7a03"
+        "5e9c80ca2-9a0d7a03",
+        "9bb0901ce-1b3bcd83"
       ],
       "status": "not-delivered",
       "statusDocBlock": 38,

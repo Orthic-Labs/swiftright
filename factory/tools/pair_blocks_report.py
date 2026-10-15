@@ -67,15 +67,22 @@ def analyse(path):
     return rows
 
 
+def write_verdict(out, case, ok_all, verdicts):
+    """The gate's verdict as a file in the run dir (block-gate.json), so the pass is committed evidence, not only stdout."""
+    doc = {"tool": "pair_blocks_report.py", "case": case.name, "runs": len(verdicts), "pass": ok_all, "verdicts": verdicts}
+    (out / "block-gate.json").write_text(json.dumps(doc, indent=2, sort_keys=True) + "\n")
+
+
 def main():
     case, out = Path(sys.argv[1]), Path(sys.argv[2])
     cfg = json.loads((case / "pair.json").read_text())["blockGate"]
     tol_px = float(cfg.get("tolerancePx", 1.5)); cut_px = float(cfg.get("cutTolerancePt", 9)) * SCALE; naturals = cfg.get("naturals", [])
-    ok_all = True; runs = sorted((out / "mac").glob("run-*.png"))
+    ok_all = True; runs = sorted((out / "mac").glob("run-*.png")); verdicts = []
     for mac in runs:
         idx = mac.stem.split("-")[1]; win = out / "windows" / f"native-{idx}.png"
         if not win.is_file():
-            print(f"  block run {idx} FAIL: no windows capture"); ok_all = False; continue
+            print(f"  block run {idx} FAIL: no windows capture"); ok_all = False
+            verdicts.append({"run": idx, "ok": False, "problems": ["no windows capture"]}); continue
         m, w = analyse(mac), analyse(win)
         problems = []
         if len(m) != len(w): problems.append(f"rows mac={len(m)} windows={len(w)}")
@@ -95,8 +102,10 @@ def main():
             if a["ink"]: problems.append(f"row {i}: {a['ink']} mac ink pixels outside the blocks (reported)")
         ok = not [p for p in problems if "(reported)" not in p]
         print(f"  block run {idx} {'ok' if ok else 'FAIL'} rows={len(m)}/{len(w)}" + ("" if not problems else " " + "; ".join(problems[:6])))
+        verdicts.append({"run": idx, "ok": ok, "rows": [len(m), len(w)], "problems": problems})
         ok_all = ok_all and ok
     print(f"blockGate runs={len(runs)} {'pass' if ok_all else 'FAIL'}")
+    write_verdict(out, case, ok_all, verdicts)
     sys.exit(0 if ok_all else 1)
 
 

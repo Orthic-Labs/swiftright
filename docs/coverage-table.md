@@ -191,6 +191,7 @@ The grade is the best block's; read that block's caveats in `docs/proven-control
 | `id` | B | swiftui.text-views | 8/8 |
 | `ImageDecoder` | B | swiftui.image-data | 3/3 |
 | `init` | B | swiftui.text-views | 8/8 |
+| `layoutPriority` | B | swiftui.layout-priority | 6/6 |
 | `listRowBackground` | B | swiftui.list-row-style | 8/8 |
 | `listRowSeparator` | B | swiftui.list-row-style | 8/8 |
 | `makeStream` | B | swiftui.task-asyncstream | 6/6 |
@@ -214,7 +215,6 @@ The grade is the best block's; read that block's caveats in `docs/proven-control
 | `aspectRatio` | C | foundations.image-layout | 10/10 at N=20 (200 pairs); negative controls: 3 of 4 fail on both cases, straight-alpha fails on the alpha case |
 | `clipped` | C | foundations.image-layout | 10/10 at N=20 (200 pairs); negative controls: 3 of 4 fail on both cases, straight-alpha fails on the alpha case |
 | `interpolation` | C | foundations.image-layout | 10/10 at N=20 (200 pairs); negative controls: 3 of 4 fail on both cases, straight-alpha fails on the alpha case |
-| `layoutPriority` | C | swiftui.layout-priority | 6/6 |
 | `scaledToFill` | C | foundations.image-layout | 10/10 at N=20 (200 pairs); negative controls: 3 of 4 fail on both cases, straight-alpha fails on the alpha case |
 | `BackgroundStyle` | E | swiftui.color-scheme | 12/12 |
 | `Color.accent` | E | swiftui.color-scheme | 12/12 |
@@ -251,4 +251,4 @@ The grade is the best block's; read that block's caveats in `docs/proven-control
 | `View.textFieldStyle` | E | swiftui.textfield | 7/7 |
 | `weight` | E | swiftui.system-font | 9/9 |
 
-Totals: A: 160, B: 43, C: 6, E: 34 (243 APIs).
+Totals: A: 160, B: 44, C: 5, E: 34 (243 APIs).
