@@ -1605,6 +1605,44 @@
         "text": "8/8 cases, 160/160 pairs pass the alpha gate (**delivered-pending-review**; decisions G1-G9)"
       },
       "windowsDifferences": []
+    },
+    {
+      "apis": {
+        "fromCaseSources": {
+          "modifiersAndMembers": [
+            "font",
+            "kerning",
+            "tracking"
+          ],
+          "types": [
+            "Font",
+            "Text"
+          ]
+        },
+        "fromManifest": []
+      },
+      "block": "foundations.abi-0.8-text-extension",
+      "cases": [],
+      "casesPassingDecidingGate": "n/a (a renderer ABI foundation: 55 renderer unit tests in CI run 38705051829, 72 Mac bridge tests, DLL discovery harness on three DLLs, one real-window e2e in the Sandbox; no paired case)",
+      "caveats": [
+        "Minimal form (decision G17): gpui shapes and paints; a DirectWrite face resolver answers face identity, metrics and the simulation clamp. Exact axis values, run-time variable fonts and private fallback chains are block F3b and are NOT delivered.",
+        "width_axis, opsz and slant are accepted and ignored with a report; weights snap to the nearest named instance (ties heavier); fallback families are system families only.",
+        "Tracking wraps on untracked advances and keeps gpui's whole-pixel baseline; the Mac side of tracking and kerning is block F5's gate.",
+        "A fallback face is named by glyph-id matching among system candidates (gpui does not expose it); an unmatched one is reported UNRESOLVED.",
+        "One Windows build (10.0.26100, Sandbox WARP); the Swift bridge was not run against the real DLLs on Windows (the DLL views are proven by the harness, the negotiation and refusal logic by Mac tests with fake entry points)."
+      ],
+      "stage": "none (renderer commit fc4a39a89, CI run 38705051829, DLL swiftright_render_v08_fc4a39a8.dll sha256 5bade6c0010fb26356ec4ff9be850cd5d0674c37f28d0341feadd8644ef32f58)",
+      "status": "delivered-pending-review",
+      "statusDocBlock": "F3",
+      "verdict": {
+        "date": "2026-10-15",
+        "runDates": [
+          "2026-10-15"
+        ],
+        "source": "docs/sr1-status.md table + factory/abi/evidence/f3/",
+        "text": "ABI 0.8 additive text extension: layouts asserted at compile time on both sides, 0.6/0.7 views unchanged on the 0.8 DLL, refusal never silent; kern=1, tracking, baseline offset, named weights, simulation policy and per-run face identity (registered hash, .notdef count) proven on a real window (**delivered-pending-review**; decisions G60-G69)"
+      },
+      "windowsDifferences": []
     }
   ],
   "generator": "factory/tools/proven-controls/generate.py",
