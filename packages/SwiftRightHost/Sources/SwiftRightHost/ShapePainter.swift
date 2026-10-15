@@ -78,7 +78,13 @@ public enum ContinuousShapeRaster {
         public var placement: Rect
     }
 
-    public static func render(_ request: ContinuousShapeRequest) throws -> Result {
+    /// Where a continuous shape's bitmap goes and how large it is: the snapped bounds, the integer origin at or before the stroked outer edge, the fractional remainder
+    /// baked into the bitmap, and the bitmap's size. Pure geometry, no raster.
+    struct Layout {
+        var originX: Float, originY: Float, fracX: Double, fracY: Double, boundsW: Float, boundsH: Float, width: Int, height: Int
+    }
+
+    static func layout(_ request: ContinuousShapeRequest) throws -> Layout {
         guard request.bounds.w.isFinite, request.bounds.h.isFinite,
               request.bounds.w > 0, request.bounds.h > 0,
               request.cornerRadiusPX.isFinite, request.cornerRadiusPX >= 0,
@@ -101,18 +107,47 @@ public enum ContinuousShapeRaster {
         let fracX = Double(outerX) - Double(originX), fracY = Double(outerY) - Double(originY)
         let width = max(1, Int((fracX + Double(boundsW) + Double(request.strokeWidthPX)).rounded(.up)))
         let height = max(1, Int((fracY + Double(boundsH) + Double(request.strokeWidthPX)).rounded(.up)))
+        return Layout(originX: originX, originY: originY, fracX: fracX, fracY: fracY, boundsW: boundsW, boundsH: boundsH, width: width, height: height)
+    }
+
+    public static func render(_ request: ContinuousShapeRequest, band: (top: Int, rows: Int)?) throws -> Result {
+        let l = try layout(request)
+        let width = l.width, height = l.height
+        if let band, band.rows * width > ContinuousRoundedRasterizer.workPixelLimit { throw HostPaintError.continuousShapeRasterInput(4) }
         let image = try ContinuousRoundedRasterizer.rasterize(
-            width: width, height: height,
+            width: width, height: band?.rows ?? height,
             cornerRadius: CGFloat(request.cornerRadiusPX),
             fillRGBA: request.fillRGBA,
             strokeRGBA: request.strokeRGBA,
             strokeWidth: CGFloat(request.strokeWidthPX),
-            shapeWidth: CGFloat(boundsW), shapeHeight: CGFloat(boundsH),
-            offsetX: CGFloat(fracX), offsetY: CGFloat(fracY))
-        let placement = Rect(x: originX + imageGuardBand, y: originY + imageGuardBand,
-                             w: Float(width) - 2 * imageGuardBand, h: Float(height) - 2 * imageGuardBand)
+            shapeWidth: CGFloat(l.boundsW), shapeHeight: CGFloat(l.boundsH),
+            offsetX: CGFloat(l.fracX), offsetY: CGFloat(l.fracY), bandTop: band?.top ?? 0)
+        let rows = band?.rows ?? height
+        let placement = Rect(x: l.originX + imageGuardBand, y: l.originY + Float(band?.top ?? 0) + imageGuardBand,
+                             w: Float(width) - 2 * imageGuardBand, h: Float(rows) - 2 * imageGuardBand)
         return Result(image: image, placement: placement)
     }
+
+
+    /// The raster of one continuous shape as horizontal bands, each within the rasteriser's work limit (a card at 2.5x is 3.4 Mpx; round 5 block 30). One band for
+    /// a shape within the limit, identical to `render`. A band is a window onto the same path, so the bands abut exactly (no seam, no overlap).
+    public static func renderBands(_ request: ContinuousShapeRequest, maxTotalPixels: Int = 64_000_000) throws -> [Result] {
+        let l = try layout(request)
+        let width = l.width, height = l.height
+        guard width * height > ContinuousRoundedRasterizer.workPixelLimit else { return [try render(request, band: nil)] }
+        guard width <= ContinuousRoundedRasterizer.workPixelLimit, width * height <= maxTotalPixels else { throw HostPaintError.continuousShapeRasterInput(3) }
+        let rows = max(1, ContinuousRoundedRasterizer.workPixelLimit / width)
+        var out: [Result] = []
+        var top = 0
+        while top < height {
+            let h = min(rows, height - top)
+            out.append(try render(request, band: (top, h)))
+            top += h
+        }
+        return out
+    }
+
+    public static func render(_ request: ContinuousShapeRequest) throws -> Result { try render(request, band: nil) }
 
     /// Rasterises and registers: the returned handle is owned by the caller until the node is removed.
     public static func primitive(_ registry: ImageRegistering, _ request: ContinuousShapeRequest) throws -> (primitive: Primitive, image: ImageHandle) {

@@ -28,6 +28,8 @@ public enum ContinuousRoundedRasterizer {
     /// Upper bound on raster area. Per-pixel cost is bounded by the segments near that pixel (spatial
     /// grid), so cost is linear in area; 2M px covers any full-screen shape at 1080p-class sizes.
     private static let maxWorkPixels = 2_000_000
+    /// Public so a caller that splits a shape into bands (`bandTop`) sizes them to the limit: the most pixels one `rasterize` call will work.
+    public static let workPixelLimit = maxWorkPixels
     private static let cellSize = 16
     /// Flattening tolerance in device pixels. Fills follow the exact curve. Apple's stroker
     /// subdivides each cubic uniformly into n = ceil(sqrt(0.75 * M / tolerance)) segments (Wang's
@@ -53,7 +55,7 @@ public enum ContinuousRoundedRasterizer {
                                  strokeRGBA: UInt32? = nil,
                                  strokeWidth: CGFloat = 0,
                                  shapeWidth: CGFloat? = nil, shapeHeight: CGFloat? = nil,
-                                 offsetX: CGFloat = 0, offsetY: CGFloat = 0) throws -> ContinuousRGBAImage {
+                                 offsetX: CGFloat = 0, offsetY: CGFloat = 0, bandTop: Int = 0) throws -> ContinuousRGBAImage {
         guard width > 0, height > 0 else { throw ContinuousRoundedRasterError.invalidSize }
         guard width <= maxPixels / max(1, height) else { throw ContinuousRoundedRasterError.pixelLimitExceeded }
         let stroke = Double(strokeWidth)
@@ -67,7 +69,9 @@ public enum ContinuousRoundedRasterizer {
         // integer origin); `shapeWidth/Height` is the path rect size.
         let ox = Double(offsetX), oy = Double(offsetY)
         guard ox.isFinite, oy.isFinite, ox >= 0, oy >= 0, ox < 1, oy < 1 else { throw ContinuousRoundedRasterError.invalidSize }
-        let rect = LayoutRect(x: CGFloat(halfStroke + ox), y: CGFloat(halfStroke + oy),
+        // `bandTop`: this bitmap is a horizontal band of a taller shape, starting that many rows down it (round 5 block 30, shapes over the work limit); the path is
+        // translated up by it, so every pixel of the band is the pixel the whole-shape raster would give.
+        let rect = LayoutRect(x: CGFloat(halfStroke + ox), y: CGFloat(halfStroke + oy - Double(bandTop)),
                               width: shapeWidth ?? CGFloat(Double(width) - stroke),
                               height: shapeHeight ?? CGFloat(Double(height) - stroke))
         let path: [ContinuousPathElement]

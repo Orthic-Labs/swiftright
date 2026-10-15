@@ -22,12 +22,63 @@ final class ContinuousRoundedGeometryTests: XCTestCase {
         let smallExtent = 40 - smallEnd.x
         let wideExtent = 120 - wideEnd.x
         XCTAssertEqual(smallExtent / 6, wideExtent / 10, accuracy: 0.00001)
-        XCTAssertThrowsError(try ContinuousRoundedGeometry.path(in: LayoutRect(x: 0, y: 0, width: 40, height: 20), cornerRadius: 100)) { error in
-            XCTAssertEqual(error as? ContinuousRoundedGeometryError, .unsupportedRadiusExtent)
+        // Round 5 block 30: past the extent limit and past half the short side the radius is no longer refused: see `testLargeRadiiFollowTheMeasuredFamily`
+        XCTAssertNoThrow(try ContinuousRoundedGeometry.path(in: LayoutRect(x: 0, y: 0, width: 40, height: 20), cornerRadius: 100))
+        XCTAssertNoThrow(try ContinuousRoundedGeometry.path(in: LayoutRect(x: 0, y: 0, width: 48, height: 48), cornerRadius: 23))
+    }
+
+    private func flatten(_ path: [ContinuousPathElement]) -> [[Double]] {
+        path.map { element in
+            switch element {
+            case .move(let p), .line(let p): return [Double(p.x), Double(p.y)]
+            case .cubic(let p, let c1, let c2): return [Double(p.x), Double(p.y), Double(c1.x), Double(c1.y), Double(c2.x), Double(c2.y)]
+            case .close: return []
+            }
         }
-        XCTAssertThrowsError(try ContinuousRoundedGeometry.path(in: LayoutRect(x: 0, y: 0, width: 48, height: 48), cornerRadius: 23)) { error in
-            XCTAssertEqual(error as? ContinuousRoundedGeometryError, .unsupportedRadiusExtent)
+    }
+
+    /// Measured: `RoundedRectangle(cornerRadius: r, style: .continuous).path(in:)` on macOS 27 (printed to 4 decimals), 100 x 40 at r = 15, r = 20 and r = 99 (a clamped radius),
+    /// and 40 x 40 at r = 99 (the vertical and the horizontal edge both clamp).
+    func testLargeRadiiFollowTheMeasuredFamily() throws {
+        let r20 = flatten(try ContinuousRoundedGeometry.path(in: LayoutRect(x: 0, y: 0, width: 100, height: 40), cornerRadius: 20))
+        let r99 = flatten(try ContinuousRoundedGeometry.path(in: LayoutRect(x: 0, y: 0, width: 100, height: 40), cornerRadius: 99))
+        XCTAssertEqual(r20, r99, "a radius past half the short side is clamped to it")
+        let expected20: [[Double]] = [
+            [100, 20], [100, 20],
+            [98.5018, 27.3701, 100, 20.8, 100, 23.6],
+            [87.3701, 38.5018, 96.6188, 32.5435, 92.5435, 36.6188],
+            [69.4267, 40, 82.6319, 40, 78.2302, 40],
+            [30.5733, 40],
+            [12.6299, 38.5018, 21.7698, 40, 17.3681, 40],
+            [1.4982, 27.3701, 7.4565, 36.6188, 3.3812, 32.5435],
+            [0, 20, 0, 23.6, 0, 20.8],
+            [0, 20],
+            [1.4982, 12.6299, 0, 19.2, 0, 16.4],
+            [12.6299, 1.4982, 3.3812, 7.4565, 7.4565, 3.3812],
+            [30.5733, 0, 17.3681, 0, 21.7698, 0],
+            [69.4267, 0],
+            [87.3701, 1.4982, 78.2302, 0, 82.6319, 0],
+            [98.5018, 12.6299, 92.5435, 3.3812, 96.6188, 7.4565],
+            [100, 20, 100, 16.4, 100, 19.2],
+            [],
+        ]
+        XCTAssertEqual(r20.count, expected20.count)
+        for (got, want) in zip(r20, expected20) {
+            XCTAssertEqual(got.count, want.count)
+            for (g, w) in zip(got, want) { XCTAssertEqual(g, w, accuracy: 0.00006) }
         }
+        // r = 15 (between the extent limit 13.08 and half 20): the first cubic starts at the mid-point and its controls moved
+        let r15 = flatten(try ContinuousRoundedGeometry.path(in: LayoutRect(x: 0, y: 0, width: 100, height: 40), cornerRadius: 15))
+        for (g, w) in zip(r15[2], [98.8763, 30.5276, 100, 24.3848, 100, 27.2422]) { XCTAssertEqual(g, w, accuracy: 0.0002) }
+        for (g, w) in zip(r15[4], [77.07, 40, 86.9739, 40, 83.6726, 40]) { XCTAssertEqual(g, w, accuracy: 0.0002) }   // the long edge keeps the ordinary coefficients
+        // a square pill: both edges clamp, the straight segments collapse to points
+        let square = flatten(try ContinuousRoundedGeometry.path(in: LayoutRect(x: 0, y: 0, width: 40, height: 40), cornerRadius: 99))
+        for (g, w) in zip(square[4], [20, 40, 23.6, 40, 20.8, 40]) { XCTAssertEqual(g, w, accuracy: 0.0002) }
+        XCTAssertEqual(square[5], [20, 40])
+        // continuity at the extent limit
+        let at = flatten(try ContinuousRoundedGeometry.path(in: LayoutRect(x: 0, y: 0, width: 100, height: 40), cornerRadius: 13.0833))
+        let beyond = flatten(try ContinuousRoundedGeometry.path(in: LayoutRect(x: 0, y: 0, width: 100, height: 40), cornerRadius: 13.0834))
+        for (g, w) in zip(at[2], beyond[2]) { XCTAssertEqual(g, w, accuracy: 0.001) }
     }
 
     func testTranslationPreservesLocalCornerGeometry() throws {
@@ -74,12 +125,7 @@ final class ContinuousRoundedGeometryTests: XCTestCase {
                                                                   strokeRGBA: 0x0000ffff,
                                                                   strokeWidth: 2)
         XCTAssertGreaterThan(combined.rgba[(10 * 40 + 20) * 4 + 3], 0)
-        XCTAssertThrowsError(try ContinuousRoundedRasterizer.rasterize(width: 40, height: 20,
-                                                                        cornerRadius: 100,
-                                                                        strokeRGBA: 0x2563ebff,
-                                                                        strokeWidth: 2)) { error in
-            XCTAssertEqual(error as? ContinuousRoundedRasterError, .unsupportedGeometry)
-        }
+        XCTAssertNoThrow(try ContinuousRoundedRasterizer.rasterize(width: 40, height: 20, cornerRadius: 100, strokeRGBA: 0x2563ebff, strokeWidth: 2))
         XCTAssertThrowsError(try ContinuousRoundedRasterizer.rasterize(width: 4096, height: 4096, cornerRadius: 6)) { error in
             XCTAssertEqual(error as? ContinuousRoundedRasterError, .pixelLimitExceeded)
         }

@@ -106,6 +106,8 @@ public final class SystemImageRegistry {
         let tint: UInt32
         let width: UInt32
         let height: UInt32
+        /// Point size of a font-sized (non-resizable) symbol; nil for resizable use.
+        let fontSize: Double?
     }
     private var handles: [HandleKey: ImageHandle] = [:]
     /// Screen scale of the window; selects the Mac device-pixel ink calibration. Set before the first layout.
@@ -142,6 +144,40 @@ public final class SystemImageRegistry {
         return LayoutSize(width: CGFloat(symbol.width), height: CGFloat(symbol.height))
     }
 
+    /// The default environment font size on macOS (body, 13 pt): what an `Image(systemName:)` with no font is drawn at.
+    public static let bodyPointSize: Double = 13
+
+    /// Point size a SwiftUI font draws a symbol at, for the fonts whose symbol layout was measured: no font (body), `Font.system(size:)`
+    /// in the regular weight and the text styles that are regular-weight system sizes (measured equal to the system font of that size).
+    /// Nil for anything else (a custom family, a design, another weight, headline, caption2): those are not measured.
+    public static func fontPointSize(_ font: Font?) -> Double? {
+        guard let font else { return bodyPointSize }
+        guard let m = font.metadata else { return font.id == "textStyle.body" ? bodyPointSize : nil }
+        guard !m.isCustom, m.familyName == nil, m.design == nil || m.design == .default, m.width == nil || m.width == .standard,
+              m.weight == nil || m.weight == .regular else { return nil }
+        if let size = m.pointSize, m.textStyle == nil, size.isFinite, size > 0 { return Double(size) }
+        let styles: [String: Double] = ["largeTitle": 26, "title": 22, "title2": 17, "title3": 15, "body": 13, "callout": 12,
+                                        "subheadline": 11, "footnote": 10, "caption": 10]
+        return m.textStyle.flatMap { styles[$0] }
+    }
+
+    /// Whether this symbol was measured for font-sized (non-resizable) use.
+    public func supportsFontSized(_ reference: ImageReference) -> Bool {
+        (try? entry(for: reference))?.symbol.layout?.supportsFontSizes ?? false
+    }
+    /// Whether this symbol was measured for `resizable().scaledToFit()` use.
+    public func supportsResizable(_ reference: ImageReference) -> Bool {
+        (try? entry(for: reference))?.symbol.layout?.supportsResizable ?? false
+    }
+
+    /// Runtime hook `Graph.imageFontIntrinsicSize`: the Image view size of a non-resizable symbol drawn at the environment font.
+    /// Nil for a symbol or font that was not measured (the runtime then keeps the natural size).
+    public func fontIntrinsicSize(for reference: ImageReference, font: Font?) -> LayoutSize? {
+        guard let (_, symbol) = try? entry(for: reference), let size = Self.fontPointSize(font),
+              let l = symbol.layout?.fontLayout(pointSize: size, scale: scale), l.framePt.allSatisfy({ $0.isFinite && $0 > 0 }) else { return nil }
+        return LayoutSize(width: CGFloat(l.framePt[0]), height: CGFloat(l.framePt[1]))
+    }
+
     /// Runtime hook `Graph.imageFitIntrinsicSize`: what SwiftUI fits `resizable().scaledToFit()` symbols by.
     public func fitIntrinsicSize(for reference: ImageReference) -> LayoutSize? {
         guard let (_, symbol) = try? entry(for: reference), let size = symbol.layout?.fitIntrinsic(scale: scale),
@@ -153,6 +189,7 @@ public final class SystemImageRegistry {
     public func install(on graph: Graph) {
         graph.imageIntrinsicSize = { [unowned self] reference in self.intrinsicSize(for: reference) }
         graph.imageFitIntrinsicSize = { [unowned self] reference in self.fitIntrinsicSize(for: reference) }
+        graph.imageFontIntrinsicSize = { [unowned self] reference, font in self.fontIntrinsicSize(for: reference, font: font) }
     }
 
     /// The symbol's own foreground (semantic colour name) when the app sets none.
@@ -167,7 +204,8 @@ public final class SystemImageRegistry {
     }
 
     /// Rasterises the symbol for a frame of `width` x `height` px (pure of the renderer; used by `handle` and by tests).
-    public func raster(for reference: ImageReference, tint: UInt32, width: UInt32, height: UInt32) throws -> SystemImageRaster {
+    /// `fontSize` selects the font-sized (non-resizable) layout model at that point size; nil is the resizable model.
+    public func raster(for reference: ImageReference, tint: UInt32, width: UInt32, height: UInt32, fontSize: Double? = nil) throws -> SystemImageRaster {
         let (name, symbol) = try entry(for: reference)
         guard width > 0, height > 0, width <= 4096, height <= 4096 else { throw SystemImageError.targetSizeInvalid }
         guard let glyph = UInt32(symbol.glyph.replacingOccurrences(of: "0x", with: ""), radix: 16), glyph <= 0x10ffff else {
@@ -176,7 +214,13 @@ public final class SystemImageRegistry {
         guard !name.isEmpty, !symbol.provider.isEmpty, symbol.provider.utf8.count <= 128, !symbol.providerVersion.isEmpty,
               table.providerPolicy.parity == "substitute-provider-unverified",
               UInt64(width) * UInt64(height) * 4 <= 16 * 1024 * 1024 else { throw SystemImageError.invalidDescriptor }
-        let layout = symbol.layout?.metrics(scale: scale)
+        let layout: SystemImageLayoutMetrics?
+        if let fontSize {
+            guard let l = symbol.layout, let m = l.fontMetrics(pointSize: fontSize, scale: scale) else { throw SystemImageError.invalidDescriptor }
+            layout = m
+        } else {
+            layout = symbol.layout?.metrics(scale: scale)
+        }
         let inset = symbol.layout == nil ? UInt32(0) : Self.overflowInset
         let oversample = symbol.layout?.sourceOversample ?? 1
         // With Mac layout metrics the glyph is rasterised oversampled and area-resampled onto the symbol's ink rect.
@@ -191,7 +235,8 @@ public final class SystemImageRegistry {
         var report = ("none", "n/a", "n/a", "n/a", "n/a", "n/a")
         do {
             if let layout {
-                let device = symbol.layout?.deviceInkBox(scale: scale, widthPx: width, heightPx: height)
+                let device = fontSize != nil ? symbol.layout?.fontDeviceInkBox(pointSize: fontSize!, scale: scale, widthPx: width, heightPx: height)
+                                            : symbol.layout?.deviceInkBox(scale: scale, widthPx: width, heightPx: height)
                 let aligned = try SystemImageRasterProvider.composeAligned(input, metrics: layout, deviceInk: device?.box, targetWidth: width,
                                                                            targetHeight: height, inset: inset, tintRGBA: tint)
                 composed = aligned.raster
@@ -222,14 +267,14 @@ public final class SystemImageRegistry {
     }
 
     /// The registered image of a symbol for a frame size and tint (cached per reference, tint and size).
-    public func handle(for reference: ImageReference, tint: UInt32, width: UInt32, height: UInt32) throws -> ImageHandle {
-        let key = HandleKey(reference: reference, tint: tint, width: width, height: height)
+    public func handle(for reference: ImageReference, tint: UInt32, width: UInt32, height: UInt32, fontSize: Double? = nil) throws -> ImageHandle {
+        let key = HandleKey(reference: reference, tint: tint, width: width, height: height, fontSize: fontSize)
         if let handle = handles[key] { return handle }
         let (name, symbol) = try entry(for: reference)
-        let r = try raster(for: reference, tint: tint, width: width, height: height)
+        let r = try raster(for: reference, tint: tint, width: width, height: height, fontSize: fontSize)
         let handle = try images.registerImage(width: r.width, height: r.height, rgba: r.rgba, stride: r.width * 4)
         handles[key] = handle
-        log("SYSTEM_IMAGE name=\(name) provider=\(symbol.provider) providerVersion=\(symbol.providerVersion) glyph=\(symbol.glyph) targetBounds=\(r.width)x\(r.height) renderedBounds=\(r.renderedWidth)x\(r.renderedHeight) layoutMetrics=\(symbol.layout == nil ? "none" : "mac-measured") placement=\(r.placement) halfCoverageBox=\(r.halfCoverageBox) macInkBox=\(r.macInkBox) inkBoxSource=\(r.inkBoxSource) deviceInkMatched=\(r.deviceInkMatched) inkRect=\(r.inkRect) tintRGBA=\(String(format: "%08x", tint)) nonZeroCoverage=\(r.nonZeroCoverage) maxCoverage=\(r.maxCoverage) selectedFace=\(r.selectedFace) parity=\(table.providerPolicy.parity)")
+        log("SYSTEM_IMAGE name=\(name) provider=\(symbol.provider) providerVersion=\(symbol.providerVersion) glyph=\(symbol.glyph) targetBounds=\(r.width)x\(r.height) renderedBounds=\(r.renderedWidth)x\(r.renderedHeight) layoutMetrics=\(symbol.layout == nil ? "none" : "mac-measured") fontSize=\(fontSize.map { String($0) } ?? "resizable") placement=\(r.placement) halfCoverageBox=\(r.halfCoverageBox) macInkBox=\(r.macInkBox) inkBoxSource=\(r.inkBoxSource) deviceInkMatched=\(r.deviceInkMatched) inkRect=\(r.inkRect) tintRGBA=\(String(format: "%08x", tint)) nonZeroCoverage=\(r.nonZeroCoverage) maxCoverage=\(r.maxCoverage) selectedFace=\(r.selectedFace) parity=\(table.providerPolicy.parity)")
         return handle
     }
 

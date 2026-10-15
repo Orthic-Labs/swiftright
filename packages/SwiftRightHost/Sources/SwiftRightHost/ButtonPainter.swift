@@ -40,14 +40,16 @@ public enum ButtonPainter {
     /// Resolves a Button node to its paint, from runtime geometry and state only. `bounds` is the node's pixel frame in window coordinates.
     public static func plan(_ node: ResolvedNode, bounds: Rect, scale: Float) throws -> ButtonPaintPlan {
         let look = look(of: node)
-        guard node.opacity == 1 else { throw HostPaintError.unsupportedButtonPaintStyle }
+        // `.plain` and `.borderless` have no artwork: opacity reaches their label's colour (`labelColor`). A bodied look would need group opacity over its artwork, not modelled.
+        guard node.opacity == 1 || !look.hasBody else { throw HostPaintError.unsupportedButtonPaintStyle }
         if node.style.foreground != nil, look == .bordered { throw HostPaintError.unsupportedButtonPaintStyle }
         let isEnabled = node.accessibility.isEnabled
         let width = bounds.w.rounded(), height = bounds.h.rounded()
         guard look.hasBody else {
             return ButtonPaintPlan(image: nil, placement: bounds, isEnabled: isEnabled, look: look, labelColor: try labelColor(of: node))
         }
-        guard width > 0, height > 0 else { throw HostPaintError.unsupportedButtonPaintStyle }
+        // An empty frame (a Button laid out at zero size) has nothing to draw; SwiftUI draws nothing for it.
+        guard width > 0, height > 0 else { return ButtonPaintPlan(image: nil, placement: bounds, isEnabled: isEnabled, look: look, labelColor: try labelColor(of: node)) }
         let image = ButtonArtwork.render(widthPX: Int(width), heightPX: Int(height), scale: scale, isEnabled: isEnabled, prominent: look == .prominent)
         return ButtonPaintPlan(image: image,
                                placement: Rect(x: bounds.x + imageGuardBand, y: bounds.y + imageGuardBand, w: width - 2 * imageGuardBand, h: height - 2 * imageGuardBand),

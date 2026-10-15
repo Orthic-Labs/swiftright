@@ -113,7 +113,7 @@ extension Graph {
             )
         case .image(let spec):
             let ideal = imageIntrinsicSize(spec.reference)
-            guard spec.sizing.isResizable else { return ideal }
+            guard spec.sizing.isResizable else { return imageFontIntrinsicSize(spec.reference, node.environment.font) ?? ideal }
             if spec.sizing.scalesToFit {
                 let ideal = imageFitIntrinsicSize(spec.reference) ?? ideal
                 guard ideal.width > 0, ideal.height > 0 else {

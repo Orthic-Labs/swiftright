@@ -72,7 +72,9 @@ final class ShapePainterTests: XCTestCase {
 
     func testInvalidInputsFailVisibly() {
         XCTAssertThrowsError(try ContinuousShapeRaster.render(ContinuousShapeRequest(bounds: Rect(x: 0, y: 0, w: 0, h: 10), cornerRadiusPX: 1, fillRGBA: 1, strokeRGBA: nil, strokeWidthPX: 0)))
-        XCTAssertThrowsError(try ContinuousShapeRaster.render(ContinuousShapeRequest(bounds: Rect(x: 0, y: 0, w: 10, h: 10), cornerRadiusPX: 100, fillRGBA: 1, strokeRGBA: nil, strokeWidthPX: 0)))
+        XCTAssertThrowsError(try ContinuousShapeRaster.render(ContinuousShapeRequest(bounds: Rect(x: 0, y: 0, w: 10, h: 10), cornerRadiusPX: .nan, fillRGBA: 1, strokeRGBA: nil, strokeWidthPX: 0)))
+        // a radius past half the short side is no longer refused (round 5 block 30): it is clamped as SwiftUI clamps it
+        XCTAssertNoThrow(try ContinuousShapeRaster.render(ContinuousShapeRequest(bounds: Rect(x: 0, y: 0, w: 10, h: 10), cornerRadiusPX: 100, fillRGBA: 1, strokeRGBA: nil, strokeWidthPX: 0)))
     }
 
     func testRegisteringKeepsTheHandleForTheCaller() throws {
@@ -80,5 +82,79 @@ final class ShapePainterTests: XCTestCase {
         let (primitive, handle) = try ContinuousShapeRaster.primitive(images, ContinuousShapeRequest(bounds: Rect(x: 4, y: 4, w: 40, h: 20), cornerRadiusPX: 5, fillRGBA: 0xff0000ff, strokeRGBA: nil, strokeWidthPX: 0))
         guard case .image(let h, _, _) = primitive else { return XCTFail() }
         XCTAssertEqual(h, handle); XCTAssertEqual(images.live, [handle.raw])
+    }
+}
+
+/// Round 5 block 30 (hub gaps R7/R8): continuous shapes over the rasteriser's work limit are drawn as bands that abut exactly; a pill radius is accepted.
+final class ContinuousShapeBandTests: XCTestCase {
+    func testABandedShapeEqualsTheWholeShapeRaster() throws {
+        // 800 x 400 px at scale 1 is 320 000 px: under the limit, so rasterise it whole AND by hand in bands to prove the bands are windows onto one path
+        let request = ContinuousShapeRequest(bounds: Rect(x: 10, y: 10, w: 800, h: 400), cornerRadiusPX: 99, fillRGBA: 0x336699ff, strokeRGBA: nil, strokeWidthPX: 0, scale: 1)
+        let whole = try ContinuousShapeRaster.render(request)
+        XCTAssertEqual(whole.image.width, 800)
+        var stitched: [UInt8] = []
+        var top = 0
+        while top < whole.image.height {
+            let rows = min(130, whole.image.height - top)
+            let band = try ContinuousShapeRaster.render(request, band: (top, rows))
+            XCTAssertEqual(band.image.width, 800)
+            XCTAssertEqual(band.placement.y, whole.placement.y + Float(top) + (imageGuardBandForTests - imageGuardBandForTests))
+            stitched += band.image.rgba
+            top += rows
+        }
+        XCTAssertEqual(stitched, whole.image.rgba, "bands are windows onto the same path")
+    }
+
+    func testAShapeOverTheWorkLimitIsSplitIntoBands() throws {
+        let request = ContinuousShapeRequest(bounds: Rect(x: 0, y: 0, w: 2250, h: 1500), cornerRadiusPX: 30, fillRGBA: 0xffffffff, strokeRGBA: nil, strokeWidthPX: 0, scale: 2.5)
+        XCTAssertThrowsError(try ContinuousShapeRaster.render(request), "a whole 3.4 Mpx raster is over the work limit")
+        let bands = try ContinuousShapeRaster.renderBands(request)
+        XCTAssertGreaterThan(bands.count, 1)
+        XCTAssertEqual(bands.reduce(0) { $0 + $1.image.height }, 1500)
+        for b in bands { XCTAssertLessThanOrEqual(b.image.width * b.image.height, 2_000_000) }
+        // corners are transparent, the middle is opaque
+        XCTAssertEqual(bands[0].image.rgba[3], 0)
+        XCTAssertEqual(bands[bands.count / 2].image.rgba[(10 * 2250 + 1000) * 4 + 3], 255)
+    }
+
+    func testAPillRadiusIsAcceptedAndAZeroSizeShapeIsRefusedVisibly() throws {
+        let pill = ContinuousShapeRequest(bounds: Rect(x: 0, y: 0, w: 200, h: 24), cornerRadiusPX: 99 * 2.5, fillRGBA: 0xff0000ff, strokeRGBA: nil, strokeWidthPX: 0, scale: 2.5)
+        let result = try ContinuousShapeRaster.render(pill)
+        XCTAssertEqual(result.image.rgba[3], 0, "the pill's corner is transparent")
+        XCTAssertEqual(result.image.rgba[((12 * 200) + 100) * 4 + 3], 255)
+        let empty = ContinuousShapeRequest(bounds: Rect(x: 0, y: 0, w: 0, h: 10), cornerRadiusPX: 5, fillRGBA: 0xff0000ff, strokeRGBA: nil, strokeWidthPX: 0, scale: 2.5)
+        XCTAssertThrowsError(try ContinuousShapeRaster.render(empty))
+    }
+}
+private let imageGuardBandForTests: Float = 0
+
+private struct Witness_ZeroBar: View {
+    var body: some View { VStack { RoundedRectangle(cornerRadius: 3, style: .continuous).fill(Color.red).frame(width: 0, height: 8); Text("x") } }
+}
+private struct Witness_Pill: View {
+    var body: some View { RoundedRectangle(cornerRadius: 99, style: .continuous).fill(Color.blue).frame(width: 80, height: 10) }
+}
+
+@MainActor
+final class ContinuousShapeEmitTests: XCTestCase {
+    private func emit<V: View>(_ view: V) throws -> [(String, NodeEmission)] {
+        let painter = ResolvedNodePainter(images: FakeImages(), scale: 2.5, text: FakeRuns(), log: { _ in })
+        let graph = Graph(view, scale: 2.5)
+        graph.rootProposal = ProposedViewSize(width: 320, height: 240)
+        graph.flush()
+        painter.beginCommit()
+        defer { painter.endCommit(committed: true) }
+        return try flatten(try XCTUnwrap(graph.snapshot())).map { n in
+            let b = Rect(x: Float(n.pixelFrame.x), y: Float(n.pixelFrame.y), w: Float(n.pixelFrame.width), h: Float(n.pixelFrame.height))
+            return (n.kind, try painter.emit(n, id: UInt64(n.instance + 1), bounds: b))
+        }
+    }
+    func testAZeroSizeContinuousShapePaintsNothing() throws {
+        let nodes = try emit(Witness_ZeroBar())
+        XCTAssertTrue(try XCTUnwrap(nodes.first { $0.0 == "RoundedRectangle" }).1.primitives.isEmpty)
+    }
+    func testAPillPaintsOneImage() throws {
+        let nodes = try emit(Witness_Pill())
+        XCTAssertEqual(try XCTUnwrap(nodes.first { $0.0 == "RoundedRectangle" }).1.primitives.count, 1)
     }
 }

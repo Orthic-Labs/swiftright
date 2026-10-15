@@ -40,15 +40,12 @@ public enum ContinuousRoundedGeometry {
         guard cornerRadius.isFinite, cornerRadius >= 0 else {
             throw ContinuousRoundedGeometryError.invalidBounds
         }
-        let requested = Double(cornerRadius)
-        // R2 shows Apple clamps path extent independently from requested
-        // radius for large requests, then adjusts control points. Reusing
-        // ordinary-radius coefficients after clamping radius is incorrect.
-        // Reject until independently observed large-radius coefficients exist.
-        let maxSupportedRadius = min(width, height) / (2 * extent)
-        guard requested <= maxSupportedRadius + 0.000001 else {
-            throw ContinuousRoundedGeometryError.unsupportedRadiusExtent
-        }
+        // Round 5 block 30 (hub gaps R7/R8): the large-radius family, measured from `RoundedRectangle(style: .continuous).path(in:)` on macOS 27 (100x40, 100x24,
+        // 200x60, 30x30 and 40x40 at radii from the extent limit to 99, scale-free). A radius is clamped to min(w, h) / 2 (r = 20 and r = 99 give the same path on 100x40).
+        // Up to r0 = half / extent along an edge the ordinary coefficients hold. Past r0 the edge's extent clamps to its half length (the first cubic then starts at the
+        // edge's mid-point) and the two control distances from the corner move linearly in r: outer 1.0885 r0 -> 0.96 half, inner 0.8684 r0 -> 0.82 half (at r = half), with the
+        // end point (a, b) still 0.0749 r and 0.6315 r. The slopes fit every measured radius to 5 decimals.
+        let requested = min(Double(cornerRadius), min(width, height) / 2)
         let x1 = x0 + width, y1 = y0 + height
         guard x1.isFinite, y1.isFinite else {
             throw ContinuousRoundedGeometryError.invalidBounds
@@ -61,17 +58,25 @@ public enum ContinuousRoundedGeometry {
                     .line(to: p(x1, y1)), .line(to: p(x0, y1)), .close]
         }
         let radius = requested
-        let e = radius * extent
         let a = radius * endpointNear
         let b = radius * endpointFar
-        let outer = radius * controlOuter
-        let inner = radius * controlInner
+        /// (extent along the edge, outer control distance, inner control distance) for an edge whose half length is `half`.
+        func edge(_ half: Double) -> (e: Double, outer: Double, inner: Double) {
+            let e = radius * extent
+            if e <= half + 0.000001 { return (e, radius * controlOuter, radius * controlInner) }
+            let r0 = half / extent
+            let t = half > r0 ? min(1, max(0, (radius - r0) / (half - r0))) : 1
+            return (half, (controlOuter * r0) + t * (0.96 * half - controlOuter * r0), (controlInner * r0) + t * (0.82 * half - controlInner * r0))
+        }
+        let vertical = edge(height / 2), horizontal = edge(width / 2)
+        let eV = vertical.e, outerV = vertical.outer, innerV = vertical.inner
+        let eH = horizontal.e, outerH = horizontal.outer, innerH = horizontal.inner
         let middleNear = radius * controlMiddleNear
         let middleFar = radius * controlMiddleFar
         let xm = (x0 + x1) / 2, ym = (y0 + y1) / 2
         guard xm.isFinite, ym.isFinite,
-              e.isFinite, a.isFinite, b.isFinite,
-              outer.isFinite, inner.isFinite,
+              eV.isFinite, eH.isFinite, a.isFinite, b.isFinite,
+              outerV.isFinite, innerV.isFinite, outerH.isFinite, innerH.isFinite,
               middleNear.isFinite, middleFar.isFinite else {
             throw ContinuousRoundedGeometryError.invalidBounds
         }
@@ -84,22 +89,22 @@ public enum ContinuousRoundedGeometry {
         }
 
         result.append(.move(to: p(right, ym)))
-        result.append(.line(to: p(right, bottom - e)))
-        cubic((right - a, bottom - b), (right, bottom - outer), (right, bottom - inner))
+        result.append(.line(to: p(right, bottom - eV)))
+        cubic((right - a, bottom - b), (right, bottom - outerV), (right, bottom - innerV))
         cubic((right - b, bottom - a), (right - middleNear, bottom - middleFar), (right - middleFar, bottom - middleNear))
-        cubic((right - e, bottom), (right - inner, bottom), (right - outer, bottom))
-        result.append(.line(to: p(left + e, bottom)))
-        cubic((left + b, bottom - a), (left + outer, bottom), (left + inner, bottom))
+        cubic((right - eH, bottom), (right - innerH, bottom), (right - outerH, bottom))
+        result.append(.line(to: p(left + eH, bottom)))
+        cubic((left + b, bottom - a), (left + outerH, bottom), (left + innerH, bottom))
         cubic((left + a, bottom - b), (left + middleFar, bottom - middleNear), (left + middleNear, bottom - middleFar))
-        cubic((left, bottom - e), (left, bottom - inner), (left, bottom - outer))
-        result.append(.line(to: p(left, top + e)))
-        cubic((left + a, top + b), (left, top + outer), (left, top + inner))
+        cubic((left, bottom - eV), (left, bottom - innerV), (left, bottom - outerV))
+        result.append(.line(to: p(left, top + eV)))
+        cubic((left + a, top + b), (left, top + outerV), (left, top + innerV))
         cubic((left + b, top + a), (left + middleNear, top + middleFar), (left + middleFar, top + middleNear))
-        cubic((left + e, top), (left + inner, top), (left + outer, top))
-        result.append(.line(to: p(right - e, top)))
-        cubic((right - b, top + a), (right - outer, top), (right - inner, top))
+        cubic((left + eH, top), (left + innerH, top), (left + outerH, top))
+        result.append(.line(to: p(right - eH, top)))
+        cubic((right - b, top + a), (right - outerH, top), (right - innerH, top))
         cubic((right - a, top + b), (right - middleFar, top + middleNear), (right - middleNear, top + middleFar))
-        cubic((right, top + e), (right, top + inner), (right, top + outer))
+        cubic((right, top + eV), (right, top + innerV), (right, top + outerV))
         result.append(.close)
         return result
     }

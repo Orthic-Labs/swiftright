@@ -926,6 +926,11 @@ public final class Graph {
     public var imageFitIntrinsicSize: (ImageReference) -> LayoutSize? = { _ in nil } {
         didSet { for node in nodes.values { node.sizeCache.removeAll() } }
     }
+    /// Size of a NON-resizable `Image(systemName:)` drawn at the environment font (nil font = the default body font): SwiftUI sizes the
+    /// symbol by the font, not by the proposal. Nil (the default) keeps the natural size above.
+    public var imageFontIntrinsicSize: (ImageReference, Font?) -> LayoutSize? = { _, _ in nil } {
+        didSet { for node in nodes.values { node.sizeCache.removeAll() } }
+    }
     /// Phase counters, nil (off) by default. See `GraphProfile`.
     public var profile: GraphProfile?
     /// Platform used to map native chords to logical commands (CONTRACT section 4).

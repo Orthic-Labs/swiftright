@@ -47,6 +47,92 @@ public struct SystemImageTable: Decodable {
         }
         public let scaleClasses: [ScaleClass]?
         public let inkOverrides: [InkOverride]?
+        /// Non-resizable, font-sized use (`Image(systemName:)` at the environment font): the Mac-measured view frame and
+        /// half-coverage ink box of the symbol at each measured point size, per scale class (factory/tools/symbol-metrics/symbol-sizes.sh).
+        public let fontSizes: [FontSize]?
+
+        /// One measured point size. SwiftUI's symbol size is not linear in the point size (the symbol face changes
+        /// its optical size, so frames jump between 17 and 18 pt and 28 and 30 pt), so each measured size is its own row.
+        public struct FontSize: Decodable {
+            public let size: Double
+            public let classes: [FontClass]
+        }
+        /// The frame and ink box at one scale class, in device pixels at the class's measured screen scale (`refScale`).
+        public struct FontClass: Decodable {
+            public let scaleClass: String
+            public let refScale: Double
+            public let framePx: [Int]
+            public let inkPx: [Int]
+        }
+        /// A font-sized symbol's layout at a point size and scale.
+        public struct FontLayout: Equatable {
+            /// The Image view's size in points (what the layout engine uses as the intrinsic size).
+            public let framePt: [Double]
+            /// Half-coverage ink box as fractions of the frame, top-down: left, top, right, bottom.
+            public let inkFractions: [Double]
+            /// A measured pixel ink box and the frame it was measured with, when the point size and scale are exactly a measured one.
+            public let measured: (framePx: [Int], inkPx: [Int], scale: Double)?
+            /// True when the point size was measured; false when it is interpolated between (or scaled from) measured sizes.
+            public let isMeasured: Bool
+            public static func == (l: FontLayout, r: FontLayout) -> Bool { l.framePt == r.framePt && l.inkFractions == r.inkFractions && l.isMeasured == r.isMeasured }
+        }
+
+        public var supportsFontSizes: Bool { !(fontSizes ?? []).isEmpty }
+        /// Whether `resizable().scaledToFit()` was measured for this symbol (scale-class fit data exists).
+        public var supportsResizable: Bool { !(scaleClasses ?? []).isEmpty }
+
+        private func fontClass(_ row: FontSize, scale: Double) -> FontClass? {
+            let wanted = scale < 2 ? "1x" : "2x"
+            guard let c = row.classes.first(where: { $0.scaleClass == wanted }), c.framePx.count == 2, c.inkPx.count == 4, c.refScale > 0,
+                  c.framePx.allSatisfy({ $0 > 0 }) else { return nil }
+            return c
+        }
+        private func fontFractions(_ c: FontClass) -> (frame: [Double], ink: [Double]) {
+            let w = Double(c.framePx[0]), h = Double(c.framePx[1])
+            return ([w / c.refScale, h / c.refScale], [Double(c.inkPx[0]) / w, Double(c.inkPx[1]) / h, Double(c.inkPx[2]) / w, Double(c.inkPx[3]) / h])
+        }
+
+        /// Layout at `pointSize` and screen `scale`: exact at a measured size; linear between the two neighbouring measured sizes;
+        /// scaled by the size ratio beyond the measured range. Nil when no size was measured.
+        public func fontLayout(pointSize: Double, scale: Double) -> FontLayout? {
+            guard pointSize.isFinite, pointSize > 0, scale > 0 else { return nil }
+            let rows = (fontSizes ?? []).sorted { $0.size < $1.size }.compactMap { r in fontClass(r, scale: scale).map { (r.size, $0) } }
+            guard !rows.isEmpty else { return nil }
+            if let hit = rows.first(where: { abs($0.0 - pointSize) < 1e-9 }) {
+                let f = fontFractions(hit.1)
+                return FontLayout(framePt: f.frame, inkFractions: f.ink, measured: (hit.1.framePx, hit.1.inkPx, hit.1.refScale), isMeasured: true)
+            }
+            if let lo = rows.last(where: { $0.0 < pointSize }), let hi = rows.first(where: { $0.0 > pointSize }) {
+                let t = (pointSize - lo.0) / (hi.0 - lo.0)
+                let a = fontFractions(lo.1), b = fontFractions(hi.1)
+                return FontLayout(framePt: zip(a.frame, b.frame).map { $0 + ($1 - $0) * t },
+                                  inkFractions: zip(a.ink, b.ink).map { $0 + ($1 - $0) * t }, measured: nil, isMeasured: false)
+            }
+            let edge = pointSize < rows[0].0 ? rows[0] : rows[rows.count - 1]
+            let f = fontFractions(edge.1), k = pointSize / edge.0
+            return FontLayout(framePt: f.frame.map { $0 * k }, inkFractions: f.ink, measured: nil, isMeasured: false)
+        }
+
+        /// Mac half-coverage pixel ink box for a font-sized symbol drawn in a `widthPx` x `heightPx` view frame (relative to the frame):
+        /// the measured box on an exact (size, scale, frame) match, else the measured ink fractions of the frame rounded to pixels.
+        public func fontDeviceInkBox(pointSize: Double, scale: Double, widthPx: UInt32, heightPx: UInt32) -> (box: SystemImageDeviceInkBox, source: String)? {
+            guard let layout = fontLayout(pointSize: pointSize, scale: scale), widthPx > 0, heightPx > 0 else { return nil }
+            if let m = layout.measured, abs(m.scale - scale) < 1e-6, m.framePx == [Int(widthPx), Int(heightPx)] {
+                let box = SystemImageDeviceInkBox(left: m.inkPx[0], top: m.inkPx[1], right: m.inkPx[2], bottom: m.inkPx[3])
+                if box.isValid { return (box, "measured-font-size") }
+            }
+            let w = Double(widthPx), h = Double(heightPx), f = layout.inkFractions
+            let box = SystemImageDeviceInkBox(left: Int((f[0] * w + 0.5).rounded(.down)), top: Int((f[1] * h + 0.5).rounded(.down)),
+                                              right: Int((f[2] * w + 0.5).rounded(.down)), bottom: Int((f[3] * h + 0.5).rounded(.down)))
+            return box.isValid ? (box, layout.isMeasured ? "font-size-fractions" : "font-size-interpolated") : nil
+        }
+        /// Linear-model metrics for a font-sized frame (used for validation and the no-override path).
+        public func fontMetrics(pointSize: Double, scale: Double) -> SystemImageLayoutMetrics? {
+            guard let l = fontLayout(pointSize: pointSize, scale: scale), l.framePt[1] > 0 else { return nil }
+            let m = SystemImageLayoutMetrics(aspect: l.framePt[0] / l.framePt[1], inkLeft: l.inkFractions[0], inkTop: l.inkFractions[1],
+                                             inkRight: l.inkFractions[2], inkBottom: l.inkFractions[3])
+            return m.isValid ? m : nil
+        }
 
         public func scaleClass(scale: Double) -> ScaleClass? {
             scaleClasses?.first(where: { scale >= $0.minScale && ($0.maxScaleExclusive.map { scale < $0 } ?? true)

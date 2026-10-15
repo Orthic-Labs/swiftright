@@ -129,6 +129,23 @@ final class ButtonPainterTests: XCTestCase {
         XCTAssertNotEqual(colours, [0x7f7f7fff])
     }
 
+    /// Round 5 block 31 (hub gap R11): a plain or borderless Button under `.opacity` draws only its label, faded; a bordered one still needs group opacity over its artwork.
+    func testOpacityOnAPlainButtonFadesItsLabel() throws {
+        struct Faded: View { var body: some View { Button("Run") {}.buttonStyle(.plain).opacity(0.5) } }
+        struct FadedBorderless: View { var body: some View { Button("Run") {}.buttonStyle(.borderless).opacity(0.5) } }
+        struct FadedBordered: View { var body: some View { Button("Run") {}.opacity(0.5) } }
+        XCTAssertEqual(try paint(Faded()).runs.colours.compactMap { $0 }.map { $0 & 255 }, [108], "216 x 0.5")
+        XCTAssertEqual(try paint(FadedBorderless()).runs.colours.count, 1)
+        XCTAssertThrowsError(try paint(FadedBordered()))
+    }
+
+    func testAnEmptyFramedButtonPaintsNothingInsteadOfFailing() throws {
+        struct Empty: View { var body: some View { Button("Run") {}.frame(width: 0, height: 0) } }
+        struct EmptyPlain: View { var body: some View { Button("Run") {}.buttonStyle(.plain).frame(width: 0, height: 0) } }
+        XCTAssertNoThrow(try paint(Empty()))
+        XCTAssertNoThrow(try paint(EmptyPlain()))
+    }
+
     func testForegroundOnABorderedButtonTintsItsFillAndIsNotModelled() {
         XCTAssertThrowsError(try paint(Witness_RedBorderedButton()))
     }

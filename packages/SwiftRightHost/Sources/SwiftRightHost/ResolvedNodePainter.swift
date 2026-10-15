@@ -190,12 +190,27 @@ public final class ResolvedNodePainter {
         case "Rectangle", "RoundedRectangle", "Circle":
             switch try ShapePainter.plan(node, bounds: bounds, scale: scale) {
             case .primitive(let primitive):
+                if case .rect(_, let color, _, _, let borderWidth) = primitive, color & 0xff == 0, borderWidth == 0 {   // transparent fill, no stroke: nothing to draw (R12)
+                    return NodeEmission(primitives: [], semantic: nil, flags: [], structural: false)
+                }
                 return NodeEmission(primitives: [primitive], semantic: nil, flags: [], structural: false)
             case .continuous(let request):
-                let result = try ContinuousShapeRaster.primitive(images, request)
-                if let stale = pendingShapeImages[id] { _ = images.release(stale) }
-                pendingShapeImages[id] = result.image
-                return NodeEmission(primitives: [result.primitive], semantic: nil, flags: [], structural: false)
+                // One image, or horizontal bands of one when the shape is over the rasteriser's work limit (round 5 block 30). Band k's handle is kept under a key
+                // derived from the node id so a commit releases every band of a node that went away or changed.
+                // A shape with no area (a zero-width bar, a frame under half a device pixel) draws nothing, as in SwiftUI (hub gap R8).
+                guard request.bounds.w > 0, request.bounds.h > 0 else { return NodeEmission(primitives: [], semantic: nil, flags: [], structural: false) }
+                var primitives: [Primitive] = []
+                let rendered: [ContinuousShapeRaster.Result]
+                do { rendered = try ContinuousShapeRaster.renderBands(request) }
+                catch HostPaintError.continuousShapeRasterInput(2) { return NodeEmission(primitives: [], semantic: nil, flags: [], structural: false) }
+                for (band, result) in rendered.enumerated() {
+                    let handle = try images.registerImage(width: UInt32(result.image.width), height: UInt32(result.image.height), rgba: result.image.rgba, stride: 0)
+                    let key = band == 0 ? id : id | (UInt64(band) << 48)
+                    if let stale = pendingShapeImages[key] { _ = images.release(stale) }
+                    pendingShapeImages[key] = handle
+                    primitives.append(.image(handle, result.placement))
+                }
+                return NodeEmission(primitives: primitives, semantic: nil, flags: [], structural: false)
             }
 
         case "Toggle":
@@ -233,13 +248,15 @@ public final class ResolvedNodePainter {
 
         case "Divider":
             // Measured on macOS 27 (light): the separator is black at alpha 25/255 (230 over white, (0,123,230) over (0,136,255)), as thick as the layout box (1 pt, snapped to the
-            // device grid like any edge: 2 or 3 px at scale 2.5). The dark separator is not measured: it fails visibly rather than guess.
-            guard node.style.colorScheme != .dark else { throw HostPaintError.unsupportedNode("Divider (dark appearance not measured)") }
+            // device grid like any edge: 2 or 3 px at scale 2.5). Dark appearance (round 5 block 31): white at alpha 25/255 (`HostPaint.darkSemantic`).
             return NodeEmission(primitives: [.rect(bounds, color: try HostPaint.rgba(.semantic("separator"), opacity: node.opacity, scheme: node.style.colorScheme))], semantic: nil, flags: [], structural: false)
 
         case "Color":
             guard let color = node.color else { throw HostPaintError.colorMetadataRequired }
-            return NodeEmission(primitives: [.rect(bounds, color: try HostPaint.rgba(color, opacity: node.opacity, scheme: node.style.colorScheme))], semantic: nil, flags: [], structural: false)
+            let rgba = try HostPaint.rgba(color, opacity: node.opacity, scheme: node.style.colorScheme)
+            // A fully transparent fill (Color.clear, alpha 0, a hit area at 0.001) draws nothing: the renderer shows a rect whose colour is 0 as opaque black (hub gap R12).
+            // The node stays (it is the hit area); only the paint is dropped.
+            return NodeEmission(primitives: rgba & 0xff == 0 ? [] : [.rect(bounds, color: rgba)], semantic: nil, flags: [], structural: false)
 
         case "Image":
             guard let systemImages else { throw HostPaintError.unsupportedNode("Image (no system image registry)") }
@@ -283,13 +300,28 @@ public final class ResolvedNodePainter {
     private func systemImagePrimitive(_ node: ResolvedNode, bounds: Rect, registry: SystemImageRegistry) throws -> Primitive {
         guard let reference = node.image else { throw HostPaintError.systemImageContractMismatch("no image reference") }
         guard registry.supports(reference) else { throw HostPaintError.systemImageContractMismatch("symbol '\(reference.name)' is not in the table") }
-        guard let sizing = node.imageSizing, sizing.isResizable, sizing.scalesToFit, sizing.resizingMode == .stretch else {
-            throw HostPaintError.systemImageContractMismatch("only resizable().scaledToFit() symbols are painted")
+        // Two measured uses: resizable().scaledToFit(), and a non-resizable symbol at the environment font (sized by the font, never stretched).
+        var fontSize: Double?
+        if let sizing = node.imageSizing {
+            guard sizing.isResizable, sizing.scalesToFit, sizing.resizingMode == .stretch else {
+                throw HostPaintError.systemImageContractMismatch("only resizable().scaledToFit() or font-sized symbols are painted")
+            }
+            guard registry.supportsResizable(reference) else {
+                throw HostPaintError.systemImageContractMismatch("symbol '\(reference.name)' has no measured resizable layout")
+            }
+        } else {
+            guard registry.supportsFontSized(reference) else {
+                throw HostPaintError.systemImageContractMismatch("symbol '\(reference.name)' has no measured font-sized layout")
+            }
+            guard let size = SystemImageRegistry.fontPointSize(node.style.font) else {
+                throw HostPaintError.systemImageContractMismatch("symbol font '\(node.style.font?.id ?? "none")' is not measured (system regular sizes, body and the regular text styles only)")
+            }
+            fontSize = size
         }
         guard bounds.w > 0, bounds.h > 0 else { throw HostPaintError.systemImageContractMismatch("empty frame") }
         let tint = try HostPaint.rgba(node.style.foreground ?? .semantic(registry.defaultForeground(for: reference)), opacity: node.opacity, scheme: node.style.colorScheme)
-        let targetWidth = UInt32(max(1, bounds.w)), targetHeight = UInt32(max(1, bounds.h))
-        let handle = try registry.handle(for: reference, tint: tint, width: targetWidth, height: targetHeight)
+        let targetWidth = fontSize == nil ? UInt32(max(1, bounds.w)) : UInt32(max(1, bounds.w.rounded())), targetHeight = fontSize == nil ? UInt32(max(1, bounds.h)) : UInt32(max(1, bounds.h.rounded()))
+        let handle = try registry.handle(for: reference, tint: tint, width: targetWidth, height: targetHeight, fontSize: fontSize)
         let inset = registry.canvasInset(for: reference)
         log("SYSTEM_IMAGE_FRAME name=\(reference.name) xPX=\(Int(bounds.x)) yPX=\(Int(bounds.y)) widthPX=\(Int(bounds.w)) heightPX=\(Int(bounds.h)) canvasInsetPX=\(Int(inset)) tintRGBA=\(String(format: "%08x", tint))")
         return .image(handle, Rect(x: bounds.x - inset + imageGuardBand, y: bounds.y - inset + imageGuardBand,

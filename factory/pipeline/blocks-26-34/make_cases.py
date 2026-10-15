@@ -24,8 +24,9 @@ def rect(x0, y0, x1, y1):
     return [round((OX + x0) * SCALE), round((OY + y0) * SCALE), round((OX + x1) * SCALE), round((OY + y1) * SCALE)]
 
 
-def case(name, typename, body, pair=None, steps=None):
-    CASES[name] = dict(type=typename, body=body, pair=pair, steps=steps)
+def case(name, typename, body, pair=None, steps=None, dark=None):
+    """dark: None, or (appearance, scheme): the blocks-17-20 style full-viewport host (the witness fills 320 x 240 itself), e.g. ("darkAqua", "dark")"""
+    CASES[name] = dict(type=typename, body=body, pair=pair, steps=steps, dark=dark)
 
 
 def click(x, y):
@@ -351,12 +352,12 @@ def font_rows(name, typename, rows, row_h, tolerance=None, lines=False, max_righ
     var body: some View {{
         VStack(alignment: .leading, spacing: 0) {{
 {body}
-        }}.frame(width: 240, height: {n * row_h}, alignment: .topLeading)
+        }}.frame(width: 240, height: 200, alignment: .topLeading)
     }}
 }}""")
     regions = [{"name": f"row {i}", "rect": rect(0, i * row_h, frame_w, (i + 1) * row_h), "align": "leading"} for i in range(n)]
     pos = {"align": "leading", "reason": reason or "Segoe UI vs SF (decision 2): measured per row, see decision F1"}
-    pos.update({"firstInkYTolerancePx": 6, "baselineTolerancePx": 6, "inkCentreYTolerancePx": 6, "firstInkXTolerancePx": 3})
+    pos.update({"firstInkYTolerancePx": 5, "baselineTolerancePx": 5, "inkCentreYTolerancePx": 5, "firstInkXTolerancePx": 3})
     if lines: pos["lines"] = True
     if max_right is not None: pos["maxInkRightPx"] = rect(max_right, 0, max_right, 0)[0]
     ex = [{"name": f"row {i} glyph region (Segoe UI vs SF, decision 2); gated by the position gate of decision 19", "rect": rg["rect"]} for i, rg in enumerate(regions)]
@@ -383,6 +384,97 @@ CASES["swiftui.system-font/truncate-v1"]["body"] = CASES["swiftui.system-font/tr
 font_rows("line-limit-v1", None, [(f(12), LONG, ".lineLimit(2)"), (f(12), LONG, ".lineLimit(3)"), (f(12), "Overview of memory pressure", ".lineLimit(3)")], 60, lines=True, max_right=110, frame_w=110)
 
 
+# =====================================================================================================================================================================
+# block 31: swiftui.paint-states (transparent fills, dark Divider); full-viewport witnesses (320 x 240) on the blocks-17-20 style host, light and dark
+# =====================================================================================================================================================================
+PS = "Witness_ps_"
+
+
+def full(name, typename, content, dark=False):
+    """a 320 x 240 witness filling the viewport with the window background; dark: the host's darkAqua window and the root colour scheme dark"""
+    scheme = ".environment(\\.colorScheme, .dark)" if dark else ""
+    case("swiftui.paint-states/" + name, typename, f"""struct {typename}: View {{
+    var body: some View {{
+        ZStack(alignment: .topLeading) {{
+            Rectangle().fill(.background)
+{content}
+        }}
+        .frame(width: 320, height: 240){scheme}
+    }}
+}}""", dark=("darkAqua", "dark") if dark else ("aqua", "light"))
+
+
+# transparent fills must leave what is beneath them untouched (Color.clear, alpha 0 and 0.001, the hit area under a plain Button) and draw nothing of their own
+TRANSPARENT = """            VStack(spacing: 0) {
+                Rectangle().fill(Color.red).frame(width: 300, height: 30)
+                ZStack { Rectangle().fill(Color.blue).frame(width: 300, height: 30); Color.clear.frame(width: 300, height: 30) }
+                ZStack { Rectangle().fill(Color.green).frame(width: 300, height: 30); Rectangle().fill(Color.black.opacity(0.001)).frame(width: 300, height: 30) }
+                ZStack { Rectangle().fill(Color.orange).frame(width: 300, height: 30); Color.red.opacity(0).frame(width: 300, height: 30) }
+                ZStack { Rectangle().fill(Color.purple).frame(width: 300, height: 30); Rectangle().fill(Color.clear).frame(width: 150, height: 30) }
+                ZStack { Rectangle().fill(Color.gray).frame(width: 300, height: 30); Color.black.opacity(0.01).frame(width: 300, height: 30) }
+                Button { } label: { ZStack { Color.black.opacity(0.001); Rectangle().fill(Color.pink).frame(width: 40, height: 20) }.frame(width: 300, height: 30) }.buttonStyle(.plain)
+                Color.clear.frame(width: 300, height: 30)
+            }.padding(10)"""
+full("transparent-fills-v1", PS + "transparent", TRANSPARENT)
+full("transparent-fills-dark-v1", PS + "transparent_dark", TRANSPARENT, dark=True)
+DIV = """            VStack(spacing: 10) {
+                Divider().frame(width: 200)
+                ZStack { Rectangle().fill(Color.blue).frame(width: 200, height: 40); Divider() }.frame(width: 200, height: 40)
+                ZStack { Color.white.frame(width: 200, height: 40); Divider() }.frame(width: 200, height: 40)
+                HStack(spacing: 10) { Rectangle().fill(Color.red).frame(width: 60, height: 40); Divider(); Rectangle().fill(Color.green).frame(width: 60, height: 40) }.frame(height: 40)
+            }.padding(10)"""
+full("divider-dark-v1", PS + "divider_dark", DIV, dark=True)
+full("divider-light-v1", PS + "divider_light", DIV)
+
+
+# =====================================================================================================================================================================
+# block 30: swiftui.continuous-shape-large (pill and large radii, zero-size shapes). Gate: the shape edge band of decision 5 (edge-AA 32), exact elsewhere.
+# =====================================================================================================================================================================
+CS = "Witness_cl_"
+
+
+def shp(name, typename, body):
+    case("swiftui.continuous-shape-large/" + name, typename, f"""struct {typename}: View {{
+    var body: some View {{
+{body}
+    }}
+}}""")
+
+
+def rr(r, w, h, fill="Color.blue", stroke=None):
+    s = f"RoundedRectangle(cornerRadius: {r}, style: .continuous)"
+    s = f"{s}.stroke({stroke}, lineWidth: 1)" if stroke else f"{s}.fill({fill})"
+    return f"{s}.frame(width: {w}, height: {h})"
+
+
+shp("pill-v1", CS + "pill", f"""        VStack(spacing: 8) {{
+            {rr(99, 200, 40, "Color.red")}
+            {rr(99, 200, 24, "Color.blue")}
+            {rr(99, 200, 10, "Color.green")}
+            {rr(99, 60, 60, "Color.orange")}
+            {rr(99, 120, 6, "Color.purple")}
+        }}.frame(width: 240, height: 200)""")
+shp("radius-range-v1", CS + "range", f"""        VStack(spacing: 6) {{
+            {rr(13.1, 100, 40, "Color.red")}
+            {rr(15, 100, 40, "Color.blue")}
+            {rr(18, 100, 40, "Color.green")}
+            {rr(20, 100, 40, "Color.orange")}
+            {rr(14, 100, 30, "Color.purple")}
+        }}.frame(width: 240, height: 200)""")
+shp("pill-stroke-v1", CS + "pill_stroke", f"""        VStack(spacing: 10) {{
+            {rr(99, 200, 40, stroke="Color.red")}
+            {rr(99, 200, 24, stroke="Color.blue")}
+            {rr(99, 60, 60, stroke="Color.green")}
+            {rr(15, 100, 40, stroke="Color.orange")}
+        }}.frame(width: 240, height: 200)""")
+shp("zero-size-v1", CS + "zero", f"""        VStack(spacing: 8) {{
+            HStack(spacing: 4) {{ {rr(3, 0, 8)}; {rr(3, 20, 8, "Color.red")}; {rr(3, 0, 8, "Color.green")}; {rr(3, 20, 8, "Color.orange")} }}
+            {rr(99, 100, 0, "Color.purple")}
+            {rr(99, 100, 10, "Color.blue")}
+            {rr(5, 0, 0)}
+        }}.frame(width: 240, height: 200)""")
+
+
 def main():
     only = sys.argv[1:]
     for name, c in CASES.items():
@@ -394,6 +486,7 @@ def main():
                 p = Path(d) / "pair.json"; p.write_text(json.dumps(c["pair"])); cmd += ["--pair-json", str(p)]
             if c["steps"]:
                 s = Path(d) / "steps.json"; s.write_text(json.dumps(c["steps"])); cmd += ["--steps", str(s)]
+            if c.get("dark"): cmd += ["--dark-host", "--appearance", c["dark"][0], "--scheme", c["dark"][1]]
             subprocess.check_call(cmd)
 
 
