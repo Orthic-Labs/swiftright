@@ -23,12 +23,15 @@ def parse_ts(s):
 
 def take_snapshot():
     script = (HERE / "guard-snapshot.ps1").read_text()
+    host_before = datetime.now(timezone.utc)
     r = subprocess.run([sys.executable, str(CLIENT), "command", script, "--out", str(HERE / ".cmd-out")], capture_output=True, text=True, timeout=900)
     text = r.stdout
     m = re.search(r"JSON-BEGIN\s*(\{.*\})\s*JSON-END", text, re.S)
     if not m:
         sys.exit("no snapshot in the command output (is the worker up? `client.py status`)\n" + (text + r.stderr)[-1500:])
     snap = json.loads(m.group(1))
+    host_after = datetime.now(timezone.utc)
+    snap["hostBeforeUtc"], snap["hostAfterUtc"] = host_before.isoformat(), host_after.isoformat()
     (HERE / "snapshots").mkdir(exist_ok=True)
     name = re.sub(r"[^0-9TZ]", "", snap["nowUtc"])[:15] + "Z.json"
     (HERE / "snapshots" / name).write_text(json.dumps(snap, indent=1))
@@ -64,6 +67,20 @@ def summarise(snap):
     lr = json.loads(snap["last-result.json"]) if snap.get("last-result.json") else None
     out.append(f"retry.json: {rj}")
     out.append(f"last-result.json: status={lr and lr.get('status')} attemptLaunched={lr and lr.get('attemptLaunched')} launchFailure={lr and lr.get('launchFailure')!r} lastLaunchUtc={lr and lr.get('lastLaunchUtc')} guardSha256Lf={lr and lr.get('guardSha256Lf')}")
+    now = parse_ts(snap["nowUtc"])
+    if snap.get("task") and snap["task"].get("nextRun"):
+        nr = parse_ts(snap["task"]["nextRun"])
+        lag = (now - nr).total_seconds()
+        out.append(f"task NextRunTime {nr.isoformat(timespec='seconds')}: " + (f"in {-lag / 60:.1f} min" if lag <= 0 else f"OVERDUE by {lag / 60:.1f} min") + ("  *** STALL: NextRunTime is overdue by more than 3 min ***" if lag > 180 else ""))
+    if snap.get("hostBeforeUtc"):
+        hb, ha = parse_ts(snap["hostBeforeUtc"]), parse_ts(snap["hostAfterUtc"])
+        # the guest reading must fall inside the host's before/after bracket of the job; outside it is clock skew
+        d = 0.0 if hb <= now <= ha else ((now - ha).total_seconds() if now > ha else (now - hb).total_seconds())
+        out.append(f"guest-vs-host clock: guest {now.isoformat(timespec='seconds')}, host bracket {hb.isoformat(timespec='seconds')}..{ha.isoformat(timespec='seconds')}, skew outside bracket {d:+.0f} s" + ("  *** CLOCK SKEW ***" if abs(d) > 60 else ""))
+    else:
+        out.append("guest-vs-host clock: not recorded in this (older or offline) snapshot")
+    if runs and runs[-1]["retry"]:
+        out.append(f"last run {runs[-1]['start'].isoformat(timespec='seconds')} scheduled attempt #{runs[-1]['retry'][0]} at {runs[-1]['retry'][2]}; log time of newest run is {(now - runs[-1]['start']).total_seconds() / 60:.1f} min ago")
     out.append("")
     out.append(f"{'run':>3}  {'start (log tz)':<26} {'outcome':<8} {'since first':>12} {'gap from prev':>14} {'expected gap':>13}  scheduled next")
     first = runs[0]["start"] if runs else None
