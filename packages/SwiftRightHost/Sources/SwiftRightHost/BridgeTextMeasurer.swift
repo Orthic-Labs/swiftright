@@ -232,10 +232,18 @@ enum RetainedRunChoice {
         let width: Float, height: Float, lines: Int, firstBaseline: Float
     }
     static func choose(_ entries: [Entry], bounds: Rect, scale: Float, text: String) throws -> Entry {
-        let candidates = entries.filter {
+        var candidates = entries.filter {
             snappedExtentCanMatch($0.width, bounds.w, origin: bounds.x, scale: scale)
                 && snappedExtentCanMatch($0.height, bounds.h, origin: bounds.y, scale: scale)
         }.sorted { ($0.proposedWidth ?? .infinity) < ($1.proposedWidth ?? .infinity) }
+        if candidates.isEmpty {
+            // Half-pixel ties (round 5, hub gap R5; decision E12): a text whose origin or height lands on a half device pixel (a baseline-aligned row, an odd offset) has its
+            // box snapped one pixel shorter than the run it measured. The run is painted at its measured size from the snapped origin, so a measurement within one pixel of the
+            // bounds on each axis is the run; the closest one wins. Anything further off is still refused.
+            candidates = entries.filter { abs($0.width - bounds.w) <= 1 && abs($0.height - bounds.h) <= 1 }
+                .sorted { (abs($0.width - bounds.w) + abs($0.height - bounds.h), $0.proposedWidth ?? .infinity) < (abs($1.width - bounds.w) + abs($1.height - bounds.h), $1.proposedWidth ?? .infinity) }
+            if let first = candidates.first { candidates = candidates.filter { abs($0.width - bounds.w) + abs($0.height - bounds.h) == abs(first.width - bounds.w) + abs(first.height - bounds.h) } }
+        }
         guard let chosen = candidates.first else { throw HostPaintError.measuredRunGeometryMismatch(text) }
         guard candidates.allSatisfy({ $0.width == chosen.width && $0.height == chosen.height && $0.lines == chosen.lines && $0.firstBaseline == chosen.firstBaseline }) else {
             throw HostPaintError.ambiguousMeasuredRun(text)

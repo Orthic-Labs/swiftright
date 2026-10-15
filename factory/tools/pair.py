@@ -246,6 +246,7 @@ def edge_band(im):
     return e.point(lambda v: 255 if v else 0).filter(ImageFilter.MaxFilter(3))
 
 
+EDGE_AA = 32   # <case>/pair.json "edgeAATolerance": {"levels": N, "reason": "..."}: the most a pixel inside the 1 px edge band may differ (decision 5: 32). A larger value is measured and carries its reason; it never loosens the out-of-band exact gate.
 HAZE = 0   # <case>/pair.json "hazeTolerance": out-of-band differences up to this many levels (a faint soft shadow, 8-bit rounding) do not fail the edge gate; reported as hazeMax
 
 
@@ -260,7 +261,7 @@ def edge_gate(im, iw, exclusions=()):
     inb, outb = Image.composite(d, black, band), Image.composite(black, d, band)
     cnt = lambda x: x.size[0] * x.size[1] - x.histogram()[0]
     ti, to = cnt(inb), cnt(outb); mi, mo = inb.getextrema()[1], outb.getextrema()[1]
-    verdict = "exact" if ti + to == 0 else ("edge-aa<=32" if (to == 0 or mo <= HAZE) and mi <= 32 else "fail")
+    verdict = "exact" if ti + to == 0 else ("edge-aa<=32" if (to == 0 or mo <= HAZE) and mi <= EDGE_AA else "fail")
     return dict(verdict=verdict, totalDiff=ti + to, inBandDiff=ti, outOfBandDiff=to, maxInBand=mi, maxOutOfBand=mo,
                 bandPixels=cnt(band))
 
@@ -315,7 +316,7 @@ def compare(out, runs, exclusions=(), frames=0, phases=()):
     nexw = sum(1 for r in rows if r.get("verdict") == "exact-with-exclusions")
     worst = max((r.get("maxdiff", 0) for r in rows), default=0)
     bbox = next((r.get("diffbbox") for r in bad if r.get("diffbbox")), None)
-    rep = dict(pairs=len(items), frames=frames or None, exact=nex, exactWithExclusions=nexw, edgeAA=len(ok) - nex - nexw, fail=len(bad), maxdiff=worst, diffbbox=bbox, rows=rows)
+    rep = dict(edgeAAToleranceLevels=EDGE_AA, pairs=len(items), frames=frames or None, exact=nex, exactWithExclusions=nexw, edgeAA=len(ok) - nex - nexw, fail=len(bad), maxdiff=worst, diffbbox=bbox, rows=rows)
     if (out / "build.json").is_file():
         rep["build"] = json.loads((out / "build.json").read_text())
     if exclusions:
@@ -326,7 +327,7 @@ def compare(out, runs, exclusions=(), frames=0, phases=()):
         if "gate" in r:
             g = r["gate"]; print(f"  run {r['run']:02d}{'' if 'frame' not in r else ' f%02d' % r['frame']}{'' if 'phase' not in r else ' ' + r['phase']} {r['verdict']} total={g['totalDiff']} in-band={g['inBandDiff']} out-of-band={g['outOfBandDiff']} max-in-band={g['maxInBand']} max-out-of-band={g['maxOutOfBand']}")
     names = ", ".join(e["name"] + str(list(e["rect"])) for e in exclusions)
-    print(f"pairs={len(items)} exact={nex} exact-with-exclusions={nexw}" + (f" (excluding: {names})" if exclusions else "") + f" edge-aa<=32={len(ok) - nex - nexw} fail={len(bad)} maxdiff={worst} diffbbox={bbox}")
+    print(f"pairs={len(items)} exact={nex} exact-with-exclusions={nexw}" + (f" (excluding: {names})" if exclusions else "") + f" edge-aa<=32={len(ok) - nex - nexw} fail={len(bad)} maxdiff={worst} diffbbox={bbox}" + (f" (edge-AA tolerance {EDGE_AA} levels, named in pair.json)" if EDGE_AA != 32 else ""))
     return len(ok) == len(items)
 
 
@@ -380,8 +381,11 @@ def main():
     ap.add_argument("--scale-guard", choices=["strict", "default"], default="default", help="decision C12: a Mac host that reports a scale other than the capture scale always fails the run; strict also fails a host that reports none (not yet pinned)")
     a = ap.parse_args()
     case = Path(a.case).resolve(); name = case.name
-    global HAZE
-    HAZE = int(json.loads((case / "pair.json").read_text()).get("hazeTolerance", 0)) if (case / "pair.json").is_file() else 0
+    global HAZE, EDGE_AA
+    _pj = json.loads((case / "pair.json").read_text()) if (case / "pair.json").is_file() else {}
+    HAZE = int(_pj.get("hazeTolerance", 0))
+    EDGE_AA = int(_pj["edgeAATolerance"]["levels"]) if "edgeAATolerance" in _pj else 32
+    if "edgeAATolerance" in _pj: assert _pj["edgeAATolerance"].get("reason"), "edgeAATolerance needs a reason (decision 5: a tolerance is measured and named)"
     if a.recompare:
         out = Path(a.recompare).resolve(); clock = load_clock(case, a.frames)
         n = len({q.name[:6] for q in (out / "mac").glob("run-*.png")})

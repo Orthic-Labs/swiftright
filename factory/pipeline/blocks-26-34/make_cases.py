@@ -433,12 +433,18 @@ full("divider-light-v1", PS + "divider_light", DIV)
 CS = "Witness_cl_"
 
 
-def shp(name, typename, body):
+EDGE_REASON = ("Apple's rasterizer coverage differs from the exact area of path(in:) on the flat shoulders of a large-radius corner: the path is Apple's to 4 decimals "
+               "(unit test), this raster equals the exact coverage of that path (independent 24x24 supersample), and SwiftUI's own fill of the shape and of Path(path(in:)) are identical; "
+               "the difference is bounded to the 1 px edge band, outside it the gate is exact (decision F4)")
+
+
+def shp(name, typename, body, edge=None):
     case("swiftui.continuous-shape-large/" + name, typename, f"""struct {typename}: View {{
     var body: some View {{
 {body}
     }}
 }}""")
+    if edge: CASES["swiftui.continuous-shape-large/" + name]["pair"] = {"edgeAATolerance": {"levels": edge, "reason": EDGE_REASON}}
 
 
 def rr(r, w, h, fill="Color.blue", stroke=None):
@@ -453,14 +459,14 @@ shp("pill-v1", CS + "pill", f"""        VStack(spacing: 8) {{
             {rr(99, 200, 10, "Color.green")}
             {rr(99, 60, 60, "Color.orange")}
             {rr(99, 120, 6, "Color.purple")}
-        }}.frame(width: 240, height: 200)""")
+        }}.frame(width: 240, height: 200)""", edge=210)
 shp("radius-range-v1", CS + "range", f"""        VStack(spacing: 6) {{
             {rr(13.1, 100, 40, "Color.red")}
             {rr(15, 100, 40, "Color.blue")}
             {rr(18, 100, 40, "Color.green")}
             {rr(20, 100, 40, "Color.orange")}
             {rr(14, 100, 30, "Color.purple")}
-        }}.frame(width: 240, height: 200)""")
+        }}.frame(width: 240, height: 200)""", edge=130)
 # NOT delivered: the stroke of a pill (radius at or near half the short side). SwiftUI's own stroker draws short spurious ticks across the path at the points where the straight
 # segment collapses to nothing (measured on the Mac: a vertical tick at each end of a stroked pill and at each pole of a stroked circle); the fill is exact. The strokes below keep
 # the first cubic's control points clear of that case (r <= 18 on a 40 pt frame).
@@ -469,7 +475,7 @@ shp("stroke-large-radius-v1", CS + "stroke_large", f"""        VStack(spacing: 1
             {rr(15, 100, 40, stroke="Color.blue")}
             {rr(18, 100, 40, stroke="Color.green")}
             {rr(14, 100, 30, stroke="Color.orange")}
-        }}.frame(width: 240, height: 200)""")
+        }}.frame(width: 240, height: 200)""", edge=130)
 shp("zero-size-v1", CS + "zero", f"""        VStack(spacing: 8) {{
             HStack(spacing: 4) {{ {rr(3, 0, 8)}; {rr(3, 20, 8, "Color.red")}; {rr(3, 0, 8, "Color.green")}; {rr(3, 20, 8, "Color.orange")} }}
             {rr(99, 100, 0, "Color.purple")}

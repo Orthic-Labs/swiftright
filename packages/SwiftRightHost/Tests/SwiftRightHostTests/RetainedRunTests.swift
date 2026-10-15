@@ -13,6 +13,10 @@ final class RetainedRunTests: XCTestCase {
     func testChoosesTheMatchingMeasurementAndRefusesTheAmbiguousOrMissing() throws {
         let chosen = try RetainedRunChoice.choose([e(100.2, 20), e(50, 20)], bounds: Rect(x: 0, y: 0, w: 101, h: 20), scale: 1, text: "t")
         XCTAssertEqual(chosen.width, 100.2)
+        // a measurement within one pixel of the bounds on each axis is a half-pixel tie, not a mismatch (round 5)
+        XCTAssertEqual(try RetainedRunChoice.choose([e(100.2, 40)], bounds: Rect(x: 0, y: 0, w: 101, h: 39), scale: 1, text: "t").height, 40)
+        XCTAssertEqual(try RetainedRunChoice.choose([e(100.2, 40, proposed: 10), e(60, 40, proposed: 20)], bounds: Rect(x: 0, y: 0, w: 100, h: 39), scale: 1, text: "t").width, 100.2, "the closest run")
+        XCTAssertThrowsError(try RetainedRunChoice.choose([e(100.2, 42)], bounds: Rect(x: 0, y: 0, w: 101, h: 39), scale: 1, text: "t"))
         XCTAssertThrowsError(try RetainedRunChoice.choose([e(10, 20)], bounds: Rect(x: 0, y: 0, w: 101, h: 20), scale: 1, text: "t")) {
             XCTAssertEqual($0 as? HostPaintError, .measuredRunGeometryMismatch("t")) }
         XCTAssertThrowsError(try RetainedRunChoice.choose([e(100.2, 20, base: 40), e(100.6, 20, base: 41)], bounds: Rect(x: 0, y: 0, w: 101, h: 20), scale: 1, text: "t")) {
