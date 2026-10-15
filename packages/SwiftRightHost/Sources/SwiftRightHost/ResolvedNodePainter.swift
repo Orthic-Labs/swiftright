@@ -28,8 +28,8 @@ public final class ResolvedNodePainter {
     private var shapeImages: [UInt64: ImageHandle] = [:]
     var pendingShapeImages: [UInt64: ImageHandle] = [:]
     /// Registered pixel images (`Image(decorative:scale:)`), one per content id, painted size and opacity: kept while a committed tree uses them.
-    /// `level` is the `Image.Interpolation` (-1 = never set, 0 none ... 3 high); `frameW` / `frameH` are the unsnapped destination size in 1/256 device pixel (the sample scale).
-    struct PixelKey: Hashable { var contentID: UInt64; var width: UInt32; var height: UInt32; var alpha: UInt8; var level: Int8 = -1; var frameW: Int32 = 0; var frameH: Int32 = 0 }
+    /// `level` is the `Image.Interpolation` (-1 = never set, 0 none ... 3 high).
+    struct PixelKey: Hashable { var contentID: UInt64; var width: UInt32; var height: UInt32; var alpha: UInt8; var level: Int8 = -1 }
     /// The last variant registered for each image node (bridge node id): what the transient path keeps painting while the size is changing.
     private var lastPixelKey: [UInt64: PixelKey] = [:]
     /// Live resize and animation (wave 1 block I2, docs/foundations-images-fonts.md 1.3): while true, an image node whose destination size changed keeps painting its last registered variant
@@ -438,12 +438,9 @@ public final class ResolvedNodePainter {
         let targetW = Int(bounds.w.rounded()), targetH = Int(bounds.h.rounded())
         let level = node.imageSizing?.interpolation
         let levelCode: Int8 = level.map { l -> Int8 in switch l { case .none: return 0; case .low: return 1; case .medium: return 2; case .high: return 3 } } ?? -1
-        let layout = node.imageLayoutFrame ?? node.frame     // the UNSNAPPED size is the sample scale (measured on the Mac); the snapped bounds are the rect
-        let frameWpx = Double(layout.width) * Double(scale), frameHpx = Double(layout.height) * Double(scale)
         let oversize = targetW > 8192 || targetH > 8192 || targetW * targetH * 4 > 64 << 20
         let w = oversize ? UInt32(min(image.width, max(1, targetW))) : UInt32(targetW), h = oversize ? UInt32(min(image.height, max(1, targetH))) : UInt32(targetH)
-        var key = PixelKey(contentID: image.contentID, width: w, height: h, alpha: UInt8((node.opacity * 255).rounded()), level: levelCode,
-                           frameW: Int32((frameWpx * 256).rounded()), frameH: Int32((frameHpx * 256).rounded()))
+        var key = PixelKey(contentID: image.contentID, width: w, height: h, alpha: UInt8((node.opacity * 255).rounded()), level: levelCode)
         var transient = false
         if isLiveResizing, id != 0, let last = lastPixelKey[id], last != key, last.contentID == key.contentID, last.level == key.level, last.alpha == key.alpha,
            pendingPixelImages[last] != nil || pixelImages[last] != nil {
@@ -457,7 +454,7 @@ public final class ResolvedNodePainter {
             if oversize {
                 if Int(w) != image.width || Int(h) != image.height { source = ImageDecoder.resample(image, width: Int(w), height: Int(h)) }
             } else {
-                source = ImageResampler.resample(image, width: Int(w), height: Int(h), frameWidth: frameWpx, frameHeight: frameHpx, level: level)
+                source = ImageResampler.resample(image, width: Int(w), height: Int(h), level: level)
             }
             var rgba = source.rgba
             if key.alpha != 255 {

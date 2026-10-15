@@ -5,7 +5,7 @@ import Foundation
 /// The host resamples an image to the node's exact device-pixel size and registers it 1:1, so the GPU sampler never decides a gated pixel. The filter per
 /// `Image.Interpolation` level is FITTED to the Mac (ImageRenderer at scale 2.5, macOS 27.0.1 build 26A434) by factory/pipeline/blocks-w1-i2/i2fit.py on the calibration images, and
 /// gated on other images. What the fit measured (all on straight-alpha sources resampled premultiplied, gamma-encoded, with the whole source mapped onto the snapped rect):
-///   - `.none`: nearest neighbour, source index = floor((t + 0.5) * source / frame), where `frame` is the UNSNAPPED frame size in device pixels.
+///   - `.none`: nearest neighbour, source index = floor((t + 0.5) * source / destination) in device pixels.
 ///   - `.low` and no modifier: bilinear (triangle) sampled at the destination pixel centre, NOT widened on a reduction (it aliases when shrinking).
 ///   - `.medium`: the same bilinear after 2 x 2 box halvings while the reduction is more than 2:1 (a mip chain).
 ///   - `.high`: the same mip chain, then a cubic with Mitchell-Netravali parameters `ImageResampler.highCubic`, sampled at the pixel centre, not widened.
@@ -38,12 +38,13 @@ public enum ImageResampler {
         }
     }
 
-    /// Resamples `image` to `width` x `height` device pixels. `frameWidth` / `frameHeight` are the UNSNAPPED destination size in device pixels (the scale of the sample positions);
-    /// the output is the snapped rect, so it may be a pixel smaller or larger than the frame. An image drawn at its own size is returned as is.
-    public static func resample(_ image: RGBAImage, width: Int, height: Int, frameWidth: Double, frameHeight: Double, level: Image.Interpolation?) -> RGBAImage {
+    /// Resamples `image` to `width` x `height` device pixels, the node's SNAPPED destination rect: the whole source is mapped onto it, so the sample scale is source / destination size
+    /// (measured with fractional fit and fill frames: the unsnapped frame size is NOT the scale). An image drawn at its own size is returned as is.
+    public static func resample(_ image: RGBAImage, width: Int, height: Int, level: Image.Interpolation?) -> RGBAImage {
         let plan = plan(for: level)
+        let frameWidth = Double(width), frameHeight = Double(height)
         // At its own size nearest and bilinear are the identity, so the image is returned as is. `.high` is NOT: its cubic (B > 0) smooths at 1:1, and so does the Mac (measured: up to 112 levels on line art).
-        if width == image.width && height == image.height && abs(frameWidth - Double(image.width)) < 1e-9 && abs(frameHeight - Double(image.height)) < 1e-9 {
+        if width == image.width && height == image.height {
             if case .cubic = plan.filter {} else { return image }
         }
         guard width > 0, height > 0, frameWidth > 0, frameHeight > 0 else { return image }
@@ -86,7 +87,7 @@ public enum ImageResampler {
         }
     }
 
-    /// Point-sampled taps: output pixel t samples at c = (t + 0.5) * source / frame; the kernel is NOT widened by the reduction; the taps in range are renormalised.
+    /// Point-sampled taps: output pixel t samples at c = (t + 0.5) * source / destination; the kernel is NOT widened by the reduction; the taps in range are renormalised.
     static func weights(source: Int, output: Int, frame: Double, filter: Filter) -> [Taps] {
         let s = Double(source) / frame
         let sup = support(filter)

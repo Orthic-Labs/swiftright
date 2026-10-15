@@ -204,7 +204,6 @@ extension Graph {
 
     func place(_ node: Node, in rect: LayoutRect, proposal: ProposedViewSize) {
         node.frame = snapToPixelGrid(rect, scale: scale)
-        node.layoutFrame = rect
         switch node.kind {
         case .text, .textField, .textEditor, .spacer, .image, .color, .divider, .shape:
             break

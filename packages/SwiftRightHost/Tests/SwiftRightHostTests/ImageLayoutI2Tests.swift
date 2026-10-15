@@ -26,7 +26,7 @@ final class ImageLayoutI2Tests: XCTestCase {
             let src = RGBAImage(width: sw, height: sh, rgba: [UInt8](Data(base64Encoded: c["source"] as! String)!))!
             let expected = [UInt8](Data(base64Encoded: c["expected"] as! String)!)
             let level: Image.Interpolation = ["none": .none, "low": .low, "medium": .medium, "high": .high][c["level"] as! String]!
-            let out = ImageResampler.resample(src, width: w, height: h, frameWidth: c["frameW"] as! Double, frameHeight: c["frameH"] as! Double, level: level)
+            let out = ImageResampler.resample(src, width: w, height: h, level: level)
             XCTAssertEqual(out.width, w); XCTAssertEqual(out.height, h)
             var worst = 0, sum = 0
             for i in 0..<expected.count { let d = abs(Int(out.rgba[i]) - Int(expected[i])); worst = max(worst, d); sum += d }
@@ -40,14 +40,14 @@ final class ImageLayoutI2Tests: XCTestCase {
     func testAnImageAtItsOwnSizeIsReturnedUnchanged() {
         let img = gradient(12, 9)
         for level in [Image.Interpolation.none, .low, .medium, nil] {
-            XCTAssertEqual(ImageResampler.resample(img, width: 12, height: 9, frameWidth: 12, frameHeight: 9, level: level).rgba, img.rgba)
+            XCTAssertEqual(ImageResampler.resample(img, width: 12, height: 9, level: level).rgba, img.rgba)
         }
     }
 
     func testNoneAtIntegerRatiosReplicatesPixelsExactly() {
         let img = gradient(5, 4)
         for k in [2, 3] {
-            let out = ImageResampler.resample(img, width: 5 * k, height: 4 * k, frameWidth: Double(5 * k), frameHeight: Double(4 * k), level: Image.Interpolation.none)
+            let out = ImageResampler.resample(img, width: 5 * k, height: 4 * k, level: Image.Interpolation.none)
             for y in 0..<(4 * k) { for x in 0..<(5 * k) {
                 let s = ((y / k) * 5 + x / k) * 4, o = (y * 5 * k + x) * 4
                 XCTAssertEqual(Array(out.rgba[o..<o + 4]), Array(img.rgba[s..<s + 4]), "k=\(k) at \(x),\(y)")
@@ -67,7 +67,7 @@ final class ImageLayoutI2Tests: XCTestCase {
         // alpha 0 yellow beside opaque red, enlarged 4x: every output pixel is red with partial alpha, or transparent with RGB 0; a straight-alpha resample would give orange
         let img = RGBAImage(width: 2, height: 1, rgba: [255, 255, 0, 0, 255, 0, 0, 255])!
         for level in [Image.Interpolation.low, .medium, .high] {
-            let out = ImageResampler.resample(img, width: 8, height: 4, frameWidth: 8, frameHeight: 4, level: level)
+            let out = ImageResampler.resample(img, width: 8, height: 4, level: level)
             for i in 0..<(8 * 4) {
                 let (r, g, b, a) = (out.rgba[i * 4], out.rgba[i * 4 + 1], out.rgba[i * 4 + 2], out.rgba[i * 4 + 3])
                 if a == 0 { XCTAssertEqual([r, g, b], [0, 0, 0]) } else { XCTAssertEqual(g, 0, "no yellow bleeds (\(level))"); XCTAssertEqual(b, 0); XCTAssertEqual(r, 255, "\(level)") }
@@ -77,7 +77,7 @@ final class ImageLayoutI2Tests: XCTestCase {
 
     func testHalvingKeepsAMeanInAMipChain() {
         let img = solid(32, 32, [40, 90, 200, 255])
-        let out = ImageResampler.resample(img, width: 8, height: 8, frameWidth: 8, frameHeight: 8, level: .high)   // 4:1: two halvings then a 1:1 cubic
+        let out = ImageResampler.resample(img, width: 8, height: 8, level: .high)   // 4:1: two halvings then a 1:1 cubic
         XCTAssertEqual(Array(out.rgba.prefix(4)), [40, 90, 200, 255])
         XCTAssertEqual(Array(out.rgba.suffix(4)), [40, 90, 200, 255])
     }
