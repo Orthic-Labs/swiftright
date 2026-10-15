@@ -60,6 +60,7 @@ jobs:
             factory/tools
           sparse-checkout-cone-mode: true
           fetch-depth: 1
+      - run: python3 -m pip install --disable-pip-version-check pillow==11.3.0
       - id: plan
         env:
           CASES: ${{ inputs.cases }}
