@@ -650,6 +650,8 @@ fn load_fonts(cx: &mut App) {
         "Tinos-Regular.ttf",
         "SRProbeLatin-Regular.ttf",
         "SRProbeGreek-Regular.ttf",
+        "SRProbeTinosNoHint-Regular.ttf",
+        "SRProbeTinosGasp-Regular.ttf",
     ] {
         let path = std::path::Path::new(&dir).join(name);
         match std::fs::read(&path) {

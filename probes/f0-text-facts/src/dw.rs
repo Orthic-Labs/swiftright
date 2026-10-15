@@ -330,6 +330,8 @@ unsafe fn run_inner(out: &str) -> windows::core::Result<()> {
         "Tinos-Regular.ttf",
         "SRProbeLatin-Regular.ttf",
         "SRProbeGreek-Regular.ttf",
+        "SRProbeTinosNoHint-Regular.ttf",
+        "SRProbeTinosGasp-Regular.ttf",
     ] {
         match std::fs::read(std::path::Path::new(&fonts_dir).join(name)) {
             Ok(bytes) => {
