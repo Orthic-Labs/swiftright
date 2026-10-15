@@ -1,0 +1,55 @@
+{
+ "excludeRects": [
+  {
+   "name": "placeholder glyphs (Segoe UI vs SF, sr1-decisions #2)",
+   "rect": [
+    250,
+    280,
+    550,
+    320
+   ]
+  }
+ ],
+ "semanticGate": {
+  "fields": [
+   "role",
+   "name",
+   "value",
+   "enabled",
+   "boundsY",
+   "boundsX"
+  ],
+  "boundsXRoles": [
+   "textfield"
+  ],
+  "scope": "main",
+  "roles": [
+   "textfield",
+   "text"
+  ]
+ },
+ "textOriginGate": {
+  "fields": [
+   [
+    245,
+    275,
+    555,
+    325
+   ]
+  ],
+  "firstInkYTolerancePx": 2,
+  "baselineTolerancePx": 2,
+  "inkCentreYTolerancePx": 0.5,
+  "yToleranceReason": "as textfield/placeholder-v1 (decision 14): Windows draws the body font at 12 pt and the Mac at 13 pt, measured per run"
+ },
+ "steps": [
+  {
+   "op": "wait",
+   "ms": 300
+  }
+ ],
+ "macArgs": [
+  "--steps",
+  "[{\"op\":\"wait\",\"ms\":300}]"
+ ]
+}

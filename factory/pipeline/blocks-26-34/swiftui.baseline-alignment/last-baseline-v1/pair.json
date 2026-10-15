@@ -1,0 +1,133 @@
+{
+ "textColourGate": {
+  "tolerance": 40,
+  "regions": [
+   {
+    "name": "item 0",
+    "rect": [
+     100,
+     50,
+     200,
+     250
+    ],
+    "align": "leading"
+   },
+   {
+    "name": "item 1",
+    "rect": [
+     220,
+     50,
+     320,
+     250
+    ],
+    "align": "leading"
+   },
+   {
+    "name": "item 2",
+    "rect": [
+     340,
+     50,
+     440,
+     250
+    ],
+    "align": "leading"
+   }
+  ],
+  "baselineAlign": [
+   {
+    "name": "baselines",
+    "items": [
+     {
+      "kind": "text",
+      "rect": [
+       100,
+       50,
+       200,
+       250
+      ]
+     },
+     {
+      "kind": "text",
+      "rect": [
+       220,
+       50,
+       320,
+       250
+      ]
+     },
+     {
+      "kind": "text",
+      "rect": [
+       340,
+       50,
+       440,
+       250
+      ]
+     },
+     {
+      "kind": "rect",
+      "rect": [
+       460,
+       50,
+       560,
+       250
+      ]
+     }
+    ],
+    "tolerancePx": 1
+   }
+  ]
+ },
+ "excludeRects": [
+  {
+   "name": "item 0 glyph region (Segoe UI vs SF, decision 2); gated by the baseline relation and the colour gate",
+   "rect": [
+    100,
+    50,
+    200,
+    250
+   ]
+  },
+  {
+   "name": "item 1 glyph region (Segoe UI vs SF, decision 2); gated by the baseline relation and the colour gate",
+   "rect": [
+    220,
+    50,
+    320,
+    250
+   ]
+  },
+  {
+   "name": "item 2 glyph region (Segoe UI vs SF, decision 2); gated by the baseline relation and the colour gate",
+   "rect": [
+    340,
+    50,
+    440,
+    250
+   ]
+  }
+ ],
+ "semanticGate": {
+  "fields": [
+   "role",
+   "name",
+   "count",
+   "order"
+  ],
+  "scope": "main",
+  "phases": [
+   ""
+  ],
+  "pixels": "report-only"
+ },
+ "steps": [
+  {
+   "op": "wait",
+   "ms": 600
+  }
+ ],
+ "macArgs": [
+  "--steps",
+  "[{\"op\":\"wait\",\"ms\":600}]"
+ ]
+}

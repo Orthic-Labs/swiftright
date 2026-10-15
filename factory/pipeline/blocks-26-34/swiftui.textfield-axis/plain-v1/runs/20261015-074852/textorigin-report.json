@@ -1,0 +1,23 @@
+{
+ "gate": "text origin (first ink x, first ink y, baseline, selection colour and start x)",
+ "yTolerancesPx": {
+  "firstInkY": 2,
+  "baseline": 2,
+  "inkCentreY": 0.5
+ },
+ "yToleranceReason": "as textfield/placeholder-v1 (decision 14): Windows draws the body font at 12 pt and the Mac at 13 pt, measured per run",
+ "firstInkTolerancePx": 0,
+ "firstInkToleranceReason": null,
+ "selectionStartTolerancePx": 0,
+ "checks": 1,
+ "fail": 1,
+ "rows": [
+  {
+   "run": 1,
+   "ok": false,
+   "why": [
+    "missing windows capture"
+   ]
+  }
+ ]
+}

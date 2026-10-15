@@ -1,0 +1,175 @@
+{
+ "edgeAAToleranceLevels": 32,
+ "pairs": 1,
+ "frames": null,
+ "exact": 0,
+ "exactWithExclusions": 1,
+ "edgeAA": 0,
+ "fail": 0,
+ "maxdiff": 0,
+ "diffbbox": null,
+ "rows": [
+  {
+   "run": 1,
+   "verdict": "exact-with-exclusions",
+   "gate": {
+    "verdict": "exact",
+    "totalDiff": 0,
+    "inBandDiff": 0,
+    "outOfBandDiff": 0,
+    "maxInBand": 0,
+    "maxOutOfBand": 0,
+    "bandPixels": 37522
+   },
+   "exact": false,
+   "differentPixels": 0,
+   "maxdiff": 0,
+   "diffbbox": null,
+   "fullFrameDifferentPixels": 34176,
+   "excluded": [
+    {
+     "name": "row 0 glyph region (Segoe UI vs SF, decision 2); gated by the position gate of decision 19",
+     "rect": [
+      100,
+      50,
+      700,
+      200
+     ],
+     "diffPixels": 8478,
+     "macInkBBox": [
+      104,
+      104,
+      460,
+      159
+     ],
+     "winInkBBox": [
+      110,
+      106,
+      466,
+      165
+     ]
+    },
+    {
+     "name": "row 1 glyph region (Segoe UI vs SF, decision 2); gated by the position gate of decision 19",
+     "rect": [
+      100,
+      200,
+      700,
+      350
+     ],
+     "diffPixels": 11179,
+     "macInkBBox": [
+      104,
+      251,
+      520,
+      315
+     ],
+     "winInkBBox": [
+      112,
+      253,
+      527,
+      321
+     ]
+    },
+    {
+     "name": "row 2 glyph region (Segoe UI vs SF, decision 2); gated by the position gate of decision 19",
+     "rect": [
+      100,
+      350,
+      700,
+      500
+     ],
+     "diffPixels": 14519,
+     "macInkBBox": [
+      105,
+      397,
+      579,
+      470
+     ],
+     "winInkBBox": [
+      107,
+      400,
+      587,
+      477
+     ]
+    }
+   ]
+  }
+ ],
+ "build": {
+  "stage": {
+   "name": "c18c4a0d8-77d324fc",
+   "commit": "c18c4a0d8ee599f339ee5231a6f41fdd27c27b4b",
+   "ref": "HEAD",
+   "mode": "git-archive",
+   "dirty": false,
+   "treeSha256": "sha256:77d324fc4cf43dc370e2b4980b56bc364d96e9e4ea59a00a9ce187282a6a5462",
+   "files": 173,
+   "paths": [
+    "packages/SwiftRightBridge",
+    "packages/SwiftRightHost",
+    "probes/sr0-s/fresh-runtime"
+   ],
+   "stagedUtc": "2026-10-15T02:01:32Z"
+  },
+  "renderer": {
+   "path": "D:\\Claude\\swiftright\\.factory-work\\inputs\\renderer-0.7-baseline-22ad719b\\swiftright_render.dll",
+   "sha256": "82513ae0c1e29f30ea4efe27d84869cd6b3c3fbce7951d78083f9647226bc05d"
+  },
+  "case": "/Volumes/D/claude/swiftright/factory/pipeline/blocks-26-34/swiftui.system-font/sizes-large-v1",
+  "mac": {
+   "osVersion": "27.0.1",
+   "osBuild": "26A434",
+   "swiftc": "Apple Swift version 6.4 (swiftlang-6.4.0.34.1 clang-2100.3.34.1)",
+   "clockHost": "os=Version_27.0.1_(Build_26A434) pinnedDisplayScale=2.5 windowBackingScale=2.5 effectiveDisplayScale=2.5 screens=[1600x1000@2.0x]",
+   "scaleGuard": {
+    "captureScale": 2.5,
+    "status": "OK",
+    "runs": 1,
+    "reported": 1,
+    "distinct": [
+     [
+      2.5,
+      "2.5",
+      2.5
+     ]
+    ],
+    "screens": [
+     "[1600x1000@2.0x]"
+    ],
+    "mismatches": [],
+    "unreportedRuns": []
+   }
+  }
+ },
+ "gate": "exact outside excluded regions",
+ "excludedRegions": [
+  {
+   "name": "row 0 glyph region (Segoe UI vs SF, decision 2); gated by the position gate of decision 19",
+   "rect": [
+    100,
+    50,
+    700,
+    200
+   ]
+  },
+  {
+   "name": "row 1 glyph region (Segoe UI vs SF, decision 2); gated by the position gate of decision 19",
+   "rect": [
+    100,
+    200,
+    700,
+    350
+   ]
+  },
+  {
+   "name": "row 2 glyph region (Segoe UI vs SF, decision 2); gated by the position gate of decision 19",
+   "rect": [
+    100,
+    350,
+    700,
+    500
+   ]
+  }
+ ]
+}

@@ -1,0 +1,6 @@
+{
+ "edgeAATolerance": {
+  "levels": 210,
+  "reason": "Apple's rasterizer coverage differs from the exact area of path(in:) on the flat shoulders of a large-radius corner: the path is Apple's to 4 decimals (unit test), this raster equals the exact coverage of that path (independent 24x24 supersample), and SwiftUI's own fill of the shape and of Path(path(in:)) are identical; the difference is bounded to the 1 px edge band, outside it the gate is exact (decision F4)"
+ }
+}

@@ -1,0 +1,206 @@
+{
+ "edgeAAToleranceLevels": 32,
+ "pairs": 1,
+ "frames": null,
+ "exact": 0,
+ "exactWithExclusions": 1,
+ "edgeAA": 0,
+ "fail": 0,
+ "maxdiff": 0,
+ "diffbbox": null,
+ "rows": [
+  {
+   "run": 1,
+   "verdict": "exact-with-exclusions",
+   "gate": {
+    "verdict": "exact",
+    "totalDiff": 0,
+    "inBandDiff": 0,
+    "outOfBandDiff": 0,
+    "maxInBand": 0,
+    "maxOutOfBand": 0,
+    "bandPixels": 5866
+   },
+   "exact": false,
+   "differentPixels": 0,
+   "maxdiff": 0,
+   "diffbbox": null,
+   "fullFrameDifferentPixels": 3352,
+   "excluded": [
+    {
+     "name": "item 0 glyph region (Segoe UI vs SF, decision 2); gated by the baseline relation and the colour gate",
+     "rect": [
+      100,
+      50,
+      200,
+      200
+     ],
+     "diffPixels": 704,
+     "macInkBBox": [
+      102,
+      121,
+      154,
+      149
+     ],
+     "winInkBBox": [
+      105,
+      121,
+      150,
+      149
+     ]
+    },
+    {
+     "name": "item 1 glyph region (Segoe UI vs SF, decision 2); gated by the baseline relation and the colour gate",
+     "rect": [
+      220,
+      50,
+      320,
+      200
+     ],
+     "diffPixels": 704,
+     "macInkBBox": [
+      222,
+      121,
+      274,
+      149
+     ],
+     "winInkBBox": [
+      225,
+      121,
+      271,
+      149
+     ]
+    },
+    {
+     "name": "item 2 glyph region (Segoe UI vs SF, decision 2); gated by the baseline relation and the colour gate",
+     "rect": [
+      340,
+      50,
+      440,
+      200
+     ],
+     "diffPixels": 1338,
+     "macInkBBox": [
+      343,
+      110,
+      418,
+      152
+     ],
+     "winInkBBox": [
+      347,
+      110,
+      415,
+      152
+     ]
+    },
+    {
+     "name": "item 3 glyph region (Segoe UI vs SF, decision 2); gated by the baseline relation and the colour gate",
+     "rect": [
+      460,
+      50,
+      560,
+      200
+     ],
+     "diffPixels": 606,
+     "macInkBBox": [
+      462,
+      123,
+      509,
+      149
+     ],
+     "winInkBBox": [
+      462,
+      123,
+      507,
+      149
+     ]
+    }
+   ]
+  }
+ ],
+ "build": {
+  "stage": {
+   "name": "35e821cfd-986bd6fa",
+   "commit": "35e821cfd527a6e09c73e300769560bab6634631",
+   "ref": "HEAD",
+   "mode": "git-archive",
+   "dirty": false,
+   "treeSha256": "sha256:986bd6fa24cf552263733451df11e130410db4fc5f1af83a975be009e51d86ff",
+   "files": 175,
+   "paths": [
+    "packages/SwiftRightBridge",
+    "packages/SwiftRightHost",
+    "probes/sr0-s/fresh-runtime"
+   ],
+   "stagedUtc": "2026-10-15T02:17:30Z"
+  },
+  "renderer": {
+   "path": "D:\\Claude\\swiftright\\.factory-work\\inputs\\renderer-0.7-baseline-22ad719b\\swiftright_render.dll",
+   "sha256": "82513ae0c1e29f30ea4efe27d84869cd6b3c3fbce7951d78083f9647226bc05d"
+  },
+  "case": "/Volumes/D/claude/swiftright/factory/pipeline/blocks-26-34/swiftui.baseline-alignment/frame-v1",
+  "mac": {
+   "osVersion": "27.0.1",
+   "osBuild": "26A434",
+   "swiftc": "Apple Swift version 6.4 (swiftlang-6.4.0.34.1 clang-2100.3.34.1)",
+   "clockHost": "os=Version_27.0.1_(Build_26A434) pinnedDisplayScale=2.5 windowBackingScale=2.5 effectiveDisplayScale=2.5 screens=[1600x1000@2.0x]",
+   "scaleGuard": {
+    "captureScale": 2.5,
+    "status": "OK",
+    "runs": 1,
+    "reported": 1,
+    "distinct": [
+     [
+      2.5,
+      "2.5",
+      2.5
+     ]
+    ],
+    "screens": [
+     "[1600x1000@2.0x]"
+    ],
+    "mismatches": [],
+    "unreportedRuns": []
+   }
+  }
+ },
+ "gate": "exact outside excluded regions",
+ "excludedRegions": [
+  {
+   "name": "item 0 glyph region (Segoe UI vs SF, decision 2); gated by the baseline relation and the colour gate",
+   "rect": [
+    100,
+    50,
+    200,
+    200
+   ]
+  },
+  {
+   "name": "item 1 glyph region (Segoe UI vs SF, decision 2); gated by the baseline relation and the colour gate",
+   "rect": [
+    220,
+    50,
+    320,
+    200
+   ]
+  },
+  {
+   "name": "item 2 glyph region (Segoe UI vs SF, decision 2); gated by the baseline relation and the colour gate",
+   "rect": [
+    340,
+    50,
+    440,
+    200
+   ]
+  },
+  {
+   "name": "item 3 glyph region (Segoe UI vs SF, decision 2); gated by the baseline relation and the colour gate",
+   "rect": [
+    460,
+    50,
+    560,
+    200
+   ]
+  }
+ ]
+}

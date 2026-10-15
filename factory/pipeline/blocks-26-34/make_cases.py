@@ -99,7 +99,7 @@ build("swiftui.text-views/text-verbatim-v1", T + "verbatim", r"""struct Witness_
             Rectangle().fill(Color.red).frame(width: 240, height: 20).padding(.top, 10)
         }.frame(width: 240, height: 200, alignment: .topLeading)
     }
-}""", [("start", None)], [("a", 0, 20, 0), ("b", 20, 40, 0), ("c", 40, 60, 0)], [])
+}""", [("start", None)], [("a", 0, 20, -2), ("b", 20, 40, -2), ("c", 40, 60, -2)], [])
 
 # Color.clear is invisible and has no ink: in a ZStack over colour, as a fill, as a background and as an overlay it changes nothing
 static("color-clear-v1", T + "clear", f"""        ZStack(alignment: .topLeading) {{

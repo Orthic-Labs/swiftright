@@ -1,0 +1,127 @@
+{
+ "case": "line-limit-v1",
+ "run": "20261015-072327",
+ "pairs": 1,
+ "gatePassed": 0,
+ "tolerance": 40,
+ "rows": [
+  {
+   "run": 1,
+   "ok": false,
+   "regions": [
+    {
+     "name": "row 0",
+     "mac": [
+      39,
+      39,
+      39
+     ],
+     "windows": [
+      31,
+      31,
+      31
+     ],
+     "ok": true,
+     "position": {
+      "mac": {
+       "firstInkX": 101,
+       "firstInkY": 121,
+       "baselineY": 181,
+       "inkCentreX": 235.0,
+       "inkRightX": 369,
+       "inkHeight": 67,
+       "lineBands": 2
+      },
+      "windows": {
+       "firstInkX": 101,
+       "firstInkY": 120,
+       "baselineY": 181,
+       "inkCentreX": 230.0,
+       "inkRightX": 359,
+       "inkHeight": 70,
+       "lineBands": 2
+      },
+      "ok": true,
+      "why": []
+     }
+    },
+    {
+     "name": "row 1",
+     "mac": [
+      39,
+      39,
+      39
+     ],
+     "windows": [
+      31,
+      31,
+      31
+     ],
+     "ok": true,
+     "position": {
+      "mac": {
+       "firstInkX": 101,
+       "firstInkY": 251,
+       "baselineY": 349,
+       "inkCentreX": 234.0,
+       "inkRightX": 367,
+       "inkHeight": 99,
+       "lineBands": 3
+      },
+      "windows": {
+       "firstInkX": 101,
+       "firstInkY": 249,
+       "baselineY": 349,
+       "inkCentreX": 235.5,
+       "inkRightX": 370,
+       "inkHeight": 101,
+       "lineBands": 3
+      },
+      "ok": true,
+      "why": []
+     }
+    },
+    {
+     "name": "row 2",
+     "mac": [
+      39,
+      39,
+      39
+     ],
+     "windows": [
+      31,
+      31,
+      31
+     ],
+     "ok": false,
+     "position": {
+      "mac": {
+       "firstInkX": 101,
+       "firstInkY": 420,
+       "baselineY": 480,
+       "inkCentreX": 223.0,
+       "inkRightX": 345,
+       "inkHeight": 136,
+       "lineBands": 3
+      },
+      "windows": {
+       "firstInkX": 101,
+       "firstInkY": 350,
+       "baselineY": 488,
+       "inkCentreX": 235.5,
+       "inkRightX": 370,
+       "inkHeight": 139,
+       "lineBands": 3
+      },
+      "ok": false,
+      "why": [
+       "first ink y differs by -70 px (tolerance 6)",
+       "baseline differs by 8 px (tolerance 6)",
+       "ink vertical centre differs by -31 px (tolerance 6)"
+      ]
+     }
+    }
+   ]
+  }
+ ]
+}

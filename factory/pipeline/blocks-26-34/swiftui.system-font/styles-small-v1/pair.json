@@ -1,0 +1,153 @@
+{
+ "textColourGate": {
+  "tolerance": 40,
+  "regions": [
+   {
+    "name": "row 0",
+    "rect": [
+     100,
+     50,
+     700,
+     110
+    ],
+    "align": "leading"
+   },
+   {
+    "name": "row 1",
+    "rect": [
+     100,
+     110,
+     700,
+     170
+    ],
+    "align": "leading"
+   },
+   {
+    "name": "row 2",
+    "rect": [
+     100,
+     170,
+     700,
+     230
+    ],
+    "align": "leading"
+   },
+   {
+    "name": "row 3",
+    "rect": [
+     100,
+     230,
+     700,
+     290
+    ],
+    "align": "leading"
+   },
+   {
+    "name": "row 4",
+    "rect": [
+     100,
+     290,
+     700,
+     350
+    ],
+    "align": "leading"
+   },
+   {
+    "name": "row 5",
+    "rect": [
+     100,
+     350,
+     700,
+     410
+    ],
+    "align": "leading"
+   }
+  ],
+  "position": {
+   "align": "leading",
+   "reason": "Segoe UI vs SF (decision 2), measured over the N=1 runs of every system-font case (Windows minus Mac, px): first ink y 0..5 (5 at largeTitle), baseline -1..4, ink mid-point 0..3.5, first ink x 0..2: Segoe UI sits lower in its line than SF and its glyphs are a little larger at the same point size (decision F1)",
+   "firstInkYTolerancePx": 5,
+   "baselineTolerancePx": 4,
+   "inkCentreYTolerancePx": 4,
+   "firstInkXTolerancePx": 2
+  }
+ },
+ "excludeRects": [
+  {
+   "name": "row 0 glyph region (Segoe UI vs SF, decision 2); gated by the position gate of decision 19",
+   "rect": [
+    100,
+    50,
+    700,
+    110
+   ]
+  },
+  {
+   "name": "row 1 glyph region (Segoe UI vs SF, decision 2); gated by the position gate of decision 19",
+   "rect": [
+    100,
+    110,
+    700,
+    170
+   ]
+  },
+  {
+   "name": "row 2 glyph region (Segoe UI vs SF, decision 2); gated by the position gate of decision 19",
+   "rect": [
+    100,
+    170,
+    700,
+    230
+   ]
+  },
+  {
+   "name": "row 3 glyph region (Segoe UI vs SF, decision 2); gated by the position gate of decision 19",
+   "rect": [
+    100,
+    230,
+    700,
+    290
+   ]
+  },
+  {
+   "name": "row 4 glyph region (Segoe UI vs SF, decision 2); gated by the position gate of decision 19",
+   "rect": [
+    100,
+    290,
+    700,
+    350
+   ]
+  },
+  {
+   "name": "row 5 glyph region (Segoe UI vs SF, decision 2); gated by the position gate of decision 19",
+   "rect": [
+    100,
+    350,
+    700,
+    410
+   ]
+  }
+ ],
+ "semanticGate": {
+  "fields": [
+   "role",
+   "name",
+   "count",
+   "order"
+  ],
+  "scope": "main",
+  "phases": [
+   ""
+  ]
+ },
+ "steps": [
+  {
+   "op": "wait",
+   "ms": 600
+  }
+ ],
+ "macArgs": [
+  "--steps",
+  "[{\"op\":\"wait\",\"ms\":600}]"
+ ]
+}

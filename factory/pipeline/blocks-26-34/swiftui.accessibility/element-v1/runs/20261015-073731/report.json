@@ -1,0 +1,236 @@
+{
+ "pairs": 1,
+ "frames": null,
+ "exact": 0,
+ "exactWithExclusions": 1,
+ "edgeAA": 0,
+ "fail": 0,
+ "maxdiff": 0,
+ "diffbbox": null,
+ "rows": [
+  {
+   "run": 1,
+   "verdict": "exact-with-exclusions",
+   "gate": {
+    "verdict": "exact",
+    "totalDiff": 0,
+    "inBandDiff": 0,
+    "outOfBandDiff": 0,
+    "maxInBand": 0,
+    "maxOutOfBand": 0,
+    "bandPixels": 18883
+   },
+   "exact": false,
+   "differentPixels": 0,
+   "maxdiff": 0,
+   "diffbbox": null,
+   "fullFrameDifferentPixels": 11639,
+   "excluded": [
+    {
+     "name": "row 0 text glyph region (Segoe UI vs SF, decision 2); gated by the semantic tree",
+     "rect": [
+      100,
+      50,
+      700,
+      100
+     ],
+     "diffPixels": 2882,
+     "macInkBBox": [
+      102,
+      64,
+      445,
+      94
+     ],
+     "winInkBBox": [
+      105,
+      66,
+      433,
+      94
+     ]
+    },
+    {
+     "name": "row 1 text glyph region (Segoe UI vs SF, decision 2); gated by the semantic tree",
+     "rect": [
+      100,
+      100,
+      700,
+      150
+     ],
+     "diffPixels": 2391,
+     "macInkBBox": [
+      101,
+      114,
+      427,
+      144
+     ],
+     "winInkBBox": [
+      101,
+      116,
+      417,
+      144
+     ]
+    },
+    {
+     "name": "row 2 text glyph region (Segoe UI vs SF, decision 2); gated by the semantic tree",
+     "rect": [
+      100,
+      150,
+      700,
+      200
+     ],
+     "diffPixels": 2367,
+     "macInkBBox": [
+      102,
+      163,
+      444,
+      189
+     ],
+     "winInkBBox": [
+      105,
+      164,
+      427,
+      187
+     ]
+    },
+    {
+     "name": "row 3 text glyph region (Segoe UI vs SF, decision 2); gated by the semantic tree",
+     "rect": [
+      100,
+      200,
+      700,
+      250
+     ],
+     "diffPixels": 1737,
+     "macInkBBox": [
+      101,
+      214,
+      422,
+      239
+     ],
+     "winInkBBox": [
+      101,
+      216,
+      414,
+      237
+     ]
+    },
+    {
+     "name": "row 4 text glyph region (Segoe UI vs SF, decision 2); gated by the semantic tree",
+     "rect": [
+      100,
+      250,
+      700,
+      300
+     ],
+     "diffPixels": 2262,
+     "macInkBBox": [
+      102,
+      263,
+      452,
+      294
+     ],
+     "winInkBBox": [
+      105,
+      266,
+      442,
+      290
+     ]
+    }
+   ]
+  }
+ ],
+ "build": {
+  "stage": {
+   "name": "5149a071a-004a04e9",
+   "commit": "5149a071a9a6ce9cd432b89ae63544ed0513b083",
+   "ref": "HEAD",
+   "mode": "git-archive",
+   "dirty": false,
+   "treeSha256": "sha256:004a04e974855c97c26a667a7b760f9f1a0148f8153ebaf87fb425e6563e2280",
+   "files": 174,
+   "paths": [
+    "packages/SwiftRightBridge",
+    "packages/SwiftRightHost",
+    "probes/sr0-s/fresh-runtime"
+   ],
+   "stagedUtc": "2026-10-15T02:07:24Z"
+  },
+  "renderer": {
+   "path": "D:\\Claude\\swiftright\\.factory-work\\inputs\\renderer-0.7-baseline-22ad719b\\swiftright_render.dll",
+   "sha256": "82513ae0c1e29f30ea4efe27d84869cd6b3c3fbce7951d78083f9647226bc05d"
+  },
+  "case": "/Volumes/D/claude/swiftright/factory/pipeline/blocks-26-34/swiftui.accessibility/element-v1",
+  "mac": {
+   "osVersion": "27.0.1",
+   "osBuild": "26A434",
+   "swiftc": "Apple Swift version 6.4 (swiftlang-6.4.0.34.1 clang-2100.3.34.1)",
+   "clockHost": "os=Version_27.0.1_(Build_26A434) pinnedDisplayScale=2.5 windowBackingScale=2.5 effectiveDisplayScale=2.5 screens=[1600x1000@2.0x]",
+   "scaleGuard": {
+    "captureScale": 2.5,
+    "status": "OK",
+    "runs": 1,
+    "reported": 1,
+    "distinct": [
+     [
+      2.5,
+      "2.5",
+      2.5
+     ]
+    ],
+    "screens": [
+     "[1600x1000@2.0x]"
+    ],
+    "mismatches": [],
+    "unreportedRuns": []
+   }
+  }
+ },
+ "gate": "exact outside excluded regions",
+ "excludedRegions": [
+  {
+   "name": "row 0 text glyph region (Segoe UI vs SF, decision 2); gated by the semantic tree",
+   "rect": [
+    100,
+    50,
+    700,
+    100
+   ]
+  },
+  {
+   "name": "row 1 text glyph region (Segoe UI vs SF, decision 2); gated by the semantic tree",
+   "rect": [
+    100,
+    100,
+    700,
+    150
+   ]
+  },
+  {
+   "name": "row 2 text glyph region (Segoe UI vs SF, decision 2); gated by the semantic tree",
+   "rect": [
+    100,
+    150,
+    700,
+    200
+   ]
+  },
+  {
+   "name": "row 3 text glyph region (Segoe UI vs SF, decision 2); gated by the semantic tree",
+   "rect": [
+    100,
+    200,
+    700,
+    250
+   ]
+  },
+  {
+   "name": "row 4 text glyph region (Segoe UI vs SF, decision 2); gated by the semantic tree",
+   "rect": [
+    100,
+    250,
+    700,
+    300
+   ]
+  }
+ ]
+}

@@ -1,0 +1,163 @@
+{
+ "pairs": 1,
+ "pass_": 0,
+ "fail": 1,
+ "gate": {
+  "fields": [
+   "role",
+   "name",
+   "value",
+   "enabled",
+   "count",
+   "order"
+  ],
+  "scope": "main",
+  "phases": [
+   ""
+  ]
+ },
+ "rows": [
+  {
+   "run": 1,
+   "verdict": "fail",
+   "compared": {
+    "final": {
+     "main": {
+      "windows": 7,
+      "mac": 6
+     }
+    }
+   },
+   "mismatches": [
+    {
+     "where": "main",
+     "field": "count",
+     "windows": 7,
+     "mac": 6,
+     "phase": ""
+    },
+    {
+     "where": "main[0]",
+     "field": "name",
+     "windows": "Heading text",
+     "mac": "Static text",
+     "role": [
+      "text",
+      "text"
+     ],
+     "phase": ""
+    },
+    {
+     "where": "main[1]",
+     "field": "role",
+     "windows": "text",
+     "mac": "image",
+     "role": [
+      "text",
+      "image"
+     ],
+     "phase": ""
+    },
+    {
+     "where": "main[1]",
+     "field": "name",
+     "windows": "Static text",
+     "mac": "Chart",
+     "role": [
+      "text",
+      "image"
+     ],
+     "phase": ""
+    },
+    {
+     "where": "main[2]",
+     "field": "role",
+     "windows": "image",
+     "mac": "button",
+     "role": [
+      "image",
+      "button"
+     ],
+     "phase": ""
+    },
+    {
+     "where": "main[2]",
+     "field": "name",
+     "windows": "Chart",
+     "mac": "Selected",
+     "role": [
+      "image",
+      "button"
+     ],
+     "phase": ""
+    },
+    {
+     "where": "main[3]",
+     "field": "name",
+     "windows": "Selected",
+     "mac": "Chosen",
+     "role": [
+      "button",
+      "button"
+     ],
+     "phase": ""
+    },
+    {
+     "where": "main[4]",
+     "field": "role",
+     "windows": "button",
+     "mac": "link",
+     "role": [
+      "button",
+      "link"
+     ],
+     "phase": ""
+    },
+    {
+     "where": "main[4]",
+     "field": "name",
+     "windows": "Chosen",
+     "mac": "Link text",
+     "role": [
+      "button",
+      "link"
+     ],
+     "phase": ""
+    },
+    {
+     "where": "main[5]",
+     "field": "name",
+     "windows": "Link text",
+     "mac": "Live text",
+     "role": [
+      "text",
+      "text"
+     ],
+     "phase": ""
+    },
+    {
+     "where": "main[6]",
+     "field": "missing",
+     "windows": {
+      "role": "text",
+      "name": "Live text",
+      "value": null,
+      "enabled": true,
+      "focus": false,
+      "toggle": null,
+      "bounds": [
+       40.0,
+       166.0,
+       43.6,
+       16.0
+      ],
+      "depth": 1,
+      "raw": "Text"
+     },
+     "mac": null,
+     "phase": ""
+    }
+   ]
+  }
+ ]
+}

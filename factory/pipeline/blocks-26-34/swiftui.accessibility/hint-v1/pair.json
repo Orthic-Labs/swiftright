@@ -1,0 +1,46 @@
+{
+ "semanticGate": {
+  "fields": [
+   "role",
+   "name",
+   "value",
+   "enabled",
+   "count",
+   "order"
+  ],
+  "scope": "main",
+  "phases": [
+   ""
+  ]
+ },
+ "excludeRects": [
+  {
+   "name": "row 0 text glyph region (Segoe UI vs SF, decision 2); gated by the semantic tree",
+   "rect": [
+    100,
+    50,
+    700,
+    130
+   ]
+  },
+  {
+   "name": "row 1 text glyph region (Segoe UI vs SF, decision 2); gated by the semantic tree",
+   "rect": [
+    100,
+    130,
+    700,
+    180
+   ]
+  }
+ ],
+ "steps": [
+  {
+   "op": "wait",
+   "ms": 700
+  }
+ ],
+ "macArgs": [
+  "--steps",
+  "[{\"op\":\"wait\",\"ms\":700}]"
+ ]
+}

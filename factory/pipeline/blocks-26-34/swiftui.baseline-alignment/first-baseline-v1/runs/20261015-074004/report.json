@@ -1,0 +1,72 @@
+{
+ "pairs": 1,
+ "frames": null,
+ "exact": 0,
+ "exactWithExclusions": 0,
+ "edgeAA": 0,
+ "fail": 1,
+ "maxdiff": 0,
+ "diffbbox": null,
+ "rows": [
+  {
+   "run": 1,
+   "error": "missing capture"
+  }
+ ],
+ "build": {
+  "mac": {
+   "osVersion": "27.0.1",
+   "osBuild": "26A434",
+   "swiftc": "Apple Swift version 6.4 (swiftlang-6.4.0.34.1 clang-2100.3.34.1)",
+   "clockHost": "os=Version_27.0.1_(Build_26A434) pinnedDisplayScale=2.5 windowBackingScale=2.5 effectiveDisplayScale=2.5 screens=[1600x1000@2.0x]",
+   "scaleGuard": {
+    "captureScale": 2.5,
+    "status": "OK",
+    "runs": 1,
+    "reported": 1,
+    "distinct": [
+     [
+      2.5,
+      "2.5",
+      2.5
+     ]
+    ],
+    "screens": [
+     "[1600x1000@2.0x]"
+    ],
+    "mismatches": [],
+    "unreportedRuns": []
+   }
+  }
+ },
+ "gate": "exact outside excluded regions",
+ "excludedRegions": [
+  {
+   "name": "item 0 glyph region (Segoe UI vs SF, decision 2); gated by the baseline relation and the colour gate",
+   "rect": [
+    100,
+    50,
+    200,
+    200
+   ]
+  },
+  {
+   "name": "item 1 glyph region (Segoe UI vs SF, decision 2); gated by the baseline relation and the colour gate",
+   "rect": [
+    220,
+    50,
+    320,
+    200
+   ]
+  },
+  {
+   "name": "item 3 glyph region (Segoe UI vs SF, decision 2); gated by the baseline relation and the colour gate",
+   "rect": [
+    460,
+    50,
+    560,
+    200
+   ]
+  }
+ ]
+}

@@ -6,6 +6,7 @@ import sys, json
 sys.path.insert(0, "/Volumes/D/claude/swiftright/factory/tools/sandbox")
 import client
 exe, frames, out = sys.argv[1], int(sys.argv[2]), sys.argv[3]
-steps = [{"op": "wait", "ms": 6000}, {"op": "shot", "label": "hub"}]
-jid, st, res = client.interact(exe, frames, out, steps, lease_seconds=60)
+import os
+steps = [{"op": "wait", "ms": int(os.environ.get("HUB_WAIT_MS", "6000"))}, {"op": "shot", "label": "hub"}]
+jid, st, res = client.interact(exe, frames, out, steps, lease_seconds=int(os.environ.get("HUB_LEASE_S", "60")))
 print(jid, st.get("state"), json.dumps({k: res.get(k) for k in ("ok", "error", "screen", "capture_exit")}, indent=1))

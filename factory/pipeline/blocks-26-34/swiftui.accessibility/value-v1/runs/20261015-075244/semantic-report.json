@@ -1,0 +1,57 @@
+{
+ "pairs": 1,
+ "pass_": 0,
+ "fail": 1,
+ "gate": {
+  "fields": [
+   "role",
+   "name",
+   "value",
+   "enabled",
+   "count",
+   "order"
+  ],
+  "scope": "main",
+  "phases": [
+   ""
+  ]
+ },
+ "rows": [
+  {
+   "run": 1,
+   "verdict": "fail",
+   "compared": {
+    "final": {
+     "main": {
+      "windows": 3,
+      "mac": 3
+     }
+    }
+   },
+   "mismatches": [
+    {
+     "where": "main[0]",
+     "field": "name",
+     "windows": "50 percent",
+     "mac": "Volume",
+     "role": [
+      "text",
+      "text"
+     ],
+     "phase": ""
+    },
+    {
+     "where": "main[0]",
+     "field": "value",
+     "windows": null,
+     "mac": "50 percent",
+     "role": [
+      "text",
+      "text"
+     ],
+     "phase": ""
+    }
+   ]
+  }
+ ]
+}
