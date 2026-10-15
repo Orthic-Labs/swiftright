@@ -649,8 +649,8 @@ def button_dark(name, rows, kinds):
         rect_ = [200, y0 - 8, 600, y0 + 68]
         if k == "btn": regions.append({"name": f"button {i}", "rect": rect_})
         else:
-            texts.append({"name": f"label {i}", "rect": [330, y0 + 4, 470, y0 + 56]})
-            ex.append({"name": f"row {i} label glyphs (Segoe UI vs SF, decision 2); colour and position gated by the text-colour gate", "rect": [330, y0 + 4, 470, y0 + 56]})
+            texts.append({"name": f"label {i}", "rect": [290, y0 + 2, 510, y0 + 58]})
+            ex.append({"name": f"row {i} label glyphs (Segoe UI vs SF, decision 2); colour and position gated by the text-colour gate", "rect": [290, y0 + 2, 510, y0 + 58]})
     pair = {}
     if regions: pair["buttonGate"] = {"capPx": 28, "yTolerancePx": 0, "labelCentreTolerancePx": 3, "labelColourTolerance": 40, "edgeAA": 32, "background": [30, 30, 30], "regions": regions}
     if texts:

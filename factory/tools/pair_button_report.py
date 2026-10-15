@@ -37,7 +37,7 @@ def label_ink(img, button, fill, cap, thresh=40):
 def bbox_nonbg(img, rect, bg):
     """bbox of the pixels in rect that differ from the background colour bg (white: the light cases; the dark ground of round 5)"""
     m = ImageChops.difference(img.crop(rect), Image.new("RGB", (rect[2] - rect[0], rect[3] - rect[1]), tuple(bg)))
-    m = ImageChops.lighter(ImageChops.lighter(*m.split()[:2]), m.split()[2]).point(lambda v: 255 if v >= 24 else 0)
+    m = ImageChops.lighter(ImageChops.lighter(*m.split()[:2]), m.split()[2]).point(lambda v: 255 if v >= 6 else 0)
     b = m.getbbox()
     return None if b is None else [b[0] + rect[0], b[1] + rect[1], b[2] + rect[0], b[3] + rect[1]]
 

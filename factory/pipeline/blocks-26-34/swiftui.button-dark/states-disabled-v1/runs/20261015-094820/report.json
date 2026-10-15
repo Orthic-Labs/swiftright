@@ -1,0 +1,216 @@
+{
+ "edgeAAToleranceLevels": 32,
+ "pairs": 1,
+ "frames": null,
+ "exact": 0,
+ "exactWithExclusions": 0,
+ "edgeAA": 0,
+ "fail": 1,
+ "maxdiff": 56,
+ "diffbbox": [
+  321,
+  59,
+  480,
+  85
+ ],
+ "rows": [
+  {
+   "run": 1,
+   "verdict": "fail",
+   "gate": {
+    "verdict": "fail",
+    "totalDiff": 339,
+    "inBandDiff": 339,
+    "outOfBandDiff": 0,
+    "maxInBand": 56,
+    "maxOutOfBand": 0,
+    "bandPixels": 10163
+   },
+   "exact": false,
+   "differentPixels": 339,
+   "maxdiff": 56,
+   "diffbbox": [
+    321,
+    59,
+    480,
+    85
+   ],
+   "fullFrameDifferentPixels": 5997,
+   "excluded": [
+    {
+     "name": "row 0 label glyphs (Segoe UI vs SF, decision 2); colour and position gated by the text-colour gate",
+     "rect": [
+      330,
+      44,
+      470,
+      96
+     ],
+     "diffPixels": 2057,
+     "macInkBBox": [
+      330,
+      58,
+      470,
+      85
+     ],
+     "winInkBBox": [
+      333,
+      59,
+      467,
+      82
+     ]
+    },
+    {
+     "name": "row 1 label glyphs (Segoe UI vs SF, decision 2); colour and position gated by the text-colour gate",
+     "rect": [
+      330,
+      119,
+      470,
+      171
+     ],
+     "diffPixels": 962,
+     "macInkBBox": [
+      365,
+      133,
+      434,
+      159
+     ],
+     "winInkBBox": [
+      370,
+      134,
+      430,
+      157
+     ]
+    },
+    {
+     "name": "row 2 label glyphs (Segoe UI vs SF, decision 2); colour and position gated by the text-colour gate",
+     "rect": [
+      330,
+      194,
+      470,
+      246
+     ],
+     "diffPixels": 786,
+     "macInkBBox": [
+      372,
+      208,
+      427,
+      234
+     ],
+     "winInkBBox": [
+      376,
+      209,
+      423,
+      232
+     ]
+    },
+    {
+     "name": "row 3 label glyphs (Segoe UI vs SF, decision 2); colour and position gated by the text-colour gate",
+     "rect": [
+      330,
+      269,
+      470,
+      321
+     ],
+     "diffPixels": 1853,
+     "macInkBBox": [
+      332,
+      283,
+      468,
+      314
+     ],
+     "winInkBBox": [
+      340,
+      284,
+      460,
+      314
+     ]
+    }
+   ]
+  }
+ ],
+ "build": {
+  "stage": {
+   "name": "ed7752908-c5d34200",
+   "commit": "ed77529087e5a800a21a849c6d3a72d9b7037972",
+   "ref": "HEAD",
+   "mode": "git-archive",
+   "dirty": false,
+   "treeSha256": "sha256:c5d34200d386d624c993b61d839614b221ee2bedd71e4335647b1c34de3f2841",
+   "files": 176,
+   "paths": [
+    "packages/SwiftRightBridge",
+    "packages/SwiftRightHost",
+    "probes/sr0-s/fresh-runtime"
+   ],
+   "stagedUtc": "2026-10-15T04:15:26Z"
+  },
+  "renderer": {
+   "path": "D:\\Claude\\swiftright\\.factory-work\\inputs\\renderer-0.7-baseline-22ad719b\\swiftright_render.dll",
+   "sha256": "82513ae0c1e29f30ea4efe27d84869cd6b3c3fbce7951d78083f9647226bc05d"
+  },
+  "case": "/Volumes/D/claude/swiftright/factory/pipeline/blocks-26-34/swiftui.button-dark/states-disabled-v1",
+  "mac": {
+   "osVersion": "27.0.1",
+   "osBuild": "26A434",
+   "swiftc": "Apple Swift version 6.4 (swiftlang-6.4.0.34.1 clang-2100.3.34.1)",
+   "clockHost": "os=Version_27.0.1_(Build_26A434) pinnedDisplayScale=2.5 windowBackingScale=2.5 effectiveDisplayScale=2.5 screens=[1600x1000@2.0x]",
+   "scaleGuard": {
+    "captureScale": 2.5,
+    "status": "OK",
+    "runs": 1,
+    "reported": 1,
+    "distinct": [
+     [
+      2.5,
+      "2.5",
+      2.5
+     ]
+    ],
+    "screens": [
+     "[1600x1000@2.0x]"
+    ],
+    "mismatches": [],
+    "unreportedRuns": []
+   }
+  }
+ },
+ "gate": "exact outside excluded regions",
+ "excludedRegions": [
+  {
+   "name": "row 0 label glyphs (Segoe UI vs SF, decision 2); colour and position gated by the text-colour gate",
+   "rect": [
+    330,
+    44,
+    470,
+    96
+   ]
+  },
+  {
+   "name": "row 1 label glyphs (Segoe UI vs SF, decision 2); colour and position gated by the text-colour gate",
+   "rect": [
+    330,
+    119,
+    470,
+    171
+   ]
+  },
+  {
+   "name": "row 2 label glyphs (Segoe UI vs SF, decision 2); colour and position gated by the text-colour gate",
+   "rect": [
+    330,
+    194,
+    470,
+    246
+   ]
+  },
+  {
+   "name": "row 3 label glyphs (Segoe UI vs SF, decision 2); colour and position gated by the text-colour gate",
+   "rect": [
+    330,
+    269,
+    470,
+    321
+   ]
+  }
+ ]
+}
