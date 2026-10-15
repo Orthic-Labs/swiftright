@@ -34,6 +34,12 @@ final class SliderRangeTests: XCTestCase {
         XCTAssertEqual(SWR_ABI_MINOR_V09, 9)
         XCTAssertEqual(SWR_ROLE_SLIDER, 15)
         XCTAssertEqual(NodeRole.slider.rawValue, UInt32(SWR_ROLE_SLIDER))
+        XCTAssertEqual(SWR_RUN_POINTER_MOVES, 1)
+        XCTAssertEqual(SWR_PTR_MOVE, 3)
+        XCTAssertEqual(SWR_PTR_I0_LEFT_DOWN, 1)
+        XCTAssertEqual(SWR_PTR_I0_LEFT_WINDOW, 2)
+        XCTAssertFalse(bridge(.v08).supportsPointerMoves)
+        XCTAssertTrue(bridge(.v09).supportsPointerMoves)
         XCTAssertEqual(SWR_ABI_MINOR, 6, "the legacy constant must not move")
     }
 

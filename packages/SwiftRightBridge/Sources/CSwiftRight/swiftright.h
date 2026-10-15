@@ -1220,6 +1220,16 @@ SWR_API swr_status swr_get_api_v08(swr_api_v08 *out, uint32_t caller_size);
  * ===========================================================================================*/
 #define SWR_ABI_MINOR_V09 9
 
+/* Pointer moves (rev 0.9, decision H3). SWR_PTR_MOVE was declared since 0.6 but never emitted. A 0.9 renderer emits it ONLY
+ * for a host that sets SWR_RUN_POINTER_MOVES in swr_run_options.flags (every earlier host passes flags 0 and sees the same
+ * events as before; a 0.6 to 0.8 renderer ignores the bit and never emits a move). SWR_EV_POINTER / SWR_PTR_MOVE: node = the
+ * hit node under the pointer (0 = none), x, y = physical px, i0 bit 0 (SWR_PTR_I0_LEFT_DOWN) = the primary button is down
+ * (a drag), i0 bit 1 (SWR_PTR_I0_LEFT_WINDOW) = the pointer left the window (node 0, x = y = -1). Consecutive moves to the
+ * same pixel with the same button state are dropped. A drag outside the window is not captured. */
+#define SWR_RUN_POINTER_MOVES  0x1u
+#define SWR_PTR_I0_LEFT_DOWN   0x1
+#define SWR_PTR_I0_LEFT_WINDOW 0x2
+
 typedef struct swr_range_entry {
     swr_node_id id;      /* the slider node, upserted by the same transaction */
     double      value;

@@ -24,6 +24,8 @@ CHECK(swr_bootstrap_info_v09, 128, 4);
 OFF(swr_bootstrap_info_v09, v08, 0); OFF(swr_bootstrap_info_v09, range_entry_size, 120); OFF(swr_bootstrap_info_v09, transaction_v09_size, 124);
 _Static_assert(SWR_ABI_MINOR == 6 && SWR_ABI_MINOR_V08 == 8 && SWR_ABI_MINOR_V09 == 9 && SWR_ROLE_SLIDER == 15 && SWR_API_V08_FN_COUNT == 22, "revision constants");
 
+_Static_assert(SWR_RUN_POINTER_MOVES == 1 && SWR_PTR_MOVE == 3 && SWR_PTR_I0_LEFT_DOWN == 1 && SWR_PTR_I0_LEFT_WINDOW == 2, "pointer move constants");
+
 #ifdef SWR_LAYOUT_MAIN
 #include <stdio.h>
 int main(void) { puts("PASS: ABI 0.9 layout assertions"); return 0; }

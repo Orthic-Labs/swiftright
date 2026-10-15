@@ -317,6 +317,7 @@ pub extern "C" fn swr_run(opts: *const RunOptions, cb: *const HostCallbacks) -> 
                 Err(_) => return E_BAD_ARG,
             }
         };
+        POINTER_MOVES.store(o.flags & RUN_POINTER_MOVES != 0, SeqCst);
         let host = Host::from_abi(&c);
         view::run(title, o.width_dip, o.height_dip, host, o.host_wake_handle as usize)
     })

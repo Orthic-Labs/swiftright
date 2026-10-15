@@ -155,6 +155,12 @@ pub const KEY_UP: u32 = 2;
 pub const PTR_DOWN: u32 = 1;
 pub const PTR_UP: u32 = 2;
 pub const PTR_MOVE: u32 = 3;
+/// Rev 0.9 (decision H3): `swr_run_options.flags` bit 0. Only a host that sets it receives SWR_PTR_MOVE events (hover and drag);
+/// every earlier host (flags 0) sees exactly the events it saw before.
+pub const RUN_POINTER_MOVES: u32 = 0x1;
+/// SWR_PTR_MOVE `i0` bits (rev 0.9): the primary button is down; the pointer left the window (node 0, x = y = -1).
+pub const PTR_I0_LEFT_DOWN: i32 = 0x1;
+pub const PTR_I0_LEFT_WINDOW: i32 = 0x2;
 pub const IME_MARK: u32 = 1;
 pub const IME_COMMIT: u32 = 2;
 pub const IME_UNMARK: u32 = 3;

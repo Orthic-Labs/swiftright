@@ -16,7 +16,7 @@ use accesskit_windows::{SubclassingAdapter, HWND as AkHWND};
 use gpui::{
     canvas, div, fill, point, prelude::*, px, rgba, size, App, AsyncApp, Application, Bounds,
     ContentMask, Context, Corners, ElementInputHandler, Entity, EntityInputHandler, FocusHandle,
-    IntoElement, KeyDownEvent, MouseButton, MouseDownEvent, MouseUpEvent, Pixels, Render,
+    IntoElement, KeyDownEvent, MouseButton, MouseDownEvent, MouseMoveEvent, MouseUpEvent, Pixels, Render,
     RenderImage, TextAlign, TitlebarOptions, UTF16Selection, Window, WindowBackgroundAppearance,
     WindowBounds, WindowHandle, WindowOptions, WindowTextSystem,
 };
@@ -552,14 +552,74 @@ fn on_pointer(action: u32, p: gpui::Point<Pixels>, m: &gpui::Modifiers, clicks: 
     push_event(e);
 }
 
+/// Rev 0.9: a pointer move (hover, drag) for a host that asked for them. The hit node is the one under the pointer; `left_down`
+/// says the primary button is held. Identical consecutive positions are dropped.
+fn on_pointer_move(p: gpui::Point<Pixels>, left_down: bool, m: &gpui::Modifiers, scale: f32) {
+    static LAST: std::sync::Mutex<(i64, i64, bool)> = std::sync::Mutex::new((i64::MIN, i64::MIN, false));
+    if !POINTER_MOVES.load(SeqCst) {
+        return;
+    }
+    let win = LIVE_WINDOW.load(SeqCst);
+    if win == 0 {
+        return;
+    }
+    let x = f32::from(p.x) * scale;
+    let y = f32::from(p.y) * scale;
+    if let Ok(mut last) = LAST.lock() {
+        let key = (x.round() as i64, y.round() as i64, left_down);
+        if *last == key {
+            return;
+        }
+        *last = key;
+    }
+    let node = with_ui(|ui| ui.tree.hit(x, y)).unwrap_or(0);
+    let mut e = Event::new(EV_POINTER, PTR_MOVE);
+    e.window = win;
+    e.node = node;
+    e.snapshot = SNAPSHOT.load(SeqCst);
+    e.x = x;
+    e.y = y;
+    e.i0 = if left_down { PTR_I0_LEFT_DOWN } else { 0 };
+    e.modifiers = mods(m);
+    push_event(e);
+}
+
+/// Rev 0.9: the pointer left the window.
+fn on_pointer_left() {
+    if !POINTER_MOVES.load(SeqCst) {
+        return;
+    }
+    let win = LIVE_WINDOW.load(SeqCst);
+    if win == 0 {
+        return;
+    }
+    let mut e = Event::new(EV_POINTER, PTR_MOVE);
+    e.window = win;
+    e.node = 0;
+    e.snapshot = SNAPSHOT.load(SeqCst);
+    e.x = -1.0;
+    e.y = -1.0;
+    e.i0 = PTR_I0_LEFT_WINDOW;
+    push_event(e);
+}
+
 impl Render for RootView {
     fn render(&mut self, _window: &mut Window, cx: &mut Context<Self>) -> impl IntoElement {
         let focus = self.focus.clone();
         let focus_paint = self.focus.clone();
         let view = cx.entity();
         div()
+            .id("swr-root")
             .size_full()
             .track_focus(&focus)
+            .on_mouse_move(|ev: &MouseMoveEvent, w: &mut Window, _cx: &mut App| {
+                on_pointer_move(ev.position, ev.pressed_button == Some(MouseButton::Left), &ev.modifiers, w.scale_factor())
+            })
+            .on_hover(|hovered: &bool, _w: &mut Window, _cx: &mut App| {
+                if !*hovered {
+                    on_pointer_left()
+                }
+            })
             .on_key_down(|ev: &KeyDownEvent, _w: &mut Window, _cx: &mut App| on_key_down(ev))
             .on_mouse_down(MouseButton::Left, |ev: &MouseDownEvent, w: &mut Window, _cx: &mut App| {
                 on_pointer(PTR_DOWN, ev.position, &ev.modifiers, ev.click_count, w.scale_factor())

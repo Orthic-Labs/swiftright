@@ -66,6 +66,8 @@ public final class Bridge {
 
     /// Rev 0.9 (decision H1): the renderer honours `SemanticNode.range` (slider RangeValue). False on a 0.6 to 0.8 renderer.
     public var supportsSliderRange: Bool { revision >= .v09 }
+    /// Rev 0.9 (decision H3): the renderer emits SWR_PTR_MOVE to a host that asks (`run(pointerMoves: true)`).
+    public var supportsPointerMoves: Bool { revision >= .v09 }
 
     // MARK: bootstrap validation (platform neutral; order as in bridge-faults)
 
@@ -125,7 +127,9 @@ public final class Bridge {
     /// (UI thread, outside all renderer borrows). `onWindowClosed` runs teardown; late
     /// main-queue work is still drained after it.
     @discardableResult
-    public func run(title: String, width: UInt32, height: UInt32) throws -> Int32 {
+    /// `pointerMoves`: ask for SWR_PTR_MOVE events (hover and drag; rev 0.9, decision H3). Ignored, never guessed, on a renderer below 0.9:
+    /// check `supportsPointerMoves`.
+    public func run(title: String, width: UInt32, height: UInt32, pointerMoves: Bool = false) throws -> Int32 {
         #if os(Windows)
         RepairGuard.installIfNeeded(appName: repairGuardName ?? title)
         let wake = _dispatch_get_main_queue_handle_4CF()
@@ -140,6 +144,7 @@ public final class Bridge {
         opts.host_wake_handle = wake
         opts.width_dip = width
         opts.height_dip = height
+        opts.flags = (pointerMoves && supportsPointerMoves) ? UInt32(SWR_RUN_POINTER_MOVES) : 0
         let rc = withUnsafePointer(to: &opts) { o in withUnsafePointer(to: &cb) { runFn(o, $0) } }
         if rc != 0 { throw BridgeError.status(rc, "swr_run") }
         return rc
