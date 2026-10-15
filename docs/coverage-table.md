@@ -220,6 +220,7 @@ The grade is the best block's; read that block's caveats in `docs/proven-control
 | `orange` | B | swiftui.observation | 6/6 |
 | `purple` | B | swiftui.observation | 6/6 |
 | `red` | B | swiftui.observation | 6/6 |
+| `Slider` | B | swiftui.slider | 13/13 |
 | `Spacer` | B | swiftui.spacer-divider | 15/15 |
 | `Spacer.minLength` | B | swiftui.spacer-divider | 15/15 |
 | `stream` | B | swiftui.task-asyncstream | 6/6 |
@@ -237,7 +238,6 @@ The grade is the best block's; read that block's caveats in `docs/proven-control
 | `interpolation` | C | foundations.image-layout | 10/10 at N=20 (200 pairs); negative controls: 3 of 4 fail on both cases, straight-alpha fails on the alpha case |
 | `layoutPriority` | C | swiftui.layout-priority | 6/6 |
 | `scaledToFill` | C | foundations.image-layout | 10/10 at N=20 (200 pairs); negative controls: 3 of 4 fail on both cases, straight-alpha fails on the alpha case |
-| `Slider` | C | swiftui.slider | 13/13 |
 | `contains` | E | swiftui.on-hover | 2/4 |
 | `EmptyView` | E | swiftui.compat | 3/5 |
 | `EnvironmentKey` | E | swiftui.compat | 3/5 |
@@ -251,4 +251,4 @@ The grade is the best block's; read that block's caveats in `docs/proven-control
 | `onHover` | E | swiftui.on-hover | 2/4 |
 | `onTapGesture` | E | swiftui.on-hover | 2/4 |
 
-Totals: A: 181, B: 43, C: 7, E: 12 (243 APIs).
+Totals: A: 181, B: 44, C: 6, E: 12 (243 APIs).

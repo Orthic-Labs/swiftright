@@ -37,6 +37,34 @@ class SemanticTests(unittest.TestCase):
         mm, _ = S.compare_run(w, m, dict(fields=["role", "name", "toggle"]))
         self.assertEqual(mm, [])
 
+    def test_h14_switch_label_child_folds_into_the_mac_shape(self):
+        # decision H14: UIA nests a switch's label Text under the Button; the Mac AX tree has a sibling static text before an unnamed AXSwitch
+        lab = win_el("Switch", "Text", 0, 0, 40, 16)
+        w = dict(windows=[win_window([win_el("Switch", "Button", 0, 0, 56, 26, toggle="On", children=[lab])])])
+        m = dict(windows=[mac_window([mac_el("Switch", "AXStaticText", 0, 0, 40, 16), mac_el(None, "AXCheckBox", 0, 0, 56, 26, subrole="AXSwitch", value=1)])])
+        cfg = dict(fields=["role", "name", "toggle", "enabled", "count"])
+        mm, _ = S.compare_run(w, m, cfg)
+        self.assertEqual(mm, [])
+
+    def test_h14_checkbox_duplicate_label_child_is_dropped(self):
+        dup = win_el("Check", "Text", 0, 0, 40, 16)
+        w = dict(windows=[win_window([win_el("Check", "CheckBox", 0, 0, 80, 16, toggle="Off", children=[dup])])])
+        m = dict(windows=[mac_window([mac_el("Check", "AXCheckBox", 0, 0, 80, 16, value=0)])])
+        mm, _ = S.compare_run(w, m, dict(fields=["role", "name", "toggle", "enabled", "count"]))
+        self.assertEqual(mm, [])
+
+    def test_h14_mutations_still_fail_the_gate(self):
+        # the fold must not hide a renamed or a missing toggle: a rename changes the switch's label, a removed switch changes the count
+        lab = win_el("Switchy", "Text", 0, 0, 40, 16)
+        renamed = dict(windows=[win_window([win_el("Switchy", "Button", 0, 0, 56, 26, toggle="On", children=[lab])])])
+        m = dict(windows=[mac_window([mac_el("Switch", "AXStaticText", 0, 0, 40, 16), mac_el(None, "AXCheckBox", 0, 0, 56, 26, subrole="AXSwitch", value=1)])])
+        cfg = dict(fields=["role", "name", "toggle", "enabled", "count"])
+        mm, _ = S.compare_run(renamed, m, cfg)
+        self.assertTrue(mm, "a renamed switch label must fail")
+        missing = dict(windows=[win_window([])])
+        mm, _ = S.compare_run(missing, m, cfg)
+        self.assertTrue(any(x.get("field") == "count" for x in mm), "a missing switch must fail the count")
+
     def test_titlebar_chrome_is_ignored_and_extra_element_fails(self):
         w = dict(windows=[win_window([win_el("A", "Text", 0, 0, 10, 10), win_el("B", "Text", 0, 20, 10, 10)])])
         m = dict(windows=[mac_window([mac_el(None, "AXStaticText", 0, 0, 10, 10, value="A")])])

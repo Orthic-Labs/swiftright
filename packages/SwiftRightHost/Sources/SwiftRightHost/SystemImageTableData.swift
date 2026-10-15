@@ -31049,6 +31049,118 @@ enum SystemImageTableData {
           }
         ]
       }
+    },
+    "gear": {
+      "provider": "Segoe Fluent Icons",
+      "providerVersion": "SegoeFluentIcons",
+      "glyph": "E713",
+      "foregroundSemantic": "label",
+      "width": 17,
+      "height": 17,
+      "status": "provider-live-declared",
+      "rasterization": {
+        "kind": "gdi-glyph-outline",
+        "textureType": "GGO_GRAY8_BITMAP",
+        "fontEmSize": null,
+        "source": "live-gdi-getglyphoutlinew"
+      },
+      "mapping": {
+        "segoeName": "Settings",
+        "fit": "weak",
+        "note": "substitute provider: the Segoe Settings gear (E713) stands in for SF gear; glyph parity is not verified (fit weak)",
+        "source": "https://learn.microsoft.com/en-us/windows/apps/design/iconography/segoe-fluent-icons-font"
+      },
+      "layout": {
+        "source": "factory/tools/symbol-metrics/symbol-sizes.sh --capture-path (NSHostingView in an offscreen pinned-scale window drawn into a bitmap as the capture host does; non-resizable Image(systemName:).font(.system(size:)); half-coverage ink)",
+        "macOS": "Version 27.0.1 (Build 26A434)",
+        "referencePointSize": 13,
+        "aspect": 1.0,
+        "inkRect": [0.058823529411764705, 0.058823529411764705, 0.8823529411764706, 0.8823529411764706],
+        "intrinsicSize": [17, 17],
+        "sourceOversample": 8,
+        "fontSizes": [
+          {
+            "size": 10.0,
+            "weight": "regular",
+            "classes": [
+              {"scaleClass": "1x", "refScale": 1.0, "framePx": [14, 14], "inkPx": [1, 1, 12, 12]},
+              {"scaleClass": "2x", "refScale": 2.5, "framePx": [33, 33], "inkPx": [2, 2, 30, 30]}
+            ]
+          },
+          {
+            "size": 11.0,
+            "weight": "regular",
+            "classes": [
+              {"scaleClass": "1x", "refScale": 1.0, "framePx": [15, 15], "inkPx": [2, 2, 13, 13]},
+              {"scaleClass": "2x", "refScale": 2.5, "framePx": [36, 36], "inkPx": [3, 3, 33, 33]}
+            ]
+          },
+          {
+            "size": 12.0,
+            "weight": "regular",
+            "classes": [
+              {"scaleClass": "1x", "refScale": 1.0, "framePx": [16, 16], "inkPx": [1, 1, 14, 14]},
+              {"scaleClass": "2x", "refScale": 2.5, "framePx": [40, 40], "inkPx": [3, 3, 36, 36]}
+            ]
+          },
+          {
+            "size": 13.0,
+            "weight": "regular",
+            "classes": [
+              {"scaleClass": "1x", "refScale": 1.0, "framePx": [17, 17], "inkPx": [1, 1, 15, 15]},
+              {"scaleClass": "2x", "refScale": 2.5, "framePx": [43, 43], "inkPx": [3, 3, 39, 39]}
+            ]
+          },
+          {
+            "size": 14.0,
+            "weight": "regular",
+            "classes": [
+              {"scaleClass": "1x", "refScale": 1.0, "framePx": [18, 18], "inkPx": [2, 2, 16, 16]},
+              {"scaleClass": "2x", "refScale": 2.5, "framePx": [46, 46], "inkPx": [3, 3, 42, 42]}
+            ]
+          },
+          {
+            "size": 15.0,
+            "weight": "regular",
+            "classes": [
+              {"scaleClass": "1x", "refScale": 1.0, "framePx": [19, 19], "inkPx": [1, 1, 17, 17]},
+              {"scaleClass": "2x", "refScale": 2.5, "framePx": [49, 49], "inkPx": [3, 3, 45, 45]}
+            ]
+          },
+          {
+            "size": 17.0,
+            "weight": "regular",
+            "classes": [
+              {"scaleClass": "1x", "refScale": 1.0, "framePx": [22, 22], "inkPx": [1, 1, 20, 20]},
+              {"scaleClass": "2x", "refScale": 2.5, "framePx": [56, 56], "inkPx": [4, 4, 51, 51]}
+            ]
+          },
+          {
+            "size": 20.0,
+            "weight": "regular",
+            "classes": [
+              {"scaleClass": "1x", "refScale": 1.0, "framePx": [27, 27], "inkPx": [2, 2, 24, 24]},
+              {"scaleClass": "2x", "refScale": 2.5, "framePx": [65, 65], "inkPx": [4, 4, 60, 60]}
+            ]
+          },
+          {
+            "size": 22.0,
+            "weight": "regular",
+            "classes": [
+              {"scaleClass": "1x", "refScale": 1.0, "framePx": [29, 29], "inkPx": [2, 2, 27, 26]},
+              {"scaleClass": "2x", "refScale": 2.5, "framePx": [72, 72], "inkPx": [5, 5, 67, 67]}
+            ]
+          },
+          {
+            "size": 28.0,
+            "weight": "regular",
+            "classes": [
+              {"scaleClass": "1x", "refScale": 1.0, "framePx": [36, 36], "inkPx": [2, 2, 33, 33]},
+              {"scaleClass": "2x", "refScale": 2.5, "framePx": [91, 91], "inkPx": [6, 6, 84, 84]}
+            ]
+          }
+        ]
+      }
     }
   }
 }

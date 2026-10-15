@@ -82,10 +82,27 @@ def flatten_win(node, origin, scale, role_map, out, depth=0):
     b = node.get("bounds")
     bounds = None if not b else [round((b[0] - origin[0]) / scale, 2), round((b[1] - origin[1]) / scale, 2), round(b[2] / scale, 2), round(b[3] / scale, 2)]
     value = node.get("value")
-    out.append(dict(role=role, name=clean(node.get("name")), value=None if toggle else clean(value), enabled=bool(node.get("enabled", True)), focus=bool(node.get("focus")),
+    # H14: UIA nests a toggle's label as a Text child that repeats the control's name. The Mac AX tree has no such child: a switch-style toggle exposes its
+    # label as a sibling text before the unnamed switch (AXCheckBox/AXSwitch), and a checkbox carries the name itself. The label is folded into that shape:
+    # a switch's label text is emitted as a sibling before it (its name is then absent on the switch), a checkbox's duplicate child is dropped.
+    # The control's own role, name, toggle, enabled and bounds are still compared on both sides.
+    kids = node.get("children", [])
+    labels = [c for c in kids if toggle and _is_toggle_label(node, c)]
+    kids = [c for c in kids if not (toggle and _is_toggle_label(node, c))]
+    switch_label = bool(labels) and role == "switch"
+    if switch_label:
+        for c in labels:
+            flatten_win(c, origin, scale, role_map, out, depth)
+    out.append(dict(role=role, name=None if switch_label else clean(node.get("name")), value=None if toggle else clean(value), enabled=bool(node.get("enabled", True)), focus=bool(node.get("focus")),
                     toggle=toggle, bounds=bounds, depth=depth, raw=node.get("role"), range=node.get("range")))
-    for c in node.get("children", []):
+    for c in kids:
         flatten_win(c, origin, scale, role_map, out, depth + 1)
+
+
+def _is_toggle_label(node, child):
+    """H14: a leaf UIA Text whose name is the toggle's own name (the label UIA nests under the control)."""
+    name = clean(node.get("name"))
+    return bool(name) and child.get("role") == "Text" and not child.get("children") and clean(child.get("name")) == name
 
 
 def _num(v):

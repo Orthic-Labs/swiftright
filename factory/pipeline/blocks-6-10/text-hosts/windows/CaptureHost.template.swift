@@ -275,6 +275,11 @@ struct HostPlacement {
             if fieldIndex < ids.count, let node = bridgeNode(ids[fieldIndex]) { ok = input.accessibility(.focus, node: node, i0: 0, i1: 0, text: "") } else { ok = false }
         case "caret":
             if let id = graph.focusedTextFieldID, let s = graph.textInput(id) { ok = s.setSelection(UTF16Range(location: (step["offset"] as? Int) ?? 0, length: (step["length"] as? Int) ?? 0)); graph.flush() } else { ok = false }
+        case "click":
+            // a pointer press on field fieldIndex at x (points, as the Mac step): focus and caret, through the product pointer path (a focus change ends the other field's composition)
+            if fieldIndex < graph.ids(ofKind: "TextField").count, let node = bridgeNode(graph.ids(ofKind: "TextField")[fieldIndex]) {
+                ok = input.pointerDown(node: node, x: Float((step["x"] as? NSNumber)?.doubleValue ?? 0) * scale)
+            } else { ok = false }
         case "compose":
             ok = focusedNode.map { input.replaceAndMark(node: $0, range: nil, text: Array(text.utf16), newSelection: nil) } ?? false
         case "composeAt":

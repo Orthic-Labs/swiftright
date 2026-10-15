@@ -25,6 +25,17 @@ final class SystemImageTests: XCTestCase {
         XCTAssertEqual(star.layout?.intrinsicSize, [17, 16])
     }
 
+    func testGearIsInTheShippedTableWithAProviderGlyphAndMeasuredLayout() throws {
+        // Block 41 controls-b: Image(systemName: "gear") was refused at render ("symbol 'gear' is not in the table").
+        let t = try SystemImageTable.standard()
+        let gear = try XCTUnwrap(t.symbols["gear"])
+        XCTAssertEqual(gear.provider, "Segoe Fluent Icons")
+        XCTAssertEqual(gear.glyph, "E713")
+        XCTAssertTrue(gear.layout?.supportsFontSizes ?? false)
+        XCTAssertNotNil(gear.layout?.fontLayout(pointSize: 13, scale: 1)?.measured)
+        XCTAssertLessThanOrEqual(t.symbols.count, Int(t.providerPolicy.maxSymbols))
+    }
+
     func testRejectsAnInvalidTable() throws {
         XCTAssertThrowsError(try SystemImageTable.decode(Data("{}".utf8)))
         var json = try String(contentsOfFile: URL(fileURLWithPath: #filePath).deletingLastPathComponent().deletingLastPathComponent().deletingLastPathComponent()

@@ -17,6 +17,8 @@ public final class HostTextInput: @preconcurrency TextStore {
     public let graph: Graph
     private let runtimeID: (UInt64) -> String?
     private let layout: (String) -> TextFieldLayout?
+    /// The fixed end of a shift-extended selection per field, kept with the selection it produced: an anchor applies only while the selection is still that one.
+    private var shiftAnchors: [String: (anchor: Int, selection: UTF16Range)] = [:]
     /// What the input did, in order (`ime-replace`, `ime-mark`, `key:backspace`, `pointer-focus`, ...), for host diagnostics and tests.
     public private(set) var trace: [String] = []
 
@@ -108,7 +110,9 @@ public final class HostTextInput: @preconcurrency TextStore {
     public func pointerDown(node: UInt64, x: Float) -> Bool {
         guard let id = runtimeID(node), graph.isTextField(id) else { return false }
         let wasFocused = graph.focusedTextFieldID == id
+        let previous = graph.focusedTextFieldID
         guard graph.focusTextField(id) else { return false }
+        endComposition(of: previous, leaving: id)
         if let l = layout(id), let s = graph.textInput(id) {
             _ = s.setSelection(UTF16Range(location: min(l.offset(atX: x), s.display.utf16.count), length: 0))
         }
@@ -122,7 +126,9 @@ public final class HostTextInput: @preconcurrency TextStore {
         switch action {
         case .focus:
             let wasFocused = graph.focusedTextFieldID == id
+            let previous = graph.focusedTextFieldID
             guard graph.focusTextField(id) else { return false }
+            endComposition(of: previous, leaving: id)
             // an accessibility focus keeps the caret at the end; an echo on the focused field leaves the selection alone
             if !wasFocused { _ = s.setSelection(UTF16Range(location: s.display.utf16.count, length: 0)) }
             trace.append("ax-focus")
@@ -151,6 +157,12 @@ public final class HostTextInput: @preconcurrency TextStore {
         }
         guard let id = graph.focusedTextFieldID, let s = graph.textInput(id) else { return false }
         trace.append("key:\(name)")
+        if shift, !ctrl, ["left", "right", "home", "end"].contains(name) {
+            extendSelection(id, s, key: name)
+            graph.flush()
+            return true
+        }
+        shiftAnchors[id] = nil
         switch name {
         case "enter", "return":
             _ = graph.pressReturn(inTextField: id)
@@ -173,6 +185,31 @@ public final class HostTextInput: @preconcurrency TextStore {
         }
         graph.flush()
         return true
+    }
+
+    /// A focus change ends the composition of the field it leaves (as Tab does and as AppKit does for its field editor): the marked text is committed to that
+    /// field's binding, so nothing stays marked in a field that no longer has the focus (Flutter 191196).
+    private func endComposition(of previous: String?, leaving id: String) {
+        guard let previous, previous != id, let s = graph.textInput(previous) else { return }
+        _ = s.unmark()
+        trace.append("focus-ends-composition")
+    }
+
+    /// Shift + Left/Right/Home/End: the anchor stays where the selection began and the other end moves (a selection that began elsewhere is anchored at its start).
+    private func extendSelection(_ id: String, _ s: TextInputState, key: String) {
+        let sel = s.selection
+        let anchor = shiftAnchors[id].flatMap { $0.selection == sel ? $0.anchor : nil } ?? sel.location
+        let focus = anchor == sel.location ? sel.location + sel.length : sel.location
+        let next: Int
+        switch key {
+        case "left": next = boundary(s.display, before: focus)
+        case "right": next = boundary(s.display, after: focus)
+        case "home": next = 0
+        default: next = s.display.utf16.count
+        }
+        _ = s.setSelection(UTF16Range(location: min(anchor, next), length: abs(next - anchor)))
+        shiftAnchors[id] = (anchor, s.selection)
+        trace.append("key:shift-\(key)")
     }
 
     private func move(_ s: TextInputState, to offset: Int) {

@@ -121,6 +121,57 @@ final class HostTextInputTests: XCTestCase {
         XCTAssertFalse(r.input.accessibility(.invoke, node: r.two, i0: 0, i1: 0, text: ""))
     }
 
+    func testPointerFocusChangeCommitsTheCompositionOfTheFieldItLeaves() {
+        // Block 40 focuschange: "ni" is marked in the first field; moving the focus must commit it there, not leave it marked (Flutter 191196)
+        let r = rig()
+        _ = r.input.pointerDown(node: r.one, x: 0)
+        XCTAssertTrue(r.input.setCaret(r.one, 2))
+        XCTAssertTrue(r.input.replaceAndMark(node: r.one, range: nil, text: Array("ni".utf16), newSelection: nil))
+        XCTAssertTrue(r.input.pointerDown(node: r.two, x: 0))
+        let one = r.graph.textInput(r.oneID)!
+        XCTAssertEqual(one.committed, "abni")
+        XCTAssertEqual(one.display, "abni")
+        XCTAssertNil(r.input.markedRange(node: r.one))
+        XCTAssertTrue(r.input.trace.contains("focus-ends-composition"))
+    }
+
+    func testAccessibilityFocusChangeCommitsTheCompositionOfTheFieldItLeaves() {
+        let r = rig()
+        _ = r.input.pointerDown(node: r.one, x: 0)
+        XCTAssertTrue(r.input.setCaret(r.one, 2))
+        XCTAssertTrue(r.input.replaceAndMark(node: r.one, range: nil, text: Array("ni".utf16), newSelection: nil))
+        XCTAssertTrue(r.input.accessibility(.focus, node: r.two, i0: 0, i1: 0, text: ""))
+        XCTAssertEqual(r.graph.textInput(r.oneID)?.committed, "abni")
+        XCTAssertNil(r.input.markedRange(node: r.one))
+    }
+
+    func testShiftArrowsExtendAndShrinkTheSelectionFromItsAnchor() {
+        // Block 40 reconvert: shift+Left selects the committed text before a reconversion; a plain arrow then collapses the selection to its left end
+        let r = rig()
+        _ = r.input.pointerDown(node: r.one, x: 0)
+        XCTAssertTrue(r.input.handleKey(name: "end", modifiers: 0))
+        let s = r.graph.textInput(r.oneID)!
+        XCTAssertTrue(r.input.handleKey(name: "left", modifiers: 0x4))
+        XCTAssertEqual(s.selection, UTF16Range(location: 1, length: 1))
+        XCTAssertTrue(r.input.handleKey(name: "left", modifiers: 0x4))
+        XCTAssertEqual(s.selection, UTF16Range(location: 0, length: 2))
+        XCTAssertTrue(r.input.handleKey(name: "right", modifiers: 0x4))
+        XCTAssertEqual(s.selection, UTF16Range(location: 1, length: 1))
+        XCTAssertTrue(r.input.handleKey(name: "left", modifiers: 0))
+        XCTAssertEqual(s.selection, UTF16Range(location: 1, length: 0))
+    }
+
+    func testShiftHomeAndEndAnchorAtTheCaret() {
+        let r = rig()
+        _ = r.input.pointerDown(node: r.one, x: 0)
+        XCTAssertTrue(r.input.handleKey(name: "end", modifiers: 0))
+        let s = r.graph.textInput(r.oneID)!
+        XCTAssertTrue(r.input.handleKey(name: "home", modifiers: 0x4))
+        XCTAssertEqual(s.selection, UTF16Range(location: 0, length: 2))
+        XCTAssertTrue(r.input.handleKey(name: "end", modifiers: 0x4))
+        XCTAssertEqual(s.selection, UTF16Range(location: 2, length: 0))
+    }
+
     func testCaretBoundsComeFromThePaintedLayout() {
         let graph = Graph(Witness_Fields(), scale: 2.5)
         graph.flush()

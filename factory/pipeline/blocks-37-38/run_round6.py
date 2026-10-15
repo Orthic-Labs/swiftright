@@ -17,7 +17,7 @@ def main():
     res = PIPE / "consolidation/results.jsonl"
     done = set()
     mac_only = "--mac-only" in sys.argv
-    force = "--force" in sys.argv or mac_only in sys.argv or "--recompare" in sys.argv   # rerun cases that already passed (new Mac host pin, changed steps)
+    force = "--force" in sys.argv or mac_only or "--recompare" in sys.argv   # rerun cases that already passed (new Mac host pin, changed steps)
     if res.exists():
         for line in res.read_text().splitlines():
             j = json.loads(line)
