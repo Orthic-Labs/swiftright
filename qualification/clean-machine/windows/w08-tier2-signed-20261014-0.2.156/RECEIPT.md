@@ -88,3 +88,7 @@ Verdict on `c0c3f685`: DELIVERED-WITH-CAVEATS, no blockers. Corrections to state
 - **Test coverage.** The new Swift unit tests cover `recordLaunch` only. They were compiled but not run in CI. The Windows-only ordering in `installIfNeeded` is shown by the Sandbox failed-launch control.
 
 Contract status: (a) CLOSED-WITH-CAVEATS (Sandbox only); (b) CLOSED; (c) OPEN, though the no-window checks passed on the real Dell (above); (d) OPEN, running; (e) CLOSED-WITH-CAVEATS for RightKit 0.2.156.
+
+## Long-run status at 15 Oct 18:15 IST (item d)
+
+The live checker shows 27 runs. The +2, +5, +15 and +60 steps fired on time. 22 hourly attempts followed, each gap 60.3–60.7 min. Run 27 (17:12:05, 23 h 31 m after the first failure) was the last attempt inside the 24 h window. It scheduled run 28 for 16 Oct 17:12:23 in daily mode (+1440 min). The package stayed NeedsRemediation and no attempt launched an installer. Still unobserved: the daily attempt actually firing on 16 Oct and then re-arming for 24 h later. Item (d) stays OPEN until that is read back.
