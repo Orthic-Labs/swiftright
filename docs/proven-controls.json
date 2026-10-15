@@ -1441,8 +1441,7 @@
       ],
       "casesPassingDecidingGate": "6/6",
       "caveats": [
-        "A priority set beneath `padding` or a frame modifier does not forward (measured); only HStack/VStack distribution is proven, not Layout protocol containers.",
-        "narrowed: proven only for non-Text children; Text in priority groups awaits text cases (L1/L3)"
+        "A priority set beneath `padding` or a frame modifier does not forward (measured); only HStack/VStack distribution is proven, not Layout protocol containers."
       ],
       "review": "oracle 2026-10-15",
       "stage": "3d58196a3-3dc0ffc8",
@@ -1454,7 +1453,7 @@
           "2026-10-15"
         ],
         "source": "docs/sr1-status.md table + factory/pipeline/closure/closure-table.json (blocks 1-20) / consolidation-table.json (blocks 21+)",
-        "text": "120/120 exact on `3d58196a3-3dc0ffc8` (**delivered-pending-review**, narrowed by Oracle: proven for non-Text children only; Text in priority groups NOT delivered, awaits text cases (L1/L3); priority beneath padding/frame does not forward)"
+        "text": "**delivered-pending-review**. The Oracle narrowing (15 October) is lifted: Text in priority groups now passes N=20 (8/8, decisions L1-L8, probes `probes/layout-rules`, cases `factory/pipeline/blocks-26-34/swiftui.layout-priority/*text*`, `hub-rows`). Priority beneath padding/frame does not forward (unchanged). The review is not repeated."
       },
       "windowsDifferences": []
     },

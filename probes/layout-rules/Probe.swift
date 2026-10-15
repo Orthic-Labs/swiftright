@@ -194,11 +194,25 @@ struct Stack: View {
     runStack("V L ll2+L2 ll2", [T("L", L, ll: 2), T("L2", L, ll: 2)], widths: [10, 20, 30, 40, 60, 80, 120], vertical: true, cross: 100)
 }
 
+/// Natural widths of the probe texts in a bundled font (case design: `Probe tinos <font file>`).
+@MainActor func tinosWidths(_ file: String) {
+    CTFontManagerRegisterFontsForURL(URL(fileURLWithPath: file) as CFURL, .process, nil)
+    for (tn, t) in texts {
+        for ll in [1] {
+            recorded["ask"] = nil
+            layout(Ask(p: ProposedViewSize(width: nil, height: nil)) { Text(t).font(.custom("Tinos-Regular", size: 13)).lineLimit(ll) }, size: CGSize(width: 500, height: 500))
+            let s = recorded["ask"] ?? .zero
+            j(["kind": "tinos", "text": tn, "outW": Double(s.width), "outH": Double(s.height)])
+        }
+    }
+}
+
 @main struct Main {
     @MainActor static func main() {
         _ = NSApplication.shared
         NSApplication.shared.setActivationPolicy(.prohibited)
         let sel = CommandLine.arguments.dropFirst().first ?? "all"
+        if sel == "tinos" { tinosWidths(CommandLine.arguments[2]); return }
         if sel == "all" || sel == "text" { textRules() }
         if sel == "all" || sel == "stack" { stackRules() }
     }

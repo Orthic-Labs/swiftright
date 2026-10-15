@@ -80,8 +80,8 @@ REVIEWED = {bid: {"review": REVIEW, "caveats": []} for bid in
             [NUM2ID[n] for n in range(1, 21)] + ["cross-cutting.pixel-ties"] + [NUM2ID[n] for n in list(range(21, 27)) + list(range(28, 37))]}
 REVIEWED["swiftui.text-views"]["caveats"] = ["Text position is ungated (the pixels and the semantic tree are)."]
 REVIEWED["swiftui.system-font"]["caveats"] = ["Weak gate: one blanket tolerance set for every size; `sizes-large-v1`'s tolerance was raised from 3 to 4 after capture (Oracle)."]
-REVIEWED["swiftui.layout-priority"] = {"review": REVIEW, "status": "delivered-pending-review", "caveats": [
-    "narrowed: proven only for non-Text children; Text in priority groups awaits text cases (L1/L3)"]}
+# Text in priority groups: the eight text cases pass at N=20 on stage 3d3c6f5c2-0a0d1f39 (L1-L8); the Oracle narrowing is lifted, the review is not repeated.
+REVIEWED["swiftui.layout-priority"] = {"review": REVIEW, "status": "delivered-pending-review", "caveats": []}
 PENDING_REVIEW -= set(REVIEWED)
 
 # No hand-set status: the closure run reran blocks 13-15 (text-origin fix, decision 12) and every block 1-20 is derived from its cases (delivered-pending-review).
@@ -238,7 +238,12 @@ def build():
                                        "for the notch's SwiftUI APIs that no delivered block covers.",
                                "see": "docs/pulse-notch-demand-map.md"},
             "knownGapsAll": gaps,
-            "blocks": entries}
+            "blocks": entries + hand_entries()}
+
+
+def hand_entries():
+    """Entries with no source in this generator (wave 1 I2, `foundations.image-layout`: its status row is not a numbered row); kept verbatim in hand-entries.json."""
+    return json.loads((Path(__file__).resolve().parent / "hand-entries.json").read_text())
 
 
 def main(argv):
