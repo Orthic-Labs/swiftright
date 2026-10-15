@@ -275,9 +275,6 @@ public final class ResolvedNodePainter {
         case "Rectangle", "RoundedRectangle", "Circle":
             switch try ShapePainter.plan(node, bounds: bounds, scale: scale) {
             case .primitive(let primitive):
-                if case .rect(_, let color, _, _, let borderWidth) = primitive, color & 0xff == 0, borderWidth == 0 {   // transparent fill, no stroke: nothing to draw (R12)
-                    return NodeEmission(primitives: [], semantic: nil, flags: [], structural: false)
-                }
                 return NodeEmission(primitives: [primitive], semantic: nil, flags: [], structural: false)
             case .continuous(let request):
                 // One image, or horizontal bands of one when the shape is over the rasteriser's work limit (round 5 block 30). Band k's handle is kept under a key
@@ -338,10 +335,7 @@ public final class ResolvedNodePainter {
 
         case "Color":
             guard let color = node.color else { throw HostPaintError.colorMetadataRequired }
-            let rgba = try HostPaint.rgba(color, opacity: node.opacity, scheme: node.style.colorScheme)
-            // A fully transparent fill (Color.clear, alpha 0, a hit area at 0.001) draws nothing: the renderer shows a rect whose colour is 0 as opaque black (hub gap R12).
-            // The node stays (it is the hit area); only the paint is dropped.
-            return NodeEmission(primitives: rgba & 0xff == 0 ? [] : [.rect(bounds, color: rgba)], semantic: nil, flags: [], structural: false)
+            return NodeEmission(primitives: [.rect(bounds, color: try HostPaint.rgba(color, opacity: node.opacity, scheme: node.style.colorScheme))], semantic: nil, flags: [], structural: false)
 
         case "Image":
             if case .pixels(let image, _)? = node.image {

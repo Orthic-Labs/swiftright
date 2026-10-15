@@ -1,0 +1,380 @@
+{
+ "alphaGate": {
+  "toleranceReason": "analytic model, not a Mac comparison: out = bg * (1 - a) + fg * a per 8-bit sRGB channel, compared as an unrounded float; 1 level covers one rounding step of an 8-bit source-over blend (premultiplied storage, 255 versus 256 divisors); alpha 0, alpha 255 and the background are exact. Wave 0 T0, docs/foundations-images-fonts.md 1.2.",
+  "ground": [
+   {
+    "name": "ground-white",
+    "rect": [
+     0,
+     0,
+     800,
+     175
+    ],
+    "rgb": [
+     255,
+     255,
+     255
+    ]
+   },
+   {
+    "name": "ground-black",
+    "rect": [
+     0,
+     175,
+     800,
+     350
+    ],
+    "rgb": [
+     0,
+     0,
+     0
+    ]
+   },
+   {
+    "name": "ground-colour",
+    "rect": [
+     0,
+     350,
+     800,
+     525
+    ],
+    "rgb": [
+     40,
+     120,
+     200
+    ]
+   },
+   {
+    "name": "ground-strip",
+    "rect": [
+     0,
+     525,
+     800,
+     600
+    ],
+    "rgb": [
+     255,
+     255,
+     255
+    ]
+   }
+  ],
+  "regions": [
+   {
+    "name": "image-black-white-a0",
+    "rect": [
+     50,
+     35,
+     150,
+     135
+    ],
+    "tol": 0,
+    "expect": [
+     255.0,
+     255.0,
+     255.0
+    ]
+   },
+   {
+    "name": "image-black-white-a1",
+    "rect": [
+     150,
+     35,
+     250,
+     135
+    ],
+    "tol": 1,
+    "expect": [
+     254.0,
+     254.0,
+     254.0
+    ]
+   },
+   {
+    "name": "image-black-white-a2",
+    "rect": [
+     250,
+     35,
+     350,
+     135
+    ],
+    "tol": 1,
+    "expect": [
+     253.0,
+     253.0,
+     253.0
+    ]
+   },
+   {
+    "name": "image-black-white-a5",
+    "rect": [
+     350,
+     35,
+     450,
+     135
+    ],
+    "tol": 1,
+    "expect": [
+     250.0,
+     250.0,
+     250.0
+    ]
+   },
+   {
+    "name": "image-black-white-a25",
+    "rect": [
+     450,
+     35,
+     550,
+     135
+    ],
+    "tol": 1,
+    "expect": [
+     230.0,
+     230.0,
+     230.0
+    ]
+   },
+   {
+    "name": "image-black-white-a128",
+    "rect": [
+     550,
+     35,
+     650,
+     135
+    ],
+    "tol": 1,
+    "expect": [
+     127.0,
+     127.0,
+     127.0
+    ]
+   },
+   {
+    "name": "image-black-white-a255",
+    "rect": [
+     650,
+     35,
+     750,
+     135
+    ],
+    "tol": 0,
+    "expect": [
+     0.0,
+     0.0,
+     0.0
+    ]
+   },
+   {
+    "name": "image-black-black-a0",
+    "rect": [
+     50,
+     210,
+     150,
+     310
+    ],
+    "tol": 0,
+    "expect": [
+     0.0,
+     0.0,
+     0.0
+    ]
+   },
+   {
+    "name": "image-black-black-a1",
+    "rect": [
+     150,
+     210,
+     250,
+     310
+    ],
+    "tol": 1,
+    "expect": [
+     0.0,
+     0.0,
+     0.0
+    ]
+   },
+   {
+    "name": "image-black-black-a2",
+    "rect": [
+     250,
+     210,
+     350,
+     310
+    ],
+    "tol": 1,
+    "expect": [
+     0.0,
+     0.0,
+     0.0
+    ]
+   },
+   {
+    "name": "image-black-black-a5",
+    "rect": [
+     350,
+     210,
+     450,
+     310
+    ],
+    "tol": 1,
+    "expect": [
+     0.0,
+     0.0,
+     0.0
+    ]
+   },
+   {
+    "name": "image-black-black-a25",
+    "rect": [
+     450,
+     210,
+     550,
+     310
+    ],
+    "tol": 1,
+    "expect": [
+     0.0,
+     0.0,
+     0.0
+    ]
+   },
+   {
+    "name": "image-black-black-a128",
+    "rect": [
+     550,
+     210,
+     650,
+     310
+    ],
+    "tol": 1,
+    "expect": [
+     0.0,
+     0.0,
+     0.0
+    ]
+   },
+   {
+    "name": "image-black-black-a255",
+    "rect": [
+     650,
+     210,
+     750,
+     310
+    ],
+    "tol": 0,
+    "expect": [
+     0.0,
+     0.0,
+     0.0
+    ]
+   },
+   {
+    "name": "image-black-colour-a0",
+    "rect": [
+     50,
+     385,
+     150,
+     485
+    ],
+    "tol": 0,
+    "expect": [
+     40.0,
+     120.0,
+     200.0
+    ]
+   },
+   {
+    "name": "image-black-colour-a1",
+    "rect": [
+     150,
+     385,
+     250,
+     485
+    ],
+    "tol": 1,
+    "expect": [
+     39.84313725490196,
+     119.52941176470588,
+     199.2156862745098
+    ]
+   },
+   {
+    "name": "image-black-colour-a2",
+    "rect": [
+     250,
+     385,
+     350,
+     485
+    ],
+    "tol": 1,
+    "expect": [
+     39.68627450980392,
+     119.05882352941177,
+     198.4313725490196
+    ]
+   },
+   {
+    "name": "image-black-colour-a5",
+    "rect": [
+     350,
+     385,
+     450,
+     485
+    ],
+    "tol": 1,
+    "expect": [
+     39.2156862745098,
+     117.6470588235294,
+     196.078431372549
+    ]
+   },
+   {
+    "name": "image-black-colour-a25",
+    "rect": [
+     450,
+     385,
+     550,
+     485
+    ],
+    "tol": 1,
+    "expect": [
+     36.07843137254902,
+     108.23529411764706,
+     180.3921568627451
+    ]
+   },
+   {
+    "name": "image-black-colour-a128",
+    "rect": [
+     550,
+     385,
+     650,
+     485
+    ],
+    "tol": 1,
+    "expect": [
+     19.92156862745098,
+     59.76470588235294,
+     99.6078431372549
+    ]
+   },
+   {
+    "name": "image-black-colour-a255",
+    "rect": [
+     650,
+     385,
+     750,
+     485
+    ],
+    "tol": 0,
+    "expect": [
+     0.0,
+     0.0,
+     0.0
+    ]
+   }
+  ]
+ }
+}

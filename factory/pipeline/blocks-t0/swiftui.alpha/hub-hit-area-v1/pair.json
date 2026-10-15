@@ -1,0 +1,155 @@
+{
+ "alphaGate": {
+  "toleranceReason": "analytic model, not a Mac comparison: out = bg * (1 - a) + fg * a per 8-bit sRGB channel, compared as an unrounded float; 1 level covers one rounding step of an 8-bit source-over blend (premultiplied storage, 255 versus 256 divisors); alpha 0, alpha 255 and the background are exact. Wave 0 T0, docs/foundations-images-fonts.md 1.2.",
+  "ground": [
+   {
+    "name": "ground-white",
+    "rect": [
+     0,
+     0,
+     800,
+     175
+    ],
+    "rgb": [
+     255,
+     255,
+     255
+    ]
+   },
+   {
+    "name": "ground-black",
+    "rect": [
+     0,
+     175,
+     800,
+     350
+    ],
+    "rgb": [
+     0,
+     0,
+     0
+    ]
+   },
+   {
+    "name": "ground-colour",
+    "rect": [
+     0,
+     350,
+     800,
+     525
+    ],
+    "rgb": [
+     40,
+     120,
+     200
+    ]
+   },
+   {
+    "name": "ground-strip",
+    "rect": [
+     0,
+     525,
+     800,
+     600
+    ],
+    "rgb": [
+     255,
+     255,
+     255
+    ]
+   }
+  ],
+  "regions": [
+   {
+    "name": "row-white",
+    "rect": [
+     50,
+     35,
+     750,
+     135
+    ],
+    "tol": 0,
+    "expect": [
+     255,
+     255,
+     255
+    ]
+   },
+   {
+    "name": "mark-white",
+    "rect": [
+     70,
+     35,
+     170,
+     135
+    ],
+    "tol": 0,
+    "expect": [
+     255,
+     0,
+     0
+    ]
+   },
+   {
+    "name": "row-black",
+    "rect": [
+     50,
+     210,
+     750,
+     310
+    ],
+    "tol": 0,
+    "expect": [
+     0,
+     0,
+     0
+    ]
+   },
+   {
+    "name": "mark-black",
+    "rect": [
+     70,
+     210,
+     170,
+     310
+    ],
+    "tol": 0,
+    "expect": [
+     255,
+     0,
+     0
+    ]
+   },
+   {
+    "name": "row-colour",
+    "rect": [
+     50,
+     385,
+     750,
+     485
+    ],
+    "tol": 0,
+    "expect": [
+     40,
+     120,
+     200
+    ]
+   },
+   {
+    "name": "mark-colour",
+    "rect": [
+     70,
+     385,
+     170,
+     485
+    ],
+    "tol": 0,
+    "expect": [
+     255,
+     0,
+     0
+    ]
+   }
+  ]
+ }
+}

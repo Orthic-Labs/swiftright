@@ -58,12 +58,18 @@ final class DividerPaintTests: XCTestCase {
         XCTAssertEqual(colour, 0xffffff19)
     }
 
-    /// A fully transparent fill draws nothing: the renderer paints a rect whose colour is 0 as opaque black (hub gap R12), so no rect is emitted for it.
-    func testTransparentFillsEmitNoRect() throws {
+    /// A fully transparent fill is emitted as an ordinary rect whose colour has alpha 0 (wave 0 T0: the renderer draws such a rect as nothing, measured against the unpatched path;
+    /// the host no longer drops it, so a transparent hit area stays an ordinary node and the alpha path is the one under test).
+    func testTransparentFillsEmitAnAlphaZeroRect() throws {
         for view in [AnyView(Color.clear.frame(width: 10, height: 10)), AnyView(Color.black.opacity(0.001).frame(width: 10, height: 10)),
                      AnyView(Rectangle().fill(Color.red.opacity(0)).frame(width: 10, height: 10)), AnyView(Color.red.opacity(0.5).opacity(0).frame(width: 10, height: 10))] {
             let nodes = try emit(ZStack { view })
-            for (n, e) in nodes where ["Color", "Rectangle"].contains(n.kind) { XCTAssertTrue(e.primitives.isEmpty, "\(n.kind) with alpha 0 emitted \(e.primitives)") }
+            for (n, e) in nodes where ["Color", "Rectangle"].contains(n.kind) {
+                XCTAssertEqual(e.primitives.count, 1, "\(n.kind) with alpha 0 emits one rect")
+                guard case .rect(_, let colour, _, _, let borderWidth)? = e.primitives.first else { return XCTFail("a transparent \(n.kind) emits a rect") }
+                XCTAssertEqual(colour & 0xff, 0, "alpha 0 stays alpha 0 (never promoted to a visible colour)")
+                XCTAssertEqual(borderWidth, 0)
+            }
         }
         let visible = try emit(Color.black.opacity(0.1).frame(width: 10, height: 10))
         XCTAssertEqual(visible.filter { $0.0.kind == "Color" }.first?.1.primitives.count, 1)

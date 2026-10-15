@@ -1,0 +1,380 @@
+{
+ "alphaGate": {
+  "toleranceReason": "analytic model, not a Mac comparison: out = bg * (1 - a) + fg * a per 8-bit sRGB channel, compared as an unrounded float; 1 level covers one rounding step of an 8-bit source-over blend (premultiplied storage, 255 versus 256 divisors); alpha 0, alpha 255 and the background are exact. Wave 0 T0, docs/foundations-images-fonts.md 1.2.",
+  "ground": [
+   {
+    "name": "ground-white",
+    "rect": [
+     0,
+     0,
+     800,
+     175
+    ],
+    "rgb": [
+     255,
+     255,
+     255
+    ]
+   },
+   {
+    "name": "ground-black",
+    "rect": [
+     0,
+     175,
+     800,
+     350
+    ],
+    "rgb": [
+     0,
+     0,
+     0
+    ]
+   },
+   {
+    "name": "ground-colour",
+    "rect": [
+     0,
+     350,
+     800,
+     525
+    ],
+    "rgb": [
+     40,
+     120,
+     200
+    ]
+   },
+   {
+    "name": "ground-strip",
+    "rect": [
+     0,
+     525,
+     800,
+     600
+    ],
+    "rgb": [
+     255,
+     255,
+     255
+    ]
+   }
+  ],
+  "regions": [
+   {
+    "name": "Color.clear-white",
+    "rect": [
+     50,
+     35,
+     170,
+     135
+    ],
+    "tol": 0,
+    "expect": [
+     255,
+     255,
+     255
+    ]
+   },
+   {
+    "name": "fill-clear-white",
+    "rect": [
+     170,
+     35,
+     290,
+     135
+    ],
+    "tol": 0,
+    "expect": [
+     255,
+     255,
+     255
+    ]
+   },
+   {
+    "name": "black-0.001-white",
+    "rect": [
+     290,
+     35,
+     410,
+     135
+    ],
+    "tol": 0,
+    "expect": [
+     255,
+     255,
+     255
+    ]
+   },
+   {
+    "name": "fill-black-0.001-white",
+    "rect": [
+     410,
+     35,
+     530,
+     135
+    ],
+    "tol": 0,
+    "expect": [
+     255,
+     255,
+     255
+    ]
+   },
+   {
+    "name": "red-opacity-0-white",
+    "rect": [
+     530,
+     35,
+     650,
+     135
+    ],
+    "tol": 0,
+    "expect": [
+     255,
+     255,
+     255
+    ]
+   },
+   {
+    "name": "plain-button-hit-area-white",
+    "rect": [
+     650,
+     35,
+     770,
+     135
+    ],
+    "tol": 0,
+    "expect": [
+     255,
+     255,
+     255
+    ]
+   },
+   {
+    "name": "plain-button-mark-white",
+    "rect": [
+     690,
+     65,
+     730,
+     105
+    ],
+    "tol": 0,
+    "expect": [
+     255,
+     0,
+     0
+    ]
+   },
+   {
+    "name": "Color.clear-black",
+    "rect": [
+     50,
+     210,
+     170,
+     310
+    ],
+    "tol": 0,
+    "expect": [
+     0,
+     0,
+     0
+    ]
+   },
+   {
+    "name": "fill-clear-black",
+    "rect": [
+     170,
+     210,
+     290,
+     310
+    ],
+    "tol": 0,
+    "expect": [
+     0,
+     0,
+     0
+    ]
+   },
+   {
+    "name": "black-0.001-black",
+    "rect": [
+     290,
+     210,
+     410,
+     310
+    ],
+    "tol": 0,
+    "expect": [
+     0,
+     0,
+     0
+    ]
+   },
+   {
+    "name": "fill-black-0.001-black",
+    "rect": [
+     410,
+     210,
+     530,
+     310
+    ],
+    "tol": 0,
+    "expect": [
+     0,
+     0,
+     0
+    ]
+   },
+   {
+    "name": "red-opacity-0-black",
+    "rect": [
+     530,
+     210,
+     650,
+     310
+    ],
+    "tol": 0,
+    "expect": [
+     0,
+     0,
+     0
+    ]
+   },
+   {
+    "name": "plain-button-hit-area-black",
+    "rect": [
+     650,
+     210,
+     770,
+     310
+    ],
+    "tol": 0,
+    "expect": [
+     0,
+     0,
+     0
+    ]
+   },
+   {
+    "name": "plain-button-mark-black",
+    "rect": [
+     690,
+     240,
+     730,
+     280
+    ],
+    "tol": 0,
+    "expect": [
+     255,
+     0,
+     0
+    ]
+   },
+   {
+    "name": "Color.clear-colour",
+    "rect": [
+     50,
+     385,
+     170,
+     485
+    ],
+    "tol": 0,
+    "expect": [
+     40,
+     120,
+     200
+    ]
+   },
+   {
+    "name": "fill-clear-colour",
+    "rect": [
+     170,
+     385,
+     290,
+     485
+    ],
+    "tol": 0,
+    "expect": [
+     40,
+     120,
+     200
+    ]
+   },
+   {
+    "name": "black-0.001-colour",
+    "rect": [
+     290,
+     385,
+     410,
+     485
+    ],
+    "tol": 0,
+    "expect": [
+     40,
+     120,
+     200
+    ]
+   },
+   {
+    "name": "fill-black-0.001-colour",
+    "rect": [
+     410,
+     385,
+     530,
+     485
+    ],
+    "tol": 0,
+    "expect": [
+     40,
+     120,
+     200
+    ]
+   },
+   {
+    "name": "red-opacity-0-colour",
+    "rect": [
+     530,
+     385,
+     650,
+     485
+    ],
+    "tol": 0,
+    "expect": [
+     40,
+     120,
+     200
+    ]
+   },
+   {
+    "name": "plain-button-hit-area-colour",
+    "rect": [
+     650,
+     385,
+     770,
+     485
+    ],
+    "tol": 0,
+    "expect": [
+     40,
+     120,
+     200
+    ]
+   },
+   {
+    "name": "plain-button-mark-colour",
+    "rect": [
+     690,
+     415,
+     730,
+     455
+    ],
+    "tol": 0,
+    "expect": [
+     255,
+     0,
+     0
+    ]
+   }
+  ]
+ }
+}

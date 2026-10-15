@@ -1,0 +1,212 @@
+{
+ "alphaGate": {
+  "toleranceReason": "analytic model, not a Mac comparison: out = bg * (1 - a) + fg * a per 8-bit sRGB channel, compared as an unrounded float; 1 level covers one rounding step of an 8-bit source-over blend (premultiplied storage, 255 versus 256 divisors); alpha 0, alpha 255 and the background are exact. Wave 0 T0, docs/foundations-images-fonts.md 1.2.",
+  "ground": [
+   {
+    "name": "ground-white",
+    "rect": [
+     0,
+     0,
+     800,
+     175
+    ],
+    "rgb": [
+     255,
+     255,
+     255
+    ]
+   },
+   {
+    "name": "ground-black",
+    "rect": [
+     0,
+     175,
+     800,
+     350
+    ],
+    "rgb": [
+     0,
+     0,
+     0
+    ]
+   },
+   {
+    "name": "ground-colour",
+    "rect": [
+     0,
+     350,
+     800,
+     525
+    ],
+    "rgb": [
+     40,
+     120,
+     200
+    ]
+   },
+   {
+    "name": "ground-strip",
+    "rect": [
+     0,
+     525,
+     800,
+     600
+    ],
+    "rgb": [
+     255,
+     255,
+     255
+    ]
+   }
+  ],
+  "regions": [
+   {
+    "name": "split-white",
+    "rect": [
+     50,
+     35,
+     150,
+     135
+    ],
+    "tol": 0,
+    "pattern": {
+     "kind": "split",
+     "axis": "x",
+     "atPx": 50,
+     "first": [
+      255,
+      255,
+      255
+     ],
+     "second": [
+      255,
+      0,
+      0
+     ]
+    }
+   },
+   {
+    "name": "checker-white",
+    "rect": [
+     150,
+     35,
+     250,
+     135
+    ],
+    "tol": 0,
+    "pattern": {
+     "kind": "checker",
+     "cellPx": 4,
+     "even": [
+      255,
+      255,
+      255
+     ],
+     "odd": [
+      0,
+      0,
+      0
+     ]
+    }
+   },
+   {
+    "name": "split-black",
+    "rect": [
+     50,
+     210,
+     150,
+     310
+    ],
+    "tol": 0,
+    "pattern": {
+     "kind": "split",
+     "axis": "x",
+     "atPx": 50,
+     "first": [
+      0,
+      0,
+      0
+     ],
+     "second": [
+      255,
+      0,
+      0
+     ]
+    }
+   },
+   {
+    "name": "checker-black",
+    "rect": [
+     150,
+     210,
+     250,
+     310
+    ],
+    "tol": 0,
+    "pattern": {
+     "kind": "checker",
+     "cellPx": 4,
+     "even": [
+      0,
+      0,
+      0
+     ],
+     "odd": [
+      0,
+      0,
+      0
+     ]
+    }
+   },
+   {
+    "name": "split-colour",
+    "rect": [
+     50,
+     385,
+     150,
+     485
+    ],
+    "tol": 0,
+    "pattern": {
+     "kind": "split",
+     "axis": "x",
+     "atPx": 50,
+     "first": [
+      40,
+      120,
+      200
+     ],
+     "second": [
+      255,
+      0,
+      0
+     ]
+    }
+   },
+   {
+    "name": "checker-colour",
+    "rect": [
+     150,
+     385,
+     250,
+     485
+    ],
+    "tol": 0,
+    "pattern": {
+     "kind": "checker",
+     "cellPx": 4,
+     "even": [
+      40,
+      120,
+      200
+     ],
+     "odd": [
+      0,
+      0,
+      0
+     ]
+    }
+   }
+  ]
+ }
+}
