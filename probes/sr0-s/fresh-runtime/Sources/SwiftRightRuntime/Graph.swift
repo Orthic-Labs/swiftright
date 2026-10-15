@@ -227,6 +227,8 @@ enum ModifierSpec {
     case accessibilityTraits(AccessibilityTraits, add: Bool)
     /// SR1 round 5 (block swiftui.layout-priority): `.layoutPriority(_:)`, read by the stack that lays out this view (through wrappers that pass their child through).
     case layoutPriority(Double)
+    /// SR1 round 5 (layout rules, decision L7): `.fixedSize(horizontal:vertical:)`: the child is proposed nothing (its ideal size) on each fixed axis and the view reports what the child reports.
+    case fixedSize(horizontal: Bool, vertical: Bool)
     /// SR1 round 4 (block swiftui.list-row-style): `.listRowSeparator(_:)` and `.listRowBackground(_:)`, read by the host from the row's subtree.
     case listRowSeparator(Visibility)
     case listRowBackground(ListRowBackground)
@@ -264,6 +266,7 @@ enum ModifierSpec {
         case .accessibilityElement: return "modifier.accessibilityElement"
         case .accessibilityTraits: return "modifier.accessibilityTraits"
         case .layoutPriority: return "modifier.layoutPriority"
+        case .fixedSize: return "modifier.fixedSize"
         case .listRowSeparator: return "modifier.listRowSeparator"
         case .listRowBackground: return "modifier.listRowBackground"
         case .clipped: return "modifier.clipped"
@@ -300,6 +303,7 @@ enum ModifierSpec {
         case .accessibilityElement: return "accessibilityElement"
         case .accessibilityTraits: return "accessibilityTraits"
         case .layoutPriority: return "layoutPriority"
+        case .fixedSize: return "fixedSize"
         case .listRowSeparator: return "listRowSeparator"
         case .listRowBackground: return "listRowBackground"
         case .clipped: return "clipped"

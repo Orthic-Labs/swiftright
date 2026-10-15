@@ -173,6 +173,9 @@ extension Graph {
             let childProposal = frame.childProposal(proposal)
             let inside = childNodes(node).first.map { measure($0, childProposal) } ?? .zero
             return frame.frameSize(for: inside, proposal: proposal)
+        case .modifier(.fixedSize(let horizontal, let vertical)):
+            // Ideal size on the fixed axes (nothing proposed), the offer on the others (decision L7).
+            return childNodes(node).first.map { measure($0, fixedProposal(proposal, horizontal, vertical)) } ?? .zero
         case .stack(let spec) where spec.name == "List":
             return LayoutSize(width: finiteLength(proposal.width) ?? 0, height: finiteLength(proposal.height) ?? 0)
         case .stack(let spec):
@@ -200,6 +203,11 @@ extension Graph {
         case .user, .modifier, .menu:
             return measureGroup(node, proposal)
         }
+    }
+
+    /// The proposal a `.fixedSize` view passes down: nil (ideal) on each fixed axis.
+    private func fixedProposal(_ proposal: ProposedViewSize, _ horizontal: Bool, _ vertical: Bool) -> ProposedViewSize {
+        ProposedViewSize(width: horizontal ? nil : proposal.width, height: vertical ? nil : proposal.height)
     }
 
     func place(_ node: Node, in rect: LayoutRect, proposal: ProposedViewSize) {
@@ -248,6 +256,14 @@ extension Graph {
                 width: childSize.width,
                 height: childSize.height
             )
+            placeChild(child, in: inner, within: node, bounds: rect, proposal: childProposal)
+        case .modifier(.fixedSize(let horizontal, let vertical)):
+            guard let child = childNodes(node).first else { return }
+            let childProposal = fixedProposal(proposal, horizontal, vertical)
+            let childSize = measure(child, childProposal)
+            // The child keeps its ideal size and sits centred in the frame it was given (SwiftUI: a fixed-size view overflows its parent's frame on both sides).
+            let inner = LayoutRect(x: rect.minX + (rect.width - childSize.width) / 2, y: rect.minY + (rect.height - childSize.height) / 2,
+                                   width: childSize.width, height: childSize.height)
             placeChild(child, in: inner, within: node, bounds: rect, proposal: childProposal)
         case .stack(let spec) where spec.name == "List":
             placeList(node, in: rect)
@@ -506,6 +522,12 @@ extension Graph {
             let childSize = measure(child, childProposal)
             let y = alignmentOffset(frame.alignment.vertical, available: frame.frameSize(for: childSize, proposal: proposal).height - childSize.height)
             return (inner.first + y, inner.last + y)
+        case .modifier(.fixedSize(let horizontal, let vertical)):
+            guard let child = childNodes(node).first else { return nil }
+            let childProposal = fixedProposal(proposal, horizontal, vertical)
+            guard let inner = baselines(of: child, childProposal) else { return nil }
+            // the child is centred in the frame this view is given; the baseline is the child's own from its top edge
+            return inner
         case .stack(let spec) where spec.name == "List":
             return nil
         case .stack(let spec):
@@ -792,11 +814,14 @@ extension Graph {
             fontMetadata: font.metadata, lineLimit: lineLimit
         )
         let measured = measurer.measure(request)
-        node.memo[wrapWidth] = measured.size
+        // A Text never reports more width than it was offered (macOS 27 measured, decision L1): offered 0 it reports 0, so in a stack its flexibility range runs
+        // from 0 to its one-line width and a lower layout priority gives way to a higher one. A measurer that reads a zero bound as no bound (the renderer) is corrected here.
+        let size = wrapWidth.map { LayoutSize(width: min(measured.size.width, max(0, $0)), height: measured.size.height) } ?? measured.size
+        node.memo[wrapWidth] = size
         // the first line's baseline, and the last line's (lines are as tall as the line height: the measured height over the line count)
         let lineHeight = measured.lineCount > 0 ? measured.size.height / CGFloat(measured.lineCount) : 0
         node.memoBase[wrapWidth] = (measured.baseline, measured.baseline + CGFloat(max(0, measured.lineCount - 1)) * lineHeight)
-        return measured.size
+        return size
     }
 
     func childNodes(_ node: Node) -> [Node] {

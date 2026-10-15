@@ -209,6 +209,17 @@ public enum SingleLineText {
     }
 }
 
+/// The width a Text reports for an offered width. SwiftUI never reports more width than it was offered (macOS 27 measured, decision L1): a Text offered 0 reports 0, a
+/// truncated single line reports at most the offer, and a line with no room for even its ellipsis reports the offer itself (the glyphs are clipped, not laid out wider).
+/// The shaped run keeps its own (possibly wider) extent; only the reported frame is clamped, and `RetainedRunChoice` is given the same clamped width.
+public enum TextReportedWidth {
+    /// `widthPX` is the shaped extent; `proposedDIP` the width the stack offered (nil: unbounded); the result is in physical pixels.
+    public static func clamp(_ widthPX: Float, proposedDIP: CGFloat?, scale: Float) -> Float {
+        guard let proposedDIP, proposedDIP.isFinite else { return widthPX }
+        return min(widthPX, Float(max(0, proposedDIP)) * scale)
+    }
+}
+
 /// The retained-run choice: among measured requests of the same text and font, those whose measured physical extent can
 /// have been snapped to the resolved bounds; all candidates must agree (else the run is ambiguous and refused).
 enum RetainedRunChoice {
@@ -333,7 +344,8 @@ public final class BridgeTextMeasurer: TextMeasurer, TextRunSource {
             }
             // A system font's frame and first baseline are the Mac's (F1 table, decision G70): the layout baseline is the table's, whichever renderer paints it.
             let baseline = firstBaselines[request].map(CGFloat.init) ?? CGFloat(result.firstBaseline / scale)
-            return SwiftRightRuntime.TextMeasurement(size: LayoutSize(width: CGFloat(result.width / scale), height: CGFloat(result.height / scale)),
+            let reportedWidth = TextReportedWidth.clamp(result.width, proposedDIP: request.proposedWidth, scale: scale)
+            return SwiftRightRuntime.TextMeasurement(size: LayoutSize(width: CGFloat(reportedWidth / scale), height: CGFloat(result.height / scale)),
                                                      baseline: baseline, lineCount: result.lineCount)
         } catch {
             failures.append("measure '\(request.text.prefix(40))' fontID=\(request.fontID): \(error)")
@@ -341,42 +353,44 @@ public final class BridgeTextMeasurer: TextMeasurer, TextRunSource {
         }
     }
 
-    /// The retained shaped run for a Text node of the given resolved pixel bounds.
-    public func run(text: String, font: Font?, bounds: Rect) throws -> TextRunHandle {
+    /// The retained measurement a Text node of these resolved pixel bounds paints: among the requests of the same text and font, the one whose reported (clamped, see
+    /// `TextReportedWidth`) extent can have been snapped to the bounds.
+    private func retainedMatch(text: String, font: Font?, bounds: Rect) throws -> (key: TextMeasureRequest, value: SwiftRightBridge.TextMeasurement, chosen: RetainedRunChoice.Entry) {
         let fontID = font?.id ?? "body"
         let metadata = font?.metadata
+        func reported(_ key: TextMeasureRequest, _ value: SwiftRightBridge.TextMeasurement) -> Float {
+            TextReportedWidth.clamp(value.width, proposedDIP: key.proposedWidth, scale: scale)
+        }
         let matching = retained.filter { $0.key.text == text && $0.key.fontID == fontID && $0.key.fontMetadata == metadata && Float($0.key.scale) == scale }
-        let entries = matching.map { RetainedRunChoice.Entry(proposedWidth: $0.key.proposedWidth, width: $0.value.width, height: $0.value.height,
+        let entries = matching.map { RetainedRunChoice.Entry(proposedWidth: $0.key.proposedWidth, width: reported($0.key, $0.value), height: $0.value.height,
                                                              lines: $0.value.lines.count, firstBaseline: $0.value.firstBaseline) }
         let chosen = try RetainedRunChoice.choose(entries, bounds: bounds, scale: scale, text: text)
-        guard let source = matching.first(where: { $0.key.proposedWidth == chosen.proposedWidth && $0.value.width == chosen.width && $0.value.height == chosen.height }) else {
+        guard let source = matching.first(where: { $0.key.proposedWidth == chosen.proposedWidth && reported($0.key, $0.value) == chosen.width && $0.value.height == chosen.height }) else {
             throw HostPaintError.measuredRunGeometryMismatch(text)
         }
+        return (source.key, source.value, chosen)
+    }
+
+    /// The retained shaped run for a Text node of the given resolved pixel bounds.
+    public func run(text: String, font: Font?, bounds: Rect) throws -> TextRunHandle {
+        let (_, value, chosen) = try retainedMatch(text: text, font: font, bounds: bounds)
         log("TEXT_RETAINED_RUN text=\(text) widthPX=\(chosen.width) heightPX=\(chosen.height) snappedWidthPX=\(bounds.w) lines=\(chosen.lines) proposedDIP=\(chosen.proposedWidth.map(String.init(describing:)) ?? "nil")")
-        return source.value.run
+        return value.run
     }
 
     /// The retained run of `run(text:font:bounds:)` re-shaped in `color`: same text, font and width, so the same geometry. Retained per request and colour.
     public func run(text: String, font: Font?, bounds: Rect, color: UInt32) throws -> TextRunHandle {
         guard color != textColor else { return try run(text: text, font: font, bounds: bounds) }
-        let fontID = font?.id ?? "body"
-        let metadata = font?.metadata
-        let matching = retained.filter { $0.key.text == text && $0.key.fontID == fontID && $0.key.fontMetadata == metadata && Float($0.key.scale) == scale }
-        let entries = matching.map { RetainedRunChoice.Entry(proposedWidth: $0.key.proposedWidth, width: $0.value.width, height: $0.value.height,
-                                                             lines: $0.value.lines.count, firstBaseline: $0.value.firstBaseline) }
-        let chosen = try RetainedRunChoice.choose(entries, bounds: bounds, scale: scale, text: text)
-        guard let source = matching.first(where: { $0.key.proposedWidth == chosen.proposedWidth && $0.value.width == chosen.width && $0.value.height == chosen.height }) else {
-            throw HostPaintError.measuredRunGeometryMismatch(text)
-        }
-        let key = ColouredKey(request: source.key, color: color)
-        if let hit = coloured[key] { return hit.run }
+        let (key, value, chosen) = try retainedMatch(text: text, font: font, bounds: bounds)
+        let coloredKey = ColouredKey(request: key, color: color)
+        if let hit = coloured[coloredKey] { return hit.run }
         guard coloured.count < Self.cacheBound else { throw TextMeasureError.measurementCacheBound }
-        let result = try shape(source.key, color: color)
-        guard result.width == chosen.width, result.height == chosen.height, result.lines.count == chosen.lines else {
+        let result = try shape(key, color: color)
+        guard result.width == value.width, result.height == chosen.height, result.lines.count == chosen.lines else {
             _ = bridge.release(result.run)
             throw HostPaintError.measuredRunGeometryMismatch(text)
         }
-        coloured[key] = result
+        coloured[coloredKey] = result
         log("TEXT_COLOURED_RUN text=\(text) colorRGBA=\(String(format: "%08x", color)) widthPX=\(result.width) heightPX=\(result.height)")
         return result.run
     }

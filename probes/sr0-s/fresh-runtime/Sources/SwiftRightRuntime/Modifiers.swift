@@ -125,6 +125,17 @@ extension View {
         Modified(content: self, spec: .layoutPriority(value))
     }
 
+    /// Lays this view out at its ideal size on both axes, whatever it is offered (a Text keeps its one-line width and is never truncated).
+    /// Apple: https://developer.apple.com/documentation/swiftui/view/fixedsize()
+    public func fixedSize() -> some View {
+        Modified(content: self, spec: .fixedSize(horizontal: true, vertical: true))
+    }
+
+    /// Lays this view out at its ideal size on the chosen axes. Apple: https://developer.apple.com/documentation/swiftui/view/fixedsize(horizontal:vertical:)
+    public func fixedSize(horizontal: Bool, vertical: Bool) -> some View {
+        Modified(content: self, spec: .fixedSize(horizontal: horizontal, vertical: vertical))
+    }
+
     public func animation<V: Equatable>(_ animation: Animation?, value: V) -> some View {
         Modified(content: self, spec: .animation(AnyEquatable(value), animation))
     }
