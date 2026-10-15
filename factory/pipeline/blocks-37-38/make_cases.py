@@ -318,7 +318,8 @@ struct HoverStrip: View {
 struct TapCounter: View {
     let id: String
     var body: some View {
-        HStack(spacing: 2) { ForEach(0..<4, id: \.self) { i in Rectangle().fill(probe.taps[id, default: 0] > i ? Color.black : Color(white: 0.85)).frame(width: 8, height: 8) } }
+        let n = probe.taps[id, default: 0]     // read in the body: an observation read inside a ForEach row closure is not tracked by the Windows runtime (decision H10)
+        HStack(spacing: 2) { ForEach(0..<4, id: \.self) { i in Rectangle().fill(n > i ? Color.black : Color(white: 0.85)).frame(width: 8, height: 8) } }
     }
 }
 
@@ -356,7 +357,7 @@ LEAVE = {"op": "leave", "real": True}
 
 def pixel_case(name, typename, witness, plan, gate=None):
     steps, labels = sl_phases(plan)
-    pair = {"phaseShots": labels}
+    pair = {"phaseShots": labels, "hazeTolerance": 1}   # 1 level on the continuous corner of a RoundedRectangle (block 30 tolerance class)
     if gate: pair.update(gate)
     case(name, typename, witness, pair, steps)
 

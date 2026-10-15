@@ -204,6 +204,7 @@ struct HostPlacement {
             if event.action == 1 {
                 pressedNode = event.node
                 pressTapTarget = graph.tapTarget(atX: x, y: y)
+                print("HOST_TAP press x=\(x) y=\(y) target=\(pressTapTarget ?? "nil")"); fflush(stdout)
                 if event.node != 0, let id = runtimeIDs[event.node], graph.sliderModel(id) != nil, graph.sliderPress(id, atX: x) { draggingSlider = id }
                 return
             }
@@ -218,7 +219,9 @@ struct HostPlacement {
                     if graph.tapButton(id) { graph.flush(); return }
                     if graph.selectRow(id, modifiers: mods) { setListActive(); graph.flush(); return }
                 }
-                if let target = armedTap, graph.tapTarget(atX: x, y: y) == target { _ = graph.invokeTapGesture(target) }
+                let releaseTarget = graph.tapTarget(atX: x, y: y)
+                print("HOST_TAP release x=\(x) y=\(y) target=\(releaseTarget ?? "nil") armed=\(armedTap ?? "nil")"); fflush(stdout)
+                if let target = armedTap, releaseTarget == target { let ran = graph.invokeTapGesture(target); print("HOST_TAP invoked=\(ran)"); fflush(stdout) }
                 graph.flush()
                 return
             }

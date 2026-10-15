@@ -40,7 +40,8 @@ struct HoverStrip: View {
 struct TapCounter: View {
     let id: String
     var body: some View {
-        HStack(spacing: 2) { ForEach(0..<4, id: \.self) { i in Rectangle().fill(probe.taps[id, default: 0] > i ? Color.black : Color(white: 0.85)).frame(width: 8, height: 8) } }
+        let n = probe.taps[id, default: 0]     // read in the body: an observation read inside a ForEach row closure is not tracked by the Windows runtime (decision H10)
+        HStack(spacing: 2) { ForEach(0..<4, id: \.self) { i in Rectangle().fill(n > i ? Color.black : Color(white: 0.85)).frame(width: 8, height: 8) } }
     }
 }
 
