@@ -260,6 +260,12 @@ fn rows_for(page: &str) -> Vec<Row> {
             );
             push("JA, no fallbacks", j, "SRProbeLatin", None);
             push(
+                "unassigned U+0378, no fallbacks",
+                "Ab \u{0378}",
+                "SRProbeLatin",
+                None,
+            );
+            push(
                 "JA fallbacks [MS Gothic]",
                 j,
                 "SRProbeLatin",

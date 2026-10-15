@@ -186,6 +186,7 @@ unsafe fn render_text(
     text: &str,
     size_dip: f32,
     scale: f32,
+    gf_override: Option<DWRITE_GRID_FIT_MODE>,
 ) -> windows::core::Result<Cell> {
     let cps: Vec<u32> = text.chars().map(|c| c as u32).collect();
     let n = cps.len();
