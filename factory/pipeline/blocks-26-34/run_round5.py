@@ -1,12 +1,12 @@
 #!/usr/bin/env python3
-"""SR1 round 4 driver: every blocks-24-25 case at N=20 on ONE stage through the Sandbox, one results.jsonl record per case (same record format as
+"""SR1 round 5 driver: every blocks-26-34 case at N=20 on ONE stage through the Sandbox, one results.jsonl record per case (same record format as
 consolidation/run_all.py, so the consolidation table and docs/proven-controls.json read it). Resumable: skips (case, N) already done for the stage.
   python3 run_round4.py <stage> [--only substring] [--runs N]"""
 import json, re, subprocess, sys, time
 from pathlib import Path
 HERE = Path(__file__).resolve().parent; PIPE = HERE.parent
 RENDERER = r"D:\Claude\swiftright\.factory-work\inputs\renderer-0.7-baseline-22ad719b\swiftright_render.dll"
-LABELS = {"swiftui.list-row-style": "24 list-row-style", "swiftui.font-custom": "25 font-custom"}
+LABELS = {"swiftui.text-views": "26 text-views", "swiftui.layout-priority": "27 layout-priority"}
 
 
 def main():
@@ -22,8 +22,9 @@ def main():
             j = json.loads(line)
             if not force and j["stage"] == stage and j.get("done") and j.get("exit") == 0: done.add((j["case"], j["n"]))
     for group, label in LABELS.items():
+        if not (HERE / group).is_dir(): continue
         for c in sorted((HERE / group).iterdir()):
-            case = f"blocks-24-25/{group}/{c.name}"
+            case = f"blocks-26-34/{group}/{c.name}"
             if not (c / "mac-source").is_dir() or (case, n) in done or (only and only not in case): continue
             t = time.time()
             if mac_only:

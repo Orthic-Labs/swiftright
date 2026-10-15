@@ -384,33 +384,47 @@ extension Graph {
         var proposals = Array(repeating: ProposedViewSize.unspecified, count: children.count)
 
         if let limit = axis.mainLimit(proposal) {
-            // Least flexible first, so that flexible children (spacers) receive what remains.
+            // Higher layout priorities are offered space first, each priority group keeping the minimum size of every lower group in reserve; within a group the
+            // least flexible child goes first, so that flexible children (spacers) receive what remains.
             let available = max(0, limit - spacingTotal)
+            var leastSizes = Array(repeating: CGFloat(0), count: children.count)
             let flex: [CGFloat] = children.indices.map { index in
-                if minLengths[index] != nil { return CGFloat.infinity }
+                if minLengths[index] != nil { leastSizes[index] = minLengths[index] ?? 0; return CGFloat.infinity }
                 let least = axis.main(measure(children[index], axis.proposal(main: 0, cross: crossLimit)))
                 let most = axis.main(measure(children[index], axis.proposal(main: CGFloat.infinity, cross: crossLimit)))
+                leastSizes[index] = least
                 return most - least
             }
-            let order = children.indices.sorted { (flex[$0], $0) < (flex[$1], $1) }
+            let priorities = children.map { layoutPriority(of: $0) }
             var remaining = available
-            var left = children.count
-            for index in order {
-                let share = max(0, remaining / CGFloat(left))
-                let proposal = axis.proposal(main: share, cross: crossLimit)
-                let size: LayoutSize
-                if let minLength = minLengths[index] {
-                    let measured = measure(children[index], proposal)
-                    size = axis.size(main: max(minLength, share), cross: axis.cross(measured))
-                } else if let fixedSize = fixed[index] {
-                    size = fixedSize
-                } else {
-                    size = measure(children[index], proposal)
+            for priority in Set(priorities).sorted(by: >) {
+                let group = children.indices.filter { priorities[$0] == priority }.sorted { (flex[$0], $0) < (flex[$1], $1) }
+                let spacers = group.filter { minLengths[$0] != nil }
+                let others = group.filter { minLengths[$0] == nil }
+                let reservedLower = children.indices.filter { priorities[$0] < priority }.reduce(CGFloat(0)) { $0 + leastSizes[$1] }
+                // A Spacer keeps its minimum length in reserve and takes what the others leave (macOS: HStack { A; Spacer(); B } in 200 pt gives A and B 96 pt each).
+                let reservedSpacers = spacers.reduce(CGFloat(0)) { $0 + leastSizes[$1] }
+                var left = others.count
+                for index in others {
+                    let share = max(0, (remaining - reservedLower - reservedSpacers) / CGFloat(left))
+                    let proposal = axis.proposal(main: share, cross: crossLimit)
+                    let size = fixed[index] ?? measure(children[index], proposal)
+                    sizes[index] = size
+                    proposals[index] = proposal
+                    remaining -= axis.main(size)
+                    left -= 1
                 }
-                sizes[index] = size
-                proposals[index] = proposal
-                remaining -= axis.main(size)
-                left -= 1
+                var spacersLeft = spacers.count
+                for index in spacers {
+                    let share = max(0, (remaining - reservedLower) / CGFloat(spacersLeft))
+                    let proposal = axis.proposal(main: share, cross: crossLimit)
+                    let measured = measure(children[index], proposal)
+                    let size = axis.size(main: max(leastSizes[index], share), cross: axis.cross(measured))
+                    sizes[index] = size
+                    proposals[index] = proposal
+                    remaining -= axis.main(size)
+                    spacersLeft -= 1
+                }
             }
         } else {
             // No main-axis limit: every child reports its ideal size; spacers collapse to their minimum.
@@ -432,6 +446,25 @@ extension Graph {
         let cross = spec.fillsCross ? (crossLimit ?? contentCross) : contentCross
         let main = sizes.reduce(0) { $0 + axis.main($1) } + spacingTotal
         return StackPlan(children: children, sizes: sizes, proposals: proposals, size: axis.size(main: main, cross: cross), gaps: gaps)
+    }
+
+    /// The `.layoutPriority(_:)` a stack reads for this child: the first one found down the chain of wrappers that pass a single child through (a modifier or a
+    /// user view around the view that sets it). 0 when none.
+    func layoutPriority(of node: Node) -> Double {
+        var current = node
+        while true {
+            if case .modifier(.layoutPriority(let value)) = current.kind { return value }
+            // `padding` and the frame modifiers do not forward a priority set beneath them (macOS: `.layoutPriority(1).padding(4)` and `.layoutPriority(1).frame(maxWidth: .infinity)`
+            // behave as no priority); user views and the other modifiers (opacity, onAppear, ...) do.
+            switch current.kind {
+            case .modifier(.padding), .modifier(.frame), .modifier(.flexibleFrame): return 0
+            default: break
+            }
+            guard current.kind.passesThrough else { return 0 }
+            let children = childNodes(current)
+            guard children.count == 1 else { return 0 }
+            current = children[0]
+        }
     }
 
     private func placeStack(_ children: [Node], _ spec: StackSpec, in rect: LayoutRect, proposal: ProposedViewSize, mirrored: Bool) {

@@ -253,6 +253,85 @@ struct Witness_tv_Maybe: ViewModifier {
 """ + CASES["swiftui.text-views/view-modifier-v1"]["body"]
 
 
+# =====================================================================================================================================================================
+# block 27: swiftui.layout-priority
+# =====================================================================================================================================================================
+# Flexible fixed-colour views (min 20, ideal 100, max 150) so the sizes are visible in pixels without text. The stacks are 200 pt along the main axis.
+P = "Witness_lp_"
+FLEX = "Rectangle().fill(%s).frame(minWidth: 20, idealWidth: 100, maxWidth: 150, minHeight: 20, idealHeight: 20, maxHeight: 20)"
+FLEXV = "Rectangle().fill(%s).frame(minWidth: 40, idealWidth: 40, maxWidth: 40, minHeight: 20, idealHeight: 100, maxHeight: 150)"
+
+
+def lp(name, rows, v=False):
+    flex = FLEXV if v else FLEX
+    body = "\n".join(rows)
+    case("swiftui.layout-priority/" + name, P + name.replace("-", "_").replace("_v1", ""), f"""struct {P}{name.replace("-", "_").replace("_v1", "")}: View {{
+    var body: some View {{
+        VStack(spacing: 10) {{
+{body}
+        }}.frame(width: 240, height: 200, alignment: .top)
+    }}
+}}""")
+
+
+def hrow(*items, spacing=0, width=200):
+    return f"            HStack(spacing: {spacing}) {{ " + "; ".join(items) + f" }}.frame(width: {width}, height: 20)"
+
+
+Rr, Bb, Gg, Oo = (FLEX % c for c in ("Color.red", "Color.blue", "Color.green", "Color.orange"))
+lp("two-views-v1", [
+    hrow(Rr, Bb),
+    hrow(Rr, Bb + ".layoutPriority(1)"),
+    hrow(Rr + ".layoutPriority(1)", Bb),
+    hrow(Rr + ".layoutPriority(1)", Bb + ".layoutPriority(1)"),
+    hrow(Rr + ".layoutPriority(-1)", Bb),
+])
+lp("three-levels-v1", [
+    hrow(Rr, Bb, Gg),
+    hrow(Rr + ".layoutPriority(2)", Bb + ".layoutPriority(1)", Gg),
+    hrow(Rr, Bb + ".layoutPriority(2)", Gg + ".layoutPriority(1)"),
+    hrow(Rr + ".layoutPriority(1)", Bb, Gg + ".layoutPriority(1)", Oo),
+])
+lp("fits-v1", [   # everything fits: a priority changes nothing
+    hrow(Rr, Bb, width=300),
+    hrow(Rr, Bb + ".layoutPriority(1)", width=300),
+    hrow(Rr + ".layoutPriority(3)", Bb, spacing=8, width=300),
+])
+lp("through-wrappers-v1", [
+    hrow(Rr, Bb + ".padding(4).layoutPriority(1)"),
+    hrow(Rr, "Witness_lp_Wrapped()"),
+    hrow(Rr, "ZStack { " + Bb + " }.layoutPriority(1)"),
+    hrow(Rr + ".layoutPriority(1).padding(4)", Bb),
+    hrow(Rr, Bb + ".layoutPriority(1).opacity(0.99)"),
+    hrow(Rr, Bb + ".layoutPriority(1).frame(maxWidth: .infinity)"),
+    hrow(Rr, Bb + ".layoutPriority(1).onAppear {}"),
+])
+CASES["swiftui.layout-priority/through-wrappers-v1"]["body"] = f"""struct Witness_lp_Wrapped: View {{
+    var body: some View {{ {Bb}.layoutPriority(1) }}
+}}
+
+""" + CASES["swiftui.layout-priority/through-wrappers-v1"]["body"]
+case("swiftui.layout-priority/vertical-v1", P + "vertical", f"""struct {P}vertical: View {{
+    var body: some View {{
+        HStack(spacing: 20) {{
+            VStack(spacing: 0) {{ {FLEXV % "Color.red"}; {FLEXV % "Color.blue"}.layoutPriority(1) }}.frame(width: 40, height: 120)
+            VStack(spacing: 0) {{ {FLEXV % "Color.red"}.layoutPriority(1); {FLEXV % "Color.blue"} }}.frame(width: 40, height: 120)
+            VStack(spacing: 4) {{ {FLEXV % "Color.red"}; {FLEXV % "Color.blue"}; {FLEXV % "Color.green"}.layoutPriority(2) }}.frame(width: 40, height: 160)
+        }}.frame(width: 240, height: 200, alignment: .top)
+    }}
+}}""")
+# spacers and layout priority: a Spacer keeps its place (priority 0); a prioritised view takes what it asks for before the spacer
+lp("with-spacer-v1", [
+    hrow(Rr, "Spacer()", Bb + ".layoutPriority(1)"),
+    hrow(Rr + ".layoutPriority(1)", "Spacer()", Bb),
+    hrow(Rr, "Spacer(minLength: 30)", Bb + ".layoutPriority(1)", width=240),
+    hrow(Rr, "Spacer()", Bb),
+    hrow(Rr, "Spacer()", Bb, Gg),
+    hrow(Rr, Bb, "Spacer()"),
+    hrow(Rr, "Spacer()", Bb + ".layoutPriority(1)", Gg + ".layoutPriority(1)"),
+])
+
+
 def main():
     only = sys.argv[1:]
     for name, c in CASES.items():
