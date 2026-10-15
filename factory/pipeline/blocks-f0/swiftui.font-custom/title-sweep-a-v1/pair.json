@@ -1,0 +1,28 @@
+{
+ "textGate": {
+  "helper": "factory/tools/pair_text_report.py",
+  "rect": [
+   75,
+   50,
+   725,
+   550
+  ],
+  "edgeTolerancePx": 4,
+  "ink": "half-coverage (luminance<=127)"
+ },
+ "excludeRects": [
+  {
+   "name": "E14c measurement case: every row's glyph region is measured per row by blocks-f0/ink_rows.py, not gated (decision G10)",
+   "rect": [
+    75,
+    50,
+    725,
+    550
+   ]
+  }
+ ],
+ "macArgs": [
+  "--fonts",
+  "/Volumes/D/claude/swiftright/factory/resources/fonts/Tinos-Regular.ttf"
+ ]
+}

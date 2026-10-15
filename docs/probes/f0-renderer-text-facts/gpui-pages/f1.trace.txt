@@ -1,0 +1,63 @@
+START f0-text-facts pid=2792 SetProcessDpiAwarenessContext(-4)->0
+GPUILOG INFO gpui::platform::windows::directx_devices: Using GPU: Microsoft Basic Render Driver
+GPUILOG INFO gpui::platform::windows::directx_devices: Created device with Direct3D 11.1 feature level.
+GPUILOG INFO gpui::platform::windows::direct_write: Use Segoe UI as UI font.
+FONT add_fonts C:\work\f0\fonts\Tinos-Regular.ttf (521588 bytes) -> Ok(())
+FONT add_fonts C:\work\f0\fonts\SRProbeLatin-Regular.ttf (20564 bytes) -> Ok(())
+FONT add_fonts C:\work\f0\fonts\SRProbeGreek-Regular.ttf (29068 bytes) -> Ok(())
+FONT add_fonts C:\work\f0\fonts\SRProbeTinosNoHint-Regular.ttf (320276 bytes) -> Ok(())
+FONT add_fonts C:\work\f0\fonts\SRProbeTinosGasp-Regular.ttf (521672 bytes) -> Ok(())
+FONT all_font_names total=259 interesting=["Bahnschrift", "Cascadia Code", "Cascadia Mono", "Consolas", "MS Gothic", "Malgun Gothic", "Meiryo", "Meiryo UI", "Nirmala Text", "Nirmala UI", "SRProbeGreek", "SRProbeLatin", "SRProbeTinosGasp", "SRProbeTinosNoHint", "Segoe Fluent Icons", "Segoe UI", "Segoe UI Emoji", "Segoe UI Historic", "Segoe UI Symbol", "Segoe UI Variable Display", "Segoe UI Variable Small", "Segoe UI Variable Text", "Sitka Banner", "Sitka Display", "Sitka Heading", "Sitka Small", "Sitka Subheading", "Sitka Text", "Times New Roman", "Tinos", "Yu Gothic", "Yu Gothic UI"]
+PAGE f1 scale_factor=2.5 bounds_logical=Bounds { origin: Point { x: 0px, y: 0px }, size: Size { 420px +ù 250px } }
+ROW page=f1 label=[Latin-only, no fallbacks] family=[SRProbeLatin] req_weight=400 style=Normal features=FontFeatures fallbacks=None size=16 width=40.625 width_per_px=2.53906 ascent=17.2656 descent=4.0156 runs=2
+ROWTEXT page=f1 label=[Latin-only, no fallbacks] text="Ab +¦+¦"
+RUN page=f1 label=[Latin-only, no fallbacks] run=0 font_id=1 request=SRProbeLatin/400 glyphs=3 emoji=0 notdef=0 :: 34@0.00 67@11.55 1@19.55 
+RUN page=f1 label=[Latin-only, no fallbacks] run=1 font_id=0 request=Segoe UI/400 glyphs=2 emoji=0 notdef=0 :: 452@23.55 453@32.32 
+LAYOUT page=f1 label=[Latin-only, no fallbacks] row_top_logical=4 row_height=23 sample_x_logical=128
+GPUILOG ERROR gpui::platform::windows::direct_write: No matching font found for SRProbeGreek
+ROW page=f1 label=[fallbacks [SRProbeGreek] (PRIVATE)] family=[SRProbeLatin] req_weight=400 style=Normal features=FontFeatures fallbacks=Some(["SRProbeGreek"]) size=16 width=40.625 width_per_px=2.53906 ascent=17.2656 descent=4.0156 runs=2
+ROWTEXT page=f1 label=[fallbacks [SRProbeGreek] (PRIVATE)] text="Ab +¦+¦"
+RUN page=f1 label=[fallbacks [SRProbeGreek] (PRIVATE)] run=0 font_id=2 request=SRProbeLatin/400 glyphs=3 emoji=0 notdef=0 :: 34@0.00 67@11.55 1@19.55 
+RUN page=f1 label=[fallbacks [SRProbeGreek] (PRIVATE)] run=1 font_id=0 request=Segoe UI/400 glyphs=2 emoji=0 notdef=0 :: 452@23.55 453@32.32 
+LAYOUT page=f1 label=[fallbacks [SRProbeGreek] (PRIVATE)] row_top_logical=29 row_height=23 sample_x_logical=128
+ROW page=f1 label=[fallbacks [Times New Roman]] family=[SRProbeLatin] req_weight=400 style=Normal features=FontFeatures fallbacks=Some(["Times New Roman"]) size=16 width=38.766 width_per_px=2.42285 ascent=14.9375 descent=3.4609 runs=2
+ROWTEXT page=f1 label=[fallbacks [Times New Roman]] text="Ab +¦+¦"
+RUN page=f1 label=[fallbacks [Times New Roman]] run=0 font_id=3 request=SRProbeLatin/400 glyphs=3 emoji=0 notdef=0 :: 34@0.00 67@11.55 1@19.55 
+RUN page=f1 label=[fallbacks [Times New Roman]] run=1 font_id=4 request=(not a resolved request: fallback face) glyphs=2 emoji=0 notdef=0 :: 533@23.55 534@31.70 
+LAYOUT page=f1 label=[fallbacks [Times New Roman]] row_top_logical=54 row_height=23 sample_x_logical=128
+GPUILOG ERROR gpui::platform::windows::direct_write: No matching font found for Segoe UI Variable
+ROW page=f1 label=[fallbacks [Segoe UI Variable]] family=[SRProbeLatin] req_weight=400 style=Normal features=FontFeatures fallbacks=Some(["Segoe UI Variable"]) size=16 width=40.625 width_per_px=2.53906 ascent=17.2656 descent=4.0156 runs=2
+ROWTEXT page=f1 label=[fallbacks [Segoe UI Variable]] text="Ab +¦+¦"
+RUN page=f1 label=[fallbacks [Segoe UI Variable]] run=0 font_id=5 request=SRProbeLatin/400 glyphs=3 emoji=0 notdef=0 :: 34@0.00 67@11.55 1@19.55 
+RUN page=f1 label=[fallbacks [Segoe UI Variable]] run=1 font_id=0 request=Segoe UI/400 glyphs=2 emoji=0 notdef=0 :: 452@23.55 453@32.32 
+LAYOUT page=f1 label=[fallbacks [Segoe UI Variable]] row_top_logical=79 row_height=23 sample_x_logical=128
+ROW page=f1 label=[JA, no fallbacks] family=[SRProbeLatin] req_weight=400 style=Normal features=FontFeatures fallbacks=None size=16 width=52.609 width_per_px=3.28809 ascent=17.2656 descent=4.0156 runs=3
+ROWTEXT page=f1 label=[JA, no fallbacks] text="Ab püéµ+ó"
+RUN page=f1 label=[JA, no fallbacks] run=0 font_id=5 request=SRProbeLatin/400 glyphs=3 emoji=0 notdef=0 :: 34@0.00 67@11.55 1@19.55 
+RUN page=f1 label=[JA, no fallbacks] run=1 font_id=6 request=(not a resolved request: fallback face) glyphs=1 emoji=0 notdef=0 :: 23644@23.55 
+RUN page=f1 label=[JA, no fallbacks] run=2 font_id=6 request=(not a resolved request: fallback face) glyphs=1 emoji=0 notdef=0 :: 1535@36.61 
+LAYOUT page=f1 label=[JA, no fallbacks] row_top_logical=104 row_height=23 sample_x_logical=128
+ROW page=f1 label=[unassigned U+0378, no fallbacks] family=[SRProbeLatin] req_weight=400 style=Normal features=FontFeatures fallbacks=None size=16 width=36.000 width_per_px=2.25000 ascent=14.9375 descent=3.4609 runs=2
+ROWTEXT page=f1 label=[unassigned U+0378, no fallbacks] text="Ab \u{378}"
+RUN page=f1 label=[unassigned U+0378, no fallbacks] run=0 font_id=5 request=SRProbeLatin/400 glyphs=3 emoji=0 notdef=0 :: 34@0.00 67@11.55 1@19.55 
+RUN page=f1 label=[unassigned U+0378, no fallbacks] run=1 font_id=5 request=SRProbeLatin/400 glyphs=1 emoji=0 notdef=1 :: 0@23.55 
+LAYOUT page=f1 label=[unassigned U+0378, no fallbacks] row_top_logical=129 row_height=23 sample_x_logical=128
+ROW page=f1 label=[JA fallbacks [MS Gothic]] family=[SRProbeLatin] req_weight=400 style=Normal features=FontFeatures fallbacks=Some(["MS Gothic"]) size=16 width=55.555 width_per_px=3.47217 ascent=14.9375 descent=3.4609 runs=3
+ROWTEXT page=f1 label=[JA fallbacks [MS Gothic]] text="Ab püéµ+ó"
+RUN page=f1 label=[JA fallbacks [MS Gothic]] run=0 font_id=7 request=SRProbeLatin/400 glyphs=3 emoji=0 notdef=0 :: 34@0.00 67@11.55 1@19.55 
+RUN page=f1 label=[JA fallbacks [MS Gothic]] run=1 font_id=8 request=(not a resolved request: fallback face) glyphs=1 emoji=0 notdef=0 :: 2102@23.55 
+RUN page=f1 label=[JA fallbacks [MS Gothic]] run=2 font_id=8 request=(not a resolved request: fallback face) glyphs=1 emoji=0 notdef=0 :: 8334@39.55 
+LAYOUT page=f1 label=[JA fallbacks [MS Gothic]] row_top_logical=154 row_height=23 sample_x_logical=128
+ROW page=f1 label=[JA fallbacks [Yu Gothic UI]] family=[SRProbeLatin] req_weight=400 style=Normal features=FontFeatures fallbacks=Some(["Yu Gothic UI"]) size=16 width=52.609 width_per_px=3.28809 ascent=17.2656 descent=4.0156 runs=3
+ROWTEXT page=f1 label=[JA fallbacks [Yu Gothic UI]] text="Ab püéµ+ó"
+RUN page=f1 label=[JA fallbacks [Yu Gothic UI]] run=0 font_id=9 request=SRProbeLatin/400 glyphs=3 emoji=0 notdef=0 :: 34@0.00 67@11.55 1@19.55 
+RUN page=f1 label=[JA fallbacks [Yu Gothic UI]] run=1 font_id=6 request=(not a resolved request: fallback face) glyphs=1 emoji=0 notdef=0 :: 23644@23.55 
+RUN page=f1 label=[JA fallbacks [Yu Gothic UI]] run=2 font_id=6 request=(not a resolved request: fallback face) glyphs=1 emoji=0 notdef=0 :: 1535@36.61 
+LAYOUT page=f1 label=[JA fallbacks [Yu Gothic UI]] row_top_logical=179 row_height=23 sample_x_logical=128
+ROW page=f1 label=[JA fallbacks [SRProbeGreek] (PRIVATE)] family=[SRProbeLatin] req_weight=400 style=Normal features=FontFeatures fallbacks=Some(["SRProbeGreek"]) size=16 width=52.609 width_per_px=3.28809 ascent=17.2656 descent=4.0156 runs=3
+ROWTEXT page=f1 label=[JA fallbacks [SRProbeGreek] (PRIVATE)] text="Ab püéµ+ó"
+RUN page=f1 label=[JA fallbacks [SRProbeGreek] (PRIVATE)] run=0 font_id=9 request=SRProbeLatin/400 glyphs=3 emoji=0 notdef=0 :: 34@0.00 67@11.55 1@19.55 
+RUN page=f1 label=[JA fallbacks [SRProbeGreek] (PRIVATE)] run=1 font_id=6 request=(not a resolved request: fallback face) glyphs=1 emoji=0 notdef=0 :: 23644@23.55 
+RUN page=f1 label=[JA fallbacks [SRProbeGreek] (PRIVATE)] run=2 font_id=6 request=(not a resolved request: fallback face) glyphs=1 emoji=0 notdef=0 :: 1535@36.61 
+LAYOUT page=f1 label=[JA fallbacks [SRProbeGreek] (PRIVATE)] row_top_logical=204 row_height=23 sample_x_logical=128
+

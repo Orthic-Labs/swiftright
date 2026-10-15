@@ -1460,6 +1460,58 @@
         "text": "font-metrics tool deterministic over 20 separate runs (sha256 2e2aecd54af19e6783441339b7fdd653753734ed15ae1c472cc8196c51371ad4); generated table loads and matches spot values (FontMetricTableTests 8/8) (**delivered-pending-review**; decisions G20-G29)"
       },
       "windowsDifferences": []
+    },
+    {
+      "apis": {
+        "fromCaseSources": {
+          "modifiersAndMembers": [
+            "custom",
+            "font"
+          ],
+          "types": [
+            "Font",
+            "Text"
+          ]
+        },
+        "fromManifest": []
+      },
+      "block": "foundations.renderer-text-facts",
+      "cases": [
+        {
+          "case": "blocks-f0/swiftui.font-custom/title-28-extra-v1",
+          "n": 20,
+          "gate": "measurement only (ink boxes read per row by blocks-f0/ink_rows.py), not a gate"
+        },
+        {
+          "case": "blocks-f0/swiftui.font-custom/title-sweep-a-v1",
+          "n": 20,
+          "gate": "measurement only (ink boxes read per row by blocks-f0/ink_rows.py), not a gate"
+        },
+        {
+          "case": "blocks-f0/swiftui.font-custom/title-sweep-b-v1",
+          "n": 20,
+          "gate": "measurement only (ink boxes read per row by blocks-f0/ink_rows.py), not a gate"
+        }
+      ],
+      "casesPassingDecidingGate": "n/a (a probe: facts with rasters or traces; E14c pair cases are measurements, 20/20 runs identical per row)",
+      "caveats": [
+        "Windows 11 build 26100 in the Sandbox (WARP rasteriser), window scale 2.5; probe pages captured at N=3, 18 of 19 byte-identical.",
+        "gpui 0.2.2 facts: no continuous font axes (named instances only), simulations implicit and not switchable, private fonts ignored as fallbacks, kerning off unless kern=1; colour emoji, glyph-positioned painting and OpenType features work.",
+        "E14c is explained in part (grid fit by the font's gasp table: worst edge 2 px -> 1 px with grid fit off; baseline floored to a whole device pixel), not closed; no product change was made.",
+        "The probe exe is a diagnostic built by .github/workflows/probe-f0-text.yml; it is never a renderer."
+      ],
+      "stage": "none (probe exe commit 1dc3502bc, CI run 38688573898; E14c cases on stage 9080b3139-e685b237)",
+      "status": "delivered-pending-review",
+      "statusDocBlock": "F0",
+      "verdict": {
+        "date": "2026-10-15",
+        "runDates": [
+          "2026-10-15"
+        ],
+        "source": "docs/probes/f0-renderer-text-facts.md",
+        "text": "gpui 0.2.2 text capabilities answered with rasters or API traces (axes NO, simulation switch NO, colour emoji YES, private fallbacks NO, glyph painting YES, features YES with kerning default off); F3 needs a DirectWrite face resolver and an own run path only for off-instance axes and private fallback chains (**delivered-pending-review**; decisions G10-G19)"
+      },
+      "windowsDifferences": []
     }
   ],
   "generator": "factory/tools/proven-controls/generate.py",

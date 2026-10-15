@@ -1,0 +1,42 @@
+START f0-text-facts pid=1808 SetProcessDpiAwarenessContext(-4)->0
+GPUILOG INFO gpui::platform::windows::directx_devices: Using GPU: Microsoft Basic Render Driver
+GPUILOG INFO gpui::platform::windows::directx_devices: Created device with Direct3D 11.1 feature level.
+GPUILOG INFO gpui::platform::windows::direct_write: Use Segoe UI as UI font.
+FONT add_fonts C:\work\f0\fonts\Tinos-Regular.ttf (521588 bytes) -> Ok(())
+FONT add_fonts C:\work\f0\fonts\SRProbeLatin-Regular.ttf (20564 bytes) -> Ok(())
+FONT add_fonts C:\work\f0\fonts\SRProbeGreek-Regular.ttf (29068 bytes) -> Ok(())
+FONT add_fonts C:\work\f0\fonts\SRProbeTinosNoHint-Regular.ttf (320276 bytes) -> Ok(())
+FONT add_fonts C:\work\f0\fonts\SRProbeTinosGasp-Regular.ttf (521672 bytes) -> Ok(())
+FONT all_font_names total=259 interesting=["Bahnschrift", "Cascadia Code", "Cascadia Mono", "Consolas", "MS Gothic", "Malgun Gothic", "Meiryo", "Meiryo UI", "Nirmala Text", "Nirmala UI", "SRProbeGreek", "SRProbeLatin", "SRProbeTinosGasp", "SRProbeTinosNoHint", "Segoe Fluent Icons", "Segoe UI", "Segoe UI Emoji", "Segoe UI Historic", "Segoe UI Symbol", "Segoe UI Variable Display", "Segoe UI Variable Small", "Segoe UI Variable Text", "Sitka Banner", "Sitka Display", "Sitka Heading", "Sitka Small", "Sitka Subheading", "Sitka Text", "Times New Roman", "Tinos", "Yu Gothic", "Yu Gothic UI"]
+PAGE e1 scale_factor=2.5 bounds_logical=Bounds { origin: Point { x: 0px, y: 0px }, size: Size { 420px +ù 250px } }
+ROW page=e1 label=[Segoe UI] family=[Segoe UI] req_weight=400 style=Normal features=FontFeatures fallbacks=None size=20 width=191.523 width_per_px=9.57617 ascent=21.5820 descent=5.0195 runs=6
+ROWTEXT page=e1 label=[Segoe UI] text="Hi =ƒÖé=ƒÿÇG¥ñ\u{fe0f}=ƒæì=ƒÅ+=ƒç«=ƒç¦ end"
+RUN page=e1 label=[Segoe UI] run=0 font_id=0 request=Segoe UI/400 glyphs=3 emoji=0 notdef=0 :: 43@0.00 76@14.20 3@19.04 
+RUN page=e1 label=[Segoe UI] run=1 font_id=1 request=(not a resolved request: fallback face) glyphs=2 emoji=2 notdef=0 :: 2386@24.52E 2317@51.98E 
+RUN page=e1 label=[Segoe UI] run=2 font_id=1 request=(not a resolved request: fallback face) glyphs=1 emoji=1 notdef=0 :: 4131@79.44E 
+RUN page=e1 label=[Segoe UI] run=3 font_id=1 request=(not a resolved request: fallback face) glyphs=1 emoji=1 notdef=0 :: 1216@106.90E 
+RUN page=e1 label=[Segoe UI] run=4 font_id=1 request=(not a resolved request: fallback face) glyphs=2 emoji=0 notdef=0 :: 281@134.37 286@140.77 
+RUN page=e1 label=[Segoe UI] run=5 font_id=0 request=Segoe UI/400 glyphs=4 emoji=0 notdef=0 :: 3@152.49 72@157.97 81@168.43 71@179.75 
+LAYOUT page=e1 label=[Segoe UI] row_top_logical=4 row_height=28 sample_x_logical=128
+ROW page=e1 label=[Tinos (no emoji glyphs)] family=[Tinos] req_weight=400 style=Normal features=FontFeatures fallbacks=None size=20 width=186.846 width_per_px=9.34229 ascent=21.5820 descent=5.0195 runs=6
+ROWTEXT page=e1 label=[Tinos (no emoji glyphs)] text="Hi =ƒÖé=ƒÿÇG¥ñ\u{fe0f}=ƒæì=ƒÅ+=ƒç«=ƒç¦ end"
+RUN page=e1 label=[Tinos (no emoji glyphs)] run=0 font_id=2 request=Tinos/400 glyphs=3 emoji=0 notdef=0 :: 43@0.00 76@14.44 3@20.00 
+RUN page=e1 label=[Tinos (no emoji glyphs)] run=1 font_id=1 request=(not a resolved request: fallback face) glyphs=2 emoji=2 notdef=0 :: 2386@25.00E 2317@52.46E 
+RUN page=e1 label=[Tinos (no emoji glyphs)] run=2 font_id=1 request=(not a resolved request: fallback face) glyphs=1 emoji=1 notdef=0 :: 4131@79.92E 
+RUN page=e1 label=[Tinos (no emoji glyphs)] run=3 font_id=1 request=(not a resolved request: fallback face) glyphs=1 emoji=1 notdef=0 :: 1216@107.38E 
+RUN page=e1 label=[Tinos (no emoji glyphs)] run=4 font_id=1 request=(not a resolved request: fallback face) glyphs=2 emoji=0 notdef=0 :: 281@134.84 286@141.25 
+RUN page=e1 label=[Tinos (no emoji glyphs)] run=5 font_id=2 request=Tinos/400 glyphs=4 emoji=0 notdef=0 :: 3@152.97 72@157.97 81@166.85 71@176.85 
+LAYOUT page=e1 label=[Tinos (no emoji glyphs)] row_top_logical=34 row_height=28 sample_x_logical=128
+ROW page=e1 label=[Segoe UI Emoji] family=[Segoe UI Emoji] req_weight=400 style=Normal features=FontFeatures fallbacks=None size=20 width=137.305 width_per_px=6.86523 ascent=21.5820 descent=5.0195 runs=1
+ROWTEXT page=e1 label=[Segoe UI Emoji] text="=ƒÖé=ƒÿÇG¥ñ\u{fe0f}=ƒæì=ƒÅ+=ƒºæ\u{200d}=ƒÆ+"
+RUN page=e1 label=[Segoe UI Emoji] run=0 font_id=3 request=Segoe UI Emoji/400 glyphs=5 emoji=5 notdef=0 :: 2386@0.00E 2317@27.46E 4131@54.92E 1216@82.38E 3507@109.84E 
+LAYOUT page=e1 label=[Segoe UI Emoji] row_top_logical=64 row_height=28 sample_x_logical=128
+ROW page=e1 label=[Segoe UI Symbol] family=[Segoe UI Symbol] req_weight=400 style=Normal features=FontFeatures fallbacks=None size=20 width=99.092 width_per_px=4.95459 ascent=21.5820 descent=5.0195 runs=1
+ROWTEXT page=e1 label=[Segoe UI Symbol] text="G£ôG£ùGÿÇGÖáGÿÄG¡É"
+RUN page=e1 label=[Segoe UI Symbol] run=0 font_id=4 request=Segoe UI Symbol/400 glyphs=6 emoji=0 notdef=0 :: 1590@0.00 1594@14.98 1391@31.32 1487@48.17 1405@61.87 3184@81.87 
+LAYOUT page=e1 label=[Segoe UI Symbol] row_top_logical=94 row_height=28 sample_x_logical=128
+ROW page=e1 label=[Segoe UI 40px] family=[Segoe UI] req_weight=400 style=Normal features=FontFeatures fallbacks=None size=40 width=109.844 width_per_px=2.74609 ascent=43.1641 descent=10.0391 runs=1
+ROWTEXT page=e1 label=[Segoe UI 40px] text="=ƒÖé=ƒÿÇ"
+RUN page=e1 label=[Segoe UI 40px] run=0 font_id=3 request=Segoe UI Emoji/400 glyphs=2 emoji=2 notdef=0 :: 2386@0.00E 2317@54.92E 
+LAYOUT page=e1 label=[Segoe UI 40px] row_top_logical=124 row_height=56 sample_x_logical=128
+
