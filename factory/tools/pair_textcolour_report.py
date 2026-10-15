@@ -82,6 +82,29 @@ def position_why(m, w, pos, align):
     return why
 
 
+def bottom_of_colour(img, rect):
+    """the bottom edge (y of the row below the last row) of the non-background pixels in `rect`: the bottom of a plain shape"""
+    px = img.load(); x0, y0, x1, y1 = rect
+    bg = Counter(px[x, y] for y in range(y0, y1) for x in range(x0, x1)).most_common(1)[0][0]
+    rows = [y for y in range(y0, y1) if any(sum(abs(a - b) for a, b in zip(px[x, y], bg)) > 90 for x in range(x0, x1))]
+    return None if not rows else max(rows) + 1
+
+
+def baseline_align(img, items, tol):
+    """ROUND 5 (decision F3): baseline alignment is gated as a RELATION on each side separately, not as a position across them (Segoe UI and SF have different ascents). items =
+    [{"kind": "text" | "rect", "rect": [x0, y0, x1, y1]}]: a text's baseline is the bottom edge of its first glyph's ink, a rect's the bottom of its pixels. Every item's baseline must
+    lie within `tol` px of the first item's. -> (ok, [baselines])"""
+    vals = []
+    for it in items:
+        if it["kind"] == "text":
+            p = position(img, tuple(it["rect"]))
+            vals.append(None if p is None else p["baselineY"] + 1)
+        else:
+            vals.append(bottom_of_colour(img, tuple(it["rect"])))
+    ok = all(v is not None for v in vals) and max(vals) - min(vals) <= tol
+    return ok, vals
+
+
 def main():
     case, out = Path(sys.argv[1]).resolve(), Path(sys.argv[2]).resolve()
     cfg = json.loads((case / "pair.json").read_text())["textColourGate"]
@@ -108,6 +131,11 @@ def main():
                 reg.update(position=dict(mac=pm, windows=pw, ok=not why, why=why)); good = good and not why; reg["ok"] = good
             ok &= good
             row["regions"].append(reg)
+        for g in cfg.get("baselineAlign", []):
+            tol = float(g.get("tolerancePx", 1))
+            mo, mv = baseline_align(im, g["items"], tol); wo, wv = baseline_align(iw, g["items"], tol)
+            row["regions"].append(dict(name=g["name"], mac=mv, windows=wv, ok=mo and wo, baselineAlign=dict(tolerancePx=tol, macOk=mo, windowsOk=wo)))
+            ok &= mo and wo
         row["ok"] = ok
     passed = sum(1 for r in rows if r["ok"])
     (out / "text-colour-report.json").write_text(json.dumps(dict(case=case.name, run=out.name, pairs=len(rows), gatePassed=passed, tolerance=tol, rows=rows), indent=1))

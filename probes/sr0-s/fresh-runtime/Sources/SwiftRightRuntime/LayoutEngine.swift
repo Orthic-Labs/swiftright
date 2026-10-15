@@ -35,6 +35,9 @@ enum CrossAlignment: Sendable {
     case start
     case middle
     case end
+    /// HStack only: the children's first / last text baselines line up.
+    case firstBaseline
+    case lastBaseline
 }
 
 struct StackSpec: Sendable, Equatable {
@@ -442,10 +445,108 @@ extension Graph {
             }
         }
 
-        let contentCross = sizes.map(axis.cross).max() ?? 0
+        var contentCross = sizes.map(axis.cross).max() ?? 0
+        if spec.cross.isBaseline, axis == .horizontal, !children.isEmpty {
+            let b = baselineOffsets(children, sizes, proposals, spec.cross)
+            contentCross = b.extent
+        }
         let cross = spec.fillsCross ? (crossLimit ?? contentCross) : contentCross
         let main = sizes.reduce(0) { $0 + axis.main($1) } + spacingTotal
         return StackPlan(children: children, sizes: sizes, proposals: proposals, size: axis.size(main: main, cross: cross), gaps: gaps)
+    }
+
+    // MARK: Baselines (round 5 block 33)
+
+    /// Where each child of a horizontal stack sits, vertically, so that their first (or last) text baselines line up, and the height the row then needs. A child with no
+    /// text counts its bottom edge as its baseline (SwiftUI: a view with no baseline aligns by its bottom edge).
+    func baselineOffsets(_ children: [Node], _ sizes: [LayoutSize], _ proposals: [ProposedViewSize], _ alignment: CrossAlignment) -> (offsets: [CGFloat], extent: CGFloat) {
+        var base: [CGFloat] = []
+        for (index, child) in children.enumerated() {
+            let found = baselines(of: child, proposals[index])
+            base.append((alignment == .lastBaseline ? found?.last : found?.first) ?? sizes[index].height)
+        }
+        let top = base.max() ?? 0
+        var extent: CGFloat = 0
+        var offsets: [CGFloat] = []
+        for (index, b) in base.enumerated() {
+            offsets.append(top - b)
+            extent = max(extent, top - b + sizes[index].height)
+        }
+        return (offsets, extent)
+    }
+
+    /// The first and last text baselines of a node laid out under `proposal`, from the node's top edge; nil when it has no text.
+    func baselines(of node: Node, _ proposal: ProposedViewSize) -> (first: CGFloat, last: CGFloat)? {
+        switch node.kind {
+        case .text(let string):
+            _ = measureText(node, node.environment.textCase?.apply(string) ?? string, width: proposal.width)
+            return node.memoBase[finiteLength(proposal.width)]
+        case .modifier(.padding(let insets)):
+            guard let child = childNodes(node).first else { return nil }
+            let inner = ProposedViewSize(width: proposal.width.map { max(0, $0 - insets.horizontal) }, height: proposal.height.map { max(0, $0 - insets.vertical) })
+            return baselines(of: child, inner).map { ($0.first + insets.top, $0.last + insets.top) }
+        case .modifier(.frame(let frame)):
+            guard let child = childNodes(node).first else { return nil }
+            let childProposal = ProposedViewSize(width: frame.width ?? proposal.width, height: frame.height ?? proposal.height)
+            guard let inner = baselines(of: child, childProposal) else { return nil }
+            let childSize = measure(child, childProposal)
+            let y = alignmentOffset(frame.alignment.vertical, available: (frame.height ?? childSize.height) - childSize.height)
+            return (inner.first + y, inner.last + y)
+        case .modifier(.flexibleFrame(let frame)):
+            guard let child = childNodes(node).first else { return nil }
+            let childProposal = frame.childProposal(proposal)
+            guard let inner = baselines(of: child, childProposal) else { return nil }
+            let childSize = measure(child, childProposal)
+            let y = alignmentOffset(frame.alignment.vertical, available: frame.frameSize(for: childSize, proposal: proposal).height - childSize.height)
+            return (inner.first + y, inner.last + y)
+        case .stack(let spec) where spec.name == "List":
+            return nil
+        case .stack(let spec):
+            let children = childNodes(node)
+            guard !children.isEmpty else { return nil }
+            switch spec.axis {
+            case .overlap, .overlay:
+                return baselines(of: children[0], proposal)
+            case .vertical:
+                let plan = stackPlan(children, spec, proposal)
+                var y: CGFloat = 0
+                var first: CGFloat?, last: CGFloat?
+                for (index, child) in children.enumerated() {
+                    if let b = baselines(of: child, plan.proposals[index]) {
+                        if first == nil { first = y + b.first }
+                        last = y + b.last
+                    }
+                    y += plan.sizes[index].height + (index < plan.gaps.count ? plan.gaps[index] : 0)
+                }
+                guard let first, let last else { return nil }
+                return (first, last)
+            case .horizontal:
+                let plan = stackPlan(children, spec, proposal)
+                let rowHeight = plan.size.height
+                let aligned = spec.cross.isBaseline ? baselineOffsets(children, plan.sizes, plan.proposals, spec.cross).offsets : nil
+                var first: CGFloat?, last: CGFloat?
+                for (index, child) in children.enumerated() {
+                    guard let b = baselines(of: child, plan.proposals[index]) else { continue }
+                    let slack = rowHeight - plan.sizes[index].height
+                    let y: CGFloat
+                    switch spec.cross {
+                    case .start: y = 0
+                    case .middle: y = slack / 2
+                    case .end: y = slack
+                    case .firstBaseline, .lastBaseline: y = aligned?[index] ?? 0
+                    }
+                    first = min(first ?? .infinity, y + b.first)
+                    last = max(last ?? -.infinity, y + b.last)
+                }
+                guard let first, let last else { return nil }
+                return (first, last)
+            }
+        case .user, .modifier, .menu:
+            let children = childNodes(node)
+            return children.count == 1 ? baselines(of: children[0], proposal) : nil
+        default:
+            return nil
+        }
     }
 
     /// The `.layoutPriority(_:)` a stack reads for this child: the first one found down the chain of wrappers that pass a single child through (a modifier or a
@@ -479,6 +580,7 @@ extension Graph {
         let axis = spec.axis
         let plan = stackPlan(children, spec, proposal)
         let crossLength = axis.cross(rect.size)
+        let baseline = spec.cross.isBaseline && axis == .horizontal ? baselineOffsets(children, plan.sizes, plan.proposals, spec.cross) : nil
         var offset = axis == .vertical ? rect.minY : rect.minX
         for (index, child) in children.enumerated() {
             var size = plan.sizes[index]
@@ -490,6 +592,7 @@ extension Graph {
             case .start: crossOffset = 0
             case .middle: crossOffset = slack / 2
             case .end: crossOffset = slack
+            case .firstBaseline, .lastBaseline: crossOffset = axis == .horizontal ? (baseline?.offsets[index] ?? 0) : slack / 2
             }
             let origin = axis == .vertical
                 ? LayoutPoint(x: rect.minX + crossOffset, y: offset)
@@ -538,7 +641,7 @@ extension Graph {
             let y: CGFloat
             switch spec.alignment.vertical.kind {
             case .top: y = rect.minY
-            case .center: y = rect.minY + ySlack / 2
+            case .center, .firstTextBaseline, .lastTextBaseline: y = rect.minY + ySlack / 2
             case .bottom: y = rect.minY + ySlack
             }
             place(child, in: mirroredRect(LayoutRect(x: x, y: y, width: size.width, height: size.height), in: rect, if: mirrored), proposal: plan.proposals[index])
@@ -559,7 +662,7 @@ extension Graph {
             let y: CGFloat
             switch spec.alignment.vertical.kind {
             case .top: y = rect.minY
-            case .center: y = rect.minY + ySlack / 2
+            case .center, .firstTextBaseline, .lastTextBaseline: y = rect.minY + ySlack / 2
             case .bottom: y = rect.minY + ySlack
             }
             place(child, in: mirroredRect(LayoutRect(x: x, y: y, width: size.width, height: size.height), in: rect, if: mirrored), proposal: proposal)
@@ -623,7 +726,7 @@ extension Graph {
     private func alignmentOffset(_ alignment: VerticalAlignment, available: CGFloat) -> CGFloat {
         switch alignment.kind {
         case .top: return 0
-        case .center: return available / 2
+        case .center, .firstTextBaseline, .lastTextBaseline: return available / 2
         case .bottom: return available
         }
     }
@@ -674,15 +777,19 @@ extension Graph {
             node.memoFont = font
             node.memoLineLimit = lineLimit
             node.memo.removeAll()
+            node.memoBase.removeAll()
         }
         if let cached = node.memo[wrapWidth] { return cached }
         let request = TextMeasureRequest(
             text: string, fontID: font.id, proposedWidth: wrapWidth, scale: scale,
             fontMetadata: font.metadata, lineLimit: lineLimit
         )
-        let size = measurer.measure(request).size
-        node.memo[wrapWidth] = size
-        return size
+        let measured = measurer.measure(request)
+        node.memo[wrapWidth] = measured.size
+        // the first line's baseline, and the last line's (lines are as tall as the line height: the measured height over the line count)
+        let lineHeight = measured.lineCount > 0 ? measured.size.height / CGFloat(measured.lineCount) : 0
+        node.memoBase[wrapWidth] = (measured.baseline, measured.baseline + CGFloat(max(0, measured.lineCount - 1)) * lineHeight)
+        return measured.size
     }
 
     func childNodes(_ node: Node) -> [Node] {
@@ -715,4 +822,9 @@ extension Graph {
     private func placeChild(_ child: Node, in rect: LayoutRect, within node: Node, bounds: LayoutRect, proposal: ProposedViewSize) {
         place(child, in: mirroredRect(rect, in: bounds, if: mirrors(node)), proposal: proposal)
     }
+}
+
+
+extension CrossAlignment {
+    var isBaseline: Bool { self == .firstBaseline || self == .lastBaseline }
 }

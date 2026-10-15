@@ -542,6 +542,8 @@ final class Node {
     /// Text memo: measured sizes for the current text, keyed by wrap width (nil = no wrap).
     var memoText: String?
     var memo: [CGFloat?: LayoutSize] = [:]
+    /// The first and last line baselines of the memoised text measurements, keyed like `memo` (round 5 block 33, baseline alignment).
+    var memoBase: [CGFloat?: (first: CGFloat, last: CGFloat)] = [:]
     /// Cache owned by a custom `Layout` container.
     var layoutStorage: Any?
     /// Retired-row state, used only when this node retains removed row state (List).
@@ -653,6 +655,7 @@ final class Node {
         rowCache = RowStateCache()
         textInput = nil
         memo = [:]
+        memoBase = [:]
         memoText = nil
         memoFont = nil
         selection = nil

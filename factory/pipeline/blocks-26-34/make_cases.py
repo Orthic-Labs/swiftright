@@ -541,6 +541,56 @@ ax("hint-v1", "\n".join([
 ]), rows=[(0, 32, 0), (32, 52, 0)])
 
 
+# =====================================================================================================================================================================
+# block 33: swiftui.baseline-alignment (VerticalAlignment.firstTextBaseline / lastTextBaseline in an HStack). Gate (decision F3): on EACH side, every item's baseline (a text's: the
+# bottom of its first glyph; a shape's: its bottom edge) lies within 1 px of the first item's; the glyph pixels stay excluded (decision 2) and the text colour gated.
+# =====================================================================================================================================================================
+BA = "Witness_ba_"
+SLOT = 48   # each item is a 40 pt wide frame, 8 pt apart
+
+
+def baseline_case(name, items, align="firstTextBaseline", extra_rows="", h=60):
+    """items: [(kind, expr)] kind 'text' | 'rect'; every item sits in a 40 pt frame so its slot is known."""
+    typename = BA + name.replace("-", "_").replace("_v1", "")
+    inner = "\n".join(f"            {e}" for _, e in items)
+    case("swiftui.baseline-alignment/" + name, typename, f"""struct {typename}: View {{
+    var body: some View {{
+        VStack(alignment: .leading, spacing: 0) {{
+            HStack(alignment: .{align}, spacing: 8) {{
+{inner}
+            }}{extra_rows}
+        }}.frame(width: 240, height: 200, alignment: .topLeading)
+    }}
+}}""")
+    regions = []; align_items = []
+    for k, (kind, _) in enumerate(items):
+        r = rect(k * SLOT, 0, k * SLOT + 40, h)
+        align_items.append({"kind": kind, "rect": r})
+        if kind == "text": regions.append({"name": f"item {k}", "rect": r, "align": "leading"})
+    ex = [{"name": f"item {k} glyph region (Segoe UI vs SF, decision 2); gated by the baseline relation and the colour gate", "rect": it["rect"]} for k, it in enumerate(align_items) if it["kind"] == "text"]
+    CASES["swiftui.baseline-alignment/" + name]["pair"] = {"textColourGate": {"tolerance": 40, "regions": regions, "baselineAlign": [{"name": "baselines", "items": align_items, "tolerancePx": 1}]},
+                                                          "excludeRects": ex, "semanticGate": {"fields": ["role", "name", "count", "order"], "scope": "main", "phases": [""]}}
+    CASES["swiftui.baseline-alignment/" + name]["steps"] = [{"op": "wait", "ms": 600}]
+
+
+def tx(size, weight="regular", mods=""):
+    return ("text", f'Text("Hxg").font(Font.system(size: {size}, weight: .{weight})){mods}.frame(width: 40, alignment: .leading)')
+
+
+def rc(color="Color.blue", w=12, h=20):
+    return ("rect", f'Rectangle().fill({color}).frame(width: {w}, height: {h}).frame(width: 40, alignment: .leading)')
+
+
+baseline_case("first-baseline-v1", [tx(12), tx(18, "semibold"), rc(), tx(11)])
+baseline_case("padding-v1", [tx(12), tx(12, mods=".padding(.top, 10)"), tx(18, mods=".padding(.top, 4)"), rc("Color.red", 12, 14)])
+baseline_case("frame-v1", [tx(12), tx(12, mods=".frame(height: 40)"), tx(18, mods=".frame(height: 50, alignment: .top)"), tx(11, mods=".frame(height: 40, alignment: .bottom)")])
+baseline_case("nested-v1", [tx(12),
+    ("text", 'HStack(spacing: 0) { Rectangle().fill(Color.green).frame(width: 8, height: 30); Text("Hxg").font(Font.system(size: 18)) }.frame(width: 40, alignment: .leading)'),
+    ("text", 'VStack(alignment: .leading, spacing: 4) { Text("Hxg").font(Font.system(size: 11)); Text("Hxg").font(Font.system(size: 11)) }.frame(width: 40, alignment: .leading)'),
+    rc("Color.orange", 12, 18)])
+baseline_case("last-baseline-v1", [("text", 'Text("Hxg Hxg Hxg Hxg").font(Font.system(size: 12)).frame(width: 40, alignment: .leading)'), tx(12), tx(18, "semibold"), rc("Color.purple", 12, 10)], align="lastTextBaseline", h=80)
+
+
 def main():
     only = sys.argv[1:]
     for name, c in CASES.items():

@@ -256,18 +256,24 @@ public struct HorizontalAlignment: Sendable, Equatable {
 }
 
 public struct VerticalAlignment: Sendable, Equatable {
-    enum Kind: Sendable { case top, center, bottom }
+    enum Kind: Sendable { case top, center, bottom, firstTextBaseline, lastTextBaseline }
     let kind: Kind
 
     public static let top = VerticalAlignment(kind: .top)
     public static let center = VerticalAlignment(kind: .center)
     public static let bottom = VerticalAlignment(kind: .bottom)
+    /// Aligns the first line's baseline of each child of an `HStack` (a child with no text counts its bottom edge). Elsewhere (a ZStack, a frame) it centres.
+    /// Apple: https://developer.apple.com/documentation/swiftui/verticalalignment/firsttextbaseline
+    public static let firstTextBaseline = VerticalAlignment(kind: .firstTextBaseline)
+    public static let lastTextBaseline = VerticalAlignment(kind: .lastTextBaseline)
 
     var crossAlignment: CrossAlignment {
         switch kind {
         case .top: return .start
         case .center: return .middle
         case .bottom: return .end
+        case .firstTextBaseline: return .firstBaseline
+        case .lastTextBaseline: return .lastBaseline
         }
     }
 }
