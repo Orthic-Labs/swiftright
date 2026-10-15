@@ -32,6 +32,23 @@ feasibility is recorded in [Windows spike](spikes/windows/RESULT.md). Never dele
 | [Mac capture](spikes/macos/README.md) | TextRenderer, Layout, VM capture & AX feasibility | Only observed channels count; absent permission remains blocked |
 | [Host lanes](hosts/README.md) | Isolated Mac VM & shared Dell operating rules | No frozen-contract/ABI integration |
 
+## Mac build caches (`factory/tools/cache_paths.py`)
+
+Every Mac build path is chosen by `factory/tools/cache_paths.py`; do not hard-code `~/Library/Caches/SwiftRightFactory` in new tools.
+
+| Root | Path | Holds |
+| --- | --- | --- |
+| Build | `/Volumes/D/swiftright-cache/<lane>/` | SwiftPM `--scratch-path`, swiftc module caches, intermediates. Compile and link here; never launch from here (TCC prompt). |
+| Run | `~/Library/Caches/SwiftRightFactory/run/<lane>/` | Only the binaries or app bundles launched. 2 GB cap, LRU eviction. |
+| Moved | `/Volumes/D/swiftright-cache-moved/<date>/` | Where the sweep and lane cleanup move things. Move, never delete. |
+
+- Use `cache_paths.build_root(lane)`, `run_root(lane)`, `preflight()` and `finish_lane(lane, ok)` from Python, or `python3 factory/tools/cache_paths.py path build|run <lane>` / `preflight <lane>` / `finish <lane>` from shell.
+- `pair.py`, `mac-stage-test.py`, `appkit-probe`, `image-io`, `symbol-metrics` and `font-metrics` already use it; `consolidation/run_all.py` and `recompare_all.py` print the free-space warning.
+- `python3 factory/tools/cache_paths.py sweep --report` prints sizes and the plan; without `--report` it moves internal entries older than 24 h, anything over the cap and finished build lanes. Anything modified in the last 4 h is never moved.
+- Internal free space: warning below 40 GB, a new Mac build is refused below 15 GB.
+- `SWIFTRIGHT_CACHE_ROOT=<dir>` puts both roots under `<dir>/build` and `<dir>/run`.
+- `swift test` launches its test bundle from the scratch path, so `mac-stage-test.py` keeps its scratch on the internal run root and moves it out when the run passes.
+
 ## Local validation
 
 Private repository: use local tools; no billed GitHub Actions. Dependency installation is confined to ignored

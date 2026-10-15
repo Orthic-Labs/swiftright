@@ -8,6 +8,7 @@ Output: <case-dir>/runs/<ts>/{windows,mac}/*.png, report.json, build.json (stage
 import argparse, json, re, shutil, subprocess, sys, time, zipfile, io
 from pathlib import Path
 from PIL import Image, ImageChops
+sys.path.insert(0, str(Path(__file__).resolve().parent)); import cache_paths   # the one place Mac build/run paths are chosen
 
 TOOLS = Path(__file__).resolve().parent / "pair"
 WIN_ROOT = r"D:\Claude\swiftright\.factory-work"
@@ -102,8 +103,11 @@ def write_build_info(out, case, stage, stage_dir, renderer):
 
 def mac(case, name, runs, out, clock=None, strict=False):
     mdir = out / "mac"; mdir.mkdir(parents=True, exist_ok=True)
-    cache = Path.home() / "Library/Caches/SwiftRightFactory/pair" / name
-    (cache / "mc").mkdir(parents=True, exist_ok=True); (cache / "bin").mkdir(exist_ok=True)
+    cache_paths.preflight("pair.py Mac capture")
+    lane = f"pair-{name}-{out.name}"                       # one lane per invocation: finishing it cannot disturb another run
+    build = cache_paths.build_root("pair")                  # /Volumes/D: shared swiftc module cache (compiled there, never executed from there)
+    cache = cache_paths.run_root(lane)                     # internal, capped: only the host executable launched below
+    (build / "mc").mkdir(parents=True, exist_ok=True); (cache / "bin").mkdir(exist_ok=True)
     srcs = sorted(str(p) for p in (case / "mac-source/Sources").rglob("*.swift"))
     if any("AXDump." in Path(p).read_text() for p in srcs):
         srcs.append(str(Path(__file__).resolve().parent / "mac-ax-dump/AXDump.swift"))   # F3: in-process accessibility dump (no AX client API, no TCC)
@@ -113,7 +117,7 @@ def mac(case, name, runs, out, clock=None, strict=False):
         srcs.append(str(Path(__file__).resolve().parent / "mac-scale-pin/ScalePin.swift"))   # decision C12: the window/displayScale pin and its MAC_ENV report
     pj = case / "pair.json"
     mac_args = json.loads(pj.read_text()).get("macArgs", []) if pj.is_file() else []   # extra host arguments for the case (e.g. ["--press", "1"])
-    sh(["/usr/bin/xcrun", "swiftc", "-parse-as-library", "-O", "-module-cache-path", str(cache / "mc"),
+    sh(["/usr/bin/xcrun", "swiftc", "-parse-as-library", "-O", "-module-cache-path", str(build / "mc"),
         "-o", str(cache / "bin/host"), *srcs], log=out / "mac-build.log")
     # the host only accepts scratch roots under a prefix hard-coded in its source
     m = re.search(r'scratchPrefix\s*=\s*"([^"]+)"', "\n".join(Path(s).read_text() for s in srcs))
@@ -138,7 +142,9 @@ def mac(case, name, runs, out, clock=None, strict=False):
         shutil.move(str(scratch / "client.png"), mdir / f"run-{i:02d}.png")
     mac_provenance(out)
     print(f"mac capture {runs}/{runs} ok", flush=True)
-    return scale_guard(out, runs, strict)
+    ok = scale_guard(out, runs, strict)
+    cache_paths.finish_lane(lane, ok=ok)                   # success: run root moved to /Volumes/D/swiftright-cache-moved; failure keeps it for diagnosis
+    return ok
 
 
 def mac_provenance(out):

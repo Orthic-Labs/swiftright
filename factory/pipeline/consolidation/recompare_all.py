@@ -41,6 +41,7 @@ def one(job):
 
 
 def main():
+    sys.path.insert(0, str(ROOT / "factory/tools")); import cache_paths; cache_paths.preflight("recompare_all", build=False)   # warning only: no Mac build here
     ap = argparse.ArgumentParser()
     ap.add_argument("stage"); ap.add_argument("--scratch", required=True); ap.add_argument("--trash"); ap.add_argument("--only"); ap.add_argument("-j", type=int, default=4); ap.add_argument("--out", default="recompare-results.json")
     a = ap.parse_args()

@@ -3,11 +3,12 @@
 
   python3 factory/tools/mac-stage-test.py --ref HEAD --log-dir <dir>      (the Windows counterpart is factory/tools/pair/stage-test.ps1 on the staged tree)
 
-Archive of PATHS at <ref> -> ~/Library/Caches/SwiftRightFactory/mac-test/<short sha>-<tree8>/ (same layout as the Windows stage, same tree hash),
+Archive of PATHS at <ref> -> <cache_paths run root>/mac-test-<short sha>-<tree8>/ (internal, capped; moved out on success) (same layout as the Windows stage, same tree hash),
 then `swift test --jobs 1` per package with the default build system. One log per package in --log-dir, and a SUMMARY.json with the executed/skipped/failed
 counts parsed from the logs. Exit 0 only when every package passes. The scratch tree is moved to ~/.Trash when --clean is given."""
 import argparse, hashlib, io, json, re, subprocess, sys, tarfile
 from pathlib import Path
+sys.path.insert(0, str(Path(__file__).resolve().parent)); import cache_paths
 
 REPO = Path(__file__).resolve().parents[2]
 PACKAGES = ["probes/sr0-s/fresh-runtime", "packages/SwiftRightHost", "packages/SwiftRightBridge"]
@@ -31,8 +32,10 @@ def main():
     for n in sorted(files):
         h.update(n.encode() + b"\0" + hashlib.sha256(files[n]).digest())   # same tree hash as stage-product.py
     name = f"{commit[:9]}-{h.hexdigest()[:8]}"
-    root = Path.home() / "Library/Caches/SwiftRightFactory/mac-test" / name
-    if not root.exists():
+    # swift test LAUNCHES the test bundle from its scratch path, so this lane must stay on the internal disk (a launch from /Volumes/D prompts TCC); factory/tools/cache_paths.py
+    cache_paths.preflight("mac-stage-test")
+    lane = f"mac-test-{name}"; root = cache_paths.run_root(lane)
+    if not (root / PACKAGES[0]).exists():   # run_root() creates the lane dir, so test for content
         for n, data in files.items():
             p = root / n; p.parent.mkdir(parents=True, exist_ok=True); p.write_bytes(data)
     logs = Path(a.log_dir); logs.mkdir(parents=True, exist_ok=True)
@@ -50,6 +53,7 @@ def main():
         ok = ok and r.returncode == 0
         print(pkg, summary["packages"][pkg], flush=True)
     (logs / "SUMMARY.json").write_text(json.dumps(summary, indent=1))
+    cache_paths.finish_lane(lane, ok=ok)
     sys.exit(0 if ok else 1)
 
 

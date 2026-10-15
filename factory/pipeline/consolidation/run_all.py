@@ -33,6 +33,7 @@ for lab, blk, g in [("11 button","blocks-11-16","swiftui.button"),("16 list","bl
 JOBS = [(l, c, 20) for l, c in R3] + [(l, c, 3) for l, c in R12]
 
 def main():
+    sys.path.insert(0, str(PIPE.parent / "tools")); import cache_paths; cache_paths.preflight("consolidation run_all (pair.py Mac builds)")   # warns < 40 GB internal free, refuses < 15 GB
     stage = sys.argv[1]; only = sys.argv[sys.argv.index("--only")+1] if "--only" in sys.argv else None
     res = HERE/"results.jsonl"
     done = set()
