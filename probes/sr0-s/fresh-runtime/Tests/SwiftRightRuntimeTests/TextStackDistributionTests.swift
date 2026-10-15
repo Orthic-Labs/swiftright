@@ -34,6 +34,7 @@ private func textWidths(_ view: some View, width: CGFloat, height: CGFloat = 100
     return everyNode(g.snapshot()).filter { $0.kind == "Text" }.map(\.frame.size.width)
 }
 
+@MainActor
 private func row<C: View>(_ width: CGFloat, spacing: CGFloat = 8, @ViewBuilder _ content: () -> C) -> some View {
     HStack(spacing: spacing) { content() }.frame(width: width, height: 100, alignment: .leading)
 }
