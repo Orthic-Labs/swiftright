@@ -140,3 +140,27 @@ final class TextViewsBlockTests: XCTestCase {
         XCTAssertEqual(a?.size.width, b?.size.width)
     }
 }
+
+/// Round 5 block 34 (hub gap G17): `TextField(_:text:axis:)` is accepted and is the single-line field (growth and wrapping are not delivered).
+@MainActor
+final class TextFieldAxisTests: XCTestCase {
+    func testAxisFieldHasTheSizeAndPlaceholderOfTheSingleLineField() {
+        struct Host: View {
+            @State var a = ""
+            @State var b = ""
+            var body: some View {
+                VStack {
+                    TextField("Name", text: $a)
+                    TextField("Name", text: $b, axis: .vertical)
+                    TextField("Name", text: $b, prompt: Text("Prompt"), axis: .vertical)
+                }
+            }
+        }
+        let g = Graph(Host(), measurer: FixedAdvanceTextMeasurer(), scale: 2.5)
+        g.rootProposal = ProposedViewSize(width: 200, height: 200); g.flush()
+        let fields = everyNode(g.snapshot()).filter { $0.kind == "TextField" }
+        XCTAssertEqual(fields.count, 3)
+        XCTAssertEqual(fields[0].frame.size, fields[1].frame.size)
+        XCTAssertEqual(fields[1].placeholder, "Name"); XCTAssertEqual(fields[2].placeholder, "Prompt")
+    }
+}

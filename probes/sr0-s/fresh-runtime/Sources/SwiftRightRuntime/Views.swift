@@ -228,6 +228,20 @@ extension TextField where Label == Text {
         self.init(text: text, label: label)
     }
 
+    /// A field whose text may wrap over several lines (`axis: .vertical`). Round 5 (hub gap G17): the field is accepted and draws, edits and sizes as the single-line field; the growth
+    /// to several lines (up to `lineLimit`) and the wrapping of long text are not delivered (docs/sr1-decisions.md F7). An empty or short field is the same on macOS (measured).
+    /// Apple: https://developer.apple.com/documentation/swiftui/textfield/init(_:text:axis:)
+    public init(_ titleKey: String, text: Binding<String>, axis: Axis) {
+        let label: () -> Text = { Text(titleKey) }
+        self.init(text: text, label: label)
+    }
+
+    /// Apple: https://developer.apple.com/documentation/swiftui/textfield/init(_:text:prompt:axis:)
+    public init(_ titleKey: String, text: Binding<String>, prompt: Text?, axis: Axis) {
+        let label: () -> Text = { Text(titleKey) }
+        self.init(text: text, prompt: prompt, label: label)
+    }
+
     /// The placeholder is `prompt` when given, else the title (macOS: both draw the grey placeholder).
     /// Apple: https://developer.apple.com/documentation/swiftui/textfield/init(_:text:prompt:)
     public init(_ titleKey: String, text: Binding<String>, prompt: Text?) {

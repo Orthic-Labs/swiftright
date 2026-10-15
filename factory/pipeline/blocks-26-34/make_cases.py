@@ -597,6 +597,29 @@ baseline_case("nested-v1", [tx(12),
 baseline_case("last-baseline-v1", [("text", 'Text("Hxg Hxg Hxg Hxg").font(Font.system(size: 12)).frame(width: 40, alignment: .leading)'), tx(12), tx(18, "semibold"), rc("Color.purple", 12, 10)], align="lastTextBaseline", h=80)
 
 
+# =====================================================================================================================================================================
+# block 34: swiftui.textfield-axis (TextField(_:text:axis:)): accepted and drawn as the single-line field (growth over several lines is not delivered, decision F7).
+# Gates as textfield/placeholder-v1 (decision 12/14): pixels with the text excluded, the field's frame, the text origin.
+# =====================================================================================================================================================================
+TFA = "Witness_tfa_"
+
+
+def tfa(name, typename, body, field=(250, 270, 550, 330), text=(258, 276, 542, 324)):
+    case("swiftui.textfield-axis/" + name, typename, f"""struct {typename}: View {{
+    @State private var name = ""
+{body}
+}}""", {
+        "excludeRects": [{"name": "placeholder glyphs (Segoe UI vs SF, sr1-decisions #2)", "rect": list(text)}],
+        "semanticGate": {"fields": ["role", "name", "value", "enabled", "boundsY", "boundsX"], "boundsXRoles": ["textfield"], "scope": "main", "roles": ["textfield", "text"]},
+        "textOriginGate": {"fields": [[field[0] - 5, field[1] - 5, field[2] + 5, field[3] + 5]], "firstInkYTolerancePx": 2, "baselineTolerancePx": 2, "inkCentreYTolerancePx": 0.5,
+                           "yToleranceReason": "as textfield/placeholder-v1 (decision 14): Windows draws the body font at 12 pt and the Mac at 13 pt, measured per run"}},
+        [{"op": "wait", "ms": 300}])
+
+
+tfa("rounded-v1", TFA + "rounded", '    var body: some View { TextField("Name", text: $name, axis: .vertical).textFieldStyle(.roundedBorder).frame(width: 120).padding(10) }')
+tfa("plain-v1", TFA + "plain", '    var body: some View { TextField("Name", text: $name, axis: .vertical).textFieldStyle(.plain).frame(width: 120).padding(10) }', field=(250, 280, 550, 320), text=(250, 280, 550, 320))
+
+
 def main():
     only = sys.argv[1:]
     for name, c in CASES.items():
