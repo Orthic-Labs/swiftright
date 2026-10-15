@@ -123,11 +123,19 @@ def drg(x0, x1, i):     # a drag along slider row i from witness x0 to x1 (pt)
     a, b = px(x0, row_y(i)), px(x1, row_y(i)); return {"op": "drag", "x0": a[0], "y0": a[1], "x1": b[0], "y1": b[1], "steps": 6}
 
 
-def interact(name, typename, body, plan, small_change, gate_extra=None):
+def tick_band(i, spacing=8):
+    """The rows where macOS draws a stepped slider's tick marks (the bottom 7 px of its 40 px frame): excluded by name from the pixel gate, decision H6."""
+    y0 = round((OY + 24 * i) * SCALE) + 33
+    return {"name": f"slider row {i}: tick marks of a stepped slider (not drawn on Windows, decision H6); the track, fill and thumb above are gated", "rect": [round(OX * SCALE), y0, round((OX + 200) * SCALE), y0 + 8]}
+
+
+def interact(name, typename, body, plan, small_change, gate_extra=None, stepped_rows=()):
     steps, labels = sl_phases(plan)
     sg = slider_gate(small_change, {"phases": labels + [""]})
     if gate_extra: sg.update(gate_extra)
-    case(name, typename, body, {"semanticGate": sg, "phaseShots": labels}, steps)
+    pair = {"semanticGate": sg, "phaseShots": labels}
+    if stepped_rows: pair["excludeRects"] = [tick_band(i) for i in stepped_rows]
+    case(name, typename, body, pair, steps)
 
 
 def stateful(typename, decls, items, spacing=8, width=200):
@@ -233,7 +241,7 @@ interact("swiftui.slider/click-track-v1", T + "click", stateful(T + "click", [("
          [SB("a"), "Slider(value: $b, in: 0...100, step: 5)", "Slider(value: $c, in: 0...1)"]), [
     ("a30", [clk(64, 0)]), ("b60", [clk(118, 1)]), ("c03", [clk(64, 2)]),
     ("a-clamp-lo", [clk(2, 0)]), ("a-clamp-hi", [clk(198, 0)]), ("b-snap", [clk(100, 1)]),
-], [10, 5, 0.1])
+], [10, 5, 0.1], stepped_rows=[1])
 
 interact("swiftui.slider/drag-v1", T + "drag", stateful(T + "drag", [("a", 20.0), ("b", 20.0), ("c", 0.0)],
          [SB("a"), "Slider(value: $b, in: 0...100, step: 10)", SB("c", 0, 1)]), [
@@ -241,13 +249,13 @@ interact("swiftui.slider/drag-v1", T + "drag", stateful(T + "drag", [("a", 20.0)
     ("a-off-thumb", [drg(150, 28, 0)]),         # press on the empty track: the thumb jumps under the pointer, then follows -> 10
     ("b-stepped", [drg(46, 106, 1)]),           # 20 -> 56.7 raw -> snaps to 50 or 60: x = 106 -> centre 102 -> 51.1 -> 50
     ("c-end", [drg(10, 199, 2)]),
-], [10, 10, 0.1])
+], [10, 10, 0.1], stepped_rows=[1])
 
 interact("swiftui.slider/keys-v1", T + "keys", stateful(T + "keys", [("a", 20.0), ("b", 20.0)], [SB("a"), "Slider(value: $b, in: 0...100, step: 5)"]), [
     ("click", [clk(64, 0)]), ("right", [key("Right")]), ("right2", [key("Right")]), ("left", [key("Left")]), ("home", [key("Home")]),
     ("pageup", [key("PageUp")]), ("end", [key("End")]), ("pagedown", [key("PageDown")]), ("up", [key("Up")]), ("down", [key("Down"), key("Down")]),
     ("b-click", [clk(100, 1)]), ("b-right", [key("Right")]), ("b-left2", [key("Left"), key("Left")]), ("b-end", [key("End")]),
-], [10, 5])
+], [10, 5], stepped_rows=[1])
 
 interact("swiftui.slider/disabled-input-v1", T + "disabled_input", stateful(T + "disabled_input", [("a", 30.0), ("b", 30.0)],
          [SB("a", extra=".disabled(true)"), SB("b")]), [

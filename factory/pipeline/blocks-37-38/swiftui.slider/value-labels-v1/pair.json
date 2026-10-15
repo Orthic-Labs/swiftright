@@ -1,0 +1,102 @@
+{
+ "semanticGate": {
+  "fields": [
+   "role",
+   "name",
+   "enabled",
+   "value",
+   "range",
+   "count",
+   "order"
+  ],
+  "scope": "main",
+  "smallChange": [
+   10
+  ],
+  "phases": [
+   "start",
+   "click-max",
+   "click-min",
+   ""
+  ]
+ },
+ "phaseShots": [
+  "start",
+  "click-max",
+  "click-min"
+ ],
+ "steps": [
+  {
+   "op": "wait",
+   "ms": 700
+  },
+  {
+   "op": "dump",
+   "label": "start"
+  },
+  {
+   "op": "wait",
+   "ms": 250
+  },
+  {
+   "op": "shot",
+   "label": "start"
+  },
+  {
+   "op": "wait",
+   "ms": 150
+  },
+  {
+   "op": "invoke",
+   "name": "100"
+  },
+  {
+   "op": "wait",
+   "ms": 450
+  },
+  {
+   "op": "dump",
+   "label": "click-max"
+  },
+  {
+   "op": "wait",
+   "ms": 250
+  },
+  {
+   "op": "shot",
+   "label": "click-max"
+  },
+  {
+   "op": "wait",
+   "ms": 150
+  },
+  {
+   "op": "invoke",
+   "name": "0"
+  },
+  {
+   "op": "wait",
+   "ms": 450
+  },
+  {
+   "op": "dump",
+   "label": "click-min"
+  },
+  {
+   "op": "wait",
+   "ms": 250
+  },
+  {
+   "op": "shot",
+   "label": "click-min"
+  },
+  {
+   "op": "wait",
+   "ms": 150
+  }
+ ],
+ "macArgs": [
+  "--steps",
+  "[{\"op\":\"wait\",\"ms\":700},{\"op\":\"dump\",\"label\":\"start\"},{\"op\":\"wait\",\"ms\":250},{\"op\":\"shot\",\"label\":\"start\"},{\"op\":\"wait\",\"ms\":150},{\"op\":\"invoke\",\"name\":\"100\"},{\"op\":\"wait\",\"ms\":450},{\"op\":\"dump\",\"label\":\"click-max\"},{\"op\":\"wait\",\"ms\":250},{\"op\":\"shot\",\"label\":\"click-max\"},{\"op\":\"wait\",\"ms\":150},{\"op\":\"invoke\",\"name\":\"0\"},{\"op\":\"wait\",\"ms\":450},{\"op\":\"dump\",\"label\":\"click-min\"},{\"op\":\"wait\",\"ms\":250},{\"op\":\"shot\",\"label\":\"click-min\"},{\"op\":\"wait\",\"ms\":150}]"
+ ]
+}

@@ -1,0 +1,75 @@
+{
+ "semanticGate": {
+  "fields": [
+   "role",
+   "name",
+   "enabled",
+   "value",
+   "range",
+   "count",
+   "order",
+   "boundsY"
+  ],
+  "scope": "main",
+  "smallChange": [
+   10,
+   10,
+   10,
+   10
+  ],
+  "boundsYTolerancePt": 1.0,
+  "ignoreNames": []
+ },
+ "excludeRects": [
+  {
+   "name": "row 0 (labels and track start: Segoe UI vs SF text widths, decision 2); the slider is gated by value, range, order and y",
+   "rect": [
+    100,
+    50,
+    700,
+    95
+   ]
+  },
+  {
+   "name": "row 1 (labels and track start: Segoe UI vs SF text widths, decision 2); the slider is gated by value, range, order and y",
+   "rect": [
+    100,
+    105,
+    700,
+    150
+   ]
+  },
+  {
+   "name": "row 2 (labels and track start: Segoe UI vs SF text widths, decision 2); the slider is gated by value, range, order and y",
+   "rect": [
+    100,
+    160,
+    700,
+    215
+   ]
+  },
+  {
+   "name": "row 3 (labels and track start: Segoe UI vs SF text widths, decision 2); the slider is gated by value, range, order and y",
+   "rect": [
+    100,
+    225,
+    700,
+    275
+   ]
+  }
+ ],
+ "steps": [
+  {
+   "op": "wait",
+   "ms": 700
+  },
+  {
+   "op": "wait",
+   "ms": 200
+  }
+ ],
+ "macArgs": [
+  "--steps",
+  "[{\"op\":\"wait\",\"ms\":700},{\"op\":\"wait\",\"ms\":200}]"
+ ]
+}

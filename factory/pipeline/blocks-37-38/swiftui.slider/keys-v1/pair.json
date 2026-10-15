@@ -1,0 +1,426 @@
+{
+ "semanticGate": {
+  "fields": [
+   "role",
+   "name",
+   "enabled",
+   "value",
+   "range",
+   "count",
+   "order"
+  ],
+  "scope": "main",
+  "smallChange": [
+   10,
+   5
+  ],
+  "phases": [
+   "click",
+   "right",
+   "right2",
+   "left",
+   "home",
+   "pageup",
+   "end",
+   "pagedown",
+   "up",
+   "down",
+   "b-click",
+   "b-right",
+   "b-left2",
+   "b-end",
+   ""
+  ]
+ },
+ "phaseShots": [
+  "click",
+  "right",
+  "right2",
+  "left",
+  "home",
+  "pageup",
+  "end",
+  "pagedown",
+  "up",
+  "down",
+  "b-click",
+  "b-right",
+  "b-left2",
+  "b-end"
+ ],
+ "excludeRects": [
+  {
+   "name": "slider row 1: tick marks of a stepped slider (not drawn on Windows, decision H6); the track, fill and thumb above are gated",
+   "rect": [
+    100,
+    143,
+    600,
+    151
+   ]
+  }
+ ],
+ "steps": [
+  {
+   "op": "wait",
+   "ms": 700
+  },
+  {
+   "op": "click",
+   "x": 260,
+   "y": 70
+  },
+  {
+   "op": "wait",
+   "ms": 450
+  },
+  {
+   "op": "dump",
+   "label": "click"
+  },
+  {
+   "op": "wait",
+   "ms": 250
+  },
+  {
+   "op": "shot",
+   "label": "click"
+  },
+  {
+   "op": "wait",
+   "ms": 150
+  },
+  {
+   "op": "key",
+   "key": "Right"
+  },
+  {
+   "op": "wait",
+   "ms": 450
+  },
+  {
+   "op": "dump",
+   "label": "right"
+  },
+  {
+   "op": "wait",
+   "ms": 250
+  },
+  {
+   "op": "shot",
+   "label": "right"
+  },
+  {
+   "op": "wait",
+   "ms": 150
+  },
+  {
+   "op": "key",
+   "key": "Right"
+  },
+  {
+   "op": "wait",
+   "ms": 450
+  },
+  {
+   "op": "dump",
+   "label": "right2"
+  },
+  {
+   "op": "wait",
+   "ms": 250
+  },
+  {
+   "op": "shot",
+   "label": "right2"
+  },
+  {
+   "op": "wait",
+   "ms": 150
+  },
+  {
+   "op": "key",
+   "key": "Left"
+  },
+  {
+   "op": "wait",
+   "ms": 450
+  },
+  {
+   "op": "dump",
+   "label": "left"
+  },
+  {
+   "op": "wait",
+   "ms": 250
+  },
+  {
+   "op": "shot",
+   "label": "left"
+  },
+  {
+   "op": "wait",
+   "ms": 150
+  },
+  {
+   "op": "key",
+   "key": "Home"
+  },
+  {
+   "op": "wait",
+   "ms": 450
+  },
+  {
+   "op": "dump",
+   "label": "home"
+  },
+  {
+   "op": "wait",
+   "ms": 250
+  },
+  {
+   "op": "shot",
+   "label": "home"
+  },
+  {
+   "op": "wait",
+   "ms": 150
+  },
+  {
+   "op": "key",
+   "key": "PageUp"
+  },
+  {
+   "op": "wait",
+   "ms": 450
+  },
+  {
+   "op": "dump",
+   "label": "pageup"
+  },
+  {
+   "op": "wait",
+   "ms": 250
+  },
+  {
+   "op": "shot",
+   "label": "pageup"
+  },
+  {
+   "op": "wait",
+   "ms": 150
+  },
+  {
+   "op": "key",
+   "key": "End"
+  },
+  {
+   "op": "wait",
+   "ms": 450
+  },
+  {
+   "op": "dump",
+   "label": "end"
+  },
+  {
+   "op": "wait",
+   "ms": 250
+  },
+  {
+   "op": "shot",
+   "label": "end"
+  },
+  {
+   "op": "wait",
+   "ms": 150
+  },
+  {
+   "op": "key",
+   "key": "PageDown"
+  },
+  {
+   "op": "wait",
+   "ms": 450
+  },
+  {
+   "op": "dump",
+   "label": "pagedown"
+  },
+  {
+   "op": "wait",
+   "ms": 250
+  },
+  {
+   "op": "shot",
+   "label": "pagedown"
+  },
+  {
+   "op": "wait",
+   "ms": 150
+  },
+  {
+   "op": "key",
+   "key": "Up"
+  },
+  {
+   "op": "wait",
+   "ms": 450
+  },
+  {
+   "op": "dump",
+   "label": "up"
+  },
+  {
+   "op": "wait",
+   "ms": 250
+  },
+  {
+   "op": "shot",
+   "label": "up"
+  },
+  {
+   "op": "wait",
+   "ms": 150
+  },
+  {
+   "op": "key",
+   "key": "Down"
+  },
+  {
+   "op": "wait",
+   "ms": 450
+  },
+  {
+   "op": "key",
+   "key": "Down"
+  },
+  {
+   "op": "wait",
+   "ms": 450
+  },
+  {
+   "op": "dump",
+   "label": "down"
+  },
+  {
+   "op": "wait",
+   "ms": 250
+  },
+  {
+   "op": "shot",
+   "label": "down"
+  },
+  {
+   "op": "wait",
+   "ms": 150
+  },
+  {
+   "op": "click",
+   "x": 350,
+   "y": 130
+  },
+  {
+   "op": "wait",
+   "ms": 450
+  },
+  {
+   "op": "dump",
+   "label": "b-click"
+  },
+  {
+   "op": "wait",
+   "ms": 250
+  },
+  {
+   "op": "shot",
+   "label": "b-click"
+  },
+  {
+   "op": "wait",
+   "ms": 150
+  },
+  {
+   "op": "key",
+   "key": "Right"
+  },
+  {
+   "op": "wait",
+   "ms": 450
+  },
+  {
+   "op": "dump",
+   "label": "b-right"
+  },
+  {
+   "op": "wait",
+   "ms": 250
+  },
+  {
+   "op": "shot",
+   "label": "b-right"
+  },
+  {
+   "op": "wait",
+   "ms": 150
+  },
+  {
+   "op": "key",
+   "key": "Left"
+  },
+  {
+   "op": "wait",
+   "ms": 450
+  },
+  {
+   "op": "key",
+   "key": "Left"
+  },
+  {
+   "op": "wait",
+   "ms": 450
+  },
+  {
+   "op": "dump",
+   "label": "b-left2"
+  },
+  {
+   "op": "wait",
+   "ms": 250
+  },
+  {
+   "op": "shot",
+   "label": "b-left2"
+  },
+  {
+   "op": "wait",
+   "ms": 150
+  },
+  {
+   "op": "key",
+   "key": "End"
+  },
+  {
+   "op": "wait",
+   "ms": 450
+  },
+  {
+   "op": "dump",
+   "label": "b-end"
+  },
+  {
+   "op": "wait",
+   "ms": 250
+  },
+  {
+   "op": "shot",
+   "label": "b-end"
+  },
+  {
+   "op": "wait",
+   "ms": 150
+  }
+ ],
+ "macArgs": [
+  "--steps",
+  "[{\"op\":\"wait\",\"ms\":700},{\"op\":\"click\",\"x\":260,\"y\":70},{\"op\":\"wait\",\"ms\":450},{\"op\":\"dump\",\"label\":\"click\"},{\"op\":\"wait\",\"ms\":250},{\"op\":\"shot\",\"label\":\"click\"},{\"op\":\"wait\",\"ms\":150},{\"op\":\"key\",\"key\":\"Right\"},{\"op\":\"wait\",\"ms\":450},{\"op\":\"dump\",\"label\":\"right\"},{\"op\":\"wait\",\"ms\":250},{\"op\":\"shot\",\"label\":\"right\"},{\"op\":\"wait\",\"ms\":150},{\"op\":\"key\",\"key\":\"Right\"},{\"op\":\"wait\",\"ms\":450},{\"op\":\"dump\",\"label\":\"right2\"},{\"op\":\"wait\",\"ms\":250},{\"op\":\"shot\",\"label\":\"right2\"},{\"op\":\"wait\",\"ms\":150},{\"op\":\"key\",\"key\":\"Left\"},{\"op\":\"wait\",\"ms\":450},{\"op\":\"dump\",\"label\":\"left\"},{\"op\":\"wait\",\"ms\":250},{\"op\":\"shot\",\"label\":\"left\"},{\"op\":\"wait\",\"ms\":150},{\"op\":\"key\",\"key\":\"Home\"},{\"op\":\"wait\",\"ms\":450},{\"op\":\"dump\",\"label\":\"home\"},{\"op\":\"wait\",\"ms\":250},{\"op\":\"shot\",\"label\":\"home\"},{\"op\":\"wait\",\"ms\":150},{\"op\":\"key\",\"key\":\"PageUp\"},{\"op\":\"wait\",\"ms\":450},{\"op\":\"dump\",\"label\":\"pageup\"},{\"op\":\"wait\",\"ms\":250},{\"op\":\"shot\",\"label\":\"pageup\"},{\"op\":\"wait\",\"ms\":150},{\"op\":\"key\",\"key\":\"End\"},{\"op\":\"wait\",\"ms\":450},{\"op\":\"dump\",\"label\":\"end\"},{\"op\":\"wait\",\"ms\":250},{\"op\":\"shot\",\"label\":\"end\"},{\"op\":\"wait\",\"ms\":150},{\"op\":\"key\",\"key\":\"PageDown\"},{\"op\":\"wait\",\"ms\":450},{\"op\":\"dump\",\"label\":\"pagedown\"},{\"op\":\"wait\",\"ms\":250},{\"op\":\"shot\",\"label\":\"pagedown\"},{\"op\":\"wait\",\"ms\":150},{\"op\":\"key\",\"key\":\"Up\"},{\"op\":\"wait\",\"ms\":450},{\"op\":\"dump\",\"label\":\"up\"},{\"op\":\"wait\",\"ms\":250},{\"op\":\"shot\",\"label\":\"up\"},{\"op\":\"wait\",\"ms\":150},{\"op\":\"key\",\"key\":\"Down\"},{\"op\":\"wait\",\"ms\":450},{\"op\":\"key\",\"key\":\"Down\"},{\"op\":\"wait\",\"ms\":450},{\"op\":\"dump\",\"label\":\"down\"},{\"op\":\"wait\",\"ms\":250},{\"op\":\"shot\",\"label\":\"down\"},{\"op\":\"wait\",\"ms\":150},{\"op\":\"click\",\"x\":350,\"y\":130},{\"op\":\"wait\",\"ms\":450},{\"op\":\"dump\",\"label\":\"b-click\"},{\"op\":\"wait\",\"ms\":250},{\"op\":\"shot\",\"label\":\"b-click\"},{\"op\":\"wait\",\"ms\":150},{\"op\":\"key\",\"key\":\"Right\"},{\"op\":\"wait\",\"ms\":450},{\"op\":\"dump\",\"label\":\"b-right\"},{\"op\":\"wait\",\"ms\":250},{\"op\":\"shot\",\"label\":\"b-right\"},{\"op\":\"wait\",\"ms\":150},{\"op\":\"key\",\"key\":\"Left\"},{\"op\":\"wait\",\"ms\":450},{\"op\":\"key\",\"key\":\"Left\"},{\"op\":\"wait\",\"ms\":450},{\"op\":\"dump\",\"label\":\"b-left2\"},{\"op\":\"wait\",\"ms\":250},{\"op\":\"shot\",\"label\":\"b-left2\"},{\"op\":\"wait\",\"ms\":150},{\"op\":\"key\",\"key\":\"End\"},{\"op\":\"wait\",\"ms\":450},{\"op\":\"dump\",\"label\":\"b-end\"},{\"op\":\"wait\",\"ms\":250},{\"op\":\"shot\",\"label\":\"b-end\"},{\"op\":\"wait\",\"ms\":150}]"
+ ]
+}

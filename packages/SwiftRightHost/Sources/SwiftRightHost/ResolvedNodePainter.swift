@@ -220,7 +220,7 @@ public final class ResolvedNodePainter {
                     try walk(child, parent: id, order: UInt32(index), clip: childClip, textColor: colour, row: rows[index], rowList: (bounds, look), a11y: childA11y, hidden: childHidden)
                 }
             } else {
-                for (index, child) in n.children.enumerated() { try walk(child, parent: id, order: UInt32(index), clip: childClip, textColor: childTextColor, inButton: childInButton || n.kind == "Button", a11y: childA11y, hidden: childHidden) }
+                for (index, child) in n.children.enumerated() { try walk(child, parent: id, order: UInt32(index), clip: childClip, textColor: childTextColor, inButton: childInButton || n.kind == "Button" || n.kind == "modifier.onTapGesture", a11y: childA11y, hidden: childHidden) }
             }
         }
         try walk(root, parent: background?.id ?? 0, order: 0, clip: nil)
@@ -328,6 +328,13 @@ public final class ResolvedNodePainter {
                                 semantic: SemanticNode(role: .slider, label: node.accessibility.label ?? "", value: node.accessibility.value ?? "",
                                                        actions: plan.isEnabled ? [.focus] : [], identifier: node.id, disabled: !plan.isEnabled, range: range),
                                 flags: plan.isEnabled ? [.hitTarget, .focusable] : [.hitTarget], structural: false, bounds: plan.controlBounds)
+
+        case "modifier.onTapGesture":
+            // a view with a tap gesture is ONE pressable accessibility node (decision H8): a button named by the text it holds, invoked by the accessibility action; its text publishes none
+            return NodeEmission(primitives: [],
+                                semantic: SemanticNode(role: .button, label: node.accessibility.label ?? Self.combinedLabel(node), actions: node.accessibility.isEnabled ? [.invoke] : [],
+                                                       identifier: node.id, disabled: !node.accessibility.isEnabled),
+                                flags: [.hitTarget], structural: false)
 
         case "Button":
             let plan = try ButtonPainter.plan(node, bounds: bounds, scale: scale)

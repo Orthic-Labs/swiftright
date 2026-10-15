@@ -1,0 +1,165 @@
+{
+ "semanticGate": {
+  "fields": [
+   "role",
+   "name",
+   "enabled",
+   "value",
+   "range",
+   "count",
+   "order"
+  ],
+  "scope": "main",
+  "smallChange": [
+   10,
+   10,
+   0.1
+  ],
+  "phases": [
+   "a-thumb-grab",
+   "a-off-thumb",
+   "b-stepped",
+   "c-end",
+   ""
+  ]
+ },
+ "phaseShots": [
+  "a-thumb-grab",
+  "a-off-thumb",
+  "b-stepped",
+  "c-end"
+ ],
+ "excludeRects": [
+  {
+   "name": "slider row 1: tick marks of a stepped slider (not drawn on Windows, decision H6); the track, fill and thumb above are gated",
+   "rect": [
+    100,
+    143,
+    600,
+    151
+   ]
+  }
+ ],
+ "steps": [
+  {
+   "op": "wait",
+   "ms": 700
+  },
+  {
+   "op": "drag",
+   "x0": 225,
+   "y0": 70,
+   "x1": 405,
+   "y1": 70,
+   "steps": 6
+  },
+  {
+   "op": "wait",
+   "ms": 450
+  },
+  {
+   "op": "dump",
+   "label": "a-thumb-grab"
+  },
+  {
+   "op": "wait",
+   "ms": 250
+  },
+  {
+   "op": "shot",
+   "label": "a-thumb-grab"
+  },
+  {
+   "op": "wait",
+   "ms": 150
+  },
+  {
+   "op": "drag",
+   "x0": 475,
+   "y0": 70,
+   "x1": 170,
+   "y1": 70,
+   "steps": 6
+  },
+  {
+   "op": "wait",
+   "ms": 450
+  },
+  {
+   "op": "dump",
+   "label": "a-off-thumb"
+  },
+  {
+   "op": "wait",
+   "ms": 250
+  },
+  {
+   "op": "shot",
+   "label": "a-off-thumb"
+  },
+  {
+   "op": "wait",
+   "ms": 150
+  },
+  {
+   "op": "drag",
+   "x0": 215,
+   "y0": 130,
+   "x1": 365,
+   "y1": 130,
+   "steps": 6
+  },
+  {
+   "op": "wait",
+   "ms": 450
+  },
+  {
+   "op": "dump",
+   "label": "b-stepped"
+  },
+  {
+   "op": "wait",
+   "ms": 250
+  },
+  {
+   "op": "shot",
+   "label": "b-stepped"
+  },
+  {
+   "op": "wait",
+   "ms": 150
+  },
+  {
+   "op": "drag",
+   "x0": 125,
+   "y0": 190,
+   "x1": 598,
+   "y1": 190,
+   "steps": 6
+  },
+  {
+   "op": "wait",
+   "ms": 450
+  },
+  {
+   "op": "dump",
+   "label": "c-end"
+  },
+  {
+   "op": "wait",
+   "ms": 250
+  },
+  {
+   "op": "shot",
+   "label": "c-end"
+  },
+  {
+   "op": "wait",
+   "ms": 150
+  }
+ ],
+ "macArgs": [
+  "--steps",
+  "[{\"op\":\"wait\",\"ms\":700},{\"op\":\"drag\",\"x0\":225,\"y0\":70,\"x1\":405,\"y1\":70,\"steps\":6},{\"op\":\"wait\",\"ms\":450},{\"op\":\"dump\",\"label\":\"a-thumb-grab\"},{\"op\":\"wait\",\"ms\":250},{\"op\":\"shot\",\"label\":\"a-thumb-grab\"},{\"op\":\"wait\",\"ms\":150},{\"op\":\"drag\",\"x0\":475,\"y0\":70,\"x1\":170,\"y1\":70,\"steps\":6},{\"op\":\"wait\",\"ms\":450},{\"op\":\"dump\",\"label\":\"a-off-thumb\"},{\"op\":\"wait\",\"ms\":250},{\"op\":\"shot\",\"label\":\"a-off-thumb\"},{\"op\":\"wait\",\"ms\":150},{\"op\":\"drag\",\"x0\":215,\"y0\":130,\"x1\":365,\"y1\":130,\"steps\":6},{\"op\":\"wait\",\"ms\":450},{\"op\":\"dump\",\"label\":\"b-stepped\"},{\"op\":\"wait\",\"ms\":250},{\"op\":\"shot\",\"label\":\"b-stepped\"},{\"op\":\"wait\",\"ms\":150},{\"op\":\"drag\",\"x0\":125,\"y0\":190,\"x1\":598,\"y1\":190,\"steps\":6},{\"op\":\"wait\",\"ms\":450},{\"op\":\"dump\",\"label\":\"c-end\"},{\"op\":\"wait\",\"ms\":250},{\"op\":\"shot\",\"label\":\"c-end\"},{\"op\":\"wait\",\"ms\":150}]"
+ ]
+}

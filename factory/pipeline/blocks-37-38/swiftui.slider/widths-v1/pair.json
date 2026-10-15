@@ -1,0 +1,36 @@
+{
+ "semanticGate": {
+  "fields": [
+   "role",
+   "name",
+   "enabled",
+   "value",
+   "range",
+   "count",
+   "order"
+  ],
+  "scope": "main",
+  "smallChange": [
+   10,
+   10,
+   10,
+   10,
+   10,
+   10
+  ]
+ },
+ "steps": [
+  {
+   "op": "wait",
+   "ms": 700
+  },
+  {
+   "op": "wait",
+   "ms": 200
+  }
+ ],
+ "macArgs": [
+  "--steps",
+  "[{\"op\":\"wait\",\"ms\":700},{\"op\":\"wait\",\"ms\":200}]"
+ ]
+}

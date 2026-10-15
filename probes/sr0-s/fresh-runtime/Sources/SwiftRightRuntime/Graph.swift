@@ -234,6 +234,9 @@ enum ModifierSpec {
     case listRowBackground(ListRowBackground)
     /// SR1 wave 1 block I2: `.clipped()`. Geometry passes through; the host clips the subtree's painting to this node's frame.
     case clipped
+    /// SR1 round 6 block 38: `.onHover(perform:)` and `.onTapGesture(count:perform:)`; the host routes pointer positions to `Graph.pointerMoved` and a release to `Graph.tapGesture`.
+    case hover(HoverHook)
+    case tap(TapHook)
 
     /// "modifier." plus `name`, as resolved records show it (static strings, no allocation per commit).
     var kindName: String {
@@ -270,6 +273,8 @@ enum ModifierSpec {
         case .listRowSeparator: return "modifier.listRowSeparator"
         case .listRowBackground: return "modifier.listRowBackground"
         case .clipped: return "modifier.clipped"
+        case .hover: return "modifier.onHover"
+        case .tap: return "modifier.onTapGesture"
         }
     }
 
@@ -307,6 +312,8 @@ enum ModifierSpec {
         case .listRowSeparator: return "listRowSeparator"
         case .listRowBackground: return "listRowBackground"
         case .clipped: return "clipped"
+        case .hover: return "onHover"
+        case .tap: return "onTapGesture"
         }
     }
 }
@@ -563,6 +570,8 @@ final class Node {
     /// Slider nodes: the control (track and thumb) rectangle set by the layout pass, window points; the drag that is under way and where on the thumb it grabbed.
     var sliderTrack: LayoutRect = .zero
     var sliderDragging = false
+    /// `.onHover` nodes: whether the pointer is inside (the last state the action was told).
+    var hovered = false
     var sliderGrab: CGFloat = 0
     /// Configured horizontal/vertical offsets; nil for legacy scroll nodes.
     var scrollOffsetX: CGFloat?
