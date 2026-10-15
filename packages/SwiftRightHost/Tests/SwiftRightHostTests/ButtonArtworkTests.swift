@@ -63,3 +63,18 @@ final class ButtonArtworkTests: XCTestCase {
         XCTAssertEqual(wide.rgba[(299) * 4 + 3], 0, "right corner is transparent too")
     }
 }
+
+/// Round 5 block 36 (hub: dark bordered buttons drew as white blobs): the dark fills and label colours, measured on macOS 27 (darkAqua, scale 2.5).
+final class ButtonArtworkDarkTests: XCTestCase {
+    private func centre(_ i: ContinuousRGBAImage) -> [UInt8] { let o = (30 * i.width + 60) * 4; return Array(i.rgba[o..<o + 3]) }
+    func testDarkFillsAndLabels() {
+        XCTAssertEqual(centre(ButtonArtwork.render(widthPX: 120, heightPX: 60, scale: 2.5, isEnabled: true, dark: true)), [48, 48, 48])
+        XCTAssertEqual(centre(ButtonArtwork.render(widthPX: 120, heightPX: 60, scale: 2.5, isEnabled: false, dark: true)), [38, 38, 38])
+        XCTAssertEqual(centre(ButtonArtwork.render(widthPX: 120, heightPX: 60, scale: 2.5, isEnabled: false, prominent: true, dark: true)), [9, 93, 185])
+        XCTAssertEqual(centre(ButtonArtwork.render(widthPX: 120, heightPX: 60, scale: 2.5, isEnabled: true)), [235, 235, 235], "light unchanged")
+        XCTAssertEqual(ButtonArtwork.labelColor(look: .bordered, isEnabled: true, dark: true), 0xdfdfdf)
+        XCTAssertEqual(ButtonArtwork.labelColor(look: .bordered, isEnabled: false, dark: true), 0x5c5c5c)
+        XCTAssertEqual(ButtonArtwork.labelColor(look: .borderless, isEnabled: true, dark: true), 0x9a9a9a)
+        XCTAssertEqual(ButtonArtwork.labelColor(look: .prominent, isEnabled: false, dark: true), 0x84aedc)
+    }
+}

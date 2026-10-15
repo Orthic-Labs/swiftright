@@ -34,7 +34,7 @@ public enum ButtonPainter {
             let colour = try HostPaint.rgba(.semantic("label"), opacity: node.opacity, scheme: node.style.colorScheme)
             return (colour & 0xffffff00) | UInt32((Double(colour & 255) / 2).rounded())
         }
-        return ButtonArtwork.labelColor(look: look, isEnabled: enabled).map { $0 << 8 | 0xff }
+        return ButtonArtwork.labelColor(look: look, isEnabled: enabled, dark: node.style.colorScheme == .dark).map { $0 << 8 | 0xff }
     }
 
     /// Resolves a Button node to its paint, from runtime geometry and state only. `bounds` is the node's pixel frame in window coordinates.
@@ -50,7 +50,7 @@ public enum ButtonPainter {
         }
         // An empty frame (a Button laid out at zero size) has nothing to draw; SwiftUI draws nothing for it.
         guard width > 0, height > 0 else { return ButtonPaintPlan(image: nil, placement: bounds, isEnabled: isEnabled, look: look, labelColor: try labelColor(of: node)) }
-        let image = ButtonArtwork.render(widthPX: Int(width), heightPX: Int(height), scale: scale, isEnabled: isEnabled, prominent: look == .prominent)
+        let image = ButtonArtwork.render(widthPX: Int(width), heightPX: Int(height), scale: scale, isEnabled: isEnabled, prominent: look == .prominent, dark: node.style.colorScheme == .dark)
         return ButtonPaintPlan(image: image,
                                placement: Rect(x: bounds.x + imageGuardBand, y: bounds.y + imageGuardBand, w: width - 2 * imageGuardBand, h: height - 2 * imageGuardBand),
                                isEnabled: isEnabled, look: look, labelColor: try labelColor(of: node))

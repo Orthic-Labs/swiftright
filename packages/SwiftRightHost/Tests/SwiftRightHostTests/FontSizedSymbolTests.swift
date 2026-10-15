@@ -224,3 +224,16 @@ final class FontWeightSymbolTests: XCTestCase {
         XCTAssertNoThrow(try emit(HStack { Image(systemName: "checkmark") }.font(Font.system(size: 12.5, weight: .semibold))))
     }
 }
+
+
+final class FillSymbolMappingTests: XCTestCase {
+    /// A `.fill` symbol with a mark knocked out must map to a Segoe glyph that has the mark (contact sheet, round 5 block 29): CheckboxFill (E73B) and
+    /// CheckboxIndeterminate (E73C) are a bare filled square and a bare line.
+    func testFilledSymbolsMapToGlyphsThatKeepTheirInnerMark() throws {
+        let t = try SystemImageTable.standard()
+        let expected = ["checkmark.square.fill": "E73D", "checkmark.circle.fill": "EC61", "info.circle.fill": "F167", "xmark.circle.fill": "EB90",
+                        "exclamationmark.triangle.fill": "F736", "xmark.octagon.fill": "EB90", "minus.square.fill": "F16D", "xmark.circle": "EA39"]
+        for (name, glyph) in expected { XCTAssertEqual(t.symbols[name]?.glyph, glyph, name) }
+        for (name, s) in t.symbols { XCTAssertFalse(["E73B", "E73C"].contains(s.glyph), name) }
+    }
+}

@@ -96,7 +96,7 @@ build("swiftui.text-views/text-verbatim-v1", T + "verbatim", r"""struct Witness_
             Text(verbatim: "**bold** and *em* 100%").frame(width: 240, height: 20, alignment: .leading)
             Text(verbatim: "\\(x) {y} %@ [z](u)").frame(width: 240, height: 20, alignment: .leading)
             Text(verbatim: "plain").frame(width: 240, height: 20, alignment: .leading)
-            Rectangle().fill(Color.red).frame(width: 240, height: 20)
+            Rectangle().fill(Color.red).frame(width: 240, height: 20).padding(.top, 10)
         }.frame(width: 240, height: 200, alignment: .topLeading)
     }
 }""", [("start", None)], [("a", 0, 20, 0), ("b", 20, 40, 0), ("c", 40, 60, 0)], [])
@@ -356,8 +356,8 @@ def font_rows(name, typename, rows, row_h, tolerance=None, lines=False, max_righ
     }}
 }}""")
     regions = [{"name": f"row {i}", "rect": rect(0, i * row_h, frame_w, (i + 1) * row_h), "align": "leading"} for i in range(n)]
-    pos = {"align": "leading", "reason": reason or "Segoe UI vs SF (decision 2), measured over the N=1 runs of every system-font case (Windows minus Mac, px): first ink y 0..5 (5 at largeTitle), baseline -1..4, ink mid-point 0..3, first ink x 0..2: Segoe UI sits lower in its line than SF and its glyphs are a little larger at the same point size (decision F1)"}
-    pos.update({"firstInkYTolerancePx": 5, "baselineTolerancePx": 4, "inkCentreYTolerancePx": 3, "firstInkXTolerancePx": 2})
+    pos = {"align": "leading", "reason": reason or "Segoe UI vs SF (decision 2), measured over the N=1 runs of every system-font case (Windows minus Mac, px): first ink y 0..5 (5 at largeTitle), baseline -1..4, ink mid-point 0..3.5, first ink x 0..2: Segoe UI sits lower in its line than SF and its glyphs are a little larger at the same point size (decision F1)"}
+    pos.update({"firstInkYTolerancePx": 5, "baselineTolerancePx": 4, "inkCentreYTolerancePx": 4, "firstInkXTolerancePx": 2})
     if lines: pos["lines"] = True
     if max_right is not None: pos["maxInkRightPx"] = rect(max_right, 0, max_right, 0)[0]
     ex = [{"name": f"row {i} glyph region (Segoe UI vs SF, decision 2); gated by the position gate of decision 19", "rect": rg["rect"]} for i, rg in enumerate(regions)]
@@ -618,6 +618,64 @@ def tfa(name, typename, body, field=(250, 270, 550, 330), text=(258, 276, 542, 3
 
 tfa("rounded-v1", TFA + "rounded", '    var body: some View { TextField("Name", text: $name, axis: .vertical).textFieldStyle(.roundedBorder).frame(width: 120).padding(10) }')
 tfa("plain-v1", TFA + "plain", '    var body: some View { TextField("Name", text: $name, axis: .vertical).textFieldStyle(.plain).frame(width: 120).padding(10) }', field=(250, 280, 550, 320), text=(250, 280, 550, 320))
+
+
+# =====================================================================================================================================================================
+# block 36: swiftui.button-dark (bordered, prominent, borderless, plain Buttons in the dark appearance; full-viewport dark host). Gate: the Button gate of decision 11
+# (pair_button_report.py: end caps exact on flat colours with edge-aa 32, flat bands, label colour within 40/255) with the dark numbers (decision F13).
+# =====================================================================================================================================================================
+BD = "Witness_bd_"
+
+
+def button_dark(name, rows, kinds):
+    """kinds: 'btn' (a bodied look: the button gate of decision 11 on a dark ground) or 'text' (borderless / plain: the label colour and position, decision 19)"""
+    typename = BD + name.replace("-", "_").replace("_v1", "")
+    inner = "\n".join(f"                {r}" for r in rows)
+    case("swiftui.button-dark/" + name, typename, f"""struct {typename}: View {{
+    var body: some View {{
+        ZStack(alignment: .top) {{
+            Rectangle().fill(.background)
+            VStack(spacing: 6) {{
+{inner}
+            }}.padding(.top, 16)
+        }}
+        .frame(width: 320, height: 240).environment(\\.colorScheme, .dark)
+    }}
+}}""", dark=("darkAqua", "dark"))
+    CASES["swiftui.button-dark/" + name]["steps"] = [{"op": "wait", "ms": 600}]
+    regions, texts, ex = [], [], []
+    for i, k in enumerate(kinds):
+        y0 = 40 + 75 * i
+        rect_ = [200, y0 - 8, 600, y0 + 68]
+        if k == "btn": regions.append({"name": f"button {i}", "rect": rect_})
+        else:
+            texts.append({"name": f"label {i}", "rect": [330, y0 + 4, 470, y0 + 56]})
+            ex.append({"name": f"row {i} label glyphs (Segoe UI vs SF, decision 2); colour and position gated by the text-colour gate", "rect": [330, y0 + 4, 470, y0 + 56]})
+    pair = {}
+    if regions: pair["buttonGate"] = {"capPx": 28, "yTolerancePx": 0, "labelCentreTolerancePx": 3, "labelColourTolerance": 40, "edgeAA": 32, "background": [30, 30, 30], "regions": regions}
+    if texts:
+        pair["textColourGate"] = {"tolerance": 24, "background": [30, 30, 30], "regions": texts, "position": {"align": "centre", "firstInkYTolerancePx": 2, "baselineTolerancePx": 2,
+            "inkCentreYTolerancePx": 0.5, "firstInkXTolerancePx": 0, "inkCentreXTolerancePx": 1.5, "reason": "as the light borderless/plain Button cases (decision 19)"}}
+        pair["excludeRects"] = ex
+    CASES["swiftui.button-dark/" + name]["pair"] = pair
+
+
+button_dark("states-v1", [
+    'Button("Bordered") { }.frame(width: 120, height: 24)',
+    'Button("Disabled") { }.disabled(true).frame(width: 120, height: 24)',
+    'Button("Prominent") { }.buttonStyle(.borderedProminent).frame(width: 120, height: 24)',
+    'Button("Prominent off") { }.buttonStyle(.borderedProminent).disabled(true).frame(width: 120, height: 24)',
+    'Button("Default") { }.keyboardShortcut(.defaultAction).frame(width: 120, height: 24)',
+    'Button("Borderless") { }.buttonStyle(.borderless).frame(width: 120, height: 24)',
+    'Button("Plain") { }.buttonStyle(.plain).frame(width: 120, height: 24)',
+], ["btn", "btn", "btn", "btn", "btn", "text", "text"])
+
+button_dark("states-disabled-v1", [
+    'Button("Borderless") { }.buttonStyle(.borderless).disabled(true).frame(width: 120, height: 24)',
+    'Button("Plain") { }.buttonStyle(.plain).disabled(true).frame(width: 120, height: 24)',
+    'Button("Red") { }.buttonStyle(.borderless).foregroundStyle(Color.red).frame(width: 120, height: 24)',
+    'Button("Red plain") { }.buttonStyle(.plain).foregroundStyle(Color.red).frame(width: 120, height: 24)',
+], ["text", "text", "text", "text"])
 
 
 def main():

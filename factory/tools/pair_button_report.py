@@ -34,21 +34,37 @@ def label_ink(img, button, fill, cap, thresh=40):
     return [b[0] + rect[0], b[1] + rect[1], b[2] + rect[0], b[3] + rect[1]], max(lum.getdata(), key=lambda v: abs(v - f))
 
 
+def bbox_nonbg(img, rect, bg):
+    """bbox of the pixels in rect that differ from the background colour bg (white: the light cases; the dark ground of round 5)"""
+    m = ImageChops.difference(img.crop(rect), Image.new("RGB", (rect[2] - rect[0], rect[3] - rect[1]), tuple(bg)))
+    m = ImageChops.lighter(ImageChops.lighter(*m.split()[:2]), m.split()[2]).point(lambda v: 255 if v >= 24 else 0)
+    b = m.getbbox()
+    return None if b is None else [b[0] + rect[0], b[1] + rect[1], b[2] + rect[0], b[3] + rect[1]]
+
+
 def main():
     case, out = Path(sys.argv[1]).resolve(), Path(sys.argv[2]).resolve()
     cfg = json.loads((case / "pair.json").read_text())["buttonGate"]
     cap, ytol = int(cfg.get("capPx", 28)), int(cfg.get("yTolerancePx", 0))
     ctol, coltol, aa = int(cfg.get("labelCentreTolerancePx", 3)), int(cfg.get("labelColourTolerance", 40)), int(cfg.get("edgeAA", 32))
+    # ROUND 5 (decision F13): "background": [r,g,b] (the dark ground) and "regions": [{"name", "rect"}] (several buttons in one capture, one gate each, on a canvas of the capture's size)
+    bg = tuple(cfg.get("background", (255, 255, 255)))
+    regions = cfg.get("regions") or [None]
     rows = []
     for mac in sorted((out / "mac").glob("run-*.png")):
+      for reg in regions:
         n = mac.stem.split("-")[1]
         win = out / "windows" / f"native-{n}.png"
-        row = dict(run=int(n), ok=False)
+        row = dict(run=int(n), ok=False, **({"region": reg["name"]} if reg else {}))
         rows.append(row)
         if not win.is_file(): row["error"] = "missing windows capture"; continue
         im, iw = Image.open(mac).convert("RGB"), Image.open(win).convert("RGB")
         if im.size != iw.size: row["error"] = f"size mac={im.size} win={iw.size}"; continue
-        mb, wb = bbox_nonwhite(im, (0, 0) + im.size), bbox_nonwhite(iw, (0, 0) + iw.size)
+        if reg:
+            def cut(img):
+                c = Image.new("RGB", img.size, bg); r = reg["rect"]; c.paste(img.crop(tuple(r)), (0, 0)); return c
+            im, iw = cut(im), cut(iw)
+        mb, wb = bbox_nonbg(im, (0, 0) + im.size, bg), bbox_nonbg(iw, (0, 0) + iw.size, bg)
         if mb is None or wb is None: row["error"] = f"no button ink mac={mb} windows={wb}"; continue
         mh, wh = mb[3] - mb[1], wb[3] - wb[1]
         same_h = mh == wh and abs(mb[1] - wb[1]) <= ytol
@@ -56,7 +72,7 @@ def main():
         fill = im.getpixel((mb[0] + cap // 2, (mb[1] + mb[3]) // 2))
         # caps through the edge gate, each aligned at its own end
         def canvas(img, box, side):
-            c = Image.new("RGB", im.size, (255, 255, 255))
+            c = Image.new("RGB", im.size, bg)
             if side == "L": c.paste(img.crop((box[0], mb[1], box[0] + cap, mb[3])), (0, 0))
             else: c.paste(img.crop((box[2] - cap, mb[1], box[2], mb[3])), (0, 0))
             return c

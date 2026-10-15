@@ -15153,7 +15153,7 @@ enum SystemImageTableData {
     "minus.square.fill": {
       "provider": "Segoe Fluent Icons",
       "providerVersion": "SegoeFluentIcons",
-      "glyph": "E73C",
+      "glyph": "F16D",
       "foregroundSemantic": "label",
       "width": 16,
       "height": 14,
@@ -15165,9 +15165,9 @@ enum SystemImageTableData {
         "source": "live-gdi-getglyphoutlinew"
       },
       "mapping": {
-        "segoeName": "CheckboxIndeterminate",
-        "fit": "nearest",
-        "note": "",
+        "segoeName": "CheckboxIndeterminateCombo14",
+        "fit": "weak",
+        "note": "no filled square with a minus is published; the outlined square with a minus is used",
         "source": "https://learn.microsoft.com/en-us/windows/apps/design/iconography/segoe-fluent-icons-font"
       },
       "layout": {
@@ -20283,7 +20283,7 @@ enum SystemImageTableData {
     "switch.2": {
       "provider": "Segoe Fluent Icons",
       "providerVersion": "SegoeFluentIcons",
-      "glyph": "EC12",
+      "glyph": "E9E9",
       "foregroundSemantic": "label",
       "width": 17,
       "height": 14,
@@ -20295,9 +20295,9 @@ enum SystemImageTableData {
         "source": "live-gdi-getglyphoutlinew"
       },
       "mapping": {
-        "segoeName": "ToggleBorder",
+        "segoeName": "Equalizer",
         "fit": "weak",
-        "note": "SF draws two stacked toggles; one toggle is used",
+        "note": "SF draws two stacked toggles; two slider tracks with knobs are used",
         "source": "https://learn.microsoft.com/en-us/windows/apps/design/iconography/segoe-fluent-icons-font"
       },
       "layout": {
@@ -22335,7 +22335,7 @@ enum SystemImageTableData {
     "xmark.circle": {
       "provider": "Segoe Fluent Icons",
       "providerVersion": "SegoeFluentIcons",
-      "glyph": "E783",
+      "glyph": "EA39",
       "foregroundSemantic": "label",
       "width": 15,
       "height": 15,
@@ -22347,9 +22347,9 @@ enum SystemImageTableData {
         "source": "live-gdi-getglyphoutlinew"
       },
       "mapping": {
-        "segoeName": "Error",
+        "segoeName": "ErrorBadge",
         "fit": "nearest",
-        "note": "",
+        "note": "outlined circle with an X",
         "source": "https://learn.microsoft.com/en-us/windows/apps/design/iconography/segoe-fluent-icons-font"
       },
       "layout": {
@@ -23361,7 +23361,7 @@ enum SystemImageTableData {
     "xmark.octagon.fill": {
       "provider": "Segoe Fluent Icons",
       "providerVersion": "SegoeFluentIcons",
-      "glyph": "EA83",
+      "glyph": "EB90",
       "foregroundSemantic": "label",
       "width": 18,
       "height": 15,
@@ -23373,9 +23373,9 @@ enum SystemImageTableData {
         "source": "live-gdi-getglyphoutlinew"
       },
       "mapping": {
-        "segoeName": "StatusError",
+        "segoeName": "StatusErrorFull",
         "fit": "weak",
-        "note": "no octagon glyph is published; a circular error status glyph is used",
+        "note": "no octagon glyph is published; the filled circle with an X knocked out is used (same glyph as xmark.circle.fill)",
         "source": "https://learn.microsoft.com/en-us/windows/apps/design/iconography/segoe-fluent-icons-font"
       },
       "layout": {
@@ -25413,7 +25413,7 @@ enum SystemImageTableData {
     "checkmark.square.fill": {
       "provider": "Segoe Fluent Icons",
       "providerVersion": "SegoeFluentIcons",
-      "glyph": "E73B",
+      "glyph": "E73D",
       "foregroundSemantic": "label",
       "width": 16,
       "height": 14,
@@ -25425,9 +25425,9 @@ enum SystemImageTableData {
         "source": "live-gdi-getglyphoutlinew"
       },
       "mapping": {
-        "segoeName": "CheckboxFill",
+        "segoeName": "CheckboxCompositeReversed",
         "fit": "nearest",
-        "note": "",
+        "note": "filled square with the check knocked out",
         "source": "https://learn.microsoft.com/en-us/windows/apps/design/iconography/segoe-fluent-icons-font"
       },
       "layout": {

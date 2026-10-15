@@ -1,0 +1,105 @@
+{
+ "textColourGate": {
+  "tolerance": 24,
+  "background": [
+   30,
+   30,
+   30
+  ],
+  "regions": [
+   {
+    "name": "label 0",
+    "rect": [
+     330,
+     44,
+     470,
+     96
+    ]
+   },
+   {
+    "name": "label 1",
+    "rect": [
+     330,
+     119,
+     470,
+     171
+    ]
+   },
+   {
+    "name": "label 2",
+    "rect": [
+     330,
+     194,
+     470,
+     246
+    ]
+   },
+   {
+    "name": "label 3",
+    "rect": [
+     330,
+     269,
+     470,
+     321
+    ]
+   }
+  ],
+  "position": {
+   "align": "centre",
+   "firstInkYTolerancePx": 2,
+   "baselineTolerancePx": 2,
+   "inkCentreYTolerancePx": 0.5,
+   "firstInkXTolerancePx": 0,
+   "inkCentreXTolerancePx": 1.5,
+   "reason": "as the light borderless/plain Button cases (decision 19)"
+  }
+ },
+ "excludeRects": [
+  {
+   "name": "row 0 label glyphs (Segoe UI vs SF, decision 2); colour and position gated by the text-colour gate",
+   "rect": [
+    330,
+    44,
+    470,
+    96
+   ]
+  },
+  {
+   "name": "row 1 label glyphs (Segoe UI vs SF, decision 2); colour and position gated by the text-colour gate",
+   "rect": [
+    330,
+    119,
+    470,
+    171
+   ]
+  },
+  {
+   "name": "row 2 label glyphs (Segoe UI vs SF, decision 2); colour and position gated by the text-colour gate",
+   "rect": [
+    330,
+    194,
+    470,
+    246
+   ]
+  },
+  {
+   "name": "row 3 label glyphs (Segoe UI vs SF, decision 2); colour and position gated by the text-colour gate",
+   "rect": [
+    330,
+    269,
+    470,
+    321
+   ]
+  }
+ ],
+ "steps": [
+  {
+   "op": "wait",
+   "ms": 600
+  }
+ ],
+ "macArgs": [
+  "--steps",
+  "[{\"op\":\"wait\",\"ms\":600}]"
+ ]
+}

@@ -1,0 +1,128 @@
+{
+ "buttonGate": {
+  "capPx": 28,
+  "yTolerancePx": 0,
+  "labelCentreTolerancePx": 3,
+  "labelColourTolerance": 40,
+  "edgeAA": 32,
+  "background": [
+   30,
+   30,
+   30
+  ],
+  "regions": [
+   {
+    "name": "button 0",
+    "rect": [
+     200,
+     32,
+     600,
+     108
+    ]
+   },
+   {
+    "name": "button 1",
+    "rect": [
+     200,
+     107,
+     600,
+     183
+    ]
+   },
+   {
+    "name": "button 2",
+    "rect": [
+     200,
+     182,
+     600,
+     258
+    ]
+   },
+   {
+    "name": "button 3",
+    "rect": [
+     200,
+     257,
+     600,
+     333
+    ]
+   },
+   {
+    "name": "button 4",
+    "rect": [
+     200,
+     332,
+     600,
+     408
+    ]
+   }
+  ]
+ },
+ "textColourGate": {
+  "tolerance": 24,
+  "background": [
+   30,
+   30,
+   30
+  ],
+  "regions": [
+   {
+    "name": "label 5",
+    "rect": [
+     330,
+     419,
+     470,
+     471
+    ]
+   },
+   {
+    "name": "label 6",
+    "rect": [
+     330,
+     494,
+     470,
+     546
+    ]
+   }
+  ],
+  "position": {
+   "align": "centre",
+   "firstInkYTolerancePx": 2,
+   "baselineTolerancePx": 2,
+   "inkCentreYTolerancePx": 0.5,
+   "firstInkXTolerancePx": 0,
+   "inkCentreXTolerancePx": 1.5,
+   "reason": "as the light borderless/plain Button cases (decision 19)"
+  }
+ },
+ "excludeRects": [
+  {
+   "name": "row 5 label glyphs (Segoe UI vs SF, decision 2); colour and position gated by the text-colour gate",
+   "rect": [
+    330,
+    419,
+    470,
+    471
+   ]
+  },
+  {
+   "name": "row 6 label glyphs (Segoe UI vs SF, decision 2); colour and position gated by the text-colour gate",
+   "rect": [
+    330,
+    494,
+    470,
+    546
+   ]
+  }
+ ],
+ "steps": [
+  {
+   "op": "wait",
+   "ms": 600
+  }
+ ],
+ "macArgs": [
+  "--steps",
+  "[{\"op\":\"wait\",\"ms\":600}]"
+ ]
+}
