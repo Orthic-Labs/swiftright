@@ -20,7 +20,7 @@ HUB = ["arrow.clockwise", "arrow.down", "arrow.up", "arrow.up.arrow.down", "chec
        "folder", "folder.badge.plus", "gauge.with.dots.needle.33percent", "gearshape", "hourglass", "info.circle", "info.circle.fill", "internaldrive",
        "magnifyingglass", "message", "minus", "minus.square.fill", "network", "pencil", "person.crop.circle", "plus", "sidebar.left", "sparkles",
        "square.dashed", "square.grid.2x2", "square.grid.3x3", "switch.2", "trash", "tray", "xmark", "xmark.circle", "xmark.circle.fill", "xmark.octagon.fill", "app.dashed"]
-HUB_EXTRA = ["paintpalette", "bell", "checkmark.circle", "checkmark.circle.fill", "checkmark.square.fill", "link", "waveform.path.ecg", "cpu", "memorychip", "terminal", "textbox"]   # Settings sections and toasts (asked for by the hub run)
+HUB_EXTRA = ["paintpalette", "bell", "checkmark.circle", "checkmark.circle.fill", "checkmark.square.fill", "link", "waveform.path.ecg", "cpu", "memorychip", "terminal", "textbox", "paperplane", "wrench", "square"]   # Settings sections and toasts (asked for by the hub run)
 
 
 def pxr(x0, y0, x1, y1):
@@ -33,13 +33,14 @@ def grid(name, typename, items, cols, cw, ch, font=None, frame_w=None, marker=Fa
     lines, cells = [], []
     for r, row in enumerate(rows):
         cs = []
-        for c, (sym, size, fexpr) in enumerate(row):
+        for c, it in enumerate(row):
+            sym, size, fexpr = it[:3]; weight = it[3] if len(it) > 3 else "regular"
             tint_expr, tint = TINTS[(r + c) % len(TINTS)]
             f = f".font({fexpr})" if fexpr else ""
             w = frame_w or cw
             cs.append(f'Image(systemName: "{sym}"){f}.foregroundStyle({tint_expr}).frame(width: {w}, height: {ch})')
             x0 = c * (cw + (8 + 40 if marker else 0))
-            cells.append(dict(name=sym, size=size if size else 13, cellPx=pxr(x0, r * ch, x0 + w, (r + 1) * ch), tint=list(tint)))
+            cells.append(dict(name=sym, size=size if size else 13, weight=weight, cellPx=pxr(x0, r * ch, x0 + w, (r + 1) * ch), tint=list(tint)))
         if marker:   # the hub sidebar row: Image frame + 8 pt gap + a 40 x 6 marker (text stands in as a fixed rectangle: text is gated elsewhere)
             cs = [f'HStack(spacing: 8) {{ {x}; Rectangle().fill(Color.gray.opacity(0.3)).frame(width: 40, height: 6) }}' for x in cs]
         lines.append("            HStack(spacing: 0) { " + "; ".join(cs) + " }")
@@ -80,6 +81,12 @@ grid("text-styles-v1", "Witness_sym_styles", [(s, z, "." + st) for s in ("gearsh
 # 6. sizes that were not measured: the table interpolates between measured sizes; judged to 1 px (reported, not generalisation evidence)
 grid("sizes-interpolated-v1", "Witness_sym_interp", [(s, z, f"Font.system(size: {z}, weight: .regular)") for s in ("gearshape", "doc", "sidebar.left") for z in (19, 21, 25, 27)],
      4, 40, 40, tolerance=1, note="interpolated sizes: the ink and frame are judged to 1 px; this case is not evidence of generalisation")
+
+
+# 7. weights: the hub's theme.type.*.font (Font.system(size:weight:): 22 / 15 / 13.5 / 13 / 12.5 / 12 / 11.5 / 11 pt in regular, semibold, bold) and the explicit
+#    semibold sizes it draws on symbols (11, 12, 13; `active ? .semibold : .regular` at 11)
+W = [(11, "semibold"), (12, "semibold"), (13, "semibold"), (13.5, "regular"), (12.5, "semibold"), (15, "bold"), (22, "semibold")]
+grid("weights-v1", "Witness_sym_weights", [(s, z, f"Font.system(size: {z}, weight: .{w})", w) for s in ("gearshape", "doc", "chevron.right", "magnifyingglass", "checkmark") for z, w in W], 7, 34, 34)
 
 
 def main():

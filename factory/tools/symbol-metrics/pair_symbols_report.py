@@ -23,11 +23,12 @@ def snap(v):
     return int(v + 0.5 // 1) if False else int((v + 0.5) // 1)
 
 
-def table_layout(sym, size, scale):
+def table_layout(sym, size, scale, weight="regular"):
     """(framePx [w,h], inkPx [l,t,r,b], measured) mirroring SystemImageTable.Layout.fontLayout at the class reference scale."""
     cls = "1x" if scale < 2 else "2x"
     rows = []
     for r in sym["layout"]["fontSizes"]:
+        if r.get("weight", "regular") != weight: continue
         c = next(c for c in r["classes"] if c["scaleClass"] == cls)
         w, h = c["framePx"]; ink = c["inkPx"]
         rows.append((r["size"], [w / c["refScale"] * scale, h / c["refScale"] * scale], [ink[0] / w, ink[1] / h, ink[2] / w, ink[3] / h], c))
@@ -79,7 +80,7 @@ def main():
     itol = max(tol, cfg.get("inkTolerancePx", 1)); ftol = cfg.get("frameTolerancePx", 1)
     plan = []
     for c in cfg["cells"]:
-        fp, ink, fr, measured = table_layout(table[c["name"]], c["size"], scale)
+        fp, ink, fr, measured = table_layout(table[c["name"]], c["size"], scale, c.get("weight", "regular"))
         cx0, cy0, cx1, cy1 = c["cellPx"]
         fw, fh = fp
         l = snap(cx0 + ((cx1 - cx0) - fw) / 2); t = snap(cy0 + ((cy1 - cy0) - fh) / 2)

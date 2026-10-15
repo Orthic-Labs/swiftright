@@ -374,6 +374,7 @@ public final class ResolvedNodePainter {
         guard registry.supports(reference) else { throw HostPaintError.systemImageContractMismatch("symbol '\(reference.name)' is not in the table") }
         // Two measured uses: resizable().scaledToFit(), and a non-resizable symbol at the environment font (sized by the font, never stretched).
         var fontSize: Double?
+        var weight = "regular"
         if let sizing = node.imageSizing {
             guard sizing.isResizable, sizing.scalesToFit, sizing.resizingMode == .stretch else {
                 throw HostPaintError.systemImageContractMismatch("only resizable().scaledToFit() or font-sized symbols are painted")
@@ -385,16 +386,17 @@ public final class ResolvedNodePainter {
             guard registry.supportsFontSized(reference) else {
                 throw HostPaintError.systemImageContractMismatch("symbol '\(reference.name)' has no measured font-sized layout")
             }
-            guard let size = SystemImageRegistry.fontPointSize(node.style.font) else {
-                throw HostPaintError.systemImageContractMismatch("symbol font '\(node.style.font?.id ?? "none")' is not measured (system regular sizes, body and the regular text styles only)")
+            guard let spec = SystemImageRegistry.fontSpec(node.style.font),
+                  registry.supportsFontSized(reference, weight: spec.weight) else {
+                throw HostPaintError.systemImageContractMismatch("symbol font '\(node.style.font?.id ?? "none")' is not measured (system fonts and text styles in the regular, semibold and bold weights only)")
             }
-            fontSize = size
+            fontSize = spec.size; weight = spec.weight
         }
         guard bounds.w > 0, bounds.h > 0 else { throw HostPaintError.systemImageContractMismatch("empty frame") }
         let tint = try HostPaint.rgba(node.style.foreground ?? .semantic(registry.defaultForeground(for: reference)), opacity: node.opacity, scheme: node.style.colorScheme)
         let targetWidth = fontSize == nil ? UInt32(max(1, bounds.w)) : UInt32(max(1, bounds.w.rounded())), targetHeight = fontSize == nil ? UInt32(max(1, bounds.h)) : UInt32(max(1, bounds.h.rounded()))
-        let handle = try registry.handle(for: reference, tint: tint, width: targetWidth, height: targetHeight, fontSize: fontSize)
-        let inset = registry.canvasInset(for: reference, fontSize: fontSize, width: targetWidth, height: targetHeight)
+        let handle = try registry.handle(for: reference, tint: tint, width: targetWidth, height: targetHeight, fontSize: fontSize, weight: weight)
+        let inset = registry.canvasInset(for: reference, fontSize: fontSize, weight: weight, width: targetWidth, height: targetHeight)
         log("SYSTEM_IMAGE_FRAME name=\(reference.name) xPX=\(Int(bounds.x)) yPX=\(Int(bounds.y)) widthPX=\(Int(bounds.w)) heightPX=\(Int(bounds.h)) canvasInsetPX=\(Int(inset)) tintRGBA=\(String(format: "%08x", tint))")
         return .image(handle, Rect(x: bounds.x - inset + imageGuardBand, y: bounds.y - inset + imageGuardBand,
                                    w: bounds.w + 2 * inset - 2 * imageGuardBand, h: bounds.h + 2 * inset - 2 * imageGuardBand))

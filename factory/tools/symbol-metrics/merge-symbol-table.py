@@ -9,30 +9,37 @@ import argparse, json
 from pathlib import Path
 here = Path(__file__).resolve().parent
 table_path = here.parent.parent.parent / "packages/SwiftRightHost/Assets/SystemImageAssets.json"
-ap = argparse.ArgumentParser(); ap.add_argument("--sizes", required=True); a = ap.parse_args()
-meas = json.load(open(a.sizes)); smap = json.load(open(here / "segoe-map.json"))
+ap = argparse.ArgumentParser(); ap.add_argument("--sizes", required=True, nargs="+", help="one or more symbol-sizes outputs (a file carries one weight)"); a = ap.parse_args()
+files = [json.load(open(f)) for f in a.sizes]; meas = files[0]; smap = json.load(open(here / "segoe-map.json"))
 table = json.load(open(table_path))
 REF = {"1x": 1.0, "2x": 2.5}
 
-def font_sizes(per):
-    sizes = sorted({float(k.split("@")[0]) for k in per})
-    out = []
-    for s in sizes:
-        label = str(int(s)) if s == int(s) else str(s)
-        classes = []
-        for cls, ref in REF.items():
-            m = per[f"{label}@{ref}"]
-            classes.append({"scaleClass": cls, "refScale": ref, "framePx": m["viewFramePx"][2:4], "inkPx": m["inkBoxPx"]})
-        out.append({"size": s, "classes": classes})
-    return out
+def font_sizes(name):
+    rows = []
+    for f in files:
+        per = f["symbols"].get(name)
+        if per is None: continue
+        weight = f.get("weight", "regular")
+        for size in sorted({float(k.split("@")[0]) for k in per}):
+            label = str(int(size)) if size == int(size) else str(size)
+            classes = []
+            for cls, ref in REF.items():
+                m = per[f"{label}@{ref}"]
+                classes.append({"scaleClass": cls, "refScale": ref, "framePx": m["viewFramePx"][2:4], "inkPx": m["inkBoxPx"]})
+            rows.append({"size": size, "weight": weight, "classes": classes})
+    rows.sort(key=lambda r: (r["weight"] != "regular", r["weight"], r["size"]))
+    return rows
 
-for name, per in meas["symbols"].items():
-    fs = font_sizes(per)
-    base = next(e for e in fs if e["size"] == 13)["classes"][0]   # 1x class, body size 13
+names = []
+for f in files:
+    names += [n for n in f["symbols"] if n not in names]
+for name in names:
+    fs = font_sizes(name)
+    base = next(e for e in fs if e["size"] == 13 and e["weight"] == "regular")["classes"][0]   # 1x class, body size 13
     w, h = base["framePx"]; ink = base["inkPx"]
     if name in table["symbols"]:
         table["symbols"][name]["layout"]["fontSizes"] = fs
-        table["symbols"][name]["layout"]["fontSizesSource"] = meas["method"] + "; macOS " + meas["macOS"]
+        table["symbols"][name]["layout"]["fontSizesSource"] = meas["method"] + "; weights regular, semibold, bold; macOS " + meas["macOS"]
         continue
     g = smap["symbols"][name]
     table["symbols"][name] = {

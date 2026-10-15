@@ -1,0 +1,13 @@
+$ ssh -o BatchMode=yes win powershell -NoProfile -ExecutionPolicy Bypass -File D:\Claude\swiftright\.factory-work\pair-tools\prep.ps1 -Zip D:\Claude\swiftright\.factory-work\hosts\weights-v1\package-20261015-084000.zip -Pkg D:\Claude\swiftright\.factory-work\hosts\weights-v1\package -Tag 20261015-084000 -Stage D:\Claude\swiftright\.factory-work\product-stage\b5cbf8bc9-e685b237-dirty -Renderer D:\Claude\swiftright\.factory-work\inputs\renderer-0.7-baseline-22ad719b\swiftright_render.dll
+--stdout--
+
+--stderr--
+Move-Item : The process cannot access the file because it is being used by another process.
+At D:\Claude\swiftright\.factory-work\pair-tools\prep.ps1:7 char:20
++ ... -Path $Pkg){Move-Item $Pkg ('D:\Claude\swiftright\.work\'+(Split-Path ...
++                 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    + CategoryInfo          : WriteError: (D:\Claude\swift...ghts-v1\package:DirectoryInfo) [Move-Item], IOException
+    + FullyQualifiedErrorId : MoveDirectoryItemIOError,Microsoft.PowerShell.Commands.MoveItemCommand
+ 
+
+exit=1

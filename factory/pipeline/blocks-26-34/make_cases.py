@@ -10,7 +10,7 @@ gated by the semantic tree; the colour squares are gated by pixels."""
 import json, subprocess, sys, tempfile
 from pathlib import Path
 H = Path(__file__).resolve().parent
-HEADER = "#if os(Windows)\nimport SwiftRightRuntime\n#else\nimport SwiftUI\n#endif\n\n"
+HEADER = "#if os(Windows)\nimport SwiftRightRuntime\nimport Foundation\n#else\nimport SwiftUI\n#endif\n\n"
 CASES = {}
 SCALE = 2.5
 OX, OY = 40, 20
@@ -356,8 +356,8 @@ def font_rows(name, typename, rows, row_h, tolerance=None, lines=False, max_righ
     }}
 }}""")
     regions = [{"name": f"row {i}", "rect": rect(0, i * row_h, frame_w, (i + 1) * row_h), "align": "leading"} for i in range(n)]
-    pos = {"align": "leading", "reason": reason or "Segoe UI vs SF (decision 2): measured per row, see decision F1"}
-    pos.update({"firstInkYTolerancePx": 5, "baselineTolerancePx": 5, "inkCentreYTolerancePx": 5, "firstInkXTolerancePx": 3})
+    pos = {"align": "leading", "reason": reason or "Segoe UI vs SF (decision 2), measured over the N=1 runs of every system-font case (Windows minus Mac, px): first ink y 0..5 (5 at largeTitle), baseline -1..4, ink mid-point 0..3, first ink x 0..2: Segoe UI sits lower in its line than SF and its glyphs are a little larger at the same point size (decision F1)"}
+    pos.update({"firstInkYTolerancePx": 5, "baselineTolerancePx": 4, "inkCentreYTolerancePx": 3, "firstInkXTolerancePx": 2})
     if lines: pos["lines"] = True
     if max_right is not None: pos["maxInkRightPx"] = rect(max_right, 0, max_right, 0)[0]
     ex = [{"name": f"row {i} glyph region (Segoe UI vs SF, decision 2); gated by the position gate of decision 19", "rect": rg["rect"]} for i, rg in enumerate(regions)]
@@ -475,7 +475,7 @@ shp("stroke-large-radius-v1", CS + "stroke_large", f"""        VStack(spacing: 1
             {rr(15, 100, 40, stroke="Color.blue")}
             {rr(18, 100, 40, stroke="Color.green")}
             {rr(14, 100, 30, stroke="Color.orange")}
-        }}.frame(width: 240, height: 200)""", edge=130)
+        }}.frame(width: 240, height: 200)""", edge=220)
 shp("zero-size-v1", CS + "zero", f"""        VStack(spacing: 8) {{
             HStack(spacing: 4) {{ {rr(3, 0, 8)}; {rr(3, 20, 8, "Color.red")}; {rr(3, 0, 8, "Color.green")}; {rr(3, 20, 8, "Color.orange")} }}
             {rr(99, 100, 0, "Color.purple")}
@@ -556,7 +556,7 @@ SLOT = 48   # each item is a 40 pt wide frame, 8 pt apart
 def baseline_case(name, items, align="firstTextBaseline", extra_rows="", h=60):
     """items: [(kind, expr)] kind 'text' | 'rect'; every item sits in a 40 pt frame so its slot is known."""
     typename = BA + name.replace("-", "_").replace("_v1", "")
-    inner = "\n".join(f"            {e}" for _, e in items)
+    inner = "\n".join(f"            {it[1]}" for it in items)
     case("swiftui.baseline-alignment/" + name, typename, f"""struct {typename}: View {{
     var body: some View {{
         VStack(alignment: .leading, spacing: 0) {{
@@ -567,8 +567,10 @@ def baseline_case(name, items, align="firstTextBaseline", extra_rows="", h=60):
     }}
 }}""")
     regions = []; align_items = []
-    for k, (kind, _) in enumerate(items):
-        r = rect(k * SLOT, 0, k * SLOT + 40, h)
+    for k, it in enumerate(items):
+        kind = it[0]
+        ov = it[2] if len(it) > 2 else None   # (x0, y0, x1, y1) in pt inside the slot: where the baseline-carrying text is (a nested row's text after its shape; the first text of a stack)
+        r = rect(k * SLOT + (ov[0] if ov else 0), ov[1] if ov else 0, k * SLOT + (ov[2] if ov else 40), ov[3] if ov else h)
         align_items.append({"kind": kind, "rect": r})
         if kind == "text": regions.append({"name": f"item {k}", "rect": r, "align": "leading"})
     ex = [{"name": f"item {k} glyph region (Segoe UI vs SF, decision 2); gated by the baseline relation and the colour gate", "rect": it["rect"]} for k, it in enumerate(align_items) if it["kind"] == "text"]
@@ -589,8 +591,8 @@ baseline_case("first-baseline-v1", [tx(12), tx(18, "semibold"), rc(), tx(11)])
 baseline_case("padding-v1", [tx(12), tx(12, mods=".padding(.top, 10)"), tx(18, mods=".padding(.top, 4)"), rc("Color.red", 12, 14)])
 baseline_case("frame-v1", [tx(12), tx(12, mods=".frame(height: 40)"), tx(18, mods=".frame(height: 50, alignment: .top)"), tx(11, mods=".frame(height: 40, alignment: .bottom)")])
 baseline_case("nested-v1", [tx(12),
-    ("text", 'HStack(spacing: 0) { Rectangle().fill(Color.green).frame(width: 8, height: 30); Text("Hxg").font(Font.system(size: 18)) }.frame(width: 40, alignment: .leading)'),
-    ("text", 'VStack(alignment: .leading, spacing: 4) { Text("Hxg").font(Font.system(size: 11)); Text("Hxg").font(Font.system(size: 11)) }.frame(width: 40, alignment: .leading)'),
+    ("text", 'HStack(spacing: 0) { Rectangle().fill(Color.green).frame(width: 8, height: 30); Text("Hxg").font(Font.system(size: 18)) }.frame(width: 40, alignment: .leading)', (9, 0, 40, 60)),
+    ("text", 'VStack(alignment: .leading, spacing: 4) { Text("Hxg").font(Font.system(size: 11)); Text("Hxg").font(Font.system(size: 11)) }.frame(width: 40, alignment: .leading)', (0, 0, 40, 20)),
     rc("Color.orange", 12, 18)])
 baseline_case("last-baseline-v1", [("text", 'Text("Hxg Hxg Hxg Hxg").font(Font.system(size: 12)).frame(width: 40, alignment: .leading)'), tx(12), tx(18, "semibold"), rc("Color.purple", 12, 10)], align="lastTextBaseline", h=80)
 

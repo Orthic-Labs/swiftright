@@ -55,6 +55,8 @@ public struct SystemImageTable: Decodable {
         /// its optical size, so frames jump between 17 and 18 pt and 28 and 30 pt), so each measured size is its own row.
         public struct FontSize: Decodable {
             public let size: Double
+            /// `Font.Weight` raw value ("regular", "semibold", "bold"); absent = regular.
+            public let weight: String?
             public let classes: [FontClass]
         }
         /// The frame and ink box at one scale class, in device pixels at the class's measured screen scale (`refScale`).
@@ -92,11 +94,14 @@ public struct SystemImageTable: Decodable {
             return ([w / c.refScale, h / c.refScale], [Double(c.inkPx[0]) / w, Double(c.inkPx[1]) / h, Double(c.inkPx[2]) / w, Double(c.inkPx[3]) / h])
         }
 
-        /// Layout at `pointSize` and screen `scale`: exact at a measured size; linear between the two neighbouring measured sizes;
+        /// The weights measured for font-sized use (a symbol is heavier and larger in a heavier weight, so each weight has its own rows).
+        public var fontWeights: Set<String> { Set((fontSizes ?? []).map { $0.weight ?? "regular" }) }
+
+        /// Layout at `pointSize` in `weight` and screen `scale`: exact at a measured size; linear between the two neighbouring measured sizes;
         /// scaled by the size ratio beyond the measured range. Nil when no size was measured.
-        public func fontLayout(pointSize: Double, scale: Double) -> FontLayout? {
+        public func fontLayout(pointSize: Double, weight: String = "regular", scale: Double) -> FontLayout? {
             guard pointSize.isFinite, pointSize > 0, scale > 0 else { return nil }
-            let rows = (fontSizes ?? []).sorted { $0.size < $1.size }.compactMap { r in fontClass(r, scale: scale).map { (r.size, $0) } }
+            let rows = (fontSizes ?? []).filter { ($0.weight ?? "regular") == weight }.sorted { $0.size < $1.size }.compactMap { r in fontClass(r, scale: scale).map { (r.size, $0) } }
             guard !rows.isEmpty else { return nil }
             if let hit = rows.first(where: { abs($0.0 - pointSize) < 1e-9 }) {
                 let f = fontFractions(hit.1)
@@ -115,8 +120,8 @@ public struct SystemImageTable: Decodable {
 
         /// Mac half-coverage pixel ink box for a font-sized symbol drawn in a `widthPx` x `heightPx` view frame (relative to the frame):
         /// the measured box on an exact (size, scale, frame) match, else the measured ink fractions of the frame rounded to pixels.
-        public func fontDeviceInkBox(pointSize: Double, scale: Double, widthPx: UInt32, heightPx: UInt32) -> (box: SystemImageDeviceInkBox, source: String)? {
-            guard let layout = fontLayout(pointSize: pointSize, scale: scale), widthPx > 0, heightPx > 0 else { return nil }
+        public func fontDeviceInkBox(pointSize: Double, weight: String = "regular", scale: Double, widthPx: UInt32, heightPx: UInt32) -> (box: SystemImageDeviceInkBox, source: String)? {
+            guard let layout = fontLayout(pointSize: pointSize, weight: weight, scale: scale), widthPx > 0, heightPx > 0 else { return nil }
             if let m = layout.measured, abs(m.scale - scale) < 1e-6, m.framePx == [Int(widthPx), Int(heightPx)] {
                 let box = SystemImageDeviceInkBox(left: m.inkPx[0], top: m.inkPx[1], right: m.inkPx[2], bottom: m.inkPx[3])
                 if box.isValid { return (box, "measured-font-size") }
@@ -127,8 +132,8 @@ public struct SystemImageTable: Decodable {
             return box.isValid ? (box, layout.isMeasured ? "font-size-fractions" : "font-size-interpolated") : nil
         }
         /// Linear-model metrics for a font-sized frame (used for validation and the no-override path).
-        public func fontMetrics(pointSize: Double, scale: Double) -> SystemImageLayoutMetrics? {
-            guard let l = fontLayout(pointSize: pointSize, scale: scale), l.framePt[1] > 0 else { return nil }
+        public func fontMetrics(pointSize: Double, weight: String = "regular", scale: Double) -> SystemImageLayoutMetrics? {
+            guard let l = fontLayout(pointSize: pointSize, weight: weight, scale: scale), l.framePt[1] > 0 else { return nil }
             let m = SystemImageLayoutMetrics(aspect: l.framePt[0] / l.framePt[1], inkLeft: l.inkFractions[0], inkTop: l.inkFractions[1],
                                              inkRight: l.inkFractions[2], inkBottom: l.inkFractions[3])
             return m.isValid ? m : nil
