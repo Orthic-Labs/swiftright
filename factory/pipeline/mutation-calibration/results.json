@@ -20,6 +20,8 @@
   "px-fractional": true,
   "px-haze": true,
   "px-ties": true,
+  "rowtol-grid13": true,
+  "rowtol-serif": true,
   "sem-alert-confirm": true,
   "sem-alert-default": true,
   "sem-alert-three": true,
@@ -272,6 +274,30 @@
     "windows/native-01.png"
    ]
   },
+  "rowtol-grid13": {
+   "case": "blocks-w1-f2/swiftui.system-font-f2/grid-13-v1",
+   "caseName": "grid-13-v1",
+   "run": "20261015-152228",
+   "files": [
+    "mac/ax-01.json",
+    "mac/run-01.png",
+    "windows/host-01.stdout.txt",
+    "windows/native-01.png",
+    "windows/uia-01.json"
+   ]
+  },
+  "rowtol-serif": {
+   "case": "blocks-w1-f2/swiftui.system-font-f2/design-serif-v1",
+   "caseName": "design-serif-v1",
+   "run": "20261015-151417",
+   "files": [
+    "mac/ax-01.json",
+    "mac/run-01.png",
+    "windows/host-01.stdout.txt",
+    "windows/native-01.png",
+    "windows/uia-01.json"
+   ]
+  },
   "sem-alert-confirm": {
    "case": "blocks-17-20/swiftui.alert/confirm-delete-v1",
    "caseName": "confirm-delete-v1",
@@ -501,15 +527,15 @@
   "text-colour": {
    "comparator": "factory/tools/pair_textcolour_report.py",
    "gates": "strongest ink colour within 24/255 per channel (decisions 2, 10, 11; A1; D1)",
-   "mutations": 49,
-   "caught": 49,
+   "mutations": 57,
+   "caught": 57,
    "caughtByAnotherGateOnly": 0,
    "caughtByComparatorCrash": 0,
    "missed": 0,
    "missedUndocumented": 0,
    "missedDocumentedExclusion": 0,
-   "nearMisses": 5,
-   "nearMissPassed": 5,
+   "nearMisses": 7,
+   "nearMissPassed": 7,
    "overStrict": 0,
    "probes": 0
   },
@@ -757,7 +783,7 @@
     "run 01 fail total=2720 in-band=2720 out-of-band=0 max-in-band=255 max-out-of-band=0",
     "pairs=1 exact=0 exact-with-exclusions=0 edge-aa<=32=0 fail=1 maxdiff=255 diffbbox=(175, 45, 626, 555)"
    ],
-   "secs": 0.2
+   "secs": 0.5
   },
   {
    "gate": "pixel",
@@ -776,7 +802,7 @@
     "run 01 fail total=1660 in-band=1660 out-of-band=0 max-in-band=255 max-out-of-band=0",
     "pairs=1 exact=0 exact-with-exclusions=0 edge-aa<=32=0 fail=1 maxdiff=255 diffbbox=(175, 45, 625, 546)"
    ],
-   "secs": 0.2
+   "secs": 0.9
   },
   {
    "gate": "pixel",
@@ -795,7 +821,7 @@
     "run 01 fail total=134000 in-band=13432 out-of-band=120568 max-in-band=1 max-out-of-band=1",
     "pairs=1 exact=0 exact-with-exclusions=0 edge-aa<=32=0 fail=1 maxdiff=1 diffbbox=(175, 45, 625, 555)"
    ],
-   "secs": 0.2
+   "secs": 0.9
   },
   {
    "gate": "pixel",
@@ -814,7 +840,7 @@
     "run 01 fail total=9000 in-band=632 out-of-band=8368 max-in-band=255 max-out-of-band=255",
     "pairs=1 exact=0 exact-with-exclusions=0 edge-aa<=32=0 fail=1 maxdiff=255 diffbbox=(215, 45, 315, 135)"
    ],
-   "secs": 0.2
+   "secs": 0.6
   },
   {
    "gate": "pixel",
@@ -833,7 +859,7 @@
     "run 01 fail total=90 in-band=90 out-of-band=0 max-in-band=255 max-out-of-band=0",
     "pairs=1 exact=0 exact-with-exclusions=0 edge-aa<=32=0 fail=1 maxdiff=255 diffbbox=(314, 45, 315, 135)"
    ],
-   "secs": 0.1
+   "secs": 0.6
   },
   {
    "gate": "pixel",
@@ -852,7 +878,7 @@
     "run 01 fail total=32 in-band=30 out-of-band=2 max-in-band=255 max-out-of-band=255",
     "pairs=1 exact=0 exact-with-exclusions=0 edge-aa<=32=0 fail=1 maxdiff=255 diffbbox=(215, 45, 315, 135)"
    ],
-   "secs": 0.2
+   "secs": 0.4
   },
   {
    "gate": "pixel",
@@ -871,7 +897,7 @@
     "run 01 fail total=110 in-band=110 out-of-band=0 max-in-band=203 max-out-of-band=0",
     "pairs=1 exact=0 exact-with-exclusions=0 edge-aa<=32=0 fail=1 maxdiff=203 diffbbox=(45, 118, 224, 370)"
    ],
-   "secs": 0.2
+   "secs": 0.5
   },
   {
    "gate": "pixel",
@@ -890,7 +916,7 @@
     "run 01 fail total=736 in-band=736 out-of-band=0 max-in-band=255 max-out-of-band=0",
     "pairs=1 exact=0 exact-with-exclusions=0 edge-aa<=32=0 fail=1 maxdiff=255 diffbbox=(37, 50, 427, 333)"
    ],
-   "secs": 0.2
+   "secs": 0.7
   },
   {
    "gate": "pixel",
@@ -909,7 +935,7 @@
     "run 01 fail total=4134 in-band=876 out-of-band=3258 max-in-band=255 max-out-of-band=255",
     "pairs=1 exact=0 exact-with-exclusions=0 edge-aa<=32=0 fail=1 maxdiff=255 diffbbox=(37, 50, 115, 103)"
    ],
-   "secs": 0.2
+   "secs": 0.9
   },
   {
    "gate": "pixel",
@@ -1023,7 +1049,7 @@
     "run 01 fail total=1644 in-band=1644 out-of-band=0 max-in-band=255 max-out-of-band=0",
     "pairs=1 exact=0 exact-with-exclusions=0 edge-aa<=32=0 fail=1 maxdiff=255 diffbbox=(347, 272, 453, 328)"
    ],
-   "secs": 0.1
+   "secs": 0.2
   },
   {
    "gate": "pixel",
@@ -1059,7 +1085,7 @@
     "run 01 edge-aa<=32 total=512 in-band=512 out-of-band=0 max-in-band=32 max-out-of-band=0",
     "pairs=1 exact=0 exact-with-exclusions=0 edge-aa<=32=1 fail=0 maxdiff=32 diffbbox=None"
    ],
-   "secs": 0.2
+   "secs": 0.8
   },
   {
    "gate": "pixel",
@@ -1078,7 +1104,7 @@
     "run 01 fail total=513 in-band=512 out-of-band=1 max-in-band=9 max-out-of-band=1",
     "pairs=1 exact=0 exact-with-exclusions=0 edge-aa<=32=0 fail=1 maxdiff=9 diffbbox=(0, 272, 453, 328)"
    ],
-   "secs": 0.2
+   "secs": 0.3
   },
   {
    "gate": "pixel",
@@ -1247,7 +1273,7 @@
     "run 01 fail total=9 in-band=9 out-of-band=0 max-in-band=33 max-out-of-band=0",
     "pairs=1 exact=0 exact-with-exclusions=0 edge-aa<=32=0 fail=1 maxdiff=33 diffbbox=(303, 305, 557, 419)"
    ],
-   "secs": 0.2
+   "secs": 0.3
   },
   {
    "gate": "pixel",
@@ -1264,7 +1290,7 @@
     "run 01 edge-aa<=32 total=9 in-band=9 out-of-band=0 max-in-band=32 max-out-of-band=0",
     "pairs=1 exact=0 exact-with-exclusions=0 edge-aa<=32=1 fail=0 maxdiff=32 diffbbox=None"
    ],
-   "secs": 0.2
+   "secs": 0.3
   },
   {
    "gate": "pixel",
@@ -1520,7 +1546,7 @@
     "bundled-font-readiness-v6-line-limit-host: pairs=1 text-colour-gate=1/1 (tolerance 24/255 per channel) first run: Tinos text mac=[39, 39, 39] win=[31, 31, 31]",
     "bundled-font-readiness-v6-line-limit-host: pairs=1 gate=0/1 outside-diff=[0] aaDiffPx min=5489 max=5489"
    ],
-   "secs": 0.3
+   "secs": 0.4
   },
   {
    "gate": "text",
@@ -1541,7 +1567,7 @@
     "bundled-font-readiness-v6-line-limit-host: pairs=1 text-colour-gate=1/1 (tolerance 24/255 per channel) first run: Tinos text mac=[39, 39, 39] win=[31, 31, 31]",
     "bundled-font-readiness-v6-line-limit-host: pairs=1 gate=0/1 outside-diff=[0] aaDiffPx min=4812 max=4812"
    ],
-   "secs": 0.3
+   "secs": 0.4
   },
   {
    "gate": "text",
@@ -1560,7 +1586,7 @@
     "bundled-font-readiness-v6-line-limit-host: pairs=1 text-colour-gate=1/1 (tolerance 24/255 per channel) first run: Tinos text mac=[39, 39, 39] win=[31, 31, 31]",
     "bundled-font-readiness-v6-line-limit-host: pairs=1 gate=1/1 outside-diff=[0] aaDiffPx min=3696 max=3696"
    ],
-   "secs": 0.5
+   "secs": 0.6
   },
   {
    "gate": "text",
@@ -1581,7 +1607,7 @@
     "bundled-font-readiness-v6-line-limit-host: pairs=1 text-colour-gate=1/1 (tolerance 24/255 per channel) first run: Tinos text mac=[39, 39, 39] win=[31, 31, 31]",
     "bundled-font-readiness-v6-line-limit-host: pairs=1 gate=0/1 outside-diff=[0] aaDiffPx min=4017 max=4017"
    ],
-   "secs": 0.5
+   "secs": 0.6
   },
   {
    "gate": "text",
@@ -1600,7 +1626,7 @@
     "bundled-font-readiness-v6-line-limit-host: pairs=1 text-colour-gate=1/1 (tolerance 24/255 per channel) first run: Tinos text mac=[39, 39, 39] win=[31, 31, 31]",
     "bundled-font-readiness-v6-line-limit-host: pairs=1 gate=1/1 outside-diff=[0] aaDiffPx min=3929 max=3929"
    ],
-   "secs": 0.5
+   "secs": 0.6
   },
   {
    "gate": "text",
@@ -1621,7 +1647,7 @@
     "bundled-font-readiness-v6-line-limit-host: pairs=1 text-colour-gate=1/1 (tolerance 24/255 per channel) first run: Tinos text mac=[39, 39, 39] win=[31, 31, 31]",
     "bundled-font-readiness-v6-line-limit-host: pairs=1 gate=0/1 outside-diff=[0] aaDiffPx min=4267 max=4267"
    ],
-   "secs": 0.5
+   "secs": 0.6
   },
   {
    "gate": "text",
@@ -1748,7 +1774,7 @@
    "why": [
     "run 01 exact-with-exclusions total=0 in-band=0 out-of-band=0 max-in-band=0 max-out-of-band=0",
     "pairs=1 exact=0 exact-with-exclusions=1 (excluding: 'Run' label glyph region (Segoe UI vs SF, sr1-decisions #2); colour gated by factory/tools/pair_textcolour_report.py[360, 280, 440, 325]) edge-aa<=32=0 fail=0 maxdiff=0 diffbbox=None",
-    "borderless-red-v1: pairs=1 text-colour-gate=0/1 (tolerance 24/255 per channel, position gated) first run: Run mac=[255, 56, 60] win=[230, 31, 35] at mac={'firstInkX': 372, 'firstInkY': 289, 'baselineY': 312, 'inkCentreX': 399.5} win={'first",
+    "borderless-red-v1: pairs=1 text-colour-gate=0/1 (tolerance 24/255 per channel, position gated) first run: Run mac=[255, 56, 60] win=[230, 31, 35] at mac={'firstInkX': 372, 'firstInkY': 289, 'baselineY': 312, 'inkCentreX': 399.5, 'inkRightX'",
     "run 1 [('Run', [], [255, 56, 60], [230, 31, 35])]"
    ],
    "secs": 0.2
@@ -1767,7 +1793,7 @@
    "why": [
     "run 01 exact-with-exclusions total=0 in-band=0 out-of-band=0 max-in-band=0 max-out-of-band=0",
     "pairs=1 exact=0 exact-with-exclusions=1 (excluding: 'Run' label glyph region (Segoe UI vs SF, sr1-decisions #2); colour gated by factory/tools/pair_textcolour_report.py[360, 280, 440, 325]) edge-aa<=32=0 fail=0 maxdiff=0 diffbbox=None",
-    "borderless-red-v1: pairs=1 text-colour-gate=1/1 (tolerance 24/255 per channel, position gated) first run: Run mac=[255, 56, 60] win=[231, 32, 36] at mac={'firstInkX': 372, 'firstInkY': 289, 'baselineY': 312, 'inkCentreX': 399.5} win={'first"
+    "borderless-red-v1: pairs=1 text-colour-gate=1/1 (tolerance 24/255 per channel, position gated) first run: Run mac=[255, 56, 60] win=[231, 32, 36] at mac={'firstInkX': 372, 'firstInkY': 289, 'baselineY': 312, 'inkCentreX': 399.5, 'inkRightX'"
    ],
    "secs": 0.2
   },
@@ -1787,7 +1813,7 @@
    "why": [
     "run 01 exact-with-exclusions total=0 in-band=0 out-of-band=0 max-in-band=0 max-out-of-band=0",
     "pairs=1 exact=0 exact-with-exclusions=1 (excluding: 'Run' label glyph region (Segoe UI vs SF, sr1-decisions #2); colour gated by factory/tools/pair_textcolour_report.py[360, 280, 440, 325]) edge-aa<=32=0 fail=0 maxdiff=0 diffbbox=None",
-    "borderless-red-v1: pairs=1 text-colour-gate=0/1 (tolerance 24/255 per channel, position gated) first run: Run mac=[255, 56, 60] win=[215, 16, 20] at mac={'firstInkX': 372, 'firstInkY': 289, 'baselineY': 312, 'inkCentreX': 399.5} win={'first",
+    "borderless-red-v1: pairs=1 text-colour-gate=0/1 (tolerance 24/255 per channel, position gated) first run: Run mac=[255, 56, 60] win=[215, 16, 20] at mac={'firstInkX': 372, 'firstInkY': 289, 'baselineY': 312, 'inkCentreX': 399.5, 'inkRightX'",
     "run 1 [('Run', [], [255, 56, 60], [215, 16, 20])]"
    ],
    "secs": 0.2
@@ -1808,7 +1834,7 @@
    "why": [
     "run 01 exact-with-exclusions total=0 in-band=0 out-of-band=0 max-in-band=0 max-out-of-band=0",
     "pairs=1 exact=0 exact-with-exclusions=1 (excluding: 'Run' label glyph region (Segoe UI vs SF, sr1-decisions #2); colour gated by factory/tools/pair_textcolour_report.py[360, 280, 440, 325]) edge-aa<=32=0 fail=0 maxdiff=0 diffbbox=None",
-    "borderless-red-v1: pairs=1 text-colour-gate=0/1 (tolerance 24/255 per channel, position gated) first run: Run mac=[255, 56, 60] win=[0, 136, 255] at mac={'firstInkX': 372, 'firstInkY': 289, 'baselineY': 312, 'inkCentreX': 399.5} win={'first",
+    "borderless-red-v1: pairs=1 text-colour-gate=0/1 (tolerance 24/255 per channel, position gated) first run: Run mac=[255, 56, 60] win=[0, 136, 255] at mac={'firstInkX': 372, 'firstInkY': 289, 'baselineY': 312, 'inkCentreX': 399.5, 'inkRightX'",
     "run 1 [('Run', [], [255, 56, 60], [0, 136, 255])]"
    ],
    "secs": 0.2
@@ -1829,8 +1855,8 @@
    "why": [
     "run 01 exact-with-exclusions total=0 in-band=0 out-of-band=0 max-in-band=0 max-out-of-band=0",
     "pairs=1 exact=0 exact-with-exclusions=1 (excluding: 'Run' label glyph region (Segoe UI vs SF, sr1-decisions #2); colour gated by factory/tools/pair_textcolour_report.py[360, 280, 440, 325]) edge-aa<=32=0 fail=0 maxdiff=0 diffbbox=None",
-    "borderless-red-v1: pairs=1 text-colour-gate=0/1 (tolerance 24/255 per channel, position gated) first run: Run mac=[255, 56, 60] win=None at mac={'firstInkX': 372, 'firstInkY': 289, 'baselineY': 312, 'inkCentreX': 399.5} win=None",
-    "run 1 [('Run', [\"no ink to place: mac={'firstInkX': 372, 'firstInkY': 289, 'baselineY': 312, 'inkCentreX': 399.5} windows=None\"], [255, 56, 60], None)]"
+    "borderless-red-v1: pairs=1 text-colour-gate=0/1 (tolerance 24/255 per channel, position gated) first run: Run mac=[255, 56, 60] win=None at mac={'firstInkX': 372, 'firstInkY': 289, 'baselineY': 312, 'inkCentreX': 399.5, 'inkRightX': 427, 'i",
+    "run 1 [('Run', [\"no ink to place: mac={'firstInkX': 372, 'firstInkY': 289, 'baselineY': 312, 'inkCentreX': 399.5, 'inkRightX': 427, 'inkHeight': 25, 'lineBands': 1} windows=None\"], [255, 56, 60], None)]"
    ],
    "secs": 0.2
   },
@@ -1850,7 +1876,7 @@
    "why": [
     "run 01 exact-with-exclusions total=0 in-band=0 out-of-band=0 max-in-band=0 max-out-of-band=0",
     "pairs=1 exact=0 exact-with-exclusions=1 (excluding: 'Run' label glyph region (Segoe UI vs SF, sr1-decisions #2); colour gated by factory/tools/pair_textcolour_report.py[360, 280, 440, 325]) edge-aa<=32=0 fail=0 maxdiff=0 diffbbox=None",
-    "borderless-red-v1: pairs=1 text-colour-gate=0/1 (tolerance 24/255 per channel, position gated) first run: Run mac=[255, 56, 60] win=[255, 56, 60] at mac={'firstInkX': 372, 'firstInkY': 289, 'baselineY': 312, 'inkCentreX': 399.5} win={'first",
+    "borderless-red-v1: pairs=1 text-colour-gate=0/1 (tolerance 24/255 per channel, position gated) first run: Run mac=[255, 56, 60] win=[255, 56, 60] at mac={'firstInkX': 372, 'firstInkY': 289, 'baselineY': 312, 'inkCentreX': 399.5, 'inkRightX'",
     "run 1 [('Run', ['ink centre x differs by 5.5 px (tolerance 1.5)'], [255, 56, 60], [255, 56, 60])]"
    ],
    "secs": 0.2
@@ -1871,7 +1897,7 @@
    "why": [
     "run 01 exact-with-exclusions total=0 in-band=0 out-of-band=0 max-in-band=0 max-out-of-band=0",
     "pairs=1 exact=0 exact-with-exclusions=1 (excluding: 'Run' label glyph region (Segoe UI vs SF, sr1-decisions #2); colour gated by factory/tools/pair_textcolour_report.py[360, 280, 440, 325]) edge-aa<=32=0 fail=0 maxdiff=0 diffbbox=None",
-    "borderless-red-v1: pairs=1 text-colour-gate=0/1 (tolerance 24/255 per channel, position gated) first run: Run mac=[255, 56, 60] win=[255, 56, 60] at mac={'firstInkX': 372, 'firstInkY': 289, 'baselineY': 312, 'inkCentreX': 399.5} win={'first",
+    "borderless-red-v1: pairs=1 text-colour-gate=0/1 (tolerance 24/255 per channel, position gated) first run: Run mac=[255, 56, 60] win=[255, 56, 60] at mac={'firstInkX': 372, 'firstInkY': 289, 'baselineY': 312, 'inkCentreX': 399.5, 'inkRightX'",
     "run 1 [('Run', ['ink centre x differs by -4.5 px (tolerance 1.5)'], [255, 56, 60], [255, 56, 60])]"
    ],
    "secs": 0.2
@@ -1892,7 +1918,7 @@
    "why": [
     "run 01 exact-with-exclusions total=0 in-band=0 out-of-band=0 max-in-band=0 max-out-of-band=0",
     "pairs=1 exact=0 exact-with-exclusions=1 (excluding: 'Run' label glyph region (Segoe UI vs SF, sr1-decisions #2); colour gated by factory/tools/pair_textcolour_report.py[360, 280, 440, 325]) edge-aa<=32=0 fail=0 maxdiff=0 diffbbox=None",
-    "borderless-red-v1: pairs=1 text-colour-gate=0/1 (tolerance 24/255 per channel, position gated) first run: Run mac=[255, 56, 60] win=[255, 56, 60] at mac={'firstInkX': 372, 'firstInkY': 289, 'baselineY': 312, 'inkCentreX': 399.5} win={'first",
+    "borderless-red-v1: pairs=1 text-colour-gate=0/1 (tolerance 24/255 per channel, position gated) first run: Run mac=[255, 56, 60] win=[255, 56, 60] at mac={'firstInkX': 372, 'firstInkY': 289, 'baselineY': 312, 'inkCentreX': 399.5, 'inkRightX'",
     "run 1 [('Run', ['first ink y differs by 7 px (tolerance 2)', 'baseline differs by 4 px (tolerance 2)', 'ink vertical centre differs by 5.5 px (tolerance 0.5)'], [255, 56, 60], [255, 56, 60])]"
    ],
    "secs": 0.2
@@ -1913,7 +1939,7 @@
    "why": [
     "run 01 exact-with-exclusions total=0 in-band=0 out-of-band=0 max-in-band=0 max-out-of-band=0",
     "pairs=1 exact=0 exact-with-exclusions=1 (excluding: 'Run' label glyph region (Segoe UI vs SF, sr1-decisions #2); colour gated by factory/tools/pair_textcolour_report.py[360, 280, 440, 325]) edge-aa<=32=0 fail=0 maxdiff=0 diffbbox=None",
-    "borderless-red-v1: pairs=1 text-colour-gate=0/1 (tolerance 24/255 per channel, position gated) first run: Run mac=[255, 56, 60] win=[255, 56, 60] at mac={'firstInkX': 372, 'firstInkY': 289, 'baselineY': 312, 'inkCentreX': 399.5} win={'first",
+    "borderless-red-v1: pairs=1 text-colour-gate=0/1 (tolerance 24/255 per channel, position gated) first run: Run mac=[255, 56, 60] win=[255, 56, 60] at mac={'firstInkX': 372, 'firstInkY': 289, 'baselineY': 312, 'inkCentreX': 399.5, 'inkRightX'",
     "run 1 [('Run', ['first ink y differs by -3 px (tolerance 2)', 'baseline differs by -6 px (tolerance 2)', 'ink vertical centre differs by -4.5 px (tolerance 0.5)'], [255, 56, 60], [255, 56, 60])]"
    ],
    "secs": 0.2
@@ -1934,7 +1960,7 @@
    "why": [
     "run 01 exact-with-exclusions total=0 in-band=0 out-of-band=0 max-in-band=0 max-out-of-band=0",
     "pairs=1 exact=0 exact-with-exclusions=1 (excluding: 'Run' label glyph region (Segoe UI vs SF, sr1-decisions #2); colour gated by factory/tools/pair_textcolour_report.py[360, 280, 440, 325]) edge-aa<=32=0 fail=0 maxdiff=0 diffbbox=None",
-    "borderless-red-v1: pairs=1 text-colour-gate=0/1 (tolerance 24/255 per channel, position gated) first run: Run mac=[255, 56, 60] win=[255, 56, 60] at mac={'firstInkX': 372, 'firstInkY': 289, 'baselineY': 312, 'inkCentreX': 399.5} win={'first",
+    "borderless-red-v1: pairs=1 text-colour-gate=0/1 (tolerance 24/255 per channel, position gated) first run: Run mac=[255, 56, 60] win=[255, 56, 60] at mac={'firstInkX': 372, 'firstInkY': 289, 'baselineY': 312, 'inkCentreX': 399.5, 'inkRightX'",
     "run 1 [('Run', ['first ink y differs by 4 px (tolerance 2)', 'ink vertical centre differs by 2.5 px (tolerance 0.5)'], [255, 56, 60], [255, 56, 60])]"
    ],
    "secs": 0.2
@@ -1956,7 +1982,7 @@
    "why": [
     "run 01 fail total=337 in-band=0 out-of-band=337 max-in-band=0 max-out-of-band=199",
     "pairs=1 exact=0 exact-with-exclusions=0 (excluding: 'Run' label glyph region (Segoe UI vs SF, sr1-decisions #2); colour gated by factory/tools/pair_textcolour_report.py[360, 280, 440, 325]) edge-aa<=32=0 fail=1 maxdiff=199 diffbbox=(440, 29",
-    "borderless-red-v1: pairs=1 text-colour-gate=0/1 (tolerance 24/255 per channel, position gated) first run: Run mac=[255, 56, 60] win=[255, 56, 60] at mac={'firstInkX': 372, 'firstInkY': 289, 'baselineY': 312, 'inkCentreX': 399.5} win={'first",
+    "borderless-red-v1: pairs=1 text-colour-gate=0/1 (tolerance 24/255 per channel, position gated) first run: Run mac=[255, 56, 60] win=[255, 56, 60] at mac={'firstInkX': 372, 'firstInkY': 289, 'baselineY': 312, 'inkCentreX': 399.5, 'inkRightX'",
     "run 1 [('Run', ['ink centre x differs by 38.5 px (tolerance 1.5)'], [255, 56, 60], [255, 56, 60])]"
    ],
    "secs": 0.2
@@ -1977,7 +2003,7 @@
    "why": [
     "run 01 exact-with-exclusions total=0 in-band=0 out-of-band=0 max-in-band=0 max-out-of-band=0",
     "pairs=1 exact=0 exact-with-exclusions=1 (excluding: 'Red' default body font glyph region (Segoe UI vs SF, sr1-decisions #2); colour gated by factory/tools/pair_textcolour_report.py[140, 70, 260, 115], 'Grey' default body font glyph region (",
-    "foreground-colour-v1: pairs=1 text-colour-gate=0/1 (tolerance 24/255 per channel, position gated) first run: Red mac=[255, 56, 60] win=[230, 31, 35] at mac={'firstInkX': 173, 'firstInkY': 79, 'baselineY': 102, 'inkCentreX': 200.0} win={'fir",
+    "foreground-colour-v1: pairs=1 text-colour-gate=0/1 (tolerance 24/255 per channel, position gated) first run: Red mac=[255, 56, 60] win=[230, 31, 35] at mac={'firstInkX': 173, 'firstInkY': 79, 'baselineY': 102, 'inkCentreX': 200.0, 'inkRight",
     "run 1 [('Red', [], [255, 56, 60], [230, 31, 35]), 'Grey', 'Plain']"
    ],
    "secs": 0.3
@@ -1996,7 +2022,7 @@
    "why": [
     "run 01 exact-with-exclusions total=0 in-band=0 out-of-band=0 max-in-band=0 max-out-of-band=0",
     "pairs=1 exact=0 exact-with-exclusions=1 (excluding: 'Red' default body font glyph region (Segoe UI vs SF, sr1-decisions #2); colour gated by factory/tools/pair_textcolour_report.py[140, 70, 260, 115], 'Grey' default body font glyph region (",
-    "foreground-colour-v1: pairs=1 text-colour-gate=1/1 (tolerance 24/255 per channel, position gated) first run: Red mac=[255, 56, 60] win=[231, 32, 36] at mac={'firstInkX': 173, 'firstInkY': 79, 'baselineY': 102, 'inkCentreX': 200.0} win={'fir"
+    "foreground-colour-v1: pairs=1 text-colour-gate=1/1 (tolerance 24/255 per channel, position gated) first run: Red mac=[255, 56, 60] win=[231, 32, 36] at mac={'firstInkX': 173, 'firstInkY': 79, 'baselineY': 102, 'inkCentreX': 200.0, 'inkRight"
    ],
    "secs": 0.3
   },
@@ -2016,7 +2042,7 @@
    "why": [
     "run 01 exact-with-exclusions total=0 in-band=0 out-of-band=0 max-in-band=0 max-out-of-band=0",
     "pairs=1 exact=0 exact-with-exclusions=1 (excluding: 'Red' default body font glyph region (Segoe UI vs SF, sr1-decisions #2); colour gated by factory/tools/pair_textcolour_report.py[140, 70, 260, 115], 'Grey' default body font glyph region (",
-    "foreground-colour-v1: pairs=1 text-colour-gate=0/1 (tolerance 24/255 per channel, position gated) first run: Red mac=[255, 56, 60] win=[215, 16, 20] at mac={'firstInkX': 173, 'firstInkY': 79, 'baselineY': 102, 'inkCentreX': 200.0} win={'fir",
+    "foreground-colour-v1: pairs=1 text-colour-gate=0/1 (tolerance 24/255 per channel, position gated) first run: Red mac=[255, 56, 60] win=[215, 16, 20] at mac={'firstInkX': 173, 'firstInkY': 79, 'baselineY': 102, 'inkCentreX': 200.0, 'inkRight",
     "run 1 [('Red', [], [255, 56, 60], [215, 16, 20]), 'Grey', 'Plain']"
    ],
    "secs": 0.2
@@ -2037,10 +2063,10 @@
    "why": [
     "run 01 exact-with-exclusions total=0 in-band=0 out-of-band=0 max-in-band=0 max-out-of-band=0",
     "pairs=1 exact=0 exact-with-exclusions=1 (excluding: 'Red' default body font glyph region (Segoe UI vs SF, sr1-decisions #2); colour gated by factory/tools/pair_textcolour_report.py[140, 70, 260, 115], 'Grey' default body font glyph region (",
-    "foreground-colour-v1: pairs=1 text-colour-gate=0/1 (tolerance 24/255 per channel, position gated) first run: Red mac=[255, 56, 60] win=[0, 136, 255] at mac={'firstInkX': 173, 'firstInkY': 79, 'baselineY': 102, 'inkCentreX': 200.0} win={'fir",
+    "foreground-colour-v1: pairs=1 text-colour-gate=0/1 (tolerance 24/255 per channel, position gated) first run: Red mac=[255, 56, 60] win=[0, 136, 255] at mac={'firstInkX': 173, 'firstInkY': 79, 'baselineY': 102, 'inkCentreX': 200.0, 'inkRight",
     "run 1 [('Red', [], [255, 56, 60], [0, 136, 255]), 'Grey', 'Plain']"
    ],
-   "secs": 0.2
+   "secs": 0.3
   },
   {
    "gate": "text-colour",
@@ -2058,8 +2084,8 @@
    "why": [
     "run 01 exact-with-exclusions total=0 in-band=0 out-of-band=0 max-in-band=0 max-out-of-band=0",
     "pairs=1 exact=0 exact-with-exclusions=1 (excluding: 'Red' default body font glyph region (Segoe UI vs SF, sr1-decisions #2); colour gated by factory/tools/pair_textcolour_report.py[140, 70, 260, 115], 'Grey' default body font glyph region (",
-    "foreground-colour-v1: pairs=1 text-colour-gate=0/1 (tolerance 24/255 per channel, position gated) first run: Red mac=[255, 56, 60] win=None at mac={'firstInkX': 173, 'firstInkY': 79, 'baselineY': 102, 'inkCentreX': 200.0} win=None; Grey mac",
-    "run 1 [('Red', [\"no ink to place: mac={'firstInkX': 173, 'firstInkY': 79, 'baselineY': 102, 'inkCentreX': 200.0} windows=None\"], [255, 56, 60], None), 'Grey', 'Plain']"
+    "foreground-colour-v1: pairs=1 text-colour-gate=0/1 (tolerance 24/255 per channel, position gated) first run: Red mac=[255, 56, 60] win=None at mac={'firstInkX': 173, 'firstInkY': 79, 'baselineY': 102, 'inkCentreX': 200.0, 'inkRightX': 227, ",
+    "run 1 [('Red', [\"no ink to place: mac={'firstInkX': 173, 'firstInkY': 79, 'baselineY': 102, 'inkCentreX': 200.0, 'inkRightX': 227, 'inkHeight': 26, 'lineBands': 1} windows=None\"], [255, 56, 60], None), 'Grey', 'Plain']"
    ],
    "secs": 0.2
   },
@@ -2079,7 +2105,7 @@
    "why": [
     "run 01 exact-with-exclusions total=0 in-band=0 out-of-band=0 max-in-band=0 max-out-of-band=0",
     "pairs=1 exact=0 exact-with-exclusions=1 (excluding: 'Red' default body font glyph region (Segoe UI vs SF, sr1-decisions #2); colour gated by factory/tools/pair_textcolour_report.py[140, 70, 260, 115], 'Grey' default body font glyph region (",
-    "foreground-colour-v1: pairs=1 text-colour-gate=0/1 (tolerance 24/255 per channel, position gated) first run: Red mac=[255, 56, 60] win=[255, 56, 60] at mac={'firstInkX': 173, 'firstInkY': 79, 'baselineY': 102, 'inkCentreX': 200.0} win={'fir",
+    "foreground-colour-v1: pairs=1 text-colour-gate=0/1 (tolerance 24/255 per channel, position gated) first run: Red mac=[255, 56, 60] win=[255, 56, 60] at mac={'firstInkX': 173, 'firstInkY': 79, 'baselineY': 102, 'inkCentreX': 200.0, 'inkRight",
     "run 1 [('Red', ['ink centre x differs by 4.5 px (tolerance 1.5)'], [255, 56, 60], [255, 56, 60]), 'Grey', 'Plain']"
    ],
    "secs": 0.2
@@ -2100,7 +2126,7 @@
    "why": [
     "run 01 exact-with-exclusions total=0 in-band=0 out-of-band=0 max-in-band=0 max-out-of-band=0",
     "pairs=1 exact=0 exact-with-exclusions=1 (excluding: 'Red' default body font glyph region (Segoe UI vs SF, sr1-decisions #2); colour gated by factory/tools/pair_textcolour_report.py[140, 70, 260, 115], 'Grey' default body font glyph region (",
-    "foreground-colour-v1: pairs=1 text-colour-gate=0/1 (tolerance 24/255 per channel, position gated) first run: Red mac=[255, 56, 60] win=[255, 56, 60] at mac={'firstInkX': 173, 'firstInkY': 79, 'baselineY': 102, 'inkCentreX': 200.0} win={'fir",
+    "foreground-colour-v1: pairs=1 text-colour-gate=0/1 (tolerance 24/255 per channel, position gated) first run: Red mac=[255, 56, 60] win=[255, 56, 60] at mac={'firstInkX': 173, 'firstInkY': 79, 'baselineY': 102, 'inkCentreX': 200.0, 'inkRight",
     "run 1 [('Red', ['ink centre x differs by -5.5 px (tolerance 1.5)'], [255, 56, 60], [255, 56, 60]), 'Grey', 'Plain']"
    ],
    "secs": 0.2
@@ -2121,10 +2147,10 @@
    "why": [
     "run 01 exact-with-exclusions total=0 in-band=0 out-of-band=0 max-in-band=0 max-out-of-band=0",
     "pairs=1 exact=0 exact-with-exclusions=1 (excluding: 'Red' default body font glyph region (Segoe UI vs SF, sr1-decisions #2); colour gated by factory/tools/pair_textcolour_report.py[140, 70, 260, 115], 'Grey' default body font glyph region (",
-    "foreground-colour-v1: pairs=1 text-colour-gate=0/1 (tolerance 24/255 per channel, position gated) first run: Red mac=[255, 56, 60] win=[255, 56, 60] at mac={'firstInkX': 173, 'firstInkY': 79, 'baselineY': 102, 'inkCentreX': 200.0} win={'fir",
+    "foreground-colour-v1: pairs=1 text-colour-gate=0/1 (tolerance 24/255 per channel, position gated) first run: Red mac=[255, 56, 60] win=[255, 56, 60] at mac={'firstInkX': 173, 'firstInkY': 79, 'baselineY': 102, 'inkCentreX': 200.0, 'inkRight",
     "run 1 [('Red', ['first ink y differs by 7 px (tolerance 2)', 'baseline differs by 4 px (tolerance 2)', 'ink vertical centre differs by 5.5 px (tolerance 0.5)'], [255, 56, 60], [255, 56, 60]), 'Grey', 'Plain']"
    ],
-   "secs": 0.2
+   "secs": 0.3
   },
   {
    "gate": "text-colour",
@@ -2142,10 +2168,10 @@
    "why": [
     "run 01 exact-with-exclusions total=0 in-band=0 out-of-band=0 max-in-band=0 max-out-of-band=0",
     "pairs=1 exact=0 exact-with-exclusions=1 (excluding: 'Red' default body font glyph region (Segoe UI vs SF, sr1-decisions #2); colour gated by factory/tools/pair_textcolour_report.py[140, 70, 260, 115], 'Grey' default body font glyph region (",
-    "foreground-colour-v1: pairs=1 text-colour-gate=0/1 (tolerance 24/255 per channel, position gated) first run: Red mac=[255, 56, 60] win=[255, 56, 60] at mac={'firstInkX': 173, 'firstInkY': 79, 'baselineY': 102, 'inkCentreX': 200.0} win={'fir",
+    "foreground-colour-v1: pairs=1 text-colour-gate=0/1 (tolerance 24/255 per channel, position gated) first run: Red mac=[255, 56, 60] win=[255, 56, 60] at mac={'firstInkX': 173, 'firstInkY': 79, 'baselineY': 102, 'inkCentreX': 200.0, 'inkRight",
     "run 1 [('Red', ['first ink y differs by -3 px (tolerance 2)', 'baseline differs by -6 px (tolerance 2)', 'ink vertical centre differs by -4.5 px (tolerance 0.5)'], [255, 56, 60], [255, 56, 60]), 'Grey', 'Plain']"
    ],
-   "secs": 0.2
+   "secs": 0.3
   },
   {
    "gate": "text-colour",
@@ -2163,7 +2189,7 @@
    "why": [
     "run 01 exact-with-exclusions total=0 in-band=0 out-of-band=0 max-in-band=0 max-out-of-band=0",
     "pairs=1 exact=0 exact-with-exclusions=1 (excluding: 'Red' default body font glyph region (Segoe UI vs SF, sr1-decisions #2); colour gated by factory/tools/pair_textcolour_report.py[140, 70, 260, 115], 'Grey' default body font glyph region (",
-    "foreground-colour-v1: pairs=1 text-colour-gate=0/1 (tolerance 24/255 per channel, position gated) first run: Red mac=[255, 56, 60] win=[255, 56, 60] at mac={'firstInkX': 173, 'firstInkY': 79, 'baselineY': 102, 'inkCentreX': 200.0} win={'fir",
+    "foreground-colour-v1: pairs=1 text-colour-gate=0/1 (tolerance 24/255 per channel, position gated) first run: Red mac=[255, 56, 60] win=[255, 56, 60] at mac={'firstInkX': 173, 'firstInkY': 79, 'baselineY': 102, 'inkCentreX': 200.0, 'inkRight",
     "run 1 [('Red', ['first ink y differs by 4 px (tolerance 2)', 'ink vertical centre differs by 2.5 px (tolerance 0.5)'], [255, 56, 60], [255, 56, 60]), 'Grey', 'Plain']"
    ],
    "secs": 0.2
@@ -2184,7 +2210,7 @@
    "why": [
     "run 01 exact-with-exclusions total=0 in-band=0 out-of-band=0 max-in-band=0 max-out-of-band=0",
     "pairs=1 exact=0 exact-with-exclusions=1 (excluding: 'Red' default body font glyph region (Segoe UI vs SF, sr1-decisions #2); colour gated by factory/tools/pair_textcolour_report.py[140, 70, 260, 115], 'Grey' default body font glyph region (",
-    "foreground-colour-v1: pairs=1 text-colour-gate=0/1 (tolerance 24/255 per channel, position gated) first run: Red mac=[255, 56, 60] win=[255, 56, 60] at mac={'firstInkX': 173, 'firstInkY': 79, 'baselineY': 102, 'inkCentreX': 200.0} win={'fir",
+    "foreground-colour-v1: pairs=1 text-colour-gate=0/1 (tolerance 24/255 per channel, position gated) first run: Red mac=[255, 56, 60] win=[255, 56, 60] at mac={'firstInkX': 173, 'firstInkY': 79, 'baselineY': 102, 'inkCentreX': 200.0, 'inkRight",
     "run 1 ['Red', ('Grey', [], [128, 128, 128], [103, 103, 103]), 'Plain']"
    ],
    "secs": 0.3
@@ -2203,7 +2229,7 @@
    "why": [
     "run 01 exact-with-exclusions total=0 in-band=0 out-of-band=0 max-in-band=0 max-out-of-band=0",
     "pairs=1 exact=0 exact-with-exclusions=1 (excluding: 'Red' default body font glyph region (Segoe UI vs SF, sr1-decisions #2); colour gated by factory/tools/pair_textcolour_report.py[140, 70, 260, 115], 'Grey' default body font glyph region (",
-    "foreground-colour-v1: pairs=1 text-colour-gate=1/1 (tolerance 24/255 per channel, position gated) first run: Red mac=[255, 56, 60] win=[255, 56, 60] at mac={'firstInkX': 173, 'firstInkY': 79, 'baselineY': 102, 'inkCentreX': 200.0} win={'fir"
+    "foreground-colour-v1: pairs=1 text-colour-gate=1/1 (tolerance 24/255 per channel, position gated) first run: Red mac=[255, 56, 60] win=[255, 56, 60] at mac={'firstInkX': 173, 'firstInkY': 79, 'baselineY': 102, 'inkCentreX': 200.0, 'inkRight"
    ],
    "secs": 0.3
   },
@@ -2223,10 +2249,10 @@
    "why": [
     "run 01 exact-with-exclusions total=0 in-band=0 out-of-band=0 max-in-band=0 max-out-of-band=0",
     "pairs=1 exact=0 exact-with-exclusions=1 (excluding: 'Red' default body font glyph region (Segoe UI vs SF, sr1-decisions #2); colour gated by factory/tools/pair_textcolour_report.py[140, 70, 260, 115], 'Grey' default body font glyph region (",
-    "foreground-colour-v1: pairs=1 text-colour-gate=0/1 (tolerance 24/255 per channel, position gated) first run: Red mac=[255, 56, 60] win=[255, 56, 60] at mac={'firstInkX': 173, 'firstInkY': 79, 'baselineY': 102, 'inkCentreX': 200.0} win={'fir",
+    "foreground-colour-v1: pairs=1 text-colour-gate=0/1 (tolerance 24/255 per channel, position gated) first run: Red mac=[255, 56, 60] win=[255, 56, 60] at mac={'firstInkX': 173, 'firstInkY': 79, 'baselineY': 102, 'inkCentreX': 200.0, 'inkRight",
     "run 1 ['Red', ('Grey', [], [128, 128, 128], [88, 88, 88]), 'Plain']"
    ],
-   "secs": 0.2
+   "secs": 0.3
   },
   {
    "gate": "text-colour",
@@ -2244,10 +2270,10 @@
    "why": [
     "run 01 exact-with-exclusions total=0 in-band=0 out-of-band=0 max-in-band=0 max-out-of-band=0",
     "pairs=1 exact=0 exact-with-exclusions=1 (excluding: 'Red' default body font glyph region (Segoe UI vs SF, sr1-decisions #2); colour gated by factory/tools/pair_textcolour_report.py[140, 70, 260, 115], 'Grey' default body font glyph region (",
-    "foreground-colour-v1: pairs=1 text-colour-gate=0/1 (tolerance 24/255 per channel, position gated) first run: Red mac=[255, 56, 60] win=[255, 56, 60] at mac={'firstInkX': 173, 'firstInkY': 79, 'baselineY': 102, 'inkCentreX': 200.0} win={'fir",
+    "foreground-colour-v1: pairs=1 text-colour-gate=0/1 (tolerance 24/255 per channel, position gated) first run: Red mac=[255, 56, 60] win=[255, 56, 60] at mac={'firstInkX': 173, 'firstInkY': 79, 'baselineY': 102, 'inkCentreX': 200.0, 'inkRight",
     "run 1 ['Red', ('Grey', [], [128, 128, 128], [0, 136, 255]), 'Plain']"
    ],
-   "secs": 0.2
+   "secs": 0.3
   },
   {
    "gate": "text-colour",
@@ -2265,8 +2291,8 @@
    "why": [
     "run 01 exact-with-exclusions total=0 in-band=0 out-of-band=0 max-in-band=0 max-out-of-band=0",
     "pairs=1 exact=0 exact-with-exclusions=1 (excluding: 'Red' default body font glyph region (Segoe UI vs SF, sr1-decisions #2); colour gated by factory/tools/pair_textcolour_report.py[140, 70, 260, 115], 'Grey' default body font glyph region (",
-    "foreground-colour-v1: pairs=1 text-colour-gate=0/1 (tolerance 24/255 per channel, position gated) first run: Red mac=[255, 56, 60] win=[255, 56, 60] at mac={'firstInkX': 173, 'firstInkY': 79, 'baselineY': 102, 'inkCentreX': 200.0} win={'fir",
-    "run 1 ['Red', ('Grey', [\"no ink to place: mac={'firstInkX': 165, 'firstInkY': 139, 'baselineY': 163, 'inkCentreX': 199.5} windows=None\"], [128, 128, 128], None), 'Plain']"
+    "foreground-colour-v1: pairs=1 text-colour-gate=0/1 (tolerance 24/255 per channel, position gated) first run: Red mac=[255, 56, 60] win=[255, 56, 60] at mac={'firstInkX': 173, 'firstInkY': 79, 'baselineY': 102, 'inkCentreX': 200.0, 'inkRight",
+    "run 1 ['Red', ('Grey', [\"no ink to place: mac={'firstInkX': 165, 'firstInkY': 139, 'baselineY': 163, 'inkCentreX': 199.5, 'inkRightX': 234, 'inkHeight': 30, 'lineBands': 1} windows=None\"], [128, 128, 128], None), 'Plain']"
    ],
    "secs": 0.2
   },
@@ -2286,7 +2312,7 @@
    "why": [
     "run 01 exact-with-exclusions total=0 in-band=0 out-of-band=0 max-in-band=0 max-out-of-band=0",
     "pairs=1 exact=0 exact-with-exclusions=1 (excluding: 'Red' default body font glyph region (Segoe UI vs SF, sr1-decisions #2); colour gated by factory/tools/pair_textcolour_report.py[140, 70, 260, 115], 'Grey' default body font glyph region (",
-    "foreground-colour-v1: pairs=1 text-colour-gate=0/1 (tolerance 24/255 per channel, position gated) first run: Red mac=[255, 56, 60] win=[255, 56, 60] at mac={'firstInkX': 173, 'firstInkY': 79, 'baselineY': 102, 'inkCentreX': 200.0} win={'fir",
+    "foreground-colour-v1: pairs=1 text-colour-gate=0/1 (tolerance 24/255 per channel, position gated) first run: Red mac=[255, 56, 60] win=[255, 56, 60] at mac={'firstInkX': 173, 'firstInkY': 79, 'baselineY': 102, 'inkCentreX': 200.0, 'inkRight",
     "run 1 ['Red', ('Grey', ['ink centre x differs by 5.5 px (tolerance 1.5)'], [128, 128, 128], [128, 128, 128]), 'Plain']"
    ],
    "secs": 0.2
@@ -2307,7 +2333,7 @@
    "why": [
     "run 01 exact-with-exclusions total=0 in-band=0 out-of-band=0 max-in-band=0 max-out-of-band=0",
     "pairs=1 exact=0 exact-with-exclusions=1 (excluding: 'Red' default body font glyph region (Segoe UI vs SF, sr1-decisions #2); colour gated by factory/tools/pair_textcolour_report.py[140, 70, 260, 115], 'Grey' default body font glyph region (",
-    "foreground-colour-v1: pairs=1 text-colour-gate=0/1 (tolerance 24/255 per channel, position gated) first run: Red mac=[255, 56, 60] win=[255, 56, 60] at mac={'firstInkX': 173, 'firstInkY': 79, 'baselineY': 102, 'inkCentreX': 200.0} win={'fir",
+    "foreground-colour-v1: pairs=1 text-colour-gate=0/1 (tolerance 24/255 per channel, position gated) first run: Red mac=[255, 56, 60] win=[255, 56, 60] at mac={'firstInkX': 173, 'firstInkY': 79, 'baselineY': 102, 'inkCentreX': 200.0, 'inkRight",
     "run 1 ['Red', ('Grey', ['ink centre x differs by -4.5 px (tolerance 1.5)'], [128, 128, 128], [128, 128, 128]), 'Plain']"
    ],
    "secs": 0.2
@@ -2328,7 +2354,7 @@
    "why": [
     "run 01 exact-with-exclusions total=0 in-band=0 out-of-band=0 max-in-band=0 max-out-of-band=0",
     "pairs=1 exact=0 exact-with-exclusions=1 (excluding: 'Red' default body font glyph region (Segoe UI vs SF, sr1-decisions #2); colour gated by factory/tools/pair_textcolour_report.py[140, 70, 260, 115], 'Grey' default body font glyph region (",
-    "foreground-colour-v1: pairs=1 text-colour-gate=0/1 (tolerance 24/255 per channel, position gated) first run: Red mac=[255, 56, 60] win=[255, 56, 60] at mac={'firstInkX': 173, 'firstInkY': 79, 'baselineY': 102, 'inkCentreX': 200.0} win={'fir",
+    "foreground-colour-v1: pairs=1 text-colour-gate=0/1 (tolerance 24/255 per channel, position gated) first run: Red mac=[255, 56, 60] win=[255, 56, 60] at mac={'firstInkX': 173, 'firstInkY': 79, 'baselineY': 102, 'inkCentreX': 200.0, 'inkRight",
     "run 1 ['Red', ('Grey', ['first ink y differs by 7 px (tolerance 2)', 'baseline differs by 3 px (tolerance 2)', 'ink vertical centre differs by 5 px (tolerance 0.5)'], [128, 128, 128], [128, 128, 128]), 'Plain']"
    ],
    "secs": 0.2
@@ -2349,7 +2375,7 @@
    "why": [
     "run 01 exact-with-exclusions total=0 in-band=0 out-of-band=0 max-in-band=0 max-out-of-band=0",
     "pairs=1 exact=0 exact-with-exclusions=1 (excluding: 'Red' default body font glyph region (Segoe UI vs SF, sr1-decisions #2); colour gated by factory/tools/pair_textcolour_report.py[140, 70, 260, 115], 'Grey' default body font glyph region (",
-    "foreground-colour-v1: pairs=1 text-colour-gate=0/1 (tolerance 24/255 per channel, position gated) first run: Red mac=[255, 56, 60] win=[255, 56, 60] at mac={'firstInkX': 173, 'firstInkY': 79, 'baselineY': 102, 'inkCentreX': 200.0} win={'fir",
+    "foreground-colour-v1: pairs=1 text-colour-gate=0/1 (tolerance 24/255 per channel, position gated) first run: Red mac=[255, 56, 60] win=[255, 56, 60] at mac={'firstInkX': 173, 'firstInkY': 79, 'baselineY': 102, 'inkCentreX': 200.0, 'inkRight",
     "run 1 ['Red', ('Grey', ['first ink y differs by -3 px (tolerance 2)', 'baseline differs by -7 px (tolerance 2)', 'ink vertical centre differs by -5 px (tolerance 0.5)'], [128, 128, 128], [128, 128, 128]), 'Plain']"
    ],
    "secs": 0.2
@@ -2370,10 +2396,10 @@
    "why": [
     "run 01 exact-with-exclusions total=0 in-band=0 out-of-band=0 max-in-band=0 max-out-of-band=0",
     "pairs=1 exact=0 exact-with-exclusions=1 (excluding: 'Red' default body font glyph region (Segoe UI vs SF, sr1-decisions #2); colour gated by factory/tools/pair_textcolour_report.py[140, 70, 260, 115], 'Grey' default body font glyph region (",
-    "foreground-colour-v1: pairs=1 text-colour-gate=0/1 (tolerance 24/255 per channel, position gated) first run: Red mac=[255, 56, 60] win=[255, 56, 60] at mac={'firstInkX': 173, 'firstInkY': 79, 'baselineY': 102, 'inkCentreX': 200.0} win={'fir",
+    "foreground-colour-v1: pairs=1 text-colour-gate=0/1 (tolerance 24/255 per channel, position gated) first run: Red mac=[255, 56, 60] win=[255, 56, 60] at mac={'firstInkX': 173, 'firstInkY': 79, 'baselineY': 102, 'inkCentreX': 200.0, 'inkRight",
     "run 1 ['Red', ('Grey', ['first ink y differs by 4 px (tolerance 2)', 'ink vertical centre differs by 2 px (tolerance 0.5)'], [128, 128, 128], [128, 128, 128]), 'Plain']"
    ],
-   "secs": 0.2
+   "secs": 0.3
   },
   {
    "gate": "text-colour",
@@ -2392,7 +2418,7 @@
    "why": [
     "run 01 fail total=209 in-band=0 out-of-band=209 max-in-band=0 max-out-of-band=199",
     "pairs=1 exact=0 exact-with-exclusions=0 (excluding: 'Red' default body font glyph region (Segoe UI vs SF, sr1-decisions #2); colour gated by factory/tools/pair_textcolour_report.py[140, 70, 260, 115], 'Grey' default body font glyph region (",
-    "foreground-colour-v1: pairs=1 text-colour-gate=0/1 (tolerance 24/255 per channel, position gated) first run: Red mac=[255, 56, 60] win=[255, 56, 60] at mac={'firstInkX': 173, 'firstInkY': 79, 'baselineY': 102, 'inkCentreX': 200.0} win={'fir",
+    "foreground-colour-v1: pairs=1 text-colour-gate=0/1 (tolerance 24/255 per channel, position gated) first run: Red mac=[255, 56, 60] win=[255, 56, 60] at mac={'firstInkX': 173, 'firstInkY': 79, 'baselineY': 102, 'inkCentreX': 200.0, 'inkRight",
     "run 1 [('Red', ['ink centre x differs by 48 px (tolerance 1.5)'], [255, 56, 60], [255, 56, 60]), 'Grey', 'Plain']"
    ],
    "secs": 0.2
@@ -2413,10 +2439,10 @@
    "why": [
     "run 01 exact-with-exclusions total=0 in-band=0 out-of-band=0 max-in-band=0 max-out-of-band=0",
     "pairs=1 exact=0 exact-with-exclusions=1 (excluding: text lines (glyph shapes differ: Segoe UI vs SF, decision 2)[0, 20, 800, 260]) edge-aa<=32=0 fail=0 maxdiff=0 diffbbox=None",
-    "text-dark-v1: pairs=1 text-colour-gate=0/1 (tolerance 24/255 per channel, position gated) first run: primary mac=[221, 221, 221] win=[196, 196, 196] at mac={'firstInkX': 22, 'firstInkY': 29, 'baselineY': 52, 'inkCentreX': 133.0} win={'first",
+    "text-dark-v1: pairs=1 text-colour-gate=0/1 (tolerance 24/255 per channel, position gated) first run: primary mac=[221, 221, 221] win=[196, 196, 196] at mac={'firstInkX': 22, 'firstInkY': 29, 'baselineY': 52, 'inkCentreX': 133.0, 'inkRightX'",
     "run 1 [('primary', [], [221, 221, 221], [196, 196, 196]), 'secondary', 'accentColor', 'red']"
    ],
-   "secs": 1.2
+   "secs": 1.4
   },
   {
    "gate": "text-colour",
@@ -2432,9 +2458,9 @@
    "why": [
     "run 01 exact-with-exclusions total=0 in-band=0 out-of-band=0 max-in-band=0 max-out-of-band=0",
     "pairs=1 exact=0 exact-with-exclusions=1 (excluding: text lines (glyph shapes differ: Segoe UI vs SF, decision 2)[0, 20, 800, 260]) edge-aa<=32=0 fail=0 maxdiff=0 diffbbox=None",
-    "text-dark-v1: pairs=1 text-colour-gate=1/1 (tolerance 24/255 per channel, position gated) first run: primary mac=[221, 221, 221] win=[197, 197, 197] at mac={'firstInkX': 22, 'firstInkY': 29, 'baselineY': 52, 'inkCentreX': 133.0} win={'first"
+    "text-dark-v1: pairs=1 text-colour-gate=1/1 (tolerance 24/255 per channel, position gated) first run: primary mac=[221, 221, 221] win=[197, 197, 197] at mac={'firstInkX': 22, 'firstInkY': 29, 'baselineY': 52, 'inkCentreX': 133.0, 'inkRightX'"
    ],
-   "secs": 1.2
+   "secs": 1.3
   },
   {
    "gate": "text-colour",
@@ -2452,10 +2478,10 @@
    "why": [
     "run 01 exact-with-exclusions total=0 in-band=0 out-of-band=0 max-in-band=0 max-out-of-band=0",
     "pairs=1 exact=0 exact-with-exclusions=1 (excluding: text lines (glyph shapes differ: Segoe UI vs SF, decision 2)[0, 20, 800, 260]) edge-aa<=32=0 fail=0 maxdiff=0 diffbbox=None",
-    "text-dark-v1: pairs=1 text-colour-gate=0/1 (tolerance 24/255 per channel, position gated) first run: primary mac=[221, 221, 221] win=[181, 181, 181] at mac={'firstInkX': 22, 'firstInkY': 29, 'baselineY': 52, 'inkCentreX': 133.0} win={'first",
+    "text-dark-v1: pairs=1 text-colour-gate=0/1 (tolerance 24/255 per channel, position gated) first run: primary mac=[221, 221, 221] win=[181, 181, 181] at mac={'firstInkX': 22, 'firstInkY': 29, 'baselineY': 52, 'inkCentreX': 133.0, 'inkRightX'",
     "run 1 [('primary', [], [221, 221, 221], [181, 181, 181]), 'secondary', 'accentColor', 'red']"
    ],
-   "secs": 0.5
+   "secs": 0.7
   },
   {
    "gate": "text-colour",
@@ -2473,10 +2499,10 @@
    "why": [
     "run 01 exact-with-exclusions total=0 in-band=0 out-of-band=0 max-in-band=0 max-out-of-band=0",
     "pairs=1 exact=0 exact-with-exclusions=1 (excluding: text lines (glyph shapes differ: Segoe UI vs SF, decision 2)[0, 20, 800, 260]) edge-aa<=32=0 fail=0 maxdiff=0 diffbbox=None",
-    "text-dark-v1: pairs=1 text-colour-gate=0/1 (tolerance 24/255 per channel, position gated) first run: primary mac=[221, 221, 221] win=[0, 136, 255] at mac={'firstInkX': 22, 'firstInkY': 29, 'baselineY': 52, 'inkCentreX': 133.0} win={'firstIn",
+    "text-dark-v1: pairs=1 text-colour-gate=0/1 (tolerance 24/255 per channel, position gated) first run: primary mac=[221, 221, 221] win=[0, 136, 255] at mac={'firstInkX': 22, 'firstInkY': 29, 'baselineY': 52, 'inkCentreX': 133.0, 'inkRightX': ",
     "run 1 [('primary', [], [221, 221, 221], [0, 136, 255]), 'secondary', 'accentColor', 'red']"
    ],
-   "secs": 0.5
+   "secs": 1.6
   },
   {
    "gate": "text-colour",
@@ -2494,10 +2520,10 @@
    "why": [
     "run 01 exact-with-exclusions total=0 in-band=0 out-of-band=0 max-in-band=0 max-out-of-band=0",
     "pairs=1 exact=0 exact-with-exclusions=1 (excluding: text lines (glyph shapes differ: Segoe UI vs SF, decision 2)[0, 20, 800, 260]) edge-aa<=32=0 fail=0 maxdiff=0 diffbbox=None",
-    "text-dark-v1: pairs=1 text-colour-gate=0/1 (tolerance 24/255 per channel, position gated) first run: primary mac=[221, 221, 221] win=None at mac={'firstInkX': 22, 'firstInkY': 29, 'baselineY': 52, 'inkCentreX': 133.0} win=None; secondary ma",
-    "run 1 [('primary', [\"no ink to place: mac={'firstInkX': 22, 'firstInkY': 29, 'baselineY': 52, 'inkCentreX': 133.0} windows=None\"], [221, 221, 221], None), 'secondary', 'accentColor', 'red']"
+    "text-dark-v1: pairs=1 text-colour-gate=0/1 (tolerance 24/255 per channel, position gated) first run: primary mac=[221, 221, 221] win=None at mac={'firstInkX': 22, 'firstInkY': 29, 'baselineY': 52, 'inkCentreX': 133.0, 'inkRightX': 244, 'ink",
+    "run 1 [('primary', [\"no ink to place: mac={'firstInkX': 22, 'firstInkY': 29, 'baselineY': 52, 'inkCentreX': 133.0, 'inkRightX': 244, 'inkHeight': 24, 'lineBands': 1} windows=None\"], [221, 221, 221], None), 'secondary', 'accentColor', 'red']"
    ],
-   "secs": 0.5
+   "secs": 0.9
   },
   {
    "gate": "text-colour",
@@ -2515,10 +2541,10 @@
    "why": [
     "run 01 exact-with-exclusions total=0 in-band=0 out-of-band=0 max-in-band=0 max-out-of-band=0",
     "pairs=1 exact=0 exact-with-exclusions=1 (excluding: text lines (glyph shapes differ: Segoe UI vs SF, decision 2)[0, 20, 800, 260]) edge-aa<=32=0 fail=0 maxdiff=0 diffbbox=None",
-    "text-dark-v1: pairs=1 text-colour-gate=0/1 (tolerance 24/255 per channel, position gated) first run: primary mac=[221, 221, 221] win=[221, 221, 221] at mac={'firstInkX': 22, 'firstInkY': 29, 'baselineY': 52, 'inkCentreX': 133.0} win={'first",
+    "text-dark-v1: pairs=1 text-colour-gate=0/1 (tolerance 24/255 per channel, position gated) first run: primary mac=[221, 221, 221] win=[221, 221, 221] at mac={'firstInkX': 22, 'firstInkY': 29, 'baselineY': 52, 'inkCentreX': 133.0, 'inkRightX'",
     "run 1 [('primary', ['first ink x differs by 5 px (tolerance 0)'], [221, 221, 221], [221, 221, 221]), 'secondary', 'accentColor', 'red']"
    ],
-   "secs": 0.6
+   "secs": 1.1
   },
   {
    "gate": "text-colour",
@@ -2536,10 +2562,10 @@
    "why": [
     "run 01 exact-with-exclusions total=0 in-band=0 out-of-band=0 max-in-band=0 max-out-of-band=0",
     "pairs=1 exact=0 exact-with-exclusions=1 (excluding: text lines (glyph shapes differ: Segoe UI vs SF, decision 2)[0, 20, 800, 260]) edge-aa<=32=0 fail=0 maxdiff=0 diffbbox=None",
-    "text-dark-v1: pairs=1 text-colour-gate=0/1 (tolerance 24/255 per channel, position gated) first run: primary mac=[221, 221, 221] win=[221, 221, 221] at mac={'firstInkX': 22, 'firstInkY': 29, 'baselineY': 52, 'inkCentreX': 133.0} win={'first",
+    "text-dark-v1: pairs=1 text-colour-gate=0/1 (tolerance 24/255 per channel, position gated) first run: primary mac=[221, 221, 221] win=[221, 221, 221] at mac={'firstInkX': 22, 'firstInkY': 29, 'baselineY': 52, 'inkCentreX': 133.0, 'inkRightX'",
     "run 1 [('primary', ['first ink x differs by -5 px (tolerance 0)'], [221, 221, 221], [221, 221, 221]), 'secondary', 'accentColor', 'red']"
    ],
-   "secs": 0.5
+   "secs": 0.9
   },
   {
    "gate": "text-colour",
@@ -2557,10 +2583,10 @@
    "why": [
     "run 01 exact-with-exclusions total=0 in-band=0 out-of-band=0 max-in-band=0 max-out-of-band=0",
     "pairs=1 exact=0 exact-with-exclusions=1 (excluding: text lines (glyph shapes differ: Segoe UI vs SF, decision 2)[0, 20, 800, 260]) edge-aa<=32=0 fail=0 maxdiff=0 diffbbox=None",
-    "text-dark-v1: pairs=1 text-colour-gate=0/1 (tolerance 24/255 per channel, position gated) first run: primary mac=[221, 221, 221] win=[221, 221, 221] at mac={'firstInkX': 22, 'firstInkY': 29, 'baselineY': 52, 'inkCentreX': 133.0} win={'first",
+    "text-dark-v1: pairs=1 text-colour-gate=0/1 (tolerance 24/255 per channel, position gated) first run: primary mac=[221, 221, 221] win=[221, 221, 221] at mac={'firstInkX': 22, 'firstInkY': 29, 'baselineY': 52, 'inkCentreX': 133.0, 'inkRightX'",
     "run 1 [('primary', ['first ink y differs by 7 px (tolerance 2)', 'baseline differs by 4 px (tolerance 2)', 'ink vertical centre differs by 5.5 px (tolerance 0.5)'], [221, 221, 221], [221, 221, 221]), 'secondary', 'accentColor', 'red']"
    ],
-   "secs": 0.5
+   "secs": 0.7
   },
   {
    "gate": "text-colour",
@@ -2578,7 +2604,7 @@
    "why": [
     "run 01 exact-with-exclusions total=0 in-band=0 out-of-band=0 max-in-band=0 max-out-of-band=0",
     "pairs=1 exact=0 exact-with-exclusions=1 (excluding: text lines (glyph shapes differ: Segoe UI vs SF, decision 2)[0, 20, 800, 260]) edge-aa<=32=0 fail=0 maxdiff=0 diffbbox=None",
-    "text-dark-v1: pairs=1 text-colour-gate=0/1 (tolerance 24/255 per channel, position gated) first run: primary mac=[221, 221, 221] win=[221, 221, 221] at mac={'firstInkX': 22, 'firstInkY': 29, 'baselineY': 52, 'inkCentreX': 133.0} win={'first",
+    "text-dark-v1: pairs=1 text-colour-gate=0/1 (tolerance 24/255 per channel, position gated) first run: primary mac=[221, 221, 221] win=[221, 221, 221] at mac={'firstInkX': 22, 'firstInkY': 29, 'baselineY': 52, 'inkCentreX': 133.0, 'inkRightX'",
     "run 1 [('primary', ['first ink y differs by -3 px (tolerance 2)', 'baseline differs by -6 px (tolerance 2)', 'ink vertical centre differs by -4.5 px (tolerance 0.5)'], [221, 221, 221], [221, 221, 221]), 'secondary', 'accentColor', 'red']"
    ],
    "secs": 0.6
@@ -2599,7 +2625,7 @@
    "why": [
     "run 01 exact-with-exclusions total=0 in-band=0 out-of-band=0 max-in-band=0 max-out-of-band=0",
     "pairs=1 exact=0 exact-with-exclusions=1 (excluding: text lines (glyph shapes differ: Segoe UI vs SF, decision 2)[0, 20, 800, 260]) edge-aa<=32=0 fail=0 maxdiff=0 diffbbox=None",
-    "text-dark-v1: pairs=1 text-colour-gate=0/1 (tolerance 24/255 per channel, position gated) first run: primary mac=[221, 221, 221] win=[221, 221, 221] at mac={'firstInkX': 22, 'firstInkY': 29, 'baselineY': 52, 'inkCentreX': 133.0} win={'first",
+    "text-dark-v1: pairs=1 text-colour-gate=0/1 (tolerance 24/255 per channel, position gated) first run: primary mac=[221, 221, 221] win=[221, 221, 221] at mac={'firstInkX': 22, 'firstInkY': 29, 'baselineY': 52, 'inkCentreX': 133.0, 'inkRightX'",
     "run 1 [('primary', ['first ink y differs by 4 px (tolerance 2)', 'ink vertical centre differs by 2.5 px (tolerance 0.5)'], [221, 221, 221], [221, 221, 221]), 'secondary', 'accentColor', 'red']"
    ],
    "secs": 0.6
@@ -2620,7 +2646,7 @@
    "why": [
     "run 01 exact-with-exclusions total=0 in-band=0 out-of-band=0 max-in-band=0 max-out-of-band=0",
     "pairs=1 exact=0 exact-with-exclusions=1 (excluding: text lines (glyph shapes differ: Segoe UI vs SF, decision 2)[0, 20, 800, 260]) edge-aa<=32=0 fail=0 maxdiff=0 diffbbox=None",
-    "text-dark-v1: pairs=1 text-colour-gate=0/1 (tolerance 24/255 per channel, position gated) first run: primary mac=[221, 221, 221] win=[221, 221, 221] at mac={'firstInkX': 22, 'firstInkY': 29, 'baselineY': 52, 'inkCentreX': 133.0} win={'first",
+    "text-dark-v1: pairs=1 text-colour-gate=0/1 (tolerance 24/255 per channel, position gated) first run: primary mac=[221, 221, 221] win=[221, 221, 221] at mac={'firstInkX': 22, 'firstInkY': 29, 'baselineY': 52, 'inkCentreX': 133.0, 'inkRightX'",
     "run 1 ['primary', 'secondary', 'accentColor', ('red', [], [255, 66, 69], [230, 41, 44])]"
    ],
    "secs": 1.5
@@ -2639,9 +2665,9 @@
    "why": [
     "run 01 exact-with-exclusions total=0 in-band=0 out-of-band=0 max-in-band=0 max-out-of-band=0",
     "pairs=1 exact=0 exact-with-exclusions=1 (excluding: text lines (glyph shapes differ: Segoe UI vs SF, decision 2)[0, 20, 800, 260]) edge-aa<=32=0 fail=0 maxdiff=0 diffbbox=None",
-    "text-dark-v1: pairs=1 text-colour-gate=1/1 (tolerance 24/255 per channel, position gated) first run: primary mac=[221, 221, 221] win=[221, 221, 221] at mac={'firstInkX': 22, 'firstInkY': 29, 'baselineY': 52, 'inkCentreX': 133.0} win={'first"
+    "text-dark-v1: pairs=1 text-colour-gate=1/1 (tolerance 24/255 per channel, position gated) first run: primary mac=[221, 221, 221] win=[221, 221, 221] at mac={'firstInkX': 22, 'firstInkY': 29, 'baselineY': 52, 'inkCentreX': 133.0, 'inkRightX'"
    ],
-   "secs": 1.4
+   "secs": 1.5
   },
   {
    "gate": "text-colour",
@@ -2659,10 +2685,10 @@
    "why": [
     "run 01 exact-with-exclusions total=0 in-band=0 out-of-band=0 max-in-band=0 max-out-of-band=0",
     "pairs=1 exact=0 exact-with-exclusions=1 (excluding: text lines (glyph shapes differ: Segoe UI vs SF, decision 2)[0, 20, 800, 260]) edge-aa<=32=0 fail=0 maxdiff=0 diffbbox=None",
-    "text-dark-v1: pairs=1 text-colour-gate=0/1 (tolerance 24/255 per channel, position gated) first run: primary mac=[221, 221, 221] win=[221, 221, 221] at mac={'firstInkX': 22, 'firstInkY': 29, 'baselineY': 52, 'inkCentreX': 133.0} win={'first",
+    "text-dark-v1: pairs=1 text-colour-gate=0/1 (tolerance 24/255 per channel, position gated) first run: primary mac=[221, 221, 221] win=[221, 221, 221] at mac={'firstInkX': 22, 'firstInkY': 29, 'baselineY': 52, 'inkCentreX': 133.0, 'inkRightX'",
     "run 1 ['primary', 'secondary', 'accentColor', ('red', ['first ink x differs by 1 px (tolerance 0)'], [255, 66, 69], [215, 26, 29])]"
    ],
-   "secs": 0.6
+   "secs": 0.7
   },
   {
    "gate": "text-colour",
@@ -2680,10 +2706,10 @@
    "why": [
     "run 01 exact-with-exclusions total=0 in-band=0 out-of-band=0 max-in-band=0 max-out-of-band=0",
     "pairs=1 exact=0 exact-with-exclusions=1 (excluding: text lines (glyph shapes differ: Segoe UI vs SF, decision 2)[0, 20, 800, 260]) edge-aa<=32=0 fail=0 maxdiff=0 diffbbox=None",
-    "text-dark-v1: pairs=1 text-colour-gate=0/1 (tolerance 24/255 per channel, position gated) first run: primary mac=[221, 221, 221] win=[221, 221, 221] at mac={'firstInkX': 22, 'firstInkY': 29, 'baselineY': 52, 'inkCentreX': 133.0} win={'first",
+    "text-dark-v1: pairs=1 text-colour-gate=0/1 (tolerance 24/255 per channel, position gated) first run: primary mac=[221, 221, 221] win=[221, 221, 221] at mac={'firstInkX': 22, 'firstInkY': 29, 'baselineY': 52, 'inkCentreX': 133.0, 'inkRightX'",
     "run 1 ['primary', 'secondary', 'accentColor', ('red', [], [255, 66, 69], [0, 136, 255])]"
    ],
-   "secs": 0.6
+   "secs": 0.7
   },
   {
    "gate": "text-colour",
@@ -2701,8 +2727,8 @@
    "why": [
     "run 01 exact-with-exclusions total=0 in-band=0 out-of-band=0 max-in-band=0 max-out-of-band=0",
     "pairs=1 exact=0 exact-with-exclusions=1 (excluding: text lines (glyph shapes differ: Segoe UI vs SF, decision 2)[0, 20, 800, 260]) edge-aa<=32=0 fail=0 maxdiff=0 diffbbox=None",
-    "text-dark-v1: pairs=1 text-colour-gate=0/1 (tolerance 24/255 per channel, position gated) first run: primary mac=[221, 221, 221] win=[221, 221, 221] at mac={'firstInkX': 22, 'firstInkY': 29, 'baselineY': 52, 'inkCentreX': 133.0} win={'first",
-    "run 1 ['primary', 'secondary', 'accentColor', ('red', [\"no ink to place: mac={'firstInkX': 22, 'firstInkY': 209, 'baselineY': 232, 'inkCentreX': 133.0} windows=None\"], [255, 66, 69], None)]"
+    "text-dark-v1: pairs=1 text-colour-gate=0/1 (tolerance 24/255 per channel, position gated) first run: primary mac=[221, 221, 221] win=[221, 221, 221] at mac={'firstInkX': 22, 'firstInkY': 29, 'baselineY': 52, 'inkCentreX': 133.0, 'inkRightX'",
+    "run 1 ['primary', 'secondary', 'accentColor', ('red', [\"no ink to place: mac={'firstInkX': 22, 'firstInkY': 209, 'baselineY': 232, 'inkCentreX': 133.0, 'inkRightX': 244, 'inkHeight': 24, 'lineBands': 1} windows=None\"], [255, 66, 69], None)]"
    ],
    "secs": 0.6
   },
@@ -2722,7 +2748,7 @@
    "why": [
     "run 01 exact-with-exclusions total=0 in-band=0 out-of-band=0 max-in-band=0 max-out-of-band=0",
     "pairs=1 exact=0 exact-with-exclusions=1 (excluding: text lines (glyph shapes differ: Segoe UI vs SF, decision 2)[0, 20, 800, 260]) edge-aa<=32=0 fail=0 maxdiff=0 diffbbox=None",
-    "text-dark-v1: pairs=1 text-colour-gate=0/1 (tolerance 24/255 per channel, position gated) first run: primary mac=[221, 221, 221] win=[221, 221, 221] at mac={'firstInkX': 22, 'firstInkY': 29, 'baselineY': 52, 'inkCentreX': 133.0} win={'first",
+    "text-dark-v1: pairs=1 text-colour-gate=0/1 (tolerance 24/255 per channel, position gated) first run: primary mac=[221, 221, 221] win=[221, 221, 221] at mac={'firstInkX': 22, 'firstInkY': 29, 'baselineY': 52, 'inkCentreX': 133.0, 'inkRightX'",
     "run 1 ['primary', 'secondary', 'accentColor', ('red', ['first ink x differs by 5 px (tolerance 0)'], [255, 66, 69], [255, 66, 69])]"
    ],
    "secs": 0.6
@@ -2743,7 +2769,7 @@
    "why": [
     "run 01 exact-with-exclusions total=0 in-band=0 out-of-band=0 max-in-band=0 max-out-of-band=0",
     "pairs=1 exact=0 exact-with-exclusions=1 (excluding: text lines (glyph shapes differ: Segoe UI vs SF, decision 2)[0, 20, 800, 260]) edge-aa<=32=0 fail=0 maxdiff=0 diffbbox=None",
-    "text-dark-v1: pairs=1 text-colour-gate=0/1 (tolerance 24/255 per channel, position gated) first run: primary mac=[221, 221, 221] win=[221, 221, 221] at mac={'firstInkX': 22, 'firstInkY': 29, 'baselineY': 52, 'inkCentreX': 133.0} win={'first",
+    "text-dark-v1: pairs=1 text-colour-gate=0/1 (tolerance 24/255 per channel, position gated) first run: primary mac=[221, 221, 221] win=[221, 221, 221] at mac={'firstInkX': 22, 'firstInkY': 29, 'baselineY': 52, 'inkCentreX': 133.0, 'inkRightX'",
     "run 1 ['primary', 'secondary', 'accentColor', ('red', ['first ink x differs by -5 px (tolerance 0)'], [255, 66, 69], [255, 66, 69])]"
    ],
    "secs": 0.6
@@ -2764,7 +2790,7 @@
    "why": [
     "run 01 exact-with-exclusions total=0 in-band=0 out-of-band=0 max-in-band=0 max-out-of-band=0",
     "pairs=1 exact=0 exact-with-exclusions=1 (excluding: text lines (glyph shapes differ: Segoe UI vs SF, decision 2)[0, 20, 800, 260]) edge-aa<=32=0 fail=0 maxdiff=0 diffbbox=None",
-    "text-dark-v1: pairs=1 text-colour-gate=0/1 (tolerance 24/255 per channel, position gated) first run: primary mac=[221, 221, 221] win=[221, 221, 221] at mac={'firstInkX': 22, 'firstInkY': 29, 'baselineY': 52, 'inkCentreX': 133.0} win={'first",
+    "text-dark-v1: pairs=1 text-colour-gate=0/1 (tolerance 24/255 per channel, position gated) first run: primary mac=[221, 221, 221] win=[221, 221, 221] at mac={'firstInkX': 22, 'firstInkY': 29, 'baselineY': 52, 'inkCentreX': 133.0, 'inkRightX'",
     "run 1 ['primary', 'secondary', 'accentColor', ('red', ['first ink y differs by 7 px (tolerance 2)', 'baseline differs by 4 px (tolerance 2)', 'ink vertical centre differs by 5.5 px (tolerance 0.5)'], [255, 66, 69], [255, 66, 69])]"
    ],
    "secs": 0.6
@@ -2785,7 +2811,7 @@
    "why": [
     "run 01 exact-with-exclusions total=0 in-band=0 out-of-band=0 max-in-band=0 max-out-of-band=0",
     "pairs=1 exact=0 exact-with-exclusions=1 (excluding: text lines (glyph shapes differ: Segoe UI vs SF, decision 2)[0, 20, 800, 260]) edge-aa<=32=0 fail=0 maxdiff=0 diffbbox=None",
-    "text-dark-v1: pairs=1 text-colour-gate=0/1 (tolerance 24/255 per channel, position gated) first run: primary mac=[221, 221, 221] win=[221, 221, 221] at mac={'firstInkX': 22, 'firstInkY': 29, 'baselineY': 52, 'inkCentreX': 133.0} win={'first",
+    "text-dark-v1: pairs=1 text-colour-gate=0/1 (tolerance 24/255 per channel, position gated) first run: primary mac=[221, 221, 221] win=[221, 221, 221] at mac={'firstInkX': 22, 'firstInkY': 29, 'baselineY': 52, 'inkCentreX': 133.0, 'inkRightX'",
     "run 1 ['primary', 'secondary', 'accentColor', ('red', ['first ink y differs by -3 px (tolerance 2)', 'baseline differs by -6 px (tolerance 2)', 'ink vertical centre differs by -4.5 px (tolerance 0.5)'], [255, 66, 69], [255, 66, 69])]"
    ],
    "secs": 0.6
@@ -2806,7 +2832,7 @@
    "why": [
     "run 01 exact-with-exclusions total=0 in-band=0 out-of-band=0 max-in-band=0 max-out-of-band=0",
     "pairs=1 exact=0 exact-with-exclusions=1 (excluding: text lines (glyph shapes differ: Segoe UI vs SF, decision 2)[0, 20, 800, 260]) edge-aa<=32=0 fail=0 maxdiff=0 diffbbox=None",
-    "text-dark-v1: pairs=1 text-colour-gate=0/1 (tolerance 24/255 per channel, position gated) first run: primary mac=[221, 221, 221] win=[221, 221, 221] at mac={'firstInkX': 22, 'firstInkY': 29, 'baselineY': 52, 'inkCentreX': 133.0} win={'first",
+    "text-dark-v1: pairs=1 text-colour-gate=0/1 (tolerance 24/255 per channel, position gated) first run: primary mac=[221, 221, 221] win=[221, 221, 221] at mac={'firstInkX': 22, 'firstInkY': 29, 'baselineY': 52, 'inkCentreX': 133.0, 'inkRightX'",
     "run 1 ['primary', 'secondary', 'accentColor', ('red', ['first ink y differs by 4 px (tolerance 2)', 'ink vertical centre differs by 2.5 px (tolerance 0.5)'], [255, 66, 69], [255, 66, 69])]"
    ],
    "secs": 0.6
@@ -2828,8 +2854,8 @@
    "why": [
     "run 01 fail total=2006 in-band=0 out-of-band=2006 max-in-band=0 max-out-of-band=191",
     "pairs=1 exact=0 exact-with-exclusions=0 (excluding: text lines (glyph shapes differ: Segoe UI vs SF, decision 2)[0, 20, 800, 260]) edge-aa<=32=0 fail=1 maxdiff=191 diffbbox=(22, 331, 233, 352)",
-    "text-dark-v1: pairs=1 text-colour-gate=0/1 (tolerance 24/255 per channel, position gated) first run: primary mac=[221, 221, 221] win=None at mac={'firstInkX': 22, 'firstInkY': 29, 'baselineY': 52, 'inkCentreX': 133.0} win=None; secondary ma",
-    "run 1 [('primary', [\"no ink to place: mac={'firstInkX': 22, 'firstInkY': 29, 'baselineY': 52, 'inkCentreX': 133.0} windows=None\"], [221, 221, 221], None), 'secondary', 'accentColor', 'red']"
+    "text-dark-v1: pairs=1 text-colour-gate=0/1 (tolerance 24/255 per channel, position gated) first run: primary mac=[221, 221, 221] win=None at mac={'firstInkX': 22, 'firstInkY': 29, 'baselineY': 52, 'inkCentreX': 133.0, 'inkRightX': 244, 'ink",
+    "run 1 [('primary', [\"no ink to place: mac={'firstInkX': 22, 'firstInkY': 29, 'baselineY': 52, 'inkCentreX': 133.0, 'inkRightX': 244, 'inkHeight': 24, 'lineBands': 1} windows=None\"], [221, 221, 221], None), 'secondary', 'accentColor', 'red']"
    ],
    "secs": 0.6
   },
@@ -2853,7 +2879,7 @@
     "bordered-v1: pairs=1 button-gate=0/1 width difference (label advance, Segoe vs SF)=[-7] cap max-in-band=20",
     "run 1 {'sameHeightAndY': False, 'flatBandsExact': True, 'labelInk': {'mac': [372, 289, 427, 314], 'windows': [376, 292, 424, 313], 'darkestMac': 36, 'darkestWindows': 36, 'centredVertically': True, 'centredHorizontally': True, 'colourOk': T"
    ],
-   "secs": 0.3
+   "secs": 0.4
   },
   {
    "gate": "button",
@@ -2941,7 +2967,7 @@
     "bordered-v1: pairs=1 button-gate=0/1 width difference (label advance, Segoe vs SF)=[-7] cap max-in-band=3",
     "run 1 {'sameHeightAndY': True, 'flatBandsExact': True, 'labelInk': {'mac': [372, 289, 427, 314], 'windows': [377, 291, 424, 312], 'darkestMac': 36, 'darkestWindows': 77, 'centredVertically': True, 'centredHorizontally': True, 'colourOk': Fa"
    ],
-   "secs": 0.4
+   "secs": 0.5
   },
   {
    "gate": "button",
@@ -3003,7 +3029,7 @@
     "pairs=1 exact=0 exact-with-exclusions=0 edge-aa<=32=0 fail=1 maxdiff=199 diffbbox=(340, 270, 459, 330)",
     "bordered-v1: pairs=1 button-gate=1/1 width difference (label advance, Segoe vs SF)=[-7] cap max-in-band=3"
    ],
-   "secs": 0.3
+   "secs": 0.4
   },
   {
    "gate": "button",
@@ -3045,7 +3071,7 @@
     "pairs=1 exact=0 exact-with-exclusions=0 edge-aa<=32=0 fail=1 maxdiff=199 diffbbox=(340, 270, 459, 330)",
     "bordered-v1: pairs=1 button-gate=1/1 width difference (label advance, Segoe vs SF)=[-7] cap max-in-band=3"
    ],
-   "secs": 0.3
+   "secs": 0.4
   },
   {
    "gate": "button",
@@ -3089,7 +3115,7 @@
     "bordered-v1: pairs=1 button-gate=0/1 width difference (label advance, Segoe vs SF)=[-7] cap max-in-band=3",
     "run 1 {'sameHeightAndY': True, 'flatBandsExact': True, 'labelInk': {'mac': [372, 289, 427, 314], 'windows': [376, 296, 424, 317], 'darkestMac': 36, 'darkestWindows': 36, 'centredVertically': False, 'centredHorizontally': True, 'colourOk': T"
    ],
-   "secs": 0.3
+   "secs": 0.4
   },
   {
    "gate": "button",
@@ -3111,7 +3137,7 @@
     "bordered-v1: pairs=1 button-gate=0/1 width difference (label advance, Segoe vs SF)=[-7] cap max-in-band=20",
     "run 1 {'sameHeightAndY': True, 'flatBandsExact': True, 'labelInk': {'mac': [372, 289, 427, 314], 'windows': [376, 291, 424, 312], 'darkestMac': 36, 'darkestWindows': 36, 'centredVertically': True, 'centredHorizontally': True, 'colourOk': Tr"
    ],
-   "secs": 0.3
+   "secs": 0.4
   },
   {
    "gate": "button",
@@ -3195,7 +3221,7 @@
     "pairs=1 exact=0 exact-with-exclusions=0 edge-aa<=32=0 fail=1 maxdiff=199 diffbbox=(340, 270, 460, 330)",
     "bordered-v1: pairs=1 button-gate=1/1 width difference (label advance, Segoe vs SF)=[1] cap max-in-band=3"
    ],
-   "secs": 0.3
+   "secs": 0.4
   },
   {
    "gate": "button",
@@ -3215,7 +3241,7 @@
     "pairs=1 exact=0 exact-with-exclusions=0 edge-aa<=32=0 fail=1 maxdiff=199 diffbbox=(340, 270, 459, 330)",
     "bordered-v1: pairs=1 button-gate=1/1 width difference (label advance, Segoe vs SF)=[-15] cap max-in-band=3"
    ],
-   "secs": 0.3
+   "secs": 0.4
   },
   {
    "gate": "button",
@@ -3237,7 +3263,7 @@
     "prominent-v1: pairs=1 button-gate=0/1 width difference (label advance, Segoe vs SF)=[-7] cap max-in-band=255",
     "run 1 {'sameHeightAndY': False, 'flatBandsExact': True, 'labelInk': {'mac': [372, 289, 427, 313], 'windows': [376, 292, 424, 313], 'darkestMac': 255, 'darkestWindows': 255, 'centredVertically': True, 'centredHorizontally': True, 'colourOk':"
    ],
-   "secs": 0.3
+   "secs": 0.4
   },
   {
    "gate": "button",
@@ -3259,7 +3285,7 @@
     "prominent-v1: pairs=1 button-gate=0/1 width difference (label advance, Segoe vs SF)=[-7] cap max-in-band=14",
     "run 1 {'sameHeightAndY': False, 'flatBandsExact': True, 'labelInk': {'mac': [372, 289, 427, 313], 'windows': [376, 291, 424, 312], 'darkestMac': 255, 'darkestWindows': 255, 'centredVertically': True, 'centredHorizontally': True, 'colourOk':"
    ],
-   "secs": 0.3
+   "secs": 0.4
   },
   {
    "gate": "button",
@@ -3281,7 +3307,7 @@
     "prominent-v1: pairs=1 button-gate=0/1 width difference (label advance, Segoe vs SF)=[] cap max-in-band=None",
     "run 1 {'error': 'no button ink mac=[340, 270, 459, 330] windows=None'}"
    ],
-   "secs": 0.2
+   "secs": 0.3
   },
   {
    "gate": "button",
@@ -3303,7 +3329,7 @@
     "prominent-v1: pairs=1 button-gate=0/1 width difference (label advance, Segoe vs SF)=[] cap max-in-band=None",
     "run 1 {'error': 'no label ink inside the button (mac=[372, 289, 427, 313] windows=None)'}"
    ],
-   "secs": 0.3
+   "secs": 0.4
   },
   {
    "gate": "button",
@@ -3345,7 +3371,7 @@
     "pairs=1 exact=0 exact-with-exclusions=0 edge-aa<=32=0 fail=1 maxdiff=255 diffbbox=(340, 270, 459, 330)",
     "prominent-v1: pairs=1 button-gate=1/1 width difference (label advance, Segoe vs SF)=[-7] cap max-in-band=14"
    ],
-   "secs": 0.4
+   "secs": 0.5
   },
   {
    "gate": "button",
@@ -3387,7 +3413,7 @@
     "pairs=1 exact=0 exact-with-exclusions=0 edge-aa<=32=0 fail=1 maxdiff=255 diffbbox=(340, 270, 459, 330)",
     "prominent-v1: pairs=1 button-gate=1/1 width difference (label advance, Segoe vs SF)=[-7] cap max-in-band=14"
    ],
-   "secs": 0.3
+   "secs": 0.4
   },
   {
    "gate": "button",
@@ -3409,7 +3435,7 @@
     "prominent-v1: pairs=1 button-gate=0/1 width difference (label advance, Segoe vs SF)=[-7] cap max-in-band=14",
     "run 1 {'sameHeightAndY': True, 'flatBandsExact': True, 'labelInk': {'mac': [372, 289, 427, 313], 'windows': [376, 293, 424, 314], 'darkestMac': 255, 'darkestWindows': 255, 'centredVertically': False, 'centredHorizontally': True, 'colourOk':"
    ],
-   "secs": 0.3
+   "secs": 0.4
   },
   {
    "gate": "button",
@@ -3429,7 +3455,7 @@
     "pairs=1 exact=0 exact-with-exclusions=0 edge-aa<=32=0 fail=1 maxdiff=255 diffbbox=(340, 270, 459, 330)",
     "prominent-v1: pairs=1 button-gate=1/1 width difference (label advance, Segoe vs SF)=[-7] cap max-in-band=14"
    ],
-   "secs": 0.3
+   "secs": 0.6
   },
   {
    "gate": "button",
@@ -3451,7 +3477,7 @@
     "prominent-v1: pairs=1 button-gate=0/1 width difference (label advance, Segoe vs SF)=[-7] cap max-in-band=14",
     "run 1 {'sameHeightAndY': True, 'flatBandsExact': True, 'labelInk': {'mac': [372, 289, 427, 313], 'windows': [381, 291, 429, 312], 'darkestMac': 255, 'darkestWindows': 255, 'centredVertically': True, 'centredHorizontally': False, 'colourOk':"
    ],
-   "secs": 0.3
+   "secs": 0.4
   },
   {
    "gate": "button",
@@ -3473,7 +3499,7 @@
     "prominent-v1: pairs=1 button-gate=0/1 width difference (label advance, Segoe vs SF)=[-7] cap max-in-band=14",
     "run 1 {'sameHeightAndY': True, 'flatBandsExact': True, 'labelInk': {'mac': [372, 289, 427, 313], 'windows': [376, 296, 424, 317], 'darkestMac': 255, 'darkestWindows': 255, 'centredVertically': False, 'centredHorizontally': True, 'colourOk':"
    ],
-   "secs": 0.3
+   "secs": 0.4
   },
   {
    "gate": "button",
@@ -3495,7 +3521,7 @@
     "prominent-v1: pairs=1 button-gate=0/1 width difference (label advance, Segoe vs SF)=[-7] cap max-in-band=255",
     "run 1 {'sameHeightAndY': True, 'flatBandsExact': True, 'labelInk': {'mac': [372, 289, 427, 313], 'windows': [376, 291, 424, 312], 'darkestMac': 255, 'darkestWindows': 255, 'centredVertically': True, 'centredHorizontally': True, 'colourOk': "
    ],
-   "secs": 0.3
+   "secs": 0.4
   },
   {
    "gate": "button",
@@ -3517,7 +3543,7 @@
     "prominent-v1: pairs=1 button-gate=0/1 width difference (label advance, Segoe vs SF)=[-7] cap max-in-band=14",
     "run 1 {'sameHeightAndY': True, 'flatBandsExact': False, 'labelInk': {'mac': [372, 289, 427, 313], 'windows': [376, 291, 424, 312], 'darkestMac': 255, 'darkestWindows': 255, 'centredVertically': True, 'centredHorizontally': True, 'colourOk':"
    ],
-   "secs": 0.3
+   "secs": 0.4
   },
   {
    "gate": "button",
@@ -3539,7 +3565,7 @@
     "prominent-v1: pairs=1 button-gate=0/1 width difference (label advance, Segoe vs SF)=[-7] cap max-in-band=33",
     "run 1 {'sameHeightAndY': True, 'flatBandsExact': True, 'labelInk': {'mac': [372, 289, 427, 313], 'windows': [376, 291, 424, 312], 'darkestMac': 255, 'darkestWindows': 255, 'centredVertically': True, 'centredHorizontally': True, 'colourOk': "
    ],
-   "secs": 0.3
+   "secs": 0.6
   },
   {
    "gate": "button",
@@ -3579,7 +3605,7 @@
     "pairs=1 exact=0 exact-with-exclusions=0 edge-aa<=32=0 fail=1 maxdiff=255 diffbbox=(340, 270, 460, 330)",
     "prominent-v1: pairs=1 button-gate=1/1 width difference (label advance, Segoe vs SF)=[1] cap max-in-band=14"
    ],
-   "secs": 0.3
+   "secs": 0.4
   },
   {
    "gate": "button",
@@ -3599,7 +3625,7 @@
     "pairs=1 exact=0 exact-with-exclusions=0 edge-aa<=32=0 fail=1 maxdiff=255 diffbbox=(340, 270, 459, 330)",
     "prominent-v1: pairs=1 button-gate=1/1 width difference (label advance, Segoe vs SF)=[-15] cap max-in-band=14"
    ],
-   "secs": 0.3
+   "secs": 0.4
   },
   {
    "gate": "button",
@@ -3621,7 +3647,7 @@
     "button-disabled-v1: pairs=1 button-gate=0/1 width difference (label advance, Segoe vs SF)=[-8] cap max-in-band=10",
     "run 1 {'sameHeightAndY': False, 'flatBandsExact': True, 'labelInk': {'mac': [99, 40, 153, 63], 'windows': [102, 42, 149, 63], 'darkestMac': 182, 'darkestWindows': 182, 'centredVertically': True, 'centredHorizontally': True, 'colourOk': True"
    ],
-   "secs": 0.3
+   "secs": 0.4
   },
   {
    "gate": "button",
@@ -3643,7 +3669,7 @@
     "button-disabled-v1: pairs=1 button-gate=0/1 width difference (label advance, Segoe vs SF)=[-8] cap max-in-band=1",
     "run 1 {'sameHeightAndY': False, 'flatBandsExact': True, 'labelInk': {'mac': [99, 40, 153, 63], 'windows': [102, 41, 149, 62], 'darkestMac': 182, 'darkestWindows': 182, 'centredVertically': True, 'centredHorizontally': True, 'colourOk': True"
    ],
-   "secs": 0.3
+   "secs": 0.4
   },
   {
    "gate": "button",
@@ -3709,7 +3735,7 @@
     "button-disabled-v1: pairs=1 button-gate=0/1 width difference (label advance, Segoe vs SF)=[-8] cap max-in-band=1",
     "run 1 {'sameHeightAndY': True, 'flatBandsExact': True, 'labelInk': {'mac': [99, 40, 153, 63], 'windows': [101, 41, 149, 62], 'darkestMac': 182, 'darkestWindows': 141, 'centredVertically': True, 'centredHorizontally': True, 'colourOk': False"
    ],
-   "secs": 0.4
+   "secs": 0.5
   },
   {
    "gate": "button",
@@ -3729,7 +3755,7 @@
     "pairs=1 exact=0 exact-with-exclusions=0 edge-aa<=32=0 fail=1 maxdiff=103 diffbbox=(65, 20, 185, 80)",
     "button-disabled-v1: pairs=1 button-gate=1/1 width difference (label advance, Segoe vs SF)=[-8] cap max-in-band=1"
    ],
-   "secs": 0.4
+   "secs": 0.5
   },
   {
    "gate": "button",
@@ -3751,7 +3777,7 @@
     "button-disabled-v1: pairs=1 button-gate=0/1 width difference (label advance, Segoe vs SF)=[-8] cap max-in-band=1",
     "run 1 {'sameHeightAndY': True, 'flatBandsExact': True, 'labelInk': {'mac': [99, 40, 153, 63], 'windows': [105, 41, 152, 62], 'darkestMac': 182, 'darkestWindows': 182, 'centredVertically': True, 'centredHorizontally': False, 'colourOk': True"
    ],
-   "secs": 0.3
+   "secs": 0.4
   },
   {
    "gate": "button",
@@ -3771,7 +3797,7 @@
     "pairs=1 exact=0 exact-with-exclusions=0 edge-aa<=32=0 fail=1 maxdiff=63 diffbbox=(65, 20, 185, 80)",
     "button-disabled-v1: pairs=1 button-gate=1/1 width difference (label advance, Segoe vs SF)=[-8] cap max-in-band=1"
    ],
-   "secs": 0.3
+   "secs": 0.4
   },
   {
    "gate": "button",
@@ -3793,7 +3819,7 @@
     "button-disabled-v1: pairs=1 button-gate=0/1 width difference (label advance, Segoe vs SF)=[-8] cap max-in-band=1",
     "run 1 {'sameHeightAndY': True, 'flatBandsExact': True, 'labelInk': {'mac': [99, 40, 153, 63], 'windows': [102, 43, 149, 64], 'darkestMac': 182, 'darkestWindows': 182, 'centredVertically': False, 'centredHorizontally': True, 'colourOk': True"
    ],
-   "secs": 0.3
+   "secs": 0.4
   },
   {
    "gate": "button",
@@ -3813,7 +3839,7 @@
     "pairs=1 exact=0 exact-with-exclusions=0 edge-aa<=32=0 fail=1 maxdiff=63 diffbbox=(65, 20, 185, 80)",
     "button-disabled-v1: pairs=1 button-gate=1/1 width difference (label advance, Segoe vs SF)=[-8] cap max-in-band=1"
    ],
-   "secs": 0.3
+   "secs": 0.4
   },
   {
    "gate": "button",
@@ -3857,7 +3883,7 @@
     "button-disabled-v1: pairs=1 button-gate=0/1 width difference (label advance, Segoe vs SF)=[-8] cap max-in-band=1",
     "run 1 {'sameHeightAndY': True, 'flatBandsExact': True, 'labelInk': {'mac': [99, 40, 153, 63], 'windows': [102, 46, 149, 67], 'darkestMac': 182, 'darkestWindows': 182, 'centredVertically': False, 'centredHorizontally': True, 'colourOk': True"
    ],
-   "secs": 0.3
+   "secs": 0.4
   },
   {
    "gate": "button",
@@ -3879,7 +3905,7 @@
     "button-disabled-v1: pairs=1 button-gate=0/1 width difference (label advance, Segoe vs SF)=[-8] cap max-in-band=10",
     "run 1 {'sameHeightAndY': True, 'flatBandsExact': True, 'labelInk': {'mac': [99, 40, 153, 63], 'windows': [102, 41, 149, 62], 'darkestMac': 182, 'darkestWindows': 182, 'centredVertically': True, 'centredHorizontally': True, 'colourOk': True}"
    ],
-   "secs": 0.3
+   "secs": 0.4
   },
   {
    "gate": "button",
@@ -3901,7 +3927,7 @@
     "button-disabled-v1: pairs=1 button-gate=0/1 width difference (label advance, Segoe vs SF)=[-8] cap max-in-band=5",
     "run 1 {'sameHeightAndY': True, 'flatBandsExact': False, 'labelInk': {'mac': [99, 40, 153, 63], 'windows': [102, 41, 149, 62], 'darkestMac': 182, 'darkestWindows': 182, 'centredVertically': True, 'centredHorizontally': True, 'colourOk': True"
    ],
-   "secs": 0.3
+   "secs": 0.4
   },
   {
    "gate": "button",
@@ -3923,7 +3949,7 @@
     "button-disabled-v1: pairs=1 button-gate=0/1 width difference (label advance, Segoe vs SF)=[-8] cap max-in-band=33",
     "run 1 {'sameHeightAndY': True, 'flatBandsExact': True, 'labelInk': {'mac': [99, 40, 153, 63], 'windows': [102, 41, 149, 62], 'darkestMac': 182, 'darkestWindows': 182, 'centredVertically': True, 'centredHorizontally': True, 'colourOk': True}"
    ],
-   "secs": 0.3
+   "secs": 0.4
   },
   {
    "gate": "button",
@@ -3943,7 +3969,7 @@
     "pairs=1 exact=0 exact-with-exclusions=0 edge-aa<=32=0 fail=1 maxdiff=63 diffbbox=(65, 20, 185, 80)",
     "button-disabled-v1: pairs=1 button-gate=1/1 width difference (label advance, Segoe vs SF)=[-8] cap max-in-band=32"
    ],
-   "secs": 0.3
+   "secs": 0.4
   },
   {
    "gate": "button",
@@ -4005,7 +4031,7 @@
     "button-disabled-v1: pairs=1 button-gate=0/1 width difference (label advance, Segoe vs SF)=[-8] cap max-in-band=10",
     "run 1 {'sameHeightAndY': True, 'flatBandsExact': False, 'labelInk': {'mac': [99, 40, 153, 63], 'windows': [102, 41, 149, 62], 'darkestMac': 182, 'darkestWindows': 36, 'centredVertically': True, 'centredHorizontally': True, 'colourOk': False"
    ],
-   "secs": 0.3
+   "secs": 0.4
   },
   {
    "gate": "button",
@@ -4027,7 +4053,7 @@
     "prominent-v1: pairs=1 button-gate=0/1 width difference (label advance, Segoe vs SF)=[-7] cap max-in-band=235",
     "run 1 {'sameHeightAndY': True, 'flatBandsExact': False, 'labelInk': {'mac': [372, 289, 427, 313], 'windows': [368, 274, 432, 326], 'darkestMac': 255, 'darkestWindows': 255, 'centredVertically': True, 'centredHorizontally': True, 'colourOk':"
    ],
-   "secs": 0.3
+   "secs": 0.4
   },
   {
    "gate": "control",
@@ -4047,7 +4073,7 @@
     "pairs=1 exact=0 exact-with-exclusions=0 edge-aa<=32=0 fail=1 maxdiff=255 diffbbox=(2, 0, 281, 61)",
     "switch-labelled-on-v1: pairs=1 control-gate=1/1 dx(label advance difference)=[-16] control max-in-band=18 out-of-band=[0]"
    ],
-   "secs": 0.4
+   "secs": 0.5
   },
   {
    "gate": "control",
@@ -4069,7 +4095,7 @@
     "switch-labelled-on-v1: pairs=1 control-gate=0/1 dx(label advance difference)=[-17] control max-in-band=255 out-of-band=[27]",
     "run 1 {'xGate': {'ok': False, 'why': ['label-to-control gap differs by -2 px (mac 23, windows 21, tolerance 1)'], 'leadingX': {'mac': 2, 'windows': 2}, 'labelLeadingX': {'mac': 2, 'windows': 2}, 'labelLeftOfControl': {'mac': True, 'windows'"
    ],
-   "secs": 0.4
+   "secs": 0.5
   },
   {
    "gate": "control",
@@ -4091,7 +4117,7 @@
     "switch-labelled-on-v1: pairs=1 control-gate=0/1 dx(label advance difference)=[-16] control max-in-band=18 out-of-band=[0]",
     "run 1 {'xGate': {'ok': True, 'why': [], 'leadingX': {'mac': 2, 'windows': 2}, 'labelLeadingX': {'mac': 2, 'windows': 2}, 'labelLeftOfControl': {'mac': True, 'windows': True}, 'controlGap': {'mac': 23, 'windows': 22}}, 'sameSizeAndY': False,"
    ],
-   "secs": 0.3
+   "secs": 0.4
   },
   {
    "gate": "control",
@@ -4113,7 +4139,7 @@
     "switch-labelled-on-v1: pairs=1 control-gate=0/1 dx(label advance difference)=[-16] control max-in-band=255 out-of-band=[0]",
     "run 1 {'xGate': {'ok': True, 'why': [], 'leadingX': {'mac': 2, 'windows': 2}, 'labelLeadingX': {'mac': 2, 'windows': 2}, 'labelLeftOfControl': {'mac': True, 'windows': True}, 'controlGap': {'mac': 23, 'windows': 22}}, 'sameSizeAndY': False,"
    ],
-   "secs": 0.3
+   "secs": 0.4
   },
   {
    "gate": "control",
@@ -4135,7 +4161,7 @@
     "switch-labelled-on-v1: pairs=1 control-gate=0/1 dx(label advance difference)=[] control max-in-band=None out-of-band=[]",
     "run 1 {'error': 'control columns mac=[(154, 265)] win=[]'}"
    ],
-   "secs": 0.3
+   "secs": 0.4
   },
   {
    "gate": "control",
@@ -4157,7 +4183,7 @@
     "switch-labelled-on-v1: pairs=1 control-gate=0/1 dx(label advance difference)=[-16] control max-in-band=18 out-of-band=[0]",
     "run 1 {'error': 'no label ink beside the control (mac=[2, 18, 119, 44] windows=None)', 'xGate': {'ok': False, 'why': []}, 'sameSizeAndY': True, 'labelInkBBox': {'mac': [2, 18, 119, 44], 'windows': None, 'centreToleranceOk': False}}"
    ],
-   "secs": 0.3
+   "secs": 0.4
   },
   {
    "gate": "control",
@@ -4179,7 +4205,7 @@
     "switch-labelled-on-v1: pairs=1 control-gate=0/1 dx(label advance difference)=[-16] control max-in-band=18 out-of-band=[0]",
     "run 1 {'xGate': {'ok': True, 'why': [], 'leadingX': {'mac': 2, 'windows': 2}, 'labelLeadingX': {'mac': 2, 'windows': 2}, 'labelLeftOfControl': {'mac': True, 'windows': True}, 'controlGap': {'mac': 23, 'windows': 22}}, 'sameSizeAndY': True, "
    ],
-   "secs": 0.7
+   "secs": 0.9
   },
   {
    "gate": "control",
@@ -4199,7 +4225,7 @@
     "pairs=1 exact=0 exact-with-exclusions=0 edge-aa<=32=0 fail=1 maxdiff=255 diffbbox=(2, 0, 281, 61)",
     "switch-labelled-on-v1: pairs=1 control-gate=1/1 dx(label advance difference)=[-16] control max-in-band=18 out-of-band=[0]"
    ],
-   "secs": 0.7
+   "secs": 0.9
   },
   {
    "gate": "control",
@@ -4221,7 +4247,7 @@
     "switch-labelled-on-v1: pairs=1 control-gate=0/1 dx(label advance difference)=[-16] control max-in-band=18 out-of-band=[0]",
     "run 1 {'xGate': {'ok': True, 'why': [], 'leadingX': {'mac': 2, 'windows': 2}, 'labelLeadingX': {'mac': 2, 'windows': 2}, 'labelLeftOfControl': {'mac': True, 'windows': True}, 'controlGap': {'mac': 23, 'windows': 22}}, 'sameSizeAndY': True, "
    ],
-   "secs": 0.4
+   "secs": 0.5
   },
   {
    "gate": "control",
@@ -4243,7 +4269,7 @@
     "switch-labelled-on-v1: pairs=1 control-gate=0/1 dx(label advance difference)=[-16] control max-in-band=18 out-of-band=[0]",
     "run 1 {'xGate': {'ok': False, 'why': ['row leading x differs by 3 px (mac 2, windows 5, tolerance 0)', 'label first ink x differs by 3 px (mac 2, windows 5, tolerance 0)', 'label-to-control gap differs by -2 px (mac 23, windows 21, toleranc"
    ],
-   "secs": 0.4
+   "secs": 0.5
   },
   {
    "gate": "control",
@@ -4265,7 +4291,7 @@
     "switch-labelled-on-v1: pairs=1 control-gate=0/1 dx(label advance difference)=[-16] control max-in-band=18 out-of-band=[0]",
     "run 1 {'xGate': {'ok': False, 'why': ['row leading x differs by 1 px (mac 2, windows 3, tolerance 0)', 'label first ink x differs by 1 px (mac 2, windows 3, tolerance 0)', 'label-to-control gap differs by -2 px (mac 23, windows 21, toleranc"
    ],
-   "secs": 0.4
+   "secs": 0.5
   },
   {
    "gate": "control",
@@ -4287,7 +4313,7 @@
     "switch-labelled-on-v1: pairs=1 control-gate=0/1 dx(label advance difference)=[-16] control max-in-band=18 out-of-band=[0]",
     "run 1 {'xGate': {'ok': False, 'why': ['row leading x differs by 5 px (mac 2, windows 7, tolerance 0)', 'label first ink x differs by 5 px (mac 2, windows 7, tolerance 0)', 'label-to-control gap differs by -2 px (mac 23, windows 21, toleranc"
    ],
-   "secs": 0.4
+   "secs": 0.5
   },
   {
    "gate": "control",
@@ -4309,7 +4335,7 @@
     "switch-labelled-on-v1: pairs=1 control-gate=0/1 dx(label advance difference)=[-16] control max-in-band=180 out-of-band=[1823]",
     "run 1 {'xGate': {'ok': True, 'why': [], 'leadingX': {'mac': 2, 'windows': 2}, 'labelLeadingX': {'mac': 2, 'windows': 2}, 'labelLeftOfControl': {'mac': True, 'windows': True}, 'controlGap': {'mac': 23, 'windows': 22}}, 'sameSizeAndY': True, "
    ],
-   "secs": 0.3
+   "secs": 0.4
   },
   {
    "gate": "control",
@@ -4331,7 +4357,7 @@
     "switch-labelled-on-v1: pairs=1 control-gate=0/1 dx(label advance difference)=[-16] control max-in-band=18 out-of-band=[1823]",
     "run 1 {'xGate': {'ok': True, 'why': [], 'leadingX': {'mac': 2, 'windows': 2}, 'labelLeadingX': {'mac': 2, 'windows': 2}, 'labelLeftOfControl': {'mac': True, 'windows': True}, 'controlGap': {'mac': 23, 'windows': 22}}, 'sameSizeAndY': True, "
    ],
-   "secs": 0.3
+   "secs": 0.4
   },
   {
    "gate": "control",
@@ -4353,7 +4379,7 @@
     "switch-labelled-on-v1: pairs=1 control-gate=0/1 dx(label advance difference)=[-16] control max-in-band=33 out-of-band=[0]",
     "run 1 {'xGate': {'ok': True, 'why': [], 'leadingX': {'mac': 2, 'windows': 2}, 'labelLeadingX': {'mac': 2, 'windows': 2}, 'labelLeftOfControl': {'mac': True, 'windows': True}, 'controlGap': {'mac': 23, 'windows': 22}}, 'sameSizeAndY': True, "
    ],
-   "secs": 0.4
+   "secs": 0.5
   },
   {
    "gate": "control",
@@ -4373,7 +4399,7 @@
     "pairs=1 exact=0 exact-with-exclusions=0 edge-aa<=32=0 fail=1 maxdiff=255 diffbbox=(2, 0, 281, 61)",
     "switch-labelled-on-v1: pairs=1 control-gate=1/1 dx(label advance difference)=[-16] control max-in-band=32 out-of-band=[0]"
    ],
-   "secs": 0.4
+   "secs": 0.5
   },
   {
    "gate": "control",
@@ -4395,7 +4421,7 @@
     "switch-labelled-on-v1: pairs=1 control-gate=0/1 dx(label advance difference)=[-11] control max-in-band=18 out-of-band=[0]",
     "run 1 {'xGate': {'ok': False, 'why': ['label-to-control gap differs by 4 px (mac 23, windows 27, tolerance 1)'], 'leadingX': {'mac': 2, 'windows': 2}, 'labelLeadingX': {'mac': 2, 'windows': 2}, 'labelLeftOfControl': {'mac': True, 'windows':"
    ],
-   "secs": 0.3
+   "secs": 0.4
   },
   {
    "gate": "control",
@@ -4417,7 +4443,7 @@
     "switch-labelled-on-v1: pairs=1 control-gate=0/1 dx(label advance difference)=[-17] control max-in-band=18 out-of-band=[0]",
     "run 1 {'xGate': {'ok': False, 'why': ['label-to-control gap differs by -2 px (mac 23, windows 21, tolerance 1)'], 'leadingX': {'mac': 2, 'windows': 2}, 'labelLeadingX': {'mac': 2, 'windows': 2}, 'labelLeftOfControl': {'mac': True, 'windows'"
    ],
-   "secs": 0.3
+   "secs": 0.4
   },
   {
    "gate": "control",
@@ -4439,7 +4465,7 @@
     "switch-labelled-on-v1: pairs=1 control-gate=0/1 dx(label advance difference)=[-21] control max-in-band=18 out-of-band=[0]",
     "run 1 {'xGate': {'ok': False, 'why': ['label-to-control gap differs by -6 px (mac 23, windows 17, tolerance 1)'], 'leadingX': {'mac': 2, 'windows': 2}, 'labelLeadingX': {'mac': 2, 'windows': 2}, 'labelLeftOfControl': {'mac': True, 'windows'"
    ],
-   "secs": 0.3
+   "secs": 0.4
   },
   {
    "gate": "control",
@@ -4459,7 +4485,7 @@
     "pairs=1 exact=0 exact-with-exclusions=0 edge-aa<=32=0 fail=1 maxdiff=255 diffbbox=(0, 2, 171, 44)",
     "checkbox-labelled-on-v1: pairs=1 control-gate=1/1 dx(label advance difference)=[0] control max-in-band=17 out-of-band=[0]"
    ],
-   "secs": 0.4
+   "secs": 0.5
   },
   {
    "gate": "control",
@@ -4481,7 +4507,7 @@
     "checkbox-labelled-on-v1: pairs=1 control-gate=0/1 dx(label advance difference)=[0] control max-in-band=17 out-of-band=[0]",
     "run 1 {'xGate': {'ok': True, 'why': [], 'leadingX': {'mac': 0, 'windows': 0}, 'labelLeadingX': {'mac': 54, 'windows': 54}, 'labelLeftOfControl': {'mac': False, 'windows': False}, 'controlGap': {'mac': 14, 'windows': 14}}, 'sameSizeAndY': Fa"
    ],
-   "secs": 0.4
+   "secs": 0.5
   },
   {
    "gate": "control",
@@ -4503,7 +4529,7 @@
     "checkbox-labelled-on-v1: pairs=1 control-gate=0/1 dx(label advance difference)=[0] control max-in-band=17 out-of-band=[0]",
     "run 1 {'xGate': {'ok': True, 'why': [], 'leadingX': {'mac': 0, 'windows': 0}, 'labelLeadingX': {'mac': 54, 'windows': 54}, 'labelLeftOfControl': {'mac': False, 'windows': False}, 'controlGap': {'mac': 14, 'windows': 14}}, 'sameSizeAndY': Fa"
    ],
-   "secs": 0.3
+   "secs": 0.4
   },
   {
    "gate": "control",
@@ -4525,7 +4551,7 @@
     "checkbox-labelled-on-v1: pairs=1 control-gate=0/1 dx(label advance difference)=[0] control max-in-band=255 out-of-band=[0]",
     "run 1 {'xGate': {'ok': True, 'why': [], 'leadingX': {'mac': 0, 'windows': 0}, 'labelLeadingX': {'mac': 54, 'windows': 54}, 'labelLeftOfControl': {'mac': False, 'windows': False}, 'controlGap': {'mac': 14, 'windows': 14}}, 'sameSizeAndY': Fa"
    ],
-   "secs": 0.3
+   "secs": 0.4
   },
   {
    "gate": "control",
@@ -4547,7 +4573,7 @@
     "checkbox-labelled-on-v1: pairs=1 control-gate=0/1 dx(label advance difference)=[] control max-in-band=None out-of-band=[]",
     "run 1 {'error': 'control columns mac=[(5, 35)] win=[]'}"
    ],
-   "secs": 0.3
+   "secs": 0.4
   },
   {
    "gate": "control",
@@ -4569,7 +4595,7 @@
     "checkbox-labelled-on-v1: pairs=1 control-gate=0/1 dx(label advance difference)=[0] control max-in-band=17 out-of-band=[0]",
     "run 1 {'error': 'no label ink beside the control (mac=[54, 8, 171, 34] windows=None)', 'xGate': {'ok': False, 'why': []}, 'sameSizeAndY': True, 'labelInkBBox': {'mac': [54, 8, 171, 34], 'windows': None, 'centreToleranceOk': False}}"
    ],
-   "secs": 0.3
+   "secs": 0.4
   },
   {
    "gate": "control",
@@ -4591,7 +4617,7 @@
     "checkbox-labelled-on-v1: pairs=1 control-gate=0/1 dx(label advance difference)=[0] control max-in-band=17 out-of-band=[0]",
     "run 1 {'xGate': {'ok': True, 'why': [], 'leadingX': {'mac': 0, 'windows': 0}, 'labelLeadingX': {'mac': 54, 'windows': 54}, 'labelLeftOfControl': {'mac': False, 'windows': False}, 'controlGap': {'mac': 14, 'windows': 14}}, 'sameSizeAndY': Tr"
    ],
-   "secs": 0.7
+   "secs": 0.9
   },
   {
    "gate": "control",
@@ -4611,7 +4637,7 @@
     "pairs=1 exact=0 exact-with-exclusions=0 edge-aa<=32=0 fail=1 maxdiff=224 diffbbox=(0, 2, 171, 42)",
     "checkbox-labelled-on-v1: pairs=1 control-gate=1/1 dx(label advance difference)=[0] control max-in-band=17 out-of-band=[0]"
    ],
-   "secs": 0.7
+   "secs": 0.9
   },
   {
    "gate": "control",
@@ -4633,7 +4659,7 @@
     "checkbox-labelled-on-v1: pairs=1 control-gate=0/1 dx(label advance difference)=[0] control max-in-band=17 out-of-band=[0]",
     "run 1 {'xGate': {'ok': True, 'why': [], 'leadingX': {'mac': 0, 'windows': 0}, 'labelLeadingX': {'mac': 54, 'windows': 54}, 'labelLeftOfControl': {'mac': False, 'windows': False}, 'controlGap': {'mac': 14, 'windows': 14}}, 'sameSizeAndY': Tr"
    ],
-   "secs": 0.4
+   "secs": 0.5
   },
   {
    "gate": "control",
@@ -4655,7 +4681,7 @@
     "checkbox-labelled-on-v1: pairs=1 control-gate=0/1 dx(label advance difference)=[0] control max-in-band=17 out-of-band=[0]",
     "run 1 {'xGate': {'ok': False, 'why': ['label first ink x differs by 3 px (mac 54, windows 57, tolerance 0)', 'label-to-control gap differs by 3 px (mac 14, windows 17, tolerance 0)'], 'leadingX': {'mac': 0, 'windows': 0}, 'labelLeadingX': {"
    ],
-   "secs": 0.4
+   "secs": 0.5
   },
   {
    "gate": "control",
@@ -4677,7 +4703,7 @@
     "checkbox-labelled-on-v1: pairs=1 control-gate=0/1 dx(label advance difference)=[0] control max-in-band=17 out-of-band=[0]",
     "run 1 {'xGate': {'ok': False, 'why': ['label first ink x differs by 1 px (mac 54, windows 55, tolerance 0)', 'label-to-control gap differs by 1 px (mac 14, windows 15, tolerance 0)'], 'leadingX': {'mac': 0, 'windows': 0}, 'labelLeadingX': {"
    ],
-   "secs": 0.4
+   "secs": 0.5
   },
   {
    "gate": "control",
@@ -4699,7 +4725,7 @@
     "checkbox-labelled-on-v1: pairs=1 control-gate=0/1 dx(label advance difference)=[0] control max-in-band=17 out-of-band=[0]",
     "run 1 {'xGate': {'ok': False, 'why': ['label first ink x differs by 5 px (mac 54, windows 59, tolerance 0)', 'label-to-control gap differs by 5 px (mac 14, windows 19, tolerance 0)'], 'leadingX': {'mac': 0, 'windows': 0}, 'labelLeadingX': {"
    ],
-   "secs": 0.4
+   "secs": 0.5
   },
   {
    "gate": "control",
@@ -4721,7 +4747,7 @@
     "checkbox-labelled-on-v1: pairs=1 control-gate=0/1 dx(label advance difference)=[0] control max-in-band=180 out-of-band=[573]",
     "run 1 {'xGate': {'ok': True, 'why': [], 'leadingX': {'mac': 0, 'windows': 0}, 'labelLeadingX': {'mac': 54, 'windows': 54}, 'labelLeftOfControl': {'mac': False, 'windows': False}, 'controlGap': {'mac': 14, 'windows': 14}}, 'sameSizeAndY': Tr"
    ],
-   "secs": 0.3
+   "secs": 0.4
   },
   {
    "gate": "control",
@@ -4743,7 +4769,7 @@
     "checkbox-labelled-on-v1: pairs=1 control-gate=0/1 dx(label advance difference)=[0] control max-in-band=17 out-of-band=[573]",
     "run 1 {'xGate': {'ok': True, 'why': [], 'leadingX': {'mac': 0, 'windows': 0}, 'labelLeadingX': {'mac': 54, 'windows': 54}, 'labelLeftOfControl': {'mac': False, 'windows': False}, 'controlGap': {'mac': 14, 'windows': 14}}, 'sameSizeAndY': Tr"
    ],
-   "secs": 0.3
+   "secs": 0.4
   },
   {
    "gate": "control",
@@ -4765,7 +4791,7 @@
     "checkbox-labelled-on-v1: pairs=1 control-gate=0/1 dx(label advance difference)=[0] control max-in-band=33 out-of-band=[0]",
     "run 1 {'xGate': {'ok': True, 'why': [], 'leadingX': {'mac': 0, 'windows': 0}, 'labelLeadingX': {'mac': 54, 'windows': 54}, 'labelLeftOfControl': {'mac': False, 'windows': False}, 'controlGap': {'mac': 14, 'windows': 14}}, 'sameSizeAndY': Tr"
    ],
-   "secs": 0.4
+   "secs": 0.6
   },
   {
    "gate": "control",
@@ -4785,7 +4811,7 @@
     "pairs=1 exact=0 exact-with-exclusions=0 edge-aa<=32=0 fail=1 maxdiff=224 diffbbox=(0, 2, 171, 42)",
     "checkbox-labelled-on-v1: pairs=1 control-gate=1/1 dx(label advance difference)=[0] control max-in-band=32 out-of-band=[0]"
    ],
-   "secs": 0.4
+   "secs": 0.5
   },
   {
    "gate": "control",
@@ -4807,7 +4833,7 @@
     "checkbox-labelled-on-v1: pairs=1 control-gate=0/1 dx(label advance difference)=[5] control max-in-band=17 out-of-band=[0]",
     "run 1 {'xGate': {'ok': False, 'why': ['row leading x differs by 5 px (mac 0, windows 5, tolerance 0)', 'label-to-control gap differs by -5 px (mac 14, windows 9, tolerance 0)'], 'leadingX': {'mac': 0, 'windows': 5}, 'labelLeadingX': {'mac':"
    ],
-   "secs": 0.3
+   "secs": 0.4
   },
   {
    "gate": "control",
@@ -4829,7 +4855,7 @@
     "checkbox-labelled-on-v1: pairs=1 control-gate=0/1 dx(label advance difference)=[1] control max-in-band=17 out-of-band=[0]",
     "run 1 {'xGate': {'ok': False, 'why': ['row leading x differs by 1 px (mac 0, windows 1, tolerance 0)', 'label-to-control gap differs by -1 px (mac 14, windows 13, tolerance 0)'], 'leadingX': {'mac': 0, 'windows': 1}, 'labelLeadingX': {'mac'"
    ],
-   "secs": 0.3
+   "secs": 0.4
   },
   {
    "gate": "control",
@@ -4851,7 +4877,7 @@
     "checkbox-labelled-on-v1: pairs=1 control-gate=0/1 dx(label advance difference)=[5] control max-in-band=17 out-of-band=[0]",
     "run 1 {'xGate': {'ok': False, 'why': ['row leading x differs by 5 px (mac 0, windows 5, tolerance 0)', 'label-to-control gap differs by -5 px (mac 14, windows 9, tolerance 0)'], 'leadingX': {'mac': 0, 'windows': 5}, 'labelLeadingX': {'mac':"
    ],
-   "secs": 0.3
+   "secs": 0.4
   },
   {
    "gate": "semantic",
@@ -5377,7 +5403,7 @@
     "semantic run 01 fail [{\"where\": \"dialog0[1]\", \"field\": \"enabled\", \"windows\": false, \"mac\": true, \"role\": [\"button\", \"button\"], \"phase\": \"open\"}]",
     "semantic pairs=1 pass=0 fail=1 fields=role,name,enabled,dialogTitle,count,order,defaultButton,boundsY,boundsCentreX scope=all"
    ],
-   "secs": 0.1
+   "secs": 0.2
   },
   {
    "gate": "semantic",
@@ -5443,7 +5469,7 @@
     "semantic run 01 fail [{\"where\": \"dialogs\", \"field\": \"count\", \"side\": \"windows\", \"expected\": 1, \"actual\": 0, \"phase\": \"open\"}]",
     "semantic pairs=1 pass=0 fail=1 fields=role,name,enabled,dialogTitle,count,order,defaultButton,boundsY,boundsCentreX scope=all"
    ],
-   "secs": 0.1
+   "secs": 0.3
   },
   {
    "gate": "semantic",
@@ -5465,7 +5491,7 @@
     "semantic run 01 fail [{\"where\": \"dialogs\", \"field\": \"count\", \"side\": \"windows\", \"expected\": 1, \"actual\": 2, \"phase\": \"open\"}]",
     "semantic pairs=1 pass=0 fail=1 fields=role,name,enabled,dialogTitle,count,order,defaultButton,boundsY,boundsCentreX scope=all"
    ],
-   "secs": 0.1
+   "secs": 0.2
   },
   {
    "gate": "semantic",
@@ -5509,7 +5535,7 @@
     "semantic run 01 fail [{\"where\": \"dialog0\", \"field\": \"defaultButton\", \"windows\": \"Cancel\", \"mac\": \"First\", \"rule\": \"Mac default button\", \"phase\": \"open\"}]",
     "semantic pairs=1 pass=0 fail=1 fields=role,name,enabled,dialogTitle,count,order,defaultButton,boundsY,boundsCentreX scope=all"
    ],
-   "secs": 0.1
+   "secs": 0.2
   },
   {
    "gate": "semantic",
@@ -5752,7 +5778,7 @@
     "textorigin run 01 field 1: ok first-ink mac=40 win=40 y(top/baseline) mac=126/147 win=128/146 selection mac x=40 (179, 215, 255) win x=40 (179, 215, 255)",
     "textorigin checks=2 pass=2 fail=0 first-ink delta (win-mac px): {0: 2}"
    ],
-   "secs": 0.2
+   "secs": 0.3
   },
   {
    "gate": "semantic",
@@ -5776,7 +5802,7 @@
     "textorigin run 01 field 1: ok first-ink mac=40 win=40 y(top/baseline) mac=126/147 win=128/146 selection mac x=40 (179, 215, 255) win x=40 (179, 215, 255)",
     "textorigin checks=2 pass=2 fail=0 first-ink delta (win-mac px): {0: 2}"
    ],
-   "secs": 0.2
+   "secs": 0.3
   },
   {
    "gate": "semantic",
@@ -5800,7 +5826,7 @@
     "textorigin run 01 field 1: ok first-ink mac=40 win=40 y(top/baseline) mac=126/147 win=128/146 selection mac x=40 (179, 215, 255) win x=40 (179, 215, 255)",
     "textorigin checks=2 pass=2 fail=0 first-ink delta (win-mac px): {0: 2}"
    ],
-   "secs": 0.2
+   "secs": 0.3
   },
   {
    "gate": "semantic",
@@ -5824,7 +5850,7 @@
     "textorigin run 01 field 1: ok first-ink mac=40 win=40 y(top/baseline) mac=126/147 win=128/146 selection mac x=40 (179, 215, 255) win x=40 (179, 215, 255)",
     "textorigin checks=2 pass=2 fail=0 first-ink delta (win-mac px): {0: 2}"
    ],
-   "secs": 0.2
+   "secs": 0.3
   },
   {
    "gate": "semantic",
@@ -5848,7 +5874,7 @@
     "textorigin run 01 field 1: ok first-ink mac=40 win=40 y(top/baseline) mac=126/147 win=128/146 selection mac x=40 (179, 215, 255) win x=40 (179, 215, 255)",
     "textorigin checks=2 pass=2 fail=0 first-ink delta (win-mac px): {0: 2}"
    ],
-   "secs": 0.2
+   "secs": 0.3
   },
   {
    "gate": "semantic",
@@ -5871,7 +5897,7 @@
     "textorigin run 01 field 1: ok first-ink mac=40 win=40 y(top/baseline) mac=126/147 win=128/146 selection mac x=40 (179, 215, 255) win x=40 (179, 215, 255)",
     "textorigin checks=2 pass=2 fail=0 first-ink delta (win-mac px): {0: 2}"
    ],
-   "secs": 0.2
+   "secs": 0.3
   },
   {
    "gate": "semantic",
@@ -5895,7 +5921,7 @@
     "ime run 01 ok steps=[('0:click', None, [2, 0]), ('2:ime', [2, 2], [4, 0])]",
     "ime pairs=1 pass=1 fail=0"
    ],
-   "secs": 0.2
+   "secs": 0.3
   },
   {
    "gate": "semantic",
@@ -5919,7 +5945,7 @@
     "ime run 01 ok steps=[('0:click', None, [2, 0]), ('2:ime', [2, 2], [4, 0])]",
     "ime pairs=1 pass=1 fail=0"
    ],
-   "secs": 0.2
+   "secs": 0.3
   },
   {
    "gate": "semantic",
@@ -5943,7 +5969,7 @@
     "ime run 01 ok steps=[('0:click', None, [2, 0]), ('2:ime', [2, 2], [4, 0])]",
     "ime pairs=1 pass=1 fail=0"
    ],
-   "secs": 0.2
+   "secs": 0.3
   },
   {
    "gate": "ime",
@@ -5967,7 +5993,7 @@
     "ime run 01 FAIL step 1 (2:ime): marked range mac [2, 2] != windows [0, 2]; final state: marked range mac [2, 2] != windows [0, 2] steps=[('0:click', None, [2, 0]), ('2:ime', [2, 2], [4, 0])]",
     "ime pairs=1 pass=0 fail=1"
    ],
-   "secs": 0.2
+   "secs": 0.3
   },
   {
    "gate": "ime",
@@ -5991,7 +6017,7 @@
     "ime run 01 FAIL step 1 (2:ime): marked range mac [3, 1] != windows [2, 2]; final state: marked range mac [3, 1] != windows [2, 2] steps=[('0:click', None, [2, 0]), ('2:ime', [3, 1], [4, 0])]",
     "ime pairs=1 pass=0 fail=1"
    ],
-   "secs": 0.2
+   "secs": 0.3
   },
   {
    "gate": "ime",
@@ -6015,7 +6041,7 @@
     "ime run 01 FAIL step 1 (2:ime): marked range mac [2, 2] != windows None; final state: marked range mac [2, 2] != windows None steps=[('0:click', None, [2, 0]), ('2:ime', [2, 2], [4, 0])]",
     "ime pairs=1 pass=0 fail=1"
    ],
-   "secs": 0.2
+   "secs": 0.3
   },
   {
    "gate": "ime",
@@ -6039,7 +6065,7 @@
     "ime run 01 FAIL step 0 (0:click): marked range mac [0, 2] != windows None steps=[('0:click', [0, 2], [2, 0]), ('2:ime', [2, 2], [4, 0])]",
     "ime pairs=1 pass=0 fail=1"
    ],
-   "secs": 0.2
+   "secs": 0.3
   },
   {
    "gate": "ime",
@@ -6063,7 +6089,7 @@
     "ime run 01 FAIL step 1 (2:ime): marked range mac [2, 2] != windows [2, 1]; final state: marked range mac [2, 2] != windows [2, 1] steps=[('0:click', None, [2, 0]), ('2:ime', [2, 2], [4, 0])]",
     "ime pairs=1 pass=0 fail=1"
    ],
-   "secs": 0.2
+   "secs": 0.3
   },
   {
    "gate": "ime",
@@ -6087,7 +6113,7 @@
     "ime run 01 FAIL step 1 (2:ime): selection mac [4, 0] != windows [3, 0]; final state: selection mac [4, 0] != windows [3, 0] steps=[('0:click', None, [2, 0]), ('2:ime', [2, 2], [4, 0])]",
     "ime pairs=1 pass=0 fail=1"
    ],
-   "secs": 0.2
+   "secs": 0.3
   },
   {
    "gate": "ime",
@@ -6135,7 +6161,7 @@
     "ime run 01 FAIL step 1 (2:ime): composed text mac 'abni' != windows 'abnj'; final state: composed text mac 'abni' != windows 'abnj' steps=[('0:click', None, [2, 0]), ('2:ime', [2, 2], [4, 0])]",
     "ime pairs=1 pass=0 fail=1"
    ],
-   "secs": 0.2
+   "secs": 0.3
   },
   {
    "gate": "ime",
@@ -6159,7 +6185,7 @@
     "ime run 01 FAIL step 1 (2:ime): composed text mac 'abno' != windows 'abni'; final state: composed text mac 'abno' != windows 'abni' steps=[('0:click', None, [2, 0]), ('2:ime', [2, 2], [4, 0])]",
     "ime pairs=1 pass=0 fail=1"
    ],
-   "secs": 0.2
+   "secs": 0.3
   },
   {
    "gate": "ime",
@@ -6183,7 +6209,7 @@
     "ime run 01 FAIL step count: windows script steps 0, mac MAC_FACT steps 2 steps=[]",
     "ime pairs=1 pass=0 fail=1"
    ],
-   "secs": 0.2
+   "secs": 0.3
   },
   {
    "gate": "ime",
@@ -6207,7 +6233,7 @@
     "ime run 01 FAIL missing log: windows host log present, mac run log MISSING steps=[]",
     "ime pairs=1 pass=0 fail=1"
    ],
-   "secs": 0.2
+   "secs": 0.3
   },
   {
    "gate": "ime",
@@ -6230,7 +6256,7 @@
     "ime run 01 ok steps=[('0:click', None, [2, 0]), ('2:ime', [2, 2], [4, 0])]",
     "ime pairs=1 pass=1 fail=0"
    ],
-   "secs": 0.2
+   "secs": 0.3
   },
   {
    "gate": "semantic",
@@ -6253,7 +6279,7 @@
     "textorigin run 01 field 0: ok first-ink mac=42 win=42 y(top/baseline) mac=44/67 win=46/66",
     "textorigin checks=1 pass=1 fail=0 first-ink delta (win-mac px): {0: 1}"
    ],
-   "secs": 0.2
+   "secs": 0.3
   },
   {
    "gate": "semantic",
@@ -6276,7 +6302,7 @@
     "textorigin run 01 field 0: ok first-ink mac=42 win=42 y(top/baseline) mac=44/67 win=46/66",
     "textorigin checks=1 pass=1 fail=0 first-ink delta (win-mac px): {0: 1}"
    ],
-   "secs": 0.2
+   "secs": 0.3
   },
   {
    "gate": "semantic",
@@ -6320,7 +6346,7 @@
     "textorigin run 01 field 0: ok first-ink mac=42 win=42 y(top/baseline) mac=44/67 win=46/66",
     "textorigin checks=1 pass=1 fail=0 first-ink delta (win-mac px): {0: 1}"
    ],
-   "secs": 0.2
+   "secs": 0.3
   },
   {
    "gate": "semantic",
@@ -6343,7 +6369,7 @@
     "textorigin run 01 field 0: ok first-ink mac=42 win=42 y(top/baseline) mac=44/67 win=46/66",
     "textorigin checks=1 pass=1 fail=0 first-ink delta (win-mac px): {0: 1}"
    ],
-   "secs": 0.2
+   "secs": 0.3
   },
   {
    "gate": "semantic",
@@ -6366,7 +6392,7 @@
     "textorigin run 01 field 0: ok first-ink mac=42 win=42 y(top/baseline) mac=44/67 win=46/66",
     "textorigin checks=1 pass=1 fail=0 first-ink delta (win-mac px): {0: 1}"
    ],
-   "secs": 0.2
+   "secs": 0.3
   },
   {
    "gate": "semantic",
@@ -6389,7 +6415,7 @@
     "textorigin run 01 field 0: ok first-ink mac=42 win=42 y(top/baseline) mac=44/67 win=46/66",
     "textorigin checks=1 pass=1 fail=0 first-ink delta (win-mac px): {0: 1}"
    ],
-   "secs": 0.2
+   "secs": 0.3
   },
   {
    "gate": "list",
@@ -6410,7 +6436,7 @@
     "arrow-keys-v1: pairs=1 list-gate=0/1",
     "run 1 [\"row 0 text mac='Row 0' windows='Row 1'\", \"row 1 text mac='Row 1' windows='Row 0'\"]"
    ],
-   "secs": 0.2
+   "secs": 0.3
   },
   {
    "gate": "list",
@@ -6431,7 +6457,7 @@
     "arrow-keys-v1: pairs=1 list-gate=0/1",
     "run 1 ['row 1 selected mac=True windows=False', 'row 4 selected mac=False windows=True']"
    ],
-   "secs": 0.2
+   "secs": 0.3
   },
   {
    "gate": "list",
@@ -6452,7 +6478,7 @@
     "arrow-keys-v1: pairs=1 list-gate=0/1",
     "run 1 ['row 1 selected mac=True windows=False']"
    ],
-   "secs": 0.2
+   "secs": 0.3
   },
   {
    "gate": "list",
@@ -6473,7 +6499,7 @@
     "arrow-keys-v1: pairs=1 list-gate=0/1",
     "run 1 ['row 0 selected mac=False windows=True']"
    ],
-   "secs": 0.2
+   "secs": 0.3
   },
   {
    "gate": "list",
@@ -6515,7 +6541,7 @@
     "arrow-keys-v1: pairs=1 list-gate=0/1",
     "run 1 ['row count mac=5 windows=6']"
    ],
-   "secs": 0.2
+   "secs": 0.3
   },
   {
    "gate": "list",
@@ -6536,7 +6562,7 @@
     "arrow-keys-v1: pairs=1 list-gate=0/1",
     "run 1 [\"row 2 text mac='Row 2' windows='Row 2!'\"]"
    ],
-   "secs": 0.2
+   "secs": 0.3
   },
   {
    "gate": "list",
@@ -6617,7 +6643,7 @@
     "arrow-keys-v1: pairs=1 list-gate=0/1",
     "run 1 ['row 1 frame mac=[150.0, 185.0, 500.0, 60.0] windows=[150, 185, 500, 62]']"
    ],
-   "secs": 0.2
+   "secs": 0.3
   },
   {
    "gate": "list",
@@ -6638,7 +6664,7 @@
     "arrow-keys-v1: pairs=1 list-gate=0/1",
     "run 1 ['row 0 label ink mac=[39, 39, 39] windows=[80, 80, 80]']"
    ],
-   "secs": 0.4
+   "secs": 0.5
   },
   {
    "gate": "list",
@@ -6656,7 +6682,7 @@
     "pairs=1 exact=0 exact-with-exclusions=0 (excluding: row 0 label glyph region (Segoe UI vs SF, sr1-decisions #2); ink colour gated by pair_list_report.py[190, 137, 340, 173], row 1 label glyph region (Segoe UI vs SF, sr1-decisions #2); ink c",
     "arrow-keys-v1: pairs=1 list-gate=1/1"
    ],
-   "secs": 0.4
+   "secs": 0.5
   },
   {
    "gate": "list",
@@ -6677,7 +6703,7 @@
     "arrow-keys-v1: pairs=1 list-gate=0/1",
     "run 1 ['row 0 label ink mac=[39, 39, 39] windows=None']"
    ],
-   "secs": 0.2
+   "secs": 0.3
   },
   {
    "gate": "list",
@@ -6699,7 +6725,7 @@
     "arrow-keys-v1: pairs=1 list-gate=0/1",
     "run 1 ['row 1 label ink mac=[255, 255, 255] windows=[33, 120, 229]']"
    ],
-   "secs": 0.2
+   "secs": 0.3
   },
   {
    "gate": "list",
@@ -6719,7 +6745,7 @@
     "pairs=1 exact=0 exact-with-exclusions=0 (excluding: row 0 label glyph region (Segoe UI vs SF, sr1-decisions #2); ink colour gated by pair_list_report.py[190, 137, 340, 173], row 1 label glyph region (Segoe UI vs SF, sr1-decisions #2); ink c",
     "arrow-keys-v1: pairs=1 list-gate=1/1"
    ],
-   "secs": 0.2
+   "secs": 0.3
   },
   {
    "gate": "list",
@@ -6741,7 +6767,7 @@
     "arrow-keys-v1: pairs=1 list-gate=0/1",
     "run 1 ['row 1 label ink mac=[255, 255, 255] windows=[33, 120, 229]']"
    ],
-   "secs": 0.2
+   "secs": 0.3
   },
   {
    "gate": "list",
@@ -6763,7 +6789,7 @@
     "arrow-keys-v1: pairs=1 list-gate=0/1",
     "run 1 ['row 1 label ink mac=[255, 255, 255] windows=None', 'row 2 label ink mac=[39, 39, 39] windows=[255, 255, 255]']"
    ],
-   "secs": 0.2
+   "secs": 0.3
   },
   {
    "gate": "list",
@@ -6783,7 +6809,7 @@
     "pairs=1 exact=0 exact-with-exclusions=0 (excluding: row 0 label glyph region (Segoe UI vs SF, sr1-decisions #2); ink colour gated by pair_list_report.py[190, 137, 340, 173], row 1 label glyph region (Segoe UI vs SF, sr1-decisions #2); ink c",
     "arrow-keys-v1: pairs=1 list-gate=1/1"
    ],
-   "secs": 0.2
+   "secs": 0.3
   },
   {
    "gate": "list",
@@ -7034,7 +7060,7 @@
     "variable-rows-selected-v1: pairs=1 list-gate=0/1",
     "run 1 ['row 0 label ink mac=[255, 56, 60] windows=[214, 15, 19]']"
    ],
-   "secs": 0.4
+   "secs": 0.5
   },
   {
    "gate": "list",
@@ -7076,7 +7102,7 @@
     "pairs=1 exact=0 exact-with-exclusions=0 edge-aa<=32=0 fail=1 maxdiff=220 diffbbox=(175, 185, 625, 305)",
     "variable-rows-selected-v1: pairs=1 list-gate=1/1"
    ],
-   "secs": 0.2
+   "secs": 0.3
   },
   {
    "gate": "list",
@@ -7096,7 +7122,7 @@
     "pairs=1 exact=0 exact-with-exclusions=0 edge-aa<=32=0 fail=1 maxdiff=13 diffbbox=(175, 185, 625, 305)",
     "variable-rows-selected-v1: pairs=1 list-gate=1/1"
    ],
-   "secs": 0.2
+   "secs": 0.3
   },
   {
    "gate": "list",
@@ -7158,7 +7184,7 @@
     "pairs=1 exact=0 exact-with-exclusions=0 edge-aa<=32=0 fail=1 maxdiff=255 diffbbox=(175, 140, 626, 375)",
     "variable-rows-selected-v1: pairs=1 list-gate=1/1"
    ],
-   "secs": 0.2
+   "secs": 0.3
   },
   {
    "gate": "clock",
@@ -7182,7 +7208,7 @@
     "clock run 01 f05 t=1.5   ok   extent\u0394=0.0 edge\u0394 start=0.0 end=0.0 progress mac=1.0 win=1.0 pixelsOutsideStrips=0 (strip px 0)",
     "clock gate: pairs=6 ok=4 fail=2"
    ],
-   "secs": 0.4
+   "secs": 0.5
   },
   {
    "gate": "clock",
@@ -7206,7 +7232,7 @@
     "clock run 01 f05 t=1.5   ok   extent\u0394=0.0 edge\u0394 start=0.0 end=0.0 progress mac=1.0 win=1.0 pixelsOutsideStrips=0 (strip px 0)",
     "clock gate: pairs=6 ok=4 fail=2"
    ],
-   "secs": 0.4
+   "secs": 0.5
   },
   {
    "gate": "clock",
@@ -7230,7 +7256,7 @@
     "clock run 01 f05 t=1.5   ok   extent\u0394=0.0 edge\u0394 start=0.0 end=0.0 progress mac=1.0 win=1.0 pixelsOutsideStrips=0 (strip px 0)",
     "clock gate: pairs=6 ok=5 fail=1"
    ],
-   "secs": 0.4
+   "secs": 0.5
   },
   {
    "gate": "clock",
@@ -7254,7 +7280,7 @@
     "clock run 01 f05 t=1.5   ok   extent\u0394=0.0 edge\u0394 start=0.0 end=0.0 progress mac=1.0 win=1.0 pixelsOutsideStrips=0 (strip px 0)",
     "clock gate: pairs=6 ok=5 fail=1"
    ],
-   "secs": 0.4
+   "secs": 0.5
   },
   {
    "gate": "clock",
@@ -7277,7 +7303,7 @@
     "clock run 01 f05 t=1.5   ok   extent\u0394=0.0 edge\u0394 start=0.0 end=0.0 progress mac=1.0 win=1.0 pixelsOutsideStrips=0 (strip px 0)",
     "clock gate: pairs=6 ok=6 fail=0"
    ],
-   "secs": 0.4
+   "secs": 0.5
   },
   {
    "gate": "clock",
@@ -7300,7 +7326,7 @@
     "clock run 01 f05 t=1.5   ok   extent\u0394=0.0 edge\u0394 start=0.0 end=0.0 progress mac=1.0 win=1.0 pixelsOutsideStrips=0 (strip px 0)",
     "clock gate: pairs=6 ok=6 fail=0"
    ],
-   "secs": 0.4
+   "secs": 0.5
   },
   {
    "gate": "clock",
@@ -7324,7 +7350,7 @@
     "clock run 01 f05 t=1.5   ok   extent\u0394=0.0 edge\u0394 start=0.0 end=0.0 progress mac=1.0 win=1.0 pixelsOutsideStrips=0 (strip px 0)",
     "clock gate: pairs=6 ok=5 fail=1"
    ],
-   "secs": 0.4
+   "secs": 0.5
   },
   {
    "gate": "clock",
@@ -7348,7 +7374,7 @@
     "clock run 01 f05 t=1.5   ok   extent\u0394=0.0 edge\u0394 start=0.0 end=0.0 progress mac=1.0 win=1.0 pixelsOutsideStrips=0 (strip px 0)",
     "clock gate: pairs=6 ok=5 fail=1"
    ],
-   "secs": 0.4
+   "secs": 0.5
   },
   {
    "gate": "clock",
@@ -7372,7 +7398,7 @@
     "clock run 01 f05 t=1.5   ok   extent\u0394=0.0 edge\u0394 start=0.0 end=0.0 progress mac=1.0 win=1.0 pixelsOutsideStrips=0 (strip px 0)",
     "clock gate: pairs=6 ok=5 fail=1"
    ],
-   "secs": 0.4
+   "secs": 0.5
   },
   {
    "gate": "clock",
@@ -7395,7 +7421,7 @@
     "clock run 01 f05 t=1.5   ok   extent\u0394=0.0 edge\u0394 start=0.0 end=0.0 progress mac=1.0 win=1.0 pixelsOutsideStrips=0 (strip px 0)",
     "clock gate: pairs=6 ok=6 fail=0"
    ],
-   "secs": 0.4
+   "secs": 0.5
   },
   {
    "gate": "clock",
@@ -7419,7 +7445,7 @@
     "clock run 01 f05 t=1.5   ok   extent\u0394=0.0 edge\u0394 start=0.0 end=0.0 progress mac=1.0 win=1.0 pixelsOutsideStrips=0 (strip px 0)",
     "clock gate: pairs=6 ok=5 fail=1"
    ],
-   "secs": 0.4
+   "secs": 0.5
   },
   {
    "gate": "clock",
@@ -7443,7 +7469,7 @@
     "clock run 01 f05 t=1.5   ok   extent\u0394=0.0 edge\u0394 start=0.0 end=0.0 progress mac=1.0 win=1.0 pixelsOutsideStrips=0 (strip px 0)",
     "clock gate: pairs=6 ok=5 fail=1"
    ],
-   "secs": 0.4
+   "secs": 0.5
   },
   {
    "gate": "clock",
@@ -7467,7 +7493,7 @@
     "clock run 01 f05 t=1.5   ok   extent\u0394=0.0 edge\u0394 start=0.0 end=0.0 progress mac=1.0 win=1.0 pixelsOutsideStrips=0 (strip px 0)",
     "clock gate: pairs=6 ok=5 fail=1"
    ],
-   "secs": 0.4
+   "secs": 0.5
   },
   {
    "gate": "clock",
@@ -7491,7 +7517,7 @@
     "clock run 01 f05 t=1.5   ok   extent\u0394=0.0 edge\u0394 start=0.0 end=0.0 progress mac=1.0 win=1.0 pixelsOutsideStrips=0 (strip px 0)",
     "clock gate: pairs=6 ok=5 fail=1"
    ],
-   "secs": 0.4
+   "secs": 0.5
   },
   {
    "gate": "clock",
@@ -7514,7 +7540,7 @@
     "clock run 01 f05 t=1.5   ok   extent\u0394=0.0 edge\u0394 start=0.0 end=0.0 progress mac=1.0 win=1.0 pixelsOutsideStrips=0 (strip px 0)",
     "clock gate: pairs=6 ok=6 fail=0"
    ],
-   "secs": 0.4
+   "secs": 0.5
   },
   {
    "gate": "clock",
@@ -7538,7 +7564,7 @@
     "clock run 01 f05 t=1.5   ok   extent\u0394=0.0 edge\u0394 start=0.0 end=0.0 progress mac=1.0 win=1.0 pixelsOutsideStrips=0 (strip px 0)",
     "clock gate: pairs=6 ok=5 fail=1"
    ],
-   "secs": 0.4
+   "secs": 0.5
   },
   {
    "gate": "clock",
@@ -7562,7 +7588,7 @@
     "clock run 01 f05 t=1.5   ok   extent\u0394=0.0 edge\u0394 start=0.0 end=0.0 progress mac=1.0 win=1.0 pixelsOutsideStrips=0 (strip px 0)",
     "clock gate: pairs=6 ok=5 fail=1"
    ],
-   "secs": 0.5
+   "secs": 0.6
   },
   {
    "gate": "clock",
@@ -7586,7 +7612,7 @@
     "clock run 01 f05 t=1.5   ok   extent\u0394=0.0 edge\u0394 start=0.0 end=0.0 progress mac=1.0 win=1.0 pixelsOutsideStrips=0 (strip px 0)",
     "clock gate: pairs=6 ok=5 fail=1"
    ],
-   "secs": 0.5
+   "secs": 0.6
   },
   {
    "gate": "clock",
@@ -7610,7 +7636,7 @@
     "clock run 01 f05 t=1.5   ok   extent\u0394=0.0 edge\u0394 start=0.0 end=0.0 progress mac=1.0 win=1.0 pixelsOutsideStrips=0 (strip px 0)",
     "clock gate: pairs=6 ok=5 fail=1"
    ],
-   "secs": 0.5
+   "secs": 0.6
   },
   {
    "gate": "clock",
@@ -7658,7 +7684,7 @@
     "clock run 01 f05 t=0.6   ok   extent\u0394=0.0 edge\u0394 start=0.0 end=0.0 progress mac=1.0 win=1.0 pixelsOutsideStrips=0 (strip px 0)",
     "clock gate: pairs=6 ok=5 fail=1"
    ],
-   "secs": 0.4
+   "secs": 0.7
   },
   {
    "gate": "clock",
@@ -7682,7 +7708,7 @@
     "clock run 01 f05 t=0.6   ok   extent\u0394=0.0 edge\u0394 start=0.0 end=0.0 progress mac=1.0 win=1.0 pixelsOutsideStrips=0 (strip px 0)",
     "clock gate: pairs=6 ok=5 fail=1"
    ],
-   "secs": 0.4
+   "secs": 0.6
   },
   {
    "gate": "clock",
@@ -7705,7 +7731,7 @@
     "clock run 01 f05 t=0.6   ok   extent\u0394=0.0 edge\u0394 start=0.0 end=0.0 progress mac=1.0 win=1.0 pixelsOutsideStrips=0 (strip px 0)",
     "clock gate: pairs=6 ok=6 fail=0"
    ],
-   "secs": 0.4
+   "secs": 0.5
   },
   {
    "gate": "clock",
@@ -7728,7 +7754,7 @@
     "clock run 01 f05 t=0.6   ok   extent\u0394=0.0 edge\u0394 start=0.0 end=0.0 progress mac=1.0 win=1.0 pixelsOutsideStrips=0 (strip px 0)",
     "clock gate: pairs=6 ok=6 fail=0"
    ],
-   "secs": 0.4
+   "secs": 0.5
   },
   {
    "gate": "clock",
@@ -7751,7 +7777,7 @@
     "clock run 01 f05 t=0.6   ok   extent\u0394=0.0 edge\u0394 start=0.0 end=0.0 progress mac=1.0 win=1.0 pixelsOutsideStrips=0 (strip px 0)",
     "clock gate: pairs=6 ok=6 fail=0"
    ],
-   "secs": 0.4
+   "secs": 0.5
   },
   {
    "gate": "clock",
@@ -7775,7 +7801,7 @@
     "clock run 01 f05 t=0.6   ok   extent\u0394=0.0 edge\u0394 start=0.0 end=0.0 progress mac=1.0 win=1.0 pixelsOutsideStrips=0 (strip px 0)",
     "clock gate: pairs=6 ok=5 fail=1"
    ],
-   "secs": 0.5
+   "secs": 0.6
   },
   {
    "gate": "clock",
@@ -7798,7 +7824,7 @@
     "clock run 01 f05 t=0.6   ok   extent\u0394=0.0 edge\u0394 start=0.0 end=0.0 progress mac=1.0 win=1.0 pixelsOutsideStrips=0 (strip px 0)",
     "clock gate: pairs=6 ok=6 fail=0"
    ],
-   "secs": 0.5
+   "secs": 0.6
   },
   {
    "gate": "clock",
@@ -7822,7 +7848,7 @@
     "clock run 01 f05 t=0.6   ok   extent\u0394=0.0 edge\u0394 start=0.0 end=0.0 progress mac=1.0 win=1.0 pixelsOutsideStrips=0 (strip px 0)",
     "clock gate: pairs=6 ok=5 fail=1"
    ],
-   "secs": 0.5
+   "secs": 0.6
   },
   {
    "gate": "clock",
@@ -7846,7 +7872,7 @@
     "clock run 01 f05 t=0.6   ok   extent\u0394=0.0 edge\u0394 start=0.0 end=0.0 progress mac=1.0 win=1.0 pixelsOutsideStrips=0 (strip px 0)",
     "clock gate: pairs=6 ok=4 fail=2"
    ],
-   "secs": 0.4
+   "secs": 0.5
   },
   {
    "gate": "clock",
@@ -7870,7 +7896,7 @@
     "clock run 01 f05 t=0.6   ok   extent\u0394=0.0 edge\u0394 start=0.0 end=0.0 progress mac=1.0 win=1.0 pixelsOutsideStrips=0 (strip px 0)",
     "clock gate: pairs=6 ok=5 fail=1"
    ],
-   "secs": 0.4
+   "secs": 0.5
   },
   {
    "gate": "clock",
@@ -7893,7 +7919,7 @@
     "clock run 01 f05 t=0.6   ok   extent\u0394=0.0 edge\u0394 start=0.0 end=0.0 progress mac=1.0 win=1.0 pixelsOutsideStrips=0 (strip px 0)",
     "clock gate: pairs=6 ok=6 fail=0"
    ],
-   "secs": 0.4
+   "secs": 0.5
   },
   {
    "gate": "clock",
@@ -7941,7 +7967,7 @@
     "clock run 01 f05 t=1.5   ok   extent\u0394=0.0 edge\u0394 start=0.0 end=0.0 progress mac=None win=None pixelsOutsideStrips=0 (strip px 0)",
     "clock gate: pairs=6 ok=4 fail=2"
    ],
-   "secs": 0.4
+   "secs": 0.5
   },
   {
    "gate": "clock",
@@ -7988,7 +8014,7 @@
     "clock run 01 f05 t=1.5   ok   extent\u0394=0.0 edge\u0394 start=0.0 end=0.0 progress mac=None win=None pixelsOutsideStrips=0 (strip px 0)",
     "clock gate: pairs=6 ok=6 fail=0"
    ],
-   "secs": 0.4
+   "secs": 0.5
   },
   {
    "gate": "clock",
@@ -8011,7 +8037,7 @@
     "clock run 01 f05 t=1.5   ok   extent\u0394=0.0 edge\u0394 start=0.0 end=0.0 progress mac=None win=None pixelsOutsideStrips=0 (strip px 0)",
     "clock gate: pairs=6 ok=6 fail=0"
    ],
-   "secs": 0.5
+   "secs": 0.6
   },
   {
    "gate": "clock",
@@ -8035,7 +8061,7 @@
     "clock run 01 f05 t=1.5   ok   extent\u0394=0.0 edge\u0394 start=0.0 end=0.0 progress mac=None win=None pixelsOutsideStrips=0 (strip px 0)",
     "clock gate: pairs=6 ok=5 fail=1"
    ],
-   "secs": 0.5
+   "secs": 0.7
   },
   {
    "gate": "clock",
@@ -8059,7 +8085,7 @@
     "clock run 01 f05 t=1.5   ok   extent\u0394=0.0 edge\u0394 start=0.0 end=0.0 progress mac=None win=None pixelsOutsideStrips=0 (strip px 0)",
     "clock gate: pairs=6 ok=5 fail=1"
    ],
-   "secs": 0.5
+   "secs": 0.6
   },
   {
    "gate": "clock",
@@ -8083,7 +8109,7 @@
     "clock run 01 f05 t=1.5   ok   extent\u0394=0.0 edge\u0394 start=0.0 end=0.0 progress mac=None win=None pixelsOutsideStrips=0 (strip px 0)",
     "clock gate: pairs=6 ok=5 fail=1"
    ],
-   "secs": 0.5
+   "secs": 0.6
   },
   {
    "gate": "clock",
@@ -8107,7 +8133,7 @@
     "clock run 01 f05 t=1.5   ok   extent\u0394=0.0 edge\u0394 start=0.0 end=0.0 progress mac=None win=None pixelsOutsideStrips=0 (strip px 0)",
     "clock gate: pairs=6 ok=5 fail=1"
    ],
-   "secs": 0.5
+   "secs": 0.6
   },
   {
    "gate": "clock",
@@ -8131,7 +8157,7 @@
     "clock run 01 f05 t=1.5   ok   extent\u0394=0.0 edge\u0394 start=0.0 end=0.0 progress mac=None win=None pixelsOutsideStrips=0 (strip px 0)",
     "clock gate: pairs=6 ok=5 fail=1"
    ],
-   "secs": 0.5
+   "secs": 0.6
   },
   {
    "gate": "clock",
@@ -8155,7 +8181,7 @@
     "clock run 01 f05 t=1.5   ok   extent\u0394=None edge\u0394 start=None end=None progress mac=None win=None pixelsOutsideStrips=0 (strip px 0)",
     "clock gate: pairs=6 ok=4 fail=2"
    ],
-   "secs": 0.4
+   "secs": 0.5
   },
   {
    "gate": "clock",
@@ -8203,7 +8229,7 @@
     "clock run 01 f05 t=1.5   ok   extent\u0394=None edge\u0394 start=None end=None progress mac=None win=None pixelsOutsideStrips=0 (strip px 0)",
     "clock gate: pairs=6 ok=5 fail=1"
    ],
-   "secs": 0.4
+   "secs": 0.5
   },
   {
    "gate": "clock",
@@ -8227,7 +8253,7 @@
     "clock run 01 f05 t=1.5   ok   extent\u0394=None edge\u0394 start=None end=None progress mac=None win=None pixelsOutsideStrips=0 (strip px 0)",
     "clock gate: pairs=6 ok=5 fail=1"
    ],
-   "secs": 0.4
+   "secs": 0.5
   },
   {
    "gate": "image",
@@ -8332,7 +8358,7 @@
     "pairs=1 exact=0 exact-with-exclusions=0 edge-aa<=32=0 fail=1 maxdiff=255 diffbbox=(0, 1, 79, 77)",
     "image-system-star-fill glyph shape: pairs=1 gate=0/1 frame=1 inkBBox=0 tint=1 shapeDiffPx=[711] (shape excluded from exact gate)"
    ],
-   "secs": 0.3
+   "secs": 0.4
   },
   {
    "gate": "image",
@@ -8374,7 +8400,7 @@
     "pairs=1 exact=0 exact-with-exclusions=0 edge-aa<=32=0 fail=1 maxdiff=255 diffbbox=(0, 0, 79, 76)",
     "image-system-star-fill glyph shape: pairs=1 gate=0/1 frame=1 inkBBox=1 tint=0 shapeDiffPx=[3003] (shape excluded from exact gate)"
    ],
-   "secs": 0.3
+   "secs": 0.4
   },
   {
    "gate": "image",
@@ -8395,7 +8421,7 @@
     "pairs=1 exact=0 exact-with-exclusions=0 edge-aa<=32=0 fail=1 maxdiff=255 diffbbox=(0, 0, 79, 76)",
     "image-system-star-fill glyph shape: pairs=1 gate=0/1 frame=1 inkBBox=0 tint=0 shapeDiffPx=[3006] (shape excluded from exact gate)"
    ],
-   "secs": 0.3
+   "secs": 0.4
   },
   {
    "gate": "image",
@@ -8521,7 +8547,7 @@
     "textorigin run 01 field 0: FAIL first ink x differs by -5 px (mac 42, win 37, tolerance 0) first-ink mac=42 win=37 y(top/baseline) mac=44/67 win=46/66",
     "textorigin checks=1 pass=0 fail=1 first-ink delta (win-mac px): {-5: 1}"
    ],
-   "secs": 0.2
+   "secs": 0.3
   },
   {
    "gate": "text-origin",
@@ -8544,7 +8570,7 @@
     "textorigin run 01 field 0: FAIL first ink x differs by 5 px (mac 42, win 47, tolerance 0) first-ink mac=42 win=47 y(top/baseline) mac=44/67 win=46/66",
     "textorigin checks=1 pass=0 fail=1 first-ink delta (win-mac px): {5: 1}"
    ],
-   "secs": 0.2
+   "secs": 0.3
   },
   {
    "gate": "text-origin",
@@ -8567,7 +8593,7 @@
     "textorigin run 01 field 0: FAIL first ink x differs by 1 px (mac 42, win 43, tolerance 0) first-ink mac=42 win=43 y(top/baseline) mac=44/67 win=46/66",
     "textorigin checks=1 pass=0 fail=1 first-ink delta (win-mac px): {1: 1}"
    ],
-   "secs": 0.2
+   "secs": 0.3
   },
   {
    "gate": "text-origin",
@@ -8590,7 +8616,7 @@
     "textorigin run 01 field 0: FAIL first ink x differs by -1 px (mac 42, win 41, tolerance 0) first-ink mac=42 win=41 y(top/baseline) mac=44/67 win=46/66",
     "textorigin checks=1 pass=0 fail=1 first-ink delta (win-mac px): {-1: 1}"
    ],
-   "secs": 0.2
+   "secs": 0.3
   },
   {
    "gate": "text-origin",
@@ -8613,7 +8639,7 @@
     "textorigin run 01 field 0: FAIL first ink y differs by 7 px (mac 44, win 51, tolerance 2); baseline differs by 4 px (mac 67, win 71, tolerance 2); ink vertical centre differs by 5.5 px (first ink y 7, baseline 4, tolerance 0.5) first-ink ma",
     "textorigin checks=1 pass=0 fail=1 first-ink delta (win-mac px): {0: 1}"
    ],
-   "secs": 0.2
+   "secs": 0.3
   },
   {
    "gate": "text-origin",
@@ -8636,7 +8662,7 @@
     "textorigin run 01 field 0: FAIL first ink y differs by -3 px (mac 44, win 41, tolerance 2); baseline differs by -6 px (mac 67, win 61, tolerance 2); ink vertical centre differs by -4.5 px (first ink y -3, baseline -6, tolerance 0.5) first-i",
     "textorigin checks=1 pass=0 fail=1 first-ink delta (win-mac px): {0: 1}"
    ],
-   "secs": 0.2
+   "secs": 0.3
   },
   {
    "gate": "text-origin",
@@ -8659,7 +8685,7 @@
     "textorigin run 01 field 0: FAIL first ink y differs by 3 px (mac 44, win 47, tolerance 2); ink vertical centre differs by 1.5 px (first ink y 3, baseline 0, tolerance 0.5) first-ink mac=42 win=42 y(top/baseline) mac=44/67 win=47/67",
     "textorigin checks=1 pass=0 fail=1 first-ink delta (win-mac px): {0: 1}"
    ],
-   "secs": 0.2
+   "secs": 0.3
   },
   {
    "gate": "text-origin",
@@ -8682,7 +8708,7 @@
     "textorigin run 01 field 0: FAIL first ink y differs by 4 px (mac 44, win 48, tolerance 2); ink vertical centre differs by 2.5 px (first ink y 4, baseline 1, tolerance 0.5) first-ink mac=42 win=42 y(top/baseline) mac=44/67 win=48/68",
     "textorigin checks=1 pass=0 fail=1 first-ink delta (win-mac px): {0: 1}"
    ],
-   "secs": 0.2
+   "secs": 0.3
   },
   {
    "gate": "text-origin",
@@ -8705,7 +8731,7 @@
     "textorigin run 01 field 0: FAIL first ink x differs by 5 px (mac 42, win 47, tolerance 0); first ink y differs by 7 px (mac 44, win 51, tolerance 2); baseline differs by 4 px (mac 67, win 71, tolerance 2); ink vertical centre differs by 5.5",
     "textorigin checks=1 pass=0 fail=1 first-ink delta (win-mac px): {5: 1}"
    ],
-   "secs": 0.2
+   "secs": 0.3
   },
   {
    "gate": "text-origin",
@@ -8728,7 +8754,7 @@
     "textorigin run 01 field 0: FAIL first ink x differs by 149 px (mac 42, win 191, tolerance 0); first ink y differs by 29 px (mac 44, win 73, tolerance 2); baseline differs by 6 px (mac 67, win 73, tolerance 2); ink vertical centre differs by",
     "textorigin checks=1 pass=0 fail=1 first-ink delta (win-mac px): {149: 1}"
    ],
-   "secs": 0.2
+   "secs": 0.3
   },
   {
    "gate": "text-origin",
@@ -8749,7 +8775,7 @@
     "textorigin run 01 field 0: ok first-ink mac=42 win=42 y(top/baseline) mac=44/67 win=46/66",
     "textorigin checks=1 pass=1 fail=0 first-ink delta (win-mac px): {0: 1}"
    ],
-   "secs": 0.2
+   "secs": 0.3
   },
   {
    "gate": "text-origin",
@@ -8773,7 +8799,7 @@
     "textorigin run 01 field 1: ok first-ink mac=40 win=40 y(top/baseline) mac=126/147 win=128/146",
     "textorigin checks=2 pass=1 fail=1 first-ink delta (win-mac px): {0: 2}"
    ],
-   "secs": 0.2
+   "secs": 0.3
   },
   {
    "gate": "text-origin",
@@ -8797,7 +8823,7 @@
     "textorigin run 01 field 1: ok first-ink mac=40 win=40 y(top/baseline) mac=126/147 win=128/146",
     "textorigin checks=2 pass=1 fail=1 first-ink delta (win-mac px): {-1: 1, 0: 1}"
    ],
-   "secs": 0.2
+   "secs": 0.3
   },
   {
    "gate": "text-origin",
@@ -8821,7 +8847,7 @@
     "textorigin run 01 field 1: ok first-ink mac=40 win=40 y(top/baseline) mac=126/147 win=128/146",
     "textorigin checks=2 pass=1 fail=1 first-ink delta (win-mac px): {-1: 1, 0: 1}"
    ],
-   "secs": 0.2
+   "secs": 0.3
   },
   {
    "gate": "text-origin",
@@ -8845,7 +8871,7 @@
     "textorigin run 01 field 1: ok first-ink mac=40 win=40 y(top/baseline) mac=126/147 win=128/146",
     "textorigin checks=2 pass=1 fail=1 first-ink delta (win-mac px): {0: 2}"
    ],
-   "secs": 0.2
+   "secs": 0.3
   },
   {
    "gate": "text-origin",
@@ -8869,7 +8895,7 @@
     "textorigin run 01 field 1: ok first-ink mac=40 win=40 y(top/baseline) mac=126/147 win=128/146",
     "textorigin checks=2 pass=1 fail=1 first-ink delta (win-mac px): {0: 2}"
    ],
-   "secs": 0.2
+   "secs": 0.3
   },
   {
    "gate": "text-origin",
@@ -8893,7 +8919,7 @@
     "textorigin run 01 field 1: ok first-ink mac=40 win=40 y(top/baseline) mac=126/147 win=128/146",
     "textorigin checks=2 pass=1 fail=1 first-ink delta (win-mac px): {0: 2}"
    ],
-   "secs": 0.2
+   "secs": 0.3
   },
   {
    "gate": "text-origin",
@@ -8917,7 +8943,7 @@
     "textorigin run 01 field 1: ok first-ink mac=40 win=40 y(top/baseline) mac=126/147 win=128/146",
     "textorigin checks=2 pass=1 fail=1 first-ink delta (win-mac px): {0: 2}"
    ],
-   "secs": 0.2
+   "secs": 0.3
   },
   {
    "gate": "text-origin",
@@ -8964,7 +8990,7 @@
     "textorigin run 01 field 1: ok first-ink mac=40 win=40 y(top/baseline) mac=126/147 win=128/146",
     "textorigin checks=2 pass=2 fail=0 first-ink delta (win-mac px): {0: 2}"
    ],
-   "secs": 0.2
+   "secs": 0.3
   },
   {
    "gate": "text-origin",
@@ -9011,7 +9037,7 @@
     "textorigin run 01 field 1: FAIL first ink x differs by -5 px (mac 40, win 35, tolerance 0) first-ink mac=40 win=35 y(top/baseline) mac=126/147 win=128/146",
     "textorigin checks=2 pass=1 fail=1 first-ink delta (win-mac px): {-5: 1, 0: 1}"
    ],
-   "secs": 0.2
+   "secs": 0.3
   },
   {
    "gate": "text-origin",
@@ -9034,7 +9060,7 @@
     "textorigin run 01 field 0: ok first-ink mac=42 win=42 y(top/baseline) mac=44/67 win=45/65 caret win x=[40] caret mac insertion x=40.0",
     "textorigin checks=1 pass=1 fail=0 first-ink delta (win-mac px): {0: 1}"
    ],
-   "secs": 0.2
+   "secs": 0.3
   },
   {
    "gate": "text-origin",
@@ -9058,7 +9084,7 @@
     "textorigin run 01 field 0: FAIL first ink y differs by 7 px (mac 44, win 51, tolerance 2); baseline differs by 4 px (mac 67, win 71, tolerance 2); ink vertical centre differs by 5.5 px (first ink y 7, baseline 4, tolerance 0.5) first-ink ma",
     "textorigin checks=1 pass=0 fail=1 first-ink delta (win-mac px): {0: 1}"
    ],
-   "secs": 0.2
+   "secs": 0.3
   },
   {
    "gate": "text-origin",
@@ -9082,7 +9108,7 @@
     "textorigin run 01 field 0: FAIL caret x mac 40.00 != windows column 41 (tolerance 0 px) first-ink mac=42 win=42 y(top/baseline) mac=44/67 win=46/66 caret win x=[41] caret mac insertion x=40.0",
     "textorigin checks=1 pass=0 fail=1 first-ink delta (win-mac px): {0: 1}"
    ],
-   "secs": 0.2
+   "secs": 0.3
   },
   {
    "gate": "text-origin",
@@ -9130,7 +9156,7 @@
     "textorigin run 01 field 0: FAIL caret x mac 40.00 != windows column 45 (tolerance 0 px) first-ink mac=42 win=42 y(top/baseline) mac=44/67 win=46/66 caret win x=[45] caret mac insertion x=40.0",
     "textorigin checks=1 pass=0 fail=1 first-ink delta (win-mac px): {0: 1}"
    ],
-   "secs": 0.2
+   "secs": 0.3
   },
   {
    "gate": "text-origin",
@@ -9154,7 +9180,7 @@
     "textorigin run 01 field 0: FAIL caret: mac insertion point 40.0, windows caret column None first-ink mac=42 win=42 y(top/baseline) mac=44/67 win=46/66 caret mac insertion x=40.0",
     "textorigin checks=1 pass=0 fail=1 first-ink delta (win-mac px): {0: 1}"
    ],
-   "secs": 0.2
+   "secs": 0.3
   },
   {
    "gate": "multi-run",
@@ -9190,7 +9216,7 @@
     "run 01 edge-aa<=32 total=512 in-band=512 out-of-band=0 max-in-band=9 max-out-of-band=0",
     "pairs=3 exact=0 exact-with-exclusions=0 edge-aa<=32=3 fail=0 maxdiff=32 diffbbox=None"
    ],
-   "secs": 0.3
+   "secs": 0.4
   },
   {
    "gate": "multi-run",
@@ -9209,7 +9235,7 @@
     "run 01 edge-aa<=32 total=512 in-band=512 out-of-band=0 max-in-band=9 max-out-of-band=0",
     "pairs=3 exact=0 exact-with-exclusions=0 edge-aa<=32=2 fail=1 maxdiff=33 diffbbox=(347, 272, 453, 328)"
    ],
-   "secs": 0.3
+   "secs": 0.4
   },
   {
    "gate": "multi-run",
@@ -9230,7 +9256,7 @@
     "pairs=3 exact=0 exact-with-exclusions=0 edge-aa<=32=0 fail=3 maxdiff=199 diffbbox=(340, 270, 459, 330)",
     "bordered-v1: pairs=3 button-gate=2/3 width difference (label advance, Segoe vs SF)=[-7] cap max-in-band=20"
    ],
-   "secs": 0.5
+   "secs": 0.7
   },
   {
    "gate": "multi-run",
@@ -9250,7 +9276,7 @@
     "pairs=3 exact=0 exact-with-exclusions=0 edge-aa<=32=0 fail=3 maxdiff=219 diffbbox=(340, 270, 459, 330)",
     "bordered-v1: pairs=3 button-gate=3/3 width difference (label advance, Segoe vs SF)=[-7] cap max-in-band=3"
    ],
-   "secs": 0.6
+   "secs": 0.8
   },
   {
    "gate": "multi-run",
@@ -9271,7 +9297,7 @@
     "pairs=3 exact=0 exact-with-exclusions=0 edge-aa<=32=0 fail=3 maxdiff=219 diffbbox=(340, 270, 459, 330)",
     "bordered-v1: pairs=3 button-gate=2/3 width difference (label advance, Segoe vs SF)=[-7] cap max-in-band=3"
    ],
-   "secs": 0.7
+   "secs": 0.8
   },
   {
    "gate": "multi-run",
@@ -9291,7 +9317,7 @@
     "pairs=3 exact=0 exact-with-exclusions=0 edge-aa<=32=0 fail=3 maxdiff=255 diffbbox=(2, 0, 281, 61)",
     "switch-labelled-on-v1: pairs=3 control-gate=3/3 dx(label advance difference)=[-16] control max-in-band=18 out-of-band=[0]"
    ],
-   "secs": 1.1
+   "secs": 1.2
   },
   {
    "gate": "multi-run",
@@ -9312,7 +9338,7 @@
     "pairs=3 exact=0 exact-with-exclusions=0 edge-aa<=32=0 fail=3 maxdiff=255 diffbbox=(2, 0, 281, 61)",
     "switch-labelled-on-v1: pairs=3 control-gate=2/3 dx(label advance difference)=[-16] control max-in-band=18 out-of-band=[0]"
    ],
-   "secs": 1.1
+   "secs": 1.2
   },
   {
    "gate": "multi-run",
@@ -9332,7 +9358,7 @@
     "pairs=3 exact=0 exact-with-exclusions=0 (excluding: row 0 label glyph region (Segoe UI vs SF, sr1-decisions #2); ink colour gated by pair_list_report.py[190, 137, 340, 173], row 1 label glyph region (Segoe UI vs SF, sr1-decisions #2); ink c",
     "arrow-keys-v1: pairs=3 list-gate=2/3"
    ],
-   "secs": 0.4
+   "secs": 0.5
   },
   {
    "gate": "multi-run",
@@ -9350,7 +9376,7 @@
     "pairs=3 exact=0 exact-with-exclusions=0 (excluding: row 0 label glyph region (Segoe UI vs SF, sr1-decisions #2); ink colour gated by pair_list_report.py[190, 137, 340, 173], row 1 label glyph region (Segoe UI vs SF, sr1-decisions #2); ink c",
     "arrow-keys-v1: pairs=3 list-gate=3/3"
    ],
-   "secs": 0.4
+   "secs": 0.5
   },
   {
    "gate": "multi-run",
@@ -9393,7 +9419,7 @@
     "semantic run 03 fail [{\"where\": \"main[0]\", \"field\": \"name\", \"windows\": \"Count 2\", \"mac\": \"Count 1\", \"role\": [\"text\", \"text\"], \"phase\": \"\"}]",
     "semantic pairs=3 pass=2 fail=1 fields=role,name,enabled,count,order,boundsY,boundsCentreX scope=main"
    ],
-   "secs": 0.3
+   "secs": 0.4
   },
   {
    "gate": "multi-run",
@@ -9414,7 +9440,7 @@
     "semantic run 03 pass",
     "semantic pairs=3 pass=3 fail=0 fields=role,name,enabled,count,order,boundsY,boundsCentreX scope=main"
    ],
-   "secs": 0.3
+   "secs": 0.4
   },
   {
    "gate": "multi-run",
@@ -9438,7 +9464,7 @@
     "clock run 03 f02 t=0.5   FAIL extent\u0394=1.149 edge\u0394 start=0.0 end=1.149 progress mac=0.5 win=0.5 pixelsOutsideStrips=0 (strip px 2400)",
     "clock gate: pairs=18 ok=17 fail=1"
    ],
-   "secs": 1.1
+   "secs": 1.2
   },
   {
    "gate": "multi-run",
@@ -9461,7 +9487,7 @@
     "clock run 01 f05 t=1.5   ok   extent\u0394=0.0 edge\u0394 start=0.0 end=0.0 progress mac=1.0 win=1.0 pixelsOutsideStrips=0 (strip px 0)",
     "clock gate: pairs=18 ok=18 fail=0"
    ],
-   "secs": 1.0
+   "secs": 1.2
   },
   {
    "gate": "multi-run",
@@ -9485,7 +9511,7 @@
     "clock run 03 f02 t=0.5   FAIL extent\u0394=0.0 edge\u0394 start=0.0 end=0.0 progress mac=0.5 win=0.5046 pixelsOutsideStrips=0 (strip px 0)",
     "clock gate: pairs=18 ok=17 fail=1"
    ],
-   "secs": 1.0
+   "secs": 1.2
   },
   {
    "gate": "multi-run",
@@ -9508,7 +9534,7 @@
     "textorigin run 03 field 0: FAIL first ink x differs by 1 px (mac 42, win 43, tolerance 0) first-ink mac=42 win=43 y(top/baseline) mac=44/67 win=46/66",
     "textorigin checks=3 pass=2 fail=1 first-ink delta (win-mac px): {0: 2, 1: 1}"
    ],
-   "secs": 0.3
+   "secs": 0.4
   },
   {
    "gate": "multi-run",
@@ -9529,7 +9555,7 @@
     "textorigin run 03 field 0: ok first-ink mac=42 win=42 y(top/baseline) mac=44/67 win=46/66",
     "textorigin checks=3 pass=3 fail=0 first-ink delta (win-mac px): {0: 3}"
    ],
-   "secs": 0.3
+   "secs": 0.4
   },
   {
    "gate": "multi-run",
@@ -9547,7 +9573,7 @@
    "why": [
     "run 01 exact-with-exclusions total=0 in-band=0 out-of-band=0 max-in-band=0 max-out-of-band=0",
     "pairs=3 exact=0 exact-with-exclusions=3 (excluding: 'Run' label glyph region (Segoe UI vs SF, sr1-decisions #2); colour gated by factory/tools/pair_textcolour_report.py[360, 280, 440, 325]) edge-aa<=32=0 fail=0 maxdiff=0 diffbbox=None",
-    "borderless-red-v1: pairs=3 text-colour-gate=2/3 (tolerance 24/255 per channel, position gated) first run: Run mac=[255, 56, 60] win=[255, 56, 60] at mac={'firstInkX': 372, 'firstInkY': 289, 'baselineY': 312, 'inkCentreX': 399.5} win={'first"
+    "borderless-red-v1: pairs=3 text-colour-gate=2/3 (tolerance 24/255 per channel, position gated) first run: Run mac=[255, 56, 60] win=[255, 56, 60] at mac={'firstInkX': 372, 'firstInkY': 289, 'baselineY': 312, 'inkCentreX': 399.5, 'inkRightX'"
    ],
    "secs": 0.4
   },
@@ -9565,9 +9591,233 @@
    "why": [
     "run 01 exact-with-exclusions total=0 in-band=0 out-of-band=0 max-in-band=0 max-out-of-band=0",
     "pairs=3 exact=0 exact-with-exclusions=3 (excluding: 'Run' label glyph region (Segoe UI vs SF, sr1-decisions #2); colour gated by factory/tools/pair_textcolour_report.py[360, 280, 440, 325]) edge-aa<=32=0 fail=0 maxdiff=0 diffbbox=None",
-    "borderless-red-v1: pairs=3 text-colour-gate=3/3 (tolerance 24/255 per channel, position gated) first run: Run mac=[255, 56, 60] win=[255, 56, 60] at mac={'firstInkX': 372, 'firstInkY': 289, 'baselineY': 312, 'inkCentreX': 399.5} win={'first"
+    "borderless-red-v1: pairs=3 text-colour-gate=3/3 (tolerance 24/255 per channel, position gated) first run: Run mac=[255, 56, 60] win=[255, 56, 60] at mac={'firstInkX': 372, 'firstInkY': 289, 'baselineY': 312, 'inkCentreX': 399.5, 'inkRightX'"
    ],
-   "secs": 0.3
+   "secs": 0.4
+  },
+  {
+   "gate": "text-colour",
+   "base": "rowtol-serif",
+   "mutation": "r0-dy-beyond",
+   "kind": "catch",
+   "what": "first ink y one px beyond the row's own tolerance",
+   "applied": "row 'row 0 Font.system(size: 13, weight: .regular, design: .serif)': moved +1 px on y; dy +4, tolerance 3: one beyond",
+   "exit": 1,
+   "failedReports": [
+    "text-colour"
+   ],
+   "verdict": "caught",
+   "design": null,
+   "why": [
+    "run 01 exact-with-exclusions total=0 in-band=0 out-of-band=0 max-in-band=0 max-out-of-band=0",
+    "pairs=1 exact=0 exact-with-exclusions=1 (excluding: row 0 Font.system(size: 13, weight: .regular, design: .serif) glyph region (Segoe UI vs SF, decision 2); gated by the position gate of decision 19 and the semantic frame gate[100, 50, 700,",
+    "semantic run 01 pass",
+    "semantic pairs=1 pass=1 fail=0 fields=role,name,count,order,boundsY,boundsX scope=main",
+    "design-serif-v1: pairs=1 text-colour-gate=0/1 (tolerance 40/255 per channel, position gated) first run: row 0 Font.system(size: 13, weight: .regular, design: .serif) mac=[39, 39, 39] win=[31, 31, 31] at mac={'firstInkX': 101, 'firstInkY': 5",
+    "run 1 [('row 0 Font.system(size: 13, weight: .regular, design: .serif)', ['first ink y differs by 4 px (tolerance 3)', 'baseline differs by 1 px (tolerance 0)', 'ink vertical centre differs by 2.5 px (tolerance 1.5)'], [39, 39, 39], [31, 31"
+   ],
+   "secs": 0.7
+  },
+  {
+   "gate": "text-colour",
+   "base": "rowtol-serif",
+   "mutation": "r0-dy-at-tol",
+   "kind": "near",
+   "what": "first ink y exactly at the row's own tolerance: must pass",
+   "applied": "row 'row 0 Font.system(size: 13, weight: .regular, design: .serif)': moved +0 px on y; dy +3, tolerance 3: exactly at",
+   "exit": 0,
+   "failedReports": [],
+   "verdict": "near-miss passed",
+   "design": null,
+   "why": [
+    "run 01 exact-with-exclusions total=0 in-band=0 out-of-band=0 max-in-band=0 max-out-of-band=0",
+    "pairs=1 exact=0 exact-with-exclusions=1 (excluding: row 0 Font.system(size: 13, weight: .regular, design: .serif) glyph region (Segoe UI vs SF, decision 2); gated by the position gate of decision 19 and the semantic frame gate[100, 50, 700,",
+    "semantic run 01 pass",
+    "semantic pairs=1 pass=1 fail=0 fields=role,name,count,order,boundsY,boundsX scope=main",
+    "design-serif-v1: pairs=1 text-colour-gate=1/1 (tolerance 40/255 per channel, position gated) first run: row 0 Font.system(size: 13, weight: .regular, design: .serif) mac=[39, 39, 39] win=[31, 31, 31] at mac={'firstInkX': 101, 'firstInkY': 5"
+   ],
+   "secs": 0.6
+  },
+  {
+   "gate": "text-colour",
+   "base": "rowtol-serif",
+   "mutation": "r0-dx-beyond",
+   "kind": "catch",
+   "what": "first ink x one px beyond the row's own tolerance",
+   "applied": "row 'row 0 Font.system(size: 13, weight: .regular, design: .serif)': moved -1 px on x; dx -1, tolerance 0: one beyond",
+   "exit": 1,
+   "failedReports": [
+    "text-colour"
+   ],
+   "verdict": "caught",
+   "design": null,
+   "why": [
+    "run 01 exact-with-exclusions total=0 in-band=0 out-of-band=0 max-in-band=0 max-out-of-band=0",
+    "pairs=1 exact=0 exact-with-exclusions=1 (excluding: row 0 Font.system(size: 13, weight: .regular, design: .serif) glyph region (Segoe UI vs SF, decision 2); gated by the position gate of decision 19 and the semantic frame gate[100, 50, 700,",
+    "semantic run 01 pass",
+    "semantic pairs=1 pass=1 fail=0 fields=role,name,count,order,boundsY,boundsX scope=main",
+    "design-serif-v1: pairs=1 text-colour-gate=0/1 (tolerance 40/255 per channel, position gated) first run: row 0 Font.system(size: 13, weight: .regular, design: .serif) mac=[39, 39, 39] win=[31, 31, 31] at mac={'firstInkX': 101, 'firstInkY': 5",
+    "run 1 [('row 0 Font.system(size: 13, weight: .regular, design: .serif)', ['first ink x differs by -1 px (tolerance 0)'], [39, 39, 39], [31, 31, 31]), 'row 1 Font.system(size: 13, weight: .bold, design: .serif)', 'row 2 Font.system(size: 20,"
+   ],
+   "secs": 0.6
+  },
+  {
+   "gate": "text-colour",
+   "base": "rowtol-serif",
+   "mutation": "r0-2pt-natural",
+   "kind": "catch",
+   "what": "row 2 pt (5 px) further in the direction of its natural offset",
+   "applied": "row 'row 0 Font.system(size: 13, weight: .regular, design: .serif)': 2 pt (+5 px) on y with the natural offset +3; dy now +8, tolerance 3",
+   "exit": 1,
+   "failedReports": [
+    "text-colour"
+   ],
+   "verdict": "caught",
+   "design": null,
+   "why": [
+    "run 01 exact-with-exclusions total=0 in-band=0 out-of-band=0 max-in-band=0 max-out-of-band=0",
+    "pairs=1 exact=0 exact-with-exclusions=1 (excluding: row 0 Font.system(size: 13, weight: .regular, design: .serif) glyph region (Segoe UI vs SF, decision 2); gated by the position gate of decision 19 and the semantic frame gate[100, 50, 700,",
+    "semantic run 01 pass",
+    "semantic pairs=1 pass=1 fail=0 fields=role,name,count,order,boundsY,boundsX scope=main",
+    "design-serif-v1: pairs=1 text-colour-gate=0/1 (tolerance 40/255 per channel, position gated) first run: row 0 Font.system(size: 13, weight: .regular, design: .serif) mac=[39, 39, 39] win=[31, 31, 31] at mac={'firstInkX': 101, 'firstInkY': 5",
+    "run 1 [('row 0 Font.system(size: 13, weight: .regular, design: .serif)', ['first ink y differs by 8 px (tolerance 3)', 'baseline differs by 5 px (tolerance 0)', 'ink vertical centre differs by 6.5 px (tolerance 1.5)'], [39, 39, 39], [31, 31"
+   ],
+   "secs": 0.6
+  },
+  {
+   "gate": "text-colour",
+   "base": "rowtol-serif",
+   "mutation": "r0-2pt-counter",
+   "kind": "catch",
+   "what": "row 2 pt (5 px) against its natural offset: first ink y may land inside its tolerance, but the baseline (tolerance 0 on these rows) moves with it and fails",
+   "applied": "row 'row 0 Font.system(size: 13, weight: .regular, design: .serif)': 2 pt (-5 px) on y against the natural offset +3; dy now -2, tolerance 3",
+   "exit": 1,
+   "failedReports": [
+    "text-colour"
+   ],
+   "verdict": "caught",
+   "design": null,
+   "why": [
+    "run 01 exact-with-exclusions total=0 in-band=0 out-of-band=0 max-in-band=0 max-out-of-band=0",
+    "pairs=1 exact=0 exact-with-exclusions=1 (excluding: row 0 Font.system(size: 13, weight: .regular, design: .serif) glyph region (Segoe UI vs SF, decision 2); gated by the position gate of decision 19 and the semantic frame gate[100, 50, 700,",
+    "semantic run 01 pass",
+    "semantic pairs=1 pass=1 fail=0 fields=role,name,count,order,boundsY,boundsX scope=main",
+    "design-serif-v1: pairs=1 text-colour-gate=0/1 (tolerance 40/255 per channel, position gated) first run: row 0 Font.system(size: 13, weight: .regular, design: .serif) mac=[39, 39, 39] win=[31, 31, 31] at mac={'firstInkX': 101, 'firstInkY': 5",
+    "run 1 [('row 0 Font.system(size: 13, weight: .regular, design: .serif)', ['baseline differs by -5 px (tolerance 0)', 'ink vertical centre differs by -3.5 px (tolerance 1.5)'], [39, 39, 39], [31, 31, 31]), 'row 1 Font.system(size: 13, weight"
+   ],
+   "secs": 0.6
+  },
+  {
+   "gate": "text-colour",
+   "base": "rowtol-grid13",
+   "mutation": "r0-dy-beyond",
+   "kind": "catch",
+   "what": "first ink y one px beyond the row's own tolerance",
+   "applied": "row '13pt ultraLight': moved +1 px on y; dy +2, tolerance 1: one beyond",
+   "exit": 1,
+   "failedReports": [
+    "text-colour"
+   ],
+   "verdict": "caught",
+   "design": null,
+   "why": [
+    "run 01 exact-with-exclusions total=0 in-band=0 out-of-band=0 max-in-band=0 max-out-of-band=0",
+    "pairs=1 exact=0 exact-with-exclusions=1 (excluding: 13pt ultraLight glyph region (Segoe UI vs SF, decision 2); gated by the position gate of decision 19 and the semantic frame gate[25, 50, 275, 90], 13pt thin glyph region (Segoe UI vs SF, d",
+    "semantic run 01 pass",
+    "semantic pairs=1 pass=1 fail=0 fields=role,name,count,order,boundsY,boundsX scope=main",
+    "grid-13-v1: pairs=1 text-colour-gate=0/1 (tolerance 40/255 per channel, position gated) first run: 13pt ultraLight mac=[41, 41, 41] win=[31, 31, 31] at mac={'firstInkX': 27, 'firstInkY': 59, 'baselineY': 82, 'inkCentreX': 50.5, 'inkRightX':",
+    "run 1 [('13pt ultraLight', ['first ink y differs by 2 px (tolerance 1)', 'baseline differs by 1 px (tolerance 0)', 'ink vertical centre differs by 1.5 px (tolerance 0.5)'], [41, 41, 41], [31, 31, 31]), '13pt thin', '13pt light', '13pt regul"
+   ],
+   "secs": 0.5
+  },
+  {
+   "gate": "text-colour",
+   "base": "rowtol-grid13",
+   "mutation": "r0-dy-at-tol",
+   "kind": "near",
+   "what": "first ink y exactly at the row's own tolerance: must pass",
+   "applied": "row '13pt ultraLight': moved +0 px on y; dy +1, tolerance 1: exactly at",
+   "exit": 0,
+   "failedReports": [],
+   "verdict": "near-miss passed",
+   "design": null,
+   "why": [
+    "run 01 exact-with-exclusions total=0 in-band=0 out-of-band=0 max-in-band=0 max-out-of-band=0",
+    "pairs=1 exact=0 exact-with-exclusions=1 (excluding: 13pt ultraLight glyph region (Segoe UI vs SF, decision 2); gated by the position gate of decision 19 and the semantic frame gate[25, 50, 275, 90], 13pt thin glyph region (Segoe UI vs SF, d",
+    "semantic run 01 pass",
+    "semantic pairs=1 pass=1 fail=0 fields=role,name,count,order,boundsY,boundsX scope=main",
+    "grid-13-v1: pairs=1 text-colour-gate=1/1 (tolerance 40/255 per channel, position gated) first run: 13pt ultraLight mac=[41, 41, 41] win=[31, 31, 31] at mac={'firstInkX': 27, 'firstInkY': 59, 'baselineY': 82, 'inkCentreX': 50.5, 'inkRightX':"
+   ],
+   "secs": 0.5
+  },
+  {
+   "gate": "text-colour",
+   "base": "rowtol-grid13",
+   "mutation": "r0-dx-beyond",
+   "kind": "catch",
+   "what": "first ink x one px beyond the row's own tolerance",
+   "applied": "row '13pt ultraLight': moved +1 px on x; dx +2, tolerance 1: one beyond",
+   "exit": 1,
+   "failedReports": [
+    "text-colour"
+   ],
+   "verdict": "caught",
+   "design": null,
+   "why": [
+    "run 01 exact-with-exclusions total=0 in-band=0 out-of-band=0 max-in-band=0 max-out-of-band=0",
+    "pairs=1 exact=0 exact-with-exclusions=1 (excluding: 13pt ultraLight glyph region (Segoe UI vs SF, decision 2); gated by the position gate of decision 19 and the semantic frame gate[25, 50, 275, 90], 13pt thin glyph region (Segoe UI vs SF, d",
+    "semantic run 01 pass",
+    "semantic pairs=1 pass=1 fail=0 fields=role,name,count,order,boundsY,boundsX scope=main",
+    "grid-13-v1: pairs=1 text-colour-gate=0/1 (tolerance 40/255 per channel, position gated) first run: 13pt ultraLight mac=[41, 41, 41] win=[31, 31, 31] at mac={'firstInkX': 27, 'firstInkY': 59, 'baselineY': 82, 'inkCentreX': 50.5, 'inkRightX':",
+    "run 1 [('13pt ultraLight', ['first ink x differs by 2 px (tolerance 1)'], [41, 41, 41], [31, 31, 31]), '13pt thin', '13pt light', '13pt regular', '13pt medium', '13pt semibold', '13pt bold', '13pt heavy', '13pt black']"
+   ],
+   "secs": 0.5
+  },
+  {
+   "gate": "text-colour",
+   "base": "rowtol-grid13",
+   "mutation": "r0-2pt-natural",
+   "kind": "catch",
+   "what": "row 2 pt (5 px) further in the direction of its natural offset",
+   "applied": "row '13pt ultraLight': 2 pt (+5 px) on y with the natural offset +1; dy now +6, tolerance 1",
+   "exit": 1,
+   "failedReports": [
+    "text-colour"
+   ],
+   "verdict": "caught",
+   "design": null,
+   "why": [
+    "run 01 exact-with-exclusions total=0 in-band=0 out-of-band=0 max-in-band=0 max-out-of-band=0",
+    "pairs=1 exact=0 exact-with-exclusions=1 (excluding: 13pt ultraLight glyph region (Segoe UI vs SF, decision 2); gated by the position gate of decision 19 and the semantic frame gate[25, 50, 275, 90], 13pt thin glyph region (Segoe UI vs SF, d",
+    "semantic run 01 pass",
+    "semantic pairs=1 pass=1 fail=0 fields=role,name,count,order,boundsY,boundsX scope=main",
+    "grid-13-v1: pairs=1 text-colour-gate=0/1 (tolerance 40/255 per channel, position gated) first run: 13pt ultraLight mac=[41, 41, 41] win=[31, 31, 31] at mac={'firstInkX': 27, 'firstInkY': 59, 'baselineY': 82, 'inkCentreX': 50.5, 'inkRightX':",
+    "run 1 [('13pt ultraLight', ['first ink y differs by 6 px (tolerance 1)', 'baseline differs by 5 px (tolerance 0)', 'ink vertical centre differs by 5.5 px (tolerance 0.5)'], [41, 41, 41], [31, 31, 31]), '13pt thin', '13pt light', '13pt regul"
+   ],
+   "secs": 0.5
+  },
+  {
+   "gate": "text-colour",
+   "base": "rowtol-grid13",
+   "mutation": "r0-2pt-counter",
+   "kind": "catch",
+   "what": "row 2 pt (5 px) against its natural offset: first ink y may land inside its tolerance, but the baseline (tolerance 0 on these rows) moves with it and fails",
+   "applied": "row '13pt ultraLight': 2 pt (-5 px) on y against the natural offset +1; dy now -4, tolerance 1",
+   "exit": 1,
+   "failedReports": [
+    "text-colour"
+   ],
+   "verdict": "caught",
+   "design": null,
+   "why": [
+    "run 01 exact-with-exclusions total=0 in-band=0 out-of-band=0 max-in-band=0 max-out-of-band=0",
+    "pairs=1 exact=0 exact-with-exclusions=1 (excluding: 13pt ultraLight glyph region (Segoe UI vs SF, decision 2); gated by the position gate of decision 19 and the semantic frame gate[25, 50, 275, 90], 13pt thin glyph region (Segoe UI vs SF, d",
+    "semantic run 01 pass",
+    "semantic pairs=1 pass=1 fail=0 fields=role,name,count,order,boundsY,boundsX scope=main",
+    "grid-13-v1: pairs=1 text-colour-gate=0/1 (tolerance 40/255 per channel, position gated) first run: 13pt ultraLight mac=[41, 41, 41] win=[31, 31, 31] at mac={'firstInkX': 27, 'firstInkY': 59, 'baselineY': 82, 'inkCentreX': 50.5, 'inkRightX':",
+    "run 1 [('13pt ultraLight', ['first ink y differs by -4 px (tolerance 1)', 'baseline differs by -5 px (tolerance 0)', 'ink vertical centre differs by -4.5 px (tolerance 0.5)'], [41, 41, 41], [31, 31, 31]), '13pt thin', '13pt light', '13pt re"
+   ],
+   "secs": 0.5
   }
  ]
 }

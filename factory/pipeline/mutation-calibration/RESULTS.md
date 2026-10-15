@@ -1,14 +1,14 @@
 # Mutation calibration results
 
-Generated 2026-10-15 by `factory/tools/mutation-calibration/calibrate.py` (see its README for every mutation). Offline: no capture, no Windows, no Sandbox. All 33 unmutated base fixtures pass their gates before any mutation is applied. The verdict of every row is the exit status of `pair.py <case> --recompare <run>`.
+Generated 2026-10-15 by `factory/tools/mutation-calibration/calibrate.py` (see its README for every mutation). Offline: no capture, no Windows, no Sandbox. All 35 unmutated base fixtures pass their gates before any mutation is applied. The verdict of every row is the exit status of `pair.py <case> --recompare <run>`.
 
-**331 of 336 seeded faults caught; 68 of 68 near-misses inside a tolerance passed; 0 over-strict gates.** 5 faults were not caught: 0 with no documented reason (findings A below), 5 that a decision or the gate's own contract says is not gated (B below).
+**339 of 344 seeded faults caught; 70 of 70 near-misses inside a tolerance passed; 0 over-strict gates.** 5 faults were not caught: 0 with no documented reason (findings A below), 5 that a decision or the gate's own contract says is not gated (B below).
 
 | Gate | Comparator | Caught / seeded | Missed (undocumented / documented exclusion) | Near-misses passed | Over-strict | Probes |
 |---|---|---|---|---|---|---|
 | pixel | `pair.py` | 27 / 29 | 2 (0 / 2) | 5 / 5 | 0 | 7 |
 | text | `pair_text_report.py` | 7 / 7 | 0 (0 / 0) | 3 / 3 | 0 | 0 |
-| text-colour | `pair_textcolour_report.py` | 49 / 49 | 0 (0 / 0) | 5 / 5 | 0 | 0 |
+| text-colour | `pair_textcolour_report.py` | 57 / 57 | 0 (0 / 0) | 7 / 7 | 0 | 0 |
 | button | `pair_button_report.py` | 38 / 38 | 0 (0 / 0) | 18 / 18 | 0 | 0 |
 | control | `pair_control_report.py` | 32 / 32 | 0 (0 / 0) | 6 / 6 | 0 | 0 |
 | list | `pair_list_report.py` | 34 / 34 (6 by the case's pixel gate) | 0 (0 / 0) | 3 / 3 | 0 | 0 |
@@ -93,6 +93,8 @@ None. Every near-miss placed exactly at or just inside a tolerance (edge-aa 32, 
 | px-fractional | `blocks-6-10/padding-frame/nested-fractional-v1` | 20261014-173407 |
 | px-haze | `blocks-17-20/swiftui.color-scheme/switch-on-dark-v1` | 20261014-162645 |
 | px-ties | `blocks-6-10/pixel-ties/layout-v1` | 20261014-182749 |
+| rowtol-grid13 | `blocks-w1-f2/swiftui.system-font-f2/grid-13-v1` | 20261015-152228 |
+| rowtol-serif | `blocks-w1-f2/swiftui.system-font-f2/design-serif-v1` | 20261015-151417 |
 | sem-alert-confirm | `blocks-17-20/swiftui.alert/confirm-delete-v1` | 20261014-224327 |
 | sem-alert-default | `blocks-17-20/swiftui.alert/default-enter-v1` | 20261014-224807 |
 | sem-alert-three | `blocks-17-20/swiftui.alert/three-buttons-v1` | 20261014-225724 |

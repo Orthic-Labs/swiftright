@@ -95,13 +95,22 @@ REVIEW = "oracle 2026-10-15"
 REVIEWED = {bid: {"review": REVIEW, "caveats": []} for bid in
             [NUM2ID[n] for n in range(1, 21)] + ["cross-cutting.pixel-ties"] + [NUM2ID[n] for n in list(range(21, 27)) + list(range(28, 37))]}
 REVIEWED["swiftui.text-views"]["caveats"] = ["Text position is ungated (the pixels and the semantic tree are)."]
-REVIEWED["swiftui.system-font"]["caveats"] = ["Weak gate: one blanket tolerance set for every size; `sizes-large-v1`'s tolerance was raised from 3 to 4 after capture (Oracle)."]
+REVIEWED["swiftui.system-font"]["caveats"] = ["The blanket tolerance set was replaced by per-row tolerances (decision G71); on the final renderer (fc4a39a89, renderer 0.8) the independent gate fails for 8 of 9 cases."]
 # Text in priority groups: the eight text cases pass at N=20 on stage 3d3c6f5c2-0a0d1f39 (L1-L8); the Oracle narrowing is lifted, the review is not repeated.
 REVIEWED["swiftui.layout-priority"] = {"review": REVIEW, "status": "delivered-pending-review", "caveats": []}
+# Block 37 slider (Oracle, 16 October 2026: PASS-WITH-CAVEATS). Delivered with caveats; the caveats below are the review's, not a re-run.
+REVIEWED["swiftui.slider"] = {"review": "oracle 2026-10-16 (block 37: PASS-WITH-CAVEATS)", "caveats": [
+    "Labels and value labels are checked semantically only (role, name, value, enabled, range, count, order); they have no position gate of their own.",
+    "The value-label buttons' vertical position is not gated: Windows y 61.2 h 14.0 against the Mac's y 62.4 h 13.2, a 1.2 pt gap, so the boundsY check was dropped (decision H15).",
+    "Dark cases gate at hazeTolerance 2 (values-dark, disabled-dark); the light cases at 1 (decision H4, which says within 1 level).",
+    "No negative controls yet: the gate has not been shown to fail on a 1 px thumb offset or a wrong fill colour."],
+    "windowsDifferences": ["Stepped-slider tick marks are not drawn on Windows (decision H4 records the Mac's tick marks under a stepped slider)."]}
 PENDING_REVIEW -= set(REVIEWED)
 
 # No hand-set status: the closure run reran blocks 13-15 (text-origin fix, decision 12) and every block 1-20 is derived from its cases (delivered-pending-review).
-OVERRIDES = {}
+OVERRIDES = {
+    "swiftui.system-font": {"status": "not-delivered", "statusReason": "Reopened 16 October (decision G71): the blanket tolerance was replaced by per-row tolerances, which fail the independent block 28 gate on the final renderer (styles-large passes; 8 of 9 cases fail; unfitted sizes and weights, undersampled rows)."},
+}
 WIN_KEYS = re.compile(r"Windows|Segoe|Sandbox|hardware|narrower|focus ring|TSF|\bIME\b|UIA|Mac side|Mac's|\bSF\b|scale 2\.5|light only|measured in light", re.I)
 NOT_SWIFTUI = set("""Int Int8 Int16 Int32 Int64 UInt Double Float CGFloat CGSize CGPoint CGRect String Bool Array Dictionary Set
 Optional Character Void Any AnyObject Self Date Data URL UUID Never Result Error Task DispatchQueue Foundation TimeInterval
@@ -224,6 +233,7 @@ def build():
             rv = REVIEWED[bid]
             review = rv["review"]
             gen = gen + ROUND4_CAVEATS.get(bid, []) + rv["caveats"]
+            win = win + rv.get("windowsDifferences", [])
             status = rv.get("status") or ("delivered-with-caveats" if gen or win else "delivered")
         elif bid in PENDING_REVIEW and passed == len(cases):
             status = "delivered-pending-review"

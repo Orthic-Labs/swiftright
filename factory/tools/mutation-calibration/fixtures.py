@@ -3,6 +3,7 @@
 factory/pipeline/mutation-calibration/fixtures/<id>/ so the calibration runs offline and byte-stable: no capture, no Windows, no Sandbox.
 
   python3 fixtures.py            # rebuild every fixture from the SOURCE paths below (read-only on the sources)
+  python3 fixtures.py --only rowtol-serif,rowtol-grid13   # rebuild only the named fixtures (the others are left as they are)
   python3 fixtures.py --refresh-config   # only re-copy each case's pair.json (the committed run dirs have since been trimmed to run 01 PNGs and reports; the logs live in the fixtures)
 Each fixture: pair.json (the case's own gate configuration, unchanged), run/ (run 01 inputs only), SOURCE.json (where it came from)."""
 import json, shutil, sys
@@ -56,12 +57,17 @@ BASES = {
     "clk-fade":      (f"{B6}/swiftui.opacity-transition/insertion-fade-v1", "20261014-002352", ["mac/run-01-f*.png", "windows/native-01-f*.png", "windows/host-01-f*.stdout.txt", "mac-run-01.log"]),
     # image gate
     "img-star":      ("pilot-delivery-five-v1/text-shape-image/image-system-star-fill-v10", "20261013-221400", ["windows/host-01.stdout.txt"]),
+    # per-row position tolerances (decision G71): F2 fit-set cases (serif: natural offset +3 px; grid-13: +1 px) and a block 28 case on the final renderer
+    # (the block 28 styles-small case fails its own unmutated run at caption2 (decision G71), so it cannot be a calibration base)
+    "rowtol-serif":  ("blocks-w1-f2/swiftui.system-font-f2/design-serif-v1", "20261015-151417", ["mac/ax-01*.json", "windows/uia-01*.json", "windows/host-01.stdout.txt"]),
+    "rowtol-grid13": ("blocks-w1-f2/swiftui.system-font-f2/grid-13-v1", "20261015-152228", ["mac/ax-01*.json", "windows/uia-01*.json", "windows/host-01.stdout.txt"]),
 }
 
 
-def build():
+def build(only=None):
     OUT.mkdir(parents=True, exist_ok=True)
     for bid, (case, run, extra) in BASES.items():
+        if only and bid not in only: continue
         src_case, src_run = PIPE / case, PIPE / case / "runs" / run
         dst = OUT / bid
         if dst.exists():
@@ -97,4 +103,6 @@ def refresh_pair_json():
 
 
 if __name__ == "__main__":
-    refresh_pair_json() if "--refresh-config" in sys.argv else build()
+    if "--refresh-config" in sys.argv: refresh_pair_json()
+    elif "--only" in sys.argv: build(set(sys.argv[sys.argv.index("--only") + 1].split(",")))   # only the named fixtures; the others are left as they are
+    else: build()

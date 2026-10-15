@@ -1,0 +1,141 @@
+{
+ "textColourGate": {
+  "tolerance": 40,
+  "regions": [
+   {
+    "name": "row 0 Font.system(size: 13)",
+    "rect": [
+     100,
+     50,
+     700,
+     90
+    ],
+    "align": "leading",
+    "position": {
+     "firstInkYTolerancePx": 1,
+     "baselineTolerancePx": 1,
+     "inkCentreYTolerancePx": 0.5,
+     "firstInkXTolerancePx": 1,
+     "reason": "per-row fit (decision G71): system|size=13|weight=regular|design=default|, FIT set F2 runs 1-10 (stage fc4a39a89-f623e43e, renderer 0.8)"
+    }
+   },
+   {
+    "name": "row 1 Font.system(size: 13).monospacedDigit()",
+    "rect": [
+     100,
+     90,
+     700,
+     130
+    ],
+    "align": "leading",
+    "position": {
+     "firstInkYTolerancePx": 1,
+     "baselineTolerancePx": 1,
+     "inkCentreYTolerancePx": 0.0,
+     "firstInkXTolerancePx": 1,
+     "reason": "per-row fit (decision G71): system|size=13|weight=regular|design=default|.monospacedDigit(), FIT set F2 runs 1-10 (stage fc4a39a89-f623e43e, renderer 0.8)"
+    }
+   },
+   {
+    "name": "row 2 Font.system(size: 22, weight: .semibold)",
+    "rect": [
+     100,
+     130,
+     700,
+     195
+    ],
+    "align": "leading",
+    "position": {
+     "firstInkYTolerancePx": 1,
+     "baselineTolerancePx": 0,
+     "inkCentreYTolerancePx": 0.5,
+     "firstInkXTolerancePx": 2,
+     "reason": "per-row fit (decision G71): system|size=22|weight=semibold|design=default|, FIT set F2 runs 1-10 (stage fc4a39a89-f623e43e, renderer 0.8)"
+    }
+   },
+   {
+    "name": "row 3 Font.system(size: 22, weight: .semibold).monospacedDigit()",
+    "rect": [
+     100,
+     195,
+     700,
+     260
+    ],
+    "align": "leading",
+    "position": {
+     "firstInkYTolerancePx": 0,
+     "baselineTolerancePx": 0,
+     "inkCentreYTolerancePx": 0.0,
+     "firstInkXTolerancePx": 3,
+     "reason": "per-row fit (decision G71): system|size=22|weight=semibold|design=default|.monospacedDigit(), FIT set F2 runs 1-10 (stage fc4a39a89-f623e43e, renderer 0.8)"
+    }
+   }
+  ],
+  "position": {
+   "align": "leading",
+   "reason": "per-row tolerances (decision G71): each region carries its own tolerances fitted on the F2 FIT set (runs 1-10, stage fc4a39a89-f623e43e, renderer 0.8); unfitted rows carry none and are not gated by a tolerance. The case-level tolerances were removed (they were one blanket set fitted on the judged runs)."
+  }
+ },
+ "excludeRects": [
+  {
+   "name": "row 0 Font.system(size: 13) glyph region (Segoe UI vs SF, decision 2); gated by the position gate of decision 19 and the semantic frame gate",
+   "rect": [
+    100,
+    50,
+    700,
+    90
+   ]
+  },
+  {
+   "name": "row 1 Font.system(size: 13).monospacedDigit() glyph region (Segoe UI vs SF, decision 2); gated by the position gate of decision 19 and the semantic frame gate",
+   "rect": [
+    100,
+    90,
+    700,
+    130
+   ]
+  },
+  {
+   "name": "row 2 Font.system(size: 22, weight: .semibold) glyph region (Segoe UI vs SF, decision 2); gated by the position gate of decision 19 and the semantic frame gate",
+   "rect": [
+    100,
+    130,
+    700,
+    195
+   ]
+  },
+  {
+   "name": "row 3 Font.system(size: 22, weight: .semibold).monospacedDigit() glyph region (Segoe UI vs SF, decision 2); gated by the position gate of decision 19 and the semantic frame gate",
+   "rect": [
+    100,
+    195,
+    700,
+    260
+   ]
+  }
+ ],
+ "semanticGate": {
+  "fields": [
+   "role",
+   "name",
+   "count",
+   "order",
+   "boundsY",
+   "boundsX"
+  ],
+  "scope": "main",
+  "phases": [
+   ""
+  ]
+ },
+ "steps": [
+  {
+   "op": "wait",
+   "ms": 600
+  }
+ ],
+ "macArgs": [
+  "--steps",
+  "[{\"op\":\"wait\",\"ms\":600}]"
+ ]
+}

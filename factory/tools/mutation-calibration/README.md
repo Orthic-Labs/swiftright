@@ -541,4 +541,19 @@ Base = fixture id (see `fixtures.py` for its case and run). All edits are to the
 | tc-red | `text-colour/r0-ink-just-beyond@run3of3` | catch | ink colour 1 level beyond the 24 tolerance in 1 of 3 runs |
 | tc-red | `text-colour/r0-ink-at-tolerance@run3of3` | near | ink colour exactly at the 24 tolerance: must pass in 1 of 3 runs |
 
-411 mutations in total.
+### text-colour
+
+| Base | Mutation | Kind | What it seeds |
+|---|---|---|---|
+| rowtol-serif | `r0-dy-beyond` | catch | first ink y one px beyond the row's own tolerance |
+| rowtol-serif | `r0-dy-at-tol` | near | first ink y exactly at the row's own tolerance: must pass |
+| rowtol-serif | `r0-dx-beyond` | catch | first ink x one px beyond the row's own tolerance |
+| rowtol-serif | `r0-2pt-natural` | catch | row 2 pt (5 px) further in the direction of its natural offset |
+| rowtol-serif | `r0-2pt-counter` | catch | row 2 pt (5 px) against its natural offset: first ink y may land inside its tolerance, but the baseline (tolerance 0 on these rows) moves with it and fails |
+| rowtol-grid13 | `r0-dy-beyond` | catch | first ink y one px beyond the row's own tolerance |
+| rowtol-grid13 | `r0-dy-at-tol` | near | first ink y exactly at the row's own tolerance: must pass |
+| rowtol-grid13 | `r0-dx-beyond` | catch | first ink x one px beyond the row's own tolerance |
+| rowtol-grid13 | `r0-2pt-natural` | catch | row 2 pt (5 px) further in the direction of its natural offset |
+| rowtol-grid13 | `r0-2pt-counter` | catch | row 2 pt (5 px) against its natural offset: first ink y may land inside its tolerance, but the baseline (tolerance 0 on these rows) moves with it and fails |
+
+421 mutations in total.

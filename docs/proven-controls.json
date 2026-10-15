@@ -1489,21 +1489,24 @@
       ],
       "casesPassingDecidingGate": "9/9",
       "caveats": [
+        "Reopened 16 October (decision G71): the blanket tolerance was replaced by per-row tolerances, which fail the independent block 28 gate on the final renderer (styles-large passes; 8 of 9 cases fail; unfitted sizes and weights, undersampled rows).",
         "Segoe UI at the requested size: Windows lines are 1-3 pt taller from 15 pt up and glyphs a little larger; the text position gate carries measured tolerances (decision F1).",
         "`Font.width` is carried, not drawn; serif, rounded and monospaced designs are refused; `lineLimit(n)` truncation falls back to the ellipsis alone when nothing fits (macOS clips instead).",
-        "Weak gate: one blanket tolerance set for every size; `sizes-large-v1`'s tolerance was raised from 3 to 4 after capture (Oracle)."
+        "The blanket tolerance set was replaced by per-row tolerances (decision G71); on the final renderer (fc4a39a89, renderer 0.8) the independent gate fails for 8 of 9 cases."
       ],
       "review": "oracle 2026-10-15",
       "stage": "9080b3139-e685b237",
-      "status": "delivered-with-caveats",
+      "status": "not-delivered",
       "statusDocBlock": 28,
+      "statusFromSources": "delivered-with-caveats",
+      "statusReason": "Reopened 16 October (decision G71): the blanket tolerance was replaced by per-row tolerances, which fail the independent block 28 gate on the final renderer (styles-large passes; 8 of 9 cases fail; unfitted sizes and weights, undersampled rows).",
       "verdict": {
         "date": "2026-10-15",
         "runDates": [
           "2026-10-15"
         ],
         "source": "docs/sr1-status.md table + factory/pipeline/closure/closure-table.json (blocks 1-20) / consolidation-table.json (blocks 21+)",
-        "text": "180/180 on `9080b3139-e685b237` (**delivered-with-caveats**; weak gate: one blanket tolerance set, `sizes-large-v1` tolerance raised 3 to 4 after capture; Segoe UI lines 1-3 pt taller, `Font.width` carried not drawn, tolerances measured, decision F1)"
+        "text": "**reopened 16 October (G71): not delivered on the final renderer.** Earlier 180/180 on `9080b3139-e685b237` (renderer 0.7) under one blanket tolerance set (superseded). On `fc4a39a89-f623e43e` (renderer 0.8): styles-large 3/3 pass; fractional, line-limit, sizes-large, sizes, style-weight, styles-small, truncate, weights fail (unfitted sizes 15, 18, 28, 11.5, 12.5 and two styles; caption2 and 12 pt undersampled, G71)"
       },
       "windowsDifferences": []
     },
@@ -1919,14 +1922,19 @@
       "casesPassingDecidingGate": "13/13",
       "caveats": [
         "The thumb is drawn from artwork fitted to the Mac's macOS 27 slider at scale 2.5 (H4); a thumb on an exact half device pixel rounds up here, where the Mac rounds half of those down (H2), so the cases use values that avoid the ties.",
-        "The Mac applies clicks, drags and keys through the accessibility value and increment (a stand-in, H5); Windows receives real posted pointer and key messages. Home, End, PageUp and PageDown are specified, not measured on the Mac."
+        "The Mac applies clicks, drags and keys through the accessibility value and increment (a stand-in, H5); Windows receives real posted pointer and key messages. Home, End, PageUp and PageDown are specified, not measured on the Mac.",
+        "Labels and value labels are checked semantically only (role, name, value, enabled, range, count, order); they have no position gate of their own.",
+        "The value-label buttons' vertical position is not gated: Windows y 61.2 h 14.0 against the Mac's y 62.4 h 13.2, a 1.2 pt gap, so the boundsY check was dropped (decision H15).",
+        "Dark cases gate at hazeTolerance 2 (values-dark, disabled-dark); the light cases at 1 (decision H4, which says within 1 level).",
+        "No negative controls yet: the gate has not been shown to fail on a 1 px thumb offset or a wrong fill colour."
       ],
+      "review": "oracle 2026-10-16 (block 37: PASS-WITH-CAVEATS)",
       "stage": [
         "3d3c6f5c2-0a0d1f39",
         "5e9c80ca2-9a0d7a03",
         "ee84dc923-ae27d688"
       ],
-      "status": "delivered-pending-review",
+      "status": "delivered-with-caveats",
       "statusDocBlock": 37,
       "verdict": {
         "date": "2026-10-15",
@@ -1935,9 +1943,11 @@
           "2026-10-16"
         ],
         "source": "docs/sr1-status.md table + factory/pipeline/closure/closure-table.json (blocks 1-20) / consolidation-table.json (blocks 21+)",
-        "text": "13/13 on `3d3c6f5c2-0a0d1f39` (**delivered-pending-review**, rounds 6 decisions H1-H5; the Mac applies clicks, drags and keys through the accessibility value as a stand-in)"
+        "text": "13/13 on `3d3c6f5c2-0a0d1f39` (**delivered-with-caveats**, Oracle review 16 October: PASS-WITH-CAVEATS; haze 1 light and 2 dark, H4; value-label position not gated, H15; no negative controls yet; rounds 6 decisions H1-H5; the Mac applies clicks, drags and keys through the accessibility value as a stand-in)"
       },
-      "windowsDifferences": []
+      "windowsDifferences": [
+        "Stepped-slider tick marks are not drawn on Windows (decision H4 records the Mac's tick marks under a stepped slider)."
+      ]
     },
     {
       "apis": {

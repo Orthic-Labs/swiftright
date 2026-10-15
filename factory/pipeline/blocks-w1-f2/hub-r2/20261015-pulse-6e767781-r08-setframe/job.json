@@ -1,0 +1,1 @@
+{"id": "20261015-135246-command-66912", "kind": "command", "timeoutSec": 300, "args": {"script": "New-Item -ItemType Directory -Force C:\\work | Out-Null; [IO.File]::WriteAllText(\"C:\\work\\hub-frame-f2.txt\",\"0\"); \"set \" + [IO.File]::ReadAllText(\"C:\\work\\hub-frame-f2.txt\")"}}
