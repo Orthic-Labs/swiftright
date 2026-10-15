@@ -8,6 +8,72 @@ Date: 15 October 2026. Requested by Pulse Swift. Inputs: Orthic-Labs/pulse code 
 - **Render: all 12 sections render in light and dark (24 of 24 pictures), but only with 14 probe patches to the product's paint and text policy** (table B). Unpatched, the first Overview frame stops at the first text measurement. The pictures are a static first frame; nothing was clicked, typed or scrolled. They are not pixel-comparable to the Mac: icons are missing (38 SF Symbols, the table holds one), fonts are approximated, and several rows truncate that do not on the Mac.
 - **Effort: about 17 agentic hours of critical path for the gaps as grouped below (16 blocks at the measured round-4 rate of 1.08 h per block, one lane), 36 h at the measured round-3 end-to-end rate.** Not included: Oracle review (round 4 has none), a fit pass over the 12 sections after the blocks land, and anything interactive. Arithmetic in section 4.
 
+## 0. Round 5 result (15 October, later the same day): the gaps are closed
+
+Pulse at `906d5192` (Pulse main, parity pass), SwiftRight stage `795d1644a-38920803`. **No stubs, no source bypass, no runtime or host patch**: the probe package is Pulse's sources untouched plus the SwiftUI re-export shim and a `Bundle.module` shim (probe packaging: PulseHub's Tanker resource bundle is not bundled, licence unconfirmed; `probes/pulse-hub/r5/`; assemble with `PULSE_SHA=906d5192 R5=1`). All five modules (`RightKitEngine`, `RightKitHub`, `RightKitHubQA`, `PulseHub`, `PulseHubFixtures`) and the `FactoryProbe` host compile for Windows with 0 errors, and **all 12 sections render in light and dark: 24 of 24 pictures** through the product's own paint and text path (`docs/pulse-hub-windows/<section>-<scheme>.png`, last panel; the Tauri and Mac panels are the earlier CI artifact and predate Pulse's parity pass). No `HOST_RENDER_ERROR`, no ellipsis-only fallback, no opaque-black rect in any section. Honest limits: the pictures are static first frames (nothing clicked, typed, scrolled; the live `.task` path never ran); nothing was compared pixel by pixel with the Mac (fonts differ, decision 2); four capture runs report `GetClientRect failed` but produced valid pictures, and a first-launch Sandbox capture occasionally comes out blank (the Activity page needs a 15-20 s wait): the pictures were re-taken until none was blank.
+
+### Compile gaps (table A)
+
+| # | API | Status |
+|---|---|---|
+| G01 | `AnyView`, `.id` | closed (block 26, F12) |
+| G02-G06 | `accessibilityElement`, `Value`, `AddTraits`, `Hint`, `Hidden` | compile and behave (block 32, F10); hint not published (no ABI field), value on a Text and the header/link traits not delivered |
+| G07 | `Text(verbatim:)` | closed (block 26) |
+| G08 | `State(initialValue:)` | closed (block 26) |
+| G09, G10 | `Color.clear`, `Color.opacity` -> `Color` | closed (blocks 26, 31) |
+| G11 | single-child `ViewBuilder` identity | closed (block 26) |
+| G12 | `VerticalAlignment.firstTextBaseline` / `lastTextBaseline` | closed (block 33, F3) |
+| G13, G14 | `Font.Weight.heavy` (nine weights), `Font.width` | closed (block 28, F1); `width` carried, not drawn |
+| G15 | `layoutPriority` | closed (block 27, F11) |
+| G16, G18 | `View.id`, `ViewModifier` | closed (block 26) |
+| G17 | `TextField(axis:)` | compiles and is the single-line field (block 34, F9); growth over lines not delivered |
+| G19 | `Scene` / `WindowGroup` | shapes only (compile) |
+| G20 | `RelativeDateTimeFormatter` | fixed on Pulse's side (`#if os(Windows)`, f8460ed5) |
+
+### Render gaps (table B)
+
+| # | Gap | Status |
+|---|---|---|
+| R1 | SF Symbols | closed: 60 names mapped to Segoe Fluent Icons, font-sized regular/semibold/bold painting from Mac-measured sizes (block 29, F5-F8, F14-F16); shapes ungated, 12 weak mappings |
+| R2 | system fonts, text styles | closed (block 28, F1) |
+| R3 | `TextMeasureError.description` recursion | fixed first (c5898d25e), unit test |
+| R4 | `lineLimit(1)` where nothing fits | ellipsis alone instead of a refusal (F2); macOS clips instead |
+| R5 | run lookup refusal | a measurement within 1 px of the bounds is the run (F2) |
+| R6 | identifiers over 256 bytes | hashed to fit (F2) |
+| R7, R8 | large radii, zero-size and oversize shapes | closed: Apple's large-radius path family, exact bands, no-area shapes draw nothing (block 30, F4); a stroked pill not delivered; edge-AA on flat shoulders differs from Apple's by a named tolerance |
+| R9 | measurement cache bound | 8192 |
+| R10 | dark `Divider` | closed (block 31, F13) |
+| R11 | `Button` under opacity / empty frame | plain and borderless Buttons paint; bordered under opacity still refused |
+| R12 | transparent fills painted black | closed (block 31; the host's alpha path was later reworked by wave 0 T0, which measured the unpatched renderer draws an alpha-0 rect as nothing) |
+| new | a transaction over 4096 upserts (Monitor 4718, General 4186 nodes) was refused with `SWR_E_TOO_LARGE` | closed: sent as consecutive transactions in tree order (`BridgeWindow.commit`) |
+| new | dark bordered/prominent/disabled Buttons drew as white blobs | closed (block 36, F13) |
+| new | Windows `Image` from PNG/ICO bytes | closed for PNG/ICO by the Swift decoder (block 35, F17-F22); wave 0 I1's WIC/ImageIO service is behind `ImageDecoder.backend = .system` |
+
+### Per section at Pulse 906d5192
+
+"Compiles": the section's module is part of the building package. "Renders": a frame was drawn light and dark with no refusal and no probe patch. Node counts are the transaction size (the Monitor and General pages exceed the renderer's 4096-node transaction limit and are sent in two).
+
+| Section | Compiles | Renders (light, dark) | Nodes (images) | Truncation searches |
+|---|---|---|---|---|
+| overview | yes | yes, yes | 3333 (82) | 249 |
+| activity | yes | yes, yes | 2637 (245) | 89 |
+| storage | yes | yes, yes | 1096 (74) | 204 |
+| cleanup | yes | yes, yes | 1079 (59) | 129 |
+| monitor | yes | yes, yes | 4718 (118) | 389 |
+| apps | yes | yes, yes (placeholder icons until the PNG decode is wired on the Pulse side) | 1143 (75) | 194 |
+| chat | yes | yes, yes | 877 (54) | 144 |
+| permissions | yes | yes, yes | 503 (25) | 66 |
+| accounts | yes | yes, yes | 879 (61) | 150 |
+| appearance | yes | yes, yes | 1747 (118) | 208 |
+| notifications | yes | yes, yes | 930 (58) | 94 |
+| general | yes | yes, yes | 4186 (273) | 313 |
+
+Remaining differences visible in the pictures: Segoe UI is 5-10 % wider than SF, so some `lineLimit(1)` labels truncate that do not on the Mac; the display font (Tanker) is its system fallback; the glyph shapes of the symbols are Segoe Fluent's. Not verified: clicking, focus, typing, `Toggle`, `Menu`, scrolling, `.task` refresh, resize, animations, the accessibility tree of the hub, DPI other than 2.5.
+
+### Measured effort (agentic wall clock, one session beside the closure and wave-0 sessions; 15 October 06:55 to 14:15, 7.3 h)
+
+Per block: authoring (runtime, tests, cases, Mac references, N=1 on the Windows Sandbox), without the N=20 queue wait: 26 text-views 0.25 h, 27 layout-priority 0.4, 28 system-font 1.3, 29 system-symbols 1.5 (one subagent, in parallel), 30 continuous-shape-large 1.2 (the anti-aliasing investigation was 0.4), 31 paint-states 0.5, 32 accessibility 0.6, 33 baseline-alignment 0.7, 34 textfield-axis 0.2, 35 image-data 1.3 (subagent, in parallel), 36 button-dark 0.8; the crash fix 0.02; the hub probe, doc and bookkeeping about 2 h. Sum of block authoring 8.8 h over 7.3 h wall (two subagents ran in parallel). N=20 captured 57 cases at about 6.5 min each (390 s mean) in the shared Sandbox queue, overlapping the authoring. **Per block: 0.8 h of authoring mean (11 blocks), 0.66 h wall per block including everything**, against the planned 1.08 h per block and 16 blocks (17 h): the blocks that were API shapes cost 0.2-0.6 h, the two that needed measurement campaigns (fonts, symbols) and the shape anti-aliasing 1.2-1.5 h, so the estimate of two slow families (symbols, fonts) held and the rest were cheaper than round 4's rate. The split into 11 blocks instead of 16 grouped the gaps as the plan said. A fit pass over the 12 sections and anything interactive are still not done.
+
 ## 1. How it was compiled and rendered
 
 - Windows, Dell, headless `swift build` and `swiftc` only; stage `8bf89d2dc-aa6cd909` is read-only and untouched. Probe package `PulseHubProbe` has one target per Pulse module, a target named `SwiftUI` (shim: `@_exported import SwiftRightRuntime`, `Foundation`) so Pulse's `import SwiftUI` resolves, and the C module `CRightKitEngine` with `rkp_*` and `rke_install_engine` link stubs (`stubs/rkp_stubs.c`; the Rust staticlib is not built).
