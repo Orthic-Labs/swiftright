@@ -1167,7 +1167,11 @@ fn build_run_faces(m: &text::Measured) -> Vec<RunFace> {
             _ => Primary::Unknown,
         }
     };
-    let mut candidates: Vec<String> = face.fallbacks.clone();
+    let mut candidates: Vec<String> = Vec::new();
+    if bundled.is_empty() {
+        candidates.push(face.family.clone());
+    }
+    candidates.extend(face.fallbacks.iter().cloned());
     candidates.extend(FALLBACK_CANDIDATES.iter().map(|s| s.to_string()));
     m.ext
         .runs
@@ -1589,7 +1593,7 @@ mod v08_tests {
     }
 
     fn rec(primary: bool, notdef: u32, gid: u32) -> text::RunRec {
-        text::RunRec { font_id: if primary { 1 } else { 2 }, primary, utf8_start: 0, utf8_len: 3, glyphs: 3, notdef, first_char: 'A' as u32, first_gid: gid, ..Default::default() }
+        text::RunRec { font_id: if primary { 1 } else { 2 }, primary, req_family: primary.then(|| "Tinos".to_string()), utf8_start: 0, utf8_len: 3, glyphs: 3, notdef, first_char: 'A' as u32, first_gid: gid, ..Default::default() }
     }
 
     fn measured(family: &str, runs: Vec<text::RunRec>) -> text::Measured {

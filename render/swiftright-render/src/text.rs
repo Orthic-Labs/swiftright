@@ -41,8 +41,12 @@ pub struct Measured {
 #[derive(Clone, Debug, Default)]
 pub struct RunRec {
     pub font_id: usize,
-    /// The requested font (the face the request resolved to), not a fallback.
+    /// The run is drawn with the requested family. gpui reports a run's font id by FACE identity (postscript name, weight, style),
+    /// which may be an id another request created, so ids are not compared: `TextSystem::get_font_for_id` gives the requested
+    /// Font behind an id (None for a face gpui picked by fallback, F0 trace) and its family is compared with the request's.
     pub primary: bool,
+    /// The family of the requested Font behind this run's font id, if there is one.
+    pub req_family: Option<String>,
     /// Byte range in the run text.
     pub utf8_start: u32,
     pub utf8_len: u32,
@@ -370,7 +374,6 @@ pub fn shape(ts: &WindowTextSystem, r: &Request, key: u64) -> Result<Measured, S
     }
 
     let f = build_font(r);
-    let primary_font = f.clone();
     let color: Hsla = Rgba::from(gpui::rgba(r.color)).into();
     let run = TextRun {
         len: r.text.len(),
@@ -413,7 +416,6 @@ pub fn shape(ts: &WindowTextSystem, r: &Request, key: u64) -> Result<Measured, S
     }
     let mut pend: Vec<Pending> = Vec::new();
     let t_px = r.ext.map_or(0.0, |e| e.track_dip) * scale; // tracking + kerning, physical px per glyph cluster
-    let primary_id = ts.resolve_font(&primary_font).0;
     let mut run_recs: Vec<RunRec> = Vec::new();
 
     for (pi, wl) in shaped.into_iter().enumerate() {
@@ -436,9 +438,11 @@ pub fn shape(ts: &WindowTextSystem, r: &Request, key: u64) -> Result<Measured, S
             let lo = run.glyphs.iter().map(|g| g.index).min().unwrap_or(0);
             let hi = run.glyphs.iter().map(|g| g.index).max().unwrap_or(0);
             let hi_len = ptext.get(hi..).and_then(|t| t.chars().next()).map_or(1, |c| c.len_utf8());
+            let req_family = ts.get_font_for_id(run.font_id).map(|f| f.family.to_string());
             run_recs.push(RunRec {
                 font_id: run.font_id.0,
-                primary: run.font_id.0 == primary_id,
+                primary: req_family.as_deref().map_or(false, |f| f.eq_ignore_ascii_case(r.family)),
+                req_family,
                 utf8_start: (para_base + lo) as u32,
                 utf8_len: (hi + hi_len - lo) as u32,
                 glyphs: run.glyphs.len() as u32,

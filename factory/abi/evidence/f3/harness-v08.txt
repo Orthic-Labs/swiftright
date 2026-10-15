@@ -1,0 +1,59 @@
+ACTCTX=True
+DLL=swiftright_render_v08_0407efcb.dll sha256=50de54515d22a6a2c19694b8fa78019bd86f2502e1352ab52e563647206a8f8b
+LABEL=new-0.8
+EXPORT swr_bootstrap_query=True
+EXPORT swr_get_api=True
+EXPORT swr_bootstrap_query_v07=True
+EXPORT swr_get_api_v07=True
+EXPORT swr_bootstrap_query_v08=True
+EXPORT swr_get_api_v08=True
+EXPORT swr_measure_text_v08=True
+EXPORT swr_text_run_faces=True
+EXPORT swr_font_face_metrics=True
+EXPORT swr_system_font_info=True
+V08_EXPORTS=both
+BOOT swr_bootstrap_query rc=0
+BOOT swr_bootstrap_query words=88,0,6,64,1597388920,13366,0,0,112,136,72,144,80,88,80,136,88,56,24,24,16,200
+BOOT swr_bootstrap_query abi_minor=6
+BOOT swr_bootstrap_query api_table_size=136
+BOOT swr_bootstrap_query_v07 rc=0
+BOOT swr_bootstrap_query_v07 words=96,0,7,64,1597388920,13366,0,0,112,152,72,144,80,88,80,136,88,56,24,24,18,200,128,48
+BOOT swr_bootstrap_query_v07 abi_minor=7
+BOOT swr_bootstrap_query_v07 api_table_size=152
+BOOT swr_bootstrap_query_v08 rc=0
+BOOT swr_bootstrap_query_v08 words=120,0,8,64,1597388920,13366,0,0,112,184,72,144,80,88,80,136,88,56,24,24,22,200,128,48,160,88,296,456,720,0
+BOOT swr_bootstrap_query_v08 abi_minor=8
+BOOT swr_bootstrap_query_v08 api_table_size=184
+TABLE swr_get_api rc=0
+TABLE swr_get_api struct_size=136
+TABLE swr_get_api_v07 rc=0
+TABLE swr_get_api_v07 struct_size=152
+TABLE swr_get_api_v08 rc=0
+TABLE swr_get_api_v08 struct_size=184
+TABLE_PREFIX_EQUAL v08==v07 (18 pointers)=True
+TABLE_PREFIX_EQUAL v07==v06 (16 pointers)=True
+V08_ENTRIES_NONZERO=True
+TABLE swr_get_api_v08 caller 183 -> rc=-14
+FACE [Segoe UI Variable Text] w400 i0=rc=0 flags=3 weight=400 style=0 sims=0 source=2 upem=2048 hhea=2210/-514/0 cap=1434 xh=1024 axes=[opsz:5..36@10.5;wght:300..700@400;wdth:100..100@100;ital:0..0@0;slnt:0..0@0] ps=Segoe-UI-Variable-Text ver=Version 2.03 file=SEGUIVAR.TTF
+FACE [Segoe UI Variable Text] w500 i0=rc=0 flags=3 weight=600 style=0 sims=0 source=2 upem=2048 hhea=2210/-514/0 cap=1434 xh=1024 axes=[opsz:5..36@10.5;wght:300..700@400;wdth:100..100@100;ital:0..0@0;slnt:0..0@0] ps=Segoe-UI-Variable-Text-Semibold ver=Version 2.03 file=SEGUIVAR.TTF
+FACE [Segoe UI Variable Text] w100 i0=rc=0 flags=3 weight=300 style=0 sims=0 source=2 upem=2048 hhea=2210/-514/0 cap=1434 xh=1024 axes=[opsz:5..36@10.5;wght:300..700@400;wdth:100..100@100;ital:0..0@0;slnt:0..0@0] ps=Segoe-UI-Variable-Text-Light ver=Version 2.03 file=SEGUIVAR.TTF
+FACE [Segoe UI Variable Text] w900 i0=rc=0 flags=3 weight=700 style=0 sims=0 source=2 upem=2048 hhea=2210/-514/0 cap=1434 xh=1024 axes=[opsz:5..36@10.5;wght:300..700@400;wdth:100..100@100;ital:0..0@0;slnt:0..0@0] ps=Segoe-UI-Variable-Text-Bold ver=Version 2.03 file=SEGUIVAR.TTF
+FACE [Segoe UI Variable Display] w400 i0=rc=0 flags=3 weight=400 style=0 sims=0 source=2 upem=2048 hhea=2210/-514/0 cap=1434 xh=1024 axes=[opsz:5..36@10.5;wght:300..700@400;wdth:100..100@100;ital:0..0@0;slnt:0..0@0] ps=Segoe-UI-Variable-Display ver=Version 2.03 file=SEGUIVAR.TTF
+FACE [Segoe UI Variable Small] w400 i0=rc=0 flags=3 weight=400 style=0 sims=0 source=2 upem=2048 hhea=2210/-514/0 cap=1434 xh=1024 axes=[opsz:5..36@10.5;wght:300..700@400;wdth:100..100@100;ital:0..0@0;slnt:0..0@0] ps=Segoe-UI-Variable-Small ver=Version 2.03 file=SEGUIVAR.TTF
+FACE [Segoe UI Variable] w400 i0=rc=0 flags=0 weight=0 style=0 sims=0 source=0 upem=0 hhea=0/0/0 cap=0 xh=0 axes=[] ps= ver= file=
+FACE [Segoe UI] w400 i0=rc=0 flags=1 weight=400 style=0 sims=0 source=2 upem=2048 hhea=2210/-514/0 cap=1434 xh=1024 axes=[] ps=SegoeUI ver=Version 5.72 file=SEGOEUI.TTF
+FACE [Segoe UI] w900 i0=rc=0 flags=1 weight=900 style=0 sims=0 source=2 upem=2048 hhea=2210/-514/0 cap=1434 xh=1024 axes=[] ps=SegoeUIBlack ver=Version 5.72 file=SEGUIBL.TTF
+FACE [Segoe UI] w400 i1=rc=0 flags=1 weight=400 style=2 sims=0 source=2 upem=2048 hhea=2210/-514/0 cap=1434 xh=1024 axes=[] ps=SegoeUI-Italic ver=Version 5.72 file=SEGOEUII.TTF
+FACE [Cascadia Mono] w400 i0=rc=0 flags=3 weight=400 style=0 sims=0 source=2 upem=2048 hhea=1900/-480/0 cap=1420 xh=1060 axes=[wght:200..700@400;ital:0..0@0;wdth:100..100@100;slnt:0..0@0] ps=CascadiaMonoRoman ver=Version 2407.024 file=CASCADIAMONO.TTF
+FACE [Sitka Text] w400 i0=rc=0 flags=3 weight=400 style=0 sims=0 source=2 upem=2250 hhea=1703/-547/563 cap=1434 xh=1076 axes=[opsz:6..27.5@11;wght:400..700@400;ital:0..0@0;wdth:100..100@100;slnt:0..0@0] ps=Sitka-Text ver=Version 2.01;220324225217 file=SITKAVF.TTF
+FACE [Tinos] w400 i0=rc=0 flags=0 weight=0 style=0 sims=0 source=0 upem=0 hhea=0/0/0 cap=0 xh=0 axes=[] ps= ver= file=
+FACE [No Such Family SRProbe] w400 i0=rc=0 flags=0 weight=0 style=0 sims=0 source=0 upem=0 hhea=0/0/0 cap=0 xh=0 axes=[] ps= ver= file=
+SYSINFO=rc=0 flags=63 families=263
+SYSINFO entry 0=Segoe UI present=1 faces=12 version=Version 5.72
+SYSINFO entry 1=Segoe UI Variable Text present=1 faces=5 version=Version 2.03
+SYSINFO entry 2=Segoe UI Variable Display present=1 faces=5 version=Version 2.03
+SYSINFO entry 3=Segoe UI Variable Small present=1 faces=5 version=Version 2.03
+SYSINFO entry 4=Cascadia Mono present=1 faces=12 version=Version 2407.024
+SYSINFO entry 5=Sitka Text present=1 faces=6 version=Version 2.01;220324225217
+SYSINFO entry 6=Segoe UI Emoji present=1 faces=1 version=Version 1.70
+SYSINFO entry 7=Segoe Fluent Icons present=1 faces=1 version=Version 1.54
