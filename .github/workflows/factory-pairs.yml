@@ -76,9 +76,6 @@ jobs:
       matrix: ${{ fromJSON(needs.plan.outputs.matrix) }}
     runs-on: xcode-27
     timeout-minutes: 240
-    env:
-      SWIFTRIGHT_CACHE_ROOT: ${{ runner.temp }}/swiftright-cache
-      SWIFTRIGHT_CACHE_MOVED: ${{ runner.temp }}/swiftright-cache-moved
     steps:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
         with:
@@ -100,6 +97,8 @@ jobs:
           CASE: ${{ matrix.case }}
           RUNS: ${{ inputs.runs }}
           TS: ${{ needs.plan.outputs.ts }}
+          SWIFTRIGHT_CACHE_ROOT: ${{ runner.temp }}/swiftright-cache
+          SWIFTRIGHT_CACHE_MOVED: ${{ runner.temp }}/swiftright-cache-moved
         run: |
           set -euo pipefail
           python3 factory/tools/ci_pair.py mac --case "$CASE" --runs "$RUNS" --ts "$TS" --root "$RUNNER_TEMP/pairs"
