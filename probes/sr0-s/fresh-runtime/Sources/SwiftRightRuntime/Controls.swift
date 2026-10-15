@@ -108,6 +108,8 @@ public struct ResolvedImageSizing: Hashable, Sendable {
 struct ImageSpec: Hashable, Sendable {
     let reference: ImageReference
     let sizing: ResolvedImageSizing
+    /// Accessibility label given at construction (`Image(_ cgImage:scale:orientation:label:)`); nil = the reference name.
+    var labelText: String? = nil
 }
 
 /// Apple: https://developer.apple.com/documentation/swiftui/image
@@ -116,6 +118,8 @@ struct ImageSpec: Hashable, Sendable {
 @MainActor
 public struct Image: View, PrimitiveView {
     let reference: ImageReference
+    /// Set by the CGImage-shaped initialisers (the `label:` text).
+    var labelText: String?
     private var capInsets = EdgeInsets()
     private var resizingMode: ResizingMode = .stretch
     private var isResizable = false
@@ -165,7 +169,7 @@ public struct Image: View, PrimitiveView {
     }
 
     @MainActor public var body: Never { return fatalError("primitive view has no body") }
-    var nodeKind: NodeKind { .image(ImageSpec(reference: reference, sizing: sizing)) }
+    var nodeKind: NodeKind { .image(ImageSpec(reference: reference, sizing: sizing, labelText: labelText)) }
     var nodeContent: (any View)? { nil }
 }
 

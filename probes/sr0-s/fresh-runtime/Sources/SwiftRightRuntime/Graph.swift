@@ -1970,7 +1970,7 @@ public final class Graph {
             value = binding.wrappedValue ? "1" : "0"
         case .image(let spec):
             role = "image"
-            label = spec.reference.name
+            label = spec.labelText ?? spec.reference.name
         case .menu:
             role = "menu"
             label = joinedText(children)

@@ -14,7 +14,7 @@ public enum ImageDecodeError: Error, Equatable, CustomStringConvertible {
 
     public var description: String {
         switch self {
-        case .notAnImage: return "ImageDecoder: not a PNG or ICO image"
+        case .notAnImage: return "ImageDecoder: not a recognised image (PNG, JPEG, GIF, BMP, ICO or TIFF)"
         case .truncated(let why): return "ImageDecoder: truncated data (\(why))"
         case .corrupt(let why): return "ImageDecoder: corrupt data (\(why))"
         case .unsupported(let what): return "ImageDecoder: unsupported (\(what))"
@@ -25,9 +25,19 @@ public enum ImageDecodeError: Error, Equatable, CustomStringConvertible {
 /// Encoded PNG / ICO bytes -> straight-alpha RGBA8 for `Image(decorative:scale:)`. No system library: the inflate and PNG code are Swift.
 /// Hub use: `HubPlatformServices.decodeImage(_:maxPixel:)`.
 public enum ImageDecoder {
+    /// Which decoder `decode(_:maxPixel:)` uses. `.swift` (the default until the lead decides, docs/sr1-decisions.md G30) is the pure-Swift PNG/ICO decoder of block 35;
+    /// `.system` is the wave 0 block I1 service: WIC on Windows, ImageIO on the Mac, under the shared `ImagePolicy` (all formats, ICC to sRGB, EXIF orientation, completeness).
+    /// The environment variable `SWIFTRIGHT_IMAGE_DECODER=system` (or `wic`) selects `.system` at launch.
+    public enum Backend: Sendable { case swift, system }
+    nonisolated(unsafe) public static var backend: Backend = {
+        let v = ProcessInfo.processInfo.environment["SWIFTRIGHT_IMAGE_DECODER"]?.lowercased()
+        return v == "system" || v == "wic" ? .system : .swift
+    }()
+
     /// Decodes `data`. An ICO yields the entry whose size is the smallest one at least `maxPixel` (else the largest). An image whose longer side is
     /// over `maxPixel` is box-filtered down so the longer side equals `maxPixel` (aspect kept, never upscaled). `maxPixel <= 0` means no limit.
     public static func decode(_ data: Data, maxPixel: Int) throws -> RGBAImage {
+        if backend == .system { return try ImagePolicy.decode(data, maxPixel: maxPixel) }
         let bytes = [UInt8](data)
         let image: RGBAImage
         if bytes.count >= 8, Array(bytes[0..<8]) == PNGDecoder.signature {

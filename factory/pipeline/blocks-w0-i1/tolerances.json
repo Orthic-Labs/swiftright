@@ -1,0 +1,11 @@
+{
+ "_comment": "Named I1 tolerances, per class: the maximum absolute difference per channel and the largest per-channel mean over the whole image, between the Windows decode (WIC + policy) and the Mac ImageIO oracle (macOS 27, Version 27.0.1 Build 26A434). Measured on the corpus of this folder (20 runs identical), rounded up ONCE to the digits shown. docs/sr1-decisions.md G34-G37 give the reasons. These classes are measured, not fitted: the calibration and gating sets are the same files (the one-set limit is stated in G37).",
+ "jpeg-444":  {"maxPerChannel": 3,  "meanPerChannel": 0.25, "reason": "different IDCT and rounding in WIC's JPEG decoder and Apple's: 4:4:4 isolates it (no chroma upsampling)"},
+ "jpeg-422":  {"maxPerChannel": 3,  "meanPerChannel": 0.6,  "reason": "IDCT plus horizontal chroma upsampling (the two decoders use different upsampling filters)"},
+ "jpeg-420":  {"maxPerChannel": 16, "meanPerChannel": 1.1,  "reason": "IDCT plus 2x2 chroma upsampling; the maximum sits on hard colour edges where the upsampling filters differ most"},
+ "jpeg-grey": {"maxPerChannel": 1,  "meanPerChannel": 0.05, "reason": "IDCT rounding only"},
+ "jpeg-cmyk": {"maxPerChannel": 58, "meanPerChannel": 14.1, "reason": "CoreGraphics converts CMYK through its colour-managed Generic CMYK space; WIC's JPEG decoder returns CMYK that the format converter turns into RGB with a plain formula; the red channel carries nearly all of the difference. Not fitted: CMYK JPEG is rare and the Mac conversion is not reproducible from a published profile."},
+ "jpeg-p3":   {"maxPerChannel": 3,  "meanPerChannel": 0.3,  "reason": "JPEG decode difference (4:4:4, q100) plus the matrix/TRC conversion's rounding"},
+ "p3":        {"maxPerChannel": 1,  "meanPerChannel": 0.09, "reason": "matrix/TRC conversion in double precision against CoreGraphics' conversion: 1 level where the two round differently"},
+ "thumbnail": {"maxPerChannel": 98, "meanPerChannel": 23.2, "reason": "the host's area-average (box) filter on premultiplied alpha against ImageIO's own thumbnail filter (and, for ICO entries, the scaled entry): different filters; the maxima sit on one-pixel-wide transparent edges of tiny thumbnails (8 px). I2 fits the filters and states the real resampling tolerance."}
+}
