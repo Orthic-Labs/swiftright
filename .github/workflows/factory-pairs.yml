@@ -89,10 +89,13 @@ jobs:
         with:
           python-version: "3.12"
       - run: python3 -m pip install --disable-pip-version-check pillow==11.3.0
-      - name: Record runner
+      - name: Record runner and require the local toolchain (Swift 6.4.0)
         run: |
+          set -euo pipefail
           sw_vers
-          xcrun swiftc --version
+          v="$(xcrun swiftc --version 2>&1 | head -n 1)"
+          echo "$v"
+          case "$v" in *"Swift version 6.4 (swiftlang-6.4.0"*) ;; *) echo "::error::Mac toolchain is not Swift 6.4.0 (local: Apple Swift version 6.4 (swiftlang-6.4.0.34.1)): $v"; exit 1 ;; esac
       - name: Mac capture (pinned scale 2.5)
         env:
           CASE: ${{ matrix.case }}
@@ -139,11 +142,27 @@ jobs:
         with:
           python-version: "3.12"
       - run: python -m pip install --disable-pip-version-check pillow==11.3.0
-      # Swift for Windows: 6.3.1 is the nearest swift.org release (6.4 has no release installer yet; the factory Dell toolchain is 6.4.0+Asserts). Measured difference, not a tolerance change.
-      - uses: compnerd/gha-setup-swift@581df1ffa3f3e786ddc73ff37364ee231f9644c5 # v0.3.0
-        with:
-          branch: swift-6.3.1-release
-          tag: 6.3.1-RELEASE
+      - name: Install Swift 6.4.0 (swift.org release installer, sha256 pinned as in scripts/release/windows-candidate.ps1)
+        shell: pwsh
+        run: |
+          $ErrorActionPreference = 'Stop'
+          $url = 'https://download.swift.org/swift-6.4.0-release/windows10/swift-6.4.0-RELEASE/swift-6.4.0-RELEASE-windows10.exe'
+          $pin = '76169A85BCBA82854A0CD8F9655FFB74B3758D60C35A245457510095F2823C03'
+          $installer = Join-Path $env:RUNNER_TEMP 'swift-6.4.0-RELEASE-windows10.exe'
+          Invoke-WebRequest -Uri $url -OutFile $installer
+          $actual = (Get-FileHash -LiteralPath $installer -Algorithm SHA256).Hash
+          if ($actual -ne $pin) { throw "Swift installer sha256 $actual does not match the pin $pin" }
+          $log = Join-Path $env:RUNNER_TEMP 'swift-install.log'
+          $p = Start-Process -FilePath $installer -ArgumentList @('/quiet', '/norestart', '/log', $log) -Wait -PassThru
+          if ($p.ExitCode -ne 0 -and $p.ExitCode -ne 3010) { if (Test-Path $log) { Get-Content $log -Tail 60 }; throw "Swift installer exit code $($p.ExitCode)" }
+          $root = Join-Path $env:LOCALAPPDATA 'Programs\Swift'
+          if (-not (Test-Path $root)) { $root = Join-Path $env:ProgramFiles 'Swift' }
+          $swift = Get-ChildItem -Path (Join-Path $root 'Toolchains') -Recurse -Filter swift.exe | Select-Object -First 1
+          if (-not $swift) { throw 'swift.exe not found after the installer ran' }
+          $runtime = Get-ChildItem -Path (Join-Path $root 'Runtimes') -Directory | ForEach-Object { Join-Path $_.FullName 'usr\bin' } | Where-Object { Test-Path (Join-Path $_ 'swiftCore.dll') } | Select-Object -First 1
+          Add-Content -Path $env:GITHUB_PATH -Value $swift.DirectoryName
+          if ($runtime) { Add-Content -Path $env:GITHUB_PATH -Value $runtime }
+          & $swift.FullName --version
       - name: Toolchain
         run: swift --version
       - name: Stage the product tree (git archive HEAD)

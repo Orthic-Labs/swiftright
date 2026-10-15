@@ -54,10 +54,27 @@ jobs:
             probes/sr0-s/fresh-runtime
           sparse-checkout-cone-mode: true
           fetch-depth: 1
-      - uses: compnerd/gha-setup-swift@581df1ffa3f3e786ddc73ff37364ee231f9644c5 # v0.3.0
-        with:
-          branch: swift-6.3.1-release
-          tag: 6.3.1-RELEASE
+      - name: Install Swift 6.4.0 (swift.org release installer, sha256 pinned as in scripts/release/windows-candidate.ps1)
+        shell: pwsh
+        run: |
+          $ErrorActionPreference = 'Stop'
+          $url = 'https://download.swift.org/swift-6.4.0-release/windows10/swift-6.4.0-RELEASE/swift-6.4.0-RELEASE-windows10.exe'
+          $pin = '76169A85BCBA82854A0CD8F9655FFB74B3758D60C35A245457510095F2823C03'
+          $installer = Join-Path $env:RUNNER_TEMP 'swift-6.4.0-RELEASE-windows10.exe'
+          Invoke-WebRequest -Uri $url -OutFile $installer
+          $actual = (Get-FileHash -LiteralPath $installer -Algorithm SHA256).Hash
+          if ($actual -ne $pin) { throw "Swift installer sha256 $actual does not match the pin $pin" }
+          $log = Join-Path $env:RUNNER_TEMP 'swift-install.log'
+          $p = Start-Process -FilePath $installer -ArgumentList @('/quiet', '/norestart', '/log', $log) -Wait -PassThru
+          if ($p.ExitCode -ne 0 -and $p.ExitCode -ne 3010) { if (Test-Path $log) { Get-Content $log -Tail 60 }; throw "Swift installer exit code $($p.ExitCode)" }
+          $root = Join-Path $env:LOCALAPPDATA 'Programs\Swift'
+          if (-not (Test-Path $root)) { $root = Join-Path $env:ProgramFiles 'Swift' }
+          $swift = Get-ChildItem -Path (Join-Path $root 'Toolchains') -Recurse -Filter swift.exe | Select-Object -First 1
+          if (-not $swift) { throw 'swift.exe not found after the installer ran' }
+          $runtime = Get-ChildItem -Path (Join-Path $root 'Runtimes') -Directory | ForEach-Object { Join-Path $_.FullName 'usr\bin' } | Where-Object { Test-Path (Join-Path $_ 'swiftCore.dll') } | Select-Object -First 1
+          Add-Content -Path $env:GITHUB_PATH -Value $swift.DirectoryName
+          if ($runtime) { Add-Content -Path $env:GITHUB_PATH -Value $runtime }
+          & $swift.FullName --version
       - name: Toolchain
         run: swift --version
       - name: swift test (SwiftRightHost, Windows)
