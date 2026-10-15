@@ -1,0 +1,263 @@
+# Pulse hub on Windows: unique compiler errors per pass (probes/pulse-hub/collect.py over the Dell logs). Pass tc1 = no stubs; tc2 = layer-1 shim stubs; tc3 = layer-2 stubs; the final real build has 0 errors (shim + runtime patch + bypass B1).
+
+## pass tc1
+PulseHub PulseFormat.swift:18:25 cannot find 'RelativeDateTimeFormatter' in scope
+PulseHub PulseFormat.swift:19:33 cannot infer contextual base in reference to member 'short'
+PulseHub PulseHub.swift:29:62 cannot find type 'AnyView' in scope
+PulseHub PulseHub.swift:33:62 cannot find type 'AnyView' in scope
+PulseHub PulseTheme.swift:23:61 type 'Font.Weight' has no member 'heavy'
+PulseHub PulseTheme.swift:66:17 extraneous argument label 'verbatim:' in call
+PulseHub PulseTheme.swift:67:56 type 'Font.Weight' has no member 'heavy'
+PulseHub Sections/ActivitySection.swift:19:52 cannot find type 'AnyView' in scope
+PulseHub Sections/ActivitySection.swift:23:62 cannot find type 'AnyView' in scope
+PulseHub Sections/ActivitySection.swift:20:9 cannot find 'AnyView' in scope
+PulseHub Sections/ActivitySection.swift:26:16 cannot find 'AnyView' in scope
+PulseHub Sections/AppsSection.swift:23:52 cannot find type 'AnyView' in scope
+PulseHub Sections/AppsSection.swift:27:62 cannot find type 'AnyView' in scope
+PulseHub Sections/AppsSection.swift:24:9 cannot find 'AnyView' in scope
+PulseHub Sections/AppsSection.swift:30:16 cannot find 'AnyView' in scope
+PulseHub Sections/ChatSection.swift:23:52 cannot find type 'AnyView' in scope
+PulseHub Sections/ChatSection.swift:27:62 cannot find type 'AnyView' in scope
+PulseHub Sections/ChatSection.swift:24:9 cannot find 'AnyView' in scope
+PulseHub Sections/ChatSection.swift:30:16 cannot find 'AnyView' in scope
+PulseHub Sections/CleanupSection.swift:25:52 cannot find type 'AnyView' in scope
+PulseHub Sections/CleanupSection.swift:29:62 cannot find type 'AnyView' in scope
+PulseHub Sections/CleanupSection.swift:26:9 cannot find 'AnyView' in scope
+PulseHub Sections/CleanupSection.swift:32:16 cannot find 'AnyView' in scope
+PulseHub Sections/MonitorSection.swift:19:52 cannot find type 'AnyView' in scope
+PulseHub Sections/MonitorSection.swift:24:62 cannot find type 'AnyView' in scope
+PulseHub Sections/MonitorSection.swift:20:9 cannot find 'AnyView' in scope
+PulseHub Sections/MonitorSection.swift:27:16 cannot find 'AnyView' in scope
+PulseHub Sections/OverviewSection.swift:19:52 cannot find type 'AnyView' in scope
+PulseHub Sections/OverviewSection.swift:24:62 cannot find type 'AnyView' in scope
+PulseHub Sections/OverviewSection.swift:20:9 cannot find 'AnyView' in scope
+PulseHub Sections/OverviewSection.swift:27:16 cannot find 'AnyView' in scope
+PulseHub Sections/SettingsSections.swift:34:52 cannot find type 'AnyView' in scope
+PulseHub Sections/SettingsSections.swift:39:62 cannot find type 'AnyView' in scope
+PulseHub Sections/SettingsSections.swift:36:16 cannot find 'AnyView' in scope
+PulseHub Sections/SettingsSections.swift:42:16 cannot find 'AnyView' in scope
+PulseHub Sections/StorageSection.swift:23:52 cannot find type 'AnyView' in scope
+PulseHub Sections/StorageSection.swift:27:62 cannot find type 'AnyView' in scope
+PulseHub Sections/StorageSection.swift:24:9 cannot find 'AnyView' in scope
+PulseHub Sections/StorageSection.swift:30:16 cannot find 'AnyView' in scope
+PulseHub Sections/Activity/ActivityView.swift:20:21 extraneous argument label 'verbatim:' in call
+PulseHub Sections/Activity/ActivityView.swift:83:17 extraneous argument label 'verbatim:' in call
+PulseHub Sections/Activity/ActivityView.swift:120:17 extraneous argument label 'verbatim:' in call
+PulseHub Sections/Activity/ActivityView.swift:143:17 extraneous argument label 'verbatim:' in call
+PulseHub Sections/Activity/ActivityView.swift:171:21 extraneous argument label 'verbatim:' in call
+PulseHub Sections/Activity/ActivityView.swift:181:10 value of type 'some View' has no member 'accessibilityAddTraits'
+PulseHub Sections/Activity/ActivityView.swift:202:21 extraneous argument label 'verbatim:' in call
+PulseHub Sections/Apps/ACControls.swift:130:13 extraneous argument label 'verbatim:' in call
+PulseHub Sections/Apps/ACControls.swift:217:21 extraneous argument label 'verbatim:' in call
+PulseHub Sections/Apps/ACControls.swift:307:10 value of type 'some View' has no member 'accessibilityValue'
+PulseHub Sections/Apps/ACControls.swift:336:25 cannot convert value of type '[ACSegmentOption<Value>]' to expected argument type 'Binding<C>'
+PulseHub Sections/Apps/ACControls.swift:336:17 generic parameter 'C' could not be inferred
+PulseHub Sections/Apps/ACControls.swift:337:41 cannot convert value of type 'Binding<Subject>' to expected argument type 'Value'
+PulseHub Sections/Apps/ACControls.swift:446:14 value of type 'some View' has no member 'accessibilityValue'
+PulseHub Sections/Apps/AppsViews.swift:11:23 incorrect argument label in call (have 'initialValue:', expected 'wrappedValue:')
+PulseHub Sections/Chat/ChatView.swift:19:21 extraneous argument label 'verbatim:' in call
+PulseHub Sections/Chat/ChatView.swift:59:17 extraneous argument label 'verbatim:' in call
+PulseHub Sections/Chat/ChatView.swift:86:17 extraneous argument label 'verbatim:' in call
+PulseHub Sections/Chat/ChatView.swift:143:70 instance method 'fill' requires that 'some View' conform to 'ShapeStyle'
+PulseHub Sections/Chat/ChatView.swift:167:10 value of type 'some View' has no member 'accessibilityAddTraits'
+PulseHub Sections/Chat/ChatView.swift:174:53 result values in '? :' expression have mismatching types 'some View' and 'Color'
+PulseHub Sections/Chat/ChatView.swift:188:17 extraneous argument label 'verbatim:' in call
+PulseHub Sections/Chat/ChatView.swift:222:21 extraneous argument label 'verbatim:' in call
+PulseHub Sections/Chat/ChatView.swift:246:25 extraneous argument label 'verbatim:' in call
+PulseHub Sections/Chat/ChatView.swift:278:21 extraneous argument label 'verbatim:' in call
+PulseHub Sections/Chat/ChatView.swift:296:17 extraneous argument label 'verbatim:' in call
+PulseHub Sections/Chat/ChatView.swift:369:13 extraneous argument label 'verbatim:' in call
+PulseHub Sections/Chat/ChatView.swift:389:17 extraneous argument label 'verbatim:' in call
+PulseHub Sections/Chat/ChatView.swift:405:55 extra argument 'axis' in call
+PulseHub Sections/Chat/ChatView.swift:405:55 cannot infer contextual base in reference to member 'vertical'
+PulseHub Sections/Chat/ChatView.swift:441:21 extraneous argument label 'verbatim:' in call
+PulseHub Sections/Cleanup/CleanupViews.swift:11:23 incorrect argument label in call (have 'initialValue:', expected 'wrappedValue:')
+PulseHub Sections/Monitor/MonitorView.swift:31:23 incorrect argument label in call (have 'initialValue:', expected 'wrappedValue:')
+PulseHub Sections/Monitor/MonitorView.swift:103:17 extraneous argument label 'verbatim:' in call
+PulseHub Sections/Monitor/MonitorView.swift:111:36 type 'VerticalAlignment' has no member 'firstTextBaseline'
+PulseHub Sections/Monitor/MonitorView.swift:144:21 extraneous argument label 'verbatim:' in call
+PulseHub Sections/Monitor/MonitorView.swift:248:36 type 'VerticalAlignment' has no member 'firstTextBaseline'
+PulseHub Sections/Monitor/MonitorView.swift:249:25 extraneous argument label 'verbatim:' in call
+PulseHub Sections/Monitor/MonitorView.swift:283:25 extraneous argument label 'verbatim:' in call
+PulseHub Sections/Monitor/MonitorView.swift:323:29 extraneous argument label 'verbatim:' in call
+PulseHub Sections/Monitor/MonitorView.swift:407:17 extraneous argument label 'verbatim:' in call
+PulseHub Sections/Monitor/MonitorView.swift:450:21 extraneous argument label 'verbatim:' in call
+PulseHub Sections/Monitor/MonitorView.swift:495:10 value of type 'some View' has no member 'accessibilityValue'
+PulseHub Sections/Monitor/MonitorView.swift:482:21 extraneous argument label 'verbatim:' in call
+PulseHub Sections/Monitor/MonitorView.swift:500:17 extraneous argument label 'verbatim:' in call
+PulseHub Sections/Monitor/MonitorView.swift:530:13 extraneous argument label 'verbatim:' in call
+PulseHub Sections/Monitor/MonitorView.swift:565:41 extraneous argument label 'verbatim:' in call
+PulseHub Sections/Monitor/MonitorView.swift:686:13 extraneous argument label 'verbatim:' in call
+PulseHub Sections/Monitor/MonitorView.swift:692:13 extraneous argument label 'verbatim:' in call
+PulseHub Sections/Monitor/MonitorView.swift:707:29 extraneous argument label 'verbatim:' in call
+PulseHub Sections/Monitor/MonitorView.swift:776:29 extraneous argument label 'verbatim:' in call
+PulseHub Sections/Monitor/MonitorView.swift:800:25 extraneous argument label 'verbatim:' in call
+PulseHub Sections/Monitor/MonitorView.swift:839:21 extraneous argument label 'verbatim:' in call
+PulseHub Sections/Monitor/MonitorView.swift:885:25 cannot convert value of type '[MonOption]' to expected argument type 'Binding<C>'
+PulseHub Sections/Monitor/MonitorView.swift:885:17 generic parameter 'C' could not be inferred
+PulseHub Sections/Monitor/MonitorView.swift:936:82 type 'Color' has no member 'clear'
+PulseHub Sections/Monitor/MonitorView.swift:954:21 extraneous argument label 'verbatim:' in call
+PulseHub Sections/Overview/OverviewView.swift:29:23 incorrect argument label in call (have 'initialValue:', expected 'wrappedValue:')
+PulseHub Sections/Overview/OverviewView.swift:69:25 extraneous argument label 'verbatim:' in call
+PulseHub Sections/Overview/OverviewView.swift:103:25 extraneous argument label 'verbatim:' in call
+PulseHub Sections/Overview/OverviewView.swift:217:25 extraneous argument label 'verbatim:' in call
+PulseHub Sections/Overview/OverviewView.swift:390:33 extraneous argument label 'verbatim:' in call
+PulseHub Sections/Overview/OverviewView.swift:447:23 type 'Color' has no member 'clear'
+PulseHub Sections/Overview/OverviewView.swift:477:14 value of type 'HubProgressBar' has no member 'accessibilityElement'
+PulseHub Sections/Overview/OverviewView.swift:507:32 type 'VerticalAlignment' has no member 'firstTextBaseline'
+PulseHub Sections/Overview/OverviewView.swift:508:21 extraneous argument label 'verbatim:' in call
+PulseHub Sections/Overview/OverviewView.swift:558:32 type 'VerticalAlignment' has no member 'firstTextBaseline'
+PulseHub Sections/Overview/OverviewView.swift:562:25 extraneous argument label 'verbatim:' in call
+PulseHub Sections/Overview/OverviewView.swift:591:13 extraneous argument label 'verbatim:' in call
+PulseHub Sections/Overview/OverviewView.swift:635:17 extraneous argument label 'verbatim:' in call
+PulseHub Sections/Overview/OverviewView.swift:674:25 extraneous argument label 'verbatim:' in call
+PulseHub Sections/Overview/OverviewView.swift:718:17 extraneous argument label 'verbatim:' in call
+PulseHub Sections/Overview/OverviewView.swift:754:21 extraneous argument label 'verbatim:' in call
+PulseHub Sections/Overview/OverviewView.swift:785:25 extraneous argument label 'verbatim:' in call
+PulseHub Sections/Settings/SettingsAccountsPage.swift:165:29 extraneous argument label 'verbatim:' in call
+PulseHub Sections/Settings/SettingsAccountsPage.swift:228:18 value of type 'Button<Text>' has no member 'accessibilityHint'
+PulseHub Sections/Settings/SettingsAccountsPage.swift:301:33 extraneous argument label 'verbatim:' in call
+PulseHub Sections/Settings/SettingsAccountsPage.swift:311:18 value of type 'some View' has no member 'accessibilityAddTraits'
+PulseHub Sections/Settings/SettingsAccountsPage.swift:320:10 value of type 'VStack<Content>' has no member 'accessibilityElement'
+PulseHub Sections/Settings/SettingsAccountsPage.swift:366:33 extraneous argument label 'verbatim:' in call
+PulseHub Sections/Settings/SettingsAccountsPage.swift:429:32 type 'VerticalAlignment' has no member 'firstTextBaseline'
+PulseHub Sections/Settings/SettingsAccountsPage.swift:430:21 extraneous argument label 'verbatim:' in call
+PulseHub Sections/Settings/SettingsUI.swift:15:15 cannot find type 'AnyView' in scope
+PulseHub Sections/Settings/SettingsAppearancePage.swift:166:26 value of type 'some View' has no member 'accessibilityHidden'
+PulseHub Sections/Settings/SettingsGeneralPage.swift:284:13 extraneous argument label 'verbatim:' in call
+PulseHub Sections/Settings/SettingsKeyboardViews.swift:128:29 extraneous argument label 'verbatim:' in call
+PulseHub Sections/Settings/SettingsLauncherViews.swift:220:13 extraneous argument label 'verbatim:' in call
+PulseHub Sections/Settings/SettingsLauncherViews.swift:309:23 incorrect argument label in call (have 'initialValue:', expected 'wrappedValue:')
+PulseHub Sections/Settings/SettingsLauncherViews.swift:462:25 no exact matches in call to initializer
+PulseHub Sections/Settings/SettingsLauncherViews.swift:462:70 cannot infer type of closure parameter 'i' without a type annotation
+PulseHub Sections/Settings/SettingsLauncherViews.swift:486:25 no exact matches in call to initializer
+PulseHub Sections/Settings/SettingsLauncherViews.swift:486:77 cannot infer type of closure parameter 'i' without a type annotation
+PulseHub Sections/Settings/SettingsLauncherViews.swift:525:21 extraneous argument label 'verbatim:' in call
+PulseHub Sections/Settings/SettingsLauncherViews.swift:565:17 extraneous argument label 'verbatim:' in call
+PulseHub Sections/Settings/SettingsLauncherViews.swift:623:21 extraneous argument label 'verbatim:' in call
+PulseHub Sections/Settings/SettingsNearbyViews.swift:293:37 extraneous argument label 'verbatim:' in call
+PulseHub Sections/Settings/SettingsNearbyViews.swift:362:10 value of type 'some View' has no member 'accessibilityElement'
+PulseHub Sections/Settings/SettingsNearbyViews.swift:381:32 type 'VerticalAlignment' has no member 'firstTextBaseline'
+PulseHub Sections/Settings/SettingsNearbyViews.swift:382:21 extraneous argument label 'verbatim:' in call
+PulseHub Sections/Settings/SettingsNearbyViews.swift:412:21 extraneous argument label 'verbatim:' in call
+PulseHub Sections/Settings/SettingsPageRoot.swift:12:23 incorrect argument label in call (have 'initialValue:', expected 'wrappedValue:')
+PulseHub Sections/Settings/SettingsPermissionsPage.swift:255:25 extraneous argument label 'verbatim:' in call
+PulseHub Sections/Settings/SettingsUI.swift:20:21 cannot find 'AnyView' in scope
+PulseHub Sections/Settings/SettingsUI.swift:58:17 extraneous argument label 'verbatim:' in call
+PulseHub Sections/Settings/SettingsUI.swift:157:17 extraneous argument label 'verbatim:' in call
+PulseHub Sections/Settings/SettingsUI.swift:179:13 extraneous argument label 'verbatim:' in call
+PulseHub Sections/Settings/SettingsUI.swift:220:17 extraneous argument label 'verbatim:' in call
+PulseHub Sections/Settings/SettingsUI.swift:227:10 value of type 'HubLayered<Content>' has no member 'accessibilityElement'
+PulseHub Sections/Settings/SettingsUI.swift:244:17 extraneous argument label 'verbatim:' in call
+PulseHub Sections/Settings/SettingsUI.swift:269:17 extraneous argument label 'verbatim:' in call
+PulseHub Sections/Settings/SettingsUI.swift:390:21 extraneous argument label 'verbatim:' in call
+PulseHub Sections/Settings/SettingsUI.swift:400:10 value of type 'some View' has no member 'accessibilityAddTraits'
+PulseHub Sections/Settings/SettingsUI.swift:442:25 extraneous argument label 'verbatim:' in call
+PulseHub Sections/Settings/SettingsUI.swift:453:18 value of type 'HStack<Content>' has no member 'accessibilityElement'
+PulseHub Sections/Settings/SettingsUI.swift:559:17 extraneous argument label 'verbatim:' in call
+PulseHub Sections/Settings/SettingsUI.swift:755:25 extraneous argument label 'verbatim:' in call
+PulseHub Sections/Storage/StorageComponents.swift:20:21 extraneous argument label 'verbatim:' in call
+PulseHub Sections/Storage/StorageComponents.swift:66:21 extraneous argument label 'verbatim:' in call
+PulseHub Sections/Storage/StorageComponents.swift:104:17 extraneous argument label 'verbatim:' in call
+PulseHub Sections/Storage/StorageComponents.swift:131:10 value of type 'some View' has no member 'accessibilityElement'
+PulseHub Sections/Storage/StorageComponents.swift:210:21 cannot convert value of type '[StorageModel.Pane]' to expected argument type 'Binding<C>'
+PulseHub Sections/Storage/StorageComponents.swift:210:13 generic parameter 'C' could not be inferred
+PulseHub Sections/Storage/StorageComponents.swift:211:30 cannot convert value of type 'Binding<C.Element>' to expected argument type 'StorageModel.Pane'
+PulseHub Sections/Storage/StorageComponents.swift:248:17 extraneous argument label 'verbatim:' in call
+PulseHub Sections/Storage/StorageDuplicates.swift:114:13 extraneous argument label 'verbatim:' in call
+PulseHub Sections/Storage/StorageDuplicates.swift:198:25 extraneous argument label 'verbatim:' in call
+PulseHub Sections/Storage/StorageFindingsView.swift:17:13 extraneous argument label 'verbatim:' in call
+PulseHub Sections/Storage/StorageFindingsView.swift:44:29 extraneous argument label 'verbatim:' in call
+PulseHub Sections/Storage/StorageFindingsView.swift:86:25 extraneous argument label 'verbatim:' in call
+PulseHub Sections/Storage/StorageFindingsView.swift:125:41 extraneous argument label 'verbatim:' in call
+PulseHub Sections/Storage/StorageFindingsView.swift:205:25 extraneous argument label 'verbatim:' in call
+PulseHub Sections/Storage/StorageFoldersView.swift:14:13 extraneous argument label 'verbatim:' in call
+PulseHub Sections/Storage/StorageFoldersView.swift:66:17 type '(EnumeratedSequence<[(name: String, path: String)]>.Index) -> Int' cannot conform to 'Hashable' [#ProtocolTypeNonConformance]
+PulseHub Sections/Storage/StorageFoldersView.swift:67:36 type '(EnumeratedSequence<[(name: String, path: String)]>.Index) -> Int' cannot conform to 'BinaryInteger' [#ProtocolTypeNonConformance]
+PulseHub Sections/Storage/StorageFoldersView.swift:66:31 missing argument label 'arrayLiteral:' in call
+PulseHub Sections/Storage/StorageFoldersView.swift:111:25 extraneous argument label 'verbatim:' in call
+PulseHub Sections/Storage/StorageFoldersView.swift:201:18 value of type 'StorageStrip' has no member 'accessibilityElement'
+PulseHub Sections/Storage/StorageFoldersView.swift:224:17 extraneous argument label 'verbatim:' in call
+PulseHub Sections/Storage/StorageFoldersView.swift:251:71 type 'Color' has no member 'clear'
+PulseHub Sections/Storage/StorageFoldersView.swift:310:13 extraneous argument label 'verbatim:' in call
+PulseHub Sections/Storage/StorageFoldersView.swift:332:25 extraneous argument label 'verbatim:' in call
+PulseHub Sections/Storage/StorageFoldersView.swift:414:17 extraneous argument label 'verbatim:' in call
+PulseHub Sections/Storage/StorageHealthViews.swift:54:13 extraneous argument label 'verbatim:' in call
+PulseHub Sections/Storage/StorageHealthViews.swift:93:13 extraneous argument label 'verbatim:' in call
+PulseHub Sections/Storage/StorageHealthViews.swift:99:17 extraneous argument label 'verbatim:' in call
+PulseHub Sections/Storage/StorageHealthViews.swift:111:29 extraneous argument label 'verbatim:' in call
+PulseHub Sections/Storage/StorageHealthViews.swift:188:25 extraneous argument label 'verbatim:' in call
+PulseHub Sections/Storage/StorageHealthViews.swift:252:33 extraneous argument label 'verbatim:' in call
+PulseHub Sections/Storage/StorageRootView.swift:14:23 incorrect argument label in call (have 'initialValue:', expected 'wrappedValue:')
+PulseHub Sections/Storage/StorageRootView.swift:19:23 incorrect argument label in call (have 'initialValue:', expected 'wrappedValue:')
+PulseHub Sections/Storage/StorageRootView.swift:26:13 extraneous argument label 'verbatim:' in call
+PulseHub Sections/Storage/StorageRootView.swift:109:25 extraneous argument label 'verbatim:' in call
+PulseHub Sections/Storage/StorageRootView.swift:138:29 extraneous argument label 'verbatim:' in call
+PulseHub Sections/Storage/StorageRootView.swift:174:10 value of type 'some View' has no member 'accessibilityAddTraits'
+PulseHub Sections/Storage/StorageRootView.swift:212:33 extraneous argument label 'verbatim:' in call
+RightKitHub HubHeader.swift:24:21 extraneous argument label 'verbatim:' in call
+RightKitHub HubHeader.swift:47:53 cannot convert return expression of type 'TupleView<HubNoTrailing>' to return type 'HubNoTrailing'
+RightKitHub HubScene.swift:26:15 cannot find type 'Scene' in scope
+RightKitHub HubScene.swift:27:9 cannot find 'WindowGroup' in scope
+RightKitHub HubScene.swift:42:27 incorrect argument label in call (have 'initialValue:', expected 'wrappedValue:')
+RightKitHub HubSearch.swift:203:25 extraneous argument label 'verbatim:' in call
+RightKitHub HubSection.swift:40:52 cannot find type 'AnyView' in scope
+RightKitHub HubShell.swift:41:27 incorrect argument label in call (have 'initialValue:', expected 'wrappedValue:')
+RightKitHub HubShell.swift:58:27 incorrect argument label in call (have 'initialValue:', expected 'wrappedValue:')
+RightKitHub HubShell.swift:228:23 cannot convert return expression of type 'TupleView<HubNoTrailing>' to return type 'HubNoTrailing'
+RightKitHub HubShell.swift:228:57 cannot convert return expression of type 'TupleView<Footer>' to return type 'Footer'
+RightKitHub HubSidebar.swift:154:19 type 'Color' has no member 'clear'
+RightKitHub HubSidebar.swift:180:25 extraneous argument label 'verbatim:' in call
+RightKitHub HubSidebar.swift:196:10 value of type 'some View' has no member 'accessibilityValue'
+RightKitHub HubStates.swift:21:17 extraneous argument label 'verbatim:' in call
+RightKitHub HubStates.swift:150:21 extraneous argument label 'verbatim:' in call
+RightKitHub HubTheme.swift:296:33 value of type 'Font' has no member 'width'
+RightKitHub HubToast.swift:126:25 extraneous argument label 'verbatim:' in call
+RightKitHub HubToast.swift:164:19 type 'Color' has no member 'clear'
+RightKitHub Components/HubBarChart.swift:168:25 extraneous argument label 'verbatim:' in call
+RightKitHub Components/HubBarChart.swift:181:10 value of type 'VStack<Content>' has no member 'accessibilityElement'
+RightKitHub Components/HubBarChart.swift:194:49 type 'Color' has no member 'clear'
+RightKitHub Components/HubCard.swift:73:21 extraneous argument label 'verbatim:' in call
+RightKitHub Components/HubCard.swift:124:21 extraneous argument label 'verbatim:' in call
+RightKitHub Components/HubCard.swift:154:13 extraneous argument label 'verbatim:' in call
+RightKitHub Components/HubCard.swift:166:15 type 'Color' has no member 'clear'
+RightKitHub Components/HubCard.swift:173:65 cannot convert return expression of type 'TupleView<HubNoTrailing>' to return type 'HubNoTrailing'
+RightKitHub Components/HubChoiceList.swift:43:37 extraneous argument label 'verbatim:' in call
+RightKitHub Components/HubChoiceList.swift:64:18 value of type 'some View' has no member 'accessibilityAddTraits'
+RightKitHub Components/HubConfirm.swift:27:31 cannot find type 'Content' in scope
+RightKitHub Components/HubConfirm.swift:5:27 cannot find type 'ViewModifier' in scope
+RightKitHub Components/HubConfirm.swift:33:21 extraneous argument label 'verbatim:' in call
+RightKitHub Components/HubConfirm.swift:53:9 cannot find 'modifier' in scope
+RightKitHub Components/HubLayered.swift:45:21 instance method 'fill' requires that 'some View' conform to 'ShapeStyle'
+RightKitHub Components/HubProgressBar.swift:30:10 value of type 'some View' has no member 'accessibilityElement'
+RightKitHub Settings/HubSettingsView.swift:21:23 incorrect argument label in call (have 'initialValue:', expected 'wrappedValue:')
+RightKitHub Settings/HubSettingsView.swift:34:25 extraneous argument label 'verbatim:' in call
+RightKitHub Settings/HubSettingsView.swift:59:17 extraneous argument label 'verbatim:' in call
+RightKitHub Settings/HubSettingsView.swift:90:21 extraneous argument label 'verbatim:' in call
+RightKitHubQA HubQAGallery.swift:61:48 cannot find type 'AnyView' in scope
+RightKitHubQA HubQAGallery.swift:113:48 cannot find type 'AnyView' in scope
+RightKitHubQA HubQAGallery.swift:62:9 cannot find 'AnyView' in scope
+RightKitHubQA HubQAGallery.swift:114:9 cannot find 'AnyView' in scope
+
+## pass tc2
+PulseHub PulseFormat.swift:18:25 cannot find 'RelativeDateTimeFormatter' in scope
+PulseHub PulseFormat.swift:19:33 cannot infer contextual base in reference to member 'short'
+PulseHub Sections/Chat/ChatView.swift:405:55 extra argument 'axis' in call
+PulseHub Sections/Chat/ChatView.swift:405:55 cannot infer contextual base in reference to member 'vertical'
+PulseHub Sections/Overview/OverviewView.swift:530:18 value of type 'HStack<TupleView<(TupleView<some View>?, some View, TupleView<some View>?)>>' has no member 'layoutPriority'
+PulseHub Sections/Settings/SettingsAccountsPage.swift:441:22 value of type 'some View' has no member 'layoutPriority'
+PulseHub Sections/Settings/SettingsLauncherViews.swift:462:25 no exact matches in call to initializer
+PulseHub Sections/Settings/SettingsLauncherViews.swift:462:70 cannot infer type of closure parameter 'i' without a type annotation
+RightKitHub HubHeader.swift:47:53 cannot convert return expression of type 'TupleView<HubNoTrailing>' to return type 'HubNoTrailing'
+RightKitHub HubShell.swift:178:39 value of type 'AnyView' has no member 'id'
+RightKitHub HubShell.swift:228:23 cannot convert return expression of type 'TupleView<HubNoTrailing>' to return type 'HubNoTrailing'
+RightKitHub HubShell.swift:228:57 cannot convert return expression of type 'TupleView<Footer>' to return type 'Footer'
+RightKitHub Components/HubCard.swift:173:65 cannot convert return expression of type 'TupleView<HubNoTrailing>' to return type 'HubNoTrailing'
+
+## pass tc3
+PulseHub PulseFormat.swift:18:25 cannot find 'RelativeDateTimeFormatter' in scope
+PulseHub PulseFormat.swift:19:33 cannot infer contextual base in reference to member 'short'
+RightKitHub HubHeader.swift:47:53 cannot convert return expression of type 'TupleView<HubNoTrailing>' to return type 'HubNoTrailing'
+RightKitHub HubShell.swift:228:23 cannot convert return expression of type 'TupleView<HubNoTrailing>' to return type 'HubNoTrailing'
+RightKitHub HubShell.swift:228:57 cannot convert return expression of type 'TupleView<Footer>' to return type 'Footer'
+RightKitHub Components/HubCard.swift:173:65 cannot convert return expression of type 'TupleView<HubNoTrailing>' to return type 'HubNoTrailing'
