@@ -1512,6 +1512,45 @@
         "text": "gpui 0.2.2 text capabilities answered with rasters or API traces (axes NO, simulation switch NO, colour emoji YES, private fallbacks NO, glyph painting YES, features YES with kerning default off); F3 needs a DirectWrite face resolver and an own run path only for off-instance axes and private fallback chains (**delivered-pending-review**; decisions G10-G19)"
       },
       "windowsDifferences": []
+    },
+    {
+      "apis": {
+        "fromCaseSources": {
+          "modifiersAndMembers": [
+            "init(decorative:scale:orientation:)",
+            "init(_:scale:orientation:label:)"
+          ],
+          "types": [
+            "CGImage",
+            "Image",
+            "Image.Orientation"
+          ]
+        },
+        "fromManifest": []
+      },
+      "block": "foundations.image-decode",
+      "cases": [],
+      "casesPassingDecidingGate": "139/139 corpus cases (decode buffers vs the Mac ImageIO oracle, 20 identical Windows runs); no paired capture case",
+      "caveats": [
+        "Buffer gate only: no pixel capture; `Image(decorative: CGImage, ...)` draws through the block 35 pixel path unchanged.",
+        "Lossless formats byte-exact (RGB under alpha 0 ignored); JPEG 4:4:4 max 3, 4:2:0 max 16 (chroma upsampling), P3 max 1, thumbnails max 98 (box filter vs ImageIO's, I2 owns the real tolerance); CMYK JPEG max 58 / mean 14.1 from the Mac (not fitted).",
+        "WIC's own colour transform gamut-maps and ignores the rendering intent; matrix/TRC profiles are converted in Swift (clip, within 1 of CoreGraphics); LUT, grey and CMYK profiles use the WIC transform and are not gated.",
+        "ImageIO ignores the AND mask of 24-bit ICO entries and cannot decode BITMAPV4HEADER BMPs; those cases are gated against the pure-Swift decoder and the V5 decode.",
+        "The pure-Swift PNG/ICO decoder remains the default (`ImageDecoder.backend`); the system backend is selected with SWIFTRIGHT_IMAGE_DECODER=system.",
+        "One Windows build (10.0.26100, WindowsCodecs 10.0.26100.9711); macOS 27.0.1 oracle."
+      ],
+      "stage": "a13fb525c-ba8c9c9a (git archive of commit a13fb525c)",
+      "status": "delivered-pending-review",
+      "statusDocBlock": "I1",
+      "verdict": {
+        "date": "2026-10-15",
+        "runDates": [
+          "2026-10-15"
+        ],
+        "source": "docs/sr1-status.md table + factory/pipeline/blocks-w0-i1/evidence/gate-windows-final.json",
+        "text": "139/139 decode cases, 20/20 identical Windows runs (run.bin sha256 724f49818af416807d3198f5abff892d5a0f46c4eae3a6b0bb9228880a7041ce) (**delivered-pending-review**; decisions G30-G39)"
+      },
+      "windowsDifferences": []
     }
   ],
   "generator": "factory/tools/proven-controls/generate.py",
