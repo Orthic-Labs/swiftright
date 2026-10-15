@@ -40,6 +40,7 @@ extension StackAdditionTests {
         XCTAssertEqual(overlay.frame.size, LayoutSize(width: 32, height: 16))
         XCTAssertEqual(overlay.children.map(\.text), ["base", "longlong"])
         XCTAssertEqual(overlay.children[0].frame, LayoutRect(x: 0, y: 0, width: 32, height: 16))
-        XCTAssertEqual(overlay.children[1].frame, LayoutRect(x: -32, y: 0, width: 64, height: 16))
+        // decision L1: a Text reports at most the width it is offered, so the unbreakable word is 32 wide (the base's width), not 64 overflowing to the left
+        XCTAssertEqual(overlay.children[1].frame, LayoutRect(x: 0, y: 0, width: 32, height: 16))
     }
 }
