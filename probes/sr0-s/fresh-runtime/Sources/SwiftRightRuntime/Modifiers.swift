@@ -114,6 +114,11 @@ extension View {
         Modified(content: self, spec: .opacity(value))
     }
 
+    /// Clips this view's painting to its own frame. Layout is unchanged. Apple: https://developer.apple.com/documentation/swiftui/view/clipped(antialiased:)
+    public func clipped(antialiased: Bool = false) -> some View {
+        Modified(content: self, spec: .clipped)
+    }
+
     /// Gives this view priority over its siblings when a stack divides the space it has: higher priorities are offered space first.
     /// Apple: https://developer.apple.com/documentation/swiftui/view/layoutpriority(_:)
     public func layoutPriority(_ value: Double) -> some View {

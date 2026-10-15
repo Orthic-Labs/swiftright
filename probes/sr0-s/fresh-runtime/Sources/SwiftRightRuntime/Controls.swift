@@ -46,6 +46,11 @@ extension Toggle: @MainActor LabeledControl {
 
 // MARK: - Image
 
+/// How a view with an aspect ratio fits the space it is offered. Apple: https://developer.apple.com/documentation/swiftui/contentmode
+public enum ContentMode: Hashable, Sendable {
+    case fit, fill
+}
+
 /// A resolved image reference. The backend loads the image; the runtime carries only the reference.
 public enum ImageReference: Hashable, Sendable {
     /// An SF Symbol name, as `Image(systemName:)` takes it.
@@ -95,14 +100,31 @@ public struct ResolvedImageSizing: Hashable, Sendable {
     public let isResizable: Bool
     public let capInsets: EdgeInsets
     public let resizingMode: Image.ResizingMode
+    /// `scaledToFit()` / `aspectRatio(_:contentMode: .fit)`.
     public let scalesToFit: Bool
+    /// `scaledToFill()` / `aspectRatio(_:contentMode: .fill)`.
+    public let scalesToFill: Bool
+    /// An explicit width / height from `aspectRatio(_:contentMode:)`; nil keeps the image's own aspect.
+    public let aspectRatio: CGFloat?
+    /// `.interpolation(_:)`; nil when never set (the Mac default draws like `.low`, measured in wave 1 block I2).
+    public let interpolation: Image.Interpolation?
+    /// `.antialiased(_:)`; nil when never set. The Mac draws image rectangles on whole device pixels, so it has no pixel effect (measured, block I2).
+    public let antialiased: Bool?
 
-    init(isResizable: Bool, capInsets: EdgeInsets, resizingMode: Image.ResizingMode, scalesToFit: Bool) {
+    init(isResizable: Bool, capInsets: EdgeInsets, resizingMode: Image.ResizingMode, scalesToFit: Bool,
+         scalesToFill: Bool = false, aspectRatio: CGFloat? = nil, interpolation: Image.Interpolation? = nil, antialiased: Bool? = nil) {
         self.isResizable = isResizable
         self.capInsets = capInsets
         self.resizingMode = resizingMode
         self.scalesToFit = scalesToFit
+        self.scalesToFill = scalesToFill
+        self.aspectRatio = aspectRatio
+        self.interpolation = interpolation
+        self.antialiased = antialiased
     }
+
+    /// True when any I2 field is set, so a non-resizable image that asks for an interpolation still reaches the host.
+    var isNonDefault: Bool { scalesToFill || aspectRatio != nil || interpolation != nil || antialiased != nil }
 }
 
 struct ImageSpec: Hashable, Sendable {
@@ -124,6 +146,15 @@ public struct Image: View, PrimitiveView {
     private var resizingMode: ResizingMode = .stretch
     private var isResizable = false
     private var scalesToFit = false
+    private var scalesToFill = false
+    private var aspectRatioValue: CGFloat?
+    private var interpolationValue: Interpolation?
+    private var antialiasedValue: Bool?
+
+    /// Apple: https://developer.apple.com/documentation/swiftui/image/interpolation
+    public enum Interpolation: Hashable, Sendable {
+        case none, low, medium, high
+    }
 
     /// How a resizable image fills space beyond its cap insets.
     public enum ResizingMode: Hashable, Sendable {
@@ -156,6 +187,39 @@ public struct Image: View, PrimitiveView {
     public func scaledToFit() -> Self {
         var image = self
         image.scalesToFit = true
+        image.scalesToFill = false
+        return image
+    }
+
+    /// Fills the proposed bounds while preserving the aspect ratio; the overflow is not clipped unless `.clipped()` follows.
+    /// Apple: https://developer.apple.com/documentation/swiftui/view/scaledtofill()
+    public func scaledToFill() -> Self {
+        var image = self
+        image.scalesToFill = true
+        image.scalesToFit = false
+        return image
+    }
+
+    /// `aspectRatio` is width / height; nil uses the image's own. Apple: https://developer.apple.com/documentation/swiftui/view/aspectratio(_:contentmode:)-771ow
+    public func aspectRatio(_ aspectRatio: CGFloat? = nil, contentMode: ContentMode) -> Self {
+        var image = self
+        image.aspectRatioValue = aspectRatio.flatMap { $0 > 0 ? $0 : nil }
+        image.scalesToFit = contentMode == .fit
+        image.scalesToFill = contentMode == .fill
+        return image
+    }
+
+    /// Chooses the resampling filter the host uses when the image is drawn at another size. Apple: https://developer.apple.com/documentation/swiftui/image/interpolation(_:)
+    public func interpolation(_ interpolation: Interpolation) -> Self {
+        var image = self
+        image.interpolationValue = interpolation
+        return image
+    }
+
+    /// Whether the image's edges are antialiased. Apple: https://developer.apple.com/documentation/swiftui/image/antialiased(_:)
+    public func antialiased(_ isAntialiased: Bool) -> Self {
+        var image = self
+        image.antialiasedValue = isAntialiased
         return image
     }
 
@@ -164,7 +228,11 @@ public struct Image: View, PrimitiveView {
             isResizable: isResizable,
             capInsets: capInsets,
             resizingMode: resizingMode,
-            scalesToFit: scalesToFit
+            scalesToFit: scalesToFit,
+            scalesToFill: scalesToFill,
+            aspectRatio: aspectRatioValue,
+            interpolation: interpolationValue,
+            antialiased: antialiasedValue
         )
     }
 

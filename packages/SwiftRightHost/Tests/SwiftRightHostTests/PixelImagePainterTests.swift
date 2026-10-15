@@ -97,15 +97,17 @@ final class PixelImagePainterTests: XCTestCase {
         XCTAssertEqual(Array(entry.rgba.prefix(4)), [200, 100, 50, 255])
     }
 
-    func testFrameLargerThanTheImageIsNotUpscaledInTheBitmap() throws {
+    func testFrameLargerThanTheImageIsUpscaledOnTheHostToTheDevicePixelSize() throws {
+        // wave 1 block I2: the host registers a device-pixel-exact buffer, so the renderer draws it 1:1 (it used to scale a 10 px bitmap on the GPU)
         let images = FakeImages()
         let n = try imageNode(Image(decorative: image(10, 10), scale: 1).resizable().frame(width: 40, height: 40))
         let p = painter(images)
         p.beginCommit()
         let out = try emitImage(p, n)
         p.endCommit(committed: true)
-        XCTAssertEqual(images.registered[out.handle.raw]?.width, 10)
-        XCTAssertEqual(out.rect.w, 100, accuracy: 0.1)   // the renderer scales it to the 100 px frame
+        XCTAssertEqual(images.registered[out.handle.raw]?.width, 100)
+        XCTAssertEqual(images.registered[out.handle.raw]?.height, 100)
+        XCTAssertEqual(out.rect.w, 100, accuracy: 0.1)
     }
 
     func testOpacityScalesAlphaAndIsAPartOfTheCacheKey() throws {

@@ -230,6 +230,8 @@ enum ModifierSpec {
     /// SR1 round 4 (block swiftui.list-row-style): `.listRowSeparator(_:)` and `.listRowBackground(_:)`, read by the host from the row's subtree.
     case listRowSeparator(Visibility)
     case listRowBackground(ListRowBackground)
+    /// SR1 wave 1 block I2: `.clipped()`. Geometry passes through; the host clips the subtree's painting to this node's frame.
+    case clipped
 
     /// "modifier." plus `name`, as resolved records show it (static strings, no allocation per commit).
     var kindName: String {
@@ -264,6 +266,7 @@ enum ModifierSpec {
         case .layoutPriority: return "modifier.layoutPriority"
         case .listRowSeparator: return "modifier.listRowSeparator"
         case .listRowBackground: return "modifier.listRowBackground"
+        case .clipped: return "modifier.clipped"
         }
     }
 
@@ -299,6 +302,7 @@ enum ModifierSpec {
         case .layoutPriority: return "layoutPriority"
         case .listRowSeparator: return "listRowSeparator"
         case .listRowBackground: return "listRowBackground"
+        case .clipped: return "clipped"
         }
     }
 }
@@ -539,6 +543,8 @@ final class Node {
     var instance = 0
     /// Layout target in logical points, set by the layout pass (snapped to the pixel grid).
     var frame: LayoutRect = .zero
+    /// The frame as layout computed it, before snapping to the device pixel grid (an image resamples with the scale of this size: wave 1 block I2).
+    var layoutFrame: LayoutRect = .zero
     /// Text memo: measured sizes for the current text, keyed by wrap width (nil = no wrap).
     var memoText: String?
     var memo: [CGFloat?: LayoutSize] = [:]
@@ -781,6 +787,8 @@ public struct ResolvedNode: Equatable, Sendable {
     public let listStyle: String?
     /// Modifier nodes of `.listRowSeparator` / `.listRowBackground` only: what the modifier asks of its List row (the host reads it from the row's subtree).
     public var rowStyle: ListRowStyle? = nil
+    /// Image nodes only: the frame before pixel snapping, in points. `frame` and `pixelFrame` are snapped; the sample scale of a resampled image is this size, not the snapped one.
+    public var imageLayoutFrame: LayoutRect? = nil
 }
 
 /// What `.listRowSeparator(_:)` and `.listRowBackground(_:)` ask of a List row.
@@ -810,7 +818,7 @@ extension ResolvedNode {
                      selection: selection, marked: marked, children: children, labelsHidden: labelsHidden, toggleStyle: toggleStyle,
                      fieldStyle: fieldStyle, placeholder: placeholder, accessibility: accessibility, style: style, image: image,
                      imageSizing: imageSizing, color: color, shapeStorage: shapeStorage, menu: menu, presentation: presentation, shortcut: shortcut,
-                     buttonStyle: buttonStyle, isDefaultButton: isDefaultButton, listStyle: listStyle, rowStyle: rowStyle)
+                     buttonStyle: buttonStyle, isDefaultButton: isDefaultButton, listStyle: listStyle, rowStyle: rowStyle, imageLayoutFrame: imageLayoutFrame)
     }
 }
 
@@ -1863,7 +1871,7 @@ public final class Graph {
         var imageSizing: ResolvedImageSizing?
         if case .image(let spec) = kind {
             image = spec.reference
-            if spec.sizing.isResizable || spec.sizing.scalesToFit {
+            if spec.sizing.isResizable || spec.sizing.scalesToFit || spec.sizing.isNonDefault {
                 imageSizing = spec.sizing
             }
         }
@@ -1936,7 +1944,8 @@ public final class Graph {
             buttonStyle: buttonStyle,
             isDefaultButton: isDefaultButton,
             listStyle: listStyle,
-            rowStyle: rowStyle
+            rowStyle: rowStyle,
+            imageLayoutFrame: imageSizing != nil || image != nil ? node.layoutFrame : nil
         )
     }
 

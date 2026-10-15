@@ -28,7 +28,14 @@ public final class ResolvedNodePainter {
     private var shapeImages: [UInt64: ImageHandle] = [:]
     var pendingShapeImages: [UInt64: ImageHandle] = [:]
     /// Registered pixel images (`Image(decorative:scale:)`), one per content id, painted size and opacity: kept while a committed tree uses them.
-    struct PixelKey: Hashable { var contentID: UInt64; var width: UInt32; var height: UInt32; var alpha: UInt8 }
+    /// `level` is the `Image.Interpolation` (-1 = never set, 0 none ... 3 high); `frameW` / `frameH` are the unsnapped destination size in 1/256 device pixel (the sample scale).
+    struct PixelKey: Hashable { var contentID: UInt64; var width: UInt32; var height: UInt32; var alpha: UInt8; var level: Int8 = -1; var frameW: Int32 = 0; var frameH: Int32 = 0 }
+    /// The last variant registered for each image node (bridge node id): what the transient path keeps painting while the size is changing.
+    private var lastPixelKey: [UInt64: PixelKey] = [:]
+    /// Live resize and animation (wave 1 block I2, docs/foundations-images-fonts.md 1.3): while true, an image node whose destination size changed keeps painting its last registered variant
+    /// (the renderer scales it on the GPU) instead of building a new device-exact buffer every frame; it is a documented transient difference. The host sets it false when the size has been
+    /// stable (the end of a window drag, the end of an animation) and commits once more: every image then rebuilds at its exact size. Settled captures never run with it true.
+    public var isLiveResizing = false
     private var pixelImages: [PixelKey: ImageHandle] = [:]
     private var pendingPixelImages: [PixelKey: ImageHandle] = [:]
     /// The runtime id of the TextField that holds the focus while a commit is painted (`commit(focused:)`); nil when no field is focused.
@@ -55,6 +62,7 @@ public final class ResolvedNodePainter {
             shapeImages = pendingShapeImages
             for (key, handle) in pixelImages where pendingPixelImages[key] != handle { _ = images.release(handle) }
             pixelImages = pendingPixelImages
+            lastPixelKey = lastPixelKey.filter { pixelImages[$0.value] != nil }
         } else {
             pendingShapeImages.values.forEach { _ = images.release($0) }
             for (key, handle) in pendingPixelImages where pixelImages[key] != handle { _ = images.release(handle) }
@@ -73,6 +81,7 @@ public final class ResolvedNodePainter {
         pixelHandles.forEach { _ = images.release($0) }
         pixelImages = [:]
         pendingPixelImages = [:]
+        lastPixelKey = [:]
     }
 
     /// A solid backdrop node under the whole tree (the window background).
@@ -234,7 +243,7 @@ public final class ResolvedNodePainter {
     }
 
     /// Containers whose resolved frame clips their descendants (a scroll view shows only its viewport).
-    static func clipsContent(_ kind: String) -> Bool { kind == "ScrollView" || kind == "List" }
+    static func clipsContent(_ kind: String) -> Bool { kind == "ScrollView" || kind == "List" || kind == "modifier.clipped" }
 
     public static func intersection(_ outer: Rect?, _ inner: Rect) -> Rect {
         guard let outer else { return inner }
@@ -339,7 +348,7 @@ public final class ResolvedNodePainter {
 
         case "Image":
             if case .pixels(let image, _)? = node.image {
-                return NodeEmission(primitives: [try pixelImagePrimitive(node, image, bounds: bounds)],
+                return NodeEmission(primitives: [try pixelImagePrimitive(node, image, bounds: bounds, id: id)],
                                     semantic: SemanticNode(role: .image, label: node.accessibility.label ?? "", identifier: node.id,
                                                            disabled: !node.accessibility.isEnabled),
                                     flags: [], structural: false)
@@ -415,9 +424,10 @@ public final class ResolvedNodePainter {
                                    w: bounds.w + 2 * inset - 2 * imageGuardBand, h: bounds.h + 2 * inset - 2 * imageGuardBand))
     }
 
-    /// Decoded pixels painted to fill the node rect. A frame smaller than the image (`.resizable().frame`) is box-filtered to the frame's device-pixel size first,
-    /// so the renderer's own sampling is 1:1 and a shrunk icon is not aliased. Node opacity scales the alpha. Tiled and cap-inset images are refused.
-    private func pixelImagePrimitive(_ node: ResolvedNode, _ image: RGBAImage, bounds: Rect) throws -> Primitive {
+    /// Decoded pixels painted to fill the node rect, as a device-pixel-exact buffer (wave 1 block I2): the image is resampled to the node's snapped device-pixel size with the filter fitted to the Mac
+    /// for its `Image.Interpolation` level (`ImageResampler`) and registered 1:1, so the renderer's own sampling never decides a pixel. An image drawn at its own size is registered as is.
+    /// Node opacity scales the alpha. Tiled and cap-inset images are refused. A destination over the renderer's limits (8192 px a side, 64 MiB) registers the source and lets the renderer scale it.
+    private func pixelImagePrimitive(_ node: ResolvedNode, _ image: RGBAImage, bounds: Rect, id: UInt64 = 0) throws -> Primitive {
         if let sizing = node.imageSizing {
             guard sizing.resizingMode == .stretch, sizing.capInsets == EdgeInsets() else {
                 throw HostPaintError.systemImageContractMismatch("pixel images paint stretched only (no tiling, no cap insets)")
@@ -426,14 +436,29 @@ public final class ResolvedNodePainter {
         guard bounds.w >= 1, bounds.h >= 1 else { throw HostPaintError.systemImageContractMismatch("empty frame") }
         guard node.opacity >= 0, node.opacity <= 1 else { throw HostPaintError.invalidFillOpacity }
         let targetW = Int(bounds.w.rounded()), targetH = Int(bounds.h.rounded())
-        let w = UInt32(min(image.width, max(1, targetW))), h = UInt32(min(image.height, max(1, targetH)))
-        let key = PixelKey(contentID: image.contentID, width: w, height: h, alpha: UInt8((node.opacity * 255).rounded()))
+        let level = node.imageSizing?.interpolation
+        let levelCode: Int8 = level.map { l -> Int8 in switch l { case .none: return 0; case .low: return 1; case .medium: return 2; case .high: return 3 } } ?? -1
+        let layout = node.imageLayoutFrame ?? node.frame     // the UNSNAPPED size is the sample scale (measured on the Mac); the snapped bounds are the rect
+        let frameWpx = Double(layout.width) * Double(scale), frameHpx = Double(layout.height) * Double(scale)
+        let oversize = targetW > 8192 || targetH > 8192 || targetW * targetH * 4 > 64 << 20
+        let w = oversize ? UInt32(min(image.width, max(1, targetW))) : UInt32(targetW), h = oversize ? UInt32(min(image.height, max(1, targetH))) : UInt32(targetH)
+        var key = PixelKey(contentID: image.contentID, width: w, height: h, alpha: UInt8((node.opacity * 255).rounded()), level: levelCode,
+                           frameW: Int32((frameWpx * 256).rounded()), frameH: Int32((frameHpx * 256).rounded()))
+        var transient = false
+        if isLiveResizing, id != 0, let last = lastPixelKey[id], last != key, last.contentID == key.contentID, last.level == key.level, last.alpha == key.alpha,
+           pendingPixelImages[last] != nil || pixelImages[last] != nil {
+            key = last; transient = true      // keep the last registered variant: the renderer scales it into the new rect
+        }
         let handle: ImageHandle
         if let known = pendingPixelImages[key] ?? pixelImages[key] {
             handle = known
         } else {
             var source = image
-            if Int(w) != image.width || Int(h) != image.height { source = ImageDecoder.resample(image, width: Int(w), height: Int(h)) }
+            if oversize {
+                if Int(w) != image.width || Int(h) != image.height { source = ImageDecoder.resample(image, width: Int(w), height: Int(h)) }
+            } else {
+                source = ImageResampler.resample(image, width: Int(w), height: Int(h), frameWidth: frameWpx, frameHeight: frameHpx, level: level)
+            }
             var rgba = source.rgba
             if key.alpha != 255 {
                 for i in stride(from: 3, to: rgba.count, by: 4) { rgba[i] = UInt8((Int(rgba[i]) * Int(key.alpha) + 127) / 255) }
@@ -441,7 +466,8 @@ public final class ResolvedNodePainter {
             handle = try images.registerImage(width: UInt32(source.width), height: UInt32(source.height), rgba: rgba, stride: 0)
         }
         pendingPixelImages[key] = handle
-        log("PIXEL_IMAGE id=\(String(image.contentID, radix: 16)) source=\(image.width)x\(image.height) registered=\(w)x\(h) xPX=\(Int(bounds.x)) yPX=\(Int(bounds.y)) widthPX=\(Int(bounds.w)) heightPX=\(Int(bounds.h)) alpha=\(key.alpha)")
+        if id != 0 { lastPixelKey[id] = key }
+        log("PIXEL_IMAGE id=\(String(image.contentID, radix: 16)) source=\(image.width)x\(image.height) registered=\(key.width)x\(key.height) xPX=\(Int(bounds.x)) yPX=\(Int(bounds.y)) widthPX=\(Int(bounds.w)) heightPX=\(Int(bounds.h)) alpha=\(key.alpha) level=\(levelCode) transient=\(transient)\(oversize ? " oversize" : "")")
         return .image(handle, Rect(x: bounds.x + imageGuardBand, y: bounds.y + imageGuardBand, w: bounds.w - 2 * imageGuardBand, h: bounds.h - 2 * imageGuardBand))
     }
 }

@@ -122,8 +122,10 @@ extension Graph {
                 pixelSized = true
             }
             guard spec.sizing.isResizable else { return pixelSized ? ideal : (imageFontIntrinsicSize(spec.reference, node.environment.font) ?? ideal) }
-            if spec.sizing.scalesToFit {
-                let ideal = pixelSized ? ideal : (imageFitIntrinsicSize(spec.reference) ?? ideal)
+            if spec.sizing.scalesToFit || spec.sizing.scalesToFill {
+                let intrinsic = pixelSized ? ideal : (imageFitIntrinsicSize(spec.reference) ?? ideal)
+                var ideal = intrinsic
+                if let ratio = spec.sizing.aspectRatio { ideal = LayoutSize(width: ratio, height: 1) }   // only the aspect matters when a ratio is given
                 guard ideal.width > 0, ideal.height > 0 else {
                     return LayoutSize(width: finiteLength(proposal.width) ?? ideal.width,
                                       height: finiteLength(proposal.height) ?? ideal.height)
@@ -132,10 +134,10 @@ extension Graph {
                 let heightScale = finiteLength(proposal.height).map { $0 / ideal.height }
                 let scale: CGFloat
                 switch (widthScale, heightScale) {
-                case let (width?, height?): scale = min(width, height)
+                case let (width?, height?): scale = spec.sizing.scalesToFill ? max(width, height) : min(width, height)
                 case let (width?, nil): scale = width
                 case let (nil, height?): scale = height
-                case (nil, nil): return ideal
+                case (nil, nil): return intrinsic
                 }
                 return LayoutSize(width: ideal.width * scale, height: ideal.height * scale)
             }
@@ -202,6 +204,7 @@ extension Graph {
 
     func place(_ node: Node, in rect: LayoutRect, proposal: ProposedViewSize) {
         node.frame = snapToPixelGrid(rect, scale: scale)
+        node.layoutFrame = rect
         switch node.kind {
         case .text, .textField, .textEditor, .spacer, .image, .color, .divider, .shape:
             break
