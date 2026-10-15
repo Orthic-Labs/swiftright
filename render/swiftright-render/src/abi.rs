@@ -826,7 +826,6 @@ pub struct RangeEntry {
 /// Rev 0.9 `swr_transaction_v09` (88 bytes): the 72-byte transaction at identical offsets + the range table. A host that sends
 /// `struct_size >= 88` supplies it; a smaller transaction has no ranges.
 #[repr(C)]
-#[derive(Clone, Copy)]
 pub struct TransactionV09 {
     pub base: Transaction,
     pub ranges: *const RangeEntry,
