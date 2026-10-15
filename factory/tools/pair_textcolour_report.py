@@ -132,9 +132,9 @@ def main():
             ok &= good
             row["regions"].append(reg)
         for g in cfg.get("baselineAlign", []):
-            tol = float(g.get("tolerancePx", 1))
-            mo, mv = baseline_align(im, g["items"], tol); wo, wv = baseline_align(iw, g["items"], tol)
-            row["regions"].append(dict(name=g["name"], mac=mv, windows=wv, ok=mo and wo, baselineAlign=dict(tolerancePx=tol, macOk=mo, windowsOk=wo)))
+            btol = float(g.get("tolerancePx", 1))   # (not `tol`: that is the colour tolerance of every later run)
+            mo, mv = baseline_align(im, g["items"], btol); wo, wv = baseline_align(iw, g["items"], btol)
+            row["regions"].append(dict(name=g["name"], mac=mv, windows=wv, ok=mo and wo, baselineAlign=dict(tolerancePx=btol, macOk=mo, windowsOk=wo)))
             ok &= mo and wo
         row["ok"] = ok
     passed = sum(1 for r in rows if r["ok"])
