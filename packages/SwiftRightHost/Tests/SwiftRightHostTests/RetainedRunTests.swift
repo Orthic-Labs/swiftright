@@ -40,4 +40,11 @@ final class RetainedRunTests: XCTestCase {
         let chosen = try RetainedRunChoice.choose([e(reported, 40, proposed: 0), e(267.5, 40, proposed: nil)], bounds: Rect(x: 0, y: 0, w: 0, h: 40), scale: 2.5, text: "t")
         XCTAssertEqual(chosen.proposedWidth, 0)
     }
+    func testSeveralMeasurementsOfAnAlmostZeroWidthTextAreNotAmbiguous() throws {
+        // 'Hi' offered 0, 0.4 and 1.2 pt reports 0, 1 and 3 px wide; the frame snapped to 1 px: every candidate that fits is clipped to the frame, the closest is the run
+        let chosen = try RetainedRunChoice.choose([e(0, 40, proposed: 0), e(1, 40, proposed: 0.4, base: 41), e(1.9, 40, proposed: 0.76)], bounds: Rect(x: 0, y: 0, w: 1, h: 40), scale: 2.5, text: "Hi")
+        XCTAssertEqual(chosen.width, 1)
+        // wider frames stay strict
+        XCTAssertThrowsError(try RetainedRunChoice.choose([e(100.2, 20, base: 40), e(100.6, 20, base: 41)], bounds: Rect(x: 0, y: 0, w: 101, h: 20), scale: 1, text: "t"))
+    }
 }

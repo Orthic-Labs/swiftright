@@ -245,6 +245,9 @@ enum RetainedRunChoice {
         }
         guard let chosen = candidates.first else { throw HostPaintError.measuredRunGeometryMismatch(text) }
         guard candidates.allSatisfy({ $0.width == chosen.width && $0.height == chosen.height && $0.lines == chosen.lines && $0.firstBaseline == chosen.firstBaseline }) else {
+            // A frame of 2 device pixels or less (a Text a stack gave almost nothing, decision L1) clips its run to nothing visible: the measurements of one text at several
+            // such offers all fit it, differing by a fraction of a pixel of reported width, and any of them paints the same. The closest one (then the smallest offer) is chosen.
+            if bounds.w <= 2 { return candidates.min { (abs($0.width - bounds.w), $0.proposedWidth ?? .infinity) < (abs($1.width - bounds.w), $1.proposedWidth ?? .infinity) } ?? chosen }
             throw HostPaintError.ambiguousMeasuredRun(text)
         }
         return chosen
