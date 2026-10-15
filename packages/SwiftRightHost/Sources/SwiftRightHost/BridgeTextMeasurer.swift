@@ -229,6 +229,8 @@ enum RetainedRunChoice {
     struct Entry {
         let proposedWidth: CGFloat?
         let width: Float, height: Float, lines: Int, firstBaseline: Float
+        /// The shaped run's own width when `width` is the (clamped) width reported to the layout; nil when they are the same.
+        var shapedWidth: Float? = nil
     }
     static func choose(_ entries: [Entry], bounds: Rect, scale: Float, text: String) throws -> Entry {
         var candidates = entries.filter {
@@ -244,10 +246,9 @@ enum RetainedRunChoice {
             if let first = candidates.first { candidates = candidates.filter { abs($0.width - bounds.w) + abs($0.height - bounds.h) == abs(first.width - bounds.w) + abs(first.height - bounds.h) } }
         }
         guard let chosen = candidates.first else { throw HostPaintError.measuredRunGeometryMismatch(text) }
-        guard candidates.allSatisfy({ $0.width == chosen.width && $0.height == chosen.height && $0.lines == chosen.lines && $0.firstBaseline == chosen.firstBaseline }) else {
-            // A frame of 2 device pixels or less (a Text a stack gave almost nothing, decision L1) clips its run to nothing visible: the measurements of one text at several
-            // such offers all fit it, differing by a fraction of a pixel of reported width, and any of them paints the same. The closest one (then the smallest offer) is chosen.
-            if bounds.w <= 2 { return candidates.min { (abs($0.width - bounds.w), $0.proposedWidth ?? .infinity) < (abs($1.width - bounds.w), $1.proposedWidth ?? .infinity) } ?? chosen }
+        // The run is what is painted: candidates that differ only in the width they REPORTED (the same shaped run offered 1.1 and 1.2 pt, both clamped to a frame of 3 px:
+        // decision L1) are one run.
+        guard candidates.allSatisfy({ ($0.shapedWidth ?? $0.width) == (chosen.shapedWidth ?? chosen.width) && $0.height == chosen.height && $0.lines == chosen.lines && $0.firstBaseline == chosen.firstBaseline }) else {
             throw HostPaintError.ambiguousMeasuredRun(text)
         }
         return chosen
@@ -369,7 +370,7 @@ public final class BridgeTextMeasurer: TextMeasurer, TextRunSource {
         }
         let matching = retained.filter { $0.key.text == text && $0.key.fontID == fontID && $0.key.fontMetadata == metadata && Float($0.key.scale) == scale }
         let entries = matching.map { RetainedRunChoice.Entry(proposedWidth: $0.key.proposedWidth, width: reported($0.key, $0.value), height: $0.value.height,
-                                                             lines: $0.value.lines.count, firstBaseline: $0.value.firstBaseline) }
+                                                             lines: $0.value.lines.count, firstBaseline: $0.value.firstBaseline, shapedWidth: $0.value.width) }
         let chosen = try RetainedRunChoice.choose(entries, bounds: bounds, scale: scale, text: text)
         guard let source = matching.first(where: { $0.key.proposedWidth == chosen.proposedWidth && reported($0.key, $0.value) == chosen.width && $0.value.height == chosen.height }) else {
             throw HostPaintError.measuredRunGeometryMismatch(text)
