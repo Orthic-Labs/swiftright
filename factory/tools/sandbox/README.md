@@ -18,6 +18,9 @@ Steps (JSON list; every step may carry `"target":"dialog"` to address the newest
 | `char` | `text` | one WM_CHAR per UTF-16 unit |
 | `click` | `x`, `y`, `button` (`left`/`right`), `count` | WM_MOUSEMOVE, then button down/up posted at the client point |
 | `ime` | `action` (`compose`, `commit`, `cancel`), `text` | tries `ImmSetCompositionStringW` on the window's input context, then posts `WM_IME_STARTCOMPOSITION`/`WM_IME_COMPOSITION` (`GCS_COMPSTR`/`GCS_RESULTSTR`)/`WM_IME_ENDCOMPOSITION`. **Caveat:** `ImmGetContext` of another process's window returns NULL, so the IMM call is refused and only the posted messages arrive; the step log says `imc=False,imm-accepted=False`. A renderer that reads the composition with `ImmGetCompositionStringW` sees no text. Real composition needs an in-process hook (host side) or hardware |
+| `move` | `x`, `y`, `down` | WM_MOUSEMOVE posted at the client point (wParam MK_LBUTTON when `down`): a hover, or a held-button move |
+| `drag` | `x0`, `y0`, `x1`, `y1`, `steps` | WM_MOUSEMOVE, left button down at (x0, y0), `steps` WM_MOUSEMOVE with the button held along the line, button up at (x1, y1) (a slider's thumb) |
+| `leave` | | WM_MOUSELEAVE posted: the pointer left the window |
 | `invoke` | `name` | UIA InvokePattern on the first element of the target window with that Name (dialog buttons) |
 | `foreground` | | gives the target window the foreground inside the Sandbox (it is its own desktop). UIA still reports no keyboard focus there (the Sandbox session has no input focus), so focus is gated through app state, not `HasKeyboardFocus` |
 | `wait` | `ms` | sleep |

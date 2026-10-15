@@ -315,6 +315,18 @@ public final class ResolvedNodePainter {
                                                        disabled: !plan.isEnabled),
                                 flags: [.hitTarget], structural: false)
 
+        case "Slider":
+            let plan = try SliderPainter.plan(node, bounds: bounds, scale: scale)
+            let handle = try images.registerImage(width: UInt32(plan.image.width), height: UInt32(plan.image.height), rgba: plan.image.rgba, stride: 0)
+            if let stale = pendingShapeImages[id] { _ = images.release(stale) }
+            pendingShapeImages[id] = handle
+            // role slider with the UIA RangeValue (ABI 0.9): value, minimum, maximum, SmallChange (the arrow-key step), LargeChange
+            let range = SliderRange(value: plan.value, min: plan.lower, max: plan.upper, step: plan.smallChange, jump: plan.largeChange)
+            return NodeEmission(primitives: [.image(handle, plan.placement)],
+                                semantic: SemanticNode(role: .slider, label: node.accessibility.label ?? "", value: node.accessibility.value ?? "",
+                                                       actions: plan.isEnabled ? [.focus] : [], identifier: node.id, disabled: !plan.isEnabled, range: range),
+                                flags: plan.isEnabled ? [.hitTarget, .focusable] : [.hitTarget], structural: false)
+
         case "Button":
             let plan = try ButtonPainter.plan(node, bounds: bounds, scale: scale)
             var primitives: [Primitive] = []

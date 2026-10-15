@@ -326,6 +326,8 @@ enum NodeKind {
     case modifier(ModifierSpec)
     /// SR1 controls. Toggle keeps its label as the child; the others are leaves or model-only.
     case toggle(Binding<Bool>)
+    /// SR1 round 6 block 37: a Slider; its children are the label and the minimum / maximum value labels that exist.
+    case slider(SliderSpec)
     case image(ImageSpec)
     case color(ResolvedColor)
     case textEditor(Binding<String>)
@@ -558,6 +560,10 @@ final class Node {
     var rowCache = RowStateCache()
     /// Scroll offset of a ScrollView node, in logical points, clamped by the layout pass.
     var scrollOffset: CGFloat = 0
+    /// Slider nodes: the control (track and thumb) rectangle set by the layout pass, window points; the drag that is under way and where on the thumb it grabbed.
+    var sliderTrack: LayoutRect = .zero
+    var sliderDragging = false
+    var sliderGrab: CGFloat = 0
     /// Configured horizontal/vertical offsets; nil for legacy scroll nodes.
     var scrollOffsetX: CGFloat?
     var scrollOffsetY: CGFloat?
@@ -789,6 +795,8 @@ public struct ResolvedNode: Equatable, Sendable {
     public let listStyle: String?
     /// Modifier nodes of `.listRowSeparator` / `.listRowBackground` only: what the modifier asks of its List row (the host reads it from the row's subtree).
     public var rowStyle: ListRowStyle? = nil
+    /// Slider nodes only (round 6 block 37): the value, bounds, step, track rectangle and thumb position.
+    public var slider: ResolvedSlider? = nil
 }
 
 /// What `.listRowSeparator(_:)` and `.listRowBackground(_:)` ask of a List row.
@@ -818,7 +826,7 @@ extension ResolvedNode {
                      selection: selection, marked: marked, children: children, labelsHidden: labelsHidden, toggleStyle: toggleStyle,
                      fieldStyle: fieldStyle, placeholder: placeholder, accessibility: accessibility, style: style, image: image,
                      imageSizing: imageSizing, color: color, shapeStorage: shapeStorage, menu: menu, presentation: presentation, shortcut: shortcut,
-                     buttonStyle: buttonStyle, isDefaultButton: isDefaultButton, listStyle: listStyle, rowStyle: rowStyle)
+                     buttonStyle: buttonStyle, isDefaultButton: isDefaultButton, listStyle: listStyle, rowStyle: rowStyle, slider: slider)
     }
 }
 
@@ -1684,7 +1692,7 @@ public final class Graph {
     private func tracksDependencies(_ kind: NodeKind, _ node: Node) -> Bool {
         if node.selection != nil { return true }
         switch kind {
-        case .user, .textField, .textEditor, .toggle, .menu: return true
+        case .user, .textField, .textEditor, .toggle, .slider, .menu: return true
         case .modifier(.focus), .modifier(.presentation), .modifier(.contextMenu): return true
         default: return false
         }
@@ -1696,6 +1704,7 @@ public final class Graph {
         case .textField, .textEditor: _ = node.textInput?.display
         case .modifier(.focus(let link)): noteFocus(node, link.isFocused())
         case .toggle(let binding): _ = binding.wrappedValue
+        case .slider(let spec): _ = spec.read()
         case .modifier(.presentation(let payload)):
             node.presented = payload.isPresented.wrappedValue
                 ? PresentedModel(payload: payload, environment: node.environment)
@@ -1917,6 +1926,8 @@ public final class Graph {
                 logical: KeyboardChords.command(for: key, modifiers: modifiers, on: keyboardPlatform)
             )
         }
+        var slider: ResolvedSlider?
+        if case .slider(let spec) = kind { slider = resolveSlider(node, spec: spec) }
         return ResolvedNode(
             id: node.idString,
             instance: node.instance,
@@ -1944,7 +1955,8 @@ public final class Graph {
             buttonStyle: buttonStyle,
             isDefaultButton: isDefaultButton,
             listStyle: listStyle,
-            rowStyle: rowStyle
+            rowStyle: rowStyle,
+            slider: slider
         )
     }
 
@@ -1976,6 +1988,10 @@ public final class Graph {
             role = "checkbox"
             label = titleOf(node) ?? joinedText(children)
             value = binding.wrappedValue ? "1" : "0"
+        case .slider(let spec):
+            role = "slider"
+            label = titleOf(node)
+            value = Self.sliderValueText(spec.clamped(spec.read()))
         case .image(let spec):
             role = "image"
             label = spec.labelText ?? spec.reference.name
@@ -2022,7 +2038,12 @@ public final class Graph {
         )
     }
 
-    /// Accessibility title of a labelled control (TextField, Toggle), from its label view.
+    /// The accessibility value of a slider as text: an integral value without a fraction ("40"), else the shortest decimal.
+    static func sliderValueText(_ v: Double) -> String {
+        v == v.rounded() && abs(v) < 1e15 ? String(Int64(v)) : String(v)
+    }
+
+    /// Accessibility title of a labelled control (TextField, Toggle, Slider), from its label view.
     private func titleOf(_ node: Node) -> String? {
         guard let labeled = node.view as? LabeledControl else { return nil }
         let title = ViewWalk.plainText(labeled.titleView)
@@ -2059,6 +2080,7 @@ public final class Graph {
         case .scroll, .scrollView: return "ScrollView"
         case .modifier(let spec): return spec.kindName
         case .toggle: return "Toggle"
+        case .slider: return "Slider"
         case .image: return "Image"
         case .color: return "Color"
         case .shape(let shape):

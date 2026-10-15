@@ -7,6 +7,9 @@
 #        window the foreground, because posted messages do not move GetKeyState (the Sandbox is its own desktop; nothing reaches the Dell).
 #   {"op":"char","text":"héllo"}                         WM_CHAR per UTF-16 unit
 #   {"op":"click","x":10,"y":20,"button":"left|right","count":1}   WM_MOUSEMOVE + button down/up
+#   {"op":"move","x":10,"y":20,"down":false}                   WM_MOUSEMOVE posted at the client point (wParam MK_LBUTTON when "down"): a pointer move, with no button (hover) or with the primary button held (a drag in steps)
+#   {"op":"drag","x0":10,"y0":20,"x1":90,"y1":20,"steps":6}    WM_MOUSEMOVE, left button down at (x0, y0), `steps` WM_MOUSEMOVE with MK_LBUTTON along the line, button up at (x1, y1)
+#   {"op":"leave"}                                              WM_MOUSELEAVE posted: the pointer left the window
 #   {"op":"ime","action":"compose","text":"にほ"}        ImmSetCompositionStringW(SCS_SETSTR) on the window's input context, then WM_IME_COMPOSITION(GCS_COMPSTR); falls back to posting
 #   {"op":"ime","action":"commit","text":"日本"}         WM_IME_COMPOSITION(GCS_RESULTSTR) when the IMM call is refused (recorded in the step log); "cancel" ends the composition
 #   {"op":"invoke","name":"OK"}                          UIA InvokePattern on the first element (in the target window) whose Name equals `name` (dialog buttons; the Sandbox cannot click a TaskDialog by pixels reliably)
@@ -83,7 +86,7 @@ public static class IxNative {
 [void][IxNative]::SetThreadDpiAwarenessContext([IntPtr]::new(-4))
 
 $WM = @{ KEYDOWN = 0x100; KEYUP = 0x101; CHAR = 0x102; SYSKEYDOWN = 0x104; SYSKEYUP = 0x105; MOUSEMOVE = 0x200; LBUTTONDOWN = 0x201; LBUTTONUP = 0x202; RBUTTONDOWN = 0x204; RBUTTONUP = 0x205
-         IME_STARTCOMPOSITION = 0x10D; IME_ENDCOMPOSITION = 0x10E; IME_COMPOSITION = 0x10F }
+         MOUSELEAVE = 0x2A3; IME_STARTCOMPOSITION = 0x10D; IME_ENDCOMPOSITION = 0x10E; IME_COMPOSITION = 0x10F }
 $VK = @{ Tab = 9; Enter = 13; Return = 13; Escape = 27; Esc = 27; Space = 32; Left = 37; Up = 38; Right = 39; Down = 40; Backspace = 8; Delete = 46; Home = 36; End = 35; PageUp = 33; PageDown = 34; Shift = 16; Ctrl = 17; Alt = 18 }
 function Get-Vk([string]$k) {
     if ($VK.ContainsKey($k)) { return [int]$VK[$k] }
@@ -125,6 +128,8 @@ function Dump-Element($el, [int]$depth, [int]$maxDepth) {
     try { $p = $null; if ($el.TryGetCurrentPattern([Windows.Automation.TogglePattern]::Pattern, [ref]$p)) { $o.toggle = $p.Current.ToggleState.ToString() } } catch { }
     try { $p = $null; if ($el.TryGetCurrentPattern([Windows.Automation.ValuePattern]::Pattern, [ref]$p)) { $o.value = $p.Current.Value } } catch { }
     try { $p = $null; if ($el.TryGetCurrentPattern([Windows.Automation.SelectionItemPattern]::Pattern, [ref]$p)) { $o.selected = [bool]$p.Current.IsSelected } } catch { }
+    # RangeValue (a slider, ABI 0.9): value, minimum, maximum, SmallChange, LargeChange
+    try { $p = $null; if ($el.TryGetCurrentPattern([Windows.Automation.RangeValuePattern]::Pattern, [ref]$p)) { $c2 = $p.Current; $o.range = [ordered]@{ value = $c2.Value; minimum = $c2.Minimum; maximum = $c2.Maximum; smallChange = $c2.SmallChange; largeChange = $c2.LargeChange; readOnly = [bool]$c2.IsReadOnly } } } catch { }
     $kids = @()
     if ($depth -lt $maxDepth) {
         $w = [Windows.Automation.TreeWalker]::RawViewWalker
@@ -189,6 +194,26 @@ function Do-Step($proc, $mainH, $step, [string]$out, [string]$n) {
                 [void][IxNative]::PostMessageW($h, $dn, [IntPtr]$mk, [IxNative]::Lp($x, $y)); Start-Sleep -Milliseconds 40
                 [void][IxNative]::PostMessageW($h, $up, [IntPtr]0, [IxNative]::Lp($x, $y)); Start-Sleep -Milliseconds 40
             }
+            return 'ok'
+        }
+        'move' {
+            $x = [int]$step.x; $y = [int]$step.y; $wp = $(if ($step.down) { 1 } else { 0 })
+            [void][IxNative]::PostMessageW($h, $WM.MOUSEMOVE, [IntPtr]$wp, [IxNative]::Lp($x, $y)); Start-Sleep -Milliseconds 40
+            return 'ok'
+        }
+        'drag' {
+            $x0 = [int]$step.x0; $y0 = [int]$step.y0; $x1 = [int]$step.x1; $y1 = [int]$step.y1; $n = $(if ($step.steps) { [int]$step.steps } else { 6 })
+            [void][IxNative]::PostMessageW($h, $WM.MOUSEMOVE, [IntPtr]0, [IxNative]::Lp($x0, $y0)); Start-Sleep -Milliseconds 40
+            [void][IxNative]::PostMessageW($h, $WM.LBUTTONDOWN, [IntPtr]1, [IxNative]::Lp($x0, $y0)); Start-Sleep -Milliseconds 40
+            for ($i = 1; $i -le $n; $i++) {
+                $x = [int][math]::Round($x0 + ($x1 - $x0) * $i / $n); $y = [int][math]::Round($y0 + ($y1 - $y0) * $i / $n)
+                [void][IxNative]::PostMessageW($h, $WM.MOUSEMOVE, [IntPtr]1, [IxNative]::Lp($x, $y)); Start-Sleep -Milliseconds 40
+            }
+            [void][IxNative]::PostMessageW($h, $WM.LBUTTONUP, [IntPtr]0, [IxNative]::Lp($x1, $y1)); Start-Sleep -Milliseconds 40
+            return 'ok'
+        }
+        'leave' {
+            [void][IxNative]::PostMessageW($h, $WM.MOUSELEAVE, [IntPtr]0, [IntPtr]0); Start-Sleep -Milliseconds 40
             return 'ok'
         }
         'ime' {
