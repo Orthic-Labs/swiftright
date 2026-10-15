@@ -15,7 +15,7 @@ import json, sys
 from pathlib import Path
 from PIL import Image
 
-PAL = {"R": (255, 59, 48), "B": (0, 122, 255), "G": (52, 199, 89), "O": (255, 149, 0), "P": (175, 82, 222), "g": (142, 142, 147)}
+PAL = {"R": (255, 59, 48), "B": (0, 122, 255), "G": (52, 199, 89), "O": (255, 141, 40), "P": (203, 48, 224), "g": (142, 142, 147)}
 SCALE = 2.5
 
 
@@ -23,7 +23,7 @@ def classify(p):
     best = min(PAL, key=lambda k: sum((a - b) ** 2 for a, b in zip(p, PAL[k])))
     if sum((a - b) ** 2 for a, b in zip(p, PAL[best])) < 900: return best
     if min(p) > 245: return "."
-    return "x"
+    return "k" if sum(p) < 330 else "x"   # k: dark (glyph ink), x: anything else (anti-aliased block edges)
 
 
 def bands(img):
@@ -47,7 +47,7 @@ def blocks(row):
         if c in PAL:
             x0 = x
             while x < n and row[x] == c: x += 1
-            res.append((c, x0, x - x0))
+            if x - x0 >= 8: res.append((c, x0, x - x0))   # a block under 8 px (3.2 pt) is a sliver: a frame the stack gave almost nothing, drawn or not by either side
         else: x += 1
     return res
 
@@ -62,7 +62,7 @@ def analyse(path):
         edges = [(x0 - 2, x0 + w + 2) for _, x0, w in bl]
         for y in range(y0, y1 + 1):
             for x, c in enumerate(lines[y]):
-                if c == "x" and not any(a <= x < b for a, b in edges): ink += 1
+                if c == "k" and not any(a <= x < b for a, b in edges): ink += 1
         rows.append(dict(y=(y0, y1), blocks=bl, ink=ink))
     return rows
 
@@ -73,9 +73,9 @@ def main():
     tol_px = float(cfg.get("tolerancePx", 1.5)); cut_px = float(cfg.get("cutTolerancePt", 9)) * SCALE; naturals = cfg.get("naturals", [])
     ok_all = True; runs = sorted((out / "mac").glob("run-*.png"))
     for mac in runs:
-        n = mac.stem.split("-")[1]; win = out / "windows" / f"native-{n}.png"
+        idx = mac.stem.split("-")[1]; win = out / "windows" / f"native-{idx}.png"
         if not win.is_file():
-            print(f"  block run {n} FAIL: no windows capture"); ok_all = False; continue
+            print(f"  block run {idx} FAIL: no windows capture"); ok_all = False; continue
         m, w = analyse(mac), analyse(win)
         problems = []
         if len(m) != len(w): problems.append(f"rows mac={len(m)} windows={len(w)}")
@@ -94,7 +94,7 @@ def main():
             if b["ink"]: problems.append(f"row {i}: {b['ink']} windows ink pixels outside the blocks")
             if a["ink"]: problems.append(f"row {i}: {a['ink']} mac ink pixels outside the blocks (reported)")
         ok = not [p for p in problems if "(reported)" not in p]
-        print(f"  block run {n} {'ok' if ok else 'FAIL'} rows={len(m)}/{len(w)}" + ("" if not problems else " " + "; ".join(problems[:6])))
+        print(f"  block run {idx} {'ok' if ok else 'FAIL'} rows={len(m)}/{len(w)}" + ("" if not problems else " " + "; ".join(problems[:6])))
         ok_all = ok_all and ok
     print(f"blockGate runs={len(runs)} {'pass' if ok_all else 'FAIL'}")
     sys.exit(0 if ok_all else 1)

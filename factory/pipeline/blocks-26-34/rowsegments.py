@@ -3,7 +3,7 @@
 usage: rowsegments.py <png> [--scale 2.5]"""
 import sys, itertools
 from PIL import Image
-PAL = {"R": (255, 59, 48), "B": (0, 122, 255), "G": (52, 199, 89), "O": (255, 149, 0), "P": (175, 82, 222), "g": (142, 142, 147)}
+PAL = {"R": (255, 59, 48), "B": (0, 122, 255), "G": (52, 199, 89), "O": (255, 141, 40), "P": (203, 48, 224), "g": (142, 142, 147)}
 def cls(p):
     best = min(PAL, key=lambda k: sum((a - b) ** 2 for a, b in zip(p, PAL[k])))
     return best if sum((a - b) ** 2 for a, b in zip(p, PAL[best])) < 900 else "."
