@@ -244,6 +244,8 @@ def build():
         cases[("swiftui.image-layout", f"ratios-{f}-v1")] = ratio_page("gate", f, GATE_SEEDS, GATE_SRC, levels=["none", "low", "medium", "high"])
     for f in ("photo", "lineart", "alpha"):     # odd source sizes (47 x 35): `.none` is tie-free; how the Mac halves an odd size in its mip chain (not fitted: G53)
         cases[("swiftui.image-calibration", f"cal-ratios-odd-{f}-v1")] = ratio_page("calodd", f, {k: v + 1000 for k, v in CAL_SEEDS.items()}, (47, 35), levels=["none", "low", "medium", "high"])
+    # 1 px checker cells (seed 60: 60 % 3 == 0 gives n = 1), calibration sizes, a seed the gating page does not use: added after the gating checker page failed medium (decision G60)
+    cases[("swiftui.image-calibration", "cal-ratios-checker1-v1")] = ratio_page("cal1px", "checker", {"checker": 60}, CAL_SRC, levels=["none", "low", "medium", "high"])
     cases[("swiftui.image-calibration", "cal-aa-v1")] = aa_page("cal_aa", CAL_SEEDS)
     cases[("swiftui.image-layout", "aa-v1")] = aa_page("gate_aa", GATE_SEEDS)
     cases[("swiftui.image-layout", "mip-v1")] = mip_page("mip", GATE_SEEDS)

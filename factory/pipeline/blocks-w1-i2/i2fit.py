@@ -105,7 +105,7 @@ def evaluate(cases, levels=LEVELS, cand_filter=None, skip_odd=True):
         man, runs = load(case)
         imgs = mac_images(runs)
         if not imgs: raise SystemExit(f"no Mac captures in {case}")
-        img = imgs[0][1]
+        img = imgs[-1][1]   # the LATEST capture (runs sort by time): an older run of a page whose layout later changed is stale (decision G60)
         ground = man["groundRGB"]
         for c in man["cells"]:
             if c.get("mode") or c["level"] not in levels: continue

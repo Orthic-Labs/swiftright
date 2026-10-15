@@ -2,7 +2,7 @@
  "resampleTolerance": {
   "low": {
    "resampleMaxPerChannel": 1,
-   "resampleMeanPerChannel": 0.7
+   "resampleMeanPerChannel": 0.9
   },
   "high": {
    "resampleMaxPerChannel": 8,
@@ -10,7 +10,7 @@
   },
   "medium": {
    "resampleMaxPerChannel": 1,
-   "resampleMeanPerChannel": 0.7
+   "resampleMeanPerChannel": 0.9
   },
   "none": {
    "resampleMaxPerChannel": 1,
@@ -21,23 +21,23 @@
  "calibrationMaxima": {
   "low": {
    "max": 1,
-   "meanOfCellMeansMax": 0.6651,
-   "cells": 411
+   "meanOfCellMeansMax": 0.8778,
+   "cells": 438
   },
   "high": {
    "max": 8,
-   "meanOfCellMeansMax": 1.9028,
-   "cells": 291
+   "meanOfCellMeansMax": 1.9097,
+   "cells": 321
   },
   "medium": {
    "max": 1,
-   "meanOfCellMeansMax": 0.6651,
-   "cells": 213
+   "meanOfCellMeansMax": 0.8778,
+   "cells": 240
   },
   "none": {
    "max": 1,
    "meanOfCellMeansMax": 0.1053,
-   "cells": 93
+   "cells": 99
   }
  },
  "stage": "cf9d48dab-77823e0e",
@@ -47,6 +47,7 @@
   "calibration/cal-fit-v1",
   "calibration/cal-ratios-alpha-v1",
   "calibration/cal-ratios-checker-v1",
+  "calibration/cal-ratios-checker1-v1",
   "calibration/cal-ratios-lineart-v1",
   "calibration/cal-ratios-odd-alpha-v1",
   "calibration/cal-ratios-odd-lineart-v1",
@@ -57,59 +58,59 @@
  "resampleFilter": {
   "none": {
    "candidate": "nearest",
-   "mean": 0.0172,
+   "mean": 0.0157,
    "max": 1.0,
    "down": {
-    "mean": 0.016675478898818628,
+    "mean": 0.015285855657250408,
     "max": 1.0
    },
    "up": {
-    "mean": 0.01780139122007135,
+    "mean": 0.01648276964821421,
     "max": 1.0
    },
-   "cells": 55
+   "cells": 60
   },
   "low": {
    "candidate": "triangle/gamma/point",
-   "mean": 0.0673,
+   "mean": 0.0681,
    "max": 1.0,
    "down": {
-    "mean": 0.06092544088611583,
+    "mean": 0.05694548835638877,
     "max": 1.0
    },
    "up": {
-    "mean": 0.08250440168882198,
+    "mean": 0.08763424716494585,
     "max": 1.0
    },
-   "cells": 80
+   "cells": 90
   },
   "medium": {
    "candidate": "triangle/gamma/mip",
-   "mean": 0.0683,
+   "mean": 0.069,
    "max": 1.0,
    "down": {
-    "mean": 0.06309732557548413,
+    "mean": 0.0584923004291918,
     "max": 1.0
    },
    "up": {
-    "mean": 0.08250440168882198,
+    "mean": 0.08763424716494585,
     "max": 1.0
    },
-   "cells": 77
+   "cells": 87
   },
   "high": {
    "candidate": "cubic-fit/gamma/mip",
-   "mean": 0.3772,
+   "mean": 0.398,
    "max": 8.0,
    "down": {
-    "mean": 0.33763325548527184,
+    "mean": 0.3406899951471303,
     "max": 5.0
    },
    "up": {
-    "mean": 0.34633661464121407,
+    "mean": 0.3720569719307362,
     "max": 8.0
    },
-   "cells": 77
+   "cells": 87
   }
  }
 }
