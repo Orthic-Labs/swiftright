@@ -170,7 +170,8 @@ public struct Image: View, PrimitiveView {
 
     /// Draws decoded pixels. The intrinsic size is the pixel size divided by `scale` (points); the image is not resizable until `.resizable()`.
     /// Apple: https://developer.apple.com/documentation/swiftui/image/init(decorative:scale:orientation:)
-    public init(decorative image: RGBAImage, scale: CGFloat = 1) { reference = .pixels(image, scale: scale > 0 ? scale : 1) }
+    /// `nonisolated`, as SwiftUI's: a value type that a nonisolated model (Pulse's `HubImage.image(fitting:)`) wraps in an Image.
+    nonisolated public init(decorative image: RGBAImage, scale: CGFloat = 1) { reference = .pixels(image, scale: scale > 0 ? scale : 1) }
 
     /// Lets image content resize to proposed dimensions.
     /// Apple: https://developer.apple.com/documentation/swiftui/image/resizable(capInsets:resizingMode:)
