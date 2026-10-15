@@ -336,6 +336,11 @@ public struct Color: ShapeStyle, Hashable, Sendable {
         resolvedColor = .rgba(red, green, blue, opacity)
     }
 
+    /// A grey (`red == green == blue == white`), sRGB. Apple: https://developer.apple.com/documentation/swiftui/color/init(white:opacity:)
+    public init(white: Double, opacity: Double = 1) {
+        resolvedColor = .rgba(white, white, white, opacity)
+    }
+
     init(semantic name: String) {
         resolvedColor = .semantic(name)
     }
