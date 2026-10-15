@@ -218,6 +218,13 @@ enum ModifierSpec {
     case presentation(PresentationPayload)
     case keyboardShortcut(KeyEquivalent, EventModifiers)
     case accessibilityLabel(String)
+    /// SR1 round 5 (block swiftui.accessibility): the other accessibility modifiers. They are read by the host, which applies them to the element beneath.
+    case accessibilityValue(String)
+    case accessibilityHint(String)
+    case accessibilityHidden(Bool)
+    case accessibilityElement(AccessibilityChildBehavior)
+    /// `accessibilityAddTraits` (add == true) and `accessibilityRemoveTraits`.
+    case accessibilityTraits(AccessibilityTraits, add: Bool)
     /// SR1 round 5 (block swiftui.layout-priority): `.layoutPriority(_:)`, read by the stack that lays out this view (through wrappers that pass their child through).
     case layoutPriority(Double)
     /// SR1 round 4 (block swiftui.list-row-style): `.listRowSeparator(_:)` and `.listRowBackground(_:)`, read by the host from the row's subtree.
@@ -249,6 +256,11 @@ enum ModifierSpec {
             return payload.kind == .alert ? "modifier.alert" : "modifier.confirmationDialog"
         case .keyboardShortcut: return "modifier.keyboardShortcut"
         case .accessibilityLabel: return "modifier.accessibilityLabel"
+        case .accessibilityValue: return "modifier.accessibilityValue"
+        case .accessibilityHint: return "modifier.accessibilityHint"
+        case .accessibilityHidden: return "modifier.accessibilityHidden"
+        case .accessibilityElement: return "modifier.accessibilityElement"
+        case .accessibilityTraits: return "modifier.accessibilityTraits"
         case .layoutPriority: return "modifier.layoutPriority"
         case .listRowSeparator: return "modifier.listRowSeparator"
         case .listRowBackground: return "modifier.listRowBackground"
@@ -279,6 +291,11 @@ enum ModifierSpec {
             return payload.kind == .alert ? "alert" : "confirmationDialog"
         case .keyboardShortcut: return "keyboardShortcut"
         case .accessibilityLabel: return "accessibilityLabel"
+        case .accessibilityValue: return "accessibilityValue"
+        case .accessibilityHint: return "accessibilityHint"
+        case .accessibilityHidden: return "accessibilityHidden"
+        case .accessibilityElement: return "accessibilityElement"
+        case .accessibilityTraits: return "accessibilityTraits"
         case .layoutPriority: return "layoutPriority"
         case .listRowSeparator: return "listRowSeparator"
         case .listRowBackground: return "listRowBackground"
@@ -817,6 +834,14 @@ public struct ResolvedAccessibility: Equatable, Sendable {
     public let isEnabled: Bool
     /// True for a List row whose tag is in the selection.
     public let isSelected: Bool
+    /// Accessibility modifier nodes only (round 5 block 32): the parameters the modifier carries; the host applies them to the element beneath.
+    public var hint: String? = nil
+    public var isHidden: Bool = false
+    /// "ignore", "combine" or "contain" on an `.accessibilityElement(children:)` node.
+    public var childBehavior: String? = nil
+    /// `accessibilityAddTraits` names (`isButton`, `isHeader`, `isSelected`, `isImage`, `isStaticText`, `isLink`, `updatesFrequently`, ...) and `accessibilityRemoveTraits`.
+    public var addedTraits: [String] = []
+    public var removedTraits: [String] = []
 }
 
 public struct ResolvedStyle: Equatable, Sendable {
@@ -1918,6 +1943,10 @@ public final class Graph {
         var role: String?
         var label: String?
         var value: String?
+        var hint: String?
+        var isHidden = false
+        var childBehavior: String?
+        var addedTraits: [String] = [], removedTraits: [String] = []
         switch node.kind {
         case .text(let string):
             role = "static-text"
@@ -1950,6 +1979,16 @@ public final class Graph {
             role = "list"
         case .modifier(.accessibilityLabel(let override)):
             label = override
+        case .modifier(.accessibilityValue(let given)):
+            value = given
+        case .modifier(.accessibilityHint(let given)):
+            hint = given
+        case .modifier(.accessibilityHidden(let hide)):
+            isHidden = hide
+        case .modifier(.accessibilityElement(let behavior)):
+            childBehavior = behavior.name
+        case .modifier(.accessibilityTraits(let traits, let add)):
+            if add { addedTraits = traits.names } else { removedTraits = traits.names }
         case .modifier(.presentation):
             if let presented = node.presented {
                 role = presented.kind == .alert ? "alert" : "dialog"
@@ -1967,7 +2006,8 @@ public final class Graph {
             label: label,
             value: value,
             isEnabled: node.enabled,
-            isSelected: selected
+            isSelected: selected,
+            hint: hint, isHidden: isHidden, childBehavior: childBehavior, addedTraits: addedTraits, removedTraits: removedTraits
         )
     }
 

@@ -194,6 +194,36 @@ extension View {
     }
 
     /// Overrides the accessibility label of this view. Apple: https://developer.apple.com/documentation/swiftui/view/accessibilitylabel(_:)
+    /// Apple: https://developer.apple.com/documentation/swiftui/view/accessibilityvalue(_:)
+    public func accessibilityValue(_ value: String) -> some View {
+        Modified(content: self, spec: .accessibilityValue(value))
+    }
+
+    /// Apple: https://developer.apple.com/documentation/swiftui/view/accessibilityhint(_:)
+    public func accessibilityHint(_ hint: String) -> some View {
+        Modified(content: self, spec: .accessibilityHint(hint))
+    }
+
+    /// Apple: https://developer.apple.com/documentation/swiftui/view/accessibilityhidden(_:)
+    public func accessibilityHidden(_ hidden: Bool) -> some View {
+        Modified(content: self, spec: .accessibilityHidden(hidden))
+    }
+
+    /// Apple: https://developer.apple.com/documentation/swiftui/view/accessibilityelement(children:)
+    public func accessibilityElement(children: AccessibilityChildBehavior = .ignore) -> some View {
+        Modified(content: self, spec: .accessibilityElement(children))
+    }
+
+    /// Apple: https://developer.apple.com/documentation/swiftui/view/accessibilityaddtraits(_:)
+    public func accessibilityAddTraits(_ traits: AccessibilityTraits) -> some View {
+        Modified(content: self, spec: .accessibilityTraits(traits, add: true))
+    }
+
+    /// Apple: https://developer.apple.com/documentation/swiftui/view/accessibilityremovetraits(_:)
+    public func accessibilityRemoveTraits(_ traits: AccessibilityTraits) -> some View {
+        Modified(content: self, spec: .accessibilityTraits(traits, add: false))
+    }
+
     public func accessibilityLabel(_ label: String) -> some View {
         Modified(content: self, spec: .accessibilityLabel(label))
     }
@@ -275,4 +305,45 @@ extension View {
             environment.foregroundStyle = color
         }))
     }
+}
+
+
+/// Apple: https://developer.apple.com/documentation/swiftui/accessibilitychildbehavior
+public struct AccessibilityChildBehavior: Hashable, Sendable {
+    let name: String
+    private init(_ name: String) { self.name = name }
+    public static let ignore = AccessibilityChildBehavior("ignore")
+    public static let combine = AccessibilityChildBehavior("combine")
+    public static let contain = AccessibilityChildBehavior("contain")
+}
+
+/// Apple: https://developer.apple.com/documentation/swiftui/accessibilitytraits
+public struct AccessibilityTraits: OptionSet, Hashable, Sendable {
+    public let rawValue: Int
+    public init(rawValue: Int) { self.rawValue = rawValue }
+    public static let isButton = AccessibilityTraits(rawValue: 1 << 0)
+    public static let isHeader = AccessibilityTraits(rawValue: 1 << 1)
+    public static let isSelected = AccessibilityTraits(rawValue: 1 << 2)
+    public static let isLink = AccessibilityTraits(rawValue: 1 << 3)
+    public static let isSearchField = AccessibilityTraits(rawValue: 1 << 4)
+    public static let isImage = AccessibilityTraits(rawValue: 1 << 5)
+    public static let playsSound = AccessibilityTraits(rawValue: 1 << 6)
+    public static let isKeyboardKey = AccessibilityTraits(rawValue: 1 << 7)
+    public static let isStaticText = AccessibilityTraits(rawValue: 1 << 8)
+    public static let isSummaryElement = AccessibilityTraits(rawValue: 1 << 9)
+    public static let updatesFrequently = AccessibilityTraits(rawValue: 1 << 10)
+    public static let startsMediaSession = AccessibilityTraits(rawValue: 1 << 11)
+    public static let allowsDirectInteraction = AccessibilityTraits(rawValue: 1 << 12)
+    public static let causesPageTurn = AccessibilityTraits(rawValue: 1 << 13)
+    public static let isModal = AccessibilityTraits(rawValue: 1 << 14)
+    public static let isToggle = AccessibilityTraits(rawValue: 1 << 15)
+
+    static let allNames: [(AccessibilityTraits, String)] = [
+        (.isButton, "isButton"), (.isHeader, "isHeader"), (.isSelected, "isSelected"), (.isLink, "isLink"), (.isSearchField, "isSearchField"), (.isImage, "isImage"),
+        (.playsSound, "playsSound"), (.isKeyboardKey, "isKeyboardKey"), (.isStaticText, "isStaticText"), (.isSummaryElement, "isSummaryElement"),
+        (.updatesFrequently, "updatesFrequently"), (.startsMediaSession, "startsMediaSession"), (.allowsDirectInteraction, "allowsDirectInteraction"),
+        (.causesPageTurn, "causesPageTurn"), (.isModal, "isModal"), (.isToggle, "isToggle"),
+    ]
+    /// The names of the traits in this set, in declaration order.
+    var names: [String] { Self.allNames.filter { contains($0.0) }.map(\.1) }
 }

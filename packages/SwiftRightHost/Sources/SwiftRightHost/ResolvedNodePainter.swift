@@ -68,6 +68,49 @@ public final class ResolvedNodePainter {
         public init(id: UInt64 = UInt64.max - 1, bounds: Rect, color: UInt32) { self.id = id; self.bounds = bounds; self.color = color }
     }
 
+    /// The accessibility modifiers above a node, as the host applies them to the element beneath (round 5 block 32). An outer modifier wins over an inner one.
+    /// `label` and `value` replace the element's; `traits` change its role (`isImage`, `isButton`) or state (`isSelected`); `isHeader`, `isLink`, `isSearchField`
+    /// and the rest have no role in the renderer ABI and are carried, not exposed. `hint` has no field in the ABI either (SWR_SEMANTIC has label, value, role,
+    /// actions, flags, identifier, toggled): it is recorded on the resolved tree and not published.
+    struct A11yPatch: Equatable {
+        var label: String?
+        var value: String?
+        var traits: Set<String> = []
+        var isEmpty: Bool { label == nil && value == nil && traits.isEmpty }
+        /// This patch (outer) over `inner`.
+        func overriding(_ inner: A11yPatch) -> A11yPatch {
+            A11yPatch(label: label ?? inner.label, value: value ?? inner.value, traits: traits.union(inner.traits))
+        }
+    }
+
+    /// Applies a patch to the semantic an element emitted (nil: the node publishes none).
+    static func apply(_ patch: A11yPatch, to semantic: SemanticNode?, bounds: Rect) -> SemanticNode? {
+        guard !patch.isEmpty else { return semantic }
+        guard var s = semantic else {
+            // a view with no element of its own (a Rectangle) becomes an image element when it is given the trait and a label
+            if patch.traits.contains("isImage"), let label = patch.label { return SemanticNode(role: .image, label: label, value: patch.value ?? "") }
+            return nil
+        }
+        if let label = patch.label { s.label = label }
+        if let value = patch.value { s.value = value }
+        if patch.traits.contains("isImage"), s.role == .staticText || s.role == .group { s.role = .image }
+        if patch.traits.contains("isButton"), s.role == .staticText || s.role == .group || s.role == .image { s.role = .button; s.actions.insert(.invoke) }
+        if patch.traits.contains("isSelected") { s.selected = true }
+        return s
+    }
+
+    /// The texts of the Text nodes under a node, in order, joined by ", " (macOS: `.accessibilityElement(children: .combine)` over two Texts reads "Memory, 1.2 GB").
+    static func combinedLabel(_ n: ResolvedNode) -> String {
+        var parts: [String] = []
+        func collect(_ item: ResolvedNode) {
+            if item.kind == "Text", let t = item.text, !t.isEmpty { parts.append(t) }
+            else if item.accessibility.role == "button", let l = item.accessibility.label, !l.isEmpty { parts.append(l) }
+            else { item.children.forEach(collect) }
+        }
+        n.children.forEach(collect)
+        return parts.joined(separator: ", ")
+    }
+
     /// What a committed tree left behind: the live bridge ids and the runtime id of each.
     public struct Committed {
         public var live: Set<UInt64>
@@ -94,7 +137,7 @@ public final class ResolvedNodePainter {
         beginCommit()
         var committed = false
         defer { endCommit(committed: committed) }
-        func walk(_ n: ResolvedNode, parent: UInt64, order: UInt32, clip: Rect?, textColor: UInt32? = nil, row: ListPainter.Row? = nil, rowList: (bounds: Rect, look: ListLook)? = nil, inButton: Bool = false) throws {
+        func walk(_ n: ResolvedNode, parent: UInt64, order: UInt32, clip: Rect?, textColor: UInt32? = nil, row: ListPainter.Row? = nil, rowList: (bounds: Rect, look: ListLook)? = nil, inButton: Bool = false, a11y: A11yPatch = A11yPatch(), hidden: Bool = false) throws {
             let id = UInt64(n.instance + 1)
             current.insert(id)
             runtimeIDs[id] = n.id
@@ -105,6 +148,35 @@ public final class ResolvedNodePainter {
             else { emission = try emit(n, id: id, bounds: bounds, textColor: textColor) }
             // A Button's label is the button's accessible name: its Text publishes no node of its own (as on macOS).
             if inButton, n.kind == "Text" { emission.semantic = nil }
+            // Accessibility modifiers (round 5 block 32): the patch above this node applies to the first element beneath it; hidden removes a whole subtree; an
+            // `.accessibilityElement(children: .combine | .ignore)` node is one element and its descendants publish none.
+            var childA11y = a11y
+            var childHidden = hidden
+            var childInButton = inButton
+            if n.kind.hasPrefix("modifier.accessibility") {
+                let acc = n.accessibility
+                var own = A11yPatch()
+                if n.kind == "modifier.accessibilityLabel" { own.label = acc.label }
+                if n.kind == "modifier.accessibilityValue" { own.value = acc.value }
+                if n.kind == "modifier.accessibilityTraits", !acc.addedTraits.isEmpty { own.traits = Set(acc.addedTraits) }
+                childA11y = a11y.overriding(own)
+                if n.kind == "modifier.accessibilityHidden", acc.isHidden { childHidden = true }
+                if n.kind == "modifier.accessibilityElement", !hidden, let behavior = acc.childBehavior, behavior == "combine" || behavior == "ignore" {
+                    let label = behavior == "combine" ? Self.combinedLabel(n) : (a11y.label ?? "")
+                    emission.semantic = Self.apply(a11y, to: SemanticNode(role: behavior == "combine" ? .staticText : .group, label: a11y.label ?? label, identifier: n.id), bounds: bounds)
+                    emission.semantic?.label = behavior == "combine" ? (a11y.label ?? label) : label
+                    childHidden = true
+                    childA11y = A11yPatch()
+                }
+            } else if !a11y.isEmpty {
+                if emission.semantic != nil || a11y.traits.contains("isImage") {
+                    emission.semantic = Self.apply(a11y, to: emission.semantic, bounds: bounds)
+                    childA11y = A11yPatch()
+                } else if n.children.count != 1 {
+                    childA11y = A11yPatch()   // a container with several children has no single element to take the patch
+                }
+            }
+            if hidden { emission.semantic = nil }
             // A List row is hit anywhere along its width, not only where its content is.
             let nodeBounds = row?.rect ?? bounds
             // The renderer resets its clip stack per node, so a scrolled-out part of a descendant is clipped by wrapping the node's own
@@ -121,10 +193,10 @@ public final class ResolvedNodePainter {
                 for (index, child) in n.children.enumerated() where index < rows.count {
                     // Text inside an active selection is white.
                     let colour = rows[index].isSelected && ListPainter.selectionColor(active: listIsActive, isEnabled: rows[index].isEnabled) == ListPainter.selectionActive ? ListPainter.selectedTextColor : childTextColor
-                    try walk(child, parent: id, order: UInt32(index), clip: childClip, textColor: colour, row: rows[index], rowList: (bounds, look))
+                    try walk(child, parent: id, order: UInt32(index), clip: childClip, textColor: colour, row: rows[index], rowList: (bounds, look), a11y: childA11y, hidden: childHidden)
                 }
             } else {
-                for (index, child) in n.children.enumerated() { try walk(child, parent: id, order: UInt32(index), clip: childClip, textColor: childTextColor, inButton: inButton || n.kind == "Button") }
+                for (index, child) in n.children.enumerated() { try walk(child, parent: id, order: UInt32(index), clip: childClip, textColor: childTextColor, inButton: childInButton || n.kind == "Button", a11y: childA11y, hidden: childHidden) }
             }
         }
         try walk(root, parent: background?.id ?? 0, order: 0, clip: nil)

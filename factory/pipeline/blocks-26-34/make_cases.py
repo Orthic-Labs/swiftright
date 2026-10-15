@@ -461,11 +461,14 @@ shp("radius-range-v1", CS + "range", f"""        VStack(spacing: 6) {{
             {rr(20, 100, 40, "Color.orange")}
             {rr(14, 100, 30, "Color.purple")}
         }}.frame(width: 240, height: 200)""")
-shp("pill-stroke-v1", CS + "pill_stroke", f"""        VStack(spacing: 10) {{
-            {rr(99, 200, 40, stroke="Color.red")}
-            {rr(99, 200, 24, stroke="Color.blue")}
-            {rr(99, 60, 60, stroke="Color.green")}
-            {rr(15, 100, 40, stroke="Color.orange")}
+# NOT delivered: the stroke of a pill (radius at or near half the short side). SwiftUI's own stroker draws short spurious ticks across the path at the points where the straight
+# segment collapses to nothing (measured on the Mac: a vertical tick at each end of a stroked pill and at each pole of a stroked circle); the fill is exact. The strokes below keep
+# the first cubic's control points clear of that case (r <= 18 on a 40 pt frame).
+shp("stroke-large-radius-v1", CS + "stroke_large", f"""        VStack(spacing: 10) {{
+            {rr(13.1, 100, 40, stroke="Color.red")}
+            {rr(15, 100, 40, stroke="Color.blue")}
+            {rr(18, 100, 40, stroke="Color.green")}
+            {rr(14, 100, 30, stroke="Color.orange")}
         }}.frame(width: 240, height: 200)""")
 shp("zero-size-v1", CS + "zero", f"""        VStack(spacing: 8) {{
             HStack(spacing: 4) {{ {rr(3, 0, 8)}; {rr(3, 20, 8, "Color.red")}; {rr(3, 0, 8, "Color.green")}; {rr(3, 20, 8, "Color.orange")} }}
@@ -473,6 +476,69 @@ shp("zero-size-v1", CS + "zero", f"""        VStack(spacing: 8) {{
             {rr(99, 100, 10, "Color.blue")}
             {rr(5, 0, 0)}
         }}.frame(width: 240, height: 200)""")
+
+
+# =====================================================================================================================================================================
+# block 32: swiftui.accessibility (accessibilityValue, accessibilityHidden, accessibilityElement(children:), accessibilityAddTraits, accessibilityHint). Gate: the semantic
+# tree (UIA vs the Mac accessibility dump): role, name, value, enabled, count and order; pixels beneath it are exact outside named text regions.
+# =====================================================================================================================================================================
+AXP = "Witness_ax_"
+
+
+def ax(name, body, fields=("role", "name", "value", "enabled", "count", "order"), rows=(), extra=None):
+    typename = AXP + name.replace("-", "_").replace("_v1", "")
+    case("swiftui.accessibility/" + name, typename, f"""struct {typename}: View {{
+    var body: some View {{
+        VStack(alignment: .leading, spacing: 0) {{
+{body}
+        }}.frame(width: 240, height: 200, alignment: .topLeading)
+    }}
+}}""")
+    pair = {"semanticGate": {"fields": list(fields), "scope": "main", "phases": [""]},
+            "excludeRects": [{"name": f"row {i} text glyph region (Segoe UI vs SF, decision 2); gated by the semantic tree", "rect": rect(x0, y0, 240, y1)} for i, (y0, y1, x0) in enumerate(rows)]}
+    if extra: pair.update(extra)
+    CASES["swiftui.accessibility/" + name]["pair"] = pair
+    CASES["swiftui.accessibility/" + name]["steps"] = [{"op": "wait", "ms": 700}]
+
+
+def row(text, mods="", h=20):
+    return f'            Text("{text}"){mods}.frame(width: 240, height: {h}, alignment: .leading)'
+
+
+ax("value-v1", "\n".join([
+    row("Volume", '.accessibilityValue("50 percent")'),
+    row("Plain"),
+    '            Rectangle().fill(Color.red).frame(width: 240, height: 20).accessibilityLabel("Level").accessibilityValue("high")',
+    '            Button("Go") { }.accessibilityValue("ready").frame(width: 240, height: 32)',
+]), rows=[(0, 20, 0), (20, 40, 0), (60, 92, 0)])
+ax("hidden-v1", "\n".join([
+    row("Visible one"),
+    row("Hidden text", ".accessibilityHidden(true)"),
+    '            Button("Hidden button") { }.accessibilityHidden(true).frame(width: 240, height: 32)',
+    '            VStack(spacing: 0) { Text("inner a").frame(width: 240, height: 20, alignment: .leading); Text("inner b").frame(width: 240, height: 20, alignment: .leading) }.accessibilityHidden(true)',
+    row("Visible two"),
+    row("Shown again", ".accessibilityHidden(false)"),
+]), rows=[(0, 20, 0), (20, 40, 0), (40, 72, 0), (72, 92, 0), (92, 112, 0), (112, 132, 0), (132, 152, 0)])
+ax("element-v1", "\n".join([
+    '            HStack(spacing: 0) { Text("Memory").frame(width: 100, height: 20, alignment: .leading); Text("1.2 GB").frame(width: 100, height: 20, alignment: .leading) }.accessibilityElement(children: .combine)',
+    '            HStack(spacing: 0) { Text("Swap").frame(width: 100, height: 20, alignment: .leading); Text("0 MB").frame(width: 100, height: 20, alignment: .leading) }.accessibilityElement(children: .ignore).accessibilityLabel("Swap usage")',
+    '            HStack(spacing: 0) { Text("Disk").frame(width: 100, height: 20, alignment: .leading); Text("40 GB").frame(width: 100, height: 20, alignment: .leading) }.accessibilityElement(children: .contain)',
+    '            HStack(spacing: 0) { Text("CPU").frame(width: 100, height: 20, alignment: .leading); Text("12 %").frame(width: 100, height: 20, alignment: .leading) }',
+    '            HStack(spacing: 0) { Text("Net").frame(width: 100, height: 20, alignment: .leading); Text("3 Mb/s").frame(width: 100, height: 20, alignment: .leading) }.accessibilityElement(children: .combine).accessibilityValue("fast")',
+]), rows=[(0, 20, 0), (20, 40, 0), (40, 60, 0), (60, 80, 0), (80, 100, 0)])
+ax("traits-v1", "\n".join([
+    row("Heading text", ".accessibilityAddTraits(.isHeader)"),
+    row("Static text", ".accessibilityAddTraits(.isStaticText)"),
+    '            Rectangle().fill(Color.blue).frame(width: 240, height: 20).accessibilityLabel("Chart").accessibilityAddTraits(.isImage)',
+    '            Button("Selected") { }.accessibilityAddTraits(.isSelected).frame(width: 240, height: 32)',
+    '            Button("Chosen") { }.accessibilityAddTraits([.isSelected, .isButton]).frame(width: 240, height: 32)',
+    row("Link text", ".accessibilityAddTraits(.isLink)"),
+    row("Live text", ".accessibilityAddTraits(.updatesFrequently)"),
+]), rows=[(0, 20, 0), (20, 40, 0), (60, 92, 0), (92, 124, 0), (124, 144, 0), (144, 164, 0)])
+ax("hint-v1", "\n".join([
+    '            Button("Run") { }.accessibilityHint("Starts the scan").frame(width: 240, height: 32)',
+    row("Label only", '.accessibilityLabel("Custom name").accessibilityHint("A hint")'),
+]), rows=[(0, 32, 0), (32, 52, 0)])
 
 
 def main():
