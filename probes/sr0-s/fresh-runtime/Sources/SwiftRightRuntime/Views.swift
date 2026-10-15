@@ -739,3 +739,21 @@ extension View {
         ModifiedContentView(modifier: modifier, base: self)
     }
 }
+
+// MARK: - Scene, WindowGroup
+
+/// Apple: https://developer.apple.com/documentation/swiftui/scene. Round 5 (hub gap G19): the shapes an app's scene helper needs to compile. The runtime hosts one root view; a
+/// scene is not run by it (the host owns the window), so a `WindowGroup` only keeps its title, id and content builder.
+public protocol Scene {}
+
+/// Apple: https://developer.apple.com/documentation/swiftui/windowgroup
+public struct WindowGroup<Content: View>: Scene {
+    public let title: String
+    public let id: String
+    let content: () -> Content
+    @MainActor public init(_ title: String, id: String, @ViewBuilder content: @escaping () -> Content) {
+        self.title = title; self.id = id; self.content = content
+    }
+    /// The window's root view.
+    @MainActor public func makeContent() -> Content { content() }
+}

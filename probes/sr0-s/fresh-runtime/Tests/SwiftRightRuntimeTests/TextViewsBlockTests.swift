@@ -164,3 +164,15 @@ final class TextFieldAxisTests: XCTestCase {
         XCTAssertEqual(fields[1].placeholder, "Name"); XCTAssertEqual(fields[2].placeholder, "Prompt")
     }
 }
+
+@MainActor
+final class SceneShapeTests: XCTestCase {
+    func testWindowGroupKeepsItsTitleIdAndContent() {
+        func scene() -> some Scene { WindowGroup("Hub", id: "hub") { Text("root") } }
+        let s = scene()
+        XCTAssertEqual((s as? WindowGroup<Text>)?.title, "Hub")
+        XCTAssertEqual((s as? WindowGroup<Text>)?.id, "hub")
+        let g = Graph((s as! WindowGroup<Text>).makeContent(), measurer: FixedAdvanceTextMeasurer(), scale: 1); g.flush()
+        XCTAssertEqual(everyNode(g.snapshot()).first { $0.kind == "Text" }?.text, "root")
+    }
+}
