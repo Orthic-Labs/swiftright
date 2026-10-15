@@ -11,7 +11,8 @@ from pathlib import Path
 
 REPO = Path(__file__).resolve().parents[2]
 PACKAGES = ["probes/sr0-s/fresh-runtime", "packages/SwiftRightHost", "packages/SwiftRightBridge"]
-PATHS = ["packages/SwiftRightBridge", "packages/SwiftRightHost", "probes/sr0-s/fresh-runtime"]
+PATHS = ["packages/SwiftRightBridge", "packages/SwiftRightHost", "probes/sr0-s/fresh-runtime",
+         "factory/pipeline/blocks-w0-i1/corpus", "factory/pipeline/blocks-w0-i1/expected"]   # the last two are test data of ImagePolicyTests (found from #filePath; absent = the tests skip)
 EXCLUDE = ["probes/sr0-s/fresh-runtime/out", "probes/sr0-s/fresh-runtime/.build"]
 
 

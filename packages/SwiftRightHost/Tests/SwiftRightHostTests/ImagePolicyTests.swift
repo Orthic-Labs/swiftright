@@ -5,6 +5,9 @@ import SwiftRightRuntime
 /// Wave 0 block I1: the policy layer above the OS codec (sniffing, completeness, ICO entry rule, EXIF orientation, thumbnail), plus the Mac ImageIO backend against the corpus.
 /// The corpus is `factory/pipeline/blocks-w0-i1/corpus` (found from this file, or from SWR_I1_CORPUS when the package runs from a copy).
 final class ImagePolicyTests: XCTestCase {
+    /// A missing corpus skips the whole case here. It must not be thrown from `corpusDir()` itself: a test that calls it inside an assertion
+    /// autoclosure (`XCTAssertEqual(try file(..), ..)`, `XCTUnwrap(try ..)`) reports an XCTSkip as a FAILURE (six failures on a Mac stage that lacked the corpus).
+    override func setUpWithError() throws { _ = try corpusDir() }
     private func corpusDir() throws -> URL {
         if let e = ProcessInfo.processInfo.environment["SWR_I1_CORPUS"] { return URL(fileURLWithPath: e) }
         var u = URL(fileURLWithPath: #filePath)
