@@ -133,8 +133,9 @@ define("text-fixed-size-v1", [
 # lineLimit(2) beside lineLimit(1) and unlimited neighbours: the rows are two lines tall (L6)
 define("text-line-limit-two-v1", [
     row(100, [item(A, ll=2), item(B, ll=2)], height=38), row(130, [item(L, ll=2), item(S, ll=2)], height=38), row(110, [item(A, ll=2), item(B, ll=1)], height=38),
-    row(120, [item(A, ll=None), item(B, ll=None)], height=53),
 ], block="swiftui.system-font")
+# Not gated (decision L6): an unlimited Text that wraps onto two lines. The Mac balances the lines (A offered 77 pt of Tinos: "Unused" over "90+ days", 47.6 wide) where the Windows host wraps
+# greedily ("Unused 90+" over "days", 66.4 wide); the offer, the order and the sizes of the stack are the same, the wrapping is the renderer's.
 
 
 def main():

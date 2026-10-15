@@ -1,0 +1,19 @@
+#if os(Windows)
+import SwiftRightRuntime
+import Foundation
+#else
+import SwiftUI
+#endif
+
+struct Witness_ts_hub_rows: View {
+    var body: some View {
+        VStack(alignment: .leading, spacing: 0) {
+            HStack(spacing: 2) { Text("All").font(.custom("Tinos-Regular", size: 13)).lineLimit(1).padding(.horizontal, 12).padding(.vertical, 5).overlay { Color.red }; Text("Unused 90+ days").font(.custom("Tinos-Regular", size: 13)).lineLimit(1).padding(.horizontal, 12).padding(.vertical, 5).overlay { Color.blue }; Text("Updates").font(.custom("Tinos-Regular", size: 13)).lineLimit(1).padding(.horizontal, 12).padding(.vertical, 5).overlay { Color.green } }.padding(2).frame(width: 240, height: 31, alignment: .leading)
+            HStack(spacing: 2) { Text("All").font(.custom("Tinos-Regular", size: 13)).lineLimit(1).padding(.horizontal, 12).padding(.vertical, 5).overlay { Color.red }; Text("Unused 90+ days").font(.custom("Tinos-Regular", size: 13)).lineLimit(1).padding(.horizontal, 12).padding(.vertical, 5).overlay { Color.blue }; Text("Updates").font(.custom("Tinos-Regular", size: 13)).lineLimit(1).padding(.horizontal, 12).padding(.vertical, 5).overlay { Color.green } }.padding(2).frame(width: 200, height: 31, alignment: .leading)
+            HStack(spacing: 2) { Text("All").font(.custom("Tinos-Regular", size: 13)).lineLimit(1).padding(.horizontal, 12).padding(.vertical, 5).overlay { Color.red }; Text("Unused 90+ days").font(.custom("Tinos-Regular", size: 13)).lineLimit(1).padding(.horizontal, 12).padding(.vertical, 5).overlay { Color.blue }; Text("Updates").font(.custom("Tinos-Regular", size: 13)).lineLimit(1).padding(.horizontal, 12).padding(.vertical, 5).overlay { Color.green } }.padding(2).frame(width: 170, height: 31, alignment: .leading)
+            HStack(spacing: 8) { Text("Sizes are measured on disk and keep updating").font(.custom("Tinos-Regular", size: 13)).lineLimit(1).overlay { Color.green }; HStack(spacing: 2) { Text("All").font(.custom("Tinos-Regular", size: 13)).lineLimit(1).padding(.horizontal, 12).padding(.vertical, 5).overlay { Color.red }; Text("Unused 90+ days").font(.custom("Tinos-Regular", size: 13)).lineLimit(1).padding(.horizontal, 12).padding(.vertical, 5).overlay { Color.blue }; Text("Updates").font(.custom("Tinos-Regular", size: 13)).lineLimit(1).padding(.horizontal, 12).padding(.vertical, 5).overlay { Color.green } }.padding(2).layoutPriority(2) }.frame(width: 240, height: 31, alignment: .leading)
+            HStack(spacing: 2) { Text("Start").font(.custom("Tinos-Regular", size: 13)).lineLimit(1).padding(.horizontal, 12).padding(.vertical, 5).overlay { Color.blue }; Text("Demo Install").font(.custom("Tinos-Regular", size: 13)).lineLimit(1).padding(.horizontal, 12).padding(.vertical, 5).overlay { Color.green }; Text("Status").font(.custom("Tinos-Regular", size: 13)).lineLimit(1).padding(.horizontal, 12).padding(.vertical, 5).overlay { Color.orange }; Text("Clear 4.2 GB").font(.custom("Tinos-Regular", size: 13)).lineLimit(1).padding(.horizontal, 12).padding(.vertical, 5).overlay { Color.purple } }.padding(2).frame(width: 170, height: 31, alignment: .leading)
+            HStack(spacing: 2) { Text("Start").font(.custom("Tinos-Regular", size: 13)).lineLimit(1).padding(.horizontal, 12).padding(.vertical, 5).overlay { Color.blue }; Text("Demo Install").font(.custom("Tinos-Regular", size: 13)).lineLimit(1).padding(.horizontal, 12).padding(.vertical, 5).overlay { Color.green }; Text("Status").font(.custom("Tinos-Regular", size: 13)).lineLimit(1).padding(.horizontal, 12).padding(.vertical, 5).overlay { Color.orange }; Text("Clear 4.2 GB").font(.custom("Tinos-Regular", size: 13)).lineLimit(1).padding(.horizontal, 12).padding(.vertical, 5).overlay { Color.purple } }.padding(2).frame(width: 150, height: 31, alignment: .leading)
+        }.frame(width: 240, height: 200, alignment: .topLeading)
+    }
+}
