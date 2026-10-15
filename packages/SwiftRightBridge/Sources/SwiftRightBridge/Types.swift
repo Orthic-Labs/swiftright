@@ -173,12 +173,15 @@ public struct MeasureRequest {
     public var lineHeight: Float        // DIPs
     public var scale: Float             // dpi / 96
     public var maxWidth: Float          // physical px, <= 0 unbounded
+    /// Rev 0.8 text extension (tracking, features, simulations policy, fallback list, baseline offset...). nil keeps the
+    /// 0.6 measure path and behaviour on every renderer; a non-nil value on a pre-0.8 renderer throws SWR_E_UNSUPPORTED.
+    public var `extension`: TextExtension?
     public init(text: String, fontFamily: String = "Segoe UI", locale: String = "en-US",
                 weight: UInt32 = 400, color: UInt32 = 0x1F1F1FFF, fontSize: Float = 16,
-                lineHeight: Float = 24, scale: Float, maxWidth: Float = 0) {
+                lineHeight: Float = 24, scale: Float, maxWidth: Float = 0, extension: TextExtension? = nil) {
         self.text = text; self.fontFamily = fontFamily; self.locale = locale; self.weight = weight
         self.color = color; self.fontSize = fontSize; self.lineHeight = lineHeight
-        self.scale = scale; self.maxWidth = maxWidth
+        self.scale = scale; self.maxWidth = maxWidth; self.extension = `extension`
     }
 }
 
@@ -195,6 +198,8 @@ public struct TextMeasurement {
     public var charCount: UInt32
     public var cacheHit: Bool
     public var cacheKey: UInt64
+    /// Rev 0.8: what the extension applied and what it ignored; nil for a request without an extension.
+    public var extensionReport: TextExtensionReport? = nil
     public var lineCount: Int { lines.count }
 }
 

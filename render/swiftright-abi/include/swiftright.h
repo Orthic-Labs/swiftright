@@ -900,6 +900,293 @@ typedef struct swr_api_v07 swr_api_v07;
 
 SWR_API swr_status swr_get_api_v07(swr_api_v07 *out, uint32_t caller_size);
 
+/* ===========================================================================
+ * REVISION 0.8 (additive): text extension, MINIMAL FORM (decision G60..G69).
+ *
+ * NEGOTIATION. Nothing above changes: swr_bootstrap_query / swr_get_api still describe 0.6
+ * (88 / 136 bytes), the _v07 exports still describe 0.7 (96 / 152 bytes, 18 functions), so a
+ * 0.6 or 0.7 host runs unchanged on a 0.8 renderer. A 0.8 renderer adds two NEW exports,
+ * swr_bootstrap_query_v08 and swr_get_api_v08. A 0.8 host resolves them; a 0.7 renderer lacks
+ * both, and the host then either falls back to the 0.7 view with the text extension reported as
+ * unavailable (extension requests are REFUSED with SWR_E_UNSUPPORTED by the bridge, never
+ * silently dropped) or refuses the renderer, as its own policy says. Exactly one of the two
+ * exports present is a half-exported renderer and is refused. The views are selected only by
+ * symbol name; there is no global mode.
+ *
+ * The 0.8 table is the 18 pointers of swr_api_v07 at unchanged offsets, then the four 0.8
+ * entries. The held frame/readback entries of the 0.7 proposal come AFTER these (their order is
+ * unchanged; they are not part of 0.8).
+ *
+ * MINIMAL FORM. Everything here is reachable through gpui 0.2.2 + a DirectWrite face resolver
+ * inside the renderer (F0 facts, decisions G10-G19). What gpui cannot do is NOT faked:
+ *   - width_axis (wdth), opsz and slant are accepted so the struct is final, but are IGNORED and
+ *     reported in swr_measure_result_v08.ignored (gpui snaps to named instances; no continuous
+ *     axes, no automatic optical size; pick the family: "Segoe UI Variable Text|Display|Small").
+ *   - weight_f snaps to the nearest named instance of the family (ties go heavier, as
+ *     DirectWrite does: 500 -> 600); the instance used is reported in resolved_weight and an
+ *     inexact request sets SWR_M08_IGN_WEIGHT_SNAPPED.
+ *   - fallback_families are SYSTEM families only. A family that is not in the system font set
+ *     (a bundled one) is reported in SWR_M08_IGN_FALLBACK_PRIVATE and has no effect (gpui looks
+ *     fallbacks up in the system collection only; private fallback is block F3b).
+ *   - tracking_dip and kerning_dip are added after every glyph cluster (kerning_dip is additive
+ *     like tracking: pair kerning itself is the OpenType `kern` feature). Wrapping (max_width)
+ *     is decided on the UNTRACKED advances.
+ *   - gpui does not kern by default: the host sends the feature (SWR_TAG('k','e','r','n'), 1) on
+ *     every Windows run; the renderer passes the list to the shaper unchanged.
+ */
+#define SWR_ABI_MINOR_V08 8
+#define SWR_API_V08_FN_COUNT 22
+#define SWR_FEATURES_MAX   16
+#define SWR_FALLBACKS_MAX  8
+#define SWR_FACE_AXES_MAX  8
+#define SWR_NAME_MAX       64
+#define SWR_VERSION_MAX    32
+#define SWR_SYSFONT_ENTRIES 8
+#define SWR_SYSFONT_NAME_MAX 48
+
+/* OpenType tag as four ASCII bytes, first character in the high byte. */
+#define SWR_TAG(a, b, c, d) \
+    (((uint32_t)(uint8_t)(a) << 24) | ((uint32_t)(uint8_t)(b) << 16) | \
+     ((uint32_t)(uint8_t)(c) << 8) | (uint32_t)(uint8_t)(d))
+
+typedef struct swr_feature {
+    uint32_t tag;           /* SWR_TAG(...) */
+    uint32_t value;         /* 0 = off, 1 = on, n = alternate n */
+} swr_feature;
+
+typedef struct swr_str {
+    const char *ptr;        /* UTF-8, not NUL terminated */
+    uint32_t    len;
+    uint32_t    reserved;
+} swr_str;
+
+/* swr_measure_request_v08.flags */
+#define SWR_M08_BASELINE_OFFSET 0x1u  /* baseline_offset_dip is valid (0 is a legal offset) */
+
+/* swr_measure_request_v08.simulations: FORBID bits, so a zeroed field keeps the 0.6 behaviour
+ * (DirectWrite may simulate). A forbidden simulation draws the nearest REAL face instead (the
+ * Mac does not synthesise, G27) and is reported. */
+#define SWR_SIM_FORBID_BOLD    0x1u
+#define SWR_SIM_FORBID_OBLIQUE 0x2u
+
+/* swr_measure_result_v08.applied */
+#define SWR_M08_APPLIED_FEATURES   0x01u
+#define SWR_M08_APPLIED_TRACKING   0x02u
+#define SWR_M08_APPLIED_BASELINE   0x04u
+#define SWR_M08_APPLIED_FALLBACKS  0x08u  /* at least one system fallback family was passed to the shaper */
+#define SWR_M08_APPLIED_WEIGHT     0x10u  /* weight_f (or font_weight) mapped to a named instance */
+#define SWR_M08_APPLIED_ITALIC     0x20u
+
+/* swr_measure_result_v08.ignored: requested but NOT done. Never silent. */
+#define SWR_M08_IGN_WEIGHT_SNAPPED   0x01u /* exact weight is not a named instance; resolved_weight used */
+#define SWR_M08_IGN_WIDTH_AXIS       0x02u
+#define SWR_M08_IGN_OPSZ             0x04u
+#define SWR_M08_IGN_SLANT            0x08u
+#define SWR_M08_IGN_FALLBACK_PRIVATE 0x10u /* a fallback family is not a system family */
+#define SWR_M08_IGN_SIM_BOLD_DROPPED 0x20u /* bold simulation forbidden: a real lighter face was used */
+#define SWR_M08_IGN_SIM_OBLIQUE_DROPPED 0x40u /* oblique forbidden and no real italic: upright drawn */
+
+/* simulation flags (result.simulations, swr_face_metrics.simulations, swr_run_face.flags) */
+#define SWR_SIMFLAG_BOLD    0x1u
+#define SWR_SIMFLAG_OBLIQUE 0x2u
+
+typedef struct swr_measure_request_v08 {
+    uint32_t struct_size;               /* sizeof(swr_measure_request_v08) = 160 */
+    uint32_t flags;                     /* SWR_M08_* */
+    swr_measure_request base;           /* the whole 0.6 request (its struct_size = 88);
+                                           font_weight is used when weight_f == 0 */
+    float    weight_f;                  /* wght; 0 = use base.font_weight; 1..1000 */
+    float    width_axis;                /* wdth percent; 0 = default. IGNORED if not 0 or 100 */
+    float    opsz;                      /* 0 = automatic. IGNORED if not 0 */
+    float    slant;                     /* degrees; 0. IGNORED if not 0 */
+    float    tracking_dip;              /* added after every glyph cluster */
+    float    kerning_dip;               /* additive, like tracking */
+    float    baseline_offset_dip;       /* with SWR_M08_BASELINE_OFFSET: the face's baseline lies this
+                                           far below the top of the line box (line_height) */
+    uint32_t italic;                    /* 0 / 1 */
+    uint32_t simulations;               /* SWR_SIM_FORBID_* */
+    uint32_t feature_count;             /* <= SWR_FEATURES_MAX else SWR_E_TOO_LARGE */
+    const swr_feature *features;
+    const swr_str *fallbacks;           /* system families, first = highest priority */
+    uint32_t fallback_count;            /* <= SWR_FALLBACKS_MAX else SWR_E_TOO_LARGE */
+    uint32_t reserved;
+} swr_measure_request_v08;
+
+typedef struct swr_measure_result_v08 {
+    uint32_t struct_size;               /* sizeof(swr_measure_result_v08) = 88 */
+    uint32_t reserved0;
+    swr_measure_result base;
+    uint32_t applied;                   /* SWR_M08_APPLIED_* */
+    uint32_t ignored;                   /* SWR_M08_IGN_* */
+    float    resolved_weight;           /* the named instance drawn (0 when the family is unknown) */
+    uint32_t resolved_italic;           /* 1 when an italic face (real or simulated) is drawn */
+    uint32_t simulations;               /* SWR_SIMFLAG_*: simulation the shaper will apply */
+    uint32_t reserved;
+} swr_measure_result_v08;
+
+/* swr_run_face.flags */
+#define SWR_RUNFACE_PRIMARY    0x01u  /* the requested family/weight/style face */
+#define SWR_RUNFACE_BUNDLED    0x02u  /* registered bytes: sha256 is their SHA-256 */
+#define SWR_RUNFACE_SYSTEM     0x04u  /* installed face (primary): file_name and version set */
+#define SWR_RUNFACE_FALLBACK   0x08u  /* a different face than the primary (system fallback) */
+#define SWR_RUNFACE_UNRESOLVED 0x10u  /* the renderer could not name this face (family empty) */
+#define SWR_RUNFACE_COLOR      0x20u  /* the run holds colour glyphs (emoji) */
+#define SWR_RUNFACE_SIM_BOLD   0x40u
+#define SWR_RUNFACE_SIM_OBLIQUE 0x80u
+
+typedef struct swr_run_face {           /* one shaped sub-run (same face), 296 bytes */
+    uint32_t utf8_start;                /* run-text byte range the sub-run covers */
+    uint32_t utf8_len;
+    uint32_t glyph_count;
+    uint32_t notdef_count;              /* glyphs with id 0 (.notdef) */
+    uint32_t flags;                     /* SWR_RUNFACE_* */
+    uint32_t weight;                    /* weight of the face drawn (0 unknown) */
+    float    ascent;                    /* physical px */
+    float    descent;
+    float    advance;                   /* physical px, sum of glyph advances before tracking */
+    uint32_t reserved;
+    uint8_t  sha256[32];                /* bundled: SHA-256 of the registered bytes, else zeros */
+    char     family[SWR_NAME_MAX];      /* UTF-8, NUL padded */
+    char     ps_name[SWR_NAME_MAX];     /* PostScript name */
+    char     version[SWR_VERSION_MAX];  /* system faces: version string */
+    char     file_name[SWR_NAME_MAX];   /* system faces: font file name (no directory) */
+} swr_run_face;
+
+typedef struct swr_axis_range {
+    uint32_t tag;                       /* SWR_TAG */
+    float    min_value;
+    float    max_value;
+    float    default_value;
+} swr_axis_range;
+
+/* swr_face_metrics.flags */
+#define SWR_FACE_FOUND     0x1u
+#define SWR_FACE_VARIABLE  0x2u
+#define SWR_FACE_BUNDLED   0x4u
+
+#define SWR_STYLE_NORMAL  0u
+#define SWR_STYLE_OBLIQUE 1u
+#define SWR_STYLE_ITALIC  2u
+
+typedef struct swr_face_metrics {       /* 456 bytes */
+    uint32_t struct_size;               /* IN: sizeof(swr_face_metrics) */
+    uint32_t flags;                     /* OUT: SWR_FACE_*; 0 when the family is unknown */
+    uint32_t weight;                    /* OUT: weight of the face the request resolves to */
+    uint32_t style;                     /* OUT: SWR_STYLE_* of that face */
+    uint32_t simulations;               /* OUT: SWR_SIMFLAG_* DirectWrite would apply to the request */
+    uint32_t source;                    /* OUT: SWR_FONT_SRC_* */
+    int32_t  units_per_em;
+    int32_t  hhea_ascent;               /* font units, descent negative as in the table */
+    int32_t  hhea_descent;
+    int32_t  hhea_line_gap;
+    int32_t  typo_ascent;               /* OS/2 sTypo* (0 when the table is absent) */
+    int32_t  typo_descent;
+    int32_t  typo_line_gap;
+    int32_t  win_ascent;                /* OS/2 usWin* */
+    int32_t  win_descent;
+    int32_t  cap_height;                /* 0 when unknown */
+    int32_t  x_height;
+    uint32_t axis_count;                /* <= SWR_FACE_AXES_MAX */
+    swr_axis_range axes[SWR_FACE_AXES_MAX];
+    uint8_t  sha256[32];                /* bundled: SHA-256, else zeros */
+    char     family[SWR_NAME_MAX];
+    char     ps_name[SWR_NAME_MAX];
+    char     version[SWR_VERSION_MAX];
+    char     file_name[SWR_NAME_MAX];
+} swr_face_metrics;
+
+/* swr_system_fonts.flags: presence of the families the host's font mapping asks about. */
+#define SWR_SYSFONT_SEGOE_UI          0x01u
+#define SWR_SYSFONT_SEGOE_VARIABLE    0x02u  /* Text, Display and Small all present */
+#define SWR_SYSFONT_CASCADIA_MONO     0x04u
+#define SWR_SYSFONT_SITKA             0x08u
+#define SWR_SYSFONT_SEGOE_EMOJI       0x10u
+#define SWR_SYSFONT_SEGOE_FLUENT_ICONS 0x20u
+
+typedef struct swr_system_font_entry {  /* 88 bytes */
+    char     name[SWR_SYSFONT_NAME_MAX];/* the family looked up, fixed order below */
+    char     version[SWR_VERSION_MAX];  /* version string of its Regular face, "" when absent */
+    uint32_t present;
+    uint32_t face_count;                /* real faces in the family */
+} swr_system_font_entry;
+
+/* entries, in this order: "Segoe UI", "Segoe UI Variable Text", "Segoe UI Variable Display",
+ * "Segoe UI Variable Small", "Cascadia Mono", "Sitka Text", "Segoe UI Emoji", "Segoe Fluent Icons". */
+typedef struct swr_system_fonts {       /* 720 bytes */
+    uint32_t struct_size;               /* IN: sizeof(swr_system_fonts) */
+    uint32_t flags;                     /* OUT: SWR_SYSFONT_* */
+    uint32_t family_count;              /* OUT: families in the system font set */
+    uint32_t reserved;
+    swr_system_font_entry entries[SWR_SYSFONT_ENTRIES];
+} swr_system_fonts;
+
+/* 0.8 view of swr_bootstrap_info: the 96 bytes of the 0.7 view at identical offsets (abi_minor 8,
+ * api_table_size sizeof(swr_api_v08) = 184, fn_count 22), plus the 0.8 size words (120 bytes). */
+typedef struct swr_bootstrap_info_v08 {
+    swr_bootstrap_info_v07 v07;
+    uint32_t measure_request_v08_size;  /* 160 */
+    uint32_t measure_result_v08_size;   /* 88 */
+    uint32_t run_face_size;             /* 296 */
+    uint32_t face_metrics_size;         /* 456 */
+    uint32_t system_fonts_size;         /* 720 */
+    uint32_t reserved;
+} swr_bootstrap_info_v08;
+
+SWR_API swr_status swr_bootstrap_query_v08(swr_bootstrap_info_v08 *out, uint32_t caller_size);
+
+/* UI thread only; E_ABI when request/result struct_size are smaller than the 0.8 structs. A
+ * request that breaks a limit is rejected whole (SWR_E_TOO_LARGE / SWR_E_BAD_ARG); nothing is
+ * applied partially. */
+SWR_API swr_status swr_measure_text_v08(const swr_measure_request_v08 *req, swr_measure_result_v08 *out);
+
+/* Per shaped sub-run of a retained run: the face, simulation flags applied, .notdef count. *count
+ * is always the total, `cap` entries are written. Primary-face identity is exact: a bundled
+ * family reports the registered SHA-256. A system FALLBACK face is named by matching the glyph ids
+ * against candidate system families (gpui does not expose it, G18); when no candidate matches the
+ * entry is SWR_RUNFACE_UNRESOLVED with an empty family. UI thread. */
+SWR_API swr_status swr_text_run_faces(swr_text_run run, swr_run_face *faces, uint32_t cap, uint32_t *count);
+
+/* Face the request would resolve to (weight snapped to a named instance, width in percent, 0 =
+ * 100). Bundled families answer from the registered bytes, installed ones from DirectWrite. Does
+ * not need a window and may run on any thread (it never touches gpui). An unknown family is
+ * SWR_OK with flags 0 (FOUND clear). */
+SWR_API swr_status swr_font_face_metrics(const uint8_t *family, uint32_t family_len, uint32_t weight,
+                                         uint32_t width_pct, uint32_t italic, swr_face_metrics *out);
+
+/* Same threading as swr_font_face_metrics. */
+SWR_API swr_status swr_system_font_info(swr_system_fonts *out);
+
+struct swr_api_v08 {
+    uint32_t struct_size;
+    uint32_t reserved;
+    swr_status (*run)(const swr_run_options *, const swr_host_callbacks *);
+    swr_status (*request_quit)(void);
+    swr_status (*window_request_close)(swr_window);
+    swr_status (*window_get_metrics)(swr_window, swr_window_metrics *);
+    swr_status (*commit)(const swr_transaction *);
+    swr_status (*measure_text)(const swr_measure_request *, swr_measure_result *);
+    swr_status (*text_run_cells)(swr_text_run, swr_char_cell *, uint32_t, uint32_t *);
+    swr_status (*text_run_release)(swr_text_run);
+    swr_status (*event_pop)(swr_event *);
+    swr_status (*request_ticks)(swr_window, int32_t);
+    swr_status (*request_modal)(swr_window, const swr_modal_request *);
+    swr_status (*selftest_reentry)(void);
+    swr_status (*get_stats)(swr_stats *);
+    swr_status (*shutdown_complete)(void);
+    swr_status (*image_register)(const uint8_t *, uint32_t, uint32_t, uint32_t, swr_image *);
+    swr_status (*image_release)(swr_image);
+    swr_status (*font_register)(const uint8_t *, uint64_t, swr_font_info *);              /* rev 0.7 */
+    swr_status (*font_resolve)(const uint8_t *, uint32_t, swr_font_resolution *);          /* rev 0.7 */
+    swr_status (*measure_text_v08)(const swr_measure_request_v08 *, swr_measure_result_v08 *); /* rev 0.8 */
+    swr_status (*text_run_faces)(swr_text_run, swr_run_face *, uint32_t, uint32_t *);          /* rev 0.8 */
+    swr_status (*font_face_metrics)(const uint8_t *, uint32_t, uint32_t, uint32_t, uint32_t, swr_face_metrics *); /* rev 0.8 */
+    swr_status (*system_font_info)(swr_system_fonts *);                                       /* rev 0.8 */
+};
+typedef struct swr_api_v08 swr_api_v08;
+
+/* Requires caller_size >= sizeof(swr_api_v08) else SWR_E_ABI, nothing written. Future revisions append here. */
+SWR_API swr_status swr_get_api_v08(swr_api_v08 *out, uint32_t caller_size);
+
 #ifdef __cplusplus
 }
 #endif

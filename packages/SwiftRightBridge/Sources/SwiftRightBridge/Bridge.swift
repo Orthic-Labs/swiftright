@@ -17,6 +17,8 @@ public final class Bridge {
     public let revision: BridgeRevision
     /// ABI 0.7 font entries; nil on a 0.6 renderer.
     let fonts: FontEntryPoints?
+    /// ABI 0.8 text-extension entries; nil on a 0.6 or 0.7 renderer.
+    let textExtension: TextExtensionEntryPoints?
 
     public var onReady: ((BridgeWindow) -> Void)?
     public var onTick: ((BridgeWindow, UInt64) -> Void)?
@@ -53,11 +55,13 @@ public final class Bridge {
     public private(set) var windowClosedCalls = 0
     private var draining = false
 
-    init(api: swr_api, info: swr_bootstrap_info, revision: BridgeRevision = .v06, fonts: FontEntryPoints? = nil) {
+    init(api: swr_api, info: swr_bootstrap_info, revision: BridgeRevision = .v06, fonts: FontEntryPoints? = nil,
+         textExtension: TextExtensionEntryPoints? = nil) {
         self.api = api
         self.info = info
         self.revision = revision
         self.fonts = fonts
+        self.textExtension = textExtension
     }
 
     // MARK: bootstrap validation (platform neutral; order as in bridge-faults)
@@ -299,6 +303,12 @@ public final class Bridge {
 
     /// Synchronous measurement. Returns a RETAINED run handle: call `release(_:)` when done.
     public func measure(_ r: MeasureRequest) throws -> TextMeasurement {
+        if let ext = r.extension {
+            guard let te = textExtension else {
+                throw BridgeError.status(-15, "swr_measure_text_v08 (renderer ABI \(revision) has no text extension; send the request without `extension` to measure the 0.6 way)")
+            }
+            return try measureV08(r, ext: ext, entry: te)
+        }
         guard let fn = api.measure_text else { throw BridgeError.status(-3, "measure_text") }
         var cap = 64
         while true {
@@ -327,15 +337,42 @@ public final class Bridge {
                 cap = Int(res.line_count)
                 continue
             }
-            let out = (0..<Int(res.lines_written)).map { i -> LineInfo in
-                let c = lines[i]
-                return LineInfo(utf8Start: c.utf8_start, utf8Len: c.utf8_len, width: c.width, top: c.top, baseline: c.baseline)
-            }
-            return TextMeasurement(run: TextRunHandle(raw: res.run), width: res.width, height: res.height,
-                               firstBaseline: res.first_baseline, lastBaseline: res.last_baseline,
-                               lines: out, charCount: res.char_count, cacheHit: res.cache_hit != 0,
-                               cacheKey: res.cache_key)
+            return measurement(from: res, lines: lines, report: nil)
         }
+    }
+
+    private func measureV08(_ r: MeasureRequest, ext: TextExtension, entry: TextExtensionEntryPoints) throws -> TextMeasurement {
+        var cap = 64
+        while true {
+            let arena = Arena()
+            let lines = arena.alloc(swr_line_info.self, count: cap)
+            lines.initialize(repeating: swr_line_info(), count: cap)
+            var res = swr_measure_result_v08()
+            res.struct_size = UInt32(MemoryLayout<swr_measure_result_v08>.size)
+            let rc = try withV08Request(r, ext: ext, lines: lines, cap: cap, arena: arena) { rq in
+                withUnsafeMutablePointer(to: &res) { entry.measure(rq, $0) }
+            }
+            if rc != 0 { throw BridgeError.status(rc, "swr_measure_text_v08") }
+            if Int(res.base.line_count) > cap {
+                _ = api.text_run_release?(res.base.run)
+                cap = Int(res.base.line_count)
+                continue
+            }
+            return measurement(from: res.base, lines: lines, report: TextExtensionReport(res))
+        }
+    }
+
+    private func measurement(from res: swr_measure_result, lines: UnsafeMutablePointer<swr_line_info>, report: TextExtensionReport?) -> TextMeasurement {
+        let out = (0..<Int(res.lines_written)).map { i -> LineInfo in
+            let c = lines[i]
+            return LineInfo(utf8Start: c.utf8_start, utf8Len: c.utf8_len, width: c.width, top: c.top, baseline: c.baseline)
+        }
+        var m = TextMeasurement(run: TextRunHandle(raw: res.run), width: res.width, height: res.height,
+                                firstBaseline: res.first_baseline, lastBaseline: res.last_baseline,
+                                lines: out, charCount: res.char_count, cacheHit: res.cache_hit != 0,
+                                cacheKey: res.cache_key)
+        m.extensionReport = report
+        return m
     }
 
     /// Per-character geometry of a retained run.
