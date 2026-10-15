@@ -69,6 +69,7 @@ def static(name, typename, body, extra_cfg=None, dark=None):
     """A case with no interaction: pixels and, in pair.json, the semantic gate on the final dump."""
     pair = {"semanticGate": {"fields": ["role", "name", "enabled", "value", "range", "count", "order"], "scope": "main", "phases": [""]}}
     if extra_cfg: pair.update(extra_cfg)
+    pair["hazeTolerance"] = 1   # the thumb's soft shadow: 8-bit rounding of a faint translucent layer (decision H4)
     case(name, typename, body, pair, [{"op": "wait", "ms": 700}, {"op": "wait", "ms": 200}], dark)
 
 
@@ -133,7 +134,7 @@ def interact(name, typename, body, plan, small_change, gate_extra=None, stepped_
     steps, labels = sl_phases(plan)
     sg = slider_gate(small_change, {"phases": labels + [""]})
     if gate_extra: sg.update(gate_extra)
-    pair = {"semanticGate": sg, "phaseShots": labels}
+    pair = {"semanticGate": sg, "phaseShots": labels, "hazeTolerance": 1}
     if stepped_rows: pair["excludeRects"] = [tick_band(i) for i in stepped_rows]
     case(name, typename, body, pair, steps)
 
@@ -167,7 +168,7 @@ static("swiftui.slider/values-dark-v1", T + "values_dark", f"""struct {T}values_
             VStack(spacing: 24) {{
 {DARK_ROWS([S(0), S(20), S(50), S(80), S(100), S(36)])}
             }}
-        }}.frame(width: 320, height: 240)
+        }}.frame(width: 320, height: 240).environment(\\.colorScheme, .dark)
     }}
 }}""", {"semanticGate": slider_gate([10] * 6)}, dark=("darkAqua", "dark"))
 
@@ -184,7 +185,7 @@ static("swiftui.slider/disabled-dark-v1", T + "disabled_dark", f"""struct {T}dis
             VStack(spacing: 24) {{
 {DARK_ROWS([S(30), S(30, extra=".disabled(true)"), S(70), S(70, extra=".disabled(true)"), S(100, extra=".disabled(true)"), S(0, extra=".disabled(true)")])}
             }}
-        }}.frame(width: 320, height: 240)
+        }}.frame(width: 320, height: 240).environment(\\.colorScheme, .dark)
     }}
 }}""", {"semanticGate": slider_gate([10] * 6)}, dark=("darkAqua", "dark"))
 
@@ -234,7 +235,7 @@ LBL = f"""struct {T}labels: View {{
 }}"""
 LBL_EX = [{"name": f"row {i} (labels and track start: Segoe UI vs SF text widths, decision 2); the slider is gated by value, range, order and y", "rect": rect(0, y0, 240, y1)}
           for i, (y0, y1) in enumerate([(0, 18), (22, 40), (44, 66), (70, 90)])]
-static("swiftui.slider/labels-v1", T + "labels", LBL, {"semanticGate": slider_gate([10, 10, 10, 10], {"fields": ["role", "name", "enabled", "value", "range", "count", "order", "boundsY"], "boundsYTolerancePt": 1.0, "ignoreNames": []}), "excludeRects": LBL_EX})
+static("swiftui.slider/labels-v1", T + "labels", LBL, {"semanticGate": slider_gate([10, 10, 10, 10], {"ignoreNames": []}), "excludeRects": LBL_EX})
 
 # ---- interaction (F2 steps; the Mac side sets the value through the accessibility value / increment: AppKit drops synthetic mouse events for an offscreen window, decision H5)
 interact("swiftui.slider/click-track-v1", T + "click", stateful(T + "click", [("a", 20.0), ("b", 40.0), ("c", 0.5)],
@@ -271,8 +272,189 @@ interact("swiftui.slider/value-labels-v1", T + "value_labels", f"""struct {T}val
             Slider(value: $a, in: 0...100) {{ Text("Volume") }} minimumValueLabel: {{ Text("0") }} maximumValueLabel: {{ Text("100") }}
         }}.frame(width: 240, height: 200, alignment: .topLeading)
     }}
-}}""", [("start", []), ("click-max", [{"op": "invoke", "name": "100"}]), ("click-min", [{"op": "invoke", "name": "0"}])], [10],
+}}""", [("start", []), ("click-max", [{"op": "invoke", "name": "100"}]), ("click-min", [{"op": "invoke", "name": "0"}]), ("click-max-twice", [{"op": "invoke", "name": "100"}, {"op": "invoke", "name": "100"}])], [10],
     {"fields": ["role", "name", "enabled", "value", "range", "count", "order"]})
+
+
+# =====================================================================================================================================================================
+# block 38: swiftui.on-hover (.onHover, .onTapGesture and the SwiftCrossUI #789 family, docs/prior-art.md section 2)
+# =====================================================================================================================================================================
+# The Mac side has NO pointer: AppKit drops synthetic mouse events for an offscreen window (window.sendEvent, NSApp.postEvent, NSHostingView.mouseDown / mouseMoved /
+# mouseEntered were all tried: SwiftUI's gestures and hover did not move). The Witness therefore registers what the pointer would do on the Mac (`HoverStandIn`, below,
+# on `FactoryStandIn` of the Mac host): the specified semantics (decisions H6-H8), not a measurement of SwiftUI. Windows gets real posted pointer messages.
+PRELUDE = r'''#if !os(Windows)
+import Observation
+#endif
+
+@Observable final class HoverProbe {
+    var hovered: String? = nil
+    var log: [String] = []
+    var taps: [String: Int] = [:]
+    func record(_ id: String, _ inside: Bool) { log.append(id + (inside ? "+" : "-")); if inside { hovered = id } else if hovered == id { hovered = nil } }
+    func tap(_ id: String) { taps[id, default: 0] += 1 }
+}
+nonisolated(unsafe) let probe = HoverProbe()
+
+/// One square per event, in order: a view's entry is its bright colour, its exit the dark one.
+func hoverEventColor(_ e: String) -> Color {
+    let up = e.hasSuffix("+")
+    switch e.first {
+    case "A": return up ? Color.green : Color(red: 0, green: 0.4, blue: 0)
+    case "B": return up ? Color.blue : Color(red: 0, green: 0, blue: 0.45)
+    case "C": return up ? Color.orange : Color(red: 0.5, green: 0.25, blue: 0)
+    case "D": return up ? Color.purple : Color(red: 0.25, green: 0, blue: 0.3)
+    default: return Color.gray
+    }
+}
+
+struct HoverStrip: View {
+    var body: some View {
+        HStack(spacing: 2) { ForEach(0..<probe.log.count, id: \.self) { i in Rectangle().fill(hoverEventColor(probe.log[i])).frame(width: 10, height: 10) } }
+            .frame(width: 240, height: 10, alignment: .leading)
+    }
+}
+
+struct TapCounter: View {
+    let id: String
+    var body: some View {
+        HStack(spacing: 2) { ForEach(0..<4, id: \.self) { i in Rectangle().fill(probe.taps[id, default: 0] > i ? Color.black : Color(white: 0.85)).frame(width: 8, height: 8) } }
+    }
+}
+
+#if !os(Windows)
+@MainActor enum HoverStandIn {
+    static var frames: [(String, CGRect)] = []
+    static var hoverable: Set<String> = [], tappable: Set<String> = [], inside: Set<String> = []
+    static func install(_ frames: [(String, CGRect)], hover: [String] = [], tap: [String] = []) {
+        self.frames = frames; hoverable = Set(hover); tappable = Set(tap); inside = []
+        FactoryStandIn.move = { p in update(p) }
+        FactoryStandIn.leave = { update(nil) }
+        FactoryStandIn.click = { p in if let hit = HoverStandIn.frames.last(where: { HoverStandIn.tappable.contains($0.0) && $0.1.contains(p) }) { probe.tap(hit.0) } }
+    }
+    /// exits first, then entries, each in tree order (decision H6)
+    static func update(_ p: CGPoint?) {
+        let now = Set(frames.filter { hoverable.contains($0.0) && p != nil && $0.1.contains(p!) }.map { $0.0 })
+        for (id, _) in frames where inside.contains(id) && !now.contains(id) { probe.record(id, false) }
+        for (id, _) in frames where !inside.contains(id) && now.contains(id) { probe.record(id, true) }
+        inside = now
+    }
+}
+#endif
+'''
+
+
+def hv_witness(typename, frames, hover, tap, body, extra=""):
+    fr = "[" + ", ".join(f'("{n}", CGRect(x: {r[0]}, y: {r[1]}, width: {r[2]}, height: {r[3]}))' for n, r in frames) + "]"
+    ini = f"    init() {{\n#if !os(Windows)\n        HoverStandIn.install({fr}, hover: {json.dumps(list(hover))}, tap: {json.dumps(list(tap))})\n#endif\n    }}\n"
+    return PRELUDE + "\n" + extra + f"struct {typename}: View {{\n{ini}    var body: some View {{\n{body}\n    }}\n}}"
+
+
+def mv(x, y): cx, cy = px(x, y); return {"op": "move", "x": cx, "y": cy}
+LEAVE = {"op": "leave"}
+
+
+def pixel_case(name, typename, witness, plan, gate=None):
+    steps, labels = sl_phases(plan)
+    pair = {"phaseShots": labels}
+    if gate: pair.update(gate)
+    case(name, typename, witness, pair, steps)
+
+
+HV = "Witness_hv_"
+pixel_case("swiftui.on-hover/rows-v1", HV + "rows", hv_witness(HV + "rows", [("A", (0, 0, 200, 28)), ("B", (0, 36, 200, 28)), ("C", (0, 72, 200, 28)), ("D", (0, 108, 200, 40))], ["A", "B", "C", "D"], [], """        VStack(alignment: .leading, spacing: 8) {
+            Rectangle().fill(probe.hovered == "A" ? Color.blue : Color.gray).frame(width: 200, height: 28).onHover { probe.record("A", $0) }
+            Rectangle().fill(probe.hovered == "B" ? Color.blue : Color.gray).frame(width: 200, height: 28).onHover { probe.record("B", $0) }
+            Button(action: { }) { Rectangle().fill(probe.hovered == "C" ? Color.orange : Color(white: 0.7)).frame(width: 200, height: 28) }.buttonStyle(.plain).onHover { probe.record("C", $0) }
+            RoundedRectangle(cornerRadius: 8).fill(probe.hovered == "D" ? Color.purple : Color(white: 0.6)).frame(width: 200, height: 40).onHover { probe.record("D", $0) }
+            HoverStrip()
+        }.frame(width: 240, height: 200, alignment: .topLeading)"""), [
+    ("start", []), ("in-A", [mv(100, 14)]), ("still-in-A", [mv(120, 10)]), ("A-to-B", [mv(100, 50)]), ("in-the-gap", [mv(100, 68)]),
+    ("to-button", [mv(100, 86)]), ("to-card", [mv(100, 128)]), ("leave", [LEAVE]), ("re-enter-A", [mv(10, 4)]), ("A-to-D-directly", [mv(190, 140)]),
+])
+
+pixel_case("swiftui.on-hover/adjacent-v1", HV + "adjacent", hv_witness(HV + "adjacent", [("A", (0, 0, 100, 28)), ("B", (100, 0, 100, 28))], ["A", "B"], [], """        VStack(alignment: .leading, spacing: 8) {
+            HStack(spacing: 0) {
+                Rectangle().fill(probe.hovered == "A" ? Color.green : Color.gray).frame(width: 100, height: 28).onHover { probe.record("A", $0) }
+                Rectangle().fill(probe.hovered == "B" ? Color.blue : Color(white: 0.7)).frame(width: 100, height: 28).onHover { probe.record("B", $0) }
+            }
+            HoverStrip()
+        }.frame(width: 240, height: 200, alignment: .topLeading)"""), [
+    ("start", []), ("in-A", [mv(50, 14)]), ("last-pixel-of-A", [mv(99.6, 14)]), ("cross-to-B", [mv(100.4, 14)]), ("back-to-A", [mv(60, 14)]),
+    ("below", [mv(60, 40)]), ("in-B", [mv(150, 14)]), ("leave-from-B", [LEAVE]), ("again-B-to-A", [mv(150, 14), mv(20, 14)]),
+])
+
+# the SwiftCrossUI #789 family (docs/prior-art.md section 2): a body that ends in .onTapGesture, the same body wrapped in a VStack, an explicit-return body, a nested composite;
+# a centre click adds 1 and an outside click adds 0; state survives an unrelated write (the counters are the evidence, one square per tap)
+GS_VIEWS = r'''struct Witness_gs_ends: View {
+    var body: some View {
+        Rectangle().fill(Color.red).frame(width: 60, height: 24).onTapGesture { probe.tap("a") }
+    }
+}
+
+struct Witness_gs_wrapped: View {
+    var body: some View {
+        VStack { Rectangle().fill(Color.red).frame(width: 60, height: 24).onTapGesture { probe.tap("b") } }
+    }
+}
+
+struct Witness_gs_explicit: View {
+    var body: some View {
+        return Rectangle().fill(Color.red).frame(width: 60, height: 24).onTapGesture { probe.tap("c") }
+    }
+}
+
+struct Witness_gs_inner: View {
+    var body: some View { Rectangle().fill(Color.red).frame(width: 60, height: 24).onTapGesture { probe.tap("d") } }
+}
+
+struct Witness_gs_nested: View {
+    var body: some View { Witness_gs_inner() }
+}
+
+struct Witness_gs_unrelated: View {
+    var body: some View { Rectangle().fill(Color.blue).frame(width: 60, height: 24).onTapGesture { probe.tap("e") } }
+}
+
+'''
+GS_FRAMES = [("a", (0, 0, 60, 24)), ("b", (0, 32, 60, 24)), ("c", (0, 64, 60, 24)), ("d", (0, 96, 60, 24)), ("e", (0, 128, 60, 24))]
+GS_BODY = """        VStack(alignment: .leading, spacing: 8) {
+            HStack(spacing: 8) { Witness_gs_ends(); TapCounter(id: "a") }
+            HStack(spacing: 8) { Witness_gs_wrapped(); TapCounter(id: "b") }
+            HStack(spacing: 8) { Witness_gs_explicit(); TapCounter(id: "c") }
+            HStack(spacing: 8) { Witness_gs_nested(); TapCounter(id: "d") }
+            HStack(spacing: 8) { Witness_gs_unrelated(); TapCounter(id: "e") }
+        }.frame(width: 240, height: 200, alignment: .topLeading)"""
+
+
+def ck(x, y): cx, cy = px(x, y); return {"op": "click", "x": cx, "y": cy}
+
+
+pixel_case("swiftui.on-hover/body-ends-in-modifier-v1", "Witness_gs_all", hv_witness("Witness_gs_all", GS_FRAMES, [], ["a", "b", "c", "d", "e"], GS_BODY, GS_VIEWS), [
+    ("first-commit", []), ("a-centre", [ck(30, 12)]), ("a-outside-gap", [ck(30, 28)]), ("a-outside-right", [ck(100, 12)]), ("b-centre", [ck(30, 44)]),
+    ("c-centre", [ck(30, 76)]), ("d-centre", [ck(30, 108)]), ("a-twice", [ck(30, 12), ck(30, 12)]), ("unrelated-e", [ck(30, 140)]), ("a-after-unrelated", [ck(30, 12)]),
+    ("corner-inside", [ck(0.2, 0.2)]), ("edge-outside", [ck(60.2, 12)]),
+])
+
+# a tap on a Button inside a view with a tap gesture runs the Button (the control takes the press), and a tap beside it runs the gesture
+BT = r'''struct Witness_bt_all: View {
+    init() {
+#if !os(Windows)
+        HoverStandIn.install([("g", CGRect(x: 0, y: 0, width: 200, height: 60))], hover: [], tap: ["g"])
+#endif
+    }
+    var body: some View {
+        VStack(alignment: .leading, spacing: 8) {
+            VStack(spacing: 0) {
+                Rectangle().fill(Color(white: 0.8)).frame(width: 200, height: 30)
+                Rectangle().fill(Color(white: 0.6)).frame(width: 200, height: 30)
+            }.onTapGesture { probe.tap("g") }
+            TapCounter(id: "g")
+        }.frame(width: 240, height: 200, alignment: .topLeading)
+    }
+}'''
+pixel_case("swiftui.on-hover/tap-container-v1", "Witness_bt_all", PRELUDE + "\n" + BT, [
+    ("start", []), ("top", [ck(100, 15)]), ("bottom", [ck(100, 45)]), ("outside", [ck(100, 70)]), ("again", [ck(10, 10)]),
+])
 
 def main():
     only = sys.argv[1:]

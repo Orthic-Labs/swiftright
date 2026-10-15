@@ -85,9 +85,9 @@ final class SliderBlockTests: XCTestCase {
         XCTAssertEqual(hi.frame.maxX, 240, accuracy: 0.5)
         XCTAssertEqual(n.frame.width, s.trackFrame.width, accuracy: 0.5)
         XCTAssertEqual(lo.accessibility.role, "button")
-        // a press on the value labels sets the bounds
-        XCTAssertTrue(g.tapButton(hi.id)); XCTAssertEqual(box.value, 100)
-        XCTAssertTrue(g.tapButton(lo.id)); XCTAssertEqual(box.value, 0)
+        // a press on the value labels moves the value one increment (macOS: 40 -> 50 -> 40)
+        XCTAssertTrue(g.tapButton(hi.id)); XCTAssertEqual(box.value, 50, accuracy: 1e-9)
+        XCTAssertTrue(g.tapButton(lo.id)); XCTAssertEqual(box.value, 40, accuracy: 1e-9)
     }
 
     func testSliderInARowTakesTheRest() throws {

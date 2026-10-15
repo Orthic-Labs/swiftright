@@ -28,6 +28,16 @@ final class OffscreenWindow: NSWindow {
     override var canBecomeKey: Bool { true }
 }
 
+/// Input stand-ins a case's Witness can register (round 6 block 38): AppKit drops synthetic mouse events for a window that is not on screen (measured: window.sendEvent,
+/// NSApp.postEvent, NSHostingView.mouseDown / mouseMoved / mouseEntered all leave SwiftUI's gestures and hover untouched), so a witness that needs a pointer on the Mac registers
+/// what the pointer would do. `click` and `move` take the point in the Witness's points (the frame the witness lays out in, origin top-left); `leave` takes none.
+@MainActor
+enum FactoryStandIn {
+    static var click: ((CGPoint) -> Void)?
+    static var move: ((CGPoint) -> Void)?
+    static var leave: (() -> Void)?
+}
+
 func pump(_ seconds: Double) { RunLoop.current.run(until: Date().addingTimeInterval(seconds)) }
 
 // Drag-and-drop without a drag: SwiftUI's List reorders through its NSOutlineView data source (`outlineView(_:validateDrop:...)` / `acceptDrop`), which wants a live
@@ -177,8 +187,12 @@ final class Driver {
             if let v = sliderValue(s, atX: Double(pt.x), grab: sliderGrab(s, atX: Double(pt.x))) { setSliderValue(s, v) }
             return
         }
+        if let stand = FactoryStandIn.click { stand(CGPoint(x: pt.x - witnessOrigin.x, y: pt.y - witnessOrigin.y)); return }
         try pressButton(where: { self.frame($0)?.contains(pt) ?? false })
     }
+
+    /// The witness's top-left in the host's point space (the witness is a 240 x 200 pt frame centred in the 320 x 240 pt viewport).
+    var witnessOrigin: CGPoint { CGPoint(x: (host.bounds.width - 240) / 2, y: (host.bounds.height - 200) / 2) }
 
     /// A drag on a slider: press at (x0, y0), release at (x1, y1); the value follows the pointer from the grab point (round 6 block 37).
     func drag(from p0: CGPoint, to p1: CGPoint) throws {
@@ -293,7 +307,10 @@ func runSteps(_ steps: [[String: Any]], driver: Driver, png: String, ax: String?
                 let sc = Double(captureScale)
                 func n(_ k: String) -> Double { (s[k] as? NSNumber)?.doubleValue ?? 0 }
                 try driver.drag(from: CGPoint(x: n("x0") / sc, y: n("y0") / sc), to: CGPoint(x: n("x1") / sc, y: n("y1") / sc))
-            case "move", "leave": break      // pointer moves: hover (block 38) has its own driver hook
+            case "move":
+                let sc = Double(captureScale), o = driver.witnessOrigin
+                FactoryStandIn.move?(CGPoint(x: ((s["x"] as? NSNumber)?.doubleValue ?? 0) / sc - Double(o.x), y: ((s["y"] as? NSNumber)?.doubleValue ?? 0) / sc - Double(o.y)))
+            case "leave": FactoryStandIn.leave?()
             case "char": for ch in (s["text"] as? String ?? "") { try driver.key(String(ch), mods: []) }
             case "invoke":
                 let name = s["name"] as? String ?? ""

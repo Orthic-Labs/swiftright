@@ -28,10 +28,13 @@ struct SliderSpec {
 
     var span: Double { upper - lower }
 
-    /// A press on a value label: the bound goes to the lower / upper bound (between `onEditingChanged(true)` and `(false)`).
+    /// A press on a value label moves the value one increment, up for the maximum label and down for the minimum (macOS 27 publishes them as buttons whose press is the
+    /// accessibility increment / decrement: 40 -> 50 on 0...100, measured), between `onEditingChanged(true)` and `(false)`.
     func setBound(upper top: Bool) {
+        let value = clamped(read())
         onEditing(true)
-        write(top ? upper : lower)
+        let next = snapped(value + (top ? increment : -increment))
+        if next != value { write(next) }
         onEditing(false)
     }
 
@@ -83,7 +86,7 @@ struct SliderControl: View, PrimitiveView {
 }
 
 /// The Slider of SwiftUI: a leading label, the control, and the value labels at its ends, in one row (`HStack`, 8 pt after the label, 4 pt either side of the
-/// control for the value labels; measured on macOS 27). The value labels are plain buttons (macOS publishes them as buttons, and a press sets the bound).
+/// control for the value labels; measured on macOS 27). The value labels are plain buttons (macOS publishes them as buttons, and a press moves the value one increment, up for the maximum label, down for the minimum).
 @MainActor
 public struct Slider<Label: View, ValueLabel: View>: View {
     let spec: SliderSpec

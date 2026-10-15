@@ -17,6 +17,6 @@ struct Witness_sl_values_dark: View {
             Slider(value: .constant(100), in: 0...100).frame(width: 200)
             Slider(value: .constant(36), in: 0...100).frame(width: 200)
             }
-        }.frame(width: 320, height: 240)
+        }.frame(width: 320, height: 240).environment(\.colorScheme, .dark)
     }
 }

@@ -110,6 +110,8 @@ struct HostPlacement {
     var placement = HostPlacement(dx: 0, dy: 0)
     /// The slider a press began on (round 6 block 37): moves and the release go to it.
     var draggingSlider: String?
+    /// The tap-gesture view under the last press (a tap needs the press and the release on the same view).
+    var pressTapTarget: String?
     init(_ bridge: Bridge) { self.bridge = bridge }
 
     func ready(_ window: BridgeWindow) {
@@ -187,28 +189,39 @@ struct HostPlacement {
         switch event.kind {
         case .axAction where event.action == 1:
             // the default (invoke) action of a Button runs it, of a Toggle flips it
-            if let id = runtimeIDs[event.node], !graph.tapButton(id) { _ = graph.activateToggle(id) }
+            if let id = runtimeIDs[event.node], !graph.tapButton(id) { if !graph.activateToggle(id) { _ = graph.invokeTapGesture(id) } }
             graph.flush()
         case .pointer:
             let x = CGFloat((event.x - placement.dx) / scale), y = CGFloat((event.y - placement.dy) / scale)
             if event.action == 3 {
-                // a pointer move (ABI 0.9, requested at run): a slider drag follows the pointer while the button is down
+                // a pointer move (ABI 0.9, requested at run): a slider drag follows the pointer while the button is down; every move updates the hover state (the pointer left the window: nil)
                 if let id = draggingSlider, event.i0 & 1 != 0 { _ = graph.sliderDrag(id, toX: x) }
+                if event.i0 & 2 != 0 { print("HOST_POINTER leave"); graph.pointerMoved(toX: nil, y: nil) } else { graph.pointerMoved(toX: x, y: y) }
+                fflush(stdout)
                 return
             }
             // A press arms the node under the pointer; the release on the same node is the click (as AppKit and UIA buttons do). A press on a slider starts its drag.
             if event.action == 1 {
                 pressedNode = event.node
+                pressTapTarget = graph.tapTarget(atX: x, y: y)
                 if event.node != 0, let id = runtimeIDs[event.node], graph.sliderModel(id) != nil, graph.sliderPress(id, atX: x) { draggingSlider = id }
                 return
             }
-            if event.action == 2, let id = draggingSlider { draggingSlider = nil; pressedNode = 0; _ = graph.sliderRelease(id); return }
-            guard event.action == 2, event.node != 0, pressedNode == event.node, let id = runtimeIDs[event.node] else { pressedNode = 0; return }
-            pressedNode = 0
-            var mods: EventModifiers = []
-            if event.modifiers & 0x4 != 0 { mods.insert(.shift) }; if event.modifiers & 0x1 != 0 { mods.insert(.command) }
-            if !graph.tapButton(id) { if graph.selectRow(id, modifiers: mods) { setListActive() } }
-            graph.flush()
+            if event.action == 2 {
+                if let id = draggingSlider { draggingSlider = nil; pressedNode = 0; _ = graph.sliderRelease(id); return }
+                let armed = pressedNode; pressedNode = 0
+                let armedTap = pressTapTarget; pressTapTarget = nil
+                // the release on the node the press armed is the click: a Button runs, a List row selects; else the tap gesture the press and the release both landed on runs (round 6 block 38)
+                if armed != 0, armed == event.node, let id = runtimeIDs[event.node] {
+                    var mods: EventModifiers = []
+                    if event.modifiers & 0x4 != 0 { mods.insert(.shift) }; if event.modifiers & 0x1 != 0 { mods.insert(.command) }
+                    if graph.tapButton(id) { graph.flush(); return }
+                    if graph.selectRow(id, modifiers: mods) { setListActive(); graph.flush(); return }
+                }
+                if let target = armedTap, graph.tapTarget(atX: x, y: y) == target { _ = graph.invokeTapGesture(target) }
+                graph.flush()
+                return
+            }
         case .key where event.action == 1:
             handleKey(event)
         default: break

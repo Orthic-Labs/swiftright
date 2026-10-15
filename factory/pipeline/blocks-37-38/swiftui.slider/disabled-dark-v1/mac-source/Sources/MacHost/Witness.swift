@@ -17,6 +17,6 @@ struct Witness_sl_disabled_dark: View {
             Slider(value: .constant(100), in: 0...100).disabled(true).frame(width: 200)
             Slider(value: .constant(0), in: 0...100).disabled(true).frame(width: 200)
             }
-        }.frame(width: 320, height: 240)
+        }.frame(width: 320, height: 240).environment(\.colorScheme, .dark)
     }
 }
