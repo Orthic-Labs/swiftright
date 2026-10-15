@@ -42,8 +42,8 @@ final class TextRequestAdapterTests: XCTestCase {
         XCTAssertThrowsError(try TextRequestAdapter.shapingRequest(for: req("x", font: Font.custom("Nope", size: 12)), body: body, fonts: FakeFonts(), scale: 1, textColor: 0)) {
             XCTAssertEqual($0 as? TextMeasureError, .customFontNotBundled("Nope")) }
         XCTAssertThrowsError(try TextRequestAdapter.shapingRequest(for: req("x", font: Font.custom("Tinos", size: 12)), body: body, fonts: nil, scale: 1, textColor: 0))
-        XCTAssertThrowsError(try TextRequestAdapter.shapingRequest(for: req("x", limit: 2), body: body, fonts: nil, scale: 1, textColor: 0)) {
-            XCTAssertEqual($0 as? TextMeasureError, .unsupportedLineLimit(2)) }
+        XCTAssertThrowsError(try TextRequestAdapter.shapingRequest(for: req("x", limit: 0), body: body, fonts: nil, scale: 1, textColor: 0)) {
+            XCTAssertEqual($0 as? TextMeasureError, .unsupportedLineLimit(0)) }
         XCTAssertThrowsError(try TextRequestAdapter.shapingRequest(for: req("x", font: .system(size: 14, weight: .bold, design: .serif)), body: body, fonts: nil, scale: 1, textColor: 0))
         XCTAssertThrowsError(try TextRequestAdapter.shapingRequest(for: req("x", font: Font.custom("Tinos", size: 0)), body: body, fonts: FakeFonts(), scale: 1, textColor: 0)) {
             XCTAssertEqual($0 as? TextMeasureError, .invalidPointSize) }
@@ -88,5 +88,80 @@ final class TextMeasureErrorDescriptionTests: XCTestCase {
             XCTAssertEqual("\(e)", d)
         }
         XCTAssertEqual(TextMeasureError.unsupportedFont("system(13)").description, "TextMeasure: unsupportedFont(system(13))")
+    }
+}
+
+
+/// Round 5, block swiftui.system-font: `Font.system(size:weight:)` and the text styles reach the shaper as the platform body family at the requested size and weight.
+final class SystemFontAdapterTests: XCTestCase {
+    // Segoe UI: hhea ascent 2210, descent 514 over 2048 units
+    private let body = BodyFontProfile(family: "Segoe UI", weight: 400, fontSizeDIP: 12, lineHeightDIP: 16, ascentEm: 2210.0 / 2048, descentEm: 514.0 / 2048)
+    private func req(_ font: Font, text: String = "Overview", limit: Int? = nil, width: CGFloat? = nil) -> TextMeasureRequest {
+        TextMeasureRequest(text: text, fontID: font.id, proposedWidth: width, scale: 2.5, fontMetadata: font.metadata, lineLimit: limit)
+    }
+    private func shape(_ font: Font, limit: Int? = nil, width: CGFloat? = nil) throws -> MeasureRequest {
+        try TextRequestAdapter.shapingRequest(for: req(font, limit: limit, width: width), body: body, fonts: nil, scale: 2.5, textColor: 0x1f1f1fff)
+    }
+
+    func testSystemFontIsTheBodyFamilyAtTheRequestedSizeAndWeight() throws {
+        let m = try shape(Font.system(size: 18, weight: .semibold))
+        XCTAssertEqual(m.fontFamily, "Segoe UI"); XCTAssertEqual(m.fontSize, 18); XCTAssertEqual(m.weight, 600)
+        XCTAssertEqual(m.lineHeight, (18 * 2210.0 / 2048).rounded().asFloat + (18 * 514.0 / 2048).rounded().asFloat)   // CoreText rule over the face's own metrics: 19 + 5
+        XCTAssertEqual(try shape(Font.system(size: 11.5)).fontSize, 11.5)
+        XCTAssertEqual(try shape(Font.system(size: 12)).weight, 400)
+        XCTAssertEqual(try shape(Font.system(size: 12, weight: .regular).weight(.heavy)).weight, 800)
+    }
+
+    func testAllNineWeightsMapToTheirClass() throws {
+        let expected: [(Font.Weight, UInt32)] = [(.ultraLight, 100), (.thin, 200), (.light, 300), (.regular, 400), (.medium, 500), (.semibold, 600), (.bold, 700), (.heavy, 800), (.black, 900)]
+        for (w, v) in expected { XCTAssertEqual(try shape(Font.system(size: 13, weight: w)).weight, v, "\(w)") }
+    }
+
+    func testTextStylesScaleAroundTheBodyFont() throws {
+        let b = try shape(.body)
+        XCTAssertEqual(b.fontSize, 12); XCTAssertEqual(b.lineHeight, 16)   // the platform body font exactly
+        let t = try shape(.title)
+        XCTAssertEqual(t.fontSize, 22 * 12 / 13, accuracy: 0.001); XCTAssertEqual(t.weight, 400)
+        XCTAssertEqual(try shape(.headline).weight, 700)
+        XCTAssertEqual(try shape(.headline.weight(.regular)).weight, 400)
+        XCTAssertEqual(try shape(.caption).fontSize, 10 * 12 / 13, accuracy: 0.001)
+        XCTAssertEqual(try shape(.body.weight(.bold)).weight, 700)
+        XCTAssertEqual(try shape(.body.weight(.bold)).fontSize, 12)
+    }
+
+    func testWidthIsCarriedAndDrawsAlike() throws {
+        XCTAssertEqual(try shape(Font.system(size: 14, weight: .semibold).width(.expanded)).fontSize, 14)
+        XCTAssertNotEqual(Font.system(size: 14).width(.expanded), Font.system(size: 14))
+    }
+
+    func testOtherDesignsAreRefusedNotSubstituted() {
+        XCTAssertThrowsError(try shape(Font.system(size: 14, weight: .regular, design: .monospaced))) { XCTAssertEqual($0 as? TextMeasureError, .unsupportedFont(Font.system(size: 14, weight: .regular, design: .monospaced).id)) }
+        XCTAssertThrowsError(try shape(Font.system(size: 14, weight: .regular, design: .rounded)))
+        XCTAssertNoThrow(try shape(Font.system(size: 14, weight: .regular, design: .default)))
+        XCTAssertThrowsError(try shape(Font.system(size: 0)))
+        XCTAssertThrowsError(try shape(Font.system(size: 1000)))
+    }
+
+    func testLineLimitAboveOneIsAccepted() throws {
+        XCTAssertNoThrow(try shape(Font.system(size: 12), limit: 3, width: 100))
+    }
+}
+
+private extension Double { var asFloat: Float { Float(self) } }
+
+final class MultiLineTextTests: XCTestCase {
+    private struct M { var text: String }
+    /// 10 per character, lines of at most `perLine` characters, broken anywhere.
+    private func select(_ text: String, perLine: Int, limit: Int) throws -> String {
+        try SingleLineText.select(text, maxWidth: Float(perLine * 10), lineLimit: limit, measure: { M(text: $0) },
+                                  width: { Float(min($0.text.count, perLine) * 10) }, lineCount: { max(1, ($0.text.count + perLine - 1) / perLine) }, release: { _ in }).displayText
+    }
+    func testTextThatFitsTheLineLimitIsUntouched() throws {
+        XCTAssertEqual(try select("abcdefghij", perLine: 5, limit: 2), "abcdefghij")
+    }
+    func testTextOverTheLineLimitEndsInAnEllipsisOnTheLastLine() throws {
+        XCTAssertEqual(try select("abcdefghijklmnop", perLine: 5, limit: 2), "abcdefghi\u{2026}")   // 9 characters + the ellipsis = 10 = two lines of 5
+        XCTAssertEqual(try select("abcdefghijklmnop", perLine: 5, limit: 3), "abcdefghijklmn\u{2026}")
+        XCTAssertEqual(try select("abcdefghijklmnop", perLine: 5, limit: 1), "abcd\u{2026}")
     }
 }

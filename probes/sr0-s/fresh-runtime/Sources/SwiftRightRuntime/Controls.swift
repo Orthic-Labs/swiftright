@@ -302,14 +302,21 @@ public struct Font: Hashable, Sendable {
         public let weight: Weight?
         public let design: Design?
         public let isCustom: Bool
+        /// The text style a style font (`.title`, `.headline`, ...) was made from, by name ("largeTitle", "title", "title2", "title3", "headline", "subheadline",
+        /// "body", "callout", "footnote", "caption", "caption2"); nil for a sized system font or a custom one.
+        public let textStyle: String?
+        /// `Font.width(_:)`, nil unless one was set.
+        public let width: Width?
 
         public init(familyName: String? = nil, pointSize: CGFloat? = nil, weight: Weight? = nil,
-                    design: Design? = nil, isCustom: Bool = false) {
+                    design: Design? = nil, isCustom: Bool = false, textStyle: String? = nil, width: Width? = nil) {
             self.familyName = familyName
             self.pointSize = pointSize
             self.weight = weight
             self.design = design
             self.isCustom = isCustom
+            self.textStyle = textStyle
+            self.width = width
         }
     }
 
@@ -323,11 +330,42 @@ public struct Font: Hashable, Sendable {
         metadataStorage = MetadataStorage(metadata)
     }
 
+    /// Apple: https://developer.apple.com/documentation/swiftui/font/weight (the nine weights, light to heavy).
     public enum Weight: String, Hashable, Sendable {
+        case ultraLight
+        case thin
+        case light
         case regular
         case medium
         case semibold
         case bold
+        case heavy
+        case black
+
+        /// The CSS / OpenType weight class (100 to 900) a renderer selects a face by.
+        public var classValue: UInt32 {
+            switch self {
+            case .ultraLight: return 100
+            case .thin: return 200
+            case .light: return 300
+            case .regular: return 400
+            case .medium: return 500
+            case .semibold: return 600
+            case .bold: return 700
+            case .heavy: return 800
+            case .black: return 900
+            }
+        }
+    }
+
+    /// Apple: https://developer.apple.com/documentation/swiftui/font/width. Carried with the font; a face without a width axis (Segoe UI) draws every width alike.
+    public struct Width: Hashable, Sendable {
+        public let name: String
+        private init(_ name: String) { self.name = name }
+        public static let compressed = Width("compressed")
+        public static let condensed = Width("condensed")
+        public static let standard = Width("standard")
+        public static let expanded = Width("expanded")
     }
 
     public enum Design: String, Hashable, Sendable {
@@ -337,20 +375,20 @@ public struct Font: Hashable, Sendable {
         case monospaced
     }
 
-    public static let largeTitle = Font(id: "textStyle.largeTitle")
-    public static let title = Font(id: "textStyle.title")
-    public static let title2 = Font(id: "textStyle.title2")
-    public static let title3 = Font(id: "textStyle.title3")
-    public static let headline = Font(id: "textStyle.headline")
-    public static let subheadline = Font(id: "textStyle.subheadline")
-    public static let body = Font(id: "textStyle.body")
-    public static let callout = Font(id: "textStyle.callout")
-    public static let footnote = Font(id: "textStyle.footnote")
-    public static let caption = Font(id: "textStyle.caption")
-    public static let caption2 = Font(id: "textStyle.caption2")
+    public static let largeTitle = Font(id: "textStyle.largeTitle", metadata: Metadata(textStyle: "largeTitle"))
+    public static let title = Font(id: "textStyle.title", metadata: Metadata(textStyle: "title"))
+    public static let title2 = Font(id: "textStyle.title2", metadata: Metadata(textStyle: "title2"))
+    public static let title3 = Font(id: "textStyle.title3", metadata: Metadata(textStyle: "title3"))
+    public static let headline = Font(id: "textStyle.headline", metadata: Metadata(textStyle: "headline"))
+    public static let subheadline = Font(id: "textStyle.subheadline", metadata: Metadata(textStyle: "subheadline"))
+    public static let body = Font(id: "textStyle.body", metadata: Metadata(textStyle: "body"))
+    public static let callout = Font(id: "textStyle.callout", metadata: Metadata(textStyle: "callout"))
+    public static let footnote = Font(id: "textStyle.footnote", metadata: Metadata(textStyle: "footnote"))
+    public static let caption = Font(id: "textStyle.caption", metadata: Metadata(textStyle: "caption"))
+    public static let caption2 = Font(id: "textStyle.caption2", metadata: Metadata(textStyle: "caption2"))
 
     public static func system(size: CGFloat, weight: Font.Weight = .regular) -> Font {
-        Font(id: "system(\(size),\(weight.rawValue))")
+        Font(id: "system(\(size),\(weight.rawValue))", metadata: Metadata(pointSize: size, weight: weight))
     }
 
     /// Creates a system font with an explicit design descriptor for measurement backends.
@@ -371,10 +409,19 @@ public struct Font: Hashable, Sendable {
 
     public func weight(_ weight: Font.Weight) -> Font {
         let metadata = self.metadata.map {
-            Metadata(familyName: $0.familyName, pointSize: $0.pointSize, weight: weight, design: $0.design, isCustom: $0.isCustom)
+            Metadata(familyName: $0.familyName, pointSize: $0.pointSize, weight: weight, design: $0.design, isCustom: $0.isCustom,
+                     textStyle: $0.textStyle, width: $0.width)
         }
         if let metadata { return Font(id: "\(id)|weight(\(weight.rawValue))", metadata: metadata) }
         return Font(id: "\(id)|weight(\(weight.rawValue))")
+    }
+
+    /// Apple: https://developer.apple.com/documentation/swiftui/font/width(_:)
+    public func width(_ width: Width) -> Font {
+        let base = metadata ?? Metadata()
+        return Font(id: "\(id)|width(\(width.name))",
+                    metadata: Metadata(familyName: base.familyName, pointSize: base.pointSize, weight: base.weight, design: base.design, isCustom: base.isCustom,
+                                       textStyle: base.textStyle, width: width))
     }
 }
 

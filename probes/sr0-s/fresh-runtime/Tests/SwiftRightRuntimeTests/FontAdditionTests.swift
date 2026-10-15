@@ -61,7 +61,9 @@ final class FontAdditionTests: XCTestCase {
         let explicit = Font.system(size: 17, design: .default)
 
         XCTAssertEqual(legacy.id, explicit.id)
-        XCTAssertNil(legacy.metadata)
+        // round 5 (system fonts reach the measurer): a sized system font carries its size and weight, but no design
+        XCTAssertEqual(legacy.metadata?.pointSize, 17)
+        XCTAssertNil(legacy.metadata?.design)
         XCTAssertNotNil(explicit.metadata)
         XCTAssertNotEqual(legacy, explicit)
     }
@@ -147,7 +149,7 @@ final class FontAdditionTests: XCTestCase {
         XCTAssertEqual(sr1Kind(graph, "Text").first?.frame.height, 32)
     }
 
-    func testLegacySystemFontLeavesMetadataUnset() {
+    func testSizedSystemFontCarriesSizeAndWeightButNoDesign() {
         let measurer = FixedAdvanceTextMeasurer()
         let graph = Graph(Text("legacy").font(.system(size: 17, weight: .medium)), measurer: measurer)
         graph.flush()
@@ -155,8 +157,10 @@ final class FontAdditionTests: XCTestCase {
 
         XCTAssertEqual(measurer.requests.first?.fontID, "system(17.0,medium)")
         XCTAssertEqual(measurer.requests.count, 1)
-        XCTAssertNil(measurer.requests.first?.fontMetadata)
-        XCTAssertNil(Font.system(size: 17, weight: .medium).metadata)
+        XCTAssertEqual(measurer.requests.first?.fontMetadata?.pointSize, 17)
+        XCTAssertEqual(measurer.requests.first?.fontMetadata?.weight, .medium)
+        XCTAssertNil(measurer.requests.first?.fontMetadata?.design)
+        XCTAssertFalse(measurer.requests.first?.fontMetadata?.isCustom ?? true)
     }
 }
 

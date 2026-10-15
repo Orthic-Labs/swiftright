@@ -74,7 +74,7 @@ func cSemantic(_ s: SemanticNode, _ arena: Arena) -> swr_semantic {
     c.label = label.ptr; c.label_len = label.len
     let value = arena.string(s.value)
     c.value = value.ptr; c.value_len = value.len
-    let identifier = arena.string(s.identifier)
+    let identifier = arena.string(SemanticIdentifier.fit(s.identifier))
     c.identifier = identifier.ptr; c.identifier_len = identifier.len
     var runs: [swr_ax_text_run] = []
     for r in s.runs {
@@ -280,4 +280,25 @@ public func selectionRects(cells: [CharCell], lines: [LineInfo], start: Int, end
     }
     flush()
     return out
+}
+
+
+/// The renderer refuses an accessibility identifier longer than `SWR_IDENTIFIER_MAX` (256 UTF-8 bytes: `swr_commit` returns `SWR_E_TOO_LARGE`), and the runtime's node
+/// paths grow with the view tree (a settings page reaches 400 bytes). A longer identifier becomes its first 180 bytes (cut at a character), "~" and the FNV-1a hash of the whole
+/// identifier in 16 hex digits: stable, within the limit, and unique per path.
+public enum SemanticIdentifier {
+    public static let maxBytes = 256
+    public static func fit(_ id: String) -> String {
+        guard id.utf8.count > maxBytes else { return id }
+        var h: UInt64 = 0xcbf29ce484222325
+        for b in id.utf8 { h = (h ^ UInt64(b)) &* 0x100000001b3 }
+        var head = "", used = 0
+        for scalar in id.unicodeScalars {
+            let n = String(scalar).utf8.count
+            if used + n > 180 { break }
+            head.unicodeScalars.append(scalar); used += n
+        }
+        let digits = String(h, radix: 16)
+        return head + "~" + String(repeating: "0", count: 16 - digits.count) + digits
+    }
 }

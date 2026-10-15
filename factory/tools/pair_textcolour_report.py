@@ -49,7 +49,10 @@ def position(img, rect, background=None, coverage=0.15):
             break
         run.add(c)
     xs = [x for x, _ in ink]
-    return dict(firstInkX=cols[0], firstInkY=min(y for x, y in ink if x in run), baselineY=max(y for x, y in ink if x in run), inkCentreX=(min(xs) + max(xs) + 1) / 2)
+    rows = sorted({y for _, y in ink})
+    bands = 1 + sum(1 for a, b in zip(rows, rows[1:]) if b != a + 1)
+    return dict(firstInkX=cols[0], firstInkY=min(y for x, y in ink if x in run), baselineY=max(y for x, y in ink if x in run), inkCentreX=(min(xs) + max(xs) + 1) / 2,
+                inkRightX=max(xs) + 1, inkHeight=max(rows) - min(rows) + 1, lineBands=bands)
 
 
 def position_why(m, w, pos, align):
@@ -68,6 +71,14 @@ def position_why(m, w, pos, align):
     else:
         dx = w["inkCentreX"] - m["inkCentreX"]
         if abs(dx) > t("inkCentreXTolerancePx"): why.append(f"ink centre x differs by {dx:g} px (tolerance {t('inkCentreXTolerancePx'):g})")
+    # ROUND 5 (decision F1): a text row may also gate the number of lines (ink bands separated by a blank pixel row; both sides must show the same count, within
+    # "lineBandsTolerance", default 0) and where the ink ends ("maxInkRightPx": neither side's ink bbox right edge may pass it, a truncated or wrapped line stays in its frame).
+    if "lineBands" in pos or pos.get("lines"):
+        db_ = w["lineBands"] - m["lineBands"]
+        if abs(db_) > t("lineBandsTolerance"): why.append(f"line count differs: mac {m['lineBands']} windows {w['lineBands']}")
+    if "maxInkRightPx" in pos:
+        for side, v in (("mac", m), ("windows", w)):
+            if v["inkRightX"] > float(pos["maxInkRightPx"]): why.append(f"{side} ink ends at {v['inkRightX']} px, past {pos['maxInkRightPx']}")
     return why
 
 
@@ -92,7 +103,8 @@ def main():
             if "position" in cfg:
                 cov = float(cfg["position"].get("coverage", 0.15))
                 pm, pw = position(im, tuple(r["rect"]), bg, cov), position(iw, tuple(r["rect"]), bg, cov)
-                why = position_why(pm, pw, cfg["position"], r.get("align", cfg["position"].get("align", "centre")))
+                pos = {**cfg["position"], **r.get("position", {})}   # a region may carry its own measured tolerances (and "reason")
+                why = position_why(pm, pw, pos, r.get("align", pos.get("align", "centre")))
                 reg.update(position=dict(mac=pm, windows=pw, ok=not why, why=why)); good = good and not why; reg["ok"] = good
             ok &= good
             row["regions"].append(reg)

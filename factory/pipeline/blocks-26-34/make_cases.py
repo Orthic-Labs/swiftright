@@ -332,6 +332,57 @@ lp("with-spacer-v1", [
 ])
 
 
+# =====================================================================================================================================================================
+# block 28: swiftui.system-font (Font.system(size:weight:), the text styles, nine weights, Font.width, lineLimit(n), truncation)
+# =====================================================================================================================================================================
+# Glyph pixels are excluded by name (decision 2: Segoe UI vs SF); the text gate is the position gate of decision 19 per row (first glyph top and baseline, first ink column, ink bbox,
+# colour) with tolerances measured per row and carried with a reason (decision F1), plus the line count and "the ink stays in its frame" (F2). Rows are 240 pt wide and
+# leading aligned, each row's frame taller than its font's line so no two rows' ink meets.
+SF = "Witness_sf_"
+TXT = "Hxg Overview"
+
+
+def font_rows(name, typename, rows, row_h, tolerance=None, lines=False, max_right=None, reason="", frame_w=240):
+    """rows: [(font expr, text, extra modifiers)]; row i is the text in a frame_w x row_h frame, leading. One position region per row."""
+    n = len(rows)
+    body = ",\n".join(f'            Text("{t}"){f}{m}.frame(width: {frame_w}, height: {row_h}, alignment: .leading)'.replace(",\n", "\n") for f, t, m in rows)
+    body = "\n".join(f'            Text("{t}"){f}{m}.frame(width: {frame_w}, height: {row_h}, alignment: .leading)' for f, t, m in rows)
+    case("swiftui.system-font/" + name, SF + name.replace("-", "_").replace("_v1", ""), f"""struct {SF}{name.replace("-", "_").replace("_v1", "")}: View {{
+    var body: some View {{
+        VStack(alignment: .leading, spacing: 0) {{
+{body}
+        }}.frame(width: 240, height: {n * row_h}, alignment: .topLeading)
+    }}
+}}""")
+    regions = [{"name": f"row {i}", "rect": rect(0, i * row_h, frame_w, (i + 1) * row_h), "align": "leading"} for i in range(n)]
+    pos = {"align": "leading", "reason": reason or "Segoe UI vs SF (decision 2): measured per row, see decision F1"}
+    pos.update({"firstInkYTolerancePx": 6, "baselineTolerancePx": 6, "inkCentreYTolerancePx": 6, "firstInkXTolerancePx": 3})
+    if lines: pos["lines"] = True
+    if max_right is not None: pos["maxInkRightPx"] = rect(max_right, 0, max_right, 0)[0]
+    ex = [{"name": f"row {i} glyph region (Segoe UI vs SF, decision 2); gated by the position gate of decision 19", "rect": rg["rect"]} for i, rg in enumerate(regions)]
+    CASES["swiftui.system-font/" + name]["pair"] = {"textColourGate": {"tolerance": 40, "regions": regions, "position": pos}, "excludeRects": ex,
+        "semanticGate": {"fields": ["role", "name", "count", "order"], "scope": "main", "phases": [""]}}
+    CASES["swiftui.system-font/" + name]["steps"] = [{"op": "wait", "ms": 600}]
+
+
+def f(size, weight="regular"):
+    return f'.font(Font.system(size: {size}, weight: .{weight}))'
+
+
+font_rows("sizes-v1", None, [(f(s), TXT, "") for s in (11, 12, 13, 15, 18)], 40)
+font_rows("sizes-large-v1", None, [(f(s), TXT, "") for s in (24, 28, 32)], 60)
+font_rows("weights-v1", None, [(f(18, w), TXT, "") for w in ("ultraLight", "thin", "light", "regular", "medium", "semibold", "bold", "heavy", "black")], 22)
+font_rows("fractional-v1", None, [(f(s, w), TXT, "") for s, w in ((11.5, "regular"), (12.5, "regular"), (11.5, "semibold"), (13, "medium"))], 40)
+font_rows("styles-large-v1", None, [(f"{'.font(.' + st + ')'}", TXT, "") for st in ("largeTitle", "title", "title2", "title3", "headline")], 36)
+font_rows("styles-small-v1", None, [(f"{'.font(.' + st + ')'}", TXT, "") for st in ("subheadline", "body", "callout", "footnote", "caption", "caption2")], 24)
+font_rows("style-weight-v1", None, [(".font(.body.weight(.bold))", TXT, ""), (".font(.headline.weight(.regular))", TXT, ""), (".font(.title3.weight(.semibold))", TXT, "")], 40)
+LONG = "Overview of memory pressure and swap activity across every running process"
+font_rows("truncate-v1", None, [(f(12), LONG, ".lineLimit(1)"), (f(11.5), LONG, ".lineLimit(1)"), (f(13, "semibold"), LONG, ".lineLimit(1)"), (f(18), LONG, ".lineLimit(1)"),
+                               (f(12), "Short", ".lineLimit(1)")], 40, max_right=240)
+CASES["swiftui.system-font/truncate-v1"]["body"] = CASES["swiftui.system-font/truncate-v1"]["body"].replace('Text("%s").font(Font.system(size: 12, weight: .regular)).lineLimit(1).frame(width: 240' % LONG, 'Text("%s").font(Font.system(size: 12, weight: .regular)).lineLimit(1).frame(width: 240' % LONG, 1)
+font_rows("line-limit-v1", None, [(f(12), LONG, ".lineLimit(2)"), (f(12), LONG, ".lineLimit(3)"), (f(12), "Overview of memory pressure", ".lineLimit(3)")], 60, lines=True, max_right=110, frame_w=110)
+
+
 def main():
     only = sys.argv[1:]
     for name, c in CASES.items():

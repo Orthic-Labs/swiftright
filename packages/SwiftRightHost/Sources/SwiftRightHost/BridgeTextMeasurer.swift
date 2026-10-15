@@ -8,16 +8,31 @@ public struct BodyFontProfile: Equatable, Sendable {
     public var weight: UInt32
     public var fontSizeDIP: Float
     public var lineHeightDIP: Float
+    /// The face's hhea ascent and descent in em (read from the face when the platform can); nil derives a line height by scaling `lineHeightDIP`.
+    public var ascentEm: Float?
+    public var descentEm: Float?
 
-    public init(family: String, weight: UInt32 = 400, fontSizeDIP: Float, lineHeightDIP: Float) {
+    public init(family: String, weight: UInt32 = 400, fontSizeDIP: Float, lineHeightDIP: Float, ascentEm: Float? = nil, descentEm: Float? = nil) {
         self.family = family; self.weight = weight; self.fontSizeDIP = fontSizeDIP; self.lineHeightDIP = lineHeightDIP
+        self.ascentEm = ascentEm; self.descentEm = descentEm
+    }
+
+    /// The SwiftUI/CoreText line height of this face at `size` DIP: round(ascent) + round(descent) (the rule `NativeWindowsBodyFont.coreTextLineHeightDIP` applies at the body
+    /// size). Without face metrics the body line height is scaled by the size ratio.
+    public func lineHeight(forSize size: Float) -> Float {
+        if let a = ascentEm, let d = descentEm { return (size * a).rounded() + (size * d).rounded() }
+        return (lineHeightDIP * size / fontSizeDIP).rounded()
     }
     /// The live Windows message-font profile resolved by the runtime (DPI-aware).
     /// The line height follows SwiftUI/CoreText (round(hhea ascent) + round(hhea descent) of the resolved face) when the face's metrics
     /// could be read, else the GDI text-metric height; the renderer's baseline rule (round(ascent) from the line top) is the same rule.
     public init(_ native: NativeWindowsBodyFont) {
+        var asc: Float?, desc: Float?
+        if let upm = native.unitsPerEm, upm > 0, let a = native.hheaAscentUnits, let d = native.hheaDescentUnits {
+            asc = Float(a) / Float(upm); desc = abs(Float(d)) / Float(upm)
+        }
         self.init(family: native.family, weight: native.weight, fontSizeDIP: native.fontSizeDIP,
-                  lineHeightDIP: native.coreTextLineHeightDIP ?? native.lineHeightDIP)
+                  lineHeightDIP: native.coreTextLineHeightDIP ?? native.lineHeightDIP, ascentEm: asc, descentEm: desc)
     }
 }
 
@@ -95,12 +110,15 @@ public enum TextRequestAdapter {
     /// `body` is the body profile, `fonts` answers `Font.custom` names (bundled fonts registered with the renderer).
     public static func shapingRequest(for request: TextMeasureRequest, body: BodyFontProfile, fonts: CustomFontResolving?,
                                       scale: Float, textColor: UInt32) throws -> MeasureRequest {
-        if let limit = request.lineLimit, limit != 1 { throw TextMeasureError.unsupportedLineLimit(limit) }
+        if let limit = request.lineLimit, limit < 1 { throw TextMeasureError.unsupportedLineLimit(limit) }
         let maxWidth = Float(request.proposedWidth ?? 0) * scale
         guard let metadata = request.fontMetadata else {
             guard request.fontID == "body" || request.fontID == "textStyle.body" else { throw TextMeasureError.unsupportedFont(request.fontID) }
             return MeasureRequest(text: request.text, fontFamily: body.family, weight: body.weight, color: textColor,
                                   fontSize: body.fontSizeDIP, lineHeight: body.lineHeightDIP, scale: scale, maxWidth: maxWidth)
+        }
+        if !metadata.isCustom {
+            return try systemShapingRequest(for: request, metadata: metadata, body: body, scale: scale, textColor: textColor, maxWidth: maxWidth)
         }
         guard metadata.isCustom, let name = metadata.familyName else { throw TextMeasureError.unsupportedFont(request.fontID) }
         guard let pointSize = metadata.pointSize.map(Float.init), pointSize.isFinite, pointSize > 0, pointSize <= 512 else {
@@ -110,19 +128,45 @@ public enum TextRequestAdapter {
         guard let metrics = fonts.metrics(forCustomName: name) else { throw TextMeasureError.customFontMetricsUnavailable(name) }
         let lineHeight = metrics.lineHeight(pointSize: pointSize)
         guard lineHeight.isFinite, lineHeight > 0 else { throw TextMeasureError.customFontMetricsUnavailable(name) }
-        let weight: UInt32
-        switch metadata.weight ?? .regular {
-        case .regular: weight = 400
-        case .medium: weight = 500
-        case .semibold: weight = 600
-        case .bold: weight = 700
-        }
-        return MeasureRequest(text: request.text, fontFamily: family, weight: weight, color: textColor,
+        return MeasureRequest(text: request.text, fontFamily: family, weight: (metadata.weight ?? .regular).classValue, color: textColor,
                               fontSize: pointSize, lineHeight: lineHeight, scale: scale, maxWidth: maxWidth)
+    }
+
+    /// The macOS text styles: point size and weight (Apple's published macOS type scale). The size is the Windows body size times size / 13, so the hierarchy
+    /// keeps its proportions around the body font (the Windows body is 12 DIP, the Mac's 13).
+    static let textStyles: [String: (size: Float, weight: Font.Weight)] = [
+        "largeTitle": (26, .regular), "title": (22, .regular), "title2": (17, .regular), "title3": (15, .regular), "headline": (13, .bold),
+        "subheadline": (11, .regular), "body": (13, .regular), "callout": (12, .regular), "footnote": (10, .regular), "caption": (10, .regular), "caption2": (10, .regular),
+    ]
+
+    /// System fonts (`Font.system(size:weight:)` and the text styles): the platform body family at the requested size and weight, its line height by the CoreText rule over
+    /// the face's own metrics (decision F1). Only the default design is drawn: a serif, rounded or monospaced design has no face here and is refused, never substituted.
+    static func systemShapingRequest(for request: TextMeasureRequest, metadata: Font.Metadata, body: BodyFontProfile, scale: Float, textColor: UInt32,
+                                     maxWidth: Float) throws -> MeasureRequest {
+        guard metadata.design == nil || metadata.design == .default else { throw TextMeasureError.unsupportedFont(request.fontID) }
+        var size: Float, weight: UInt32
+        if let style = metadata.textStyle {
+            guard let entry = textStyles[style] else { throw TextMeasureError.unsupportedFont(request.fontID) }
+            // the body style with no weight of its own is exactly the platform body font
+            if style == "body", metadata.weight == nil {
+                return MeasureRequest(text: request.text, fontFamily: body.family, weight: body.weight, color: textColor,
+                                      fontSize: body.fontSizeDIP, lineHeight: body.lineHeightDIP, scale: scale, maxWidth: maxWidth)
+            }
+            size = entry.size * body.fontSizeDIP / 13
+            weight = (metadata.weight ?? entry.weight).classValue
+        } else {
+            guard let point = metadata.pointSize.map(Float.init), point.isFinite, point > 0, point <= 512 else { throw TextMeasureError.invalidPointSize }
+            size = point
+            weight = (metadata.weight ?? .regular).classValue
+        }
+        let lineHeight = body.lineHeight(forSize: size)
+        guard lineHeight.isFinite, lineHeight > 0 else { throw TextMeasureError.invalidPointSize }
+        return MeasureRequest(text: request.text, fontFamily: body.family, weight: weight, color: textColor,
+                              fontSize: size, lineHeight: lineHeight, scale: scale, maxWidth: maxWidth)
     }
 }
 
-/// One-line text with `.lineLimit(1)`: the longest prefix plus an ellipsis that fits the width. The search is
+/// Text with `.lineLimit(n)`: the longest prefix plus an ellipsis that fits the width in at most `n` lines (n = 1: one line). The search is
 /// logarithmically bounded; every rejected measurement is released by `release`, only the returned run stays with the caller.
 public enum SingleLineText {
     public struct Selection<M> {
@@ -131,7 +175,7 @@ public enum SingleLineText {
         public let candidateCount: Int
     }
 
-    public static func select<M>(_ text: String, maxWidth: Float,
+    public static func select<M>(_ text: String, maxWidth: Float, lineLimit: Int = 1,
                                  measure: (String) throws -> M,
                                  width: (M) -> Float, lineCount: (M) -> Int, release: (M) -> Void) throws -> Selection<M> {
         guard maxWidth.isFinite, maxWidth >= 0 else { throw TextMeasureError.invalidWidth }
@@ -142,7 +186,7 @@ public enum SingleLineText {
         var evaluations = 0
         let maxEvaluations = 128
         func candidate(_ prefixCount: Int) -> String { String(characters.prefix(prefixCount)) + "\u{2026}" }
-        func fits(_ m: M) -> Bool { lineCount(m) == 1 && (maxWidth <= 0 || width(m) <= maxWidth) }
+        func fits(_ m: M) -> Bool { lineCount(m) >= 1 && lineCount(m) <= lineLimit && (maxWidth <= 0 || width(m) <= maxWidth) }
         func evaluate(_ value: String) throws -> M? {
             guard evaluations < maxEvaluations else { return nil }
             evaluations += 1
@@ -215,7 +259,7 @@ public final class BridgeTextMeasurer: TextMeasurer, TextRunSource {
     private struct ColouredKey: Hashable { let request: TextMeasureRequest; let color: UInt32 }
     private var retained: [TextMeasureRequest: SwiftRightBridge.TextMeasurement] = [:]
     private var coloured: [ColouredKey: SwiftRightBridge.TextMeasurement] = [:]
-    private static let cacheBound = 256
+    private static let cacheBound = 8192
 
     public init(bridge: Bridge, scale: Float, body: BodyFontProfile, fonts: CustomFontResolving? = nil,
                 textColor: UInt32 = 0x1f1f1fff, log: @escaping (String) -> Void = { print($0) }) {
@@ -225,15 +269,22 @@ public final class BridgeTextMeasurer: TextMeasurer, TextRunSource {
     /// Shapes `request` in `color` (the single-line search for `lineLimit(1)` included); the caller owns the returned run.
     private func shape(_ request: TextMeasureRequest, color: UInt32) throws -> SwiftRightBridge.TextMeasurement {
         let shaping = try TextRequestAdapter.shapingRequest(for: request, body: body, fonts: fonts, scale: scale, textColor: color)
-        if request.lineLimit == 1 {
-            let selection = try SingleLineText.select(request.text, maxWidth: shaping.maxWidth,
-                measure: { candidate -> SwiftRightBridge.TextMeasurement in
-                    var r = shaping; r.text = candidate
-                    return try bridge.measure(r)
-                },
-                width: { $0.width }, lineCount: { $0.lineCount }, release: { _ = bridge.release($0.run) })
-            log("TEXT_SINGLE_LINE originalUTF8=\(request.text.utf8.count) displayUTF8=\(selection.displayText.utf8.count) candidateCount=\(selection.candidateCount) maxWidthPX=\(shaping.maxWidth)")
-            return selection.measurement
+        if let limit = request.lineLimit {
+            do {
+                let selection = try SingleLineText.select(request.text, maxWidth: shaping.maxWidth, lineLimit: limit,
+                    measure: { candidate -> SwiftRightBridge.TextMeasurement in
+                        var r = shaping; r.text = candidate
+                        return try bridge.measure(r)
+                    },
+                    width: { $0.width }, lineCount: { $0.lineCount }, release: { _ = bridge.release($0.run) })
+                log("TEXT_SINGLE_LINE originalUTF8=\(request.text.utf8.count) displayUTF8=\(selection.displayText.utf8.count) lineLimit=\(limit) candidateCount=\(selection.candidateCount) maxWidthPX=\(shaping.maxWidth)")
+                return selection.measurement
+            } catch TextMeasureError.noCandidateFits {
+                // Not even the ellipsis fits the offered width (decision F2): the ellipsis alone, which overflows the offer by its own width. macOS clips the first glyphs instead.
+                var r = shaping; r.text = "\u{2026}"
+                log("TEXT_ELLIPSIS_ONLY originalUTF8=\(request.text.utf8.count) lineLimit=\(limit) maxWidthPX=\(shaping.maxWidth)")
+                return try bridge.measure(r)
+            }
         }
         return try bridge.measure(shaping)
     }
