@@ -34,7 +34,8 @@
   {
    "op": "move",
    "x": 225,
-   "y": 85
+   "y": 85,
+   "real": true
   },
   {
    "op": "wait",
@@ -59,7 +60,8 @@
   {
    "op": "move",
    "x": 349,
-   "y": 85
+   "y": 85,
+   "real": true
   },
   {
    "op": "wait",
@@ -84,7 +86,8 @@
   {
    "op": "move",
    "x": 351,
-   "y": 85
+   "y": 85,
+   "real": true
   },
   {
    "op": "wait",
@@ -109,7 +112,8 @@
   {
    "op": "move",
    "x": 250,
-   "y": 85
+   "y": 85,
+   "real": true
   },
   {
    "op": "wait",
@@ -134,7 +138,8 @@
   {
    "op": "move",
    "x": 250,
-   "y": 150
+   "y": 150,
+   "real": true
   },
   {
    "op": "wait",
@@ -159,7 +164,8 @@
   {
    "op": "move",
    "x": 475,
-   "y": 85
+   "y": 85,
+   "real": true
   },
   {
    "op": "wait",
@@ -182,7 +188,8 @@
    "ms": 150
   },
   {
-   "op": "leave"
+   "op": "leave",
+   "real": true
   },
   {
    "op": "wait",
@@ -207,7 +214,8 @@
   {
    "op": "move",
    "x": 475,
-   "y": 85
+   "y": 85,
+   "real": true
   },
   {
    "op": "wait",
@@ -216,7 +224,8 @@
   {
    "op": "move",
    "x": 150,
-   "y": 85
+   "y": 85,
+   "real": true
   },
   {
    "op": "wait",
@@ -241,6 +250,6 @@
  ],
  "macArgs": [
   "--steps",
-  "[{\"op\":\"wait\",\"ms\":700},{\"op\":\"dump\",\"label\":\"start\"},{\"op\":\"wait\",\"ms\":250},{\"op\":\"shot\",\"label\":\"start\"},{\"op\":\"wait\",\"ms\":150},{\"op\":\"move\",\"x\":225,\"y\":85},{\"op\":\"wait\",\"ms\":450},{\"op\":\"dump\",\"label\":\"in-A\"},{\"op\":\"wait\",\"ms\":250},{\"op\":\"shot\",\"label\":\"in-A\"},{\"op\":\"wait\",\"ms\":150},{\"op\":\"move\",\"x\":349,\"y\":85},{\"op\":\"wait\",\"ms\":450},{\"op\":\"dump\",\"label\":\"last-pixel-of-A\"},{\"op\":\"wait\",\"ms\":250},{\"op\":\"shot\",\"label\":\"last-pixel-of-A\"},{\"op\":\"wait\",\"ms\":150},{\"op\":\"move\",\"x\":351,\"y\":85},{\"op\":\"wait\",\"ms\":450},{\"op\":\"dump\",\"label\":\"cross-to-B\"},{\"op\":\"wait\",\"ms\":250},{\"op\":\"shot\",\"label\":\"cross-to-B\"},{\"op\":\"wait\",\"ms\":150},{\"op\":\"move\",\"x\":250,\"y\":85},{\"op\":\"wait\",\"ms\":450},{\"op\":\"dump\",\"label\":\"back-to-A\"},{\"op\":\"wait\",\"ms\":250},{\"op\":\"shot\",\"label\":\"back-to-A\"},{\"op\":\"wait\",\"ms\":150},{\"op\":\"move\",\"x\":250,\"y\":150},{\"op\":\"wait\",\"ms\":450},{\"op\":\"dump\",\"label\":\"below\"},{\"op\":\"wait\",\"ms\":250},{\"op\":\"shot\",\"label\":\"below\"},{\"op\":\"wait\",\"ms\":150},{\"op\":\"move\",\"x\":475,\"y\":85},{\"op\":\"wait\",\"ms\":450},{\"op\":\"dump\",\"label\":\"in-B\"},{\"op\":\"wait\",\"ms\":250},{\"op\":\"shot\",\"label\":\"in-B\"},{\"op\":\"wait\",\"ms\":150},{\"op\":\"leave\"},{\"op\":\"wait\",\"ms\":450},{\"op\":\"dump\",\"label\":\"leave-from-B\"},{\"op\":\"wait\",\"ms\":250},{\"op\":\"shot\",\"label\":\"leave-from-B\"},{\"op\":\"wait\",\"ms\":150},{\"op\":\"move\",\"x\":475,\"y\":85},{\"op\":\"wait\",\"ms\":450},{\"op\":\"move\",\"x\":150,\"y\":85},{\"op\":\"wait\",\"ms\":450},{\"op\":\"dump\",\"label\":\"again-B-to-A\"},{\"op\":\"wait\",\"ms\":250},{\"op\":\"shot\",\"label\":\"again-B-to-A\"},{\"op\":\"wait\",\"ms\":150}]"
+  "[{\"op\":\"wait\",\"ms\":700},{\"op\":\"dump\",\"label\":\"start\"},{\"op\":\"wait\",\"ms\":250},{\"op\":\"shot\",\"label\":\"start\"},{\"op\":\"wait\",\"ms\":150},{\"op\":\"move\",\"x\":225,\"y\":85,\"real\":true},{\"op\":\"wait\",\"ms\":450},{\"op\":\"dump\",\"label\":\"in-A\"},{\"op\":\"wait\",\"ms\":250},{\"op\":\"shot\",\"label\":\"in-A\"},{\"op\":\"wait\",\"ms\":150},{\"op\":\"move\",\"x\":349,\"y\":85,\"real\":true},{\"op\":\"wait\",\"ms\":450},{\"op\":\"dump\",\"label\":\"last-pixel-of-A\"},{\"op\":\"wait\",\"ms\":250},{\"op\":\"shot\",\"label\":\"last-pixel-of-A\"},{\"op\":\"wait\",\"ms\":150},{\"op\":\"move\",\"x\":351,\"y\":85,\"real\":true},{\"op\":\"wait\",\"ms\":450},{\"op\":\"dump\",\"label\":\"cross-to-B\"},{\"op\":\"wait\",\"ms\":250},{\"op\":\"shot\",\"label\":\"cross-to-B\"},{\"op\":\"wait\",\"ms\":150},{\"op\":\"move\",\"x\":250,\"y\":85,\"real\":true},{\"op\":\"wait\",\"ms\":450},{\"op\":\"dump\",\"label\":\"back-to-A\"},{\"op\":\"wait\",\"ms\":250},{\"op\":\"shot\",\"label\":\"back-to-A\"},{\"op\":\"wait\",\"ms\":150},{\"op\":\"move\",\"x\":250,\"y\":150,\"real\":true},{\"op\":\"wait\",\"ms\":450},{\"op\":\"dump\",\"label\":\"below\"},{\"op\":\"wait\",\"ms\":250},{\"op\":\"shot\",\"label\":\"below\"},{\"op\":\"wait\",\"ms\":150},{\"op\":\"move\",\"x\":475,\"y\":85,\"real\":true},{\"op\":\"wait\",\"ms\":450},{\"op\":\"dump\",\"label\":\"in-B\"},{\"op\":\"wait\",\"ms\":250},{\"op\":\"shot\",\"label\":\"in-B\"},{\"op\":\"wait\",\"ms\":150},{\"op\":\"leave\",\"real\":true},{\"op\":\"wait\",\"ms\":450},{\"op\":\"dump\",\"label\":\"leave-from-B\"},{\"op\":\"wait\",\"ms\":250},{\"op\":\"shot\",\"label\":\"leave-from-B\"},{\"op\":\"wait\",\"ms\":150},{\"op\":\"move\",\"x\":475,\"y\":85,\"real\":true},{\"op\":\"wait\",\"ms\":450},{\"op\":\"move\",\"x\":150,\"y\":85,\"real\":true},{\"op\":\"wait\",\"ms\":450},{\"op\":\"dump\",\"label\":\"again-B-to-A\"},{\"op\":\"wait\",\"ms\":250},{\"op\":\"shot\",\"label\":\"again-B-to-A\"},{\"op\":\"wait\",\"ms\":150}]"
  ]
 }

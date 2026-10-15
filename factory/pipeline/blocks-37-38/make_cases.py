@@ -69,7 +69,7 @@ def static(name, typename, body, extra_cfg=None, dark=None):
     """A case with no interaction: pixels and, in pair.json, the semantic gate on the final dump."""
     pair = {"semanticGate": {"fields": ["role", "name", "enabled", "value", "range", "count", "order"], "scope": "main", "phases": [""]}}
     if extra_cfg: pair.update(extra_cfg)
-    pair["hazeTolerance"] = 1   # the thumb's soft shadow: 8-bit rounding of a faint translucent layer (decision H4)
+    pair["hazeTolerance"] = 2 if dark else 1   # the thumb's soft shadow: 8-bit rounding of a faint translucent layer (decision H4); two levels over the dark thumb's double translucency
     case(name, typename, body, pair, [{"op": "wait", "ms": 700}, {"op": "wait", "ms": 200}], dark)
 
 
@@ -130,12 +130,13 @@ def tick_band(i, spacing=8):
     return {"name": f"slider row {i}: tick marks of a stepped slider (not drawn on Windows, decision H6); the track, fill and thumb above are gated", "rect": [round(OX * SCALE), y0, round((OX + 200) * SCALE), y0 + 8]}
 
 
-def interact(name, typename, body, plan, small_change, gate_extra=None, stepped_rows=()):
+def interact(name, typename, body, plan, small_change, gate_extra=None, stepped_rows=(), exclude=()):
     steps, labels = sl_phases(plan)
     sg = slider_gate(small_change, {"phases": labels + [""]})
     if gate_extra: sg.update(gate_extra)
     pair = {"semanticGate": sg, "phaseShots": labels, "hazeTolerance": 1}
     if stepped_rows: pair["excludeRects"] = [tick_band(i) for i in stepped_rows]
+    if exclude: pair["excludeRects"] = pair.get("excludeRects", []) + list(exclude)
     case(name, typename, body, pair, steps)
 
 
@@ -233,8 +234,7 @@ LBL = f"""struct {T}labels: View {{
         }}.frame(width: 240, height: 200, alignment: .topLeading)
     }}
 }}"""
-LBL_EX = [{"name": f"row {i} (labels and track start: Segoe UI vs SF text widths, decision 2); the slider is gated by value, range, order and y", "rect": rect(0, y0, 240, y1)}
-          for i, (y0, y1) in enumerate([(0, 18), (22, 40), (44, 66), (70, 90)])]
+LBL_EX = [{"name": "the four label rows (labels, value labels and where the track starts: Segoe UI vs SF text widths, decision 2; tick marks of the stepped row, H6); the sliders are gated by value, range, order and name, the artwork by the unlabelled cases", "rect": rect(0, 0, 240, 92)}]
 static("swiftui.slider/labels-v1", T + "labels", LBL, {"semanticGate": slider_gate([10, 10, 10, 10], {"ignoreNames": []}), "excludeRects": LBL_EX})
 
 # ---- interaction (F2 steps; the Mac side sets the value through the accessibility value / increment: AppKit drops synthetic mouse events for an offscreen window, decision H5)
@@ -273,7 +273,8 @@ interact("swiftui.slider/value-labels-v1", T + "value_labels", f"""struct {T}val
         }}.frame(width: 240, height: 200, alignment: .topLeading)
     }}
 }}""", [("start", []), ("click-max", [{"op": "invoke", "name": "100"}]), ("click-min", [{"op": "invoke", "name": "0"}]), ("click-max-twice", [{"op": "invoke", "name": "100"}, {"op": "invoke", "name": "100"}])], [10],
-    {"fields": ["role", "name", "enabled", "value", "range", "count", "order"]})
+    {"fields": ["role", "name", "enabled", "value", "range", "count", "order"]},
+    exclude=[{"name": "the labelled row (label, value labels and where the track starts: Segoe UI vs SF text widths, decision 2); the slider is gated by value and range", "rect": rect(0, 0, 240, 20)}])
 
 
 # =====================================================================================================================================================================
@@ -349,8 +350,8 @@ def hv_witness(typename, frames, hover, tap, body, extra=""):
     return PRELUDE + "\n" + extra + f"struct {typename}: View {{\n{ini}    var body: some View {{\n{body}\n    }}\n}}"
 
 
-def mv(x, y): cx, cy = px(x, y); return {"op": "move", "x": cx, "y": cy}
-LEAVE = {"op": "leave"}
+def mv(x, y): cx, cy = px(x, y); return {"op": "move", "x": cx, "y": cy, "real": True}   # the real cursor: posted moves leave it elsewhere and the window then reports a leave at once
+LEAVE = {"op": "leave", "real": True}
 
 
 def pixel_case(name, typename, witness, plan, gate=None):

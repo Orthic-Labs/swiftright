@@ -35,7 +35,8 @@
   {
    "op": "move",
    "x": 350,
-   "y": 85
+   "y": 85,
+   "real": true
   },
   {
    "op": "wait",
@@ -60,7 +61,8 @@
   {
    "op": "move",
    "x": 400,
-   "y": 75
+   "y": 75,
+   "real": true
   },
   {
    "op": "wait",
@@ -85,7 +87,8 @@
   {
    "op": "move",
    "x": 350,
-   "y": 175
+   "y": 175,
+   "real": true
   },
   {
    "op": "wait",
@@ -110,7 +113,8 @@
   {
    "op": "move",
    "x": 350,
-   "y": 220
+   "y": 220,
+   "real": true
   },
   {
    "op": "wait",
@@ -135,7 +139,8 @@
   {
    "op": "move",
    "x": 350,
-   "y": 265
+   "y": 265,
+   "real": true
   },
   {
    "op": "wait",
@@ -160,7 +165,8 @@
   {
    "op": "move",
    "x": 350,
-   "y": 370
+   "y": 370,
+   "real": true
   },
   {
    "op": "wait",
@@ -183,7 +189,8 @@
    "ms": 150
   },
   {
-   "op": "leave"
+   "op": "leave",
+   "real": true
   },
   {
    "op": "wait",
@@ -208,7 +215,8 @@
   {
    "op": "move",
    "x": 125,
-   "y": 60
+   "y": 60,
+   "real": true
   },
   {
    "op": "wait",
@@ -233,7 +241,8 @@
   {
    "op": "move",
    "x": 575,
-   "y": 400
+   "y": 400,
+   "real": true
   },
   {
    "op": "wait",
@@ -258,6 +267,6 @@
  ],
  "macArgs": [
   "--steps",
-  "[{\"op\":\"wait\",\"ms\":700},{\"op\":\"dump\",\"label\":\"start\"},{\"op\":\"wait\",\"ms\":250},{\"op\":\"shot\",\"label\":\"start\"},{\"op\":\"wait\",\"ms\":150},{\"op\":\"move\",\"x\":350,\"y\":85},{\"op\":\"wait\",\"ms\":450},{\"op\":\"dump\",\"label\":\"in-A\"},{\"op\":\"wait\",\"ms\":250},{\"op\":\"shot\",\"label\":\"in-A\"},{\"op\":\"wait\",\"ms\":150},{\"op\":\"move\",\"x\":400,\"y\":75},{\"op\":\"wait\",\"ms\":450},{\"op\":\"dump\",\"label\":\"still-in-A\"},{\"op\":\"wait\",\"ms\":250},{\"op\":\"shot\",\"label\":\"still-in-A\"},{\"op\":\"wait\",\"ms\":150},{\"op\":\"move\",\"x\":350,\"y\":175},{\"op\":\"wait\",\"ms\":450},{\"op\":\"dump\",\"label\":\"A-to-B\"},{\"op\":\"wait\",\"ms\":250},{\"op\":\"shot\",\"label\":\"A-to-B\"},{\"op\":\"wait\",\"ms\":150},{\"op\":\"move\",\"x\":350,\"y\":220},{\"op\":\"wait\",\"ms\":450},{\"op\":\"dump\",\"label\":\"in-the-gap\"},{\"op\":\"wait\",\"ms\":250},{\"op\":\"shot\",\"label\":\"in-the-gap\"},{\"op\":\"wait\",\"ms\":150},{\"op\":\"move\",\"x\":350,\"y\":265},{\"op\":\"wait\",\"ms\":450},{\"op\":\"dump\",\"label\":\"to-button\"},{\"op\":\"wait\",\"ms\":250},{\"op\":\"shot\",\"label\":\"to-button\"},{\"op\":\"wait\",\"ms\":150},{\"op\":\"move\",\"x\":350,\"y\":370},{\"op\":\"wait\",\"ms\":450},{\"op\":\"dump\",\"label\":\"to-card\"},{\"op\":\"wait\",\"ms\":250},{\"op\":\"shot\",\"label\":\"to-card\"},{\"op\":\"wait\",\"ms\":150},{\"op\":\"leave\"},{\"op\":\"wait\",\"ms\":450},{\"op\":\"dump\",\"label\":\"leave\"},{\"op\":\"wait\",\"ms\":250},{\"op\":\"shot\",\"label\":\"leave\"},{\"op\":\"wait\",\"ms\":150},{\"op\":\"move\",\"x\":125,\"y\":60},{\"op\":\"wait\",\"ms\":450},{\"op\":\"dump\",\"label\":\"re-enter-A\"},{\"op\":\"wait\",\"ms\":250},{\"op\":\"shot\",\"label\":\"re-enter-A\"},{\"op\":\"wait\",\"ms\":150},{\"op\":\"move\",\"x\":575,\"y\":400},{\"op\":\"wait\",\"ms\":450},{\"op\":\"dump\",\"label\":\"A-to-D-directly\"},{\"op\":\"wait\",\"ms\":250},{\"op\":\"shot\",\"label\":\"A-to-D-directly\"},{\"op\":\"wait\",\"ms\":150}]"
+  "[{\"op\":\"wait\",\"ms\":700},{\"op\":\"dump\",\"label\":\"start\"},{\"op\":\"wait\",\"ms\":250},{\"op\":\"shot\",\"label\":\"start\"},{\"op\":\"wait\",\"ms\":150},{\"op\":\"move\",\"x\":350,\"y\":85,\"real\":true},{\"op\":\"wait\",\"ms\":450},{\"op\":\"dump\",\"label\":\"in-A\"},{\"op\":\"wait\",\"ms\":250},{\"op\":\"shot\",\"label\":\"in-A\"},{\"op\":\"wait\",\"ms\":150},{\"op\":\"move\",\"x\":400,\"y\":75,\"real\":true},{\"op\":\"wait\",\"ms\":450},{\"op\":\"dump\",\"label\":\"still-in-A\"},{\"op\":\"wait\",\"ms\":250},{\"op\":\"shot\",\"label\":\"still-in-A\"},{\"op\":\"wait\",\"ms\":150},{\"op\":\"move\",\"x\":350,\"y\":175,\"real\":true},{\"op\":\"wait\",\"ms\":450},{\"op\":\"dump\",\"label\":\"A-to-B\"},{\"op\":\"wait\",\"ms\":250},{\"op\":\"shot\",\"label\":\"A-to-B\"},{\"op\":\"wait\",\"ms\":150},{\"op\":\"move\",\"x\":350,\"y\":220,\"real\":true},{\"op\":\"wait\",\"ms\":450},{\"op\":\"dump\",\"label\":\"in-the-gap\"},{\"op\":\"wait\",\"ms\":250},{\"op\":\"shot\",\"label\":\"in-the-gap\"},{\"op\":\"wait\",\"ms\":150},{\"op\":\"move\",\"x\":350,\"y\":265,\"real\":true},{\"op\":\"wait\",\"ms\":450},{\"op\":\"dump\",\"label\":\"to-button\"},{\"op\":\"wait\",\"ms\":250},{\"op\":\"shot\",\"label\":\"to-button\"},{\"op\":\"wait\",\"ms\":150},{\"op\":\"move\",\"x\":350,\"y\":370,\"real\":true},{\"op\":\"wait\",\"ms\":450},{\"op\":\"dump\",\"label\":\"to-card\"},{\"op\":\"wait\",\"ms\":250},{\"op\":\"shot\",\"label\":\"to-card\"},{\"op\":\"wait\",\"ms\":150},{\"op\":\"leave\",\"real\":true},{\"op\":\"wait\",\"ms\":450},{\"op\":\"dump\",\"label\":\"leave\"},{\"op\":\"wait\",\"ms\":250},{\"op\":\"shot\",\"label\":\"leave\"},{\"op\":\"wait\",\"ms\":150},{\"op\":\"move\",\"x\":125,\"y\":60,\"real\":true},{\"op\":\"wait\",\"ms\":450},{\"op\":\"dump\",\"label\":\"re-enter-A\"},{\"op\":\"wait\",\"ms\":250},{\"op\":\"shot\",\"label\":\"re-enter-A\"},{\"op\":\"wait\",\"ms\":150},{\"op\":\"move\",\"x\":575,\"y\":400,\"real\":true},{\"op\":\"wait\",\"ms\":450},{\"op\":\"dump\",\"label\":\"A-to-D-directly\"},{\"op\":\"wait\",\"ms\":250},{\"op\":\"shot\",\"label\":\"A-to-D-directly\"},{\"op\":\"wait\",\"ms\":150}]"
  ]
 }

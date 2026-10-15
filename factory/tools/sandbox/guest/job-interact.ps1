@@ -9,7 +9,8 @@
 #   {"op":"click","x":10,"y":20,"button":"left|right","count":1}   WM_MOUSEMOVE + button down/up
 #   {"op":"move","x":10,"y":20,"down":false}                   WM_MOUSEMOVE posted at the client point (wParam MK_LBUTTON when "down"): a pointer move, with no button (hover) or with the primary button held (a drag in steps)
 #   {"op":"drag","x0":10,"y0":20,"x1":90,"y1":20,"steps":6}    WM_MOUSEMOVE, left button down at (x0, y0), `steps` WM_MOUSEMOVE with MK_LBUTTON along the line, button up at (x1, y1)
-#   {"op":"leave"}                                              WM_MOUSELEAVE posted: the pointer left the window
+#   {"op":"leave","real":false}                                 WM_MOUSELEAVE posted (real: the cursor is moved just outside the window)
+#   ("move" with "real":true moves the real cursor to the client point instead of posting a message)
 #   {"op":"ime","action":"compose","text":"にほ"}        ImmSetCompositionStringW(SCS_SETSTR) on the window's input context, then WM_IME_COMPOSITION(GCS_COMPSTR); falls back to posting
 #   {"op":"ime","action":"commit","text":"日本"}         WM_IME_COMPOSITION(GCS_RESULTSTR) when the IMM call is refused (recorded in the step log); "cancel" ends the composition
 #   {"op":"invoke","name":"OK"}                          UIA InvokePattern on the first element (in the target window) whose Name equals `name` (dialog buttons; the Sandbox cannot click a TaskDialog by pixels reliably)
@@ -52,6 +53,7 @@ public static class IxNative {
  [DllImport("user32.dll")] public static extern uint GetDpiForWindow(IntPtr h);
  [StructLayout(LayoutKind.Sequential)] public struct POINT {public int x,y;}
  public static int[] ClientScreen(IntPtr h){RECT r; GetClientRect(h,out r); POINT p=new POINT(); ClientToScreen(h,ref p); return new int[]{p.x,p.y,r.right-r.left,r.bottom-r.top};}
+ [DllImport("user32.dll")] public static extern bool SetCursorPos(int x,int y);
  [DllImport("user32.dll")] public static extern bool SetForegroundWindow(IntPtr h);
  [DllImport("user32.dll")] public static extern IntPtr GetForegroundWindow();
  [DllImport("user32.dll")] public static extern bool AttachThreadInput(uint a,uint b,bool f);
@@ -198,6 +200,11 @@ function Do-Step($proc, $mainH, $step, [string]$out, [string]$n) {
         }
         'move' {
             $x = [int]$step.x; $y = [int]$step.y; $wp = $(if ($step.down) { 1 } else { 0 })
+            if ($step.real) {
+                # the real cursor: the OS then sends WM_MOUSEMOVE and, when it leaves, WM_MOUSELEAVE (a posted move leaves the real cursor elsewhere, so the window's own mouse tracking reports a leave at once)
+                $cs = [IxNative]::ClientScreen($h); [void][IxNative]::SetCursorPos($cs[0] + $x, $cs[1] + $y); Start-Sleep -Milliseconds 80
+                return 'ok(cursor)'
+            }
             [void][IxNative]::PostMessageW($h, $WM.MOUSEMOVE, [IntPtr]$wp, [IxNative]::Lp($x, $y)); Start-Sleep -Milliseconds 40
             return 'ok'
         }
@@ -213,6 +220,7 @@ function Do-Step($proc, $mainH, $step, [string]$out, [string]$n) {
             return 'ok'
         }
         'leave' {
+            if ($step.real) { $cs = [IxNative]::ClientScreen($h); [void][IxNative]::SetCursorPos($cs[0] + $cs[2] + 60, $cs[1] + $cs[3] + 60); Start-Sleep -Milliseconds 120; return 'ok(cursor)' }
             [void][IxNative]::PostMessageW($h, $WM.MOUSELEAVE, [IntPtr]0, [IntPtr]0); Start-Sleep -Milliseconds 40
             return 'ok'
         }
