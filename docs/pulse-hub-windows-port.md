@@ -8,6 +8,31 @@ Date: 15 October 2026. Requested by Pulse Swift. Inputs: Orthic-Labs/pulse code 
 - **Render: all 12 sections render in light and dark (24 of 24 pictures), but only with 14 probe patches to the product's paint and text policy** (table B). Unpatched, the first Overview frame stops at the first text measurement. The pictures are a static first frame; nothing was clicked, typed or scrolled. They are not pixel-comparable to the Mac: icons are missing (38 SF Symbols, the table holds one), fonts are approximated, and several rows truncate that do not on the Mac.
 - **Effort: about 17 agentic hours of critical path for the gaps as grouped below (16 blocks at the measured round-4 rate of 1.08 h per block, one lane), 36 h at the measured round-3 end-to-end rate.** Not included: Oracle review (round 4 has none), a fit pass over the 12 sections after the blocks land, and anything interactive. Arithmetic in section 4.
 
+## 0. Round 6 result (16 October): Text in priority groups, Pulse at 3e8b6b29, PulseFit on and off
+
+Pulse at `3e8b6b29` (`PulseFit.swift` present), SwiftRight stage `3d3c6f5c2-0a0d1f39` (HEAD of the layout-rules lane). Probe package: `probes/pulse-hub/` (`fetch-pulse.sh`, `assemble.sh` with `R5=1`), built on the Dell with `buildhost.ps1`: **0 errors, exit 0** for `FactoryProbe` in both variants. The renderer is `renderer-0.7-baseline-22ad719b` (sha `82513ae0`), the one the case gates use. Pictures: `docs/pulse-hub-windows/<section>-<scheme>.png` (Pulse's workarounds **on**) and `docs/pulse-hub-windows/nofit/` (**off**: `PulseFit.swift` evaluated as on the Mac, in the fetched copy only; Pulse is not edited). Each picture is a full-window PrintWindow of one launch; each launch was its own Sandbox job with the frame counter set first, because a shared job launched frames out of order (run 2 reported frame 2, run 3 frame 1). Blank (white) first frames were retried at a 15 s wait; the final set has 24 distinct pictures per variant and every picture's host log names the section it shows.
+
+- **Layout rules (block 27, G15):** closed for Text. The eight paired text cases pass the block gate at N=20 on `3d3c6f5c2-0a0d1f39` (text-labels, text-priority, text-three-groups, text-spacer, hub-rows, text-zero-proposal, text-fixed-size, system-font line-limit-two). Measured rules: L1-L8 in `docs/sr1-decisions.md`.
+- **canImport(SwiftRightHost):** **false** in RightKitHub in our build. Measured with a two-target probe package on the Dell (same stage): a target that depends on `SwiftRightRuntime` only reports `false`, a target that depends on `SwiftRightHost` reports `true`. RightKitHub's probe target does not depend on `SwiftRightHost`, so `HubImage` has no backing and `image(fitting:)` returns nil. Consequence, seen in the pictures: the Apps section shows generic placeholder tiles, not the app icons. Fix on either side: add the `SwiftRightHost` product to the RightKitHub target (probe) or the Pulse package (the Windows host product), then re-measure.
+- **PulseFit.swift:** with the workarounds off, seven of the twelve sections draw differently (activity, storage, monitor, apps, chat, accounts, and appearance dark); the other five are identical. This round does not show what the Mac does with those sections; the seven need a per-section check before any of the Windows priorities or lengths is removed.
+
+| Section | Compiles | Renders light, dark (on) | Pictures differ with PulseFit off |
+| --- | --- | --- | --- |
+| overview | yes | yes, yes | no |
+| activity | yes | yes, yes | yes, yes |
+| storage | yes | yes, yes | yes, yes |
+| cleanup | yes | yes, yes | no |
+| monitor | yes | yes, yes | light yes; dark only a 30 px band |
+| apps | yes | yes, yes (icons are placeholders: canImport false) | yes, yes |
+| chat | yes | yes, yes | light yes; dark yes |
+| permissions | yes | yes, yes | no |
+| accounts | yes | yes, yes | yes, yes |
+| appearance | yes | yes, yes | light no; dark only a 10 x 68 px area |
+| notifications | yes | yes, yes | no |
+| general | yes | yes, yes | no |
+
+No `HOST_RENDER_ERROR` and no `HOST_EXCEPTION` in any of the 48 captures. Not verified this round: clicking, typing, scrolling, the `.task` path, and pixel comparison with the Mac.
+
 ## 0. Round 5 result (15 October, later the same day): the gaps are closed
 
 Pulse at `906d5192` (Pulse main, parity pass), SwiftRight stage `795d1644a-38920803`. **No stubs, no source bypass, no runtime or host patch**: the probe package is Pulse's sources untouched plus the SwiftUI re-export shim and a `Bundle.module` shim (probe packaging: PulseHub's Tanker resource bundle is not bundled, licence unconfirmed; `probes/pulse-hub/r5/`; assemble with `PULSE_SHA=906d5192 R5=1`). All five modules (`RightKitEngine`, `RightKitHub`, `RightKitHubQA`, `PulseHub`, `PulseHubFixtures`) and the `FactoryProbe` host compile for Windows with 0 errors, and **all 12 sections render in light and dark: 24 of 24 pictures** through the product's own paint and text path (`docs/pulse-hub-windows/<section>-<scheme>.png`, last panel; the Tauri and Mac panels are the earlier CI artifact and predate Pulse's parity pass). No `HOST_RENDER_ERROR`, no ellipsis-only fallback, no opaque-black rect in any section. Honest limits: the pictures are static first frames (nothing clicked, typed, scrolled; the live `.task` path never ran); nothing was compared pixel by pixel with the Mac (fonts differ, decision 2); four capture runs report `GetClientRect failed` but produced valid pictures, and a first-launch Sandbox capture occasionally comes out blank (the Activity page needs a 15-20 s wait): the pictures were re-taken until none was blank.
@@ -24,7 +49,7 @@ Pulse at `906d5192` (Pulse main, parity pass), SwiftRight stage `795d1644a-38920
 | G11 | single-child `ViewBuilder` identity | closed (block 26) |
 | G12 | `VerticalAlignment.firstTextBaseline` / `lastTextBaseline` | closed (block 33, F3) |
 | G13, G14 | `Font.Weight.heavy` (nine weights), `Font.width` | closed (block 28, F1); `width` carried, not drawn |
-| G15 | `layoutPriority` | open for Text children: fix db29b0c5e, cases pending |
+| G15 | `layoutPriority` | closed for Text children (round 6: eight text cases pass N=20, decisions L1-L8) |
 | G16, G18 | `View.id`, `ViewModifier` | closed (block 26) |
 | G17 | `TextField(axis:)` | compiles and is the single-line field (block 34, F9); growth over lines not delivered |
 | G19 | `Scene` / `WindowGroup` | shapes only (compile) |
