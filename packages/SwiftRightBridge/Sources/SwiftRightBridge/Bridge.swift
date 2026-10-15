@@ -435,6 +435,8 @@ public final class BridgeWindow {
     unowned let bridge: Bridge
     /// Last delivered window-metrics event (authoritative over the renderer getter). Per window, so a new window starts empty.
     var metricsLatch = MetricsLatch()
+    /// The version of the last transaction sent (a split transaction uses several, so the host's next version may already be taken).
+    var lastVersion: UInt64 = 0
 
     init(bridge: Bridge, handle: UInt64) {
         self.bridge = bridge
@@ -448,11 +450,49 @@ public final class BridgeWindow {
 
     /// One versioned transaction. All-or-nothing; presented after the current callback unwinds.
     public func commit(_ t: Transaction) throws {
+        // The renderer accepts at most 4096 upserts, 4096 removes and 65536 primitives per transaction (`render/swiftright-render/src/abi.rs` MAX_UPSERTS, MAX_REMOVES,
+        // MAX_PRIMITIVES: more is SWR_E_TOO_LARGE). A page whose tree is larger (the hub's Monitor and General sections: 4700+ nodes) is sent as consecutive transactions: the removes
+        // first, then the upserts in tree order (a parent is always upserted before its children, so every prefix is a consistent tree), the focus on the last one. They are
+        // presented together, after the current callback unwinds. A transaction within the limits is sent as it is.
+        for chunk in Self.split(t, lastVersion: lastVersion) { try send(chunk) }
+    }
+
+    /// The renderer's per-transaction limits.
+    static let maxUpserts = 4096, maxRemoves = 4096, maxPrimitives = 65536
+
+    /// `t` as the transactions the renderer accepts, versions strictly increasing from `max(t.version, lastVersion + 1)`. Pure (testable without a renderer).
+    static func split(_ t: Transaction, lastVersion: UInt64) -> [Transaction] {
+        var version = max(t.version, lastVersion &+ 1)
+        let primitiveCount = t.upserts.reduce(0) { $0 + $1.primitives.count }
+        if t.upserts.count <= maxUpserts, t.removes.count <= maxRemoves, primitiveCount <= maxPrimitives {
+            return [Transaction(version: version, focus: t.focus, upserts: t.upserts, removes: t.removes)]
+        }
+        var out: [Transaction] = []
+        var removes = t.removes[...]
+        while !removes.isEmpty {
+            let n = min(maxRemoves, removes.count)
+            out.append(Transaction(version: version, removes: Array(removes.prefix(n)))); version &+= 1
+            removes = removes.dropFirst(n)
+        }
+        var upserts: [NodeUpsert] = [], prims = 0
+        for u in t.upserts {
+            if !upserts.isEmpty, upserts.count >= maxUpserts || prims + u.primitives.count > maxPrimitives {
+                out.append(Transaction(version: version, upserts: upserts)); version &+= 1
+                upserts = []; prims = 0
+            }
+            upserts.append(u); prims += u.primitives.count
+        }
+        out.append(Transaction(version: version, focus: t.focus, upserts: upserts))
+        return out
+    }
+
+    private func send(_ t: Transaction) throws {
         guard let fn = bridge.api.commit else { throw BridgeError.status(-3, "commit") }
         let arena = Arena()
         var tx = cTransaction(t, window: handle, arena: arena)
         let rc = withUnsafePointer(to: &tx) { fn($0) }
         if rc != 0 { throw BridgeError.status(rc, "swr_commit v\(t.version)") }
+        lastVersion = t.version
     }
 
     /// Window metrics in physical px. Before any `.windowMetrics` event this is the renderer's value at ready (the settled
