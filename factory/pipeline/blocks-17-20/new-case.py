@@ -22,13 +22,13 @@ def patch_text_host(t):
         nonlocal t
         assert t.count(old) == 1, ("text host anchor", old[:60], t.count(old))
         t = t.replace(old, new)
-    rep("    var windowClosed = false\n", """    var windowClosed = false
-    var coordinator: PresentationCoordinator?
-    static let leaseNS: UInt64 = {
+    # the lease: the same snippet the 222 hosts that parse --factory-capture-lease-seconds carry (tools/pass_capture_lease.py); a template that already has it gets no second copy
+    LEASE = """    static let leaseNS: UInt64 = {
         for a in CommandLine.arguments where a.hasPrefix("--factory-capture-lease-seconds=") { if let n = UInt64(a.dropFirst("--factory-capture-lease-seconds=".count)), n > 0 { return n * 1_000_000_000 } }
         return 10_000_000_000
     }()
-""")
+"""
+    rep("    var windowClosed = false\n", "    var windowClosed = false\n    var coordinator: PresentationCoordinator?\n" + ("" if "static let leaseNS" in t else LEASE))
     rep("            self.graph = graph\n", """            self.graph = graph
             coordinator = PresentationCoordinator(graph: graph) { id, title, message, items, defaultIndex in
                 try window.requestDialog(requestID: id, title: title, message: message, buttons: items, defaultIndex: defaultIndex)
@@ -36,7 +36,9 @@ def patch_text_host(t):
 """)
     rep('            print("HOST_COMMIT version=\\(version) nodes=\\(committed.nodeCount) focused=\\(record.focused ?? "none")")\n', '            print("HOST_COMMIT version=\\(version) nodes=\\(committed.nodeCount) focused=\\(record.focused ?? "none")")\n            try coordinator?.sync(root: root)\n')
     rep("    func event(_ event: BridgeEvent) {\n        guard !windowClosed else { return }\n", "    func event(_ event: BridgeEvent) {\n        guard !windowClosed else { return }\n        if coordinator?.handle(event) == true { graph?.flush(); return }\n")
-    rep("if time - (started ?? time) > 10_000_000_000 { bridge.requestQuit() }", "if time - (started ?? time) > Self.leaseNS { bridge.requestQuit() }")
+    if "> 10_000_000_000 { bridge.requestQuit() }" in t:
+        rep("if time - (started ?? time) > 10_000_000_000 { bridge.requestQuit() }", "if time - (started ?? time) > Self.leaseNS { bridge.requestQuit() }")
+    assert "> Self.leaseNS { bridge.requestQuit() }" in t, "text host has no parsed lease"
     return t
 
 if a.alert_host:

@@ -63,6 +63,10 @@ struct HostPlacement {
     var errors: [String] = []
     // The bridge drains late main-queue work after onWindowClosed; no window ownership lookup is valid then.
     var windowClosed = false
+    static let leaseNS: UInt64 = {
+        for a in CommandLine.arguments where a.hasPrefix("--factory-capture-lease-seconds=") { if let n = UInt64(a.dropFirst("--factory-capture-lease-seconds=".count)), n > 0 { return n * 1_000_000_000 } }
+        return 10_000_000_000
+    }()
     init(_ bridge: Bridge) { self.bridge = bridge }
 
     func ready(_ window: BridgeWindow) {
@@ -158,7 +162,7 @@ struct HostPlacement {
         if started == nil { started = time }
         graph?.tick(now: Double(time) / 1_000_000_000)
         graph?.flush()
-        if time - (started ?? time) > 10_000_000_000 { bridge.requestQuit() }
+        if time - (started ?? time) > Self.leaseNS { bridge.requestQuit() }
     }
 
     func closed() {
