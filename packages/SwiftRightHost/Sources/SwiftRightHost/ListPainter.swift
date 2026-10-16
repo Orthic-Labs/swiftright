@@ -5,10 +5,12 @@ import SwiftRightBridge
 /// How a List is painted on the host side: the list's own background and row separators, and for each row (a direct child of the List node) its selection
 /// highlight. Row text paints itself (white inside an active selection). The numbers are measured from SwiftUI's default macOS List (an NSTableView in the inset
 /// style, rendered at scale 2.5, light appearance; factory/tools/switch-artwork/list-profile): a row is its content plus 8 pt, at least 24 pt (`ListMetrics`);
-/// separators are 1 pt lines in 230 (the pixel row above them at half coverage) along the bottom of every row except the last, from 16 pt inside the list's
+/// separators are 1 pt lines in 230 (the pixel row above them at half coverage) along the bottom of every row except the last, from 16 pt inside the row's
 /// leading edge to 16 pt inside its trailing edge (the plain style: from 8 pt to the edge), and hidden next to a selected row; the inset style's selection is a
-/// rounded rectangle (corner outline measured, `ListHighlightArtwork`) 10 pt inside the list's edges, accent (0, 100, 225) while the list is the key view and grey 220 otherwise; the plain style's is a
-/// flat full-width rectangle; the background is white. Nothing of Apple's artwork is embedded.
+/// rounded rectangle (corner outline measured, `ListHighlightArtwork`) 10 pt inside the row's edges, accent (0, 100, 225) while the list is the key view and grey 220 otherwise; the plain style's is a
+/// flat full-width rectangle; the background is white. When an inset list's rows overflow it, a legacy vertical scroller reserves 16.8 pt at the trailing edge
+/// and its rows end there (H21); the row, selection and separator measures are then taken from the row, not the list, which is the same as the list when the rows fit.
+/// Nothing of Apple's artwork is embedded.
 public enum ListPainter {
     public static let background: UInt32 = 0xffffffff
     public static let separatorRGB: UInt32 = 0xe6e6e6
@@ -47,18 +49,23 @@ public enum ListPainter {
         return (separatorHidden, setsBackground, background, unsupported)
     }
 
-    /// The full-width rectangle of every row (direct child) of a List, top to bottom, in window pixels, from the layout rules (`ListMetrics`): edges at
-    /// whole device pixels (a half pixel rounds up, as AppKit lays the first row of a list at a half-pixel position).
+    /// The rectangle of every row (direct child) of a List, top to bottom, in window pixels, from the layout rules (`ListMetrics`): the list's width, less
+    /// the legacy scroller's gutter (16.8 pt, 42 px at scale 2.5) only when the rows overflow the list (see `ListMetrics`), and edges at whole device pixels
+    /// (a half pixel rounds up, as AppKit lays the first row of a list at a half-pixel position).
     public static func rows(of list: ResolvedNode, bounds: Rect, scale: Float) -> [Row] {
         let look = look(of: list)
+        let rowHeights = list.children.map { ListMetrics.rowHeight(forContent: CGFloat($0.frame.height)) }
+        let overflows = ListMetrics.overflows(look, rowHeights: rowHeights, viewportHeight: CGFloat(bounds.h / scale))
+        let gutter = (Float(ListMetrics.trailingGutter(look, overflows: overflows)) * scale).rounded(.toNearestOrAwayFromZero)
+        let rowWidth = max(0, bounds.w - gutter)
         var edge = (bounds.y + Float(ListMetrics.topInset(look)) * scale).rounded(.toNearestOrAwayFromZero)
         var out: [Row] = []
         var cursor = Float(ListMetrics.topInset(look))
-        for child in list.children {
-            cursor += Float(ListMetrics.rowHeight(forContent: CGFloat(child.frame.height)))
+        for (child, height) in zip(list.children, rowHeights) {
+            cursor += Float(height)
             let next = (bounds.y + cursor * scale).rounded(.toNearestOrAwayFromZero)
             let style = rowStyle(of: child)
-            out.append(Row(rect: Rect(x: bounds.x, y: edge, w: bounds.w, h: next - edge), isSelected: child.accessibility.isSelected, isEnabled: child.accessibility.isEnabled,
+            out.append(Row(rect: Rect(x: bounds.x, y: edge, w: rowWidth, h: next - edge), isSelected: child.accessibility.isSelected, isEnabled: child.accessibility.isEnabled,
                            separatorHidden: style.separatorHidden ?? false, background: style.background, backgroundUnsupported: style.unsupported))
             edge = next
         }
@@ -85,7 +92,8 @@ public enum ListPainter {
             if let fill = row.background { out.append(.rect(row.rect, color: try HostPaint.rgba(fill, opacity: 1))) }
         }
         for (i, row) in rows.enumerated() where i < rows.count - 1 && !row.isSelected && !rows[i + 1].isSelected && !row.separatorHidden {
-            let x = bounds.x + inset, w = max(0, bounds.w - inset - right)
+            // the separator spans its row (inset from the row's edges, not the list's)
+            let x = row.rect.x + inset, w = max(0, row.rect.w - inset - right)
             let bottom = row.rect.y + row.rect.h
             if row.background != nil {
                 // over a coloured row the separator is the translucent black it is (alpha 25/255, as the Divider), not the flat grey that equals it over white
@@ -110,11 +118,11 @@ public enum ListPainter {
         case rounded(Rect, rgb: UInt32)
     }
 
-    public static func highlight(for row: Row, listBounds: Rect, look: ListLook, scale: Float, active: Bool) -> Highlight? {
+    public static func highlight(for row: Row, look: ListLook, scale: Float, active: Bool) -> Highlight? {
         guard row.isSelected, row.background == nil else { return nil }   // a row background replaces the selection highlight (measured: the highlight is not drawn over it)
         let rgb = selectionColor(active: active, isEnabled: row.isEnabled)
         if look == .plain { return .flat(row.rect, rgb << 8 | 0xff) }
         let inset = selectionInsetPoints * scale
-        return .rounded(Rect(x: listBounds.x + inset, y: row.rect.y, w: listBounds.w - 2 * inset, h: row.rect.h), rgb: rgb)
+        return .rounded(Rect(x: row.rect.x + inset, y: row.rect.y, w: max(0, row.rect.w - 2 * inset), h: row.rect.h), rgb: rgb)
     }
 }

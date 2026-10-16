@@ -28,6 +28,24 @@ private struct Witness_ListSidebar: View {
     var body: some View { List { Text("A") }.listStyle(.sidebar).frame(width: 200, height: 160) }
 }
 
+/// Seven rows in 160 pt: a 188 pt document (10 + 168 + 10) overflows, so a legacy scroller reserves the gutter.
+private struct Witness_ListSevenRows: View {
+    var body: some View { List { ForEach(0..<7, id: \.self) { i in Text("Row \(i)") } }.frame(width: 200, height: 160) }
+}
+
+/// Three rows in 92 pt: the document is exactly 10 + 72 + 10 = 92 pt, which fits (no overflow).
+private struct Witness_ListExactFit: View {
+    var body: some View { List { Text("One"); Text("Two"); Text("Three") }.frame(width: 200, height: 92) }
+}
+
+/// The controls-b List of block 39 (`swiftui.uia-walk/controls-b-v1` Witness.swift): 180 x 90 pt, the first row selected.
+private struct Witness_ListControlsB: View {
+    @State var selection: Int? = 1
+    var body: some View {
+        List(selection: $selection) { Text("One").tag(1); Text("Two").tag(2); Text("Three").tag(3) }.frame(width: 180, height: 90)
+    }
+}
+
 /// The List paint (decision 12): rows, separators, selection and semantics, from the default macOS List measured at scale 2.5.
 @MainActor
 final class ListPainterTests: XCTestCase {
@@ -64,7 +82,57 @@ final class ListPainterTests: XCTestCase {
         XCTAssertEqual(rows.count, 5)
         XCTAssertEqual(rects.map { $0.rect.y }, [125, 185, 245, 305, 365])
         XCTAssertEqual(rects.map { $0.rect.h }, [60, 60, 60, 60, 60])
-        XCTAssertEqual(rects.map { $0.rect.x }, [150, 150, 150, 150, 150]); XCTAssertEqual(rects[0].rect.w, 500)
+        XCTAssertEqual(rects.map { $0.rect.x }, [150, 150, 150, 150, 150])
+        XCTAssertEqual(rects[0].rect.w, 500, "five rows fit (140 pt in a 160 pt list): no scroller, so the row spans the whole list (H21)")
+    }
+
+    func testInsetRowsSpanTheListLessTheScrollerGutterAsOnMacOS() throws {
+        // controls-b, CI run 38854967920: the Mac's three row frames are 163.2 pt (408 px) wide from the list's leading edge; the list is 180 pt (450 px)
+        let r = try commit(Witness_ListControlsB())
+        let rows = flatten(r.root).first { $0.kind == "List" }!.children
+        let ups = try rows.map { row in try XCTUnwrap(r.transaction.upserts.first { $0.id == UInt64(row.instance + 1) }) }
+        XCTAssertEqual(ups.map { $0.bounds.x }, [150, 150, 150])
+        XCTAssertEqual(ups.map { $0.bounds.w }, [408, 408, 408], "450 px less 42 px: the Mac's 163.2 pt row")
+        XCTAssertEqual(ups.map { $0.bounds.h }, [60, 60, 60])
+        let list = try upsert(r, kind: "List")
+        XCTAssertEqual(rects(list.primitives)[0].0.w, 450, "the list's own background spans the whole list, gutter included")
+    }
+
+    func testSelectedRowHighlightMatchesTheMacPixels() throws {
+        // controls-b: the Mac selection fill spans x 125..482 (358 px) in a 100..550 list, 10 pt inside the row's edges (the row ends at 508)
+        let r = try commit(Witness_ListControlsB())
+        let rows = flatten(r.root).first { $0.kind == "List" }!.children
+        let selected = try XCTUnwrap(r.transaction.upserts.first { $0.id == UInt64(rows[0].instance + 1) })
+        guard case .image(let handle, let place, _) = try XCTUnwrap(selected.primitives.first(where: { if case .image = $0 { return true } else { return false } })) else { return XCTFail("inset selection is a rasterised rounded rectangle") }
+        let image = try XCTUnwrap(r.images.registered[handle.raw])
+        XCTAssertEqual(Float(image.width), 358); XCTAssertEqual(Float(image.height), 60)
+        XCTAssertEqual(place.x, 175, accuracy: 0.1); XCTAssertEqual(place.y, 125, accuracy: 0.1)
+    }
+
+    func testOverflowingInsetListReservesTheScrollerGutter() throws {
+        let r = try commit(Witness_ListSevenRows())
+        let list = flatten(r.root).first { $0.kind == "List" }!
+        let rects = ListPainter.rows(of: list, bounds: Rect(x: 150, y: 100, w: 500, h: 400), scale: 2.5)
+        XCTAssertEqual(rects.count, 7)
+        XCTAssertEqual(rects.map { $0.rect.w }, [458, 458, 458, 458, 458, 458, 458], "188 pt document in a 160 pt list: the 42 px gutter")
+    }
+
+    func testExactFitInsetListReservesNoGutter() throws {
+        // controls-b's 90 pt list overflows by 2 pt (92 > 90); a 92 pt list holding the same three rows fits exactly
+        let r = try commit(Witness_ListExactFit())
+        let list = flatten(r.root).first { $0.kind == "List" }!
+        let rects = ListPainter.rows(of: list, bounds: Rect(x: 150, y: 100, w: 500, h: 230), scale: 2.5)
+        XCTAssertEqual(rects.map { $0.rect.w }, [500, 500, 500])
+    }
+
+    func testSeparatorSpansTheRowInsetSixteenPointsOnEachSide() throws {
+        // controls-b: row 0 is selected, so only the separator under row 1 is drawn; the Mac's runs 140..467 (328 px) in a row 100..508
+        let r = try commit(Witness_ListControlsB())
+        let list = try upsert(r, kind: "List")
+        let seps = Array(rects(list.primitives).dropFirst())
+        XCTAssertEqual(seps.count, 2, "one separator (a 2 px line and a half-coverage row), none under the selected row 0")
+        XCTAssertEqual(seps[0].0.x, 190, "16 pt (40 px) inside the row's leading edge"); XCTAssertEqual(seps[0].0.w, 328, "ends 16 pt inside the row's trailing edge: 518 = 150 + 408 - 40")
+        XCTAssertEqual(seps[0].0.y, 243); XCTAssertEqual(seps[0].0.h, 2)
     }
 
     func testBackgroundAndFourSeparatorsInTwoLayers() throws {
@@ -77,7 +145,7 @@ final class ListPainterTests: XCTestCase {
         let seps = Array(rs.dropFirst())
         XCTAssertEqual(seps.count, 8, "4 separators (none after the last row), each a 2 px line and a half-coverage pixel row above it")
         // under row 0 (125..185): the 2 px line 183..185 in 230 and the pixel row 182 in 242.5 (243), from 16 pt (40 px) inside both edges
-        XCTAssertEqual(seps[0].0.y, 183); XCTAssertEqual(seps[0].0.h, 2); XCTAssertEqual(seps[0].0.x, 190); XCTAssertEqual(seps[0].0.w, 420); XCTAssertEqual(seps[0].1, 0xe6e6e6ff)
+        XCTAssertEqual(seps[0].0.y, 183); XCTAssertEqual(seps[0].0.h, 2); XCTAssertEqual(seps[0].0.x, 190); XCTAssertEqual(seps[0].0.w, 420, "the row (the full 500 px list, since the rows fit) less 40 px on each side"); XCTAssertEqual(seps[0].1, 0xe6e6e6ff)
         XCTAssertEqual(seps[1].0.y, 182); XCTAssertEqual(seps[1].0.h, 1); XCTAssertEqual(seps[1].1, 0xf3f3f3ff)
     }
 
@@ -94,7 +162,7 @@ final class ListPainterTests: XCTestCase {
             let selected = try XCTUnwrap(r.transaction.upserts.first { $0.id == UInt64(rows[2].instance + 1) })
             guard case .image(let handle, let place, _) = try XCTUnwrap(selected.primitives.first(where: { if case .image = $0 { return true } else { return false } })) else { return XCTFail("inset selection is a rasterised rounded rectangle") }
             let image = try XCTUnwrap(r.images.registered[handle.raw])
-            XCTAssertEqual(Float(image.width), 450, "180 pt: the highlight is inset 10 pt from both edges"); XCTAssertEqual(Float(image.height), 60)
+            XCTAssertEqual(Float(image.width), 450, "200 pt list, rows fit: the row is the list's 500 px and the highlight is inset 10 pt from both edges"); XCTAssertEqual(Float(image.height), 60)
             XCTAssertEqual(place.x, 175, accuracy: 0.1); XCTAssertEqual(place.y, 245, accuracy: 0.1)
             let mid = (30 * Int(image.width) + 225) * 4
             XCTAssertEqual(Array(image.rgba[mid..<mid + 3]).map(Int.init), colour)

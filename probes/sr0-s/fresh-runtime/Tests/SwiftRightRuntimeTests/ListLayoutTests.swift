@@ -100,8 +100,30 @@ final class ListLayoutTests: XCTestCase {
         let list = try XCTUnwrap(everyNode(root).first { $0.kind == "List" })
         let r = rows(root)
         let full = ListMetrics.rowFrame(content: r[1].frame, listFrame: list.frame)
-        XCTAssertEqual(full.height, 48); XCTAssertEqual(full.minX, list.frame.minX); XCTAssertEqual(full.width, 200)
+        XCTAssertEqual(full.height, 48); XCTAssertEqual(full.minX, list.frame.minX)
+        XCTAssertEqual(Double(full.width), 200, accuracy: 1e-9, "the rows fit: no gutter, the row spans the list")
+        let scrolled = ListMetrics.rowFrame(content: r[1].frame, listFrame: list.frame, trailingGutter: ListMetrics.trailingGutter(.inset, overflows: true))
+        XCTAssertEqual(Double(scrolled.width), 200 - 16.8, accuracy: 1e-6, "an overflowing inset list: the row ends 16.8 pt before the trailing edge")
         XCTAssertEqual(Double(full.minY - list.frame.minY), 34, accuracy: 0.5)
+    }
+
+    func testScrollerGutterOnlyForAnOverflowingInsetList() {
+        XCTAssertEqual(Double(ListMetrics.trailingGutter(.inset, overflows: true)), 16.8, accuracy: 1e-6)
+        XCTAssertEqual(ListMetrics.trailingGutter(.inset, overflows: false), 0)
+        XCTAssertEqual(ListMetrics.trailingGutter(.plain, overflows: true), 0, "the plain style's gutter is unmeasured: none")
+    }
+
+    func testControlsBDocumentOverflowsItsNinetyPointList() {
+        // controls-b (CI): 10 + 3 x 24 + 10 = 92 pt document in a 90 pt list (AXOutline 92 pt, AXScrollArea 90 pt)
+        let rows: [CGFloat] = [24, 24, 24]
+        XCTAssertEqual(ListMetrics.documentHeight(.inset, rowHeights: rows), 92)
+        XCTAssertTrue(ListMetrics.overflows(.inset, rowHeights: rows, viewportHeight: 90))
+        XCTAssertFalse(ListMetrics.overflows(.inset, rowHeights: rows, viewportHeight: 92), "a document exactly the viewport's height fits")
+    }
+
+    func testFiveRowsFitTheirOneSixtyPointList() {
+        // five-rows (CI): 10 + 5 x 24 + 10 = 140 pt in 160 pt, no AXScrollBar, rows span the full width
+        XCTAssertFalse(ListMetrics.overflows(.inset, rowHeights: [CGFloat](repeating: 24, count: 5), viewportHeight: 160))
     }
 
     func testListStyleMetadata() throws {

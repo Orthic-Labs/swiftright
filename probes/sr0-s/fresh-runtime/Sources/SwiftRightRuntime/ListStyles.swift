@@ -36,21 +36,46 @@ public enum ListLook: Equatable, Sendable {
 /// factory/tools/switch-artwork/list-profile): a row is its content plus 8 pt above and below, at least 24 pt tall; the content starts 16 pt from the list's
 /// leading edge (8 pt in the plain style) and is centred in the row; the inset style leaves 10 pt above the first row (the plain style none). A List takes the
 /// whole proposed size (an unframed List in a window fills it; its ideal size is zero).
+///
+/// Vertical scrolling (H21, CI run 38868496881 and the fetched Mac accessibility trees). The inset style's scrollable document is its top inset, every
+/// row and a 10 pt bottom inset (controls-b: AXOutline 92 pt = 10 + 3 x 24 + 10 in a 90 pt viewport). When that document is taller than the List, a legacy
+/// (always-visible) vertical scroller is shown at the trailing edge and reserves 16.8 pt there (AXScrollBar at x 202 pt, width 19 pt, with the rows ending
+/// at 203.2 pt). When the rows fit (five-rows: 140 pt in 160 pt) there is no scroller and the rows span the full width. The gutter is the legacy scroller's;
+/// an overlay scroller takes no space. The factory pins the legacy style on its Mac reference (`factory/tools/mac-accessibility.sh`). SwiftRight draws no
+/// scroll bar, so an overflowing List only clips its rows at the bottom (a known gap). The plain style has no measured bottom inset or gutter; it is none.
 public enum ListMetrics {
     public static let rowMinHeight: CGFloat = 24
     public static let rowContentPadding: CGFloat = 8
+    /// The legacy vertical scroller's reserved width at the inset List's trailing edge (measured, controls-b).
+    public static let insetScrollerGutter: CGFloat = 16.8
+    /// The inset List's bottom inset in its scrollable document (measured, controls-b: 10 + 72 + 10 = 92 pt).
+    public static let insetBottomInset: CGFloat = 10
 
     /// The row's height for content of `contentHeight`.
     public static func rowHeight(forContent contentHeight: CGFloat) -> CGFloat { max(rowMinHeight, contentHeight + rowContentPadding) }
 
     public static func contentInset(_ look: ListLook) -> CGFloat { look == .plain ? 8 : 16 }
     public static func topInset(_ look: ListLook) -> CGFloat { look == .plain ? 0 : 10 }
+    public static func bottomInset(_ look: ListLook) -> CGFloat { look == .inset ? insetBottomInset : 0 }
 
-    /// The full-width rectangle of a row (`content` is the row content's frame in the List's coordinates, `listFrame` the List's), derived from the layout
-    /// rules above: the row is `rowHeight` tall around its content, whose centre is the row's centre.
-    public static func rowFrame(content: LayoutRect, listFrame: LayoutRect) -> LayoutRect {
+    /// The height of the List's scrollable document: its top inset, every row and its bottom inset.
+    public static func documentHeight(_ look: ListLook, rowHeights: [CGFloat]) -> CGFloat {
+        topInset(look) + rowHeights.reduce(0, +) + bottomInset(look)
+    }
+
+    /// Whether the rows overflow the List's viewport, so that a vertical scroller is shown (strictly taller: a document of exactly the viewport's height fits).
+    public static func overflows(_ look: ListLook, rowHeights: [CGFloat], viewportHeight: CGFloat) -> Bool {
+        documentHeight(look, rowHeights: rowHeights) > viewportHeight
+    }
+
+    /// The width a List reserves at its trailing edge for a legacy vertical scroller: the inset style's, and only when the rows overflow. Zero otherwise.
+    public static func trailingGutter(_ look: ListLook, overflows: Bool) -> CGFloat { look == .inset && overflows ? insetScrollerGutter : 0 }
+
+    /// The rectangle of a row (`content` is the row content's frame in the List's coordinates, `listFrame` the List's), derived from the layout rules
+    /// above: the row is `rowHeight` tall around its content, whose centre is the row's centre, and it spans the list's width less `trailingGutter`.
+    public static func rowFrame(content: LayoutRect, listFrame: LayoutRect, trailingGutter: CGFloat = 0) -> LayoutRect {
         let height = rowHeight(forContent: content.height)
         let top = content.minY - (height - content.height) / 2
-        return LayoutRect(x: listFrame.minX, y: top, width: listFrame.width, height: height)
+        return LayoutRect(x: listFrame.minX, y: top, width: listFrame.width - trailingGutter, height: height)
     }
 }

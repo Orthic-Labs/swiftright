@@ -343,9 +343,16 @@ extension Graph {
     private func placeList(_ node: Node, in rect: LayoutRect) {
         let look = ListLook(style: node.environment.listStyleMetadata)
         let inset = ListMetrics.contentInset(look)
-        let proposal = ProposedViewSize(width: max(0, rect.width - 2 * inset), height: nil)
+        let children = childNodes(node)
+        // Overflow decides the gutter, so it is read from the rows at the full width first. A row that wraps at the narrower width could change height;
+        // this pass does not re-decide, so a wrap that crosses the viewport edge is the one case not measured.
+        let fullProposal = ProposedViewSize(width: max(0, rect.width - 2 * inset), height: nil)
+        let heights = children.map { ListMetrics.rowHeight(forContent: measure($0, fullProposal).height) }
+        let gutter = ListMetrics.trailingGutter(look, overflows: ListMetrics.overflows(look, rowHeights: heights, viewportHeight: rect.height))
+        // A row spans the list less the trailing scroller gutter, so the content's proposal is the row's width less the two insets.
+        let proposal = ProposedViewSize(width: max(0, rect.width - gutter - 2 * inset), height: nil)
         var y = rect.minY + ListMetrics.topInset(look)
-        for child in childNodes(node) {
+        for child in children {
             let size = measure(child, proposal)
             let rowHeight = ListMetrics.rowHeight(forContent: size.height)
             let content = LayoutRect(x: rect.minX + inset, y: y + (rowHeight - size.height) / 2, width: size.width, height: size.height)
