@@ -196,5 +196,26 @@ class SemanticTests(unittest.TestCase):
         kept = S.keep(g["main"], {})
         self.assertEqual([(e["role"], e["name"], e["toggle"], e["bounds"]) for e in kept], [("checkbox", "Enabled", "on", [0.0, 0.0, 16.0, 16.0])])
 
+    def test_h17_render_scale_wins_over_the_window_dpi_for_bounds(self):
+        # A CI runner window reads dpi 120 while the host passed the render scale 2.5: bounds in points must use 2.5 (the Dell reading is 240 / 96 = 2.5).
+        el = win_el("Enabled", "CheckBox", 25, 50, 40, 40)
+        dell = win_window([el], dpi=240)
+        ci = win_window([el], dpi=120)
+        ci["renderScale"] = 2.5
+        b = lambda doc: S.keep(S.win_groups(dict(windows=[doc]), {})["main"], {})[0]["bounds"]
+        self.assertEqual(b(ci), b(dell))
+        legacy = win_window([el], dpi=120)   # no host-reported scale: the DPI is the scale, as before H17
+        self.assertNotEqual(b(legacy), b(dell))
+
+    def test_h17_host_render_scale_is_read_from_the_host_log(self):
+        import tempfile, os
+        with tempfile.TemporaryDirectory() as d:
+            p = os.path.join(d, "host-01.stdout.txt")
+            open(p, "w").write("HOST_SCALE_GUARD requested=2.5 renderer=2.5 clientDPI=120 status=PASS\n")
+            self.assertEqual(S.host_render_scale(p), 2.5)
+            open(p, "w").write("HOST_SCALE_GUARD requested=2.5 renderer=1.25 clientDPI=120 status=MISMATCH\n")
+            self.assertIsNone(S.host_render_scale(p))
+            self.assertIsNone(S.host_render_scale(os.path.join(d, "missing.txt")))
+
 if __name__ == "__main__":
     unittest.main()

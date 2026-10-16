@@ -26,6 +26,9 @@ GUEST_SCRIPT = {"capture": "job-capture.ps1", "clock": "job-clock.ps1", "interac
 RENDERERS = {
     "renderer-0.9-925df9f3": dict(runId=38742361678, artifact="swiftright-render-925df9f3ae5edfd91c52a467e498502927b0ab56",
                                   sha256="6b6fc10c81741d27d74075c5fe9ed63a4259e1472ef092764081d2b55924e422"),
+    # ABI 0.10 (decision H17): the explicit render scale. render-windows CI run 38841885720 on d449e4deed698f4ae46435cb756a4ce1791c6a0b.
+    "renderer-0.10-d449e4de": dict(runId=38841885720, artifact="swiftright-render-d449e4deed698f4ae46435cb756a4ce1791c6a0b",
+                                   sha256="b8f046977986e8a6d642ceac12f09182cc404bb9871304b6e5ab8fa39330da09"),
 }
 BLOCK_LABELS = {"swiftui.slider": "37 slider", "swiftui.on-hover": "38 on-hover", "swiftui.uia-walk": "39 uia-walk",
                 "swiftui.compat": "41 compat", "swiftui.ime-traps": "40 ime-traps"}

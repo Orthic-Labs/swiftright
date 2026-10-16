@@ -1,7 +1,8 @@
 # Factory pair sweeps on GitHub runners: long batches (many cases, N runs) sharded one case per job, so
 # cases run in parallel across runners. Hand-written (public repository: builds run only in Actions; docs/rules/public-ci.md).
 # Per case: a Mac job (xcode-27) captures the Mac reference at the pinned scale 2.5 (decision C12, ScalePin.swift) and a Windows job
-# (windows-2025) builds the Windows side against the pinned renderer and captures in the runner's interactive session.
+# (windows-2025) builds the Windows side against the pinned renderer and captures in the runner's interactive session. The runner's display
+# cannot reach 240 dpi, so the Windows capture host passes the explicit render scale 2.5 to the renderer (ABI 0.10, decision H17).
 # A compare job applies pair.py's gates (pixel, semantic, scale guard) and writes results.jsonl beside the runs/ tree.
 # Fetch a run locally with: python3 factory/tools/ci_fetch.py <run-id>   (downloads only; builds nothing).
 # No secrets, no signing, no publication. Read-only repository permissions; actions: read lets the Windows job fetch the pinned renderer artifact.
@@ -177,17 +178,15 @@ jobs:
           & $swift.FullName --version
       - name: Toolchain
         run: swift --version
-      - name: Per-monitor 250% probe (factory/tools/ci/dpi-probe.ps1; fails the job unless GetDpiForWindow reads 240)
+      # The runner's display (Hyper-V: 1024x768 at 125% at most) cannot reach 240 dpi, so the capture host does not depend on it: it passes the
+      # explicit render scale 2.5 through the public API (decision H17; HOST_SCALE_GUARD in the host log must read PASS). This step only logs
+      # what the display is, so a result can be read against it. It cannot fail the job.
+      - name: Display scale (log only)
         shell: pwsh
+        continue-on-error: true
         run: |
-          ./factory/tools/ci/dpi-probe.ps1 -Target 250 -OutFile "$env:RUNNER_TEMP\dpi-probe.json"
-      - uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4
-        if: always()
-        with:
-          name: dpi-probe
-          path: ${{ runner.temp }}/dpi-probe.json
-          retention-days: 30
-          if-no-files-found: ignore
+          Add-Type -Namespace Probe -Name Native -MemberDefinition '[System.Runtime.InteropServices.DllImport("user32.dll")] public static extern uint GetDpiForSystem(); [System.Runtime.InteropServices.DllImport("user32.dll")] public static extern int GetSystemMetrics(int i);'
+          Write-Host "display: $([Probe.Native]::GetSystemMetrics(0))x$([Probe.Native]::GetSystemMetrics(1)) system dpi $([Probe.Native]::GetDpiForSystem()) (the capture host renders at the explicit scale 2.5 regardless)"
       - name: Stage the product tree (git archive HEAD)
         id: stage
         run: |

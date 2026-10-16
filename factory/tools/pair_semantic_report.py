@@ -144,7 +144,7 @@ def win_groups(doc, role_map, list_rows=False):
     main, dialogs = [], []
     for w in doc.get("windows", []):
         cx, cy, cw, ch = w.get("client", w["rect"][:2] + [0, 0])
-        scale = (w.get("dpi") or 96) / 96.0
+        scale = w.get("renderScale") or (w.get("dpi") or 96) / 96.0   # H17: the scale the host passed to the renderer (HOST_SCALE_GUARD) wins over the window's DPI
         els = []
         if "tree" in w:
             flatten_win(w["tree"], (cx, cy), scale, role_map, els, 0, list_rows)
@@ -317,6 +317,18 @@ def compare_run(win_doc, mac_doc, cfg, phase="", host_dialogs=None):
     return mm, info
 
 
+def host_render_scale(stdout_path):
+    """The render scale the capture host passed and the renderer reported (decision H17), from its HOST_SCALE_GUARD line; None when the
+    host did not print one (a capture from before 0.10: the window's DPI is then the scale)."""
+    import re
+    try:
+        text = Path(stdout_path).read_text(encoding="utf-8-sig", errors="replace")
+    except OSError:
+        return None
+    m = re.search(r"HOST_SCALE_GUARD requested=(\S+) renderer=(\S+) clientDPI=\S+ status=PASS", text)
+    return float(m.group(2)) if m else None
+
+
 def main():
     case, out = Path(sys.argv[1]).resolve(), Path(sys.argv[2]).resolve()
     cfg = json.loads((case / "pair.json").read_text()).get("semanticGate")
@@ -332,7 +344,12 @@ def main():
             wp, mp = out / f"windows/uia-{i:02d}{suffix}.json", out / f"mac/ax-{i:02d}{suffix}.json"
             if not (wp.is_file() and mp.is_file()):
                 err = f"missing dump (phase '{phase}') windows={wp.is_file()} mac={mp.is_file()}"; break
-            pm, pinfo = compare_run(json.loads(wp.read_text(encoding="utf-8-sig")), json.loads(mp.read_text(encoding="utf-8-sig")), cfg, phase, host_dialog_requests(out / f"windows/host-{i:02d}.stdout.txt"))
+            win_doc = json.loads(wp.read_text(encoding="utf-8-sig"))
+            hs = host_render_scale(out / f"windows/host-{i:02d}.stdout.txt")
+            if hs:
+                for w_ in win_doc.get("windows", []):
+                    w_["renderScale"] = hs
+            pm, pinfo = compare_run(win_doc, json.loads(mp.read_text(encoding="utf-8-sig")), cfg, phase, host_dialog_requests(out / f"windows/host-{i:02d}.stdout.txt"))
             mm += [dict(m, phase=phase) for m in pm]; info[phase or "final"] = pinfo
         if err:
             rows.append(dict(run=i, verdict="fail", error=err)); continue

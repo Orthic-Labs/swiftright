@@ -122,7 +122,11 @@ struct HostPlacement {
             let metrics = owned.size
             ownedHWND = owned.hwnd; initialDPI = metrics.dpi
             print("HOST_ABI_INITIAL_METRICS width=\(abi.width) height=\(abi.height) scale=\(abi.scale)")
-            scale = metrics.scale
+            // H17: the scale is the renderer's own report (the explicit render scale passed to run below), never GetDpiForWindow.
+            scale = abi.scale
+            let scaleOK = abs(abi.scale - factoryRenderScale) < 1e-4
+            print("HOST_SCALE_GUARD requested=\(factoryRenderScale) renderer=\(abi.scale) clientDPI=\(metrics.dpi) status=\(scaleOK ? "PASS" : "MISMATCH")")
+            guard scaleOK else { throw NSError(domain: "HostRenderScaleMismatch", code: 1) }
             viewport = Rect(x: 0, y: 0, w: Float(metrics.width), h: Float(metrics.height))
             // Bundled fonts register before the first measurement and are verified to resolve to the registered bytes.
             let fonts = BundledFontLibrary(bridge: bridge)
@@ -135,7 +139,7 @@ struct HostPlacement {
                     print("HOST_BUNDLED_FONT family=\(registration.family) weight=\(registration.weight) faces=\(registration.faceCount) sha256=sha256:\(registration.sha256Hex) abi=\(bridge.revision) resolve=\(resolved.source)")
                 }
             }
-            let body = BodyFontProfile(try NativeWindowsBodyFontResolver.resolve(dpi: metrics.dpi))
+            let body = BodyFontProfile(try NativeWindowsBodyFontResolver.resolve(dpi: UInt32((scale * 96).rounded())))
             let measurer = BridgeTextMeasurer(bridge: bridge, scale: scale, body: body, fonts: fonts)
             self.measurer = measurer
             let images = try SystemImageRegistry(images: bridge, rasterizer: WindowsGlyphRasterizer())
@@ -285,8 +289,8 @@ struct HostPlacement {
             let width = Float(owned.size.width), height = Float(owned.size.height)
             if viewport.w != width || viewport.h != height {
                 viewport = Rect(x: 0, y: 0, w: width, h: height)
-                graph?.rootProposal = ProposedViewSize(width: owned.size.logicalWidth, height: owned.size.logicalHeight)
-                print("HOST_VIEWPORT_UPDATE width=\(owned.size.width) height=\(owned.size.height) dpi=\(owned.size.dpi) logicalWidth=\(owned.size.logicalWidth) logicalHeight=\(owned.size.logicalHeight)")
+                graph?.rootProposal = ProposedViewSize(width: (CGFloat(width) / CGFloat(scale)), height: (CGFloat(height) / CGFloat(scale)))
+                print("HOST_VIEWPORT_UPDATE width=\(owned.size.width) height=\(owned.size.height) dpi=\(owned.size.dpi) logicalWidth=\((CGFloat(width) / CGFloat(scale))) logicalHeight=\((CGFloat(height) / CGFloat(scale)))")
                 fflush(stdout)
             }
         } catch { fail(error); return }
@@ -337,6 +341,9 @@ struct HostPlacement {
     }
 }
 
+/// The density every gate was fitted at (decision C12 on the Mac). Passed to the renderer as an explicit render scale (decision H17).
+let factoryRenderScale: Float = 2.5
+
 let result: Int32 = MainActor.assumeIsolated {
     do {
         let dll = hostRendererPath()
@@ -352,7 +359,7 @@ let result: Int32 = MainActor.assumeIsolated {
         }
         defer { UnhookWindowsHookEx(activationHook) }
         print("HOST_BACKGROUND_GUARD thread-cbt-activation-veto")
-        try bridge.run(title: "Alchemist FactoryProbe", width: 320, height: 240, pointerMoves: true)
+        try bridge.run(title: "Alchemist FactoryProbe", width: 320, height: 240, pointerMoves: true, renderScale: factoryRenderScale)
         host.errors.forEach { print("HOST_RENDER_ERROR \($0)") }
         return host.errors.isEmpty ? 0 : 1
     } catch { print("HOST_STARTUP_ERROR \(error)"); return 78 }
