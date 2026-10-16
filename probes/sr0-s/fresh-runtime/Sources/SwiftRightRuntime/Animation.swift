@@ -227,6 +227,12 @@ final class AnimationTransaction {
     private(set) var logicalPending = 0
     private(set) var removalPending = 0
     private var settled = false
+    /// True while the `withAnimation` / `withTransaction` body that made this transaction is still running (`TransactionContext.begin` .. `end`). A segment
+    /// commit made inside a nested block must not settle it: the body may still write state, and the completion fires only after those writes commit.
+    var frameOpen = false
+    /// The body wrote no state itself but contained nested transactions (which committed their own writes): this transaction only settles its completion
+    /// and never decides the animation of a later, unrelated write that happens to take it from the unattached list.
+    var settlesOnly = false
 
     init(animation: Animation?, completion: (() -> Void)?, criteria: AnimationCompletionCriteria = .logicallyComplete,
          disablesAnimations: Bool = false, scope: Node? = nil) {
@@ -254,11 +260,11 @@ final class AnimationTransaction {
 
     /// Schedules the completion once, when no layer the completion criteria wait for is still running.
     func settleIfDone() {
-        guard !settled else { return }
+        guard !settled, !frameOpen else { return }
         guard (criteria == .removed ? removalPending : logicalPending) == 0 else { return }
         settled = true
         if let completion {
-            TransactionContext.deferred.append(completion)
+            TransactionContext.deferCompletion(completion)
             self.completion = nil
         }
     }
@@ -410,6 +416,7 @@ enum TransactionContext {
         let transaction: AnimationTransaction
         var touched: [Graph] = []
         var everTouched = false
+        var hadNested = false
         init(_ transaction: AnimationTransaction) { self.transaction = transaction }
     }
     /// Every live graph (one per window). `withAnimation` has no graph argument, so the boundary cannot know which graph owns the state the
@@ -418,7 +425,21 @@ enum TransactionContext {
     private static var frames: [Frame] = []
     /// Transactions whose body wrote no graph's state: the next commit of any graph takes them (they only settle their completion).
     private static var unattached: [AnimationTransaction] = []
-    static var deferred: [() -> Void] = []
+    /// A settled completion and the transactions of the frames open when it settled (outermost first). It runs only after those frames have closed and no
+    /// graph still queues their transactions: a write it makes would otherwise coalesce into the commit that applies a still-queued enclosing transaction.
+    private struct Deferred {
+        let run: () -> Void
+        let gates: [AnimationTransaction]
+    }
+    private static var queuedCompletions: [Deferred] = []
+    static var deferred: [() -> Void] { queuedCompletions.map(\.run) }
+    static func deferCompletion(_ completion: @escaping () -> Void) {
+        queuedCompletions.append(Deferred(run: completion, gates: frames.map(\.transaction)))
+    }
+    private static func isGated(_ item: Deferred) -> Bool {
+        item.gates.contains { gate in graphs.contains { $0.graph?.isQueued(gate) == true } }
+    }
+    private static var draining = false
     static var hasOpenFrame: Bool { !frames.isEmpty }
 
     static func register(_ graph: Graph) { graphs.append(WeakGraph(graph)) }
@@ -437,10 +458,12 @@ enum TransactionContext {
             if outermost { entry.graph?.commitTriggerBeforeTransaction() }
         }
         if let parent = frames.last {
+            parent.hadNested = true
             let touched = parent.touched
             parent.touched = []
             for graph in touched { graph.commitSegment(parent.transaction) }
         }
+        transaction.frameOpen = true
         frames.append(Frame(transaction))
     }
 
@@ -448,12 +471,25 @@ enum TransactionContext {
     /// transaction, its writes are committed now under it, so the enclosing transaction's later writes do not take its place as the decisive one.
     static func end(_ transaction: AnimationTransaction) {
         guard let frame = frames.popLast() else { return }
-        if !frame.everTouched { unattached.append(transaction); return }
+        transaction.frameOpen = false
+        if !frame.everTouched { transaction.settlesOnly = frame.hadNested; unattached.append(transaction); drainIfIdle(); return }
+        var enqueued = false
         if frames.isEmpty {
-            for graph in frame.touched { graph.enqueue(transaction) }
+            for graph in frame.touched { graph.enqueue(transaction); enqueued = true }
         } else {
             for graph in frame.touched { graph.commitSegment(transaction) }
         }
+        // Writes of this body that a nested block's segment commit already committed leave nothing to queue. The completion then waits only for the
+        // animation: settle now unless a graph still holds the transaction for its next commit (which settles it).
+        if !enqueued && !graphs.contains(where: { $0.graph?.isQueued(transaction) == true }) { transaction.settleIfDone() }
+        // Completions that settled inside this body stay queued while a graph still holds this (or an enclosing) transaction; they run at that graph's commit.
+        drainIfIdle()
+    }
+
+    /// Completions run only when no transaction frame is open (SwiftUI runs them asynchronously, after the enclosing transaction closes), so a write a
+    /// completion makes never takes an open frame's transaction, whichever window the frame or the completion belongs to.
+    private static func drainIfIdle() {
+        if frames.isEmpty { drainDeferred() }
     }
 
     /// `graph` is written under the innermost open frame's transaction.
@@ -471,12 +507,16 @@ enum TransactionContext {
 
     static var unattachedTransactions: [AnimationTransaction] { unattached }
 
-    /// Runs completions in order. A completion may schedule more, so this loops until empty.
+    /// Runs completions in order, only while no transaction frame is open, and skipping any whose gating transactions are still queued on a graph (they
+    /// stay queued, in order, and run at the commit that takes those transactions). A completion may schedule more, so this loops until none is runnable.
     static func drainDeferred() {
-        while !deferred.isEmpty {
-            let batch = deferred
-            deferred = []
-            for completion in batch { completion() }
+        guard !draining else { return }
+        draining = true
+        defer { draining = false }
+        while frames.isEmpty {
+            guard let index = queuedCompletions.firstIndex(where: { !isGated($0) }) else { return }
+            let item = queuedCompletions.remove(at: index)
+            item.run()
         }
     }
 }
@@ -551,7 +591,7 @@ extension Graph {
             for node in changed { snap(node) }
             return
         }
-        let explicit = transactions.filter { $0.scope == nil }
+        let explicit = transactions.filter { $0.scope == nil && !$0.settlesOnly }
         let scoped = transactions.filter { $0.scope != nil }
         let disables = explicit.contains { $0.disablesAnimations }
         var byScope: [ObjectIdentifier: AnimationTransaction] = [:]

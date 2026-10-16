@@ -14,7 +14,7 @@ Copy signed recorder app, FixtureApp, and F1Assemble to `$HOME/sr0-scratch/tuple
 
 ```sh
 S="$HOME/sr0-scratch/tuple12-cross"
-REC="$S/bin/F1MacRecord.app/Contents/MacOS/F1MacRecord" \
+REC="$HOME/Applications/SwiftRight/F1MacRecord.app/Contents/MacOS/F1MacRecord" \
 FA="$S/bin/FixtureApp" \
 ASM="$S/bin/F1Assemble" \
 qualification/tuple12-mac20.sh "$S/out/mac-20"
@@ -37,7 +37,7 @@ Existing trusted recorder can support fresh F1×20 only: packet `qualification/t
 Root-run command, using fresh internal output:
 
 ```sh
-REC="$HOME/sr0-scratch/tuple12-f1/bin/F1MacRecord.app/Contents/MacOS/F1MacRecord" \
+REC="$HOME/Applications/SwiftRight/F1MacRecord.app/Contents/MacOS/F1MacRecord" \
 FA="$HOME/sr0-scratch/tuple12-f1/bin/FixtureApp" \
 ASM="$HOME/sr0-scratch/tuple12-f1/bin/F1Assemble" \
 qualification/tuple12-mac-f1-run.sh "$HOME/sr0-scratch/tuple12-f1-$(uuidgen)"

@@ -1800,6 +1800,9 @@ public final class Graph {
 
     func enqueue(_ transaction: AnimationTransaction) { queued.append(transaction) }
 
+    /// Whether `transaction` waits in this graph's queue for its next commit.
+    func isQueued(_ transaction: AnimationTransaction) -> Bool { queued.contains { $0 === transaction } }
+
     /// The transactions pending for the next commit of this graph (a removal reads them to decide whether it animates).
     var pendingTransactions: [AnimationTransaction] { queued + TransactionContext.unattachedTransactions }
 

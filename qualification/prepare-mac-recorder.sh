@@ -3,8 +3,14 @@ set -eu
 
 # Build generalized F1MacRecord from a commit-pinned source archive in a
 # fresh internal scratch namespace. This script never signs, deletes, or
-# reuses output. Signing remains held pending process-level no-prompt proof.
+# reuses scratch output. Signing remains held pending process-level no-prompt proof.
+# $OUT is BUILD SCRATCH only. The recorder runs from ONE fixed path,
+# $HOME/Applications/SwiftRight/F1MacRecord.app (Adrian's rule 2026-10-17: no new id, no new
+# folder). A signed bundle is installed there in place by install-mac-recorder.sh (previous copy kept as
+# F1MacRecord.previous.app). This script installs only if the built bundle is already signed
+# (team 6KLGD3LLKF, id com.orthiclabs.swiftright.f1macrecord); otherwise it leaves the build in $OUT.
 ROOT=$(CDPATH= cd -- "$(dirname -- "$0")/.." && pwd -P)
+. "$ROOT/qualification/install-in-place.sh"
 SOURCE_COMMIT=0e201571e4320a3b6ccce14313fd2ad67e523904
 PACKAGE_PATH=probes/sr0-o/f1-cross
 SOURCE_PATH=$PACKAGE_PATH/Sources/F1MacRecord/main.swift
@@ -127,3 +133,12 @@ manifest = {
 (out / "unsigned-build-manifest.json").write_text(json.dumps(manifest, indent=2) + "\n")
 print(json.dumps(manifest, indent=2))
 PY
+rc=0
+install_in_place "$APP" F1MacRecord com.orthiclabs.swiftright.f1macrecord || rc=$?
+case "$rc" in
+  0) ;;
+  3) # not validly signed / wrong team or id: leave the build in $OUT, installed copy untouched
+     echo "recorder built unsigned at $APP; sign it with '$SR_SIGN_IDENTITY', then run qualification/install-mac-recorder.sh $APP" >&2
+     echo "fixed recorder path: $SR_APP_DIR/F1MacRecord.app" >&2 ;;
+  *) echo "install into fixed path failed (exit $rc)" >&2; exit "$rc" ;;
+esac

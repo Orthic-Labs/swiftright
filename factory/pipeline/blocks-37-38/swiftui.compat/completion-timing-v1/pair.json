@@ -1,0 +1,81 @@
+{
+ "phaseShots": [
+  "start",
+  "mid",
+  "end"
+ ],
+ "hazeTolerance": 0,
+ "excludeRects": [
+  {
+   "name": "button label glyphs (Segoe UI vs SF, decision 2/11)",
+   "rect": [
+    100,
+    50,
+    350,
+    120
+   ]
+  }
+ ],
+ "steps": [
+  {
+   "op": "wait",
+   "ms": 700
+  },
+  {
+   "op": "dump",
+   "label": "start"
+  },
+  {
+   "op": "wait",
+   "ms": 250
+  },
+  {
+   "op": "shot",
+   "label": "start"
+  },
+  {
+   "op": "wait",
+   "ms": 150
+  },
+  {
+   "op": "invoke",
+   "name": "Run"
+  },
+  {
+   "op": "wait",
+   "ms": 350
+  },
+  {
+   "op": "dump",
+   "label": "mid"
+  },
+  {
+   "op": "shot",
+   "label": "mid"
+  },
+  {
+   "op": "wait",
+   "ms": 1200
+  },
+  {
+   "op": "dump",
+   "label": "end"
+  },
+  {
+   "op": "wait",
+   "ms": 250
+  },
+  {
+   "op": "shot",
+   "label": "end"
+  },
+  {
+   "op": "wait",
+   "ms": 150
+  }
+ ],
+ "macArgs": [
+  "--steps",
+  "[{\"op\":\"wait\",\"ms\":700},{\"op\":\"dump\",\"label\":\"start\"},{\"op\":\"wait\",\"ms\":250},{\"op\":\"shot\",\"label\":\"start\"},{\"op\":\"wait\",\"ms\":150},{\"op\":\"invoke\",\"name\":\"Run\"},{\"op\":\"wait\",\"ms\":350},{\"op\":\"dump\",\"label\":\"mid\"},{\"op\":\"shot\",\"label\":\"mid\"},{\"op\":\"wait\",\"ms\":1200},{\"op\":\"dump\",\"label\":\"end\"},{\"op\":\"wait\",\"ms\":250},{\"op\":\"shot\",\"label\":\"end\"},{\"op\":\"wait\",\"ms\":150}]"
+ ]
+}

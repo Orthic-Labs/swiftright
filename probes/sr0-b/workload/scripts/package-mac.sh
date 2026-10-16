@@ -1,9 +1,12 @@
 #!/bin/sh
 # Builds the macOS workload in release and wraps both executables in minimal .app bundles (stable identity for the
-# TCC grants the recorder needs; ad-hoc signed). Build only: nothing is launched.
+# TCC grants the recorder needs; Developer ID signed with the same identity as F1MacRecord). Build only: nothing is launched.
+# Installs each bundle at ONE fixed path under $HOME/Applications/SwiftRight/ (in place; previous copy kept as
+# <name>.previous.app). Adrian's rule 2026-10-17: no new id, no new folder. $OUT is build scratch only.
 # Usage: scripts/package-mac.sh [out-dir]   (default: probes/sr0-b/workload/out-mac)
 set -eu
 HERE=$(cd "$(dirname "$0")/.." && pwd)
+. "$HERE/../../../qualification/install-in-place.sh"
 OUT=${1:-$HERE/out-mac}
 cd "$HERE"
 swift build -c release --product WorkloadMac
@@ -28,7 +31,7 @@ mkbundle() { # name bundle-id uielement
 <key>LSUIElement</key><$3/>
 </dict></plist>
 PLIST
-  codesign --force --sign - "$APP" >/dev/null 2>&1
+  codesign --force --sign "$SR_SIGN_IDENTITY" --identifier "$2" "$APP" >/dev/null
 }
 mkbundle WorkloadMac com.orthiclabs.sr0.workload false
 mkbundle SckRecorder com.orthiclabs.sr0.sckrecorder true
@@ -42,4 +45,9 @@ mkbundle SckRecorder com.orthiclabs.sr0.sckrecorder true
   echo "}"
 } > "$OUT/build-mac.json"
 cat "$OUT/build-mac.json"
-echo "bundles in $OUT"
+echo "bundles built in scratch $OUT"
+# Hash the built executables above, then move each signed bundle to its fixed path.
+install_in_place "$OUT/WorkloadMac.app" WorkloadMac com.orthiclabs.sr0.workload
+install_in_place "$OUT/SckRecorder.app" SckRecorder com.orthiclabs.sr0.sckrecorder
+# run-mac.sh and run_one.sh read build-mac.json from the fixed dir; keep the scratch copy too.
+cp "$OUT/build-mac.json" "$SR_APP_DIR/build-mac.json"

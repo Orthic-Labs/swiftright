@@ -7,7 +7,8 @@
 # Usage: scripts/run-mac.sh [--instr full|light] [--runs 3] [--tag name] [--request-permissions]
 set -eu
 HERE=$(cd "$(dirname "$0")/.." && pwd)
-OUTMAC=${OUTMAC:-$HERE/out-mac}
+# Bundles run from the one fixed install path written by package-mac.sh (rule 2026-10-17); never from a build dir.
+OUTMAC=${OUTMAC:-$HOME/Applications/SwiftRight}
 INSTR=full; RUNS=3; TAG=""; EXTRA=""
 while [ $# -gt 0 ]; do
   case "$1" in

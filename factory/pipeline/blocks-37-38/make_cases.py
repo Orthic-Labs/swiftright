@@ -725,6 +725,49 @@ for _label, _op in (("start", None), ("plain", "Plain"), ("animated", "Animated"
     _onchg_steps += [{"op": "dump", "label": _label}, {"op": "wait", "ms": 250}, {"op": "shot", "label": _label}, {"op": "wait", "ms": 150}]
 case("swiftui.compat/onchange-animation-v1", CO + "onchg", compat_onchg, {"phaseShots": ["start", "plain", "animated", "nested"], "hazeTolerance": 0, "excludeRects": _btn_ex}, _onchg_steps)
 
+compat_ctime = CP + r'''@Observable final class CtimeProbe {
+    var markInner = -1
+    var markOuter = -1
+    var t0 = Date()
+    func late() -> Int { Date().timeIntervalSince(t0) > 0.15 ? 1 : 0 }
+}
+nonisolated(unsafe) let ctp = CtimeProbe()
+
+struct CtimeMark: View {
+    let mark: Int
+    var body: some View { Rectangle().fill(mark < 0 ? Color.gray : (mark == 1 ? Color.green : Color.red)).frame(width: mark == 1 ? 40 : 8, height: 6) }
+}
+
+struct Witness_co_ctime: View {
+    @State private var x = 0
+    @State private var y = 0
+    var body: some View {
+        VStack(alignment: .leading, spacing: 4) {
+            Button("Run") {
+                ctp.t0 = Date()
+                withAnimation(.linear(duration: 1)) {
+                    withAnimation(nil) { x = 1 } completion: { y = 2; ctp.markInner = ctp.late() }
+                } completion: { ctp.markOuter = ctp.late() }
+            }.frame(width: 100, height: 28)
+            // x (orange) is written under the inner withAnimation(nil) and snaps. y (blue) is written by the inner completion: if SwiftUI runs that completion
+            // after the outer transaction closes (asynchronously), y does not take the outer 1 s linear animation and is 50 pt at the mid sample; if it ran
+            // inside the open outer transaction, y animates (about 26 pt at 0.4 s). The marks record when each completion ran (green = after 0.15 s, red = at once,
+            // gray = never). Nothing here is asserted from SwiftUI documentation: the Mac capture is the reference.
+            VStack(alignment: .leading, spacing: 1) {
+                Color.orange.frame(width: CGFloat(x) * 20 + 10, height: 6)
+                Color.blue.frame(width: CGFloat(y) * 20 + 10, height: 6)
+            }
+            HStack(spacing: 4) { CtimeMark(mark: ctp.markInner); CtimeMark(mark: ctp.markOuter) }
+        }.frame(width: 240, height: 200, alignment: .topLeading)
+    }
+}'''
+_ctime_ex = [_btn_ex[0]]
+# a mid-animation sample (400 ms into the outer 1 s animation), then the settled state
+_ctime_steps = [{"op": "wait", "ms": 700}, {"op": "dump", "label": "start"}, {"op": "wait", "ms": 250}, {"op": "shot", "label": "start"}, {"op": "wait", "ms": 150},
+                {"op": "invoke", "name": "Run"}, {"op": "wait", "ms": 350}, {"op": "dump", "label": "mid"}, {"op": "shot", "label": "mid"}, {"op": "wait", "ms": 1200},
+                {"op": "dump", "label": "end"}, {"op": "wait", "ms": 250}, {"op": "shot", "label": "end"}, {"op": "wait", "ms": 150}]
+case("swiftui.compat/completion-timing-v1", CO + "ctime", compat_ctime, {"phaseShots": ["start", "mid", "end"], "hazeTolerance": 0, "excludeRects": _ctime_ex}, _ctime_steps)
+
 def main():
     only = sys.argv[1:]
     for name, c in CASES.items():

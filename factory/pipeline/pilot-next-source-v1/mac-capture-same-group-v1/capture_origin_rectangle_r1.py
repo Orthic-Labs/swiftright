@@ -35,7 +35,7 @@ from factory.core.artifacts import provenance
 
 DEFAULT_SCRATCH = Path('/Users/adrdsouza/Library/Caches/SwiftRightFactory/sr1')
 PILOTS = ('swiftui.shapes.fill-stroke', 'swiftui.image', 'swiftui.stack-overlay', 'swiftui.text.bundled-font', 'swiftui.custom-layout', 'swiftui.scroll-view', 'swiftui.toggle', 'swiftui.disabled', 'swiftui.padding-frame', 'swiftui.preference-key')
-RECORDER = REPO / 'probes/sr0-o/f1-cross/out/signed/F1MacRecord.app'
+RECORDER = Path.home() / 'Applications/SwiftRight/F1MacRecord.app'  # one fixed install path (rule 2026-10-17)
 
 class CaptureError(ValueError): pass
 
@@ -145,19 +145,13 @@ def recorder_preflight(scratch: Path, evidence: Path) -> dict:
     if verify.returncode:
         info['reason'] = 'existing signed recorder codesign verification failed'
         return info
-    copied = scratch / 'existing-recorder/F1MacRecord.app'
-    if copied.exists():
-        if digest(copied / 'Contents/MacOS/F1MacRecord') != info['sourceBinaryHash']:
-            raise CaptureError('existing scratch recorder differs; refusing replacement')
-    else:
-        copied.parent.mkdir(parents=True, exist_ok=True)
-        shutil.copytree(RECORDER, copied, symlinks=True)
+    copied = RECORDER  # installed recorder (fixed path), run in place; never copied to a new folder (rule 2026-10-17)
     executable = copied / 'Contents/MacOS/F1MacRecord'
     info['copiedExecutable'] = str(executable)
     info['copiedBinaryHash'] = digest(executable)
     verify_copy = logged(['/usr/bin/codesign', '--verify', '--strict', str(copied)], evidence / 'recorder-copy-verify')
     if verify_copy.returncode:
-        info['reason'] = 'scratch copy verification failed'
+        info['reason'] = 'installed recorder (fixed path) verification failed'
         return info
     missing = scratch / 'intentionally-nonexistent-preflight-fixture'
     if missing.exists(): raise CaptureError('preflight fixture must not exist')

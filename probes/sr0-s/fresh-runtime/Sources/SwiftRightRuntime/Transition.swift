@@ -117,7 +117,7 @@ extension Graph {
     /// The animation a removal under `parent` runs with: a changed `.animation(_:value:)` above it, else the last explicit transaction; nil = none.
     private func removalTransaction(under parent: Node) -> AnimationTransaction? {
         let queued = pendingTransactions
-        let explicit = queued.last { $0.scope == nil }
+        let explicit = queued.last { $0.scope == nil && !$0.settlesOnly }   // a settles-only outer block governs no removal (issue #2)
         let disables = explicit?.disablesAnimations ?? false
         if !disables {
             var cursor: Node? = parent

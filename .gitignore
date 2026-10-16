@@ -26,3 +26,9 @@ conformance/candidates/
 /factory/catalogue/public-ancestor-spike/public-ancestor-evidence-v2.json
 /factory/pipeline/workspace-cleanup-audit-v1/report.json
 /factory/runtime-additions/taskid-windows-direct-scp-v1/results/native-artifacts/compiler/swift-frontend.exe
+
+# Factory capture run output (2026-10-17, disk-hygiene): run directories are not committed by default.
+# Evidence runs referenced by a committed results.jsonl row are added explicitly with `git add -f <run dir>`.
+factory/pipeline/**/runs/
+factory/pipeline/**/.build-*.log
+tasks/handoffs/**/*.context.json

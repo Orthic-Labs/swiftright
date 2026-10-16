@@ -2,7 +2,7 @@
 # One Mac workload run with the sampler: run_one.sh <root> <rN> <full|light>
 set -u
 W=/private/tmp/claude-501/-Volumes-D-claude-swiftright/608d5b75-d927-4ac2-a450-cee48f9d74ed/scratchpad/mac-workload
-OUTMAC=$W/out-mac
+OUTMAC=$HOME/Applications/SwiftRight  # fixed install path (rule 2026-10-17)
 ROOT=$1; RID=$2; LVL=$3
 mkdir -p "$ROOT/$RID"
 cp "$OUTMAC/build-mac.json" "$ROOT/build-mac.json"

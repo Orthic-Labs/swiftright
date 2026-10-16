@@ -287,7 +287,9 @@ final class TransactionBoundaryScopeTests: XCTestCase {
         XCTAssertEqual(mid[2], 30, accuracy: 1e-9, "the inner write: 1 s, halfway")
     }
 
-    // T -> onChange: withAnimation(a) { follower } -> onChange of follower: withAnimation(nil) { third }
+    // A chain of onChange passes: writing the trigger runs its onChange, which writes `follower` under withAnimation(linear 1 s); that pass's onChange of
+    // `follower` writes `third` under withAnimation(nil). Each pass commits under its own transaction: the records read [plain, linear, plain], the
+    // follower animates (halfway at 0.5 s) and the third snaps.
     func testOnChangeChainEachPassCommitsUnderItsOwnTransaction() {
         let model = ChainModel()
         model.react = { model, new in withAnimation(.linear(duration: 1.0)) { model.follower = new } }
@@ -323,6 +325,171 @@ final class TransactionBoundaryScopeTests: XCTestCase {
         let mid = widths(graph)
         XCTAssertEqual(mid[1], 30, accuracy: 1e-9, "the first write runs its own 1 s animation")
         XCTAssertEqual(mid[2], 20, accuracy: 1e-9, "the second runs its own 2 s animation")
+    }
+
+    // Issue #2 (A): a completion that settles inside a nested block runs after every transaction frame has closed, so its writes do not take the open
+    // outer animation. The outer body writes `follower` (2 s); the nested withAnimation(nil) writes `trigger` and its completion writes `third`.
+    func testNestedCompletionWritesDoNotInheritTheOuterAnimation() {
+        let model = ChainModel()
+        model.react = { _, _ in }
+        let (graph, _) = chain(model)
+        var completed = false
+        withAnimation(.linear(duration: 2.0)) {
+            model.follower = 40
+            withAnimation(nil) { model.trigger = 40 } completion: {
+                completed = true
+                model.third = 40
+            }
+            XCTAssertFalse(completed, "the completion waits for the outer frame to close")
+        }
+        XCTAssertTrue(completed, "it runs when the outermost frame ends")
+        graph.flush()
+        graph.tick(now: 0)
+        graph.tick(now: 0.5)
+        let mid = widths(graph)
+        XCTAssertEqual(mid[0], 50, accuracy: 1e-9, "the nested nil write snaps")
+        XCTAssertEqual(mid[1], 20, accuracy: 1e-9, "the outer write runs the outer 2 s animation")
+        XCTAssertEqual(mid[2], 50, accuracy: 1e-9, "the completion's write is plain: it does not take the outer animation")
+    }
+
+    // Issue #2 (B): an outer completion fires only after its own writes have committed and its animation has settled, even when a nested block animates
+    // and a segment commit changes no layout. The outer body first writes `follower` to 5 and back to 0 (it notifies, the layout is unchanged), so the
+    // segment commit the nested block forces applies the outer transaction to no changed node: before the fix that settled it and ran its completion inside
+    // the body, before the outer write that follows the nested block.
+    func testOuterCompletionFiresAfterTheOuterWriteCommitsAndSettles() {
+        let model = ChainModel()
+        model.react = { _, _ in }
+        let (graph, _) = chain(model)
+        var fired = false
+        withAnimation(.linear(duration: 1.0)) {
+            model.follower = 5
+            model.follower = 0
+            withAnimation(.linear(duration: 1.0)) { model.third = 40 }
+            XCTAssertFalse(fired, "the outer completion has not run after the nested block")
+            model.trigger = 40  // the outer write that follows the nested block
+        } completion: {
+            fired = true
+        }
+        XCTAssertFalse(fired, "not before the outer write has committed")
+        graph.flush()
+        graph.tick(now: 0)
+        XCTAssertFalse(fired)
+        graph.tick(now: 0.5)
+        XCTAssertFalse(fired, "the outer write is still animating")
+        XCTAssertEqual(widths(graph)[0], 30, accuracy: 1e-9)
+        graph.tick(now: 1.0)
+        XCTAssertTrue(fired, "after the outer animation settles")
+        XCTAssertEqual(widths(graph)[0], 50, accuracy: 1e-9)
+    }
+
+    // A completion with no enclosing transaction behaves as before: it runs at the tick that ends the animation, and its own write is plain.
+    func testCompletionOutsideAnyTransactionRunsAtTheTickAndItsWriteIsPlain() {
+        let model = ChainModel()
+        model.react = { _, _ in }
+        let (graph, _) = chain(model)
+        var fired = false
+        withAnimation(.linear(duration: 1.0)) { model.trigger = 40 } completion: {
+            fired = true
+            model.third = 40
+        }
+        graph.flush()
+        graph.tick(now: 0)
+        graph.tick(now: 0.5)
+        XCTAssertFalse(fired)
+        graph.tick(now: 1.0)
+        XCTAssertTrue(fired)
+        graph.flush()
+        graph.tick(now: 1.5)
+        let w = widths(graph)
+        XCTAssertEqual(w[0], 50, accuracy: 1e-9)
+        XCTAssertEqual(w[2], 50, accuracy: 1e-9, "the completion's write snaps")
+    }
+
+    // A completion that settled inside a nested block while the outer transaction is still queued on its graph (the outer body wrote after the nested
+    // block) does not run at a tick, however early: its write would coalesce into the commit that applies the queued outer animation.
+    func testTickWhileOuterTransactionIsQueuedDoesNotRunTheNestedCompletion() {
+        let model = ChainModel()
+        model.react = { _, _ in }
+        let (graph, _) = chain(model)
+        var completed = false
+        withAnimation(.linear(duration: 2.0)) {
+            withAnimation(nil) { model.trigger = 40 } completion: {
+                completed = true
+                model.third = 40
+            }
+            model.follower = 40  // outer write after the nested block: the outer transaction is queued at the end of the body
+        }
+        XCTAssertFalse(completed, "waits: the outer transaction is still queued")
+        graph.tick(now: 0)
+        XCTAssertFalse(completed, "a tick does not run it")
+        graph.flush()
+        XCTAssertTrue(completed, "it runs at the commit that applies the outer transaction")
+        graph.flush()
+        graph.tick(now: 0)
+        graph.tick(now: 0.5)
+        let mid = widths(graph)
+        XCTAssertEqual(mid[1], 20, accuracy: 1e-9, "the outer write runs the outer 2 s animation")
+        XCTAssertEqual(mid[2], 50, accuracy: 1e-9, "the completion's write is plain")
+    }
+
+    // The same, with another window committing in between: its commit drains completions but does not run this graph's gated one.
+    func testAnotherWindowsCommitDoesNotRunACompletionGatedOnAQueuedTransaction() {
+        let modelA = ChainModel(), modelB = ChainModel()
+        modelA.react = { _, _ in }
+        modelB.react = { _, _ in }
+        let (graphA, _) = chain(modelA)
+        let (graphB, _) = chain(modelB)
+        var completed = false
+        withAnimation(.linear(duration: 2.0)) {
+            withAnimation(nil) { modelA.trigger = 40 } completion: {
+                completed = true
+                modelA.third = 40
+            }
+            modelA.follower = 40
+        }
+        modelB.trigger = 40  // a plain change in window B
+        graphB.flush()
+        XCTAssertFalse(completed, "B's commit does not run A's gated completion")
+        graphA.flush()
+        XCTAssertTrue(completed, "A's commit takes the queued outer transaction, then runs it")
+        graphA.flush()
+        graphA.tick(now: 0)
+        graphA.tick(now: 0.5)
+        XCTAssertEqual(widths(graphA)[1], 20, accuracy: 1e-9)
+        XCTAssertEqual(widths(graphA)[2], 50, accuracy: 1e-9, "plain")
+        XCTAssertEqual(widths(graphB)[0], 50, accuracy: 1e-9, "B's own plain change snapped")
+    }
+
+    // Two windows: a completion that settles in window A while a transaction is open (the outer body writes window B's state, after A's nested block) waits
+    // until B's commit takes that transaction; neither a tick nor A's own commit runs it earlier, and its write is then plain.
+    func testCompletionInOneWindowNeverRunsUnderTheOtherWindowsOpenTransaction() {
+        let modelA = ChainModel(), modelB = ChainModel()
+        modelA.react = { _, _ in }
+        modelB.react = { _, _ in }
+        let (graphA, _) = chain(modelA)
+        let (graphB, _) = chain(modelB)
+        var ran = false
+        withAnimation(.linear(duration: 2.0)) {
+            withAnimation(nil) { modelA.trigger = 40 } completion: {
+                ran = true
+                modelA.third = 40
+            }
+            XCTAssertFalse(ran, "A's completion does not run while the outer transaction is open")
+            modelB.follower = 40  // window B's write, after the nested block: the transaction is queued on B
+        }
+        XCTAssertFalse(ran, "B still queues the transaction")
+        graphA.tick(now: 0)
+        graphA.flush()
+        XCTAssertFalse(ran, "neither a tick nor A's commit runs it")
+        graphB.flush()
+        XCTAssertTrue(ran, "B's commit takes the transaction, then runs the completion")
+        graphA.flush()
+        graphA.tick(now: 0)
+        graphB.tick(now: 0)
+        graphA.tick(now: 0.5)
+        graphB.tick(now: 0.5)
+        XCTAssertEqual(widths(graphA)[2], 50, accuracy: 1e-9, "A's completion write is plain, not B's 2 s animation")
+        XCTAssertEqual(widths(graphB)[1], 20, accuracy: 1e-9, "B's own write animates under its transaction")
     }
 
     // A transaction belongs to the graph whose state its body wrote: another window's commit must not consume it.

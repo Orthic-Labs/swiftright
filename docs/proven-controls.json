@@ -48,7 +48,7 @@
       "status": "delivered",
       "statusDocBlock": 1,
       "verdict": {
-        "date": "2026-10-15",
+        "date": "2026-10-17",
         "runDates": [
           "2026-10-15"
         ],
@@ -95,7 +95,7 @@
       "status": "delivered",
       "statusDocBlock": 2,
       "verdict": {
-        "date": "2026-10-15",
+        "date": "2026-10-17",
         "runDates": [
           "2026-10-15"
         ],
@@ -142,7 +142,7 @@
       "status": "delivered",
       "statusDocBlock": 3,
       "verdict": {
-        "date": "2026-10-15",
+        "date": "2026-10-17",
         "runDates": [
           "2026-10-15"
         ],
@@ -187,7 +187,7 @@
       "status": "delivered",
       "statusDocBlock": 4,
       "verdict": {
-        "date": "2026-10-15",
+        "date": "2026-10-17",
         "runDates": [
           "2026-10-15"
         ],
@@ -244,7 +244,7 @@
       "status": "delivered",
       "statusDocBlock": 5,
       "verdict": {
-        "date": "2026-10-15",
+        "date": "2026-10-17",
         "runDates": [
           "2026-10-15"
         ],
@@ -297,7 +297,7 @@
       "status": "delivered",
       "statusDocBlock": 6,
       "verdict": {
-        "date": "2026-10-15",
+        "date": "2026-10-17",
         "runDates": [
           "2026-10-15"
         ],
@@ -347,7 +347,7 @@
       "statusFromSources": "delivered",
       "statusReason": "Reopened 16 October (F2 rebaseline, decision G70): fresh N=3 captures on stage fc4a39a89 fail by 1 px at tolerance 0 (textorigin first-ink or control-label x); the earlier passing captures on stage 6459bb8cd still exist (e.g. `blocks-6-10/swiftui.textfield/plain-v1/runs/20261015-050354`), and the deleted final-stage captures failed with the same 1 px deltas. Failing cases: toggle switch-labelled-on-v1, checkbox-labelled-on-v1.",
       "verdict": {
-        "date": "2026-10-15",
+        "date": "2026-10-17",
         "runDates": [
           "2026-10-15"
         ],
@@ -404,7 +404,7 @@
       "status": "delivered",
       "statusDocBlock": 8,
       "verdict": {
-        "date": "2026-10-15",
+        "date": "2026-10-17",
         "runDates": [
           "2026-10-15"
         ],
@@ -455,7 +455,7 @@
       "status": "delivered",
       "statusDocBlock": 9,
       "verdict": {
-        "date": "2026-10-15",
+        "date": "2026-10-17",
         "runDates": [
           "2026-10-15"
         ],
@@ -505,7 +505,7 @@
       "status": "delivered",
       "statusDocBlock": 10,
       "verdict": {
-        "date": "2026-10-15",
+        "date": "2026-10-17",
         "runDates": [
           "2026-10-15"
         ],
@@ -589,7 +589,7 @@
       "status": "delivered",
       "statusDocBlock": 11,
       "verdict": {
-        "date": "2026-10-15",
+        "date": "2026-10-17",
         "runDates": [
           "2026-10-15"
         ],
@@ -655,7 +655,7 @@
       "status": "delivered",
       "statusDocBlock": 12,
       "verdict": {
-        "date": "2026-10-15",
+        "date": "2026-10-17",
         "runDates": [
           "2026-10-15"
         ],
@@ -714,7 +714,7 @@
       "statusFromSources": "delivered",
       "statusReason": "Reopened 16 October (F2 rebaseline, decision G70): fresh N=3 captures on stage fc4a39a89 fail by 1 px at tolerance 0 (textorigin first-ink or control-label x); the earlier passing captures on stage 6459bb8cd still exist (e.g. `blocks-6-10/swiftui.textfield/plain-v1/runs/20261015-050354`), and the deleted final-stage captures failed with the same 1 px deltas. Failing cases: textfield automatic-style-v1, caret-empty-v1, filled-truncated-v1, placeholder-v1, plain-v1, prompt-v1.",
       "verdict": {
-        "date": "2026-10-15",
+        "date": "2026-10-17",
         "runDates": [
           "2026-10-15"
         ],
@@ -792,7 +792,7 @@
       "status": "delivered-with-caveats",
       "statusDocBlock": 14,
       "verdict": {
-        "date": "2026-10-15",
+        "date": "2026-10-17",
         "runDates": [
           "2026-10-15"
         ],
@@ -830,7 +830,8 @@
       "caveats": [
         "CI confirmation (16 October): the CI runners use the Windows WARP adapter at an explicit render scale of 2.5 (H17), not native 240 dpi. The Dell 240-dpi sandbox stays the reference; the CI and Dell captures were pixel-identical on click-track and labels.",
         "CI N=20 pass on renderer 0.10 (stage 06a3a0a85-5dfe7cc2 for ime-cancel, ime-commit and ime-composing-v1; c4e83a68a-5dfe7cc2 for ime-recompose-v1), replacing the 16 October N=3 regression on renderer 0.7 (stage 3d3c6f5c2).",
-        "Extra CI evidence: `ime-composing-v1` passes N=20 in run 38870003524 (stage 168328082-0766196a, commit 168328082), after the harness lease fix (H22); it had been lost to the fixed 10 s host lease in run 38865487951 (H23)."
+        "Extra CI evidence: `ime-composing-v1` passes N=20 in run 38870003524 (stage 168328082-0766196a, commit 168328082), after the harness lease fix (H22); it had been lost to the fixed 10 s host lease in run 38865487951 (H23).",
+        "Pixels are report-only on every block 15 case (`pair.json` `pixels: report-only`, H28, issue #3): the semantic, text-origin and IME gates decide; the marked-text look (yellow on the Mac, underline on Windows), the candidate window and the value-line glyphs are reported, not gated, with no named exclusion rectangles."
       ],
       "ciN20": {
         "casesPassing": "4/4",
@@ -865,7 +866,7 @@
       "status": "delivered-with-caveats",
       "statusDocBlock": 15,
       "verdict": {
-        "date": "2026-10-15",
+        "date": "2026-10-17",
         "runDates": [
           "2026-10-15"
         ],
@@ -938,7 +939,7 @@
       "status": "delivered",
       "statusDocBlock": 16,
       "verdict": {
-        "date": "2026-10-15",
+        "date": "2026-10-17",
         "runDates": [
           "2026-10-15"
         ],
@@ -998,7 +999,7 @@
       "status": "delivered",
       "statusDocBlock": 17,
       "verdict": {
-        "date": "2026-10-15",
+        "date": "2026-10-17",
         "runDates": [
           "2026-10-15"
         ],
@@ -1067,7 +1068,7 @@
       "status": "delivered",
       "statusDocBlock": 18,
       "verdict": {
-        "date": "2026-10-15",
+        "date": "2026-10-17",
         "runDates": [
           "2026-10-15"
         ],
@@ -1152,7 +1153,7 @@
       "status": "delivered-with-caveats",
       "statusDocBlock": 19,
       "verdict": {
-        "date": "2026-10-15",
+        "date": "2026-10-17",
         "runDates": [
           "2026-10-15"
         ],
@@ -1229,7 +1230,7 @@
       "statusFromSources": "delivered",
       "statusReason": "Reopened 16 October (F2 rebaseline, decision G70): fresh N=3 captures on stage fc4a39a89 fail by 1 px at tolerance 0 (textorigin first-ink or control-label x); the earlier passing captures on stage 6459bb8cd still exist (e.g. `blocks-6-10/swiftui.textfield/plain-v1/runs/20261015-050354`), and the deleted final-stage captures failed with the same 1 px deltas. Failing cases: color-scheme text-dark-v1.",
       "verdict": {
-        "date": "2026-10-15",
+        "date": "2026-10-17",
         "runDates": [
           "2026-10-15"
         ],
@@ -1291,7 +1292,7 @@
       "status": "delivered-with-caveats",
       "statusDocBlock": 21,
       "verdict": {
-        "date": "2026-10-15",
+        "date": "2026-10-17",
         "runDates": [
           "2026-10-15"
         ],
@@ -1351,7 +1352,7 @@
       "status": "delivered-with-caveats",
       "statusDocBlock": 22,
       "verdict": {
-        "date": "2026-10-15",
+        "date": "2026-10-17",
         "runDates": [
           "2026-10-15"
         ],
@@ -1412,7 +1413,7 @@
       "status": "delivered-with-caveats",
       "statusDocBlock": 23,
       "verdict": {
-        "date": "2026-10-15",
+        "date": "2026-10-17",
         "runDates": [
           "2026-10-15"
         ],
@@ -1469,7 +1470,7 @@
       "status": "delivered-with-caveats",
       "statusDocBlock": 24,
       "verdict": {
-        "date": "2026-10-15",
+        "date": "2026-10-17",
         "runDates": [
           "2026-10-15"
         ],
@@ -1516,7 +1517,7 @@
       "status": "delivered-with-caveats",
       "statusDocBlock": 25,
       "verdict": {
-        "date": "2026-10-15",
+        "date": "2026-10-17",
         "runDates": [
           "2026-10-15"
         ],
@@ -1578,7 +1579,7 @@
       "status": "delivered-with-caveats",
       "statusDocBlock": 26,
       "verdict": {
-        "date": "2026-10-15",
+        "date": "2026-10-17",
         "runDates": [
           "2026-10-15"
         ],
@@ -1635,7 +1636,7 @@
       "status": "delivered-with-caveats",
       "statusDocBlock": 27,
       "verdict": {
-        "date": "2026-10-15",
+        "date": "2026-10-17",
         "runDates": [
           "2026-10-15"
         ],
@@ -1688,7 +1689,7 @@
       "statusFromSources": "delivered-with-caveats",
       "statusReason": "Reopened 16 October (decision G71): the blanket tolerance was replaced by per-row tolerances, which fail the independent block 28 gate on the final renderer (styles-large passes; 8 of 9 cases fail; unfitted sizes and weights, undersampled rows).",
       "verdict": {
-        "date": "2026-10-15",
+        "date": "2026-10-17",
         "runDates": [
           "2026-10-15"
         ],
@@ -1741,7 +1742,7 @@
       "status": "delivered-with-caveats",
       "statusDocBlock": 29,
       "verdict": {
-        "date": "2026-10-15",
+        "date": "2026-10-17",
         "runDates": [
           "2026-10-15"
         ],
@@ -1783,7 +1784,7 @@
       "status": "delivered-with-caveats",
       "statusDocBlock": 30,
       "verdict": {
-        "date": "2026-10-15",
+        "date": "2026-10-17",
         "runDates": [
           "2026-10-15"
         ],
@@ -1831,7 +1832,7 @@
       "status": "delivered-with-caveats",
       "statusDocBlock": 31,
       "verdict": {
-        "date": "2026-10-15",
+        "date": "2026-10-17",
         "runDates": [
           "2026-10-15"
         ],
@@ -1881,7 +1882,7 @@
       "status": "delivered-with-caveats",
       "statusDocBlock": 32,
       "verdict": {
-        "date": "2026-10-15",
+        "date": "2026-10-17",
         "runDates": [
           "2026-10-15"
         ],
@@ -1928,7 +1929,7 @@
       "status": "delivered-with-caveats",
       "statusDocBlock": 33,
       "verdict": {
-        "date": "2026-10-15",
+        "date": "2026-10-17",
         "runDates": [
           "2026-10-15"
         ],
@@ -1968,7 +1969,7 @@
       "statusFromSources": "delivered-with-caveats",
       "statusReason": "Reopened 16 October (F2 rebaseline, decision G70): fresh N=3 captures on stage fc4a39a89 fail by 1 px at tolerance 0 (textorigin first-ink or control-label x); the earlier passing captures on stage 6459bb8cd still exist (e.g. `blocks-6-10/swiftui.textfield/plain-v1/runs/20261015-050354`), and the deleted final-stage captures failed with the same 1 px deltas. Failing cases: textfield-axis plain-v1.",
       "verdict": {
-        "date": "2026-10-15",
+        "date": "2026-10-17",
         "runDates": [
           "2026-10-15"
         ],
@@ -2016,7 +2017,7 @@
       "status": "delivered-with-caveats",
       "statusDocBlock": 35,
       "verdict": {
-        "date": "2026-10-15",
+        "date": "2026-10-17",
         "runDates": [
           "2026-10-15"
         ],
@@ -2062,7 +2063,7 @@
       "status": "delivered-with-caveats",
       "statusDocBlock": 36,
       "verdict": {
-        "date": "2026-10-15",
+        "date": "2026-10-17",
         "runDates": [
           "2026-10-15"
         ],
@@ -2151,7 +2152,7 @@
       "status": "delivered-with-caveats",
       "statusDocBlock": 37,
       "verdict": {
-        "date": "2026-10-15",
+        "date": "2026-10-17",
         "runDates": [
           "2026-10-15",
           "2026-10-16"
@@ -2236,7 +2237,7 @@
       "status": "delivered-with-caveats",
       "statusDocBlock": 38,
       "verdict": {
-        "date": "2026-10-15",
+        "date": "2026-10-17",
         "runDates": [
           "2026-10-16"
         ],
@@ -2314,7 +2315,7 @@
       "status": "delivered-pending-review",
       "statusDocBlock": 39,
       "verdict": {
-        "date": "2026-10-15",
+        "date": "2026-10-17",
         "runDates": [
           "2026-10-16"
         ],
@@ -2350,6 +2351,7 @@
       "caveats": [
         "CI confirmation (16 October): the CI runners use the Windows WARP adapter at an explicit render scale of 2.5 (H17), not native 240 dpi. The Dell 240-dpi sandbox stays the reference; the CI and Dell captures were pixel-identical on click-track and labels.",
         "Hardware IME is deferred: the cases drive the in-process TextStore script and the NSTextInputClient path, not a real IME (H9(b)).",
+        "Pixels are report-only on every block 40 case (`pair.json` `pixels: report-only`, H28, issue #3): the semantic, text-origin and IME gates decide; no exclusion rectangles are named.",
         "Extra CI evidence: `imet-badregion-v1` passes N=20 in run 38870003524 (stage 168328082-0766196a, commit 168328082) after the harness lease fix (H22); its mapped run stays 38860483220."
       ],
       "ciN20": {
@@ -2382,7 +2384,7 @@
       "status": "delivered-pending-review",
       "statusDocBlock": 40,
       "verdict": {
-        "date": "2026-10-15",
+        "date": "2026-10-17",
         "runDates": [
           "2026-10-16"
         ],
@@ -2438,9 +2440,8 @@
         "Ported from OpenSwiftUI's MIT tests as view bodies and expectations only (H9a); EquatableView and animation completion are not ported and not delivered.",
         "Runtime change (commit ce47755c3): `withAnimation` and `withTransaction` settle pending changes before their body (state-nested-update is the case that measured it). The onChange transaction handling was revised in 7796b0b81: each write commits under the innermost open transaction (inner wins; measured on the Mac in run 38913665384). Independently reviewed 16 October (PASS); block 41 has six measured cases (onchange-animation-v1 added).",
         "Runtime transaction fixes (commit 5713ea1fe, H23; the onChange part was revised in 7796b0b81, see above): the transaction boundary is per graph (a weak graph registry, not the last-flushed graph); `onChange` writes inherit the triggering transaction with no mid-flush commit; a boundary settle outside a flush schedules a flush; `isErasedEmpty` stays single-modifier and is documented. Unit tests 434/434 at that commit. CI run 38865487951 (N=3): 38 of 39 cases pass; `ime-composing-v1` was lost to the fixed 10 s host lease, not to the change (it passes N=20 in run 38870003524 after H22).",
-        "Open edge (Oracle finding A): a completion can run while an outer withAnimation is still open, so its writes animate with the outer transaction; SwiftUI runs completions asynchronously.",
-        "Open edge (Oracle finding B): an outer completion can fire early when a segment commit changes no layout.",
-        "Test-comment gap at TransactionBoundaryScopeTests.swift:272 (probes/sr0-s/fresh-runtime/Tests/SwiftRightRuntimeTests/)."
+        "Open edges A and B (Oracle findings 16 October: a completion could run while an outer withAnimation was still open, and an outer completion could fire early when a segment commit changed no layout) are coded against in the working tree (H29, issue #2: frameOpen, gated deferred completions, settlesOnly) with six unit tests and the new case `completion-timing-v1`, read-only reviewed PASS-WITH-CAVEATS; NOT yet built, tested or captured, so both edges remain open until the unit suite and the block 41 N=20 CI run pass.",
+        "The test-comment gap at the former TransactionBoundaryScopeTests.swift:272 is corrected in the same working-tree change."
       ],
       "ciN20": {
         "casesPassing": "5/6",
@@ -2473,7 +2474,7 @@
       "status": "delivered-with-caveats",
       "statusDocBlock": 41,
       "verdict": {
-        "date": "2026-10-15",
+        "date": "2026-10-17",
         "runDates": [
           "2026-10-16"
         ],
@@ -2518,7 +2519,7 @@
       "status": "delivered",
       "statusDocBlock": "pixel-ties",
       "verdict": {
-        "date": "2026-10-15",
+        "date": "2026-10-17",
         "runDates": [
           "2026-10-15"
         ],
@@ -2600,7 +2601,7 @@
     "factory/pipeline/closure/results.jsonl",
     "Witness.swift of each case"
   ],
-  "statusDate": "2026-10-15",
+  "statusDate": "2026-10-17",
   "statusValues": [
     "delivered",
     "delivered-with-caveats",

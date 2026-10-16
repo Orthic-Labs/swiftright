@@ -140,9 +140,9 @@ export default {
         identity: {
           // Package identity name: letters, digits, '.' and '-' only (validateMsixIdentity).
           name: "OrthicLabs.SliceApp",
-          // TODO(identity): replace with the exact subject of the provisioned Azure Artifact Signing certificate,
-          // confirmed natively on the signing host. MSIX requires Publisher to equal the signer subject byte for
-          // byte. The CN must stay "CN=Damned Ventures LLC" (msix-build.mjs MSIX_SIGNER_SUBJECT).
+          // Pinned to the exact subject in swift-package.json `publisher` (single source; keep the two byte-identical).
+          // MSIX requires Publisher to equal the signer subject byte for byte. The CN must stay
+          // "CN=Damned Ventures LLC" (msix-build.mjs MSIX_SIGNER_SUBJECT).
           publisher: "CN=Damned Ventures LLC, O=Damned Ventures LLC, L=new york, S=New York, C=US",
           publisherDisplayName: "Orthic Labs",
           displayName: "SliceApp",

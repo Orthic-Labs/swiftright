@@ -48,6 +48,34 @@ Data: rows persist to `rows.json` (schema 1, atomic write):
   generator does not emit it; RightKit follow-up, not edited). The earlier text here claimed the path was "outside both
   virtualized areas"; that was wrong. Not yet verified on a machine: see Windows check 8.
 
+## Fixed install paths and identities
+
+Adrian's rule (2026-10-17): no new id, no new folder, for every app. Each app or helper installs and updates in place
+at one fixed path with one bundle id and one signing identity, and never runs from a new path. This file is
+SliceApp's packaging doc; the Mac recorder and workload helpers have no packaging doc of their own, so they are listed
+here too (recorder usage: `docs/sr0-tuple12-mac-capture.md`).
+
+| App | Fixed path (internal disk, never `/Volumes/D`) | Bundle id | Signing |
+|---|---|---|---|
+| F1MacRecord | `$HOME/Applications/SwiftRight/F1MacRecord.app` | `com.orthiclabs.swiftright.f1macrecord` | Developer ID Application: Adrian D'souza (6KLGD3LLKF) |
+| SckRecorder | `$HOME/Applications/SwiftRight/SckRecorder.app` | `com.orthiclabs.sr0.sckrecorder` | same identity (holds Screen Recording) |
+| WorkloadMac | `$HOME/Applications/SwiftRight/WorkloadMac.app` | `com.orthiclabs.sr0.workload` | same identity |
+
+SliceApp's Windows package keeps identity name `OrthicLabs.SliceApp` and publisher
+`CN=Damned Ventures LLC, O=Damned Ventures LLC, L=new york, S=New York, C=US` (pinned in `right-release.config.mjs`,
+sourced from `swift-package.json`).
+
+The fixed dir is per user (`$HOME`). `package-mac.sh` and the workload runs (`run-mac.sh`) must run as the same user,
+or the dedicated Mac test user named in `run-mac.sh:3-5` needs its own install. `package-mac.sh` needs the Developer ID
+private key in that user's keychain. `package-mac.sh` also copies `build-mac.json` into the fixed dir for the run scripts.
+
+Rollback rule: build into a scratch dir, then replace in place. The current copy moves to
+`<name>.previous.app` beside it (replacing an older `.previous.app`) and the new bundle takes the fixed path. To roll
+back, swap the two. Installing goes through `qualification/install-in-place.sh`, which refuses an unsigned bundle or one
+whose team or bundle id differs, because a changed identity forces a new privacy grant. `install-mac-recorder.sh`
+copies its source bundle and installs the copy, so the source (for example
+`probes/sr0-o/f1-cross/out/signed/F1MacRecord.app`) stays in place.
+
 ## Dev build
 
 macOS (unsigned, not sealed):
