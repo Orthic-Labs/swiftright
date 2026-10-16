@@ -1480,6 +1480,10 @@ fn settle_client_metrics(req_w_dip: u32, req_h_dip: u32) {
         "[swiftright-render] ready metrics requested={}x{}dip ready-client={}x{}px scale={} changed_since_initial={}",
         req_w_dip, req_h_dip, w, h, s, changed
     );
+    if let Some(o) = scale::override_scale() {
+        let (ew, eh) = (scale::physical_px(req_w_dip, o), scale::physical_px(req_h_dip, o));
+        eprintln!("[swiftright-render] render-scale ready: client {}x{}px expected {}x{}px matches={}", w, h, ew, eh, (w, h) == (ew, eh));
+    }
 }
 
 fn launch(cx: &mut App, title: String, width: u32, height: u32, host: Host) {
@@ -1553,13 +1557,9 @@ fn launch(cx: &mut App, title: String, width: u32, height: u32, host: Host) {
             s
         );
         if let Some(o) = ovr {
-            eprintln!(
-                "[swiftright-render] render-scale override={} display-scale={} (window sized for {}); client matches request={}",
-                o,
-                g,
-                if (g - g0).abs() < 1e-4 { "the live display" } else { "a different display than it opened on" },
-                (cw, ch) == (scale::physical_px(width, o), scale::physical_px(height, o))
-            );
+            // The client rect of a window that is still hidden is an early sample (it can read another size until the initial placement
+            // applies); the settled check is logged at ready (`settle_client_metrics`).
+            eprintln!("[swiftright-render] render-scale override={} display-scale={} (window requested for the display it opened on: {})", o, g, (g - g0).abs() < 1e-4);
         }
         WIN_SCALE_BITS.store(s.to_bits(), SeqCst);
         let style = unsafe { GetWindowLongPtrW(hwnd, -16) };
