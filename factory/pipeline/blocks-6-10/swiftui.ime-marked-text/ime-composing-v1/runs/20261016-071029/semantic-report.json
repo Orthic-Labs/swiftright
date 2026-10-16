@@ -1,0 +1,172 @@
+{
+ "pairs": 3,
+ "pass_": 1,
+ "fail": 2,
+ "gate": {
+  "fields": [
+   "role",
+   "name",
+   "value",
+   "enabled",
+   "boundsY",
+   "boundsX"
+  ],
+  "boundsXRoles": [
+   "text",
+   "textfield"
+  ],
+  "scope": "main",
+  "roles": [
+   "textfield",
+   "text"
+  ],
+  "pixels": "report-only"
+ },
+ "rows": [
+  {
+   "run": 1,
+   "verdict": "fail",
+   "compared": {
+    "final": {
+     "main": {
+      "windows": 0,
+      "mac": 2
+     }
+    }
+   },
+   "mismatches": [
+    {
+     "where": "main[0]",
+     "field": "missing",
+     "windows": null,
+     "mac": {
+      "role": "textfield",
+      "name": "Name",
+      "value": "abni",
+      "enabled": true,
+      "focus": true,
+      "toggle": null,
+      "bounds": [
+       10,
+       10,
+       120,
+       24
+      ],
+      "depth": 2,
+      "raw": "AXTextField",
+      "default": false,
+      "cancel": false,
+      "destructive": false,
+      "range": null
+     },
+     "phase": ""
+    },
+    {
+     "where": "main[1]",
+     "field": "missing",
+     "windows": null,
+     "mac": {
+      "role": "text",
+      "name": "bound: ab",
+      "value": null,
+      "enabled": true,
+      "focus": false,
+      "toggle": null,
+      "bounds": [
+       10,
+       42,
+       61.2,
+       16
+      ],
+      "depth": 2,
+      "raw": "AXStaticText",
+      "default": false,
+      "cancel": false,
+      "destructive": false,
+      "range": null
+     },
+     "phase": ""
+    }
+   ]
+  },
+  {
+   "run": 2,
+   "verdict": "fail",
+   "compared": {
+    "final": {
+     "main": {
+      "windows": 0,
+      "mac": 2
+     }
+    }
+   },
+   "mismatches": [
+    {
+     "where": "main[0]",
+     "field": "missing",
+     "windows": null,
+     "mac": {
+      "role": "textfield",
+      "name": "Name",
+      "value": "abni",
+      "enabled": true,
+      "focus": true,
+      "toggle": null,
+      "bounds": [
+       10,
+       10,
+       120,
+       24
+      ],
+      "depth": 2,
+      "raw": "AXTextField",
+      "default": false,
+      "cancel": false,
+      "destructive": false,
+      "range": null
+     },
+     "phase": ""
+    },
+    {
+     "where": "main[1]",
+     "field": "missing",
+     "windows": null,
+     "mac": {
+      "role": "text",
+      "name": "bound: ab",
+      "value": null,
+      "enabled": true,
+      "focus": false,
+      "toggle": null,
+      "bounds": [
+       10,
+       42,
+       61.2,
+       16
+      ],
+      "depth": 2,
+      "raw": "AXStaticText",
+      "default": false,
+      "cancel": false,
+      "destructive": false,
+      "range": null
+     },
+     "phase": ""
+    }
+   ]
+  },
+  {
+   "run": 3,
+   "verdict": "pass",
+   "compared": {
+    "final": {
+     "main": {
+      "windows": 2,
+      "mac": 2
+     }
+    }
+   },
+   "mismatches": []
+  }
+ ]
+}

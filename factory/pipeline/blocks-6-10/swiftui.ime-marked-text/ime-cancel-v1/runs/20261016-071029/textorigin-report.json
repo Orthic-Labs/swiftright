@@ -1,0 +1,130 @@
+{
+ "gate": "text origin (first ink x, first ink y, baseline, selection colour and start x)",
+ "yTolerancesPx": {
+  "firstInkY": 2,
+  "baseline": 2,
+  "inkCentreY": 0.5
+ },
+ "yToleranceReason": "measured over the 20 captured runs of every bezeled TextField case (dy,dbaseline px, Windows minus Mac): (2,-2) (2,-1) (1,-2) (1,-1), constant across runs: Windows draws the body font at 12 pt and the Mac at 13 pt (decision 2), so the glyphs are shorter and, with the line centred on both sides, the top sits 1-2 px lower and the baseline 1-2 px higher; the mid-point of the two stays within 0.5 px",
+ "firstInkTolerancePx": 0,
+ "firstInkToleranceReason": null,
+ "selectionStartTolerancePx": 0,
+ "checks": 3,
+ "fail": 0,
+ "rows": [
+  {
+   "run": 1,
+   "field": 0,
+   "frame": [
+    25,
+    25,
+    325,
+    85
+   ],
+   "ok": true,
+   "why": [],
+   "mac": {
+    "background": [
+     255,
+     255,
+     255
+    ],
+    "firstInkX": 41,
+    "firstInkY": 50,
+    "baselineY": 68,
+    "selection": null,
+    "caretX": null
+   },
+   "windows": {
+    "background": [
+     255,
+     255,
+     255
+    ],
+    "firstInkX": 41,
+    "firstInkY": 51,
+    "baselineY": 67,
+    "selection": null,
+    "caretX": [
+     76
+    ]
+   }
+  },
+  {
+   "run": 2,
+   "field": 0,
+   "frame": [
+    25,
+    25,
+    325,
+    85
+   ],
+   "ok": true,
+   "why": [],
+   "mac": {
+    "background": [
+     255,
+     255,
+     255
+    ],
+    "firstInkX": 41,
+    "firstInkY": 50,
+    "baselineY": 68,
+    "selection": null,
+    "caretX": null
+   },
+   "windows": {
+    "background": [
+     255,
+     255,
+     255
+    ],
+    "firstInkX": 41,
+    "firstInkY": 51,
+    "baselineY": 67,
+    "selection": null,
+    "caretX": [
+     76
+    ]
+   }
+  },
+  {
+   "run": 3,
+   "field": 0,
+   "frame": [
+    25,
+    25,
+    325,
+    85
+   ],
+   "ok": true,
+   "why": [],
+   "mac": {
+    "background": [
+     255,
+     255,
+     255
+    ],
+    "firstInkX": 41,
+    "firstInkY": 50,
+    "baselineY": 68,
+    "selection": null,
+    "caretX": null
+   },
+   "windows": {
+    "background": [
+     255,
+     255,
+     255
+    ],
+    "firstInkX": 41,
+    "firstInkY": 51,
+    "baselineY": 67,
+    "selection": null,
+    "caretX": [
+     76
+    ]
+   }
+  }
+ ]
+}
