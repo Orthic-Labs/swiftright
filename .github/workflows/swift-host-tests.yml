@@ -71,7 +71,10 @@ jobs:
           if (-not (Test-Path $root)) { $root = Join-Path $env:ProgramFiles 'Swift' }
           $swift = Get-ChildItem -Path (Join-Path $root 'Toolchains') -Recurse -Filter swift.exe | Select-Object -First 1
           if (-not $swift) { throw 'swift.exe not found after the installer ran' }
+          Get-ChildItem -Path $root -Depth 2 -Directory | ForEach-Object { Write-Host $_.FullName }
           $runtime = Get-ChildItem -Path (Join-Path $root 'Runtimes') -Directory | ForEach-Object { Join-Path $_.FullName 'usr\bin' } | Where-Object { Test-Path (Join-Path $_ 'swiftCore.dll') } | Select-Object -First 1
+          if (-not $runtime) { $runtime = Join-Path $root 'Runtimes\6.4.0\usr\bin' }
+          Write-Host "swift runtime bin: $runtime (swiftCore.dll present: $(Test-Path (Join-Path $runtime 'swiftCore.dll')))"
           Add-Content -Path $env:GITHUB_PATH -Value $swift.DirectoryName
           if ($runtime) { Add-Content -Path $env:GITHUB_PATH -Value $runtime }
           & $swift.FullName --version
