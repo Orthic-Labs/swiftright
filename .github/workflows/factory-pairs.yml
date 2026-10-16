@@ -200,7 +200,15 @@ jobs:
           set -euo pipefail
           work="$RUNNER_TEMP/ci-work"
           mkdir -p "$work"
-          { read -r name; read -r dest; } < <(python factory/tools/ci_pair.py stage --work "$work")
+          # A stage attempt can die with a native exit (0x80000004) before Python prints anything (CI 38854967920, focus-state/shift-tab-v1; the
+          # windows job then has no product stage). The stage is idempotent (ci_pair.py keeps an existing STAGE.json), so up to three attempts.
+          for attempt in 1 2 3; do
+            if python factory/tools/ci_pair.py stage --work "$work" > "$RUNNER_TEMP/stage-out.txt"; then break; fi
+            echo "stage attempt $attempt failed"
+            if [ "$attempt" -eq 3 ]; then exit 1; fi
+            sleep 10
+          done
+          { read -r name; read -r dest; } < "$RUNNER_TEMP/stage-out.txt"
           echo "name=$name" >> "$GITHUB_OUTPUT"
           echo "dest=$dest" >> "$GITHUB_OUTPUT"
           echo "work=$work" >> "$GITHUB_OUTPUT"
