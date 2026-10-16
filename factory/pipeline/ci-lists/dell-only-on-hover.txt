@@ -1,8 +1,0 @@
-# Dell-only: block 38 on-hover cases that need real-cursor delivery (decision H25, 16 October).
-# Reason: on the GitHub windows-2025 runner (Hyper-V display) no real pointer move reaches the GPUI window. CI run 38912970380 (adjacent-v1, N=1, commit df1c02d3e):
-# SendInput with absolute MOUSEEVENTF_MOVE|VIRTUALDESK moved the real cursor to every target (GetCursorPos matched), but the host printed no pointer event
-# (HOST_EVENT kind=2) for any move or leave, and the B square never highlighted. SetCursorPos moves reached the window once only (coordinator report of the block 38 CI failure).
-# Run these only on the Dell (local build, started by Adrian). Do not dispatch them to CI until a runner delivers real pointer input (H25).
-# body-ends-in-modifier-v1 and tap-container-v1 send no real-cursor move and stay in CI lists.
-factory/pipeline/blocks-37-38/swiftui.on-hover/adjacent-v1
-factory/pipeline/blocks-37-38/swiftui.on-hover/rows-v1
