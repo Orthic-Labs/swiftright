@@ -494,7 +494,8 @@ walk_b = f"""struct {UIA}b: View {{
 }}"""
 for nm, tn, body in (("a", UIA + "a", walk_a), ("b", UIA + "b", walk_b)):
     case(f"swiftui.uia-walk/controls-{nm}-v1", tn, body,
-         {"semanticGate": {"fields": ["role", "name", "enabled", "toggle", "value", "count", "order"], "scope": "main", "pixels": "report-only", "ignoreNames": []}},
+         {"semanticGate": dict({"fields": ["role", "name", "enabled", "toggle", "value", "count", "order"], "scope": "main", "pixels": "report-only", "ignoreNames": []},
+                               **({"listRows": "pixels-only"} if nm == "b" else {}))},   # H16: controls-b's list rows are pixel-gated only (the Mac exposes no row content)
          [{"op": "wait", "ms": 700}, {"op": "key", "key": "Tab"}, {"op": "wait", "ms": 300}, {"op": "wait", "ms": 200}])
 
 

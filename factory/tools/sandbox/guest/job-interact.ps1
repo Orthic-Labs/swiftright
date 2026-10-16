@@ -285,6 +285,9 @@ try {
         try {
             $si = [Diagnostics.ProcessStartInfo]::new($exe); $si.Arguments = $leaseArg; $si.UseShellExecute = $false; $si.CreateNoWindow = $true
             $si.RedirectStandardOutput = $true; $si.RedirectStandardError = $true
+            # Park the real cursor at the screen corner, outside the window the host is about to create: the cursor is shared across jobs, so a cursor left over
+            # the window would be a hover at creation (an extra enter, then an exit square in the event strip, and every later square shifted; block 38 rows/adjacent).
+            [void][IxNative]::SetCursorPos(0, 0)
             $p = [Diagnostics.Process]::Start($si); $so = $p.StandardOutput.ReadToEndAsync(); $se = $p.StandardError.ReadToEndAsync()
             $deadline = [DateTime]::UtcNow.AddSeconds(30)
             do { Start-Sleep -Milliseconds 100; $p.Refresh(); if ($p.HasExited) { throw "host exited early code=$($p.ExitCode)" }; if ([DateTime]::UtcNow -gt $deadline) { throw 'window deadline' } } while ($p.MainWindowHandle -eq [IntPtr]::Zero)

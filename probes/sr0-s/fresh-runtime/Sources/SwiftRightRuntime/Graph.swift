@@ -936,6 +936,8 @@ public final class Graph {
     var animating: [Node] = []
     /// onAppear actions of nodes that appeared in the running flush; `flush` runs them after presenting the state those nodes first appeared in.
     var pendingAppear: [() -> Void] = []
+    /// onChange actions of the current evaluation, run after the update commits (SwiftUI): what they write is the next update pass.
+    var pendingChanges: [() -> Void] = []
     /// Removed subtrees still presented while their removal transition runs (see Transition.swift).
     var ghosts: [Ghost] = []
     var animatingNeedsSort = false
@@ -954,6 +956,8 @@ public final class Graph {
     /// Observation change callbacks received (tests check that retired registrations stay silent).
     private(set) var observationCallbacks = 0
     private var dirty: [NodeID: Node] = [:]
+    /// True while the dirty nodes are being evaluated: a transaction boundary inside an evaluation is not a new transaction.
+    private var evaluating = false
     private var flushScheduled = false
     private(set) var sequence = 0
     private var instanceCounter = 0
@@ -1047,27 +1051,19 @@ public final class Graph {
         let flushStart = profile == nil ? 0 : GraphProfile.now()
         var rounds = 0
         var presentedBeforeAppear = false
+        TransactionContext.boundary = { [weak self] in self?.settleAtTransactionBoundary() }
         while rounds < 64 {
-            while !dirty.isEmpty, rounds < 64 {
-                rounds += 1
-                evaluationRound += 1
-                // Shallow nodes first so a dirty ancestor evaluates its dirty descendants; ties in creation order (deterministic and
-                // an integer compare, where comparing path strings would cost more than evaluating a small node).
-                let batch = dirty.values.sorted {
-                    $0.depth != $1.depth ? $0.depth < $1.depth : $0.instance < $1.instance
-                }
-                dirty.removeAll()
-                for node in batch where node.alive && nodes[node.id] === node {
-                    // Evaluating a node re-evaluates everything below it, so a dirty node already reached from a dirty ancestor
-                    // in this round is done.
-                    if node.evaluatedRound == evaluationRound { continue }
-                    // A node marked only because a ForEach data source it expands changed, and whose own view has not been
-                    // replaced, expands the same ForEach again: its unchanged rows need no evaluation (see `expand`).
-                    evaluate(node, refresh: node.dataStale && !node.fullDirty && !node.viewReplaced)
-                }
-            }
+            drainDirty(&rounds)
             if !preferenceObserverNodes.isEmpty { deliverPreferenceChanges() }
             applyWindowSchemeRequest()
+            if dirty.isEmpty, !pendingChanges.isEmpty {
+                // The update has been evaluated: commit it, then run the onChange actions it queued. Their writes are the next pass.
+                commit()
+                let actions = pendingChanges
+                pendingChanges = []
+                for action in actions { action() }
+                continue
+            }
             if dirty.isEmpty {
                 if pendingAppear.isEmpty { break }
                 // SwiftUI runs onAppear after the first render of the node, and what it changes is a second update (so `onAppear { withAnimation { ... } }`
@@ -1086,6 +1082,39 @@ public final class Graph {
             profile!.evaluateNS &+= GraphProfile.now() &- flushStart
         }
         if !presentedBeforeAppear { commit() }
+    }
+
+    /// Evaluates the dirty nodes in rounds until none is left (or the round bound is hit): the coalesced evaluation `flush` runs.
+    private func drainDirty(_ rounds: inout Int) {
+        while !dirty.isEmpty, rounds < 64 {
+            rounds += 1
+            evaluationRound += 1
+            // Shallow nodes first so a dirty ancestor evaluates its dirty descendants; ties in creation order (deterministic and
+            // an integer compare, where comparing path strings would cost more than evaluating a small node).
+            let batch = dirty.values.sorted {
+                $0.depth != $1.depth ? $0.depth < $1.depth : $0.instance < $1.instance
+            }
+            dirty.removeAll()
+            evaluating = true
+            for node in batch where node.alive && nodes[node.id] === node {
+                // Evaluating a node re-evaluates everything below it, so a dirty node already reached from a dirty ancestor
+                // in this round is done.
+                if node.evaluatedRound == evaluationRound { continue }
+                // A node marked only because a ForEach data source it expands changed, and whose own view has not been
+                // replaced, expands the same ForEach again: its unchanged rows need no evaluation (see `expand`).
+                evaluate(node, refresh: node.dataStale && !node.fullDirty && !node.viewReplaced)
+            }
+            evaluating = false
+        }
+    }
+
+    /// A transaction boundary (`withAnimation`, `withTransaction`, before their body runs): the changes made so far are a transaction of their own, so the
+    /// dirty nodes they dirtied are evaluated now, before the new transaction's changes are made. Nothing is committed here; the next flush commits.
+    /// Mac (SwiftUI): `onAppear { value = 1; value = 2; withAnimation { value = 3; value = 4 } }` evaluates the body with 0, 2, 4, 4, never 1.
+    private func settleAtTransactionBoundary() {
+        guard !evaluating, !closed, !dirty.isEmpty else { return }
+        var rounds = 0
+        drainDirty(&rounds)
     }
 
     public func snapshot() -> ResolvedNode? {
@@ -1248,8 +1277,20 @@ public final class Graph {
                 expand(child, prefix: prefix + [.optional], into: &out, refreshable: &refreshable)
             }
         case .leaf:
+            // A modifier over an erased empty view (AnyView(EmptyView()).frame(...)) is not a stack child: it takes no space and no stack spacing
+            // (measured on macOS 27 in block 41 any-view: the following rows sit where they would without it).
+            if let primitive = view as? PrimitiveView, case .modifier = primitive.nodeKind, let content = primitive.nodeContent, isErasedEmpty(content) {
+                return
+            }
             out.append(Entry(relative: prefix + [.type(info.name)], view: view, info: info))
         }
+    }
+
+    /// `AnyView` (any depth) around `EmptyView`: a view with no content.
+    private func isErasedEmpty(_ view: any View) -> Bool {
+        if view is EmptyView { return true }
+        if let erased = view as? AnyView { return isErasedEmpty(erased.wrapped) }
+        return false
     }
 
     /// `keepExisting`: a child that survives is left as it is (not given the new view, not evaluated). Valid only when the
@@ -1415,7 +1456,9 @@ public final class Graph {
     private func runOnChange(_ node: Node, value: AnyEquatable, initial: Bool, action: @escaping (Any, Any) -> Void) {
         // While an onAppear of this flush is still waiting (see `pendingAppear`), an action that follows it in evaluation order waits behind it.
         func run(_ old: Any, _ new: Any) {
-            if pendingAppear.isEmpty { action(old, new) } else { pendingAppear.append { action(old, new) } }
+            if !pendingAppear.isEmpty { pendingAppear.append { action(old, new) }; return }
+            if evaluating { pendingChanges.append { action(old, new) }; return }
+            action(old, new)
         }
         if let baseline = node.storage[onChangeKey] as? OnChangeBaseline {
             let previous = baseline.value
@@ -2002,7 +2045,7 @@ public final class Graph {
             value = Self.sliderValueText(spec.clamped(spec.read()))
         case .image(let spec):
             role = "image"
-            label = spec.labelText ?? spec.reference.name
+            label = spec.labelText ?? spec.reference.accessibilityName
         case .menu:
             role = "menu"
             label = joinedText(children)

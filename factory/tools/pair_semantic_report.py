@@ -68,12 +68,14 @@ def norm_toggle_mac(role, value):
         return {"on": "on", "off": "off", "mixed": "mixed"}.get(str(value).lower())
 
 
-def flatten_win(node, origin, scale, role_map, out, depth=0):
+def flatten_win(node, origin, scale, role_map, out, depth=0, list_rows=False):
     """UIA node -> normalised element list (depth-first). origin = client origin in screen px, scale = px per point."""
     if node.get("role") == "TitleBar":
         return   # window chrome (system menu, minimise/maximise/close): the Mac host window is borderless, so it has none
     if depth > 0 and node.get("role") == "Window":
         return   # an owned window (a task dialog) is also listed under its owner by UIA; it is compared as its own window
+    if list_rows and node.get("role") == "ListItem":
+        return   # H16: the Mac AX exposes no list-row content (rows are pixel-gated only); the row subtree is not compared
     role = WIN_ROLE.get(node.get("role"), "unknown")
     toggle = norm_toggle_win(node.get("toggle"))
     if role == "button" and toggle:
@@ -92,11 +94,11 @@ def flatten_win(node, origin, scale, role_map, out, depth=0):
     switch_label = bool(labels) and role == "switch"
     if switch_label:
         for c in labels:
-            flatten_win(c, origin, scale, role_map, out, depth)
+            flatten_win(c, origin, scale, role_map, out, depth, list_rows)
     out.append(dict(role=role, name=None if switch_label else clean(node.get("name")), value=None if toggle else clean(value), enabled=bool(node.get("enabled", True)), focus=bool(node.get("focus")),
                     toggle=toggle, bounds=bounds, depth=depth, raw=node.get("role"), range=node.get("range")))
     for c in kids:
-        flatten_win(c, origin, scale, role_map, out, depth + 1)
+        flatten_win(c, origin, scale, role_map, out, depth + 1, list_rows)
 
 
 def _is_toggle_label(node, child):
@@ -112,10 +114,14 @@ def _num(v):
         return None
 
 
-def flatten_mac(node, role_map, out, depth=0):
+def flatten_mac(node, role_map, out, depth=0, list_rows=False):
     r = node.get("role"); sub = node.get("subrole")
+    if list_rows and r == "AXScrollBar":
+        return   # H16: a scroll bar and its increment/decrement arrows are scroll parts, not content
     key = f"{r}/{sub}" if sub else r
     role = role_map.get(key) or role_map.get(r) or MAC_ROLE.get(key) or MAC_ROLE.get(r) or "unknown"
+    if list_rows and r == "AXOutline":
+        role = "list"   # H16: a SwiftUI List's AXOutline is the list itself (its rows carry no content)
     toggle = norm_toggle_mac(r, node.get("value"))
     value = node.get("value")
     # a text element's content is its value or label; Windows publishes it as Name, so fold it there
@@ -130,10 +136,10 @@ def flatten_mac(node, role_map, out, depth=0):
                     default=bool(node.get("default")), cancel=bool(node.get("cancel")), destructive=bool(node.get("destructive")),
                     range=(dict(value=_num(node.get("value")), minimum=_num(node.get("min")), maximum=_num(node.get("max"))) if r == "AXSlider" else None)))
     for c in node.get("children", []):
-        flatten_mac(c, role_map, out, depth + 1)
+        flatten_mac(c, role_map, out, depth + 1, list_rows)
 
 
-def win_groups(doc, role_map):
+def win_groups(doc, role_map, list_rows=False):
     """-> {"main": [elements], "dialogs": [[elements], ...], "focused": {...}}"""
     main, dialogs = [], []
     for w in doc.get("windows", []):
@@ -141,7 +147,7 @@ def win_groups(doc, role_map):
         scale = (w.get("dpi") or 96) / 96.0
         els = []
         if "tree" in w:
-            flatten_win(w["tree"], (cx, cy), scale, role_map, els)
+            flatten_win(w["tree"], (cx, cy), scale, role_map, els, 0, list_rows)
         if w.get("main"):
             main = els
         else:
@@ -149,12 +155,12 @@ def win_groups(doc, role_map):
     return dict(main=main, dialogs=dialogs, focused=doc.get("focusedElement"))
 
 
-def mac_groups(doc, role_map):
+def mac_groups(doc, role_map, list_rows=False):
     main, dialogs = [], []
     for w in doc.get("windows", []):
         els = []
         if "tree" in w:
-            flatten_mac(w["tree"], role_map, els)
+            flatten_mac(w["tree"], role_map, els, 0, list_rows)
         if w.get("main"):
             main = els
         else:
@@ -275,7 +281,8 @@ def default_button_mismatch(label, req, mac_buttons):
 
 def compare_run(win_doc, mac_doc, cfg, phase="", host_dialogs=None):
     rm = cfg.get("roleMap", {})
-    w, m = win_groups(win_doc, rm), mac_groups(mac_doc, rm)
+    list_rows = cfg.get("listRows") == "pixels-only"   # H16: list rows are not compared (the Mac exposes no row content); the pixel gate covers them
+    w, m = win_groups(win_doc, rm, list_rows), mac_groups(mac_doc, rm, list_rows)
     scope = cfg.get("scope", "all")
     mm, info = [], {}
     if scope in ("main", "all"):

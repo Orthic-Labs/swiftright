@@ -402,6 +402,11 @@ enum TransactionContext {
     private static var queued: [AnimationTransaction] = []
     static var deferred: [() -> Void] = []
     static var queuedCount: Int { queued.count }
+    /// Set by the graph that flushes: evaluates the changes made so far as their own transaction (see `Graph.settleAtTransactionBoundary`).
+    static var boundary: (() -> Void)?
+
+    /// A new transaction begins: the changes made before it are settled first, so they are not coalesced with its changes.
+    static func begin() { boundary?() }
 
     static func enqueue(_ transaction: AnimationTransaction) {
         queued.append(transaction)
@@ -437,6 +442,7 @@ public func withAnimation<Result>(
 ) rethrows -> Result {
     let transaction = AnimationTransaction(animation: animation, completion: completion)
     defer { TransactionContext.enqueue(transaction) }
+    TransactionContext.begin()
     return try body()
 }
 
@@ -450,6 +456,7 @@ public func withAnimation<Result>(
 ) rethrows -> Result {
     let transaction = AnimationTransaction(animation: animation, completion: completion, criteria: completionCriteria)
     defer { TransactionContext.enqueue(transaction) }
+    TransactionContext.begin()
     return try body()
 }
 
@@ -459,6 +466,7 @@ public func withAnimation<Result>(
 public func withTransaction<Result>(_ transaction: Transaction, _ body: () throws -> Result) rethrows -> Result {
     let queued = AnimationTransaction(animation: transaction.animation, completion: nil, disablesAnimations: transaction.disablesAnimations)
     defer { TransactionContext.enqueue(queued) }
+    TransactionContext.begin()
     return try body()
 }
 

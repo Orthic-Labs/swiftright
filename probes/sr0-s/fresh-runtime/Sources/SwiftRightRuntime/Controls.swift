@@ -68,6 +68,21 @@ public enum ImageReference: Hashable, Sendable {
     }
 }
 
+extension ImageReference {
+    /// The accessibility name of an image with no `.accessibilityLabel`: the SF Symbol's own description where one was measured on macOS 27
+    /// (`star.fill` is "Favorite" on the Mac; a screen reader must not say "star.fill"), else the name the image was made with.
+    public var accessibilityName: String {
+        if case .system(let symbol) = self, let described = SFSymbolDescriptions.measured[symbol] { return described }
+        return name
+    }
+}
+
+/// SF Symbol descriptions measured on macOS 27 (the AX name of an unlabelled `Image(systemName:)`). Only measured symbols are listed; the rest
+/// fall back to the symbol name, which is the gap this table grows from. Measured: AXDump of factory/pipeline/blocks-37-38/swiftui.uia-walk/controls-b-v1.
+public enum SFSymbolDescriptions {
+    public static let measured: [String: String] = ["star.fill": "Favorite"]
+}
+
 /// A decoded raster: straight-alpha (non-premultiplied) RGBA8, row-major, top row first, no row padding.
 /// Equality and hashing use the content id (a 64-bit FNV-1a of the dimensions and bytes), so comparing two images never scans the pixels.
 public struct RGBAImage: Hashable, Sendable {

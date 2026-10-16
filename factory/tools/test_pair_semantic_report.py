@@ -65,6 +65,45 @@ class SemanticTests(unittest.TestCase):
         mm, _ = S.compare_run(missing, m, cfg)
         self.assertTrue(any(x.get("field") == "count" for x in mm), "a missing switch must fail the count")
 
+    def _h16_docs(self, rename_star=None, drop_list=False):
+        # H16 (controls-b shape): a list of three named rows (the rows carry their text), a Star text outside the list; the Mac has an AXOutline with four
+        # contentless AXUnknown rows inside an AXScrollArea whose AXScrollBar holds zero-size disabled arrows
+        rows = [win_el(n, "ListItem", 0, 24 * i, 180, 24, children=[win_el(n, "Text", 2, 24 * i + 2, 40, 16)]) for i, n in enumerate(["One", "Two", "Three"])]
+        kids = [win_el(rename_star or "Star", "Text", 0, 0, 30, 16)]
+        if not drop_list:
+            kids.append(win_el("", "List", 0, 30, 180, 90, children=rows))
+        w = dict(windows=[win_window(kids)])
+        outline = mac_el("", "AXOutline", 0, 30, 182, 92, children=[mac_el(None, "AXUnknown", 0, 30 + 24 * i, 0, 0) for i in range(4)])
+        arrows = [mac_el(None, "AXButton", 0, 0, 0, 0, subrole="AXIncrementArrow", enabled=False), mac_el(None, "AXButton", 0, 0, 0, 0, subrole="AXDecrementArrow", enabled=False)]
+        scroll = mac_el("", "AXScrollArea", 0, 30, 180, 90, enabled=False, children=[outline, mac_el("", "AXScrollBar", 0, 30, 19, 92, children=arrows)])
+        m = dict(windows=[mac_window([mac_el("Star", "AXStaticText", 0, 0, 30, 16), scroll])])
+        return w, m
+
+    def test_h16_list_rows_are_not_compared_and_the_list_scroll_bar_is_not_content(self):
+        w, m = self._h16_docs()
+        cfg = dict(fields=["role", "name", "enabled", "count"], listRows="pixels-only")
+        mm, _ = S.compare_run(w, m, cfg)
+        self.assertEqual(mm, [])
+
+    def test_h16_mutation_a_missing_list_still_fails(self):
+        w, m = self._h16_docs(drop_list=True)
+        cfg = dict(fields=["role", "name", "enabled", "count"], listRows="pixels-only")
+        mm, _ = S.compare_run(w, m, cfg)
+        self.assertTrue(any(x.get("field") in ("count", "missing") for x in mm), mm)
+
+    def test_h16_mutation_a_missing_scroll_view_on_the_mac_still_fails(self):
+        w, m = self._h16_docs()
+        m["windows"][0]["tree"]["children"] = [c for c in m["windows"][0]["tree"]["children"] if c.get("role") != "AXScrollArea"]
+        cfg = dict(fields=["role", "name", "enabled", "count"], listRows="pixels-only")
+        mm, _ = S.compare_run(w, m, cfg)
+        self.assertTrue(any(x.get("field") in ("count", "missing", "role") for x in mm), mm)
+
+    def test_h16_mutation_a_renamed_control_outside_the_rows_still_fails(self):
+        w, m = self._h16_docs(rename_star="Stars")
+        cfg = dict(fields=["role", "name", "enabled", "count"], listRows="pixels-only")
+        mm, _ = S.compare_run(w, m, cfg)
+        self.assertTrue(any(x.get("field") == "name" for x in mm), mm)
+
     def test_titlebar_chrome_is_ignored_and_extra_element_fails(self):
         w = dict(windows=[win_window([win_el("A", "Text", 0, 0, 10, 10), win_el("B", "Text", 0, 20, 10, 10)])])
         m = dict(windows=[mac_window([mac_el(None, "AXStaticText", 0, 0, 10, 10, value="A")])])
