@@ -29,6 +29,9 @@ RENDERERS = {
     # ABI 0.10 (decision H17): the explicit render scale. render-windows CI run 38841885720 on d449e4deed698f4ae46435cb756a4ce1791c6a0b.
     "renderer-0.10-d449e4de": dict(runId=38841885720, artifact="swiftright-render-d449e4deed698f4ae46435cb756a4ce1791c6a0b",
                                    sha256="b8f046977986e8a6d642ceac12f09182cc404bb9871304b6e5ab8fa39330da09"),
+    # The same plus the settled-size log line at ready (the early-sample line removed). render-windows CI run 38842731404 on a15ebc5d14bef5128c0b8e531f66ffb15ebe9758.
+    "renderer-0.10-a15ebc5d": dict(runId=38842731404, artifact="swiftright-render-a15ebc5d14bef5128c0b8e531f66ffb15ebe9758",
+                                   sha256="c533438a0900bc5aeaee10661a70c9c3ee0e1d87e774a5ac4aea81589f25f996"),
 }
 BLOCK_LABELS = {"swiftui.slider": "37 slider", "swiftui.on-hover": "38 on-hover", "swiftui.uia-walk": "39 uia-walk",
                 "swiftui.compat": "41 compat", "swiftui.ime-traps": "40 ime-traps"}
