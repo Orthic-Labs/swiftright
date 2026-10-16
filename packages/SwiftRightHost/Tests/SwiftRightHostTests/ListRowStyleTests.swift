@@ -61,7 +61,7 @@ final class ListRowStyleTests: XCTestCase {
         let r = rects(try list(Witness_RowsRed()))
         let fills = r.filter { $0.1 == 0xff383cff }
         XCTAssertEqual(fills.count, 5)
-        XCTAssertEqual(fills.first?.0.w, 458, "the row's width: the 500 px list less the 42 px trailing scroller gutter (H21)")
+        XCTAssertEqual(fills.first?.0.w, 500, "the whole list width")
         XCTAssertEqual(fills.first?.0.y, 25, "the list's 10 pt inset (25 px) above the first row stays the list's own (the list is the root here, at y 0)")
         XCTAssertEqual(r.filter { $0.1 == 0x00000019 }.count, 4, "four separators, translucent black over the colour")
     }

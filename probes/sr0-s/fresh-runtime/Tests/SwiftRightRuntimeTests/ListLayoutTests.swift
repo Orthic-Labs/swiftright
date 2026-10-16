@@ -100,15 +100,8 @@ final class ListLayoutTests: XCTestCase {
         let list = try XCTUnwrap(everyNode(root).first { $0.kind == "List" })
         let r = rows(root)
         let full = ListMetrics.rowFrame(content: r[1].frame, listFrame: list.frame)
-        XCTAssertEqual(full.height, 48); XCTAssertEqual(full.minX, list.frame.minX)
-        XCTAssertEqual(Double(full.width), 200 - 16.8, accuracy: 1e-6, "the inset row ends 16.8 pt before the list's trailing edge (the scroller gutter)")
-        XCTAssertEqual(Double(ListMetrics.rowFrame(content: r[1].frame, listFrame: list.frame, look: .plain).width), 200, accuracy: 1e-9, "the plain style reserves no gutter")
+        XCTAssertEqual(full.height, 48); XCTAssertEqual(full.minX, list.frame.minX); XCTAssertEqual(full.width, 200)
         XCTAssertEqual(Double(full.minY - list.frame.minY), 34, accuracy: 0.5)
-    }
-
-    func testTrailingGutterIsMeasuredForTheInsetStyleOnly() {
-        XCTAssertEqual(Double(ListMetrics.trailingGutter(.inset)), 16.8, accuracy: 1e-6)
-        XCTAssertEqual(ListMetrics.trailingGutter(.plain), 0)
     }
 
     func testListStyleMetadata() throws {

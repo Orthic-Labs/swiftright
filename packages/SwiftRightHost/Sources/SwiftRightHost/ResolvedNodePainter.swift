@@ -170,7 +170,7 @@ public final class ResolvedNodePainter {
             let p = n.pixelFrame
             let bounds = place(Rect(x: Float(p.x), y: Float(p.y), w: Float(p.width), h: Float(p.height)))
             var emission: NodeEmission
-            if let row, let rowList { emission = try emitListRow(n, id: id, row: row, look: rowList.look, contentBounds: bounds, textColor: textColor) }
+            if let row, let rowList { emission = try emitListRow(n, id: id, row: row, listBounds: rowList.bounds, look: rowList.look, contentBounds: bounds, textColor: textColor) }
             else { emission = try emit(n, id: id, bounds: bounds, textColor: textColor) }
             // A Button's label is the button's accessible name: its Text publishes no node of its own (as on macOS).
             if inButton, n.kind == "Text" { emission.semantic = nil }
@@ -393,9 +393,9 @@ public final class ResolvedNodePainter {
     }
 
     /// One row of a List: its selection highlight (a rect primitive), and the row's semantics (a list item, selected or not) over the row's whole width.
-    func emitListRow(_ node: ResolvedNode, id: UInt64, row: ListPainter.Row, look: ListLook, contentBounds: Rect, textColor: UInt32?) throws -> NodeEmission {
+    func emitListRow(_ node: ResolvedNode, id: UInt64, row: ListPainter.Row, listBounds: Rect, look: ListLook, contentBounds: Rect, textColor: UInt32?) throws -> NodeEmission {
         var primitives: [Primitive] = []
-        switch ListPainter.highlight(for: row, look: look, scale: scale, active: listIsActive) {
+        switch ListPainter.highlight(for: row, listBounds: listBounds, look: look, scale: scale, active: listIsActive) {
         case .flat(let rect, let rgba)?:
             primitives = [.rect(rect, color: rgba)]
         case .rounded(let rect, let rgb)?:
