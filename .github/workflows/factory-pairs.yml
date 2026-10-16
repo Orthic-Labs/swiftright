@@ -97,6 +97,13 @@ jobs:
           v="$(xcrun swiftc --version 2>&1 | head -n 1)"
           echo "$v"
           case "$v" in *"Swift version 6.4 (swiftlang-6.4.0"*) ;; *) echo "::error::Mac toolchain is not Swift 6.4.0 (local: Apple Swift version 6.4 (swiftlang-6.4.0.34.1)): $v"; exit 1 ;; esac
+      # Reduce Motion and the other accessibility display settings change SwiftUI's transitions (a move becomes a crossfade). The
+      # reference is the local Mac with all four off. Logs before/after, sets any on setting off, and fails closed before capture.
+      - name: Mac accessibility environment (log, match the reference, fail closed)
+        run: |
+          set -euo pipefail
+          mkdir -p "$RUNNER_TEMP/pairs"
+          bash factory/tools/mac-accessibility.sh "$RUNNER_TEMP/pairs/mac-accessibility.txt"
       - name: Mac capture (pinned scale 2.5)
         env:
           CASE: ${{ matrix.case }}
