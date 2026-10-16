@@ -76,20 +76,21 @@ ROUND6_CAVEATS = {
     "swiftui.uia-walk": ["Controls-a pixels are report-only. Controls-b pixels decide only inside its list rect (H20); the semantic tree is gated for every control kind listed in the case.",
                          "Controls-b passes N=20 in CI run 38872207896 (stage f81244b4f-9ce7a09e, commit f81244b4f, renderer 0.10 at scale 2.5): the semantic tree, the list gate and the list-rect pixels, after the H21 gutter. Controls-a passes N=20 in run 38854967920.",
                          "H16 rows are covered by the list-rect region pixel gate plus listGate (H20, H21), and the offscreen Mac harness exposes no row content, so the rows are not compared semantically.",
-                         "H21: the scroller gutter applies only when the list overflows with legacy scrollers; the CI Mac is pinned to legacy (`factory/tools/mac-accessibility.sh`). An overflowing List clips on Windows with no scroll bar drawn (a known gap). An overflowing-List reference must come from CI, not a trackpad Mac, because overlay scrollers take no gutter.",
+                         "H21: the scroller gutter applies only when the list overflows with legacy scrollers; the CI Mac is pinned to legacy (`factory/tools/mac-accessibility.sh`). An overflowing List clips on Windows with no scroll bar drawn (a known gap). Unproven: that overlay scrollers take no gutter. Every runner logged `ax.scrollerStyle=overlay` before the pin, yet the pre-pin run 38854967920 drew an AXScrollBar and the 16.8 pt gutter.",
                          "The semantic comparator folds a toggle's nested label into the Mac AX shape (H14): a switch's label is a sibling before an unnamed switch, a checkbox's duplicate label child is dropped; role, name, toggle, enabled and bounds are still compared.",
                          "Controls-b list rows are gated by pair_list_report.py (count, text, order, selected, frame within 1 px, label ink) and the list-rect pixels (H20), not by the semantic comparator (H16): the offscreen Mac harness's AX tree exposes its rows as AXUnknown with no content; a normal macOS List exposes AXRow/AXCell, which was not measured here.",
                          "An unlabelled `Image(systemName: \"star.fill\")` is named `Favorite`; the name comes from a measured SF-symbol description table that holds measured symbols only (one entry so far: star.fill, English, macOS 27). Other symbols fall back to the symbol name, which will not match the Mac."],
     "swiftui.ime-traps": ["Hardware IME is deferred: the cases drive the in-process TextStore script and the NSTextInputClient path, not a real IME (H9(b)).",
                           "Extra CI evidence: `imet-badregion-v1` passes N=20 in run 38870003524 (stage 168328082-0766196a, commit 168328082) after the harness lease fix (H22); its mapped run stays 38860483220."],
     "swiftui.compat": ["Ported from OpenSwiftUI's MIT tests as view bodies and expectations only (H9a); EquatableView and animation completion are not ported and not delivered.",
-                       "Runtime change (commit ce47755c3): `withAnimation` and `withTransaction` settle pending changes before their body, and `onChange` actions run after the commit with their writes in the next pass (state-nested-update is the case that measured it).",
-                       "Runtime transaction fixes (commit 5713ea1fe, H23): the transaction boundary is per graph (a weak graph registry, not the last-flushed graph); `onChange` writes inherit the triggering transaction with no mid-flush commit; a boundary settle outside a flush schedules a flush; `isErasedEmpty` stays single-modifier and is documented. Unit tests 434/434 at that commit. CI run 38865487951 (N=3): 38 of 39 cases pass; `ime-composing-v1` was lost to the fixed 10 s host lease, not to the change (it passes N=20 in run 38870003524 after H22)."],
+                       "Runtime change (commit ce47755c3): `withAnimation` and `withTransaction` settle pending changes before their body (state-nested-update is the case that measured it). The `onChange` transaction handling from that commit is being revised after an Oracle BLOCK on 5713ea1fe; block 41 stays delivered-pending-review only for its 5 measured cases.",
+                       "Runtime transaction fixes (commit 5713ea1fe, H23; under revision after the Oracle BLOCK): the transaction boundary is per graph (a weak graph registry, not the last-flushed graph); `onChange` writes inherit the triggering transaction with no mid-flush commit; a boundary settle outside a flush schedules a flush; `isErasedEmpty` stays single-modifier and is documented. Unit tests 434/434 at that commit. CI run 38865487951 (N=3): 38 of 39 cases pass; `ime-composing-v1` was lost to the fixed 10 s host lease, not to the change (it passes N=20 in run 38870003524 after H22)."],
 }
 ROUND4_CAVEATS.update(ROUND5_CAVEATS)
 ROUND4_CAVEATS.update(ROUND6_CAVEATS)
 # The 21 List cases (block 16's 13 and block 24's 8) re-pass at N=3 on f81244b4f (run 38872220871). Notes only: the status is unchanged.
-LIST_NOTES = {bid: ["The 21 List cases re-pass at N=3 on stage f81244b4f-9ce7a09e (commit f81244b4f, run 38872220871), and the H21 gutter rule now applies to them: an inset List reserves the legacy scroller gutter only when it overflows. N=3 only; this note does not change the status."]
+LIST_NOTES = {bid: ["The 21 List cases re-pass at N=3 on stage f81244b4f-9ce7a09e (commit f81244b4f, run 38872220871), and the H21 gutter rule now applies to them: an inset List reserves the legacy scroller gutter only when it overflows. N=3 only; this note does not change the status.",
+                     "H21 premise unproven: every runner logged `ax.scrollerStyle=overlay` before the pin, yet run 38854967920 drew a scroll bar and a 16.8 pt gutter. The gutter in the Mac capture is blank (no scroller drawn). An exact fit (document = viewport) and an overflowing plain list were not measured."]
               for bid in ("swiftui.list", "swiftui.list-row-style")}
 PENDING_REVIEW = {"swiftui.observation", "swiftui.task-asyncstream", "swiftui.spacer-divider", "swiftui.list-row-style", "swiftui.font-custom"} | set(ROUND5_CAVEATS)
 
@@ -343,14 +344,13 @@ def build():
     sdate, rows, gaps = parse_status()
     stages = {}
     cstage = json.loads(CLOSURE_TABLE.read_text())["stage"]
-    cases_closure = {r["case"] for r in table if not (isinstance(top(r), int) and top(r) > 20)}
-    for line in RESULTS.read_text().splitlines():            # rounds 4 and 5: every stage the case was recorded on
+    for line in RESULTS.read_text().splitlines():            # every stage a case PASSED on (exit 0), blocks 11-16, 21 and up
         r = json.loads(line)
-        if r.get("done") and r["case"] not in cases_closure:
+        if r.get("done") and r["exit"] == 0:
             stages.setdefault(r["case"], set()).add(r["stage"])
-    for line in CLOSURE_RESULTS.read_text().splitlines():    # blocks 1-20: the single closure stage
+    for line in CLOSURE_RESULTS.read_text().splitlines():    # blocks 1-20: the closure stage, where the case passed
         r = json.loads(line)
-        if r.get("done") and r["stage"] == cstage:
+        if r.get("done") and r["exit"] == 0 and r["stage"] == cstage:
             stages.setdefault(r["case"], set()).add(cstage)
     failing_local = {r["case"] for r in table if r["exit"] != 0}
     for case, run in CI_CASE_RUN.items():                   # a case's stages are where it passed: the CI stage, plus local stages only if the local row passed
