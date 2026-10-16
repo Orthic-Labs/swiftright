@@ -1879,7 +1879,18 @@ public final class Graph {
 
     // MARK: Commit
 
-    private func commit() {
+    /// Commits the pass made so far under `transaction` (a nested `withAnimation` boundary or end; see `TransactionContext.begin`), taking along what
+    /// is already queued (an `.animation(_:value:)` change the pass made). Where this graph is evaluating, the transaction is queued as before.
+    func commitSegment(_ transaction: AnimationTransaction) {
+        guard !closed else { return }
+        if evaluating { enqueue(transaction); return }
+        var rounds = 0
+        drainDirty(&rounds)
+        commit(extra: transaction)
+        uncommitted = false
+    }
+
+    private func commit(extra: AnimationTransaction? = nil) {
         guard !closed, let root else { return }
         let profiling = profile != nil
         var t0 = profiling ? GraphProfile.now() : 0
@@ -1897,7 +1908,7 @@ public final class Graph {
         if profiling { lap(&profile!.layoutNS) }
         var changed: [Node] = []
         collectChanged(root, into: &changed)
-        let transactions = takeQueued()
+        let transactions = takeQueued() + (extra.map { [$0] } ?? [])
         // Motions end in path order (completion order must not depend on how the tree was walked), so sort when a motion
         // can start or end in this commit.
         if !transactions.isEmpty || changed.contains(where: { $0.motion != nil }) {

@@ -245,9 +245,9 @@ final class TransactionBoundaryScopeTests: XCTestCase {
         XCTAssertEqual(Array(widths(graph).prefix(2)), [50, 50])
     }
 
-    // A withAnimation nested in the one an onChange action opened: the inner body ends first, so the outer transaction is the last explicit one and decides
-    // for every node the pass changed (that ordering predates the per-graph queue; recorded here, not changed). The outer one must not be committed early.
-    func testNestedWithAnimationInOnChangeKeepsTheOuterAnimationOnItsOwnWrite() {
+    // A withAnimation nested in the one an onChange action opened: each write commits under the innermost transaction open when it is made (measured on
+    // macOS 27, block 41 onchange-animation-v1: the Mac animates the inner write with the inner animation, the outer one with the outer).
+    func testNestedWithAnimationInOnChangeInnerWriteTakesTheInnerAnimation() {
         let model = ChainModel()
         model.react = { model, new in
             withAnimation(.linear(duration: 2.0)) {
@@ -259,14 +259,32 @@ final class TransactionBoundaryScopeTests: XCTestCase {
         let base = records.items.count
         model.trigger = 40
         graph.flush()
-        XCTAssertEqual(records.items.count - base, 2, "the trigger's pass, then one pass for both writes")
-        XCTAssertNil(records.items[base].animation)
+        XCTAssertEqual(records.items.dropFirst(base).map { $0.animation }, [nil, "linear", "linear", nil],
+                       "the trigger's pass; the outer write under the outer animation; the inner write under the inner one; the flush's closing commit")
         graph.tick(now: 0)
         graph.tick(now: 0.5)
         let mid = widths(graph)
         XCTAssertEqual(mid[0], 50, accuracy: 1e-9, "the trigger snapped")
-        XCTAssertEqual(mid[1], 20, accuracy: 1e-9, "the outer write animates with the outer 2 s animation, not snapped")
-        XCTAssertEqual(mid[2], 20, accuracy: 1e-9, "the inner write is in the same pass: the last explicit transaction (the outer one) decides")
+        XCTAssertEqual(mid[1], 20, accuracy: 1e-9, "the outer write runs the outer 2 s animation (a quarter of the way)")
+        XCTAssertEqual(mid[2], 30, accuracy: 1e-9, "the inner write runs the inner 1 s animation (halfway)")
+    }
+
+    // Outside onChange: x written under the outer transaction, y under the inner one nested in it, z under the outer again.
+    func testNestedWithAnimationWritesTakeTheInnermostOpenTransaction() {
+        let model = ChainModel()
+        let (graph, records) = chain(model)
+        let base = records.items.count
+        withAnimation(.linear(duration: 2.0)) {
+            model.trigger = 40
+            withAnimation(.linear(duration: 1.0)) { model.third = 40 }
+        }
+        graph.flush()
+        _ = records.items.dropFirst(base)
+        graph.tick(now: 0)
+        graph.tick(now: 0.5)
+        let mid = widths(graph)
+        XCTAssertEqual(mid[0], 20, accuracy: 1e-9, "the outer write: 2 s, a quarter of the way")
+        XCTAssertEqual(mid[2], 30, accuracy: 1e-9, "the inner write: 1 s, halfway")
     }
 
     // T -> onChange: withAnimation(a) { follower } -> onChange of follower: withAnimation(nil) { third }

@@ -405,10 +405,12 @@ enum TransactionContext {
         weak var graph: Graph?
         init(_ graph: Graph) { self.graph = graph }
     }
+    /// One open `withAnimation` body. `touched` holds the graphs written under its transaction and not yet committed or queued.
     private final class Frame {
-        var graphs: [ObjectIdentifier] = []
+        let transaction: AnimationTransaction
         var touched: [Graph] = []
-        init() {}
+        var everTouched = false
+        init(_ transaction: AnimationTransaction) { self.transaction = transaction }
     }
     /// Every live graph (one per window). `withAnimation` has no graph argument, so the boundary cannot know which graph owns the state the
     /// body will write; each graph settles only its own pending changes, so every live graph is told and none is mistaken for another.
@@ -423,38 +425,42 @@ enum TransactionContext {
 
     /// A new transaction begins: the changes each graph made before it are settled first (see `Graph.settleAtTransactionBoundary`), so they
     /// are not coalesced with the new transaction's changes. Its body is then a frame, closed by `end`.
-    static func begin() {
+    /// Each write belongs to the innermost transaction open when it is made (SwiftUI; measured on macOS 27, block 41 onchange-animation: the write inside
+    /// an inner `withAnimation` animates with the inner one). So when a transaction opens inside another, the writes the enclosing one made so far are
+    /// committed under it first (`Graph.commitSegment`), and the nested body's writes are committed under the nested transaction when it ends.
+    static func begin(_ transaction: AnimationTransaction) {
         graphs.removeAll { $0.graph == nil }
-        // Only the outermost transaction an onChange action opens commits the triggering pass: a transaction nested in an open frame belongs to the
-        // frame's writes, whose transaction is queued when the frame ends, so committing here would commit them before it is queued.
+        // Only the outermost transaction an onChange action opens commits the triggering pass.
         let outermost = frames.isEmpty
         for entry in graphs {
             entry.graph?.settleAtTransactionBoundary()
             if outermost { entry.graph?.commitTriggerBeforeTransaction() }
         }
-        frames.append(Frame())
+        if let parent = frames.last {
+            let touched = parent.touched
+            parent.touched = []
+            for graph in touched { graph.commitSegment(parent.transaction) }
+        }
+        frames.append(Frame(transaction))
     }
 
-    /// The body ended: its transaction is queued on each graph it wrote (or left unattached when it wrote none).
+    /// The body ended: its transaction is queued on each graph it wrote and not yet committed (or left unattached when it wrote none). Nested in another
+    /// transaction, its writes are committed now under it, so the enclosing transaction's later writes do not take its place as the decisive one.
     static func end(_ transaction: AnimationTransaction) {
         guard let frame = frames.popLast() else { return }
-        if frame.touched.isEmpty { unattached.append(transaction); return }
-        for graph in frame.touched { graph.enqueue(transaction) }
+        if !frame.everTouched { unattached.append(transaction); return }
+        if frames.isEmpty {
+            for graph in frame.touched { graph.enqueue(transaction) }
+        } else {
+            for graph in frame.touched { graph.commitSegment(transaction) }
+        }
     }
 
-    /// `graph` is written inside the open frames. True when it is the first write to it in the innermost frame.
-    @discardableResult
-    static func touch(_ graph: Graph) -> Bool {
-        var first = false
-        for (index, frame) in frames.enumerated() {
-            let id = ObjectIdentifier(graph)
-            if !frame.graphs.contains(id) {
-                frame.graphs.append(id)
-                frame.touched.append(graph)
-                if index == frames.count - 1 { first = true }
-            }
-        }
-        return first
+    /// `graph` is written under the innermost open frame's transaction.
+    static func touch(_ graph: Graph) {
+        guard let frame = frames.last else { return }
+        frame.everTouched = true
+        if !frame.touched.contains(where: { $0 === graph }) { frame.touched.append(graph) }
     }
 
     static func takeUnattached() -> [AnimationTransaction] {
@@ -486,7 +492,7 @@ public func withAnimation<Result>(
 ) rethrows -> Result {
     let transaction = AnimationTransaction(animation: animation, completion: completion)
     defer { TransactionContext.end(transaction) }
-    TransactionContext.begin()
+    TransactionContext.begin(transaction)
     return try body()
 }
 
@@ -500,7 +506,7 @@ public func withAnimation<Result>(
 ) rethrows -> Result {
     let transaction = AnimationTransaction(animation: animation, completion: completion, criteria: completionCriteria)
     defer { TransactionContext.end(transaction) }
-    TransactionContext.begin()
+    TransactionContext.begin(transaction)
     return try body()
 }
 
@@ -510,7 +516,7 @@ public func withAnimation<Result>(
 public func withTransaction<Result>(_ transaction: Transaction, _ body: () throws -> Result) rethrows -> Result {
     let queued = AnimationTransaction(animation: transaction.animation, completion: nil, disablesAnimations: transaction.disablesAnimations)
     defer { TransactionContext.end(queued) }
-    TransactionContext.begin()
+    TransactionContext.begin(queued)
     return try body()
 }
 

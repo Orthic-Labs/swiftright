@@ -662,7 +662,7 @@ nonisolated(unsafe) let op = OnchProbe()
 
 struct MarkBar: View {
     let mark: Int
-    var body: some View { Rectangle().fill(mark < 0 ? Color.gray : (mark == 1 ? Color.green : Color.red)).frame(width: mark == 1 ? 40 : 8, height: 8) }
+    var body: some View { Rectangle().fill(mark < 0 ? Color.gray : (mark == 1 ? Color.green : Color.red)).frame(width: mark == 1 ? 40 : 8, height: 6) }
 }
 
 struct Witness_co_onchg: View {
@@ -674,28 +674,26 @@ struct Witness_co_onchg: View {
     @State private var cf = 0
     @State private var ct = 0
     var body: some View {
-        VStack(alignment: .leading, spacing: 8) {
-            HStack(spacing: 4) {
-                Button("Plain") { op.t0 = Date(); a = 1 }.frame(width: 76, height: 28)
-                Button("Animated") {
-                    op.t0 = Date()
-                    withAnimation(.linear(duration: 0.3)) { b = 1 } completion: { op.markB = op.late() }
-                }.frame(width: 76, height: 28)
-                Button("Nested") { op.t0 = Date(); c = 1 }.frame(width: 76, height: 28)
-            }
+        VStack(alignment: .leading, spacing: 4) {
+            Button("Plain") { op.t0 = Date(); a = 1 }.frame(width: 100, height: 28)
+            Button("Animated") {
+                op.t0 = Date()
+                withAnimation(.linear(duration: 0.3)) { b = 1 } completion: { op.markB = op.late() }
+            }.frame(width: 100, height: 28)
+            Button("Nested") { op.t0 = Date(); c = 1 }.frame(width: 100, height: 28)
             // direction A: a plain trigger; its onChange writes under withAnimation. The follower (blue) animates, the trigger (orange, visible on the white background) snaps
-            VStack(alignment: .leading, spacing: 2) {
-                Color.orange.frame(width: CGFloat(a) * 20 + 10, height: 8)
-                Color.blue.frame(width: CGFloat(af) * 20 + 10, height: 8)
+            VStack(alignment: .leading, spacing: 1) {
+                Color.orange.frame(width: CGFloat(a) * 20 + 10, height: 6)
+                Color.blue.frame(width: CGFloat(af) * 20 + 10, height: 6)
             }
             .onChange(of: a) { _, new in
                 withAnimation(.linear(duration: 0.3)) { af = new } completion: { op.markA = op.late() }
             }
             MarkBar(mark: op.markA)
             // direction B: an animated trigger; its onChange writes under withAnimation(nil). The trigger (orange) keeps its animation, the follower (red) snaps
-            VStack(alignment: .leading, spacing: 2) {
-                Color.orange.frame(width: CGFloat(b) * 20 + 10, height: 8)
-                Color.red.frame(width: CGFloat(bf) * 20 + 10, height: 8)
+            VStack(alignment: .leading, spacing: 1) {
+                Color.orange.frame(width: CGFloat(b) * 20 + 10, height: 6)
+                Color.red.frame(width: CGFloat(bf) * 20 + 10, height: 6)
             }
             .onChange(of: b) { _, new in
                 withAnimation(nil) { bf = new }
@@ -703,11 +701,11 @@ struct Witness_co_onchg: View {
             MarkBar(mark: op.markB)
             // direction C: a plain trigger; its onChange nests an inner withAnimation (0.25 s) in an outer one (0.4 s). The outer completion (first bar) runs late
             // if the outer animation animated the follower; the inner completion (second bar) runs late only if the inner transaction governed the inner write
-            // (third), at once if the outer one decided for it. Both are measured; neither is assumed.
-            VStack(alignment: .leading, spacing: 2) {
-                Color.orange.frame(width: CGFloat(c) * 20 + 10, height: 8)
-                Color.blue.frame(width: CGFloat(cf) * 20 + 10, height: 8)
-                Color.purple.frame(width: CGFloat(ct) * 20 + 10, height: 8)
+            // (third), at once if the outer one decided for it. Both are measured; neither is assumed. (Run 38913665384, Mac: both bars green, inner governs its own writes.)
+            VStack(alignment: .leading, spacing: 1) {
+                Color.orange.frame(width: CGFloat(c) * 20 + 10, height: 6)
+                Color.blue.frame(width: CGFloat(cf) * 20 + 10, height: 6)
+                Color.purple.frame(width: CGFloat(ct) * 20 + 10, height: 6)
             }
             .onChange(of: c) { _, new in
                 withAnimation(.linear(duration: 0.4)) {
@@ -719,7 +717,7 @@ struct Witness_co_onchg: View {
         }.frame(width: 240, height: 200, alignment: .topLeading)
     }
 }'''
-_btn_ex = [{"name": "button label glyphs (Segoe UI vs SF, decision 2/11)", "rect": [round((OX + x) * SCALE), round(OY * SCALE), round((OX + x + 76) * SCALE), round((OY + 28) * SCALE)]} for x in (0, 80, 160)]
+_btn_ex = [{"name": "button label glyphs (Segoe UI vs SF, decision 2/11)", "rect": [round(OX * SCALE), round((OY + y) * SCALE), round((OX + 100) * SCALE), round((OY + y + 28) * SCALE)]} for y in (0, 32, 64)]
 # the completions run up to 0.4 s after the click: each phase settles for 800 ms before its dump (sl_phases settles 450 ms)
 _onchg_steps = [{"op": "wait", "ms": 700}]
 for _label, _op in (("start", None), ("plain", "Plain"), ("animated", "Animated"), ("nested", "Nested")):
