@@ -31,6 +31,9 @@ pub struct Measured {
     pub last_baseline: f32,
     pub line_height_dip: f32,
     pub scale: f32,
+    /// Rev 0.10: GPUI logical px per host DIP-at-scale, `S / G` under an explicit render scale, exactly 1.0 otherwise. Line
+    /// height and tracking handed to GPUI at paint time are multiplied by it (shaping used the same factor).
+    pub gpui_ratio: f32,
     pub char_count: u32,
     pub key: u64,
     /// Rev 0.8: what the face resolver decided and what the shaper produced, for painting and `swr_text_run_faces`.
@@ -221,6 +224,8 @@ pub struct Request<'a> {
     pub line_height: f32,
     pub scale: f32,
     pub max_width: f32,
+    /// Rev 0.10: see `Measured::gpui_ratio`. 1.0 without an explicit render scale.
+    pub gpui_ratio: f32,
 }
 
 pub fn cache_key(r: &Request) -> u64 {
@@ -234,6 +239,11 @@ pub fn cache_key(r: &Request) -> u64 {
     r.font_size.to_bits().hash(&mut h);
     r.line_height.to_bits().hash(&mut h);
     r.scale.to_bits().hash(&mut h);
+    // Rev 0.10: a different S / G ratio is a different shaping. Hashed only when it is not 1, so every key without an override is
+    // exactly what it was.
+    if r.gpui_ratio != 1.0 {
+        r.gpui_ratio.to_bits().hash(&mut h);
+    }
     r.max_width.max(0.0).to_bits().hash(&mut h);
     // Rev 0.8: a request with an extension is a different shaping; a 0.6 request keeps its 0.6 key.
     if let Some(e) = r.ext {
@@ -343,6 +353,11 @@ fn glyph_id_of(g: &gpui::ShapedGlyph) -> u32 {
 /// Shapes `r.text` with GPUI's text system. Rev 0.6: '\n' splits paragraphs.
 pub fn shape(ts: &WindowTextSystem, r: &Request, key: u64) -> Result<Measured, Status> {
     let scale = r.scale;
+    // Rev 0.10: `k` = S / G (1.0 without an explicit render scale). GPUI shapes at `font_size * k` logical px and turns logical into
+    // device px with G = S / k, so every layout value it returns converts to physical px with `g`, and every host-facing DIP value
+    // (line height, tracking, baselines) keeps `scale`. With k == 1.0, g == scale and nothing below changes.
+    let k = r.gpui_ratio;
+    let g = scale / k;
     let lh = r.line_height;
     let line_px = lh * scale;
     let chars: Vec<char> = r.text.chars().collect();
@@ -367,6 +382,7 @@ pub fn shape(ts: &WindowTextSystem, r: &Request, key: u64) -> Result<Measured, S
             last_baseline: empty_baseline,
             line_height_dip: lh,
             scale,
+            gpui_ratio: k,
             char_count: 0,
             key,
             ext: MeasuredExt { track_dip: r.ext.map_or(0.0, |e| e.track_dip), color: r.color, font_size: r.font_size, face: face_req(r), ..Default::default() },
@@ -384,12 +400,12 @@ pub fn shape(ts: &WindowTextSystem, r: &Request, key: u64) -> Result<Measured, S
         strikethrough: None,
     };
     let wrap = if r.max_width > 0.0 {
-        Some(px(r.max_width / scale))
+        Some(px(r.max_width / g))
     } else {
         None
     };
     let shaped = ts
-        .shape_text(SharedString::from(r.text.to_string()), px(r.font_size), &[run], wrap, None)
+        .shape_text(SharedString::from(r.text.to_string()), px(r.font_size * k), &[run], wrap, None)
         .map_err(|_| E_PLATFORM)?;
     let paragraph_texts: Vec<&str> = r.text.split('\n').collect();
     if shaped.len() != paragraph_texts.len() {
@@ -422,7 +438,8 @@ pub fn shape(ts: &WindowTextSystem, r: &Request, key: u64) -> Result<Measured, S
         let ptext = paragraph_texts[pi];
         let layout = wl.unwrapped_layout.clone();
         if asc_desc.is_none() && !ptext.is_empty() {
-            asc_desc = Some((f32::from(layout.ascent), f32::from(layout.descent)));
+            // DIP units: GPUI shaped at `font_size * k`, so its ascent and descent are k times the host's.
+            asc_desc = Some((f32::from(layout.ascent) / k, f32::from(layout.descent) / k));
         }
         // Rev 0.8: glyph cluster starts (tracking is added per cluster) and one record per shaped sub-run (same gpui font id).
         let mut cluster_starts: Vec<usize> = layout.runs.iter().flat_map(|run| run.glyphs.iter().map(|g| g.index)).collect();
@@ -448,9 +465,9 @@ pub fn shape(ts: &WindowTextSystem, r: &Request, key: u64) -> Result<Measured, S
                 glyphs: run.glyphs.len() as u32,
                 notdef: run.glyphs.iter().filter(|g| glyph_id_of(g) == 0).count() as u32,
                 emoji: run.glyphs.iter().any(|g| g.is_emoji),
-                advance_px: (next_x - f32::from(first.position.x)) * scale,
-                ascent_px: f32::from(ts.ascent(run.font_id, layout.font_size)) * scale,
-                descent_px: f32::from(ts.descent(run.font_id, layout.font_size)) * scale,
+                advance_px: (next_x - f32::from(first.position.x)) * g,
+                ascent_px: f32::from(ts.ascent(run.font_id, layout.font_size)) * g,
+                descent_px: f32::from(ts.descent(run.font_id, layout.font_size)) * g,
                 first_char: ptext.get(first.index..).and_then(|t| t.chars().next()).map_or(0, |c| c as u32),
                 first_gid: glyph_id_of(first),
             });
@@ -479,8 +496,8 @@ pub fn shape(ts: &WindowTextSystem, r: &Request, key: u64) -> Result<Measured, S
             let xs = line_start_x[line];
             // Tracking: every cluster before this one on the visual line moved by t_px; this cluster's cell includes its own.
             let n_before = cluster_ordinal(&cluster_starts, byte).saturating_sub(cluster_ordinal(&cluster_starts, line_first_byte[line])) as f32;
-            let x0 = (f32::from(layout.x_for_index(byte)) - xs) * scale + t_px * n_before;
-            let x1 = (f32::from(layout.x_for_index(byte + len)) - xs) * scale + t_px * (n_before + 1.0);
+            let x0 = (f32::from(layout.x_for_index(byte)) - xs) * g + t_px * n_before;
+            let x1 = (f32::from(layout.x_for_index(byte + len)) - xs) * g + t_px * (n_before + 1.0);
             if x1 > line_width[line] {
                 line_width[line] = x1;
             }
@@ -582,6 +599,7 @@ pub fn shape(ts: &WindowTextSystem, r: &Request, key: u64) -> Result<Measured, S
         lines: infos,
         line_height_dip: lh,
         scale,
+        gpui_ratio: k,
         char_count: chars.len() as u32,
         key,
         ext: MeasuredExt {

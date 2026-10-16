@@ -15,6 +15,7 @@ mod faces;
 mod font;
 mod pace;
 mod rt;
+mod scale;
 mod text;
 mod trace;
 mod tree;
@@ -305,9 +306,6 @@ pub extern "C" fn swr_run(opts: *const RunOptions, cb: *const HostCallbacks) -> 
         {
             return E_BAD_ARG;
         }
-        if SHUTDOWN.load(SeqCst) || RUN_STARTED.swap(true, SeqCst) {
-            return E_STATE;
-        }
         let title = if o.title.is_null() || o.title_len == 0 {
             String::from("SwiftRight")
         } else {
@@ -317,6 +315,21 @@ pub extern "C" fn swr_run(opts: *const RunOptions, cb: *const HostCallbacks) -> 
                 Err(_) => return E_BAD_ARG,
             }
         };
+        // Rev 0.10: an options struct of at least 48 bytes carries an explicit render scale (decision H17). A smaller struct has
+        // none, and 0 means none; an invalid value is refused before anything is started.
+        let render_scale = if (o.struct_size as usize) >= std::mem::size_of::<RunOptionsV10>() {
+            let v10 = unsafe { &*(opts as *const RunOptionsV10) };
+            match scale::parse_render_scale(v10.render_scale) {
+                Ok(v) => v,
+                Err(()) => return E_BAD_ARG,
+            }
+        } else {
+            None
+        };
+        if SHUTDOWN.load(SeqCst) || RUN_STARTED.swap(true, SeqCst) {
+            return E_STATE;
+        }
+        scale::set_override(render_scale);
         POINTER_MOVES.store(o.flags & RUN_POINTER_MOVES != 0, SeqCst);
         let host = Host::from_abi(&c);
         view::run(title, o.width_dip, o.height_dip, host, o.host_wake_handle as usize)
@@ -524,6 +537,8 @@ fn measure_core(r: &MeasureRequest, ext: Option<&text::Ext>, out: &mut MeasureRe
         line_height: r.line_height,
         scale: r.scale,
         max_width: r.max_width,
+        // Rev 0.10: exactly 1.0 unless the host passed an explicit render scale (decision H17).
+        gpui_ratio: scale::gpui_ratio(scale::override_scale(), r.scale, scale::gpui_scale()),
     };
     bump(S_MEASURE);
     let key = text::cache_key(&q);
@@ -943,6 +958,36 @@ pub extern "C" fn swr_bootstrap_query_v09(out: *mut BootstrapInfoV09, caller_siz
         }
         SWR_OK
     })
+}
+
+/// Rev 0.10 discovery (additive): the 0.9 view at identical offsets (abi_minor 10; the 184-byte table and 22 functions are the 0.8
+/// ones) + the run options v10 size. The legacy, `_v07`, `_v08` and `_v09` exports are untouched.
+#[no_mangle]
+pub extern "C" fn swr_bootstrap_query_v10(out: *mut BootstrapInfoV10, caller_size: u32) -> Status {
+    guard!({
+        let need = std::mem::size_of::<BootstrapInfoV10>() as u32;
+        if out.is_null() || caller_size < need {
+            return E_BAD_ARG;
+        }
+        let mut v09 = std::mem::MaybeUninit::<BootstrapInfoV09>::uninit();
+        let rc = swr_bootstrap_query_v09(v09.as_mut_ptr(), std::mem::size_of::<BootstrapInfoV09>() as u32);
+        if rc != SWR_OK {
+            return rc;
+        }
+        let mut v09 = unsafe { v09.assume_init() };
+        v09.v08.v07.base.abi_minor = ABI_MINOR_V10;
+        v09.v08.v07.base.struct_size = need;
+        unsafe {
+            *out = BootstrapInfoV10 { v09, run_options_v10_size: std::mem::size_of::<RunOptionsV10>() as u32, reserved: 0 };
+        }
+        SWR_OK
+    })
+}
+
+/// Rev 0.10 function table: identical to the 0.8 table (no new functions; the scale travels in the run options).
+#[no_mangle]
+pub extern "C" fn swr_get_api_v10(out: *mut ApiV08, caller_size: u32) -> Status {
+    swr_get_api_v08(out, caller_size)
 }
 
 /// Rev 0.9 function table: identical to the 0.8 table (no new functions).
@@ -1485,6 +1530,7 @@ mod v08_tests {
             line_height: 20.0,
             scale: 1.0,
             max_width: 0.0,
+            gpui_ratio: 1.0,
         };
         let f = text::build_font(&q);
         assert_eq!(f.features.tag_value_list(), &[("kern".to_string(), 1u32)]);
@@ -1508,7 +1554,39 @@ mod v08_tests {
             line_height: 20.0,
             scale: 1.0,
             max_width: 0.0,
+            gpui_ratio: 1.0,
         }
+    }
+
+    /// Rev 0.10: a render-scale ratio is a different shaping, and ratio 1 (no override) keeps the pre-0.10 key.
+    #[test]
+    fn cache_key_separates_a_render_scale_ratio_and_keeps_the_old_key_at_one() {
+        let one = text::cache_key(&base(None));
+        let mut r = base(None);
+        r.gpui_ratio = 2.0;
+        assert_ne!(one, text::cache_key(&r));
+        let mut r = base(None);
+        r.gpui_ratio = 1.0;
+        assert_eq!(one, text::cache_key(&r));
+    }
+
+    #[test]
+    fn bootstrap_v10_extends_v09_and_reports_minor_10() {
+        let mut b = std::mem::MaybeUninit::<BootstrapInfoV10>::uninit();
+        assert_eq!(swr_bootstrap_query_v10(b.as_mut_ptr(), std::mem::size_of::<BootstrapInfoV10>() as u32), SWR_OK);
+        let b = unsafe { b.assume_init() };
+        assert_eq!(b.v09.v08.v07.base.abi_minor, 10);
+        assert_eq!(b.v09.v08.v07.base.struct_size, 136);
+        assert_eq!(b.run_options_v10_size, 48);
+        // The 0.9 and 0.8 views are untouched and the table is the 0.8 one.
+        let mut v9 = std::mem::MaybeUninit::<BootstrapInfoV09>::uninit();
+        assert_eq!(swr_bootstrap_query_v09(v9.as_mut_ptr(), std::mem::size_of::<BootstrapInfoV09>() as u32), SWR_OK);
+        assert_eq!(unsafe { v9.assume_init() }.v08.v07.base.abi_minor, 9);
+        assert_eq!(b.v09.v08.v07.base.api_table_size, 184);
+        assert_eq!(b.v09.v08.v07.base.fn_count, 22);
+        assert_eq!(swr_bootstrap_query_v10(std::ptr::null_mut(), 136), E_BAD_ARG);
+        let mut small = std::mem::MaybeUninit::<BootstrapInfoV10>::uninit();
+        assert_eq!(swr_bootstrap_query_v10(small.as_mut_ptr(), 128), E_BAD_ARG);
     }
 
     #[test]
@@ -1656,6 +1734,7 @@ mod v08_tests {
             last_baseline: 0.0,
             line_height_dip: 20.0,
             scale: 1.0,
+            gpui_ratio: 1.0,
             char_count: 3,
             key: 1,
             ext: text::MeasuredExt {

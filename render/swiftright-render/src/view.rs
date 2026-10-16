@@ -26,6 +26,7 @@ use crate::abi::*;
 use crate::ax::{Actions, Activation};
 use crate::pace;
 use crate::rt::*;
+use crate::scale;
 use crate::text::{RunSlab, Slab, TextCache, TrackedImage, MAX_RUNS};
 use crate::trace;
 use crate::tree::{Prim, Tree};
@@ -54,6 +55,37 @@ extern "system" {
     fn GetCursorPos(pt: *mut [i32; 2]) -> i32;
     fn SetForegroundWindow(hwnd: *mut c_void) -> i32;
     fn PostMessageW(hwnd: *mut c_void, msg: u32, w: usize, l: isize) -> i32;
+    // Rev 0.10: the primary monitor's DPI, to size the window before it exists when an explicit render scale is set.
+    fn MonitorFromPoint(pt: WinPoint, flags: u32) -> *mut c_void;
+}
+
+#[repr(C)]
+#[derive(Clone, Copy)]
+struct WinPoint {
+    x: i32,
+    y: i32,
+}
+
+#[link(name = "shcore")]
+extern "system" {
+    fn GetDpiForMonitor(monitor: *mut c_void, dpi_type: i32, dpi_x: *mut u32, dpi_y: *mut u32) -> i32;
+}
+
+/// The primary monitor's effective DPI over 96 (GPUI opens the window on the primary display), or 1.0 when it cannot be read.
+fn primary_monitor_scale() -> f32 {
+    const MONITOR_DEFAULTTOPRIMARY: u32 = 1;
+    const MDT_EFFECTIVE_DPI: i32 = 0;
+    let mon = unsafe { MonitorFromPoint(WinPoint { x: 0, y: 0 }, MONITOR_DEFAULTTOPRIMARY) };
+    if mon.is_null() {
+        return 1.0;
+    }
+    let (mut x, mut y) = (0u32, 0u32);
+    let hr = unsafe { GetDpiForMonitor(mon, MDT_EFFECTIVE_DPI, &mut x, &mut y) };
+    if hr != 0 || x == 0 {
+        1.0
+    } else {
+        x as f32 / 96.0
+    }
 }
 
 type TaskDialogCallback = unsafe extern "system" fn(*mut c_void, u32, usize, isize, isize) -> i32;
@@ -744,7 +776,7 @@ fn paint_tree(
                         continue;
                     }
                     // Rev 0.6: one GPUI WrappedLine per paragraph, stacked by `top` (run-local px).
-                    let lh = px(run.line_height_dip);
+                    let lh = px(run.line_height_dip * run.gpui_ratio);
                     for (wl, top) in run.wrapped.iter() {
                         let o = point(
                             origin.x + px((*x + tx.0) * inv),
@@ -753,7 +785,7 @@ fn paint_tree(
                         if run.ext.track_dip != 0.0 {
                             // Rev 0.8 tracking: shape with gpui, paint every glyph at its layout position plus the tracking
                             // (G14: Window::paint_glyph is public). Tracking 0 keeps the unchanged path above.
-                            masked(window, clip, |w| paint_tracked(wl, o, lh, run.ext.track_dip, run.ext.color, w));
+                            masked(window, clip, |w| paint_tracked(wl, o, lh, run.ext.track_dip * run.gpui_ratio, run.ext.color, w));
                         } else {
                             masked(window, clip, |w| {
                                 let _ = wl.paint(o, lh, TextAlign::Left, None, w, cx);
@@ -840,7 +872,20 @@ fn paint_root(
         (f32::from(vs.width) * scale).round() as u32,
         (f32::from(vs.height) * scale).round() as u32,
     );
-    publish_window_metrics(w, h, scale);
+    // Rev 0.10: the scale the host sees is the explicit one when set, else GPUI's own (unchanged). GPUI's scale (G) stays the unit
+    // for converting GPUI logical px to device px.
+    let ovr = scale::override_scale();
+    let host_scale = scale::effective_scale(ovr, 0, scale);
+    let metrics_changed = publish_window_metrics(w, h, host_scale);
+    if scale::note_gpui_scale(scale) && ovr.is_some() {
+        // WM_DPICHANGED under an explicit render scale (H17): the host-visible scale stays fixed. What changed is G, so shaped
+        // text (which baked in k = S / G) is dropped from the cache and the host gets a metrics event to re-measure on, even
+        // though no host-visible number moved.
+        let _ = with_ui(|ui| ui.cache.clear());
+        if !metrics_changed {
+            push_window_metrics_event(w, h, host_scale);
+        }
+    }
     WIN_ACTIVE.store(window.is_window_active(), SeqCst);
 
     // Released images leave the sprite atlas before this frame draws (a still-committed one
@@ -1388,18 +1433,23 @@ fn publish_window_metrics(w: u32, h: u32, scale: f32) -> bool {
     let cs = WIN_SCALE_BITS.swap(bits, SeqCst) != bits;
     let changed = cw | ch | cs;
     if changed {
-        let win = LIVE_WINDOW.load(SeqCst);
-        if win != 0 {
-            let mut e = Event::new(EV_WINDOW_METRICS, 0);
-            e.window = win;
-            e.snapshot = SNAPSHOT.load(SeqCst);
-            e.i0 = w as i32;
-            e.i1 = h as i32;
-            e.x = scale;
-            push_event(e);
-        }
+        push_window_metrics_event(w, h, scale);
     }
     changed
+}
+
+/// Queues EV_WINDOW_METRICS for the live window (nothing before the window exists).
+fn push_window_metrics_event(w: u32, h: u32, scale: f32) {
+    let win = LIVE_WINDOW.load(SeqCst);
+    if win != 0 {
+        let mut e = Event::new(EV_WINDOW_METRICS, 0);
+        e.window = win;
+        e.snapshot = SNAPSHOT.load(SeqCst);
+        e.i0 = w as i32;
+        e.i1 = h as i32;
+        e.x = scale;
+        push_event(e);
+    }
 }
 
 /// Reads the live window's client rect and per-window DPI from Win32 (the authority: the GPUI viewport is 0x0 at scale 1
@@ -1413,7 +1463,11 @@ fn read_client_metrics() -> Option<(u32, u32, f32)> {
     unsafe { GetClientRect(hwnd, &mut rc) };
     let (w, h) = client_size_px(rc);
     let dpi = unsafe { GetDpiForWindow(hwnd) };
-    let s = if dpi == 0 { f32::from_bits(WIN_SCALE_BITS.load(SeqCst)) } else { dpi as f32 / 96.0 };
+    if dpi != 0 {
+        scale::note_gpui_scale(dpi as f32 / 96.0);
+    }
+    // An explicit render scale replaces the DPI-derived one; without it this is the previous expression.
+    let s = scale::effective_scale(scale::override_scale(), dpi, f32::from_bits(WIN_SCALE_BITS.load(SeqCst)));
     Some((w, h, s))
 }
 
@@ -1429,7 +1483,15 @@ fn settle_client_metrics(req_w_dip: u32, req_h_dip: u32) {
 }
 
 fn launch(cx: &mut App, title: String, width: u32, height: u32, host: Host) {
-    let bounds = Bounds::centered(None, size(px(width as f32), px(height as f32)), cx);
+    // Rev 0.10: with an explicit render scale S the client area must be `dip * S` physical px. GPUI converts the logical size it is
+    // given with the display's scale G, so ask for `dip * S / G`. Without an override the request is exactly `dip` (unchanged).
+    let ovr = scale::override_scale();
+    let g0 = if ovr.is_some() { primary_monitor_scale() } else { 1.0 };
+    let bounds = Bounds::centered(
+        None,
+        size(px(scale::requested_logical_size(width, ovr, g0)), px(scale::requested_logical_size(height, ovr, g0))),
+        cx,
+    );
     let handle: WindowHandle<RootView> = match cx.open_window(
         WindowOptions {
             window_bounds: Some(WindowBounds::Windowed(bounds)),
@@ -1474,7 +1536,9 @@ fn launch(cx: &mut App, title: String, width: u32, height: u32, host: Host) {
         let mut rc = [0i32; 4];
         unsafe { GetClientRect(hwnd, &mut rc) };
         let dpi = unsafe { GetDpiForWindow(hwnd) };
-        let s = if dpi == 0 { window.scale_factor() } else { dpi as f32 / 96.0 };
+        let g = if dpi == 0 { window.scale_factor() } else { dpi as f32 / 96.0 };
+        scale::note_gpui_scale(g);
+        let s = scale::effective_scale(ovr, dpi, window.scale_factor());
         let (cw, ch) = client_size_px(rc);
         WIN_W.store(cw, SeqCst);
         WIN_H.store(ch, SeqCst);
@@ -1488,6 +1552,15 @@ fn launch(cx: &mut App, title: String, width: u32, height: u32, host: Host) {
             ch,
             s
         );
+        if let Some(o) = ovr {
+            eprintln!(
+                "[swiftright-render] render-scale override={} display-scale={} (window sized for {}); client matches request={}",
+                o,
+                g,
+                if (g - g0).abs() < 1e-4 { "the live display" } else { "a different display than it opened on" },
+                (cw, ch) == (scale::physical_px(width, o), scale::physical_px(height, o))
+            );
+        }
         WIN_SCALE_BITS.store(s.to_bits(), SeqCst);
         let style = unsafe { GetWindowLongPtrW(hwnd, -16) };
         let exstyle = unsafe { GetWindowLongPtrW(hwnd, -20) };

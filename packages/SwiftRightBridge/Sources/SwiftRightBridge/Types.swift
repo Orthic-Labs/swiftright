@@ -184,7 +184,7 @@ public struct MeasureRequest {
     public var color: UInt32            // 0xRRGGBBAA, baked into the shaped run
     public var fontSize: Float          // DIPs
     public var lineHeight: Float        // DIPs
-    public var scale: Float             // dpi / 96
+    public var scale: Float             // dpi / 96, or the explicit render scale when the window was run with one (`Bridge.run(renderScale:)`)
     public var maxWidth: Float          // physical px, <= 0 unbounded
     /// Rev 0.8 text extension (tracking, features, simulations policy, fallback list, baseline offset...). nil keeps the
     /// 0.6 measure path and behaviour on every renderer; a non-nil value on a pre-0.8 renderer throws SWR_E_UNSUPPORTED.

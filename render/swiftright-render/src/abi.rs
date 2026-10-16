@@ -1,4 +1,4 @@
-//! `#[repr(C)]` mirrors of render/swiftright-abi/include/swiftright.h (ABI 0.6, 0.7, 0.8 and 0.9).
+//! `#[repr(C)]` mirrors of render/swiftright-abi/include/swiftright.h (ABI 0.6, 0.7, 0.8, 0.9 and 0.10).
 //! Compile-time size asserts use the sizes measured with clang on the header.
 
 use std::ffi::{c_char, c_void};
@@ -14,6 +14,8 @@ pub const ABI_MINOR_V08: u32 = 8;
 pub const API_V08_FN_COUNT: u32 = 22;
 /// Rev 0.9 (additive): minor reported ONLY by the `_v09` discovery exports (the 0.8 function table is unchanged: 22 functions).
 pub const ABI_MINOR_V09: u32 = 9;
+/// Rev 0.10 (additive): minor reported ONLY by the `_v10` discovery exports (the 0.8 function table is unchanged: 22 functions).
+pub const ABI_MINOR_V10: u32 = 10;
 /// Rev 0.9: AccessKit Role::Slider (UIA Slider; RangeValuePattern when a range entry is sent).
 pub const ROLE_SLIDER: u32 = 15;
 pub const FEATURES_MAX: usize = 16;
@@ -299,6 +301,15 @@ pub struct RunOptions {
     pub title_len: u32,
     pub width_dip: u32,
     pub height_dip: u32,
+    pub reserved: u32,
+}
+
+/// Rev 0.10 `swr_run_options_v10` (48 bytes): the 40-byte options at identical offsets + an explicit render scale. A host that
+/// sends `struct_size >= 48` supplies it; a smaller struct has no override. `render_scale` 0 = none (the window's DPI decides).
+#[repr(C)]
+pub struct RunOptionsV10 {
+    pub base: RunOptions,
+    pub render_scale: f32,
     pub reserved: u32,
 }
 
@@ -848,6 +859,15 @@ pub struct BootstrapInfoV09 {
     pub transaction_v09_size: u32,
 }
 
+/// Rev 0.10 `swr_bootstrap_info_v10` (136 bytes): the 0.9 view at identical offsets (abi_minor 10) + the options size word.
+#[repr(C)]
+#[derive(Clone, Copy)]
+pub struct BootstrapInfoV10 {
+    pub v09: BootstrapInfoV09,
+    pub run_options_v10_size: u32,
+    pub reserved: u32,
+}
+
 /// Rev 0.8 `swr_api_v08` (184 bytes): the 18 pointers of `ApiV07` at unchanged offsets + the 0.8 entries.
 #[repr(C)]
 #[derive(Clone, Copy)]
@@ -948,6 +968,10 @@ const _: () = assert!(std::mem::size_of::<Transaction>() == 72);
 const _: () = assert!(std::mem::size_of::<TransactionV09>() == 88);
 const _: () = assert!(std::mem::offset_of!(TransactionV09, ranges) == 72);
 const _: () = assert!(std::mem::size_of::<BootstrapInfoV09>() == 128);
+const _: () = assert!(std::mem::size_of::<RunOptionsV10>() == 48);
+const _: () = assert!(std::mem::offset_of!(RunOptionsV10, render_scale) == 40);
+const _: () = assert!(std::mem::size_of::<BootstrapInfoV10>() == 136);
+const _: () = assert!(std::mem::offset_of!(BootstrapInfoV10, run_options_v10_size) == 128);
 const _: () = assert!(std::mem::offset_of!(BootstrapInfoV09, range_entry_size) == 120);
 const _: () = assert!(std::mem::offset_of!(BootstrapInfoV08, measure_request_v08_size) == 96);
 const _: () = assert!(std::mem::offset_of!(BootstrapInfoV08, system_fonts_size) == 112);

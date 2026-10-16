@@ -1260,6 +1260,55 @@ SWR_API swr_status swr_bootstrap_query_v09(swr_bootstrap_info_v09 *out, uint32_t
 /* The 0.8 table (SWR_E_ABI when caller_size < sizeof(swr_api_v08)). */
 SWR_API swr_status swr_get_api_v09(swr_api_v08 *out, uint32_t caller_size);
 
+/* ===========================================================================================
+ * REVISION 0.10 (additive): explicit render scale (decision H17).
+ *
+ * Everything above is unchanged. `swr_bootstrap_query`, `_v07`, `_v08` and `_v09` still describe 0.6 to 0.9, so an older host
+ * runs unchanged on a 0.10 renderer. A 0.10 renderer adds two NEW exports, swr_bootstrap_query_v10 and swr_get_api_v10; a 0.9
+ * renderer lacks both, and a 0.10 host then falls back to the 0.9 view and cannot set a render scale (typed, never silent:
+ * check `supportsRenderScale`). The function table is the 0.8 table (22 functions, 184 bytes).
+ *
+ * The render scale is an explicit device scale factor, like a browser's forced device scale factor or an image renderer's scale:
+ * a host that wants a fixed scale (fixed-scale exports, the same rendering on every display) sets it instead of taking the
+ * window's DPI. It travels in a TAIL of swr_run_options: a host that sends struct_size >= sizeof(swr_run_options_v10) supplies
+ * render_scale. A smaller struct has none. render_scale 0 means none. A value that is not finite, is negative, or lies outside
+ * [0.25, 16] fails swr_run with SWR_E_BAD_ARG before anything starts. The scale is the same on debug and release builds.
+ *
+ * With no render scale nothing changes: every value comes from the window's DPI exactly as in 0.9.
+ *
+ * With a render scale S, S replaces the DPI-derived scale everywhere the host can see it:
+ *   - the window's client area is width_dip * S by height_dip * S physical px (rounded), on any display;
+ *   - swr_window_metrics.scale and the EV_WINDOW_METRICS payload report S;
+ *   - text is shaped and measured so that a swr_measure_request carrying scale S gives the same geometry a window whose DPI
+ *     is 96 * S gives, and glyphs rasterise at font_size * S physical px;
+ *   - pointer positions, hit rectangles and AccessKit/UIA bounding rectangles are physical px of the window, which
+ *     the window size above makes a width_dip * S grid: they need no conversion and follow S through the window size.
+ * WM_DPICHANGED (the window moved to a display with another DPI, or the user changed the display scale): the reported scale
+ * stays S. The window is resized by the OS suggestion as for any window, so EV_WINDOW_METRICS reports the new physical size (and
+ * still S). Text shaped before the change was shaped for the old display scale, so the renderer drops its shaping cache and
+ * queues EV_WINDOW_METRICS once more even when no number moved; a host re-measures on that event. Nothing re-derives S from the
+ * new DPI.
+ * ===========================================================================================*/
+#define SWR_ABI_MINOR_V10 10
+
+typedef struct swr_run_options_v10 {
+    swr_run_options base;       /* 40 bytes, identical offsets; base.struct_size = sizeof(swr_run_options_v10) */
+    float           render_scale;   /* S: dpi / 96 equivalent, 0 = none (the window's DPI decides), else in [0.25, 16] */
+    uint32_t        reserved;
+} swr_run_options_v10;          /* 48 bytes */
+
+/* 0.10 view of swr_bootstrap_info: the 128 bytes of the 0.9 view at identical offsets (abi_minor 10,
+ * api_table_size sizeof(swr_api_v08) = 184, fn_count 22), plus the options size (136 bytes). */
+typedef struct swr_bootstrap_info_v10 {
+    swr_bootstrap_info_v09 v09;
+    uint32_t run_options_v10_size;       /* 48 */
+    uint32_t reserved;
+} swr_bootstrap_info_v10;
+
+SWR_API swr_status swr_bootstrap_query_v10(swr_bootstrap_info_v10 *out, uint32_t caller_size);
+/* The 0.8 table (SWR_E_ABI when caller_size < sizeof(swr_api_v08)). */
+SWR_API swr_status swr_get_api_v10(swr_api_v08 *out, uint32_t caller_size);
+
 #ifdef __cplusplus
 }
 #endif

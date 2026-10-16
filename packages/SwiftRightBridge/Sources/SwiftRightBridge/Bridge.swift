@@ -68,6 +68,10 @@ public final class Bridge {
     public var supportsSliderRange: Bool { revision >= .v09 }
     /// Rev 0.9 (decision H3): the renderer emits SWR_PTR_MOVE to a host that asks (`run(pointerMoves: true)`).
     public var supportsPointerMoves: Bool { revision >= .v09 }
+    /// Rev 0.10 (decision H17): the renderer accepts an explicit render scale in `run(renderScale:)`. False on a 0.6 to 0.9 renderer.
+    public var supportsRenderScale: Bool { revision >= .v10 }
+    /// The explicit render scale `run` was given, nil when the window's DPI decides. Set by `run` before the window opens.
+    public internal(set) var renderScale: Float?
 
     // MARK: bootstrap validation (platform neutral; order as in bridge-faults)
 
@@ -129,7 +133,16 @@ public final class Bridge {
     @discardableResult
     /// `pointerMoves`: ask for SWR_PTR_MOVE events (hover and drag; rev 0.9, decision H3). Ignored, never guessed, on a renderer below 0.9:
     /// check `supportsPointerMoves`.
-    public func run(title: String, width: UInt32, height: UInt32, pointerMoves: Bool = false) throws -> Int32 {
+    ///
+    /// `renderScale` (rev 0.10, decision H17): an explicit render scale S (a device scale factor, like a forced device scale
+    /// factor in a browser: 2.5 is 240 dpi), used instead of the window's DPI. The window's client area is `width * S` by
+    /// `height * S` physical px, `BridgeWindow.metrics().scale` reports S, and `measure` uses S whatever scale the request names. nil (the
+    /// default) keeps the window's DPI, byte-for-byte as before. A value outside [0.25, 16] or not finite, or a renderer below
+    /// 0.10 (check `supportsRenderScale`), throws: a requested scale is never silently dropped. If the window moves to a display
+    /// with another DPI the scale stays S (see swiftright.h, REVISION 0.10).
+    public func run(title: String, width: UInt32, height: UInt32, pointerMoves: Bool = false, renderScale: Float? = nil) throws -> Int32 {
+        let wireScale = try Bridge.runOptionsScale(requested: renderScale, rendererSupports: supportsRenderScale, revision: revision)
+        self.renderScale = renderScale
         #if os(Windows)
         RepairGuard.installIfNeeded(appName: repairGuardName ?? title)
         let wake = _dispatch_get_main_queue_handle_4CF()
@@ -137,21 +150,48 @@ public final class Bridge {
         var cb = makeCallbacks()
         let arena = Arena()
         let t = arena.string(title)
-        var opts = swr_run_options()
-        opts.struct_size = UInt32(MemoryLayout<swr_run_options>.size)
-        opts.title = t.ptr
-        opts.title_len = t.len
-        opts.host_wake_handle = wake
-        opts.width_dip = width
-        opts.height_dip = height
-        opts.flags = (pointerMoves && supportsPointerMoves) ? UInt32(SWR_RUN_POINTER_MOVES) : 0
-        let rc = withUnsafePointer(to: &opts) { o in withUnsafePointer(to: &cb) { runFn(o, $0) } }
+        var opts10 = Bridge.makeRunOptions(title: t.ptr, titleLen: t.len, wake: wake, width: width, height: height,
+                                           pointerMoves: pointerMoves && supportsPointerMoves, renderScale: wireScale)
+        let rc = withUnsafePointer(to: &opts10) { o in
+            o.withMemoryRebound(to: swr_run_options.self, capacity: 1) { base in withUnsafePointer(to: &cb) { runFn(base, $0) } }
+        }
         if rc != 0 { throw BridgeError.status(rc, "swr_run") }
         return rc
         #else
         throw BridgeError.unsupportedPlatform
         #endif
     }
+
+    /// The render scale word to put on the wire for `run`. nil requested: 0 (none). Pure policy, so it is unit-tested on every host.
+    static func runOptionsScale(requested: Float?, rendererSupports: Bool, revision: BridgeRevision) throws -> Float {
+        guard let s = requested else { return 0 }
+        guard s.isFinite, s >= 0.25, s <= 16 else {
+            throw BridgeError.startup("SWR_STARTUP_ERROR: render scale \(s) is outside 0.25 to 16")
+        }
+        guard rendererSupports else {
+            throw BridgeError.startup("SWR_STARTUP_ERROR: renderer is ABI \(revision), an explicit render scale needs 0.10")
+        }
+        return s
+    }
+
+    /// Builds the run options. With no render scale (`renderScale` 0) the struct_size is the 0.9 size, so the renderer sees exactly
+    /// the options an older host sends; with one it is the 0.10 size and the scale word is read.
+    static func makeRunOptions(title: UnsafePointer<CChar>?, titleLen: UInt32, wake: UnsafeMutableRawPointer?, width: UInt32, height: UInt32,
+                               pointerMoves: Bool, renderScale: Float) -> swr_run_options_v10 {
+        var v = swr_run_options_v10()
+        v.base.struct_size = UInt32(renderScale == 0 ? MemoryLayout<swr_run_options>.size : MemoryLayout<swr_run_options_v10>.size)
+        v.base.title = title
+        v.base.title_len = titleLen
+        v.base.host_wake_handle = wake
+        v.base.width_dip = width
+        v.base.height_dip = height
+        v.base.flags = pointerMoves ? UInt32(SWR_RUN_POINTER_MOVES) : 0
+        v.render_scale = renderScale
+        return v
+    }
+
+    /// The scale a measurement uses: the render scale when one is set (one scale source), else the request's own.
+    static func measureScale(requested: Float, renderScale: Float?) -> Float { renderScale ?? requested }
 
     /// Drains the main dispatch queue once, from the calling (main) thread, for a host that has no renderer loop (the headless
     /// benchmark and soak, which run `MainActor` work and `Task`s without a window). Not for use from inside a renderer callback
@@ -310,7 +350,9 @@ public final class Bridge {
     // MARK: measurement and runs (UI thread)
 
     /// Synchronous measurement. Returns a RETAINED run handle: call `release(_:)` when done.
-    public func measure(_ r: MeasureRequest) throws -> TextMeasurement {
+    public func measure(_ request: MeasureRequest) throws -> TextMeasurement {
+        var r = request
+        r.scale = Bridge.measureScale(requested: request.scale, renderScale: renderScale)
         if let ext = r.extension {
             guard let te = textExtension else {
                 throw BridgeError.status(-15, "swr_measure_text_v08 (renderer ABI \(revision) has no text extension; send the request without `extension` to measure the 0.6 way)")

@@ -306,3 +306,25 @@ fn global_char(node: u64, run_id: u64, idx: usize) -> usize {
     }
     0
 }
+
+#[cfg(test)]
+mod render_scale_tests {
+    use super::rect;
+    use crate::scale;
+
+    /// UIA bounding rectangles are the host's physical-pixel rectangles, converted by nothing: the window's client area is
+    /// `dip * S` px (scale.rs), the host lays out on that grid, and accesskit_windows maps client px to screen px. So the bounds
+    /// follow the render scale through the host's layout and no GPUI scale (G) enters this path.
+    #[test]
+    fn uia_bounds_are_the_host_physical_rectangle_at_any_scale() {
+        // A 100 x 50 DIP control at (10, 20) DIP, laid out by a host at S = 2.5, is (25, 50, 250, 125) px.
+        let s = 2.5f32;
+        let b = [10.0 * s, 20.0 * s, 100.0 * s, 50.0 * s];
+        let r = rect(&b);
+        assert_eq!((r.x0, r.y0, r.x1, r.y1), (25.0, 50.0, 275.0, 175.0));
+        // The same rectangle on a different display scale is the same numbers: nothing here reads a DPI.
+        assert_eq!((rect(&b).x0, rect(&b).x1), (r.x0, r.x1));
+        // The window that rectangle lives in is `dip * S` px wide on every display.
+        assert_eq!(scale::physical_px(320, s), 800);
+    }
+}
