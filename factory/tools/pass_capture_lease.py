@@ -37,8 +37,11 @@ PARSE_BLOCK = (
 )
 FIXED_OLD = "if time - (started ?? time) > 10_000_000_000 { bridge.requestQuit() }"
 FIXED_NEW = "if time - (started ?? time) > Self.leaseNS { bridge.requestQuit() }"
-# A lifetime compare: `time - (started ?? time) > <rhs>`. It is fixed unless the right-hand side is the parsed lease.
-FIXED_COMPARE = re.compile(r"time - \(?started(?: \?\? time\))? *>(?!=) *(?P<rhs>[^ {]+)")   # `>=` is a script timing guard, not a lifetime
+# A lifetime compare: `time - <started-expression> > <rhs>`, where the started expression is `started`, `started ?? time`, `started!`, `startedAt`
+# and so on, with any spacing and optional parentheses. It is fixed unless the right-hand side is the parsed lease. `>=` is a script timing
+# guard, not a lifetime, and never matches. Not caught: a compare through an intermediate variable (`let e = time - started` then `e > N`),
+# or a compare that names the clock something other than `time`. The 310 stamped hosts use the `time - (started ?? time)` form.
+FIXED_COMPARE = re.compile(r"\btime\s*-\s*\(?\s*started\w*[^>;{}]*?>(?!=)\s*(?P<rhs>[^\s{};)]+)")
 
 
 def is_fixed_compare(line):

@@ -62,6 +62,12 @@ jobs:
           sparse-checkout-cone-mode: true
           fetch-depth: 1
       - run: python3 -m pip install --disable-pip-version-check pillow==11.3.0
+      # Guards before any capture (the mac and windows jobs need plan): a fixed capture lease or a missing render scale fails the run here.
+      - name: Guards (fixed capture lease, render scale)
+        run: |
+          set -euo pipefail
+          python3 factory/tools/pass_capture_lease.py --check
+          python3 factory/tools/pass_render_scale.py --check
       - id: plan
         env:
           CASES: ${{ inputs.cases }}

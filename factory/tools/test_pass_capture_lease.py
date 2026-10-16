@@ -30,6 +30,10 @@ class FixedLeaseGuard(unittest.TestCase):
         self.assertFalse(pcl.is_fixed_compare("if time - (started ?? time) > Self.leaseNS { bridge.requestQuit() }"))
         self.assertFalse(pcl.is_fixed_compare("        return 10_000_000_000"))
         self.assertFalse(pcl.is_fixed_compare("guard time - started >= 300_000_000, time - lastScriptTick >= 150_000_000 else { return }"))
+        self.assertTrue(pcl.is_fixed_compare("if (time - (started ?? time)) > 10_000_000_000 { bridge.requestQuit() }"))
+        self.assertTrue(pcl.is_fixed_compare("if time-(started??time)>10_000_000_000{ x() }"))
+        self.assertTrue(pcl.is_fixed_compare("if time - startedAt > 5_000_000_000 { x() }"))
+        self.assertFalse(pcl.is_fixed_compare("if (time - (started ?? time)) > Self.leaseNS) { x() }"))
 
     def test_apply_text_is_the_parsed_snippet(self):
         self.assertEqual(FIXED_HOST.count(pcl.FIXED_OLD), 1)
