@@ -46,7 +46,11 @@ try {
     New-Item -ItemType Directory -Force -Path $out | Out-Null
     & powershell.exe -NoProfile -NonInteractive -ExecutionPolicy Bypass -File $capture -Exe $exe -Out $out -Runs $runs -Frames $($clock.Count) -Shared *>&1 | Out-File -LiteralPath "$JobDir\capture.log" -Encoding utf8
     $res.capture_exit = $LASTEXITCODE
-    $done = @(Get-Content -LiteralPath "$out\done.json" -Raw | ConvertFrom-Json)
+    # PowerShell 5.1: piping ConvertFrom-Json into @() yields ONE element (the whole array), so the count was always wrong. Read it into a
+    # variable, unwrap a {"value":[...]} envelope when there is one, then count the elements.
+    $doneRaw = Get-Content -LiteralPath "$out\done.json" -Raw | ConvertFrom-Json
+    if ($doneRaw -is [System.Management.Automation.PSCustomObject] -and $doneRaw.PSObject.Properties['value']) { $doneRaw = $doneRaw.value }
+    $done = @($doneRaw)
     $res.done = $done
     $res.ok = [bool](@($done | Where-Object { $_.status -ne 'ok' }).Count -eq 0 -and $done.Count -eq $runs)
 } catch { $res.error = $_.Exception.Message }
