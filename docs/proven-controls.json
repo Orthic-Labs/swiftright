@@ -772,7 +772,8 @@
       "casesPassingDecidingGate": "4/4",
       "caveats": [
         "CI confirmation (16 October): the CI runners use the Windows WARP adapter at an explicit render scale of 2.5 (H17), not native 240 dpi. The Dell 240-dpi sandbox stays the reference; the CI and Dell captures were pixel-identical on click-track and labels.",
-        "CI N=20 pass on renderer 0.10 (stage 06a3a0a85-5dfe7cc2 for ime-cancel, ime-commit and ime-composing-v1; c4e83a68a-5dfe7cc2 for ime-recompose-v1), replacing the 16 October N=3 regression on renderer 0.7 (stage 3d3c6f5c2)."
+        "CI N=20 pass on renderer 0.10 (stage 06a3a0a85-5dfe7cc2 for ime-cancel, ime-commit and ime-composing-v1; c4e83a68a-5dfe7cc2 for ime-recompose-v1), replacing the 16 October N=3 regression on renderer 0.7 (stage 3d3c6f5c2).",
+        "Extra CI evidence: `ime-composing-v1` passes N=20 in run 38870003524 (stage 168328082-0766196a, commit 168328082), after the harness lease fix (H22); it had been lost to the fixed 10 s host lease in run 38865487951 (H23)."
       ],
       "ciN20": {
         "casesPassing": "4/4",
@@ -859,7 +860,9 @@
         "blocks-11-16/swiftui.list/variable-rows-v1"
       ],
       "casesPassingDecidingGate": "13/13",
-      "caveats": [],
+      "caveats": [
+        "The 21 List cases re-pass at N=3 on stage f81244b4f-9ce7a09e (commit f81244b4f, run 38872220871), and the H21 gutter rule now applies to them: an inset List reserves the legacy scroller gutter only when it overflows. N=3 only; this note does not change the status."
+      ],
       "review": "oracle 2026-10-15",
       "stage": "6459bb8cd-d243b1c9",
       "status": "delivered",
@@ -1363,10 +1366,15 @@
       "casesPassingDecidingGate": "8/8",
       "caveats": [
         "`.listStyle(.sidebar)` is not delivered; `.listRowBackground` draws a Color or a Rectangle filled with a Color only (another view fails visibly).",
-        "`listRowSeparator(edges:)` is accepted; top and bottom are not told apart. A row background replaces the selection highlight."
+        "`listRowSeparator(edges:)` is accepted; top and bottom are not told apart. A row background replaces the selection highlight.",
+        "The 21 List cases re-pass at N=3 on stage f81244b4f-9ce7a09e (commit f81244b4f, run 38872220871), and the H21 gutter rule now applies to them: an inset List reserves the legacy scroller gutter only when it overflows. N=3 only; this note does not change the status."
       ],
       "review": "oracle 2026-10-15",
-      "stage": "8bf89d2dc-aa6cd909",
+      "stage": [
+        "8bf89d2dc-aa6cd909",
+        "bac19bb8e-0766196a",
+        "f81244b4f-9ce7a09e"
+      ],
       "status": "delivered-with-caveats",
       "statusDocBlock": 24,
       "verdict": {
@@ -2045,6 +2053,7 @@
       "stage": [
         "06a3a0a85-5dfe7cc2",
         "3d3c6f5c2-0a0d1f39",
+        "5713ea1fe-94ff8023",
         "5e9c80ca2-9a0d7a03",
         "645396d04-5dfe7cc2",
         "c4e83a68a-5dfe7cc2",
@@ -2156,32 +2165,40 @@
         "blocks-37-38/swiftui.uia-walk/controls-a-v1",
         "blocks-37-38/swiftui.uia-walk/controls-b-v1"
       ],
-      "casesPassingDecidingGate": "1/2",
+      "casesPassingDecidingGate": "2/2",
       "caveats": [
-        "CI confirmation (16 October): the CI runners use the Windows WARP adapter at an explicit render scale of 2.5 (H17), not native 240 dpi. The Dell 240-dpi sandbox stays the reference; the CI and Dell captures were pixel-identical on click-track and labels."
+        "CI confirmation (16 October): the CI runners use the Windows WARP adapter at an explicit render scale of 2.5 (H17), not native 240 dpi. The Dell 240-dpi sandbox stays the reference; the CI and Dell captures were pixel-identical on click-track and labels.",
+        "Controls-a pixels are report-only. Controls-b pixels decide only inside its list rect (H20); the semantic tree is gated for every control kind listed in the case.",
+        "Controls-b passes N=20 in CI run 38872207896 (stage f81244b4f-9ce7a09e, commit f81244b4f, renderer 0.10 at scale 2.5): the semantic tree, the list gate and the list-rect pixels, after the H21 gutter. Controls-a passes N=20 in run 38854967920.",
+        "H16 rows are covered by the list-rect region pixel gate plus listGate (H20, H21), and the offscreen Mac harness exposes no row content, so the rows are not compared semantically.",
+        "H21: the scroller gutter applies only when the list overflows with legacy scrollers; the CI Mac is pinned to legacy (`factory/tools/mac-accessibility.sh`). An overflowing List clips on Windows with no scroll bar drawn (a known gap). An overflowing-List reference must come from CI, not a trackpad Mac, because overlay scrollers take no gutter.",
+        "The semantic comparator folds a toggle's nested label into the Mac AX shape (H14): a switch's label is a sibling before an unnamed switch, a checkbox's duplicate label child is dropped; role, name, toggle, enabled and bounds are still compared.",
+        "Controls-b list rows are gated by pair_list_report.py (count, text, order, selected, frame within 1 px, label ink) and the list-rect pixels (H20), not by the semantic comparator (H16): the offscreen Mac harness's AX tree exposes its rows as AXUnknown with no content; a normal macOS List exposes AXRow/AXCell, which was not measured here.",
+        "An unlabelled `Image(systemName: \"star.fill\")` is named `Favorite`; the name comes from a measured SF-symbol description table that holds measured symbols only (one entry so far: star.fill, English, macOS 27). Other symbols fall back to the symbol name, which will not match the Mac."
       ],
       "ciN20": {
-        "casesPassing": "1/2",
+        "casesPassing": "2/2",
         "renderScale": 2.5,
         "renderer": "renderer-0.10-a15ebc5d",
         "runDirs": {
-          "38854967920": "runs/20261016-051729"
+          "38854967920": "runs/20261016-051729",
+          "38872207896": "runs/20261016-081325"
         },
         "runs": [
-          "38854967920"
+          "38854967920",
+          "38872207896"
         ],
         "stages": [
-          "06a3a0a85-5dfe7cc2"
+          "06a3a0a85-5dfe7cc2",
+          "f81244b4f-9ce7a09e"
         ],
         "windowsAdapter": "WARP (CI runner)"
       },
       "stage": [
         "06a3a0a85-5dfe7cc2",
-        "2eca0dce1-75c5d11e",
-        "3d3c6f5c2-0a0d1f39",
-        "645396d04-5dfe7cc2"
+        "f81244b4f-9ce7a09e"
       ],
-      "status": "not-delivered",
+      "status": "delivered-pending-review",
       "statusDocBlock": 39,
       "verdict": {
         "date": "2026-10-15",
@@ -2219,7 +2236,8 @@
       "casesPassingDecidingGate": "4/4",
       "caveats": [
         "CI confirmation (16 October): the CI runners use the Windows WARP adapter at an explicit render scale of 2.5 (H17), not native 240 dpi. The Dell 240-dpi sandbox stays the reference; the CI and Dell captures were pixel-identical on click-track and labels.",
-        "Hardware IME is deferred: the cases drive the in-process TextStore script and the NSTextInputClient path, not a real IME (H9(b))."
+        "Hardware IME is deferred: the cases drive the in-process TextStore script and the NSTextInputClient path, not a real IME (H9(b)).",
+        "Extra CI evidence: `imet-badregion-v1` passes N=20 in run 38870003524 (stage 168328082-0766196a, commit 168328082) after the harness lease fix (H22); its mapped run stays 38860483220."
       ],
       "ciN20": {
         "casesPassing": "4/4",
@@ -2241,7 +2259,9 @@
       },
       "stage": [
         "06a3a0a85-5dfe7cc2",
+        "168328082-0766196a",
         "3d3c6f5c2-0a0d1f39",
+        "5713ea1fe-94ff8023",
         "645396d04-5dfe7cc2",
         "c4e83a68a-5dfe7cc2"
       ],
@@ -2299,7 +2319,8 @@
       "caveats": [
         "CI confirmation (16 October): the CI runners use the Windows WARP adapter at an explicit render scale of 2.5 (H17), not native 240 dpi. The Dell 240-dpi sandbox stays the reference; the CI and Dell captures were pixel-identical on click-track and labels.",
         "Ported from OpenSwiftUI's MIT tests as view bodies and expectations only (H9a); EquatableView and animation completion are not ported and not delivered.",
-        "Runtime change (commit ce47755c3): `withAnimation` and `withTransaction` settle pending changes before their body, and `onChange` actions run after the commit with their writes in the next pass (state-nested-update is the case that measured it)."
+        "Runtime change (commit ce47755c3): `withAnimation` and `withTransaction` settle pending changes before their body, and `onChange` actions run after the commit with their writes in the next pass (state-nested-update is the case that measured it).",
+        "Runtime transaction fixes (commit 5713ea1fe, H23): the transaction boundary is per graph (a weak graph registry, not the last-flushed graph); `onChange` writes inherit the triggering transaction with no mid-flush commit; a boundary settle outside a flush schedules a flush; `isErasedEmpty` stays single-modifier and is documented. Unit tests 434/434 at that commit. CI run 38865487951 (N=3): 38 of 39 cases pass; `ime-composing-v1` was lost to the fixed 10 s host lease, not to the change (it passes N=20 in run 38870003524 after H22)."
       ],
       "ciN20": {
         "casesPassing": "5/5",
@@ -2323,6 +2344,7 @@
         "06a3a0a85-5dfe7cc2",
         "2eca0dce1-75c5d11e",
         "3d3c6f5c2-0a0d1f39",
+        "5713ea1fe-94ff8023",
         "645396d04-5dfe7cc2",
         "c4e83a68a-5dfe7cc2"
       ],

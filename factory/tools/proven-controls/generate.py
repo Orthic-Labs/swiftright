@@ -74,15 +74,23 @@ ROUND6_CAVEATS = {
     "swiftui.on-hover": ["Hover and tap are specified (H6), and the Mac side is a witness stand-in (H5): the offscreen Mac window never receives pointer events, so the Mac counts come from the witness.",
                          "A view with a tap gesture publishes one pressable node named by its text (H7); the Mac tree shows its Text as static text, so the trees are not compared for these cases."],
     "swiftui.uia-walk": ["Controls-a pixels are report-only. Controls-b pixels decide only inside its list rect (H20); the semantic tree is gated for every control kind listed in the case.",
+                         "Controls-b passes N=20 in CI run 38872207896 (stage f81244b4f-9ce7a09e, commit f81244b4f, renderer 0.10 at scale 2.5): the semantic tree, the list gate and the list-rect pixels, after the H21 gutter. Controls-a passes N=20 in run 38854967920.",
+                         "H16 rows are covered by the list-rect region pixel gate plus listGate (H20, H21), and the offscreen Mac harness exposes no row content, so the rows are not compared semantically.",
+                         "H21: the scroller gutter applies only when the list overflows with legacy scrollers; the CI Mac is pinned to legacy (`factory/tools/mac-accessibility.sh`). An overflowing List clips on Windows with no scroll bar drawn (a known gap). An overflowing-List reference must come from CI, not a trackpad Mac, because overlay scrollers take no gutter.",
                          "The semantic comparator folds a toggle's nested label into the Mac AX shape (H14): a switch's label is a sibling before an unnamed switch, a checkbox's duplicate label child is dropped; role, name, toggle, enabled and bounds are still compared.",
                          "Controls-b list rows are gated by pair_list_report.py (count, text, order, selected, frame within 1 px, label ink) and the list-rect pixels (H20), not by the semantic comparator (H16): the offscreen Mac harness's AX tree exposes its rows as AXUnknown with no content; a normal macOS List exposes AXRow/AXCell, which was not measured here.",
                          "An unlabelled `Image(systemName: \"star.fill\")` is named `Favorite`; the name comes from a measured SF-symbol description table that holds measured symbols only (one entry so far: star.fill, English, macOS 27). Other symbols fall back to the symbol name, which will not match the Mac."],
-    "swiftui.ime-traps": ["Hardware IME is deferred: the cases drive the in-process TextStore script and the NSTextInputClient path, not a real IME (H9(b))."],
+    "swiftui.ime-traps": ["Hardware IME is deferred: the cases drive the in-process TextStore script and the NSTextInputClient path, not a real IME (H9(b)).",
+                          "Extra CI evidence: `imet-badregion-v1` passes N=20 in run 38870003524 (stage 168328082-0766196a, commit 168328082) after the harness lease fix (H22); its mapped run stays 38860483220."],
     "swiftui.compat": ["Ported from OpenSwiftUI's MIT tests as view bodies and expectations only (H9a); EquatableView and animation completion are not ported and not delivered.",
-                       "Runtime change (commit ce47755c3): `withAnimation` and `withTransaction` settle pending changes before their body, and `onChange` actions run after the commit with their writes in the next pass (state-nested-update is the case that measured it)."],
+                       "Runtime change (commit ce47755c3): `withAnimation` and `withTransaction` settle pending changes before their body, and `onChange` actions run after the commit with their writes in the next pass (state-nested-update is the case that measured it).",
+                       "Runtime transaction fixes (commit 5713ea1fe, H23): the transaction boundary is per graph (a weak graph registry, not the last-flushed graph); `onChange` writes inherit the triggering transaction with no mid-flush commit; a boundary settle outside a flush schedules a flush; `isErasedEmpty` stays single-modifier and is documented. Unit tests 434/434 at that commit. CI run 38865487951 (N=3): 38 of 39 cases pass; `ime-composing-v1` was lost to the fixed 10 s host lease, not to the change (it passes N=20 in run 38870003524 after H22)."],
 }
 ROUND4_CAVEATS.update(ROUND5_CAVEATS)
 ROUND4_CAVEATS.update(ROUND6_CAVEATS)
+# The 21 List cases (block 16's 13 and block 24's 8) re-pass at N=3 on f81244b4f (run 38872220871). Notes only: the status is unchanged.
+LIST_NOTES = {bid: ["The 21 List cases re-pass at N=3 on stage f81244b4f-9ce7a09e (commit f81244b4f, run 38872220871), and the H21 gutter rule now applies to them: an inset List reserves the legacy scroller gutter only when it overflows. N=3 only; this note does not change the status."]
+              for bid in ("swiftui.list", "swiftui.list-row-style")}
 PENDING_REVIEW = {"swiftui.observation", "swiftui.task-asyncstream", "swiftui.spacer-divider", "swiftui.list-row-style", "swiftui.font-custom"} | set(ROUND5_CAVEATS)
 
 # Round 6 (blocks 37-41, the Pulse hub's Slider, onHover/onTapGesture and the prior-art items, factory/pipeline/blocks-37-38): a block is
@@ -123,6 +131,7 @@ REVIEWED["swiftui.slider"] = {"review": "oracle 2026-10-16 (block 37: PASS-WITH-
 # explicit scale 2.5, CI_CASE_RUN below) passes every case of each block, so the status on current code is no longer unknown.
 REVIEWED["swiftui.focus-state"]["caveats"].append("CI N=20 pass on renderer 0.10 (stage 06a3a0a85-5dfe7cc2 for bool-form-v1 and tab-order-v1; c4e83a68a-5dfe7cc2 for programmatic-v1 and shift-tab-v1), replacing the 16 October N=3 regression on renderer 0.7 (stage 3d3c6f5c2).")
 REVIEWED["swiftui.ime-marked-text"]["caveats"].append("CI N=20 pass on renderer 0.10 (stage 06a3a0a85-5dfe7cc2 for ime-cancel, ime-commit and ime-composing-v1; c4e83a68a-5dfe7cc2 for ime-recompose-v1), replacing the 16 October N=3 regression on renderer 0.7 (stage 3d3c6f5c2).")
+REVIEWED["swiftui.ime-marked-text"]["caveats"].append("Extra CI evidence: `ime-composing-v1` passes N=20 in run 38870003524 (stage 168328082-0766196a, commit 168328082), after the harness lease fix (H22); it had been lost to the fixed 10 s host lease in run 38865487951 (H23).")
 REVIEWED["swiftui.opacity-transition"]["caveats"].append("CI N=20 pass on renderer 0.10 for all 7 cases (stage 06a3a0a85-5dfe7cc2), replacing the 16 October N=3 regression on renderer 0.7 (stage 3d3c6f5c2, opacity-text-v1). The clock job's own ok flag reads False in the CI result.json although all 20 runs report ok; the gate is clock-report.json (120 of 120 pairs, 0 fail).")
 
 # CI N=20 confirmation (16 October 2026; docs/sr1-status.md, "CI N=20 confirmation"). Each case below passed its deciding gate at N=20 in the CI run
@@ -132,8 +141,10 @@ REVIEWED["swiftui.opacity-transition"]["caveats"].append("CI N=20 pass on render
 CI_RUNS = {
     "38854967920": {"runDirs": "runs/20261016-051729", "stage": "06a3a0a85-5dfe7cc2", "commit": "06a3a0a85fc737df1ea7e24cc137636e6889bf2d"},
     "38860483220": {"runDirs": "runs/20261016-061908", "stage": "c4e83a68a-5dfe7cc2", "commit": "c4e83a68a06f2672766f3c83426b980d78d4c659"},
+    "38872207896": {"runDirs": "runs/20261016-081325", "stage": "f81244b4f-9ce7a09e", "commit": "f81244b4f3b0995188439bd6dae4e15f34a13a04"},
 }
-_CI_RUN_1 = [  # 27 cases that pass on the current gate, run 38854967920 (controls-b-v1 is out: its list gate fails, H20)
+
+_CI_RUN_1 = [  # 27 cases that pass on the current gate, run 38854967920 (controls-b-v1 is in _CI_RUN_3: it failed its list gate there, H20)
     "blocks-37-38/swiftui.slider/disabled-dark-v1", "blocks-37-38/swiftui.slider/disabled-input-v1", "blocks-37-38/swiftui.slider/labels-v1",
     "blocks-37-38/swiftui.slider/over-colour-v1", "blocks-37-38/swiftui.slider/values-dark-v1", "blocks-37-38/swiftui.slider/values-light-v1",
     "blocks-37-38/swiftui.slider/widths-v1", "blocks-37-38/swiftui.uia-walk/controls-a-v1",
@@ -152,7 +163,10 @@ _CI_RUN_2 = [  # 11 cases, run 38860483220: the 9 cases that hit the capture art
     "blocks-6-10/swiftui.focus-state/programmatic-v1", "blocks-6-10/swiftui.focus-state/shift-tab-v1", "blocks-6-10/swiftui.ime-marked-text/ime-recompose-v1",
     "blocks-6-10/swiftui.ime-traps/imet-badregion-v1", "blocks-37-38/swiftui.compat/any-view-v1",
 ]
-CI_CASE_RUN = {**{c: "38854967920" for c in _CI_RUN_1}, **{c: "38860483220" for c in _CI_RUN_2}}
+_CI_RUN_3 = [  # 1 case, run 38872207896 (commit f81244b4f, H20 list gate with the H21 overflow-only gutter): controls-b passes its semantic, list and list-rect gates at N=20
+    "blocks-37-38/swiftui.uia-walk/controls-b-v1",
+]
+CI_CASE_RUN = {**{c: "38854967920" for c in _CI_RUN_1}, **{c: "38860483220" for c in _CI_RUN_2}, **{c: "38872207896" for c in _CI_RUN_3}}
 CI_CAVEAT = ("CI confirmation (16 October): the CI runners use the Windows WARP adapter at an explicit render scale of 2.5 (H17), not native 240 dpi. "
              "The Dell 240-dpi sandbox stays the reference; the CI and Dell captures were pixel-identical on click-track and labels.")
 PENDING_REVIEW -= set(REVIEWED)
@@ -375,6 +389,7 @@ def build():
         elif bid in PENDING_REVIEW and passed == len(cases):
             status = "delivered-pending-review"
             gen = gen + ROUND4_CAVEATS.get(bid, [])
+        gen = gen + LIST_NOTES.get(bid, [])
         e = {"block": bid, "statusDocBlock": num, "status": status,
              "cases": sorted(c["case"] for c in cases), "casesPassingDecidingGate": f"{passed}/{len(cases)}",
              "apis": {"fromManifest": manifest_apis(mblocks[bid]) if bid in mblocks else [],
