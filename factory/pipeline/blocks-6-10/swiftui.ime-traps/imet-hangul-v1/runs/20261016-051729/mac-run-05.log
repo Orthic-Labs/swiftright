@@ -1,0 +1,18 @@
+$ /Users/runner/work/_temp/swiftright-cache/run/pair-imet-hangul-v1-20261016-051729/bin/host --plain --scale 2.5 --png /Users/runner/work/_temp/pairs/factory/pipeline/blocks-6-10/swiftui.ime-traps/imet-hangul-v1/runs/20261016-051729/mac/run-05.png --ax /Users/runner/work/_temp/pairs/factory/pipeline/blocks-6-10/swiftui.ime-traps/imet-hangul-v1/runs/20261016-051729/mac/ax-05.json --steps [{"op":"click","x":150,"y":55},{"op":"wait","ms":250},{"op":"ime","action":"compose","text":"\u314e"},{"op":"ime","action":"compose","text":"\ud558"},{"op":"ime","action":"compose","text":"\ud55c"},{"op":"ime","action":"commit","text":"\ud55c"},{"op":"ime","action":"compose","text":"\u3131"},{"op":"ime","action":"compose","text":"\uadf8"},{"op":"ime","action":"compose","text":"\uae00"},{"op":"ime","action":"commit","text":"\uae00"},{"op":"wait","ms":250}]
+--stdout--
+MAC_ENV os=Version_27.0.1_(Build_26A434) pinnedDisplayScale=2.5 windowBackingScale=2.5 effectiveDisplayScale=2.5 screens=[1024x768@1.0x]
+MAC_FACT step=start fieldEditor=0 firstResponder=Optional<NSResponder>
+MAC_FACT step=0:click fieldEditor=1 text="ab" selection=2+0 marked=2+0 caretXpx=77.51
+MAC_FACT step=2:ime fieldEditor=1 text="abㅎ" selection=3+0 marked=2+1 caretXpx=105.63
+MAC_FACT step=3:ime fieldEditor=1 text="ab하" selection=3+0 marked=2+1 caretXpx=105.63
+MAC_FACT step=4:ime fieldEditor=1 text="ab한" selection=3+0 marked=2+1 caretXpx=105.63
+MAC_FACT step=5:ime fieldEditor=1 text="ab한" selection=3+0 marked=3+0 caretXpx=105.63
+MAC_FACT step=6:ime fieldEditor=1 text="ab한ㄱ" selection=4+0 marked=3+1 caretXpx=133.74
+MAC_FACT step=7:ime fieldEditor=1 text="ab한그" selection=4+0 marked=3+1 caretXpx=133.74
+MAC_FACT step=8:ime fieldEditor=1 text="ab한글" selection=4+0 marked=3+1 caretXpx=133.74
+MAC_FACT step=9:ime fieldEditor=1 text="ab한글" selection=4+0 marked=4+0 caretXpx=133.74
+MAC_CAPTURE 800x600 scale=2.5 png=/Users/runner/work/_temp/pairs/factory/pipeline/blocks-6-10/swiftui.ime-traps/imet-hangul-v1/runs/20261016-051729/mac/run-05.png
+
+--stderr--
+
+exit=0

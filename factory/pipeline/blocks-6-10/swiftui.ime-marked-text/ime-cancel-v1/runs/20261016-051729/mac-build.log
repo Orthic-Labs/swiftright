@@ -1,0 +1,37 @@
+$ /usr/bin/xcrun swiftc -parse-as-library -O -module-cache-path /Users/runner/work/_temp/swiftright-cache/build/pair/mc -o /Users/runner/work/_temp/swiftright-cache/run/pair-ime-cancel-v1-20261016-051729/bin/host /Users/runner/work/swiftright/swiftright/factory/pipeline/blocks-6-10/swiftui.ime-marked-text/ime-cancel-v1/mac-source/Sources/MacHost/CaptureHost.swift /Users/runner/work/swiftright/swiftright/factory/pipeline/blocks-6-10/swiftui.ime-marked-text/ime-cancel-v1/mac-source/Sources/MacHost/Witness.swift /Users/runner/work/swiftright/swiftright/factory/tools/mac-ax-dump/AXDump.swift /Users/runner/work/swiftright/swiftright/factory/tools/mac-ax-dump/AlertHooks.swift /Users/runner/work/swiftright/swiftright/factory/tools/mac-scale-pin/ScalePin.swift
+--stdout--
+
+--stderr--
+/Users/runner/work/swiftright/swiftright/factory/tools/mac-ax-dump/AXDump.swift:45:32: warning: use '#selector' instead of explicitly constructing a 'Selector'
+ 43 | 
+ 44 |     @MainActor static func children(of object: NSObject) -> [NSObject] {
+ 45 |         if object.responds(to: Selector("accessibilityChildren")), let kids = object.perform(Selector("accessibilityChildren"))?.takeUnretainedValue() as? [Any] {
+    |                                `- warning: use '#selector' instead of explicitly constructing a 'Selector'
+ 46 |             let objs = kids.compactMap { $0 as? NSObject }
+ 47 |             if !objs.isEmpty { return objs }
+
+/Users/runner/work/swiftright/swiftright/factory/tools/mac-ax-dump/AXDump.swift:45:94: warning: use '#selector' instead of explicitly constructing a 'Selector'
+ 43 | 
+ 44 |     @MainActor static func children(of object: NSObject) -> [NSObject] {
+ 45 |         if object.responds(to: Selector("accessibilityChildren")), let kids = object.perform(Selector("accessibilityChildren"))?.takeUnretainedValue() as? [Any] {
+    |                                                                                              `- warning: use '#selector' instead of explicitly constructing a 'Selector'
+ 46 |             let objs = kids.compactMap { $0 as? NSObject }
+ 47 |             if !objs.isEmpty { return objs }
+
+/Users/runner/work/swiftright/swiftright/factory/tools/mac-ax-dump/AXDump.swift:87:45: warning: conditional downcast from 'NSResponder?' to 'NSObject' is equivalent to an implicit conversion to an optional 'NSObject'
+ 85 |         var rec: [String: Any] = ["main": main, "kind": kind, "title": w.title, "frame": [Double(frame.minX), Double(frame.minY), Double(frame.width), Double(frame.height)],
+ 86 |                                   "tree": ["role": "AXWindow", "name": w.title, "enabled": true, "focus": w.isKeyWindow, "bounds": [0.0, 0.0, Double(frame.width), Double(frame.height)], "children": [tree]] as [String: Any]]
+ 87 |         if let responder = w.firstResponder as? NSObject, !(responder is NSWindow) { rec["firstResponder"] = String(describing: type(of: responder)) }
+    |                                             `- warning: conditional downcast from 'NSResponder?' to 'NSObject' is equivalent to an implicit conversion to an optional 'NSObject'
+ 88 |         return rec
+ 89 |     }
+
+/Users/runner/work/swiftright/swiftright/factory/tools/mac-ax-dump/AXDump.swift:107:44: warning: conditional downcast from 'NSResponder?' to 'NSObject' is equivalent to an implicit conversion to an optional 'NSObject'
+105 |         }
+106 |         var doc: [String: Any] = ["scale": scale, "windows": windows]
+107 |         if let focus = main.firstResponder as? NSObject, !(focus is NSWindow) {
+    |                                            `- warning: conditional downcast from 'NSResponder?' to 'NSObject' is equivalent to an implicit conversion to an optional 'NSObject'
+108 |             doc["focusedElement"] = ["name": string(get(focus, "accessibilityLabel")) ?? string(get(focus, "accessibilityTitle")) ?? "", "role": string(get(focus, "accessibilityRole")) ?? "AXGroup"]
+109 |         }
+
+exit=0

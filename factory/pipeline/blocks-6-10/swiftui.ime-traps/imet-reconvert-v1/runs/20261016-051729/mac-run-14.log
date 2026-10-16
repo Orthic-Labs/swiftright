@@ -1,0 +1,15 @@
+$ /Users/runner/work/_temp/swiftright-cache/run/pair-imet-reconvert-v1-20261016-051729/bin/host --plain --scale 2.5 --png /Users/runner/work/_temp/pairs/factory/pipeline/blocks-6-10/swiftui.ime-traps/imet-reconvert-v1/runs/20261016-051729/mac/run-14.png --ax /Users/runner/work/_temp/pairs/factory/pipeline/blocks-6-10/swiftui.ime-traps/imet-reconvert-v1/runs/20261016-051729/mac/ax-14.json --steps [{"op":"click","x":150,"y":55},{"op":"wait","ms":250},{"op":"ime","action":"commit","text":"\u65e5\u672c\u8a9e"},{"op":"key","key":"Left","mods":["shift"]},{"op":"key","key":"Left","mods":["shift"]},{"op":"ime","action":"compose","text":"\u307b\u3093\u3054"},{"op":"ime","action":"commit","text":"\u672c\u8a9e"},{"op":"wait","ms":250}]
+--stdout--
+MAC_ENV os=Version_27.0.1_(Build_26A434) pinnedDisplayScale=2.5 windowBackingScale=2.5 effectiveDisplayScale=2.5 screens=[1024x768@1.0x]
+MAC_FACT step=start fieldEditor=0 firstResponder=Optional<NSResponder>
+MAC_FACT step=0:click fieldEditor=1 text="ab" selection=2+0 marked=2+0 caretXpx=77.51
+MAC_FACT step=2:ime fieldEditor=1 text="ab日本語" selection=5+0 marked=5+0 caretXpx=174.26
+MAC_FACT step=3:key fieldEditor=1 text="ab日本語" selection=4+1 marked=5+0 caretXpx=142.01
+MAC_FACT step=4:key fieldEditor=1 text="ab日本語" selection=3+2 marked=5+0 caretXpx=109.76
+MAC_FACT step=5:ime fieldEditor=1 text="ab日ほんご" selection=6+0 marked=3+3 caretXpx=202.30
+MAC_FACT step=6:ime fieldEditor=1 text="ab日本語" selection=5+0 marked=5+0 caretXpx=174.26
+MAC_CAPTURE 800x600 scale=2.5 png=/Users/runner/work/_temp/pairs/factory/pipeline/blocks-6-10/swiftui.ime-traps/imet-reconvert-v1/runs/20261016-051729/mac/run-14.png
+
+--stderr--
+
+exit=0
