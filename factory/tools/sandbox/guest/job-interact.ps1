@@ -172,13 +172,24 @@ function Find-ByName($root, [string]$name) {
 
 # Settled capture, the capture.ps1 rule (CI 38852596361, 38854967920): poll PrintWindow every 200 ms until three identical digests in a row (20 s limit),
 # save the last settled bitmap itself, and warn when a poll differed from the stable digest. Every poll digest goes to $log (settle-NN-*.txt).
+# Host lifetime (CI 38865487951 ime-composing-v1 runs 1-2): the host ends its own process after its capture lease, counted from its first tick. The lease is requested
+# with --factory-capture-lease-seconds (below), but a host whose main.swift keeps a compiled 10 s check ignores the flag. $script:tWin is when this run first saw the
+# window; Gone-Report puts the elapsed time and the requested lease into the error so a closed window names how long it lived.
+$script:tWin = $null; $script:proc = $null; $script:leaseS = 120
+function Window-Ms { if ($script:tWin) { return [int]([DateTime]::UtcNow - $script:tWin).TotalMilliseconds } return -1 }
+function Gone-Report([string]$where) {
+    $exited = [bool]($script:proc -and $script:proc.HasExited)
+    return "GetClientRect failed: host window gone $where, $(Window-Ms) ms after the window was first seen; host process exited=$exited; requested lease=$($script:leaseS) s (a host with a compiled lease ignores the flag)"
+}
+function Test-Alive($h) { $r = New-Object IxNative+RECT; return [bool][IxNative]::GetClientRect($h, [ref]$r) }
+
 function Save-SettledShot([IntPtr]$h, [string]$path, [string]$log) {
     $start = [DateTime]::UtcNow; $digests = @(); $prev = $null; $same = 0; $stable = $null
     while ($null -eq $stable) {
         if ([DateTime]::UtcNow -gt $start.AddSeconds(20)) { return 'first present not observed within 20 s' }
         Start-Sleep -Milliseconds 200
         $dg = [IxNative]::Grab($h); $digests += , $dg
-        if ($dg -eq 'gone') { return 'GetClientRect failed' }
+        if ($dg -eq 'gone') { return (Gone-Report 'during the settle poll') }
         if ($dg -ne '' -and $dg -eq $prev) { $same++ } else { $same = 0 }
         $prev = $dg
         if ($same -ge 2) { $stable = $dg }
@@ -308,9 +319,13 @@ try {
     $out = "$JobDir\out"
     New-Item -ItemType Directory -Force -Path $out | Out-Null
     $results = @()
-    $leaseArg = $(if ($job.args.leaseSeconds) { "--factory-capture-lease-seconds=$([int]$job.args.leaseSeconds)" } else { '--factory-capture-lease-seconds=120' })   # 40 s closed the host window before the UIA dump on cold run 1 (CI 38854967920 imet-badregion-v1: uia-01.json has no windows)
+    # The host honours this flag only when its main.swift parses it (213 of the 353 FactoryProbe copies at HEAD). The other 140, among them ime-composing-v1 and
+    # imet-badregion-v1, have a compiled 10 s lease (10_000_000_000 ns) and ignore the argument, so the window closes about 10 s after its first tick whatever is
+    # requested here. The fix for those copies is in the host source, not this harness; see Gone-Report for what a closed window now reports.
+    $script:leaseS = $(if ($job.args.leaseSeconds) { [int]$job.args.leaseSeconds } else { 120 })
+    $leaseArg = "--factory-capture-lease-seconds=$($script:leaseS)"
     for ($i = 1; $i -le $runs; $i++) {
-        $n = '{0:00}' -f $i; $p = $null; $status = 'failed'; $log = @()
+        $n = '{0:00}' -f $i; $p = $null; $status = 'failed'; $log = @(); $script:tWin = $null; $script:proc = $null
         try {
             $si = [Diagnostics.ProcessStartInfo]::new($exe); $si.Arguments = $leaseArg; $si.UseShellExecute = $false; $si.CreateNoWindow = $true
             $si.RedirectStandardOutput = $true; $si.RedirectStandardError = $true
@@ -319,22 +334,23 @@ try {
             # enter, then an exit square in the event strip, and every later square shifted; block 38 rows/adjacent).
             $scr = [System.Windows.Forms.Screen]::PrimaryScreen.Bounds
             [void][IxNative]::SetCursorPos($scr.Right - 1, $scr.Bottom - 1)
-            $p = [Diagnostics.Process]::Start($si); $so = $p.StandardOutput.ReadToEndAsync(); $se = $p.StandardError.ReadToEndAsync()
+            $p = [Diagnostics.Process]::Start($si); $script:proc = $p; $so = $p.StandardOutput.ReadToEndAsync(); $se = $p.StandardError.ReadToEndAsync()
             $deadline = [DateTime]::UtcNow.AddSeconds(30)
             do { Start-Sleep -Milliseconds 100; $p.Refresh(); if ($p.HasExited) { throw "host exited early code=$($p.ExitCode)" }; if ([DateTime]::UtcNow -gt $deadline) { throw 'window deadline' } } while ($p.MainWindowHandle -eq [IntPtr]::Zero)
-            $h = $p.MainWindowHandle
+            $h = $p.MainWindowHandle; $script:tWin = [DateTime]::UtcNow
             if (-not [IxNative]::SetWindowPos($h, [IntPtr]::new(1), 0, 0, 0, 0, 0x0013)) { throw 'SetWindowPos failed' }
             Start-Sleep -Milliseconds $settle
             $k = 0
             foreach ($s in $steps) {
                 $k++
-                $r = 'ok'
+                $r = 'ok'; $t0 = Window-Ms
                 try { $r = Do-Step $p $h $s $out $n } catch { $r = 'ERROR: ' + $_.Exception.Message }
-                $log += [ordered]@{ step = $k; op = [string]$s.op; result = $r }
+                $log += [ordered]@{ step = $k; op = [string]$s.op; result = $r; window_ms_start = $t0; window_ms_end = (Window-Ms) }
                 if ($r -like 'ERROR*') { throw "step $k ($($s.op)): $r" }
-                if ($p.HasExited) { throw "host exited during step $k" }
+                if ($p.HasExited -or -not (Test-Alive $h)) { throw (Gone-Report "during step $k ($($s.op))") }
             }
             Start-Sleep -Milliseconds $settle
+            if ($p.HasExited -or -not (Test-Alive $h)) { throw (Gone-Report 'before the final UIA dump') }
             Dump-Process $p $h (Join-Path $out "uia-$n.json")
             $r = Save-SettledShot $h (Join-Path $out "native-$n.png") (Join-Path $out "settle-$n.txt"); if ($r -ne 'ok') { throw $r }
             $status = 'ok'
@@ -346,7 +362,7 @@ try {
                 try { [void]$so.Wait(5000); $so.Result | Set-Content (Join-Path $out "host-$n.stdout.txt"); $se.Result | Set-Content (Join-Path $out "host-$n.stderr.txt") } catch { }
             }
         }
-        $results += [ordered]@{ run = $i; status = $status }
+        $results += [ordered]@{ run = $i; status = $status; lease_s_requested = $script:leaseS; window_ms_at_end = (Window-Ms) }
     }
     ConvertTo-Json -InputObject @($results) | Set-Content (Join-Path $out 'done.json')
     $res.done = $results
