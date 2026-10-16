@@ -71,11 +71,20 @@ public static class IxNative {
  }
  public static string Cls(IntPtr h){var b=new StringBuilder(256);GetClassNameW(h,b,256);return b.ToString();}
  public static string Txt(IntPtr h){var b=new StringBuilder(512);GetWindowTextW(h,b,512);return b.ToString();}
- public static string Shot(IntPtr h,string path){
-  RECT r; if(!GetClientRect(h,out r)) return "GetClientRect failed"; int w=r.right-r.left, ht=r.bottom-r.top; if(w<3||ht<3) return "bad size "+w+"x"+ht;
-  using(Bitmap b=new Bitmap(w,ht,PixelFormat.Format32bppArgb)){using(Graphics g=Graphics.FromImage(b)){g.Clear(Color.Magenta);IntPtr dc=g.GetHdc();try{if(!PrintWindow(h,dc,3))return "PrintWindow false";}finally{g.ReleaseHdc(dc);}} b.Save(path,ImageFormat.Png);}
-  return "ok";
+ // Settled-snapshot capture (as factory/tools/pair/capture.ps1): Grab returns the digest of one PrintWindow poll and keeps its bitmap; SavePng writes the
+ // last settled bitmap, so a PrintWindow taken after the settle loop cannot replace the frame that produced the stable digest.
+ public static Bitmap Last;
+ public static string Grab(IntPtr h){
+  RECT r; if(!GetClientRect(h,out r)) return "gone"; int w=r.right-r.left, ht=r.bottom-r.top; if(w<3||ht<3) return "";
+  Bitmap b=new Bitmap(w,ht,PixelFormat.Format32bppArgb);
+  using(Graphics g=Graphics.FromImage(b)){g.Clear(Color.Magenta);IntPtr dc=g.GetHdc();bool ok;try{ok=PrintWindow(h,dc,3);}finally{g.ReleaseHdc(dc);} if(!ok){b.Dispose();return "";}}
+  var d=b.LockBits(new Rectangle(0,0,w,ht),ImageLockMode.ReadOnly,PixelFormat.Format32bppArgb);
+  string dg;
+  try{ byte[] px=new byte[d.Stride*ht]; Marshal.Copy(d.Scan0,px,0,px.Length); using(var sha=System.Security.Cryptography.SHA256.Create()){ dg=BitConverter.ToString(sha.ComputeHash(px)); } }
+  finally{b.UnlockBits(d);}
+  if(Last!=null){Last.Dispose();} Last=b; return dg;
  }
+ public static string SavePng(string path){ if(Last==null) return "no settled bitmap"; Last.Save(path,ImageFormat.Png); return "ok"; }
  public static IntPtr Lp(int x,int y){return (IntPtr)(((y&0xFFFF)<<16)|(x&0xFFFF));}
  public static void Foreground(IntPtr h){
   IntPtr fg=GetForegroundWindow(); uint pid; uint ft=GetWindowThreadProcessId(fg,out pid); uint me=GetCurrentThreadId();
@@ -160,6 +169,25 @@ function Find-ByName($root, [string]$name) {
     return $root.FindFirst([Windows.Automation.TreeScope]::Descendants, $cond)
 }
 
+# Settled capture, the capture.ps1 rule (CI 38852596361, 38854967920): poll PrintWindow every 200 ms until three identical digests in a row (20 s limit),
+# save the last settled bitmap itself, and warn when a poll differed from the stable digest. Every poll digest goes to $log (settle-NN-*.txt).
+function Save-SettledShot([IntPtr]$h, [string]$path, [string]$log) {
+    $start = [DateTime]::UtcNow; $digests = @(); $prev = $null; $same = 0; $stable = $null
+    while ($null -eq $stable) {
+        if ([DateTime]::UtcNow -gt $start.AddSeconds(20)) { return 'first present not observed within 20 s' }
+        Start-Sleep -Milliseconds 200
+        $dg = [IxNative]::Grab($h); $digests += , $dg
+        if ($dg -eq 'gone') { return 'GetClientRect failed' }
+        if ($dg -ne '' -and $dg -eq $prev) { $same++ } else { $same = 0 }
+        $prev = $dg
+        if ($same -ge 2) { $stable = $dg }
+    }
+    $differs = @(); for ($q = 0; $q -lt $digests.Count; $q++) { if ($digests[$q] -ne $stable) { $differs += ("poll$($q + 1)=" + $digests[$q]) } }
+    if ($differs.Count -gt 0) { Write-Warning ((Split-Path $path -Leaf) + ': ' + $differs.Count + ' of ' + $digests.Count + ' PrintWindow poll(s) differ from the stable digest: ' + ($differs -join ' ')) }
+    Set-Content -Path $log -Value ('settled polls=' + $digests.Count + ' stable=' + $stable + ' differing=' + $differs.Count + $(if ($differs.Count) { ' ' + ($differs -join ' ') } else { '' }))
+    return [IxNative]::SavePng($path)
+}
+
 function Do-Step($proc, $mainH, $step, [string]$out, [string]$n) {
     $op = [string]$step.op
     $h = $(if ($op -in 'wait', 'dump', 'shot') { $mainH } else { Resolve-Target $proc $step $mainH })
@@ -167,7 +195,7 @@ function Do-Step($proc, $mainH, $step, [string]$out, [string]$n) {
         'foreground' { [IxNative]::Foreground($h); Start-Sleep -Milliseconds 300; return 'ok' }
         'wait' { Start-Sleep -Milliseconds ([int]$step.ms); return 'ok' }
         'dump' { Dump-Process $proc $mainH (Join-Path $out ("uia-$n-" + [string]$step.label + '.json')); return 'ok' }
-        'shot' { return [IxNative]::Shot($mainH, (Join-Path $out ("native-$n-" + [string]$step.label + '.png'))) }
+        'shot' { return Save-SettledShot $mainH (Join-Path $out ("native-$n-" + [string]$step.label + '.png')) (Join-Path $out ("settle-$n-" + [string]$step.label + '.txt')) }
         'key' {
             $keyVk = Get-Vk ([string]$step.key); $mods = @($step.mods | Where-Object { $_ })
             $ext = $keyVk -in 33, 34, 35, 36, 37, 38, 39, 40, 45, 46
@@ -279,7 +307,7 @@ try {
     $out = "$JobDir\out"
     New-Item -ItemType Directory -Force -Path $out | Out-Null
     $results = @()
-    $leaseArg = $(if ($job.args.leaseSeconds) { "--factory-capture-lease-seconds=$([int]$job.args.leaseSeconds)" } else { '--factory-capture-lease-seconds=40' })
+    $leaseArg = $(if ($job.args.leaseSeconds) { "--factory-capture-lease-seconds=$([int]$job.args.leaseSeconds)" } else { '--factory-capture-lease-seconds=120' })   # 40 s closed the host window before the UIA dump on cold run 1 (CI 38854967920 imet-badregion-v1: uia-01.json has no windows)
     for ($i = 1; $i -le $runs; $i++) {
         $n = '{0:00}' -f $i; $p = $null; $status = 'failed'; $log = @()
         try {
@@ -305,7 +333,7 @@ try {
             }
             Start-Sleep -Milliseconds $settle
             Dump-Process $p $h (Join-Path $out "uia-$n.json")
-            $r = [IxNative]::Shot($h, (Join-Path $out "native-$n.png")); if ($r -ne 'ok') { throw $r }
+            $r = Save-SettledShot $h (Join-Path $out "native-$n.png") (Join-Path $out "settle-$n.txt"); if ($r -ne 'ok') { throw $r }
             $status = 'ok'
         } catch { $status = [string]$_ }
         finally {
