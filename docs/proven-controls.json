@@ -705,10 +705,33 @@
       ],
       "casesPassingDecidingGate": "4/4",
       "caveats": [
-        "On stage 3d3c6f5c2 with renderer 0.7 the N=3 layout-rules regression fails 4 of 4 cases; they pass on fc4a39a89 with renderer 0.8, so the status on current code with renderer 0.8 is unknown."
+        "CI confirmation (16 October): the CI runners use the Windows WARP adapter at an explicit render scale of 2.5 (H17), not native 240 dpi. The Dell 240-dpi sandbox stays the reference; the CI and Dell captures were pixel-identical on click-track and labels.",
+        "CI N=20 pass on renderer 0.10 (stage 06a3a0a85-5dfe7cc2 for bool-form-v1 and tab-order-v1; c4e83a68a-5dfe7cc2 for programmatic-v1 and shift-tab-v1), replacing the 16 October N=3 regression on renderer 0.7 (stage 3d3c6f5c2)."
       ],
+      "ciN20": {
+        "casesPassing": "4/4",
+        "renderScale": 2.5,
+        "renderer": "renderer-0.10-a15ebc5d",
+        "runDirs": {
+          "38854967920": "runs/20261016-051729",
+          "38860483220": "runs/20261016-061908"
+        },
+        "runs": [
+          "38854967920",
+          "38860483220"
+        ],
+        "stages": [
+          "06a3a0a85-5dfe7cc2",
+          "c4e83a68a-5dfe7cc2"
+        ],
+        "windowsAdapter": "WARP (CI runner)"
+      },
       "review": "oracle 2026-10-15",
-      "stage": "6459bb8cd-d243b1c9",
+      "stage": [
+        "06a3a0a85-5dfe7cc2",
+        "6459bb8cd-d243b1c9",
+        "c4e83a68a-5dfe7cc2"
+      ],
       "status": "delivered-with-caveats",
       "statusDocBlock": 14,
       "verdict": {
@@ -717,7 +740,7 @@
           "2026-10-15"
         ],
         "source": "docs/sr1-status.md table + factory/pipeline/closure/closure-table.json (blocks 1-20) / consolidation-table.json (blocks 21+)",
-        "text": "4/4 jobs pass their deciding gates, 80 runs at N=20, on `6459bb8cd-d243b1c9` (**delivered-with-caveats** (current code on renderer 0.8 unknown; regression caveat 16 Oct); Mac scale guard OK on every run)"
+        "text": "4/4 jobs pass their deciding gates, 80 runs at N=20, on `6459bb8cd-d243b1c9` (**delivered-with-caveats**; CI N=20 confirmation 4/4 on renderer 0.10 at scale 2.5 (H17): stage 06a3a0a85-5dfe7cc2 for bool-form-v1 and tab-order-v1, c4e83a68a-5dfe7cc2 for programmatic-v1 and shift-tab-v1; this replaces the 16 October unknown-on-renderer-0.8 caveat; Mac scale guard OK on every run)"
       },
       "windowsDifferences": []
     },
@@ -748,10 +771,33 @@
       ],
       "casesPassingDecidingGate": "4/4",
       "caveats": [
-        "On stage 3d3c6f5c2 with renderer 0.7 the N=3 layout-rules regression fails 4 of 4 cases; they pass on fc4a39a89 with renderer 0.8, so the status on current code with renderer 0.8 is unknown."
+        "CI confirmation (16 October): the CI runners use the Windows WARP adapter at an explicit render scale of 2.5 (H17), not native 240 dpi. The Dell 240-dpi sandbox stays the reference; the CI and Dell captures were pixel-identical on click-track and labels.",
+        "CI N=20 pass on renderer 0.10 (stage 06a3a0a85-5dfe7cc2 for ime-cancel, ime-commit and ime-composing-v1; c4e83a68a-5dfe7cc2 for ime-recompose-v1), replacing the 16 October N=3 regression on renderer 0.7 (stage 3d3c6f5c2)."
       ],
+      "ciN20": {
+        "casesPassing": "4/4",
+        "renderScale": 2.5,
+        "renderer": "renderer-0.10-a15ebc5d",
+        "runDirs": {
+          "38854967920": "runs/20261016-051729",
+          "38860483220": "runs/20261016-061908"
+        },
+        "runs": [
+          "38854967920",
+          "38860483220"
+        ],
+        "stages": [
+          "06a3a0a85-5dfe7cc2",
+          "c4e83a68a-5dfe7cc2"
+        ],
+        "windowsAdapter": "WARP (CI runner)"
+      },
       "review": "oracle 2026-10-15",
-      "stage": "6459bb8cd-d243b1c9",
+      "stage": [
+        "06a3a0a85-5dfe7cc2",
+        "6459bb8cd-d243b1c9",
+        "c4e83a68a-5dfe7cc2"
+      ],
       "status": "delivered-with-caveats",
       "statusDocBlock": 15,
       "verdict": {
@@ -760,7 +806,7 @@
           "2026-10-15"
         ],
         "source": "docs/sr1-status.md table + factory/pipeline/closure/closure-table.json (blocks 1-20) / consolidation-table.json (blocks 21+)",
-        "text": "4/4 jobs pass their deciding gates, 80 runs at N=20, on `6459bb8cd-d243b1c9` (**delivered-with-caveats** (current code on renderer 0.8 unknown; regression caveat 16 Oct); Mac scale guard OK on every run)"
+        "text": "4/4 jobs pass their deciding gates, 80 runs at N=20, on `6459bb8cd-d243b1c9` (**delivered-with-caveats**; CI N=20 confirmation 4/4 on renderer 0.10 at scale 2.5 (H17): stage 06a3a0a85-5dfe7cc2 for ime-cancel, ime-commit and ime-composing-v1, c4e83a68a-5dfe7cc2 for ime-recompose-v1; this replaces the 16 October unknown-on-renderer-0.8 caveat; Mac scale guard OK on every run)"
       },
       "windowsDifferences": []
     },
@@ -991,10 +1037,29 @@
       ],
       "casesPassingDecidingGate": "7/7",
       "caveats": [
-        "On stage 3d3c6f5c2 with renderer 0.7 the N=3 layout-rules regression fails opacity-text-v1; the block passes on fc4a39a89 with renderer 0.8, so the status on current code with renderer 0.8 is unknown."
+        "CI confirmation (16 October): the CI runners use the Windows WARP adapter at an explicit render scale of 2.5 (H17), not native 240 dpi. The Dell 240-dpi sandbox stays the reference; the CI and Dell captures were pixel-identical on click-track and labels.",
+        "CI N=20 pass on renderer 0.10 for all 7 cases (stage 06a3a0a85-5dfe7cc2), replacing the 16 October N=3 regression on renderer 0.7 (stage 3d3c6f5c2, opacity-text-v1). The clock job's own ok flag reads False in the CI result.json although all 20 runs report ok; the gate is clock-report.json (120 of 120 pairs, 0 fail)."
       ],
+      "ciN20": {
+        "casesPassing": "7/7",
+        "renderScale": 2.5,
+        "renderer": "renderer-0.10-a15ebc5d",
+        "runDirs": {
+          "38854967920": "runs/20261016-051729"
+        },
+        "runs": [
+          "38854967920"
+        ],
+        "stages": [
+          "06a3a0a85-5dfe7cc2"
+        ],
+        "windowsAdapter": "WARP (CI runner)"
+      },
       "review": "oracle 2026-10-15",
-      "stage": "6459bb8cd-d243b1c9",
+      "stage": [
+        "06a3a0a85-5dfe7cc2",
+        "6459bb8cd-d243b1c9"
+      ],
       "status": "delivered-with-caveats",
       "statusDocBlock": 19,
       "verdict": {
@@ -1003,7 +1068,7 @@
           "2026-10-15"
         ],
         "source": "docs/sr1-status.md table + factory/pipeline/closure/closure-table.json (blocks 1-20) / consolidation-table.json (blocks 21+)",
-        "text": "7/7 jobs pass their deciding gates, 140 runs at N=20, on `6459bb8cd-d243b1c9` (**delivered-with-caveats** (current code on renderer 0.8 unknown; regression caveat 16 Oct); Mac scale guard OK on every run)"
+        "text": "7/7 jobs pass their deciding gates, 140 runs at N=20, on `6459bb8cd-d243b1c9` (**delivered-with-caveats**; CI N=20 confirmation 7/7 on renderer 0.10 at scale 2.5 (H17), stage 06a3a0a85-5dfe7cc2 (clock-report.json 120 of 120 pairs for the five clock cases); this replaces the 16 October unknown-on-renderer-0.8 caveat; Mac scale guard OK on every run)"
       },
       "windowsDifferences": []
     },
@@ -1950,6 +2015,7 @@
       ],
       "casesPassingDecidingGate": "13/13",
       "caveats": [
+        "CI confirmation (16 October): the CI runners use the Windows WARP adapter at an explicit render scale of 2.5 (H17), not native 240 dpi. The Dell 240-dpi sandbox stays the reference; the CI and Dell captures were pixel-identical on click-track and labels.",
         "The thumb is drawn from artwork fitted to the Mac's macOS 27 slider at scale 2.5 (H4); a thumb on an exact half device pixel rounds up here, where the Mac rounds half of those down (H2), so the cases use values that avoid the ties.",
         "The Mac applies clicks, drags and keys through the accessibility value and increment (a stand-in, H5); Windows receives real posted pointer and key messages. Home, End, PageUp and PageDown are specified, not measured on the Mac.",
         "Labels and value labels are checked semantically only (role, name, value, enabled, range, count, order); they have no position gate of their own.",
@@ -1957,10 +2023,31 @@
         "Dark cases gate at hazeTolerance 2 (values-dark, disabled-dark); the light cases at 1 (decision H4, which says within 1 level).",
         "No negative controls yet: the gate has not been shown to fail on a 1 px thumb offset or a wrong fill colour."
       ],
+      "ciN20": {
+        "casesPassing": "13/13",
+        "renderScale": 2.5,
+        "renderer": "renderer-0.10-a15ebc5d",
+        "runDirs": {
+          "38854967920": "runs/20261016-051729",
+          "38860483220": "runs/20261016-061908"
+        },
+        "runs": [
+          "38854967920",
+          "38860483220"
+        ],
+        "stages": [
+          "06a3a0a85-5dfe7cc2",
+          "c4e83a68a-5dfe7cc2"
+        ],
+        "windowsAdapter": "WARP (CI runner)"
+      },
       "review": "oracle 2026-10-16 (block 37: PASS-WITH-CAVEATS)",
       "stage": [
+        "06a3a0a85-5dfe7cc2",
         "3d3c6f5c2-0a0d1f39",
         "5e9c80ca2-9a0d7a03",
+        "645396d04-5dfe7cc2",
+        "c4e83a68a-5dfe7cc2",
         "ee84dc923-ae27d688"
       ],
       "status": "delivered-with-caveats",
@@ -1972,7 +2059,7 @@
           "2026-10-16"
         ],
         "source": "docs/sr1-status.md table + factory/pipeline/closure/closure-table.json (blocks 1-20) / consolidation-table.json (blocks 21+)",
-        "text": "13/13 on `3d3c6f5c2-0a0d1f39` (**delivered-with-caveats**, Oracle review 16 October: PASS-WITH-CAVEATS; haze 1 light and 2 dark, H4; value-label position not gated, H15; no negative controls yet; rounds 6 decisions H1-H5; the Mac applies clicks, drags and keys through the accessibility value as a stand-in)"
+        "text": "13/13 on `3d3c6f5c2-0a0d1f39` (**delivered-with-caveats**, Oracle review 16 October: PASS-WITH-CAVEATS; haze 1 light and 2 dark, H4; value-label position not gated, H15; no negative controls yet; rounds 6 decisions H1-H5; the Mac applies clicks, drags and keys through the accessibility value as a stand-in; CI N=20 confirmation 13/13 on renderer 0.10 at scale 2.5 (H17), stages 06a3a0a85-5dfe7cc2 and c4e83a68a-5dfe7cc2; the two negative controls fail as required at N=3 on the local dirty stage)"
       },
       "windowsDifferences": [
         "Stepped-slider tick marks are not drawn on Windows (decision H4 records the Mac's tick marks under a stepped slider)."
@@ -2022,7 +2109,7 @@
         "2eca0dce1-75c5d11e",
         "3d3c6f5c2-0a0d1f39",
         "5e9c80ca2-9a0d7a03",
-        "9bb0901ce-1b3bcd83"
+        "645396d04-5dfe7cc2"
       ],
       "status": "not-delivered",
       "statusDocBlock": 38,
@@ -2069,14 +2156,31 @@
         "blocks-37-38/swiftui.uia-walk/controls-a-v1",
         "blocks-37-38/swiftui.uia-walk/controls-b-v1"
       ],
-      "casesPassingDecidingGate": "0/2",
-      "caveats": [],
-      "stage": [
-        "2eca0dce1-75c5d11e",
-        "3d3c6f5c2-0a0d1f39",
-        "9bb0901ce-1b3bcd83"
+      "casesPassingDecidingGate": "2/2",
+      "caveats": [
+        "CI confirmation (16 October): the CI runners use the Windows WARP adapter at an explicit render scale of 2.5 (H17), not native 240 dpi. The Dell 240-dpi sandbox stays the reference; the CI and Dell captures were pixel-identical on click-track and labels.",
+        "Pixels are report-only; the semantic tree is gated for every control kind listed in the case.",
+        "The semantic comparator folds a toggle's nested label into the Mac AX shape (H14): a switch's label is a sibling before an unnamed switch, a checkbox's duplicate label child is dropped; role, name, toggle, enabled and bounds are still compared.",
+        "List rows are pixel-gated only (H16): the Mac AX exposes no list-row content (its AXUnknown rows have no name, value, bounds or children), so Windows ListItem subtrees are left out of the semantic comparison.",
+        "An unlabelled `Image(systemName: \"star.fill\")` is named `Favorite`; the name comes from a measured SF-symbol description table that holds measured symbols only (one entry so far)."
       ],
-      "status": "not-delivered",
+      "ciN20": {
+        "casesPassing": "2/2",
+        "renderScale": 2.5,
+        "renderer": "renderer-0.10-a15ebc5d",
+        "runDirs": {
+          "38854967920": "runs/20261016-051729"
+        },
+        "runs": [
+          "38854967920"
+        ],
+        "stages": [
+          "06a3a0a85-5dfe7cc2"
+        ],
+        "windowsAdapter": "WARP (CI runner)"
+      },
+      "stage": "06a3a0a85-5dfe7cc2",
+      "status": "delivered-pending-review",
       "statusDocBlock": 39,
       "verdict": {
         "date": "2026-10-15",
@@ -2084,7 +2188,7 @@
           "2026-10-16"
         ],
         "source": "docs/sr1-status.md table + factory/pipeline/closure/closure-table.json (blocks 1-20) / consolidation-table.json (blocks 21+)",
-        "text": "**0/2** on `3d3c6f5c2-0a0d1f39`: `controls-a-v1` fails the semantic gate on all 20 runs; `controls-b-v1` produces no pairs (0 compared, exit 1). **not-delivered**"
+        "text": "**2/2** CI N=20 on renderer 0.10 at scale 2.5 (H17), run 38854967920, stage 06a3a0a85-5dfe7cc2: `controls-a-v1` and `controls-b-v1` pass the semantic gate 20/20 (pixels report-only). The local 0/2 on `3d3c6f5c2-0a0d1f39` predates the H14 comparator fold. **delivered-pending-review** (H14, H16; the Mac side of the list is a pixel gate only)"
       },
       "windowsDifferences": []
     },
@@ -2111,10 +2215,36 @@
         "blocks-6-10/swiftui.ime-traps/imet-hangul-v1",
         "blocks-6-10/swiftui.ime-traps/imet-reconvert-v1"
       ],
-      "casesPassingDecidingGate": "2/4",
-      "caveats": [],
-      "stage": "3d3c6f5c2-0a0d1f39",
-      "status": "not-delivered",
+      "casesPassingDecidingGate": "4/4",
+      "caveats": [
+        "CI confirmation (16 October): the CI runners use the Windows WARP adapter at an explicit render scale of 2.5 (H17), not native 240 dpi. The Dell 240-dpi sandbox stays the reference; the CI and Dell captures were pixel-identical on click-track and labels.",
+        "Hardware IME is deferred: the cases drive the in-process TextStore script and the NSTextInputClient path, not a real IME (H9(b))."
+      ],
+      "ciN20": {
+        "casesPassing": "4/4",
+        "renderScale": 2.5,
+        "renderer": "renderer-0.10-a15ebc5d",
+        "runDirs": {
+          "38854967920": "runs/20261016-051729",
+          "38860483220": "runs/20261016-061908"
+        },
+        "runs": [
+          "38854967920",
+          "38860483220"
+        ],
+        "stages": [
+          "06a3a0a85-5dfe7cc2",
+          "c4e83a68a-5dfe7cc2"
+        ],
+        "windowsAdapter": "WARP (CI runner)"
+      },
+      "stage": [
+        "06a3a0a85-5dfe7cc2",
+        "3d3c6f5c2-0a0d1f39",
+        "645396d04-5dfe7cc2",
+        "c4e83a68a-5dfe7cc2"
+      ],
+      "status": "delivered-pending-review",
       "statusDocBlock": 40,
       "verdict": {
         "date": "2026-10-15",
@@ -2122,7 +2252,7 @@
           "2026-10-16"
         ],
         "source": "docs/sr1-status.md table + factory/pipeline/closure/closure-table.json (blocks 1-20) / consolidation-table.json (blocks 21+)",
-        "text": "**2/4** on `3d3c6f5c2-0a0d1f39`: `imet-badregion-v1` and `imet-hangul-v1` pass 20/20; `imet-focuschange-v1` and `imet-reconvert-v1` fail the semantic gate on all 20 runs. **not-delivered**"
+        "text": "**4/4** CI N=20 on renderer 0.10 at scale 2.5 (H17): `imet-focuschange-v1`, `imet-hangul-v1`, `imet-reconvert-v1` in run 38854967920 (stage 06a3a0a85-5dfe7cc2), `imet-badregion-v1` in run 38860483220 (stage c4e83a68a-5dfe7cc2; its run 38854967920 capture hit the artifact); semantic gate 20/20 each. Local `3d3c6f5c2-0a0d1f39` was 2/4. **delivered-pending-review**"
       },
       "windowsDifferences": []
     },
@@ -2164,13 +2294,38 @@
         "blocks-37-38/swiftui.compat/state-nested-update-v1",
         "blocks-37-38/swiftui.compat/task-id-v1"
       ],
-      "casesPassingDecidingGate": "3/5",
-      "caveats": [],
-      "stage": [
-        "2eca0dce1-75c5d11e",
-        "3d3c6f5c2-0a0d1f39"
+      "casesPassingDecidingGate": "5/5",
+      "caveats": [
+        "CI confirmation (16 October): the CI runners use the Windows WARP adapter at an explicit render scale of 2.5 (H17), not native 240 dpi. The Dell 240-dpi sandbox stays the reference; the CI and Dell captures were pixel-identical on click-track and labels.",
+        "Ported from OpenSwiftUI's MIT tests as view bodies and expectations only (H9a); EquatableView and animation completion are not ported and not delivered.",
+        "Runtime change (commit ce47755c3): `withAnimation` and `withTransaction` settle pending changes before their body, and `onChange` actions run after the commit with their writes in the next pass (state-nested-update is the case that measured it)."
       ],
-      "status": "not-delivered",
+      "ciN20": {
+        "casesPassing": "5/5",
+        "renderScale": 2.5,
+        "renderer": "renderer-0.10-a15ebc5d",
+        "runDirs": {
+          "38854967920": "runs/20261016-051729",
+          "38860483220": "runs/20261016-061908"
+        },
+        "runs": [
+          "38854967920",
+          "38860483220"
+        ],
+        "stages": [
+          "06a3a0a85-5dfe7cc2",
+          "c4e83a68a-5dfe7cc2"
+        ],
+        "windowsAdapter": "WARP (CI runner)"
+      },
+      "stage": [
+        "06a3a0a85-5dfe7cc2",
+        "2eca0dce1-75c5d11e",
+        "3d3c6f5c2-0a0d1f39",
+        "645396d04-5dfe7cc2",
+        "c4e83a68a-5dfe7cc2"
+      ],
+      "status": "delivered-pending-review",
       "statusDocBlock": 41,
       "verdict": {
         "date": "2026-10-15",
@@ -2178,7 +2333,7 @@
           "2026-10-16"
         ],
         "source": "docs/sr1-status.md table + factory/pipeline/closure/closure-table.json (blocks 1-20) / consolidation-table.json (blocks 21+)",
-        "text": "**3/5** on `3d3c6f5c2-0a0d1f39`: `environment-key-v1`, `id-modifier-order-v1` (button glyph region excluded, decision 2/11) and `task-id-v1` pass 20/20; `any-view-v1` fails on all 80 pairs and `state-nested-update-v1` fails on all 40 pairs (bbox (130, 95, 455, 185)). **not-delivered**"
+        "text": "**5/5** CI N=20 on renderer 0.10 at scale 2.5 (H17): `environment-key-v1`, `id-modifier-order-v1`, `state-nested-update-v1`, `task-id-v1` in run 38854967920 (stage 06a3a0a85-5dfe7cc2), `any-view-v1` in run 38860483220 (stage c4e83a68a-5dfe7cc2); pixel gate 0 fail on every case (the button glyph region is excluded, decision 2/11). Runtime change in ce47755c3: transaction boundary and onChange timing. Local `3d3c6f5c2-0a0d1f39` was 3/5. **delivered-pending-review**"
       },
       "windowsDifferences": []
     },

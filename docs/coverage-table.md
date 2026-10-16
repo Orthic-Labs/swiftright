@@ -214,7 +214,12 @@ The grade is the best block's; read that block's caveats in `docs/proven-control
 | `antialiased` | C | foundations.image-layout | 10/10 at N=20 (200 pairs); negative controls: 3 of 4 fail on both cases, straight-alpha fails on the alpha case |
 | `aspectRatio` | C | foundations.image-layout | 10/10 at N=20 (200 pairs); negative controls: 3 of 4 fail on both cases, straight-alpha fails on the alpha case |
 | `clipped` | C | foundations.image-layout | 10/10 at N=20 (200 pairs); negative controls: 3 of 4 fail on both cases, straight-alpha fails on the alpha case |
+| `EmptyView` | C | swiftui.compat | 5/5 |
+| `Environment` | C | swiftui.compat | 5/5 |
+| `EnvironmentKey` | C | swiftui.compat | 5/5 |
+| `EnvironmentValues` | C | swiftui.compat | 5/5 |
 | `interpolation` | C | foundations.image-layout | 10/10 at N=20 (200 pairs); negative controls: 3 of 4 fail on both cases, straight-alpha fails on the alpha case |
+| `onChange` | C | swiftui.compat | 5/5 |
 | `scaledToFill` | C | foundations.image-layout | 10/10 at N=20 (200 pairs); negative controls: 3 of 4 fail on both cases, straight-alpha fails on the alpha case |
 | `BackgroundStyle` | E | swiftui.color-scheme | 12/12 |
 | `Color.accent` | E | swiftui.color-scheme | 12/12 |
@@ -224,17 +229,12 @@ The grade is the best block's; read that block's caveats in `docs/proven-control
 | `ColorScheme.dark` | E | swiftui.color-scheme | 12/12 |
 | `ColorScheme.light` | E | swiftui.color-scheme | 12/12 |
 | `contains` | E | swiftui.on-hover | 2/4 |
-| `EmptyView` | E | swiftui.compat | 3/5 |
-| `Environment` | E | swiftui.color-scheme | 12/12 |
-| `EnvironmentKey` | E | swiftui.compat | 3/5 |
-| `EnvironmentValues` | E | swiftui.compat | 3/5 |
 | `EnvironmentValues.colorScheme` | E | swiftui.color-scheme | 12/12 |
 | `FactoryStandIn` | E | swiftui.on-hover | 2/4 |
 | `filter` | E | swiftui.on-hover | 2/4 |
 | `first` | E | swiftui.on-hover | 2/4 |
 | `hasSuffix` | E | swiftui.on-hover | 2/4 |
 | `last` | E | swiftui.on-hover | 2/4 |
-| `onChange` | E | swiftui.compat | 3/5 |
 | `onHover` | E | swiftui.on-hover | 2/4 |
 | `onSubmit` | E | swiftui.textfield | 7/7 |
 | `onTapGesture` | E | swiftui.on-hover | 2/4 |
@@ -251,4 +251,4 @@ The grade is the best block's; read that block's caveats in `docs/proven-control
 | `View.textFieldStyle` | E | swiftui.textfield | 7/7 |
 | `weight` | E | swiftui.system-font | 9/9 |
 
-Totals: A: 145, B: 59, C: 5, E: 34 (243 APIs).
+Totals: A: 145, B: 59, C: 10, E: 29 (243 APIs).

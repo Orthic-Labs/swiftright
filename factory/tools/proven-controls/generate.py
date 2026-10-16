@@ -73,9 +73,13 @@ ROUND6_CAVEATS = {
                        "The Mac applies clicks, drags and keys through the accessibility value and increment (a stand-in, H5); Windows receives real posted pointer and key messages. Home, End, PageUp and PageDown are specified, not measured on the Mac."],
     "swiftui.on-hover": ["Hover and tap are specified (H6), and the Mac side is a witness stand-in (H5): the offscreen Mac window never receives pointer events, so the Mac counts come from the witness.",
                          "A view with a tap gesture publishes one pressable node named by its text (H7); the Mac tree shows its Text as static text, so the trees are not compared for these cases."],
-    "swiftui.uia-walk": ["Pixels are report-only; the semantic tree is gated for every control kind listed in the case."],
+    "swiftui.uia-walk": ["Pixels are report-only; the semantic tree is gated for every control kind listed in the case.",
+                         "The semantic comparator folds a toggle's nested label into the Mac AX shape (H14): a switch's label is a sibling before an unnamed switch, a checkbox's duplicate label child is dropped; role, name, toggle, enabled and bounds are still compared.",
+                         "List rows are pixel-gated only (H16): the Mac AX exposes no list-row content (its AXUnknown rows have no name, value, bounds or children), so Windows ListItem subtrees are left out of the semantic comparison.",
+                         "An unlabelled `Image(systemName: \"star.fill\")` is named `Favorite`; the name comes from a measured SF-symbol description table that holds measured symbols only (one entry so far)."],
     "swiftui.ime-traps": ["Hardware IME is deferred: the cases drive the in-process TextStore script and the NSTextInputClient path, not a real IME (H9(b))."],
-    "swiftui.compat": ["Ported from OpenSwiftUI's MIT tests as view bodies and expectations only (H9a); EquatableView and animation completion are not ported and not delivered."],
+    "swiftui.compat": ["Ported from OpenSwiftUI's MIT tests as view bodies and expectations only (H9a); EquatableView and animation completion are not ported and not delivered.",
+                       "Runtime change (commit ce47755c3): `withAnimation` and `withTransaction` settle pending changes before their body, and `onChange` actions run after the commit with their writes in the next pass (state-nested-update is the case that measured it)."],
 }
 ROUND4_CAVEATS.update(ROUND5_CAVEATS)
 ROUND4_CAVEATS.update(ROUND6_CAVEATS)
@@ -115,11 +119,42 @@ REVIEWED["swiftui.slider"] = {"review": "oracle 2026-10-16 (block 37: PASS-WITH-
     "Dark cases gate at hazeTolerance 2 (values-dark, disabled-dark); the light cases at 1 (decision H4, which says within 1 level).",
     "No negative controls yet: the gate has not been shown to fail on a 1 px thumb offset or a wrong fill colour."],
     "windowsDifferences": ["Stepped-slider tick marks are not drawn on Windows (decision H4 records the Mac's tick marks under a stepped slider)."]}
-# Blocks 14, 15, 19 (16 October): the N=3 layout-rules regression on stage 3d3c6f5c2 with renderer 0.7 fails them; they pass on fc4a39a89 with renderer 0.8,
-# which predates the layout commits, so their status on current code with renderer 0.8 is unknown (docs/sr1-decisions.md, verification 16 October).
-REVIEWED["swiftui.focus-state"]["caveats"].append("On stage 3d3c6f5c2 with renderer 0.7 the N=3 layout-rules regression fails 4 of 4 cases; they pass on fc4a39a89 with renderer 0.8, so the status on current code with renderer 0.8 is unknown.")
-REVIEWED["swiftui.ime-marked-text"]["caveats"].append("On stage 3d3c6f5c2 with renderer 0.7 the N=3 layout-rules regression fails 4 of 4 cases; they pass on fc4a39a89 with renderer 0.8, so the status on current code with renderer 0.8 is unknown.")
-REVIEWED["swiftui.opacity-transition"]["caveats"].append("On stage 3d3c6f5c2 with renderer 0.7 the N=3 layout-rules regression fails opacity-text-v1; the block passes on fc4a39a89 with renderer 0.8, so the status on current code with renderer 0.8 is unknown.")
+# Blocks 14, 15, 19 (16 October): the N=3 layout-rules regression on stage 3d3c6f5c2 with renderer 0.7 failed them. The CI N=20 confirmation (renderer 0.10,
+# explicit scale 2.5, CI_CASE_RUN below) passes every case of each block, so the status on current code is no longer unknown.
+REVIEWED["swiftui.focus-state"]["caveats"].append("CI N=20 pass on renderer 0.10 (stage 06a3a0a85-5dfe7cc2 for bool-form-v1 and tab-order-v1; c4e83a68a-5dfe7cc2 for programmatic-v1 and shift-tab-v1), replacing the 16 October N=3 regression on renderer 0.7 (stage 3d3c6f5c2).")
+REVIEWED["swiftui.ime-marked-text"]["caveats"].append("CI N=20 pass on renderer 0.10 (stage 06a3a0a85-5dfe7cc2 for ime-cancel, ime-commit and ime-composing-v1; c4e83a68a-5dfe7cc2 for ime-recompose-v1), replacing the 16 October N=3 regression on renderer 0.7 (stage 3d3c6f5c2).")
+REVIEWED["swiftui.opacity-transition"]["caveats"].append("CI N=20 pass on renderer 0.10 for all 7 cases (stage 06a3a0a85-5dfe7cc2), replacing the 16 October N=3 regression on renderer 0.7 (stage 3d3c6f5c2, opacity-text-v1). The clock job's own ok flag reads False in the CI result.json although all 20 runs report ok; the gate is clock-report.json (120 of 120 pairs, 0 fail).")
+
+# CI N=20 confirmation (16 October 2026; docs/sr1-status.md, "CI N=20 confirmation"). Each case below passed its deciding gate at N=20 in the CI run
+# named here, on renderer 0.10 with the explicit render scale 2.5 (ABI 0.10, decision H17). The stage and commit are those recorded in each run's build.json.
+# The run directories are not committed, so the mapping is hand-set here; each case was checked against its run directory's deciding gate
+# (pixel, semantic, text-origin or clock report) when it was mapped.
+CI_RUNS = {
+    "38854967920": {"runDirs": "runs/20261016-051729", "stage": "06a3a0a85-5dfe7cc2", "commit": "06a3a0a85fc737df1ea7e24cc137636e6889bf2d"},
+    "38860483220": {"runDirs": "runs/20261016-061908", "stage": "c4e83a68a-5dfe7cc2", "commit": "c4e83a68a06f2672766f3c83426b980d78d4c659"},
+}
+_CI_RUN_1 = [  # 28 cases, run 38854967920
+    "blocks-37-38/swiftui.slider/disabled-dark-v1", "blocks-37-38/swiftui.slider/disabled-input-v1", "blocks-37-38/swiftui.slider/labels-v1",
+    "blocks-37-38/swiftui.slider/over-colour-v1", "blocks-37-38/swiftui.slider/values-dark-v1", "blocks-37-38/swiftui.slider/values-light-v1",
+    "blocks-37-38/swiftui.slider/widths-v1", "blocks-37-38/swiftui.uia-walk/controls-a-v1", "blocks-37-38/swiftui.uia-walk/controls-b-v1",
+    "blocks-6-10/swiftui.focus-state/bool-form-v1", "blocks-6-10/swiftui.focus-state/tab-order-v1",
+    "blocks-6-10/swiftui.ime-marked-text/ime-cancel-v1", "blocks-6-10/swiftui.ime-marked-text/ime-commit-v1", "blocks-6-10/swiftui.ime-marked-text/ime-composing-v1",
+    "blocks-6-10/swiftui.opacity-transition/insertion-fade-v1", "blocks-6-10/swiftui.opacity-transition/move-leading-v1",
+    "blocks-6-10/swiftui.opacity-transition/opacity-animated-v1", "blocks-6-10/swiftui.opacity-transition/opacity-static-v1",
+    "blocks-6-10/swiftui.opacity-transition/opacity-text-v1", "blocks-6-10/swiftui.opacity-transition/removal-fade-v1",
+    "blocks-6-10/swiftui.opacity-transition/removal-move-v1", "blocks-6-10/swiftui.ime-traps/imet-focuschange-v1", "blocks-6-10/swiftui.ime-traps/imet-hangul-v1",
+    "blocks-6-10/swiftui.ime-traps/imet-reconvert-v1", "blocks-37-38/swiftui.compat/environment-key-v1", "blocks-37-38/swiftui.compat/id-modifier-order-v1",
+    "blocks-37-38/swiftui.compat/state-nested-update-v1", "blocks-37-38/swiftui.compat/task-id-v1",
+]
+_CI_RUN_2 = [  # 11 cases, run 38860483220: the cases that hit the capture artifact in run 38854967920 (and shift-tab-v1, whose job crashed there)
+    "blocks-37-38/swiftui.slider/click-track-v1", "blocks-37-38/swiftui.slider/disabled-light-v1", "blocks-37-38/swiftui.slider/drag-v1",
+    "blocks-37-38/swiftui.slider/keys-v1", "blocks-37-38/swiftui.slider/range-v1", "blocks-37-38/swiftui.slider/value-labels-v1",
+    "blocks-6-10/swiftui.focus-state/programmatic-v1", "blocks-6-10/swiftui.focus-state/shift-tab-v1", "blocks-6-10/swiftui.ime-marked-text/ime-recompose-v1",
+    "blocks-6-10/swiftui.ime-traps/imet-badregion-v1", "blocks-37-38/swiftui.compat/any-view-v1",
+]
+CI_CASE_RUN = {**{c: "38854967920" for c in _CI_RUN_1}, **{c: "38860483220" for c in _CI_RUN_2}}
+CI_CAVEAT = ("CI confirmation (16 October): the CI runners use the Windows WARP adapter at an explicit render scale of 2.5 (H17), not native 240 dpi. "
+             "The Dell 240-dpi sandbox stays the reference; the CI and Dell captures were pixel-identical on click-track and labels.")
 PENDING_REVIEW -= set(REVIEWED)
 
 # No hand-set status: the closure run reran blocks 13-15 (text-origin fix, decision 12) and every block 1-20 is derived from its cases (delivered-pending-review).
@@ -278,6 +313,11 @@ def validate_hand_entries(entries, generated_ids, status_text, root=ROOT):
     return errors
 
 
+def case_passes(row):
+    """A case passes on its local table row (exit 0) or on its CI N=20 run (CI_CASE_RUN)."""
+    return row["exit"] == 0 or row["case"] in CI_CASE_RUN
+
+
 def build():
     def top(r):
         n = r["block"].split()[0]
@@ -298,6 +338,11 @@ def build():
         r = json.loads(line)
         if r.get("done") and r["stage"] == cstage:
             stages.setdefault(r["case"], set()).add(cstage)
+    failing_local = {r["case"] for r in table if r["exit"] != 0}
+    for case, run in CI_CASE_RUN.items():                   # a case's stages are where it passed: the CI stage, plus local stages only if the local row passed
+        if case in failing_local:
+            stages[case] = set()
+        stages.setdefault(case, set()).add(CI_RUNS[run]["stage"])
     bycase = {}
     for r in table:
         num = r["block"].split()[0]
@@ -308,6 +353,9 @@ def build():
         bid = NUM2ID.get(num, "cross-cutting.pixel-ties")
         row = rows.get(num, {"verdict": "", "caveats": ""})
         gen, win = split_caveats(row["caveats"])
+        ci_runs = sorted({CI_CASE_RUN[c["case"]] for c in cases if c["case"] in CI_CASE_RUN})
+        if ci_runs:
+            gen = gen + [CI_CAVEAT]
         types, mods = set(), set()
         for c in cases:
             for p in witness_files(c["case"]):
@@ -315,7 +363,7 @@ def build():
         stg = sorted({s for c in cases for s in stages.get(c["case"], set())})
         rundates = sorted({f"{d[:4]}-{d[4:6]}-{d[6:]}" for d in
                            (re.search(r"/runs/(\d{8})-", c["out"]).group(1) for c in cases if c.get("out"))})
-        passed = sum(1 for c in cases if c["exit"] == 0)
+        passed = sum(1 for c in cases if case_passes(c))
         status = "not-delivered" if passed != len(cases) else ("delivered-with-caveats" if gen or win else "delivered")
         review = None
         if bid in REVIEWED and passed == len(cases):
@@ -338,6 +386,11 @@ def build():
              "caveats": gen, "windowsDifferences": win}
         if review:
             e["review"] = review
+        if ci_runs:
+            e["ciN20"] = {"runs": ci_runs, "stages": sorted({CI_RUNS[r]["stage"] for r in ci_runs}),
+                          "casesPassing": f"{sum(1 for c in cases if c['case'] in CI_CASE_RUN)}/{len(cases)}",
+                          "renderer": "renderer-0.10-a15ebc5d", "renderScale": 2.5, "windowsAdapter": "WARP (CI runner)",
+                          "runDirs": {r: CI_RUNS[r]["runDirs"] for r in ci_runs}}
         ov = OVERRIDES.get(bid)
         if ov:
             e["statusFromSources"] = e["status"]
