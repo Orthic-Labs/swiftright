@@ -34,9 +34,13 @@ try {
     $res.renderer_sha256 = (Get-FileHash -LiteralPath $renderer -Algorithm SHA256).Hash.ToLower()
     try { $res.video = @(Get-CimInstance Win32_VideoController | ForEach-Object { $_.Name + ' ' + $_.DriverVersion }) } catch { }
     try { Add-Type -AssemblyName System.Windows.Forms; $b = [Windows.Forms.SystemInformation]::VirtualScreen; $res.screen = "$($b.Width)x$($b.Height)" } catch { }
+    # The capture script: the sandbox copy (C:\sbq\guest, deployed by client.py sync_capture_tool) unless the job names one.
+    # The GitHub runner passes factory/tools/pair/capture.ps1 from the checkout (ci_pair.py: args.captureScript).
+    $capture = $(if ($job.args.captureScript) { [string]$job.args.captureScript } else { 'C:\sbq\guest\capture.ps1' })
+    if (-not (Test-Path -LiteralPath $capture -PathType Leaf)) { throw "capture script not visible in the guest: $capture" }
     $out = "$JobDir\out"
     New-Item -ItemType Directory -Force -Path $out | Out-Null
-    & powershell.exe -NoProfile -NonInteractive -ExecutionPolicy Bypass -File 'C:\sbq\guest\capture.ps1' -Exe $exe -Out $out -Runs $runs -Shared *>&1 | Out-File -LiteralPath "$JobDir\capture.log" -Encoding utf8
+    & powershell.exe -NoProfile -NonInteractive -ExecutionPolicy Bypass -File $capture -Exe $exe -Out $out -Runs $runs -Shared *>&1 | Out-File -LiteralPath "$JobDir\capture.log" -Encoding utf8
     $res.capture_exit = $LASTEXITCODE
     $done = @(Get-Content -LiteralPath "$out\done.json" -Raw | ConvertFrom-Json)
     $res.done = $done

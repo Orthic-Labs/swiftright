@@ -23,6 +23,30 @@ REPO_SLUG = os.environ.get("GITHUB_REPOSITORY", "Orthic-Labs/swiftright")
 GUEST = HERE / "sandbox" / "guest"
 RENDERERS_DIR = REPO / "factory" / "renderers"   # committed pinned DLLs: <label>/swiftright_render.dll + SHA256
 GUEST_SCRIPT = {"capture": "job-capture.ps1", "clock": "job-clock.ps1", "interact": "job-interact.ps1"}
+# The capture script the clock and capture jobs run per launch: the same file client.py deploys to C:\sbq\guest on the Dell.
+# The job passes it as args.captureScript; the guest scripts default to the sandbox path only when no path is passed.
+CAPTURE_SCRIPT = HERE / "pair" / "capture.ps1"
+NESTED_SCRIPT = {"capture": CAPTURE_SCRIPT, "clock": CAPTURE_SCRIPT}
+
+
+def job_kind(clock, steps):
+    return "clock" if clock is not None else "interact" if steps is not None else "capture"
+
+
+def guest_scripts(kind):
+    """Every script a job of this kind runs on the runner, so a missing file fails before a build or a job starts."""
+    return [GUEST / GUEST_SCRIPT[kind]] + ([NESTED_SCRIPT[kind]] if kind in NESTED_SCRIPT else [])
+
+
+def job_args(kind, exe, runs, renderer, clock=None, steps=None):
+    args = dict(exe=str(exe), runs=runs, renderer=str(Path(renderer)))
+    if kind == "clock":
+        args["clock"] = list(clock)
+    if kind == "interact":
+        args.update(steps=steps, settleMs=500)
+    if kind in NESTED_SCRIPT:
+        args["captureScript"] = str(NESTED_SCRIPT[kind])
+    return args
 # The pinned renderers. Each DLL is committed under factory/renderers/<label>/ (checked first); the CI artifact below is the fallback.
 # Labels are the names the factory uses.
 RENDERERS = {
@@ -197,12 +221,11 @@ def cmd_windows(a):
     print(f"windows build ok {time.time() - t:.0f}s", flush=True)
     steps = pair.load_steps(case, None)
     clock = pair.load_clock(case, None)
-    kind = "clock" if clock is not None else "interact" if steps is not None else "capture"
-    args = dict(exe=str(exe), runs=a.runs, renderer=str(Path(a.renderer)))
-    if kind == "clock":
-        args["clock"] = list(clock)
-    if kind == "interact":
-        args.update(steps=steps, settleMs=500)
+    kind = job_kind(clock, steps)
+    missing = [str(f) for f in guest_scripts(kind) if not f.is_file()]
+    if missing:
+        sys.exit(f"guest scripts for a {kind} job do not exist in the checkout: {missing}")
+    args = job_args(kind, exe, a.runs, a.renderer, clock=clock, steps=steps)
     jobdir = Path(a.work) / "jobs" / slug(a.case)
     if jobdir.exists():
         shutil.rmtree(jobdir)
