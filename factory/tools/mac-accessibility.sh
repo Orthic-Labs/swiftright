@@ -1,7 +1,8 @@
 #!/bin/bash
 # Mac accessibility environment for factory captures (decision C12 extension). usage: mac-accessibility.sh <out-file>
-# Logs the accessibility settings and screens, sets any setting that is on back to the reference (all off, as on Adrian's Mac on
-# 2026-10-16), re-reads them through NSWorkspace, and FAILS CLOSED (exit 1) if any setting is still on or a readback line is missing.
+# Logs the accessibility settings and screens. On a GitHub Actions runner (GITHUB_ACTIONS=true only) it sets any setting that is on back to
+# the reference (all off, as on Adrian's Mac on 2026-10-16). On any other machine it NEVER writes defaults: it only reports, and it fails
+# closed (exit 1) if a setting is on. It re-reads through NSWorkspace and fails closed if any setting is still on or a readback line is missing.
 # Reduce Motion turns movement transitions into crossfades, so an on setting changes the Mac reference.
 set -uo pipefail
 out="${1:?usage: mac-accessibility.sh <out-file>}"
@@ -33,9 +34,13 @@ snapshot() {
   for k in $keys; do
     v="$(read_default "$k")"
     if is_on "$v"; then
-      echo "set $k: $v -> 0 (reference: off)"
-      defaults write com.apple.universalaccess "$k" -bool false || echo "defaults write $k failed"
-      fixed=1
+      if [ "${GITHUB_ACTIONS:-}" = true ]; then
+        echo "set $k: $v -> 0 (reference: off; GitHub Actions runner)"
+        defaults write com.apple.universalaccess "$k" -bool false || echo "defaults write $k failed"
+        fixed=1
+      else
+        echo "::error::accessibility $k is $v on this machine; this script never writes outside GitHub Actions (read-only here)"
+      fi
     fi
   done
   [ "$fixed" = 1 ] && snapshot after-set
