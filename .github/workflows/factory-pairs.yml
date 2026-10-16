@@ -177,6 +177,13 @@ jobs:
           & $swift.FullName --version
       - name: Toolchain
         run: swift --version
+      - name: Match the Dell system DPI (LogPixels 240 = 250%, measured on the Dell) and report it
+        shell: pwsh
+        run: |
+          $k = 'HKLM:\SYSTEM\CurrentControlSet\Hardware Profiles\Current\Software\Fonts'
+          "before LogPixels: $((Get-ItemProperty -Path $k -Name LogPixels -ErrorAction SilentlyContinue).LogPixels)"
+          Set-ItemProperty -Path $k -Name LogPixels -Value 240 -Type DWord
+          "after LogPixels: $((Get-ItemProperty -Path $k -Name LogPixels).LogPixels)"
       - name: Stage the product tree (git archive HEAD)
         id: stage
         run: |
