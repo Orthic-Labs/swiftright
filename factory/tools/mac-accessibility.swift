@@ -5,7 +5,7 @@ print("ax.reduceMotion=\(ws.accessibilityDisplayShouldReduceMotion)")
 print("ax.reduceTransparency=\(ws.accessibilityDisplayShouldReduceTransparency)")
 print("ax.increaseContrast=\(ws.accessibilityDisplayShouldIncreaseContrast)")
 print("ax.differentiateWithoutColor=\(ws.accessibilityDisplayShouldDifferentiateWithoutColor)")
-// The effective scroller style: legacy scrollers reserve a gutter at a List's trailing edge when its rows overflow (H21); overlay scrollers take no space.
+// The effective scroller style: legacy scrollers reserve a gutter at a List's trailing edge when its rows overflow (H21); whether an overlay scroller takes space is unproven (H21).
 print("ax.scrollerStyle=\(NSScroller.preferredScrollerStyle == .legacy ? "legacy" : "overlay")")
 print("screens=\(NSScreen.screens.count)")
 for s in NSScreen.screens {

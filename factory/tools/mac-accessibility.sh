@@ -5,7 +5,7 @@
 # closed (exit 1) if a setting is on. It re-reads through NSWorkspace and fails closed if any setting is still on or a readback line is missing.
 # Reduce Motion turns movement transitions into crossfades, so an on setting changes the Mac reference.
 # Scroller style: a List whose rows overflow reserves a gutter only under legacy (always-visible) scrollers (H21). The required value is the effective
-# style (NSScroller legacy). AppleShowScrollBars is logged, not required: it reads absent on a mouse-attached runner that is legacy anyway. On a
+# style (NSScroller legacy). AppleShowScrollBars is logged, not required. Whether an overlay style takes a gutter is unproven (H21): every runner logged overlay before the pin, so the pin is a measured requirement. On a
 # GitHub Actions runner only, a non-legacy style is set with `defaults write -g AppleShowScrollBars Always` and re-read; anywhere else it fails closed.
 set -uo pipefail
 out="${1:?usage: mac-accessibility.sh <out-file>}"
