@@ -87,8 +87,12 @@ Verdict on `c0c3f685`: DELIVERED-WITH-CAVEATS, no blockers. Corrections to state
 - **"The next launch retries."** True only when the guard isn't installed yet or its task is missing. On an upgrade with the task present, a failed spawn leaves the new script in place, and the existing task runs it (`-EventRecordID` is optional). This is unchanged from before.
 - **Test coverage.** The new Swift unit tests cover `recordLaunch` only. They were compiled but not run in CI. The Windows-only ordering in `installIfNeeded` is shown by the Sandbox failed-launch control.
 
-Contract status: (a) CLOSED-WITH-CAVEATS (Sandbox only); (b) CLOSED; (c) OPEN, though the no-window checks passed on the real Dell (above); (d) OPEN, running; (e) CLOSED-WITH-CAVEATS for RightKit 0.2.156.
+Contract status: (a) CLOSED-WITH-CAVEATS (Sandbox only); (b) CLOSED; (c) OPEN, though the no-window checks passed on the real Dell (above); (d) CLOSED (Sandbox, genuine clock; see 16 Oct below); (e) CLOSED-WITH-CAVEATS for RightKit 0.2.156.
 
 ## Long-run status at 15 Oct 18:15 IST (item d)
 
 The live checker shows 27 runs. The +2, +5, +15 and +60 steps fired on time. 22 hourly attempts followed, each gap 60.3–60.7 min. Run 27 (17:12:05, 23 h 31 m after the first failure) was the last attempt inside the 24 h window. It scheduled run 28 for 16 Oct 17:12:23 in daily mode (+1440 min). The package stayed NeedsRemediation and no attempt launched an installer. Still unobserved: the daily attempt actually firing on 16 Oct and then re-arming for 24 h later. Item (d) stays OPEN until that is read back.
+
+## Long-run status at 16 Oct 19:16 IST (item d): CLOSED
+
+The live checker (`longrun/longrun_check.py`, snapshot saved in `longrun/snapshots/`) shows run 28 fired at 2026-10-16T17:12:27 IST, 1440.4 min after run 27, in daily mode on a genuine clock (no skew), 1 day 23 h 31 m after the first failure. It failed as expected (feed still down), kept `attemptLaunched=false`, and re-armed run 29 for 2026-10-17T17:12:44 IST (+1440 min, daily). Totals: ladder +2/+5/+15/+60 on time, 22 hourly attempts, 2 daily-mode attempts. Every PASS criterion is met. The long run is still armed; end it with `client.py w08-reset --break-long-run` when the worker is needed. Not independently reviewed.
