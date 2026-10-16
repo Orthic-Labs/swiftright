@@ -343,7 +343,8 @@ extension Graph {
     private func placeList(_ node: Node, in rect: LayoutRect) {
         let look = ListLook(style: node.environment.listStyleMetadata)
         let inset = ListMetrics.contentInset(look)
-        let proposal = ProposedViewSize(width: max(0, rect.width - 2 * inset), height: nil)
+        // A row spans the list less the trailing scroller gutter, so the content's proposal is the row's width less the two insets.
+        let proposal = ProposedViewSize(width: max(0, rect.width - ListMetrics.trailingGutter(look) - 2 * inset), height: nil)
         var y = rect.minY + ListMetrics.topInset(look)
         for child in childNodes(node) {
             let size = measure(child, proposal)
