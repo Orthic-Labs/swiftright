@@ -71,6 +71,15 @@ jobs:
           if (-not (Test-Path $root)) { $root = Join-Path $env:ProgramFiles 'Swift' }
           $swift = Get-ChildItem -Path (Join-Path $root 'Toolchains') -Recurse -Filter swift.exe | Select-Object -First 1
           if (-not $swift) { throw 'swift.exe not found after the installer ran' }
+          # The installer sets machine/user environment variables (windows-candidate.ps1 Merge-InstallerEnvironment); steps only inherit
+          # PATH from GITHUB_PATH, so export the rest too. Values are not printed.
+          $exported = @()
+          foreach ($level in 'Machine', 'User') {
+            [Environment]::GetEnvironmentVariables($level).GetEnumerator() | Where-Object { $_.Name -ne 'Path' -and $_.Name -match '^[A-Za-z_][A-Za-z0-9_]*$' -and ([string]$_.Value) -notmatch "[\r\n]" } | ForEach-Object {
+              Add-Content -Path $env:GITHUB_ENV -Value "$($_.Name)=$($_.Value)"; $exported += $_.Name
+            }
+          }
+          Write-Host "exported installer env: $(($exported | Where-Object { $_ -match 'SWIFT|SDK|VC|WIN|UCRT|Platform' }) -join ', ')"
           Get-ChildItem -Path $root -Depth 2 -Directory | ForEach-Object { Write-Host $_.FullName }
           $runtime = Get-ChildItem -Path (Join-Path $root 'Runtimes') -Directory | ForEach-Object { Join-Path $_.FullName 'usr\bin' } | Where-Object { Test-Path (Join-Path $_ 'swiftCore.dll') } | Select-Object -First 1
           if (-not $runtime) { $runtime = Join-Path $root 'Runtimes\6.4.0\usr\bin' }
