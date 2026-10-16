@@ -177,22 +177,17 @@ jobs:
           & $swift.FullName --version
       - name: Toolchain
         run: swift --version
-      - name: Match the Dell system DPI (LogPixels 240 = 250%, measured on the Dell) and report it
+      - name: Per-monitor 250% probe (factory/tools/ci/dpi-probe.ps1; fails the job unless GetDpiForWindow reads 240)
         shell: pwsh
         run: |
-          $k = 'HKLM:\SYSTEM\CurrentControlSet\Hardware Profiles\Current\Software\Fonts'
-          "before LogPixels: $((Get-ItemProperty -Path $k -Name LogPixels -ErrorAction SilentlyContinue).LogPixels)"
-          Set-ItemProperty -Path $k -Name LogPixels -Value 240 -Type DWord
-          "after LogPixels: $((Get-ItemProperty -Path $k -Name LogPixels).LogPixels)"
-          # Fallback 1 (coordinator): per-user scale, then restart explorer so the interactive session re-reads it
-          $u = 'HKCU:\Control Panel\Desktop'
-          Set-ItemProperty -Path $u -Name LogPixels -Value 240 -Type DWord
-          Set-ItemProperty -Path $u -Name Win8DpiScaling -Value 1 -Type DWord
-          Stop-Process -Name explorer -Force -ErrorAction SilentlyContinue
-          Start-Sleep -Seconds 10
-          Get-Process explorer -ErrorAction SilentlyContinue | ForEach-Object { "explorer restarted pid $($_.Id)" }
-          Add-Type -MemberDefinition '[DllImport("user32.dll")] public static extern uint GetDpiForSystem();' -Name Dpi -Namespace Probe
-          "GetDpiForSystem in a new process: $([Probe.Dpi]::GetDpiForSystem())"
+          ./factory/tools/ci/dpi-probe.ps1 -Target 250 -OutFile "$env:RUNNER_TEMP\dpi-probe.json"
+      - uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4
+        if: always()
+        with:
+          name: dpi-probe
+          path: ${{ runner.temp }}/dpi-probe.json
+          retention-days: 30
+          if-no-files-found: ignore
       - name: Stage the product tree (git archive HEAD)
         id: stage
         run: |
