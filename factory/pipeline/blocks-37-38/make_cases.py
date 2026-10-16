@@ -492,10 +492,28 @@ walk_b = f"""struct {UIA}b: View {{
         }}.frame(width: 240, height: 200, alignment: .topLeading)
     }}
 }}"""
+# controls-b's List (block 39, decision H16 as corrected 16 October): the semantic tree gates every field outside the rows (listRows pixels-only), and pair_list_report.py
+# gates the rows (count, text, order, selected, frame within 1 px, label ink). The pixel gate DECIDES inside the list rect, outside the three row-label glyph boxes (Segoe
+# UI vs SF, decision 2). Everything outside the list rect (Star, gear, Hidden, the Level slider, the empty margins) is named in excludeRects and reported, never gated: the
+# case's pixels outside the list are report-only by named exclusion, as before. The list rect is the Windows List's bounds at scale 2.5 (client origin 112,96 px; 450 x 225 px).
+LIST_RECT = [100, 270, 550, 495]
+LIST_ROWS_EXCLUDE = [
+    {"name": "outside the list rect: Star, gear, Hidden and the Level slider (glyphs and symbol artwork, Segoe vs SF, decision 2/3); reported, not gated", "rect": [0, 0, 800, 270]},
+    {"name": "outside the list rect: below the list (reported, not gated)", "rect": [0, 495, 800, 600]},
+    {"name": "outside the list rect: left margin (reported, not gated)", "rect": [0, 270, 100, 495]},
+    {"name": "outside the list rect: right margin (reported, not gated)", "rect": [550, 270, 800, 495]},
+    {"name": "row 0 label glyphs (Segoe UI vs SF, decision 2); text, order, selection and frame gated by pair_list_report.py", "rect": [136, 308, 206, 344]},
+    {"name": "row 1 label glyphs (Segoe UI vs SF, decision 2); text, order, selection and frame gated by pair_list_report.py", "rect": [136, 369, 204, 403]},
+    {"name": "row 2 label glyphs (Segoe UI vs SF, decision 2); text, order, selection and frame gated by pair_list_report.py", "rect": [136, 428, 230, 462]},
+]
+LIST_GATE = {"rowsTopPx": 295, "rowHeightPx": 60, "listRect": LIST_RECT, "rows": 3, "textColourTolerance": 40}
 for nm, tn, body in (("a", UIA + "a", walk_a), ("b", UIA + "b", walk_b)):
-    case(f"swiftui.uia-walk/controls-{nm}-v1", tn, body,
-         {"semanticGate": dict({"fields": ["role", "name", "enabled", "toggle", "value", "count", "order"], "scope": "main", "pixels": "report-only", "ignoreNames": []},
-                               **({"listRows": "pixels-only"} if nm == "b" else {}))},   # H16: controls-b's list rows are pixel-gated only (the Mac exposes no row content)
+    if nm == "a":
+        pair = {"semanticGate": {"fields": ["role", "name", "enabled", "toggle", "value", "count", "order"], "scope": "main", "pixels": "report-only", "ignoreNames": []}}
+    else:
+        pair = {"semanticGate": {"fields": ["role", "name", "enabled", "toggle", "value", "count", "order"], "scope": "main", "ignoreNames": [], "listRows": "pixels-only"},
+                "listGate": LIST_GATE, "excludeRects": LIST_ROWS_EXCLUDE}
+    case(f"swiftui.uia-walk/controls-{nm}-v1", tn, body, pair,
          [{"op": "wait", "ms": 700}, {"op": "key", "key": "Tab"}, {"op": "wait", "ms": 300}, {"op": "wait", "ms": 200}])
 
 

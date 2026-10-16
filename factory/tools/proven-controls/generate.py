@@ -73,10 +73,10 @@ ROUND6_CAVEATS = {
                        "The Mac applies clicks, drags and keys through the accessibility value and increment (a stand-in, H5); Windows receives real posted pointer and key messages. Home, End, PageUp and PageDown are specified, not measured on the Mac."],
     "swiftui.on-hover": ["Hover and tap are specified (H6), and the Mac side is a witness stand-in (H5): the offscreen Mac window never receives pointer events, so the Mac counts come from the witness.",
                          "A view with a tap gesture publishes one pressable node named by its text (H7); the Mac tree shows its Text as static text, so the trees are not compared for these cases."],
-    "swiftui.uia-walk": ["Pixels are report-only; the semantic tree is gated for every control kind listed in the case.",
+    "swiftui.uia-walk": ["Controls-a pixels are report-only. Controls-b pixels decide only inside its list rect (H20); the semantic tree is gated for every control kind listed in the case.",
                          "The semantic comparator folds a toggle's nested label into the Mac AX shape (H14): a switch's label is a sibling before an unnamed switch, a checkbox's duplicate label child is dropped; role, name, toggle, enabled and bounds are still compared.",
-                         "List rows are pixel-gated only (H16): the Mac AX exposes no list-row content (its AXUnknown rows have no name, value, bounds or children), so Windows ListItem subtrees are left out of the semantic comparison.",
-                         "An unlabelled `Image(systemName: \"star.fill\")` is named `Favorite`; the name comes from a measured SF-symbol description table that holds measured symbols only (one entry so far)."],
+                         "Controls-b list rows are gated by pair_list_report.py (count, text, order, selected, frame within 1 px, label ink) and the list-rect pixels (H20), not by the semantic comparator (H16): the offscreen Mac harness's AX tree exposes its rows as AXUnknown with no content; a normal macOS List exposes AXRow/AXCell, which was not measured here.",
+                         "An unlabelled `Image(systemName: \"star.fill\")` is named `Favorite`; the name comes from a measured SF-symbol description table that holds measured symbols only (one entry so far: star.fill, English, macOS 27). Other symbols fall back to the symbol name, which will not match the Mac."],
     "swiftui.ime-traps": ["Hardware IME is deferred: the cases drive the in-process TextStore script and the NSTextInputClient path, not a real IME (H9(b))."],
     "swiftui.compat": ["Ported from OpenSwiftUI's MIT tests as view bodies and expectations only (H9a); EquatableView and animation completion are not ported and not delivered.",
                        "Runtime change (commit ce47755c3): `withAnimation` and `withTransaction` settle pending changes before their body, and `onChange` actions run after the commit with their writes in the next pass (state-nested-update is the case that measured it)."],
@@ -117,7 +117,7 @@ REVIEWED["swiftui.slider"] = {"review": "oracle 2026-10-16 (block 37: PASS-WITH-
     "Labels and value labels are checked semantically only (role, name, value, enabled, range, count, order); they have no position gate of their own.",
     "The value-label buttons' vertical position is not gated: Windows y 61.2 h 14.0 against the Mac's y 62.4 h 13.2, a 1.2 pt gap, so the boundsY check was dropped (decision H15).",
     "Dark cases gate at hazeTolerance 2 (values-dark, disabled-dark); the light cases at 1 (decision H4, which says within 1 level).",
-    "No negative controls yet: the gate has not been shown to fail on a 1 px thumb offset or a wrong fill colour."],
+    "Negative controls exist (negative-fill-colour-v1, negative-thumb-offset-v1): they fail at N=3 on the local dirty stage and mutate the Mac witness, so they are not CI paired evidence."],
     "windowsDifferences": ["Stepped-slider tick marks are not drawn on Windows (decision H4 records the Mac's tick marks under a stepped slider)."]}
 # Blocks 14, 15, 19 (16 October): the N=3 layout-rules regression on stage 3d3c6f5c2 with renderer 0.7 failed them. The CI N=20 confirmation (renderer 0.10,
 # explicit scale 2.5, CI_CASE_RUN below) passes every case of each block, so the status on current code is no longer unknown.
@@ -133,10 +133,10 @@ CI_RUNS = {
     "38854967920": {"runDirs": "runs/20261016-051729", "stage": "06a3a0a85-5dfe7cc2", "commit": "06a3a0a85fc737df1ea7e24cc137636e6889bf2d"},
     "38860483220": {"runDirs": "runs/20261016-061908", "stage": "c4e83a68a-5dfe7cc2", "commit": "c4e83a68a06f2672766f3c83426b980d78d4c659"},
 }
-_CI_RUN_1 = [  # 28 cases, run 38854967920
+_CI_RUN_1 = [  # 27 cases that pass on the current gate, run 38854967920 (controls-b-v1 is out: its list gate fails, H20)
     "blocks-37-38/swiftui.slider/disabled-dark-v1", "blocks-37-38/swiftui.slider/disabled-input-v1", "blocks-37-38/swiftui.slider/labels-v1",
     "blocks-37-38/swiftui.slider/over-colour-v1", "blocks-37-38/swiftui.slider/values-dark-v1", "blocks-37-38/swiftui.slider/values-light-v1",
-    "blocks-37-38/swiftui.slider/widths-v1", "blocks-37-38/swiftui.uia-walk/controls-a-v1", "blocks-37-38/swiftui.uia-walk/controls-b-v1",
+    "blocks-37-38/swiftui.slider/widths-v1", "blocks-37-38/swiftui.uia-walk/controls-a-v1",
     "blocks-6-10/swiftui.focus-state/bool-form-v1", "blocks-6-10/swiftui.focus-state/tab-order-v1",
     "blocks-6-10/swiftui.ime-marked-text/ime-cancel-v1", "blocks-6-10/swiftui.ime-marked-text/ime-commit-v1", "blocks-6-10/swiftui.ime-marked-text/ime-composing-v1",
     "blocks-6-10/swiftui.opacity-transition/insertion-fade-v1", "blocks-6-10/swiftui.opacity-transition/move-leading-v1",
@@ -146,7 +146,7 @@ _CI_RUN_1 = [  # 28 cases, run 38854967920
     "blocks-6-10/swiftui.ime-traps/imet-reconvert-v1", "blocks-37-38/swiftui.compat/environment-key-v1", "blocks-37-38/swiftui.compat/id-modifier-order-v1",
     "blocks-37-38/swiftui.compat/state-nested-update-v1", "blocks-37-38/swiftui.compat/task-id-v1",
 ]
-_CI_RUN_2 = [  # 11 cases, run 38860483220: the cases that hit the capture artifact in run 38854967920 (and shift-tab-v1, whose job crashed there)
+_CI_RUN_2 = [  # 11 cases, run 38860483220: the 9 cases that hit the capture artifact in run 38854967920, plus shift-tab-v1 (job crash) and imet-badregion-v1 (GetClientRect failure) there
     "blocks-37-38/swiftui.slider/click-track-v1", "blocks-37-38/swiftui.slider/disabled-light-v1", "blocks-37-38/swiftui.slider/drag-v1",
     "blocks-37-38/swiftui.slider/keys-v1", "blocks-37-38/swiftui.slider/range-v1", "blocks-37-38/swiftui.slider/value-labels-v1",
     "blocks-6-10/swiftui.focus-state/programmatic-v1", "blocks-6-10/swiftui.focus-state/shift-tab-v1", "blocks-6-10/swiftui.ime-marked-text/ime-recompose-v1",
