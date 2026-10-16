@@ -38,7 +38,7 @@ def guest_scripts(kind):
     return [GUEST / GUEST_SCRIPT[kind]] + ([NESTED_SCRIPT[kind]] if kind in NESTED_SCRIPT else [])
 
 
-def job_args(kind, exe, runs, renderer, clock=None, steps=None):
+def job_args(kind, exe, runs, renderer, clock=None, steps=None, flicker=False):
     args = dict(exe=str(exe), runs=runs, renderer=str(Path(renderer)))
     if kind == "clock":
         args["clock"] = list(clock)
@@ -46,6 +46,8 @@ def job_args(kind, exe, runs, renderer, clock=None, steps=None):
         args.update(steps=steps, settleMs=500)
     if kind in NESTED_SCRIPT:
         args["captureScript"] = str(NESTED_SCRIPT[kind])
+    if flicker:
+        args["flickerProbe"] = True
     return args
 # The pinned renderers. Each DLL is committed under factory/renderers/<label>/ (checked first); the CI artifact below is the fallback.
 # Labels are the names the factory uses.
@@ -225,7 +227,9 @@ def cmd_windows(a):
     missing = [str(f) for f in guest_scripts(kind) if not f.is_file()]
     if missing:
         sys.exit(f"guest scripts for a {kind} job do not exist in the checkout: {missing}")
-    args = job_args(kind, exe, a.runs, a.renderer, clock=clock, steps=steps)
+    if a.flicker_probe and kind == "clock":
+        sys.exit("--flicker-probe is not implemented for a clock job")
+    args = job_args(kind, exe, a.runs, a.renderer, clock=clock, steps=steps, flicker=a.flicker_probe)
     jobdir = Path(a.work) / "jobs" / slug(a.case)
     if jobdir.exists():
         shutil.rmtree(jobdir)
@@ -246,7 +250,7 @@ def cmd_windows(a):
     ok = r.returncode == 0 and len(done) == a.runs and not bad
     stage = json.loads((Path(a.stage_dir) / "STAGE.json").read_text())
     guest = json.loads((jobdir / "result.json").read_text(encoding="utf-8-sig")) if (jobdir / "result.json").is_file() else {}
-    info = dict(stage=stage, renderer=dict(path=str(a.renderer), label=a.renderer_label, sha256=sha), case=a.case, captureKind=kind,
+    info = dict(stage=stage, renderer=dict(path=str(a.renderer), label=a.renderer_label, sha256=sha), case=a.case, captureKind=kind, flickerProbe=a.flicker_probe,
                 runner=dict(os=os.environ.get("RUNNER_OS", ""), image=os.environ.get("ImageOS", ""), video=guest.get("video"),
                             exeSha256=guest.get("exe_sha256"), rendererSha256=guest.get("renderer_sha256")),
                 capture=dict(ok=ok, runs=a.runs, done=len(done), bad=bad[:5], guestOk=guest.get("ok"), guestError=guest.get("error")))
@@ -313,6 +317,7 @@ def main():
         if name == "windows":
             p.add_argument("--work", required=True); p.add_argument("--stage-dir", required=True)
             p.add_argument("--renderer", required=True); p.add_argument("--renderer-label", required=True)
+            p.add_argument("--flicker-probe", action="store_true")
         if name == "compare":
             p.add_argument("--results", required=True)
     a = ap.parse_args()

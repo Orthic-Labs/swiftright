@@ -26,6 +26,7 @@ $ErrorActionPreference = 'Stop'
 $job = Get-Content -LiteralPath "$JobDir\job.json" -Raw | ConvertFrom-Json
 $runs = $(if ($job.args.runs) { [int]$job.args.runs } else { 1 })
 $settle = $(if ($null -ne $job.args.settleMs) { [int]$job.args.settleMs } else { 500 })
+$script:probe = [bool]$job.args.flickerProbe   # args.flickerProbe: the screen-grab probe in Save-SettledShot (flicker-*.tsv); absent for a normal run
 $steps = @($job.args.steps)
 $res = [ordered]@{ kind = 'interact'; ok = $false; runs = $runs; exe_source = [string]$job.args.exe; steps = $steps.Count }
 
@@ -204,11 +205,16 @@ function Test-Alive($h) { $r = New-Object IxNative+RECT; return [bool][IxNative]
 
 function Save-SettledShot([IntPtr]$h, [string]$path, [string]$log) {
     $start = [DateTime]::UtcNow; $digests = @(); $prev = $null; $same = 0; $stable = $null
+    # FlickerProbe (args.flickerProbe, as capture.ps1): the screen region is BitBlt-grabbed at the same instant as each PrintWindow poll; the window is made topmost first
+    $sGrabs = @(); $pwStats = @()
+    if ($script:probe) { [FlickerScreen]::Clear(); [void][IxNative]::SetWindowPos($h, [IntPtr]::new(-1), 0, 0, 0, 0, 0x0013) }
     while ($null -eq $stable) {
         if ([DateTime]::UtcNow -gt $start.AddSeconds(20)) { return 'first present not observed within 20 s' }
         Start-Sleep -Milliseconds 200
+        if ($script:probe) { $tS = [DateTime]::UtcNow.ToString('HH:mm:ss.fff'); $sg = [FlickerScreen]::Grab($h) }
         $dg = [IxNative]::Grab($h); $digests += , $dg
         if ($dg -eq 'gone') { return (Gone-Report 'during the settle poll') }
+        if ($script:probe) { $sGrabs += , @($tS, $sg); $pwStats += , @([DateTime]::UtcNow.ToString('HH:mm:ss.fff'), $(if ($dg -ne '') { [FlickerScreen]::Stats([IxNative]::Last) } else { "empty`t`t`t" })) }
         if ($dg -ne '' -and $dg -eq $prev) { $same++ } else { $same = 0 }
         $prev = $dg
         if ($same -ge 2) { $stable = $dg }
@@ -216,6 +222,19 @@ function Save-SettledShot([IntPtr]$h, [string]$path, [string]$log) {
     $differs = @(); for ($q = 0; $q -lt $digests.Count; $q++) { if ($digests[$q] -ne $stable) { $differs += ("poll$($q + 1)=" + $digests[$q]) } }
     if ($differs.Count -gt 0) { Write-Warning ((Split-Path $path -Leaf) + ': ' + $differs.Count + ' of ' + $digests.Count + ' PrintWindow poll(s) differ from the stable digest: ' + ($differs -join ' ')) }
     Set-Content -Path $log -Value ('settled polls=' + $digests.Count + ' stable=' + $stable + ' differing=' + $differs.Count + $(if ($differs.Count) { ' ' + ($differs -join ' ') } else { '' }))
+    if ($script:probe) {
+        $dir = Split-Path $path -Parent; $base = [IO.Path]::GetFileNameWithoutExtension($path)
+        $sStable = ($sGrabs[-1][1] -split "`t")[1]
+        $tsv = @("poll`tutc_screen`tutc_pw`tscreen_idx`tscreen_digest`tscreen_darkfrac`tscreen_darkrows`tscreen_black`tscreen_topwin_ours`tscreen_rect`tpw_digest`tpw_darkfrac`tpw_darkrows`tpw_black`tscreen_differs`tpw_differs")
+        for ($q = 0; $q -lt $sGrabs.Count; $q++) {
+            $sf = @($sGrabs[$q][1] -split "`t"); $pf = @($pwStats[$q][1] -split "`t")
+            $sd = [int]($sf[1] -ne $sStable); $pd = [int]($digests[$q] -ne $stable)
+            $tsv += ((@(($q + 1), $sGrabs[$q][0], $pwStats[$q][0]) + $sf + $pf + @($sd, $pd)) -join "`t")
+            if ($sf[0] -ne '-1' -and $sd) { [void][FlickerScreen]::Save([int]$sf[0], (Join-Path $dir ('flicker-' + $base + '-poll' + ($q + 1) + '-screen.png'))) }
+        }
+        Set-Content -Path (Join-Path $dir ('flicker-' + $base + '.tsv')) -Value $tsv
+        [FlickerScreen]::Clear()
+    }
     return [IxNative]::SavePng($path)
 }
 
@@ -333,6 +352,52 @@ function Do-Step($proc, $mainH, $step, [string]$out, [string]$n) {
     }
 }
 
+if ($script:probe) {
+Add-Type -ReferencedAssemblies System.Drawing -TypeDefinition @'
+using System; using System.Collections.Generic; using System.Drawing; using System.Drawing.Imaging; using System.Globalization; using System.Runtime.InteropServices;
+public static class FlickerScreen {
+ [StructLayout(LayoutKind.Sequential)] public struct RECT {public int left,top,right,bottom;}
+ [StructLayout(LayoutKind.Sequential)] public struct POINT {public int x,y;}
+ [DllImport("user32.dll")] public static extern bool GetClientRect(IntPtr h,out RECT r);
+ [DllImport("user32.dll")] public static extern bool ClientToScreen(IntPtr h,ref POINT p);
+ [DllImport("user32.dll")] public static extern IntPtr GetDC(IntPtr h);
+ [DllImport("user32.dll")] public static extern int ReleaseDC(IntPtr h,IntPtr dc);
+ [DllImport("gdi32.dll")] public static extern bool BitBlt(IntPtr dst,int x,int y,int cx,int cy,IntPtr src,int sx,int sy,uint rop);
+ [DllImport("user32.dll")] public static extern IntPtr WindowFromPoint(POINT p);
+ [DllImport("user32.dll")] public static extern IntPtr GetAncestor(IntPtr h,uint flags);
+ public static List<Bitmap> Kept=new List<Bitmap>();
+ public static void Clear(){ foreach(Bitmap b in Kept){ b.Dispose(); } Kept.Clear(); }
+ public static string Save(int idx,string path){ if(idx<0||idx>=Kept.Count) return "no frame "+idx; Kept[idx].Save(path,ImageFormat.Png); return "ok"; }
+ // SHA-256 of the 32bpp rows (as PairNative.Grab), share of pixels with R,G,B < 8, rows at least 90% that dark, and 1 when the frame is black (>= 99% dark).
+ public static string Stats(Bitmap b){
+  int w=b.Width, ht=b.Height;
+  var d=b.LockBits(new Rectangle(0,0,w,ht),ImageLockMode.ReadOnly,PixelFormat.Format32bppArgb);
+  byte[] px=new byte[d.Stride*ht];
+  try{ Marshal.Copy(d.Scan0,px,0,px.Length); } finally{ b.UnlockBits(d); }
+  string dg; using(var sha=System.Security.Cryptography.SHA256.Create()){ dg=BitConverter.ToString(sha.ComputeHash(px)); }
+  long dark=0; int darkRows=0;
+  for(int y=0;y<ht;y++){ int rd=0; int off=y*d.Stride; for(int x=0;x<w;x++){ int i=off+4*x; if(px[i]<8&&px[i+1]<8&&px[i+2]<8) rd++; } dark+=rd; if(rd>=0.9*w) darkRows++; }
+  double frac=(double)dark/((double)w*ht);
+  return dg+"\t"+frac.ToString("F4",CultureInfo.InvariantCulture)+"\t"+darkRows+"\t"+(frac>=0.99?1:0);
+ }
+ // One screen grab of the client area: BitBlt from the screen DC (what the desktop composed at this instant), not PrintWindow.
+ // Returns idx, digest, darkfrac, darkrows, black, topwin_ours (1 when the topmost window at the client centre is this window), screen rect sx,sy,w,h.
+ // A failed grab has idx -1 and its reason in the last field.
+ public static string Grab(IntPtr h){
+  RECT r; if(!GetClientRect(h,out r)) return "-1\t\t\t\t\t\tgone";
+  int w=r.right-r.left, ht=r.bottom-r.top; if(w<3||ht<3) return "-1\t\t\t\t\t\tsize "+w+"x"+ht;
+  POINT o=new POINT(); ClientToScreen(h,ref o);
+  POINT c=new POINT(); c.x=o.x+w/2; c.y=o.y+ht/2;
+  IntPtr top=WindowFromPoint(c);
+  int ours=(top!=IntPtr.Zero && (top==h || GetAncestor(top,2)==h))?1:0;
+  Bitmap b=new Bitmap(w,ht,PixelFormat.Format32bppArgb);
+  using(Graphics g=Graphics.FromImage(b)){ IntPtr dc=g.GetHdc(); IntPtr sdc=GetDC(IntPtr.Zero); bool ok; try{ ok=BitBlt(dc,0,0,w,ht,sdc,o.x,o.y,0x00CC0020|0x40000000); } finally{ ReleaseDC(IntPtr.Zero,sdc); g.ReleaseHdc(dc); } if(!ok){ b.Dispose(); return "-1\t\t\t\t\t\tbitblt"; } }
+  string s=Stats(b); Kept.Add(b);
+  return (Kept.Count-1)+"\t"+s+"\t"+ours+"\t"+o.x+","+o.y+","+w+","+ht;
+ }
+}
+'@
+}
 try {
     $env:Path = 'C:\swiftrt;' + $env:Path
     $renderer = $(if ($job.args.renderer) { [string]$job.args.renderer } else { 'D:\Claude\swiftright\.factory-work\inputs\renderer\swiftright_render.dll' })

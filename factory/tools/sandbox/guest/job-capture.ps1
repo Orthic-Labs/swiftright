@@ -40,7 +40,9 @@ try {
     if (-not (Test-Path -LiteralPath $capture -PathType Leaf)) { throw "capture script not visible in the guest: $capture" }
     $out = "$JobDir\out"
     New-Item -ItemType Directory -Force -Path $out | Out-Null
-    & powershell.exe -NoProfile -NonInteractive -ExecutionPolicy Bypass -File $capture -Exe $exe -Out $out -Runs $runs -Shared *>&1 | Out-File -LiteralPath "$JobDir\capture.log" -Encoding utf8
+    # args.flickerProbe: capture.ps1 -FlickerProbe (flicker-*.tsv per settle poll); absent for a normal run
+    $probeArg = $(if ($job.args.flickerProbe) { @('-FlickerProbe') } else { @() })
+    & powershell.exe -NoProfile -NonInteractive -ExecutionPolicy Bypass -File $capture -Exe $exe -Out $out -Runs $runs -Shared @probeArg *>&1 | Out-File -LiteralPath "$JobDir\capture.log" -Encoding utf8
     $res.capture_exit = $LASTEXITCODE
     # PowerShell 5.1: piping ConvertFrom-Json into @() yields ONE element (the whole array), so the count was always wrong. Read it into a
     # variable, unwrap a {"value":[...]} envelope when there is one, then count the elements.

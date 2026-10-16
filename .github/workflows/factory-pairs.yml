@@ -36,6 +36,11 @@ on:
         required: false
         default: "renderer-0.10-a15ebc5d"
         type: string
+      flicker_probe:
+        description: "Windows capture: also BitBlt the screen at each settle poll, logged beside PrintWindow (flicker-*.tsv). Diagnostic; off for normal runs."
+        required: false
+        default: false
+        type: boolean
 
 permissions:
   contents: read
@@ -236,10 +241,13 @@ jobs:
           STAGE_DIR: ${{ steps.stage.outputs.dest }}
           WORK: ${{ steps.stage.outputs.work }}
           DLL: ${{ steps.renderer.outputs.dll }}
+          FLICKER_PROBE: ${{ inputs.flicker_probe }}
         run: |
           set -euo pipefail
+          probe=()
+          if [ "$FLICKER_PROBE" = "true" ]; then probe=(--flicker-probe); fi
           python factory/tools/ci_pair.py windows --case "$CASE" --runs "$RUNS" --ts "$TS" --root "$RUNNER_TEMP/pairs" \
-            --work "$WORK" --stage-dir "$STAGE_DIR" --renderer "$DLL" --renderer-label "$LABEL"
+            --work "$WORK" --stage-dir "$STAGE_DIR" --renderer "$DLL" --renderer-label "$LABEL" "${probe[@]}"
       - uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4
         if: always()
         with:
