@@ -22,6 +22,27 @@ struct MirrorScreen: View {
     }
 }
 
+@Observable
+@MainActor
+final class ChainModel {
+    var trigger = 0
+    var follower = 0
+    /// What the onChange of `trigger` does with the new value.
+    var react: (ChainModel, Int) -> Void = { model, new in model.follower = new }
+}
+
+/// Two boxes: the white one follows `trigger`, the black one follows `follower`, which an onChange of `trigger` writes.
+struct ChainScreen: View {
+    let model: ChainModel
+    var body: some View {
+        VStack(alignment: .leading, spacing: 0) {
+            Color.white.frame(width: CGFloat(model.trigger + 10), height: 10)
+            Color.black.frame(width: CGFloat(model.follower + 10), height: 10)
+        }
+        .onChange(of: model.trigger) { _, new in model.react(model, new) }
+    }
+}
+
 @MainActor
 final class TransactionBoundaryScopeTests: XCTestCase {
     final class Records { var items: [CommitRecord] = [] }
@@ -141,5 +162,101 @@ final class TransactionBoundaryScopeTests: XCTestCase {
         XCTAssertEqual(probe.values, [0, 2, 4, 4])
         XCTAssertEqual(probe.changes, [[0, 2], [2, 4]])
         XCTAssertEqual(commits, 2, "the state before onAppear, and the final state; no commit between the onChange pass")
+    }
+
+    // MARK: Each change commits under the transaction it was made in
+
+    private func chain(_ model: ChainModel) -> (Graph, Records) {
+        let graph = Graph(ChainScreen(model: model))
+        graph.rootProposal = ProposedViewSize(width: 240, height: 200)
+        let records = Records()
+        graph.commitSink = { records.items.append($0) }
+        graph.flush()
+        return (graph, records)
+    }
+
+    private func widths(_ graph: Graph) -> [Double] {
+        var nodes: [ResolvedNode] = []
+        collect(graph.snapshot(), into: &nodes) { $0.kind == "Color" }
+        return nodes.map { Double($0.frame.width) }
+    }
+
+    func testPlainTriggerWithAnimatedOnChangeWriteSnapsTheTriggerAndAnimatesTheWrite() {
+        let model = ChainModel()
+        model.react = { model, new in withAnimation(.linear(duration: 1.0)) { model.follower = new } }
+        let (graph, records) = chain(model)
+        let base = records.items.count
+        model.trigger = 40
+        graph.flush()
+        XCTAssertEqual(records.items.count - base, 2, "the trigger's pass, then the onChange pass under its own transaction")
+        XCTAssertNil(records.items[base].animation, "the trigger was made with no transaction")
+        XCTAssertEqual(records.items.last?.animation, "linear")
+        graph.tick(now: 0)
+        graph.tick(now: 0.5)
+        let mid = widths(graph)
+        XCTAssertEqual(mid[0], 50, accuracy: 1e-9, "the trigger snapped")
+        XCTAssertEqual(mid[1], 30, accuracy: 1e-9, "the onChange write animates, halfway")
+    }
+
+    func testAnimatedTriggerWithNilAnimationOnChangeWriteAnimatesTheTriggerAndSnapsTheWrite() {
+        let model = ChainModel()
+        model.react = { model, new in withAnimation(nil) { model.follower = new } }
+        let (graph, records) = chain(model)
+        let base = records.items.count
+        withAnimation(.linear(duration: 1.0)) { model.trigger = 40 }
+        graph.flush()
+        XCTAssertEqual(records.items.count - base, 2)
+        XCTAssertEqual(records.items[base].animation, "linear", "the trigger keeps its own transaction")
+        XCTAssertNil(records.items.last?.animation)
+        graph.tick(now: 0)
+        graph.tick(now: 0.5)
+        let mid = widths(graph)
+        XCTAssertEqual(mid[0], 30, accuracy: 1e-9, "the trigger animates")
+        XCTAssertEqual(mid[1], 50, accuracy: 1e-9, "the nil-animation write snaps")
+    }
+
+    func testAnimatedTriggerWithDifferentAnimationOnChangeWriteKeepsBoth() {
+        let model = ChainModel()
+        model.react = { model, new in withAnimation(.linear(duration: 2.0)) { model.follower = new } }
+        let (graph, records) = chain(model)
+        let base = records.items.count
+        withAnimation(.linear(duration: 1.0)) { model.trigger = 40 }
+        graph.flush()
+        XCTAssertEqual(records.items.count - base, 2)
+        graph.tick(now: 0)
+        graph.tick(now: 0.5)
+        let mid = widths(graph)
+        XCTAssertEqual(mid[0], 30, accuracy: 1e-9, "the trigger runs its own 1 s animation")
+        XCTAssertEqual(mid[1], 20, accuracy: 1e-9, "the write runs its own 2 s animation (quarter of the way)")
+    }
+
+    func testPlainOnChangeWriteAfterAPlainTriggerCommitsOnce() {
+        let model = ChainModel()
+        let (graph, records) = chain(model)
+        let base = records.items.count
+        model.trigger = 40
+        graph.flush()
+        XCTAssertEqual(records.items.count - base, 1)
+        XCTAssertEqual(widths(graph), [50, 50])
+    }
+
+    // A transaction belongs to the graph whose state its body wrote: another window's commit must not consume it.
+    func testQueuedTransactionIsNotConsumedByAnotherWindow() {
+        let modelA = MirrorModel(), modelB = MirrorModel()
+        let (graphA, recordsA) = make(modelA)
+        let (graphB, recordsB) = make(modelB)
+        let baseA = recordsA.items.count, baseB = recordsB.items.count
+        modelA.source = 40  // plain, in window A
+        withAnimation(.linear(duration: 1.0)) { modelB.source = 40 }  // animated, in window B
+        graphA.flush()  // A commits first
+        XCTAssertNil(recordsA.items.last?.animation, "A's commit does not take B's transaction")
+        XCTAssertEqual(box(graphA)?.frame.width ?? -1, 50, accuracy: 1e-9, "A snapped")
+        graphB.flush()
+        XCTAssertEqual(recordsB.items.count - baseB, 1)
+        XCTAssertEqual(recordsB.items.last?.animation, "linear")
+        graphB.tick(now: 0)
+        graphB.tick(now: 0.5)
+        XCTAssertEqual(box(graphB)?.frame.width ?? -1, 30, accuracy: 1e-9, "B animates")
+        XCTAssertEqual(recordsA.items.count - baseA, 1)
     }
 }

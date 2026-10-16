@@ -116,7 +116,7 @@ final class Ghost {
 extension Graph {
     /// The animation a removal under `parent` runs with: a changed `.animation(_:value:)` above it, else the last explicit transaction; nil = none.
     private func removalTransaction(under parent: Node) -> AnimationTransaction? {
-        let queued = TransactionContext.queuedTransactions
+        let queued = pendingTransactions
         let explicit = queued.last { $0.scope == nil }
         let disables = explicit?.disablesAnimations ?? false
         if !disables {

@@ -396,41 +396,71 @@ final class MotionChain {
     }
 }
 
-/// Transaction queue and deferred completions. Both are drained on the main actor by commit and tick.
+/// Transaction frames and deferred completions. A `withAnimation` body is a frame: the graphs whose state it writes (`Graph.noteChange`) are recorded in it,
+/// and when the body ends its transaction is queued on those graphs only (`Graph.queued`), so a window never consumes another window's transaction.
+/// Completions are drained on the main actor by commit and tick.
 @MainActor
 enum TransactionContext {
-    private static var queued: [AnimationTransaction] = []
-    static var deferred: [() -> Void] = []
-    static var queuedCount: Int { queued.count }
     private final class WeakGraph {
         weak var graph: Graph?
         init(_ graph: Graph) { self.graph = graph }
     }
+    private final class Frame {
+        var graphs: [ObjectIdentifier] = []
+        var touched: [Graph] = []
+        init() {}
+    }
     /// Every live graph (one per window). `withAnimation` has no graph argument, so the boundary cannot know which graph owns the state the
     /// body will write; each graph settles only its own pending changes, so every live graph is told and none is mistaken for another.
     private static var graphs: [WeakGraph] = []
+    private static var frames: [Frame] = []
+    /// Transactions whose body wrote no graph's state: the next commit of any graph takes them (they only settle their completion).
+    private static var unattached: [AnimationTransaction] = []
+    static var deferred: [() -> Void] = []
+    static var hasOpenFrame: Bool { !frames.isEmpty }
 
     static func register(_ graph: Graph) { graphs.append(WeakGraph(graph)) }
 
     /// A new transaction begins: the changes each graph made before it are settled first (see `Graph.settleAtTransactionBoundary`), so they
-    /// are not coalesced with the new transaction's changes.
+    /// are not coalesced with the new transaction's changes. Its body is then a frame, closed by `end`.
     static func begin() {
         graphs.removeAll { $0.graph == nil }
-        for entry in graphs { entry.graph?.settleAtTransactionBoundary() }
+        for entry in graphs {
+            entry.graph?.settleAtTransactionBoundary()
+            entry.graph?.commitTriggerBeforeTransaction()
+        }
+        frames.append(Frame())
     }
 
-    static func enqueue(_ transaction: AnimationTransaction) {
-        queued.append(transaction)
+    /// The body ended: its transaction is queued on each graph it wrote (or left unattached when it wrote none).
+    static func end(_ transaction: AnimationTransaction) {
+        guard let frame = frames.popLast() else { return }
+        if frame.touched.isEmpty { unattached.append(transaction); return }
+        for graph in frame.touched { graph.enqueue(transaction) }
     }
 
-    /// The transactions queued so far (a removal reads them to decide whether it animates).
-    static var queuedTransactions: [AnimationTransaction] { queued }
+    /// `graph` is written inside the open frames. True when it is the first write to it in the innermost frame.
+    @discardableResult
+    static func touch(_ graph: Graph) -> Bool {
+        var first = false
+        for (index, frame) in frames.enumerated() {
+            let id = ObjectIdentifier(graph)
+            if !frame.graphs.contains(id) {
+                frame.graphs.append(id)
+                frame.touched.append(graph)
+                if index == frames.count - 1 { first = true }
+            }
+        }
+        return first
+    }
 
-    static func takeQueued() -> [AnimationTransaction] {
-        let out = queued
-        queued = []
+    static func takeUnattached() -> [AnimationTransaction] {
+        let out = unattached
+        unattached = []
         return out
     }
+
+    static var unattachedTransactions: [AnimationTransaction] { unattached }
 
     /// Runs completions in order. A completion may schedule more, so this loops until empty.
     static func drainDeferred() {
@@ -452,7 +482,7 @@ public func withAnimation<Result>(
     completion: (() -> Void)? = nil
 ) rethrows -> Result {
     let transaction = AnimationTransaction(animation: animation, completion: completion)
-    defer { TransactionContext.enqueue(transaction) }
+    defer { TransactionContext.end(transaction) }
     TransactionContext.begin()
     return try body()
 }
@@ -466,7 +496,7 @@ public func withAnimation<Result>(
     completion: @escaping () -> Void
 ) rethrows -> Result {
     let transaction = AnimationTransaction(animation: animation, completion: completion, criteria: completionCriteria)
-    defer { TransactionContext.enqueue(transaction) }
+    defer { TransactionContext.end(transaction) }
     TransactionContext.begin()
     return try body()
 }
@@ -476,7 +506,7 @@ public func withAnimation<Result>(
 @MainActor
 public func withTransaction<Result>(_ transaction: Transaction, _ body: () throws -> Result) rethrows -> Result {
     let queued = AnimationTransaction(animation: transaction.animation, completion: nil, disablesAnimations: transaction.disablesAnimations)
-    defer { TransactionContext.enqueue(queued) }
+    defer { TransactionContext.end(queued) }
     TransactionContext.begin()
     return try body()
 }

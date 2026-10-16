@@ -961,6 +961,12 @@ public final class Graph {
     /// A transaction-boundary settle evaluated changes outside a flush: they still need their commit (and the onChange actions they queued their
     /// run), though no node is dirty any more. `scheduleFlush` honours it; `flush` clears it.
     private var settledAwaitingFlush = false
+    /// Transactions queued on this graph (by `withAnimation` bodies that wrote its state, and its own `.animation(_:value:)` changes); a commit takes them.
+    private var queued: [AnimationTransaction] = []
+    /// True while the onChange actions of a flush run: a transaction they open commits the triggering pass first (see `noteWrite`).
+    private var runningChangeActions = false
+    /// The state evaluated since the last commit has not been committed yet (the triggering pass of the running onChange actions).
+    private var uncommitted = false
     private var flushScheduled = false
     private(set) var sequence = 0
     private var instanceCounter = 0
@@ -1045,7 +1051,7 @@ public final class Graph {
             if node.motion != nil { c.motions += 1 }
         }
         c.viewTypeInfos = ViewTypes.cacheCount
-        c.queuedTransactions = TransactionContext.queuedCount
+        c.queuedTransactions = queued.count + TransactionContext.unattachedTransactions.count
         c.deferredCompletions = TransactionContext.deferred.count
         return c
     }
@@ -1066,7 +1072,11 @@ public final class Graph {
                 // triggered the action (SwiftUI: a write inside onChange during an animated transaction inherits it).
                 let actions = pendingChanges
                 pendingChanges = []
+                runningChangeActions = true
+                uncommitted = true
                 for action in actions { action() }
+                runningChangeActions = false
+                uncommitted = false
                 continue
             }
             if dirty.isEmpty {
@@ -1248,7 +1258,7 @@ public final class Graph {
         preferenceObserverNodes.removeAll()
         animating.removeAll()
         dirty.removeAll()
-        for queued in TransactionContext.takeQueued() { queued.settleIfDone() }
+        for queued in takeQueued() { queued.settleIfDone() }
         sequence += 1
         commitSink?(CommitRecord(sequence: sequence, root: nil, focused: nil, animation: nil))
         closed = true
@@ -1628,7 +1638,7 @@ public final class Graph {
         }
         if case .modifier(.animation(let value, let animation)) = kind {
             if let previous = node.lastEquatable, !previous.matches(value.value) {
-                TransactionContext.enqueue(AnimationTransaction(animation: animation, completion: nil, scope: node))
+                enqueue(AnimationTransaction(animation: animation, completion: nil, scope: node))
             }
             node.lastEquatable = value
         }
@@ -1788,8 +1798,37 @@ public final class Graph {
 
     // MARK: Invalidation
 
+    func enqueue(_ transaction: AnimationTransaction) { queued.append(transaction) }
+
+    /// The transactions pending for the next commit of this graph (a removal reads them to decide whether it animates).
+    var pendingTransactions: [AnimationTransaction] { queued + TransactionContext.unattachedTransactions }
+
+    private func takeQueued() -> [AnimationTransaction] {
+        let out = TransactionContext.takeUnattached() + queued
+        queued = []
+        return out
+    }
+
+    /// A write to this graph's state. Inside a `withAnimation` body it records the graph in the frame (the transaction will be queued here). Made by an
+    /// onChange action, it is state the action's own pass has not committed.
+    private func noteWrite() {
+        TransactionContext.touch(self)
+        if runningChangeActions { uncommitted = true }
+    }
+
+    /// A transaction begins (`TransactionContext.begin`, after the settle) while this graph runs its onChange actions: the pass that triggered them is
+    /// committed first, under the transaction it was made in. SwiftUI keeps each change's own transaction, so the trigger must not take the action's
+    /// animation, nor lose its own to `withAnimation(nil)`. An onChange write made with no transaction of its own begins nothing, so it inherits the
+    /// trigger's transaction and commits nothing extra.
+    func commitTriggerBeforeTransaction() {
+        guard runningChangeActions, uncommitted, !evaluating, !closed else { return }
+        commit()
+        uncommitted = false
+    }
+
     func noteChange(_ node: Node) {
         guard node.alive, nodes[node.id] === node else { return }
+        noteWrite()
         node.fullDirty = true
         dirty[node.id] = node
         scheduleFlush()
@@ -1798,6 +1837,7 @@ public final class Graph {
     /// A ForEach data source that `node` expands changed. The node is re-expanded at the next flush.
     func noteDataChange(_ node: Node) {
         guard node.alive, nodes[node.id] === node else { return }
+        noteWrite()
         node.dataStale = true
         dirty[node.id] = node
         scheduleFlush()
@@ -1857,7 +1897,7 @@ public final class Graph {
         if profiling { lap(&profile!.layoutNS) }
         var changed: [Node] = []
         collectChanged(root, into: &changed)
-        let transactions = TransactionContext.takeQueued()
+        let transactions = takeQueued()
         // Motions end in path order (completion order must not depend on how the tree was walked), so sort when a motion
         // can start or end in this commit.
         if !transactions.isEmpty || changed.contains(where: { $0.motion != nil }) {
