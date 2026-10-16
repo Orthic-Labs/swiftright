@@ -11,7 +11,16 @@ skipped. A file where an edit does not apply exactly is reported and left alone.
 
   python3 factory/tools/pass_render_scale.py            # apply
   python3 factory/tools/pass_render_scale.py --check    # report only; exit 1 if any host does not pass the scale
+
+Silent-skip guard: the edit pass skips any file without a `scale = metrics.scale` line, so a future host template could drop the render
+scale unnoticed. `--check` therefore also scans every Swift file under factory/pipeline/blocks-* for a `bridge.run(` / `Bridge.run(` call
+with no `renderScale` argument, lists each offender with its line, and exits 1. Apply mode lists the same offenders but does not fail on them.
+
+Exclusion (deliberate): archived copies are not scanned, because they are frozen evidence of the runs that produced them and rewriting
+them would change recorded artifacts. Out of scope: factory/native/windows/*, factory/pipeline/pilot-delivery-five-v1,
+factory/pipeline/pilot-next-source-v1 and factory/pipeline/sr0-display-selfjob-v4. Only the blocks-* tree is scanned.
 """
+import re
 import sys
 from pathlib import Path
 
@@ -47,6 +56,35 @@ def targets():
         yield p
 
 
+BRIDGE_RUN = re.compile(r"(?<![A-Za-z0-9_.])[bB]ridge\.run\(")
+SCAN_GLOB = "blocks-*/**/*.swift"
+
+
+def run_call_args(text):
+    """Yield (line, args) for each bridge.run( call; args is the balanced text inside its parentheses."""
+    for m in BRIDGE_RUN.finditer(text):
+        depth, i = 1, m.end()
+        while i < len(text) and depth:
+            if text[i] == "(":
+                depth += 1
+            elif text[i] == ")":
+                depth -= 1
+            i += 1
+        yield text.count("\n", 0, m.start()) + 1, text[m.end():i - 1]
+
+
+def scan_offenders(root=ROOT):
+    """Return [(repo-relative path, line)] for each bridge.run call under factory/pipeline/blocks-* that passes no renderScale."""
+    found = []
+    for p in sorted((root / "factory/pipeline").glob(SCAN_GLOB)):
+        if not p.is_file():
+            continue
+        for line, args in run_call_args(p.read_text(encoding="utf-8", errors="replace")):
+            if "renderScale" not in args:
+                found.append((p.relative_to(root).as_posix(), line))
+    return found
+
+
 def main():
     check = "--check" in sys.argv
     done = skipped = bad = 0
@@ -77,7 +115,11 @@ def main():
             p.write_text(new)
         done += 1
     print(f"{'would change' if check else 'changed'} {done}, already passing {skipped}, not applied {bad}")
-    return 1 if (bad or (check and done)) else 0
+    offenders = scan_offenders()
+    for rel, line in offenders:
+        print(f"NO renderScale: {rel}:{line}")
+    print(f"bridge.run without renderScale under blocks-*: {len(offenders)}")
+    return 1 if (bad or (check and done) or (check and offenders)) else 0
 
 
 if __name__ == "__main__":

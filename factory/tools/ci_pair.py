@@ -21,8 +21,10 @@ import pair  # noqa: E402  (pair imports cache_paths; nothing is created at impo
 
 REPO_SLUG = os.environ.get("GITHUB_REPOSITORY", "Orthic-Labs/swiftright")
 GUEST = HERE / "sandbox" / "guest"
+RENDERERS_DIR = REPO / "factory" / "renderers"   # committed pinned DLLs: <label>/swiftright_render.dll + SHA256
 GUEST_SCRIPT = {"capture": "job-capture.ps1", "clock": "job-clock.ps1", "interact": "job-interact.ps1"}
-# The pinned renderer: render-windows.yml artifact of commit 925df9f3 (run 38742361678). Labels are the names the factory uses.
+# The pinned renderers. Each DLL is committed under factory/renderers/<label>/ (checked first); the CI artifact below is the fallback.
+# Labels are the names the factory uses.
 RENDERERS = {
     "renderer-0.9-925df9f3": dict(runId=38742361678, artifact="swiftright-render-925df9f3ae5edfd91c52a467e498502927b0ab56",
                                   sha256="6b6fc10c81741d27d74075c5fe9ed63a4259e1472ef092764081d2b55924e422"),
@@ -121,6 +123,17 @@ def cmd_stage(a):
 # ---------------------------------------------------------------- renderer
 def cmd_renderer(a):
     spec = RENDERERS[a.label]
+    # The committed copy comes first: CI artifacts expire (14 days), so the pin must not depend on them.
+    local = RENDERERS_DIR / a.label / "swiftright_render.dll"
+    if local.is_file():
+        got = sha256_file(local)
+        if got != spec["sha256"]:
+            sys.exit(f"committed renderer sha256 mismatch: {local}: {got} != {spec['sha256']}")
+        side = local.with_name("SHA256")
+        if side.is_file() and side.read_text().split()[:1] != [spec["sha256"]]:
+            sys.exit(f"committed SHA256 sidecar does not match the pin: {side}")
+        print(local)
+        return
     dest = Path(a.dest); dest.mkdir(parents=True, exist_ok=True)
     subprocess.run(["gh", "run", "download", str(spec["runId"]), "--repo", REPO_SLUG, "--name", spec["artifact"], "--dir", str(dest)], check=True)
     dlls = [p for p in dest.rglob("swiftright_render.dll")]
