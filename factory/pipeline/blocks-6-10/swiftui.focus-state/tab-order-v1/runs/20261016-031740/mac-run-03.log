@@ -1,0 +1,19 @@
+$ /Users/runner/work/_temp/swiftright-cache/run/pair-tab-order-v1-20261016-031740/bin/host --plain --scale 2.5 --png /Users/runner/work/_temp/pairs/factory/pipeline/blocks-6-10/swiftui.focus-state/tab-order-v1/runs/20261016-031740/mac/run-03.png --ax /Users/runner/work/_temp/pairs/factory/pipeline/blocks-6-10/swiftui.focus-state/tab-order-v1/runs/20261016-031740/mac/ax-03.json --steps [{"op":"wait","ms":300},{"op":"key","key":"Tab"},{"op":"wait","ms":250},{"op":"dump","label":"t1"},{"op":"key","key":"Tab"},{"op":"wait","ms":250},{"op":"dump","label":"t2"},{"op":"key","key":"Tab"},{"op":"wait","ms":250},{"op":"dump","label":"t3"},{"op":"click","x":150,"y":55},{"op":"wait","ms":250},{"op":"dump","label":"t4"},{"op":"key","key":"Tab"},{"op":"wait","ms":250},{"op":"dump","label":"t5"},{"op":"wait","ms":200}]
+--stdout--
+MAC_ENV os=Version_27.0.1_(Build_26A434) pinnedDisplayScale=2.5 windowBackingScale=2.5 effectiveDisplayScale=2.5 screens=[1024x768@1.0x]
+MAC_FACT step=start fieldEditor=0 firstResponder=Optional<NSResponder>
+MAC_FACT step=1:key fieldEditor=1 text="one" selection=0+3 marked=3+0 caretXpx=40.00
+MAC_FACT step=3:dump fieldEditor=1 text="one" selection=0+3 marked=3+0 caretXpx=40.00
+MAC_FACT step=4:key fieldEditor=1 text="two" selection=0+3 marked=3+0 caretXpx=40.00
+MAC_FACT step=6:dump fieldEditor=1 text="two" selection=0+3 marked=3+0 caretXpx=40.00
+MAC_FACT step=7:key fieldEditor=1 text="one" selection=0+3 marked=3+0 caretXpx=40.00
+MAC_FACT step=9:dump fieldEditor=1 text="one" selection=0+3 marked=3+0 caretXpx=40.00
+MAC_FACT step=10:click fieldEditor=1 text="one" selection=0+3 marked=3+0 caretXpx=40.00
+MAC_FACT step=12:dump fieldEditor=1 text="one" selection=0+3 marked=3+0 caretXpx=40.00
+MAC_FACT step=13:key fieldEditor=1 text="two" selection=0+3 marked=3+0 caretXpx=40.00
+MAC_FACT step=15:dump fieldEditor=1 text="two" selection=0+3 marked=3+0 caretXpx=40.00
+MAC_CAPTURE 800x600 scale=2.5 png=/Users/runner/work/_temp/pairs/factory/pipeline/blocks-6-10/swiftui.focus-state/tab-order-v1/runs/20261016-031740/mac/run-03.png
+
+--stderr--
+
+exit=0

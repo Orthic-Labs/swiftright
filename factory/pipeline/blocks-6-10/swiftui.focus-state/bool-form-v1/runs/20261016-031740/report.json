@@ -1,0 +1,152 @@
+{
+ "edgeAAToleranceLevels": 32,
+ "pairs": 3,
+ "frames": null,
+ "exact": 0,
+ "exactWithExclusions": 0,
+ "edgeAA": 0,
+ "fail": 3,
+ "maxdiff": 224,
+ "diffbbox": [
+  22,
+  22,
+  328,
+  305
+ ],
+ "rows": [
+  {
+   "run": 1,
+   "verdict": "fail",
+   "gate": {
+    "verdict": "fail",
+    "totalDiff": 6019,
+    "inBandDiff": 5631,
+    "outOfBandDiff": 388,
+    "maxInBand": 224,
+    "maxOutOfBand": 224,
+    "bandPixels": 16317
+   },
+   "exact": false,
+   "differentPixels": 6019,
+   "maxdiff": 224,
+   "diffbbox": [
+    22,
+    22,
+    328,
+    305
+   ]
+  },
+  {
+   "run": 2,
+   "verdict": "fail",
+   "gate": {
+    "verdict": "fail",
+    "totalDiff": 6019,
+    "inBandDiff": 5631,
+    "outOfBandDiff": 388,
+    "maxInBand": 224,
+    "maxOutOfBand": 224,
+    "bandPixels": 16317
+   },
+   "exact": false,
+   "differentPixels": 6019,
+   "maxdiff": 224,
+   "diffbbox": [
+    22,
+    22,
+    328,
+    305
+   ]
+  },
+  {
+   "run": 3,
+   "verdict": "fail",
+   "gate": {
+    "verdict": "fail",
+    "totalDiff": 6019,
+    "inBandDiff": 5631,
+    "outOfBandDiff": 388,
+    "maxInBand": 224,
+    "maxOutOfBand": 224,
+    "bandPixels": 16317
+   },
+   "exact": false,
+   "differentPixels": 6019,
+   "maxdiff": 224,
+   "diffbbox": [
+    22,
+    22,
+    328,
+    305
+   ]
+  }
+ ],
+ "build": {
+  "mac": {
+   "osVersion": "27.0.1",
+   "osBuild": "26A434",
+   "swiftc": "Apple Swift version 6.4 (swiftlang-6.4.0.34.1 clang-2100.3.34.1)",
+   "clockHost": "os=Version_27.0.1_(Build_26A434) pinnedDisplayScale=2.5 windowBackingScale=2.5 effectiveDisplayScale=2.5 screens=[1024x768@1.0x]",
+   "scaleGuard": {
+    "captureScale": 2.5,
+    "status": "OK",
+    "runs": 3,
+    "reported": 3,
+    "distinct": [
+     [
+      2.5,
+      "2.5",
+      2.5
+     ]
+    ],
+    "screens": [
+     "[1024x768@1.0x]"
+    ],
+    "mismatches": [],
+    "unreportedRuns": []
+   }
+  },
+  "stage": {
+   "name": "645396d04-5dfe7cc2",
+   "commit": "645396d04ee11f620968451b6ab9791ddf1ee57f",
+   "ref": "HEAD",
+   "mode": "git-archive",
+   "dirty": false,
+   "treeSha256": "sha256:5dfe7cc2a4abbed619d89da0bfb81acbbfc70a8a486ea7994e17cf237680323f",
+   "files": 406,
+   "paths": [
+    "packages/SwiftRightBridge",
+    "packages/SwiftRightHost",
+    "probes/sr0-s/fresh-runtime",
+    "factory/pipeline/blocks-w0-i1/corpus",
+    "factory/pipeline/blocks-w0-i1/expected"
+   ],
+   "stagedUtc": "2026-10-16T03:53:12Z"
+  },
+  "renderer": {
+   "path": "D:\\a\\_temp\\renderer\\swiftright_render.dll",
+   "label": "renderer-0.10-a15ebc5d",
+   "sha256": "c533438a0900bc5aeaee10661a70c9c3ee0e1d87e774a5ac4aea81589f25f996"
+  },
+  "windows": {
+   "runner": {
+    "os": "Windows",
+    "image": "win25-vs2026",
+    "video": [
+     "Microsoft Hyper-V Video 10.0.26100.1150"
+    ],
+    "exeSha256": "c1da300206723504f44c6e3d784ff21c9feb97e50b194cbfb3a3376b57cb3912",
+    "rendererSha256": "c533438a0900bc5aeaee10661a70c9c3ee0e1d87e774a5ac4aea81589f25f996"
+   },
+   "capture": {
+    "ok": true,
+    "runs": 3,
+    "done": 3,
+    "bad": [],
+    "guestOk": true,
+    "guestError": null
+   },
+   "captureKind": "interact"
+  }
+ }
+}

@@ -1,0 +1,758 @@
+{
+ "edgeAAToleranceLevels": 32,
+ "pairs": 30,
+ "frames": null,
+ "exact": 3,
+ "exactWithExclusions": 0,
+ "edgeAA": 0,
+ "fail": 27,
+ "maxdiff": 255,
+ "diffbbox": [
+  100,
+  50,
+  425,
+  165
+ ],
+ "rows": [
+  {
+   "run": 1,
+   "verdict": "fail",
+   "gate": {
+    "verdict": "fail",
+    "totalDiff": 24375,
+    "inBandDiff": 3288,
+    "outOfBandDiff": 21087,
+    "maxInBand": 255,
+    "maxOutOfBand": 255,
+    "bandPixels": 9224
+   },
+   "exact": false,
+   "differentPixels": 24375,
+   "maxdiff": 255,
+   "diffbbox": [
+    100,
+    50,
+    425,
+    165
+   ]
+  },
+  {
+   "run": 1,
+   "phase": "start",
+   "verdict": "exact",
+   "gate": {
+    "verdict": "exact",
+    "totalDiff": 0,
+    "inBandDiff": 0,
+    "outOfBandDiff": 0,
+    "maxInBand": 0,
+    "maxOutOfBand": 0,
+    "bandPixels": 4824
+   },
+   "exact": true,
+   "differentPixels": 0,
+   "maxdiff": 0,
+   "diffbbox": null
+  },
+  {
+   "run": 1,
+   "phase": "in-A",
+   "verdict": "fail",
+   "gate": {
+    "verdict": "fail",
+    "totalDiff": 18125,
+    "inBandDiff": 1448,
+    "outOfBandDiff": 16677,
+    "maxInBand": 203,
+    "maxOutOfBand": 203,
+    "bandPixels": 5224
+   },
+   "exact": false,
+   "differentPixels": 18125,
+   "maxdiff": 203,
+   "diffbbox": [
+    100,
+    50,
+    350,
+    165
+   ]
+  },
+  {
+   "run": 1,
+   "phase": "last-pixel-of-A",
+   "verdict": "fail",
+   "gate": {
+    "verdict": "fail",
+    "totalDiff": 18125,
+    "inBandDiff": 1448,
+    "outOfBandDiff": 16677,
+    "maxInBand": 203,
+    "maxOutOfBand": 203,
+    "bandPixels": 5224
+   },
+   "exact": false,
+   "differentPixels": 18125,
+   "maxdiff": 203,
+   "diffbbox": [
+    100,
+    50,
+    350,
+    165
+   ]
+  },
+  {
+   "run": 1,
+   "phase": "cross-to-B",
+   "verdict": "fail",
+   "gate": {
+    "verdict": "fail",
+    "totalDiff": 19375,
+    "inBandDiff": 1816,
+    "outOfBandDiff": 17559,
+    "maxInBand": 255,
+    "maxOutOfBand": 255,
+    "bandPixels": 6024
+   },
+   "exact": false,
+   "differentPixels": 19375,
+   "maxdiff": 255,
+   "diffbbox": [
+    100,
+    50,
+    600,
+    165
+   ]
+  },
+  {
+   "run": 1,
+   "phase": "back-to-A",
+   "verdict": "fail",
+   "gate": {
+    "verdict": "fail",
+    "totalDiff": 20625,
+    "inBandDiff": 2184,
+    "outOfBandDiff": 18441,
+    "maxInBand": 255,
+    "maxOutOfBand": 255,
+    "bandPixels": 6824
+   },
+   "exact": false,
+   "differentPixels": 20625,
+   "maxdiff": 255,
+   "diffbbox": [
+    100,
+    50,
+    350,
+    165
+   ]
+  },
+  {
+   "run": 1,
+   "phase": "below",
+   "verdict": "fail",
+   "gate": {
+    "verdict": "fail",
+    "totalDiff": 3750,
+    "inBandDiff": 1104,
+    "outOfBandDiff": 2646,
+    "maxInBand": 255,
+    "maxOutOfBand": 255,
+    "bandPixels": 7224
+   },
+   "exact": false,
+   "differentPixels": 3750,
+   "maxdiff": 255,
+   "diffbbox": [
+    100,
+    140,
+    275,
+    165
+   ]
+  },
+  {
+   "run": 1,
+   "phase": "in-B",
+   "verdict": "fail",
+   "gate": {
+    "verdict": "fail",
+    "totalDiff": 21875,
+    "inBandDiff": 2552,
+    "outOfBandDiff": 19323,
+    "maxInBand": 255,
+    "maxOutOfBand": 255,
+    "bandPixels": 7624
+   },
+   "exact": false,
+   "differentPixels": 21875,
+   "maxdiff": 255,
+   "diffbbox": [
+    100,
+    50,
+    600,
+    165
+   ]
+  },
+  {
+   "run": 1,
+   "phase": "leave-from-B",
+   "verdict": "fail",
+   "gate": {
+    "verdict": "fail",
+    "totalDiff": 5000,
+    "inBandDiff": 1472,
+    "outOfBandDiff": 3528,
+    "maxInBand": 255,
+    "maxOutOfBand": 255,
+    "bandPixels": 8024
+   },
+   "exact": false,
+   "differentPixels": 5000,
+   "maxdiff": 255,
+   "diffbbox": [
+    100,
+    140,
+    335,
+    165
+   ]
+  },
+  {
+   "run": 1,
+   "phase": "again-B-to-A",
+   "verdict": "fail",
+   "gate": {
+    "verdict": "fail",
+    "totalDiff": 24375,
+    "inBandDiff": 3288,
+    "outOfBandDiff": 21087,
+    "maxInBand": 255,
+    "maxOutOfBand": 255,
+    "bandPixels": 9224
+   },
+   "exact": false,
+   "differentPixels": 24375,
+   "maxdiff": 255,
+   "diffbbox": [
+    100,
+    50,
+    425,
+    165
+   ]
+  },
+  {
+   "run": 2,
+   "verdict": "fail",
+   "gate": {
+    "verdict": "fail",
+    "totalDiff": 24375,
+    "inBandDiff": 3288,
+    "outOfBandDiff": 21087,
+    "maxInBand": 255,
+    "maxOutOfBand": 255,
+    "bandPixels": 9224
+   },
+   "exact": false,
+   "differentPixels": 24375,
+   "maxdiff": 255,
+   "diffbbox": [
+    100,
+    50,
+    425,
+    165
+   ]
+  },
+  {
+   "run": 2,
+   "phase": "start",
+   "verdict": "exact",
+   "gate": {
+    "verdict": "exact",
+    "totalDiff": 0,
+    "inBandDiff": 0,
+    "outOfBandDiff": 0,
+    "maxInBand": 0,
+    "maxOutOfBand": 0,
+    "bandPixels": 4824
+   },
+   "exact": true,
+   "differentPixels": 0,
+   "maxdiff": 0,
+   "diffbbox": null
+  },
+  {
+   "run": 2,
+   "phase": "in-A",
+   "verdict": "fail",
+   "gate": {
+    "verdict": "fail",
+    "totalDiff": 18125,
+    "inBandDiff": 1448,
+    "outOfBandDiff": 16677,
+    "maxInBand": 203,
+    "maxOutOfBand": 203,
+    "bandPixels": 5224
+   },
+   "exact": false,
+   "differentPixels": 18125,
+   "maxdiff": 203,
+   "diffbbox": [
+    100,
+    50,
+    350,
+    165
+   ]
+  },
+  {
+   "run": 2,
+   "phase": "last-pixel-of-A",
+   "verdict": "fail",
+   "gate": {
+    "verdict": "fail",
+    "totalDiff": 18125,
+    "inBandDiff": 1448,
+    "outOfBandDiff": 16677,
+    "maxInBand": 203,
+    "maxOutOfBand": 203,
+    "bandPixels": 5224
+   },
+   "exact": false,
+   "differentPixels": 18125,
+   "maxdiff": 203,
+   "diffbbox": [
+    100,
+    50,
+    350,
+    165
+   ]
+  },
+  {
+   "run": 2,
+   "phase": "cross-to-B",
+   "verdict": "fail",
+   "gate": {
+    "verdict": "fail",
+    "totalDiff": 19375,
+    "inBandDiff": 1816,
+    "outOfBandDiff": 17559,
+    "maxInBand": 255,
+    "maxOutOfBand": 255,
+    "bandPixels": 6024
+   },
+   "exact": false,
+   "differentPixels": 19375,
+   "maxdiff": 255,
+   "diffbbox": [
+    100,
+    50,
+    600,
+    165
+   ]
+  },
+  {
+   "run": 2,
+   "phase": "back-to-A",
+   "verdict": "fail",
+   "gate": {
+    "verdict": "fail",
+    "totalDiff": 20625,
+    "inBandDiff": 2184,
+    "outOfBandDiff": 18441,
+    "maxInBand": 255,
+    "maxOutOfBand": 255,
+    "bandPixels": 6824
+   },
+   "exact": false,
+   "differentPixels": 20625,
+   "maxdiff": 255,
+   "diffbbox": [
+    100,
+    50,
+    350,
+    165
+   ]
+  },
+  {
+   "run": 2,
+   "phase": "below",
+   "verdict": "fail",
+   "gate": {
+    "verdict": "fail",
+    "totalDiff": 3750,
+    "inBandDiff": 1104,
+    "outOfBandDiff": 2646,
+    "maxInBand": 255,
+    "maxOutOfBand": 255,
+    "bandPixels": 7224
+   },
+   "exact": false,
+   "differentPixels": 3750,
+   "maxdiff": 255,
+   "diffbbox": [
+    100,
+    140,
+    275,
+    165
+   ]
+  },
+  {
+   "run": 2,
+   "phase": "in-B",
+   "verdict": "fail",
+   "gate": {
+    "verdict": "fail",
+    "totalDiff": 21875,
+    "inBandDiff": 2552,
+    "outOfBandDiff": 19323,
+    "maxInBand": 255,
+    "maxOutOfBand": 255,
+    "bandPixels": 7624
+   },
+   "exact": false,
+   "differentPixels": 21875,
+   "maxdiff": 255,
+   "diffbbox": [
+    100,
+    50,
+    600,
+    165
+   ]
+  },
+  {
+   "run": 2,
+   "phase": "leave-from-B",
+   "verdict": "fail",
+   "gate": {
+    "verdict": "fail",
+    "totalDiff": 5000,
+    "inBandDiff": 1472,
+    "outOfBandDiff": 3528,
+    "maxInBand": 255,
+    "maxOutOfBand": 255,
+    "bandPixels": 8024
+   },
+   "exact": false,
+   "differentPixels": 5000,
+   "maxdiff": 255,
+   "diffbbox": [
+    100,
+    140,
+    335,
+    165
+   ]
+  },
+  {
+   "run": 2,
+   "phase": "again-B-to-A",
+   "verdict": "fail",
+   "gate": {
+    "verdict": "fail",
+    "totalDiff": 24375,
+    "inBandDiff": 3288,
+    "outOfBandDiff": 21087,
+    "maxInBand": 255,
+    "maxOutOfBand": 255,
+    "bandPixels": 9224
+   },
+   "exact": false,
+   "differentPixels": 24375,
+   "maxdiff": 255,
+   "diffbbox": [
+    100,
+    50,
+    425,
+    165
+   ]
+  },
+  {
+   "run": 3,
+   "verdict": "fail",
+   "gate": {
+    "verdict": "fail",
+    "totalDiff": 24375,
+    "inBandDiff": 3288,
+    "outOfBandDiff": 21087,
+    "maxInBand": 255,
+    "maxOutOfBand": 255,
+    "bandPixels": 9224
+   },
+   "exact": false,
+   "differentPixels": 24375,
+   "maxdiff": 255,
+   "diffbbox": [
+    100,
+    50,
+    425,
+    165
+   ]
+  },
+  {
+   "run": 3,
+   "phase": "start",
+   "verdict": "exact",
+   "gate": {
+    "verdict": "exact",
+    "totalDiff": 0,
+    "inBandDiff": 0,
+    "outOfBandDiff": 0,
+    "maxInBand": 0,
+    "maxOutOfBand": 0,
+    "bandPixels": 4824
+   },
+   "exact": true,
+   "differentPixels": 0,
+   "maxdiff": 0,
+   "diffbbox": null
+  },
+  {
+   "run": 3,
+   "phase": "in-A",
+   "verdict": "fail",
+   "gate": {
+    "verdict": "fail",
+    "totalDiff": 18125,
+    "inBandDiff": 1448,
+    "outOfBandDiff": 16677,
+    "maxInBand": 203,
+    "maxOutOfBand": 203,
+    "bandPixels": 5224
+   },
+   "exact": false,
+   "differentPixels": 18125,
+   "maxdiff": 203,
+   "diffbbox": [
+    100,
+    50,
+    350,
+    165
+   ]
+  },
+  {
+   "run": 3,
+   "phase": "last-pixel-of-A",
+   "verdict": "fail",
+   "gate": {
+    "verdict": "fail",
+    "totalDiff": 18125,
+    "inBandDiff": 1448,
+    "outOfBandDiff": 16677,
+    "maxInBand": 203,
+    "maxOutOfBand": 203,
+    "bandPixels": 5224
+   },
+   "exact": false,
+   "differentPixels": 18125,
+   "maxdiff": 203,
+   "diffbbox": [
+    100,
+    50,
+    350,
+    165
+   ]
+  },
+  {
+   "run": 3,
+   "phase": "cross-to-B",
+   "verdict": "fail",
+   "gate": {
+    "verdict": "fail",
+    "totalDiff": 19375,
+    "inBandDiff": 1816,
+    "outOfBandDiff": 17559,
+    "maxInBand": 255,
+    "maxOutOfBand": 255,
+    "bandPixels": 6024
+   },
+   "exact": false,
+   "differentPixels": 19375,
+   "maxdiff": 255,
+   "diffbbox": [
+    100,
+    50,
+    600,
+    165
+   ]
+  },
+  {
+   "run": 3,
+   "phase": "back-to-A",
+   "verdict": "fail",
+   "gate": {
+    "verdict": "fail",
+    "totalDiff": 20625,
+    "inBandDiff": 2184,
+    "outOfBandDiff": 18441,
+    "maxInBand": 255,
+    "maxOutOfBand": 255,
+    "bandPixels": 6824
+   },
+   "exact": false,
+   "differentPixels": 20625,
+   "maxdiff": 255,
+   "diffbbox": [
+    100,
+    50,
+    350,
+    165
+   ]
+  },
+  {
+   "run": 3,
+   "phase": "below",
+   "verdict": "fail",
+   "gate": {
+    "verdict": "fail",
+    "totalDiff": 3750,
+    "inBandDiff": 1104,
+    "outOfBandDiff": 2646,
+    "maxInBand": 255,
+    "maxOutOfBand": 255,
+    "bandPixels": 7224
+   },
+   "exact": false,
+   "differentPixels": 3750,
+   "maxdiff": 255,
+   "diffbbox": [
+    100,
+    140,
+    275,
+    165
+   ]
+  },
+  {
+   "run": 3,
+   "phase": "in-B",
+   "verdict": "fail",
+   "gate": {
+    "verdict": "fail",
+    "totalDiff": 21875,
+    "inBandDiff": 2552,
+    "outOfBandDiff": 19323,
+    "maxInBand": 255,
+    "maxOutOfBand": 255,
+    "bandPixels": 7624
+   },
+   "exact": false,
+   "differentPixels": 21875,
+   "maxdiff": 255,
+   "diffbbox": [
+    100,
+    50,
+    600,
+    165
+   ]
+  },
+  {
+   "run": 3,
+   "phase": "leave-from-B",
+   "verdict": "fail",
+   "gate": {
+    "verdict": "fail",
+    "totalDiff": 5000,
+    "inBandDiff": 1472,
+    "outOfBandDiff": 3528,
+    "maxInBand": 255,
+    "maxOutOfBand": 255,
+    "bandPixels": 8024
+   },
+   "exact": false,
+   "differentPixels": 5000,
+   "maxdiff": 255,
+   "diffbbox": [
+    100,
+    140,
+    335,
+    165
+   ]
+  },
+  {
+   "run": 3,
+   "phase": "again-B-to-A",
+   "verdict": "fail",
+   "gate": {
+    "verdict": "fail",
+    "totalDiff": 24375,
+    "inBandDiff": 3288,
+    "outOfBandDiff": 21087,
+    "maxInBand": 255,
+    "maxOutOfBand": 255,
+    "bandPixels": 9224
+   },
+   "exact": false,
+   "differentPixels": 24375,
+   "maxdiff": 255,
+   "diffbbox": [
+    100,
+    50,
+    425,
+    165
+   ]
+  }
+ ],
+ "build": {
+  "mac": {
+   "osVersion": "27.0.1",
+   "osBuild": "26A434",
+   "swiftc": "Apple Swift version 6.4 (swiftlang-6.4.0.34.1 clang-2100.3.34.1)",
+   "clockHost": "os=Version_27.0.1_(Build_26A434) pinnedDisplayScale=2.5 windowBackingScale=2.5 effectiveDisplayScale=2.5 screens=[1024x768@1.0x]",
+   "scaleGuard": {
+    "captureScale": 2.5,
+    "status": "OK",
+    "runs": 3,
+    "reported": 3,
+    "distinct": [
+     [
+      2.5,
+      "2.5",
+      2.5
+     ]
+    ],
+    "screens": [
+     "[1024x768@1.0x]"
+    ],
+    "mismatches": [],
+    "unreportedRuns": []
+   }
+  },
+  "stage": {
+   "name": "645396d04-5dfe7cc2",
+   "commit": "645396d04ee11f620968451b6ab9791ddf1ee57f",
+   "ref": "HEAD",
+   "mode": "git-archive",
+   "dirty": false,
+   "treeSha256": "sha256:5dfe7cc2a4abbed619d89da0bfb81acbbfc70a8a486ea7994e17cf237680323f",
+   "files": 406,
+   "paths": [
+    "packages/SwiftRightBridge",
+    "packages/SwiftRightHost",
+    "probes/sr0-s/fresh-runtime",
+    "factory/pipeline/blocks-w0-i1/corpus",
+    "factory/pipeline/blocks-w0-i1/expected"
+   ],
+   "stagedUtc": "2026-10-16T03:20:17Z"
+  },
+  "renderer": {
+   "path": "D:\\a\\_temp\\renderer\\swiftright_render.dll",
+   "label": "renderer-0.10-a15ebc5d",
+   "sha256": "c533438a0900bc5aeaee10661a70c9c3ee0e1d87e774a5ac4aea81589f25f996"
+  },
+  "windows": {
+   "runner": {
+    "os": "Windows",
+    "image": "win25-vs2026",
+    "video": [
+     "Microsoft Hyper-V Video 10.0.26100.1150"
+    ],
+    "exeSha256": "f334e7bdc68b60081eab87eb98e86cf8404765f761ecd017b4b385c696cd7cc6",
+    "rendererSha256": "c533438a0900bc5aeaee10661a70c9c3ee0e1d87e774a5ac4aea81589f25f996"
+   },
+   "capture": {
+    "ok": true,
+    "runs": 3,
+    "done": 3,
+    "bad": [],
+    "guestOk": true,
+    "guestError": null
+   },
+   "captureKind": "interact"
+  }
+ }
+}
