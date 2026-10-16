@@ -6,9 +6,9 @@ Records: `results.jsonl` (one line per case: stage, n, exit, prior, changed, tai
 
 Every record's `prior` is the closure run on `6459bb8cd`. The lane's commit message (`340a8b237`) also names `31c7cbcb5` as a comparison point for textfield submit and focus tab-order, but no record here holds a run at `31c7cbcb5`.
 
-`31c7cbcb5` is not a clean pre-lane baseline: it contains `db29b0c5e` and `bbfea2f6f`, predates only `0a926b54e`, `0d84c2363` and `1b76fd6c6`, and is 67 commits after `6459bb8cd`. Do not read the verdict changes as caused by the layout lane.
+`31c7cbcb5` is not a clean pre-lane baseline: it contains `db29b0c5e` and `bbfea2f6f`, predates only `0a926b54e`, `0d84c2363` and `1b76fd6c6`, and is 67 commits after `6459bb8cd`. Cause not separated; candidates are F2 + renderer 0.7 and db29b0c5e.
 
-Likely but unproven cause: F2 (`7d73e2ac6`, body 13 DIP) with the 0.7 renderer. Evidence: Windows first ink +3 px, baseline +2 px, ink height 21 to 23 px. `db29b0c5e` is not excluded.
+Evidence for the F2 candidate (`7d73e2ac6`, body 13 DIP) with the 0.7 renderer: Windows first ink +3 px, baseline +2 px, ink height 21 to 23 px.
 
 Verdict changes with no comparison run at `31c7cbcb5` (every changed case except textfield submit and focus tab-order): focus-state bool-form-v1, programmatic-v1, shift-tab-v1; ime-marked-text ime-cancel-v1, ime-commit-v1, ime-composing-v1, ime-recompose-v1; opacity-transition opacity-text-v1; color-scheme text-dark-v1; alert confirm-cancel-v1.
 

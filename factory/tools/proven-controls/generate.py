@@ -105,7 +105,9 @@ REVIEWED["swiftui.layout-priority"] = {"review": "oracle 2026-10-15 (narrowed); 
     "The block gate ignores blocks under 8 px (about 3.2 pt) (pair_blocks_report.py:50).",
     "The text-priority row-6 Windows capture shows a 1 px red hairline that the gate drops.",
     "A cut Text gets a 9 pt width tolerance and the x allowance accumulates (pair_blocks_report.py:93, :97, :100), so equal and priority splits of all-cut rows can pass.",
-    "hub-rows is gated at the cut tolerance throughout; its row 2 blue block differs by about 7 px and passes."]}
+    "hub-rows is gated at the cut tolerance throughout; its row 2 blue block differs by about 7 px and passes.",
+    "The eight Text verdicts ran on renderer 0.7 (`renderer-0.7-baseline`, sha 82513ae0…) and are not yet confirmed on renderer 0.8.",
+    "text-line-limit-two (system-font) measures an 8.4 pt width difference on row 1, a cut Text, against the 9 pt cut tolerance: 0.6 pt of slack, and the tolerance was set from that same 8.4 pt measurement; the case has no layoutPriority."]}
 # Block 37 slider (Oracle, 16 October 2026: PASS-WITH-CAVEATS). Delivered with caveats; the caveats below are the review's, not a re-run.
 REVIEWED["swiftui.slider"] = {"review": "oracle 2026-10-16 (block 37: PASS-WITH-CAVEATS)", "caveats": [
     "Labels and value labels are checked semantically only (role, name, value, enabled, range, count, order); they have no position gate of their own.",
@@ -113,13 +115,18 @@ REVIEWED["swiftui.slider"] = {"review": "oracle 2026-10-16 (block 37: PASS-WITH-
     "Dark cases gate at hazeTolerance 2 (values-dark, disabled-dark); the light cases at 1 (decision H4, which says within 1 level).",
     "No negative controls yet: the gate has not been shown to fail on a 1 px thumb offset or a wrong fill colour."],
     "windowsDifferences": ["Stepped-slider tick marks are not drawn on Windows (decision H4 records the Mac's tick marks under a stepped slider)."]}
+# Blocks 14, 15, 19 (16 October): the N=3 layout-rules regression on stage 3d3c6f5c2 with renderer 0.7 fails them; they pass on fc4a39a89 with renderer 0.8,
+# which predates the layout commits, so their status on current code with renderer 0.8 is unknown (docs/sr1-decisions.md, verification 16 October).
+REVIEWED["swiftui.focus-state"]["caveats"].append("On stage 3d3c6f5c2 with renderer 0.7 the N=3 layout-rules regression fails 4 of 4 cases; they pass on fc4a39a89 with renderer 0.8, so the status on current code with renderer 0.8 is unknown.")
+REVIEWED["swiftui.ime-marked-text"]["caveats"].append("On stage 3d3c6f5c2 with renderer 0.7 the N=3 layout-rules regression fails 4 of 4 cases; they pass on fc4a39a89 with renderer 0.8, so the status on current code with renderer 0.8 is unknown.")
+REVIEWED["swiftui.opacity-transition"]["caveats"].append("On stage 3d3c6f5c2 with renderer 0.7 the N=3 layout-rules regression fails opacity-text-v1; the block passes on fc4a39a89 with renderer 0.8, so the status on current code with renderer 0.8 is unknown.")
 PENDING_REVIEW -= set(REVIEWED)
 
 # No hand-set status: the closure run reran blocks 13-15 (text-origin fix, decision 12) and every block 1-20 is derived from its cases (delivered-pending-review).
 # Reopened 16 October on the F2 rebaseline (3cb231a98, factory/pipeline/blocks-w1-f2/rebaseline-final-verdicts.json, stage fc4a39a89, decision G70): these blocks
-# had passed on captures that are no longer on disk, and fresh N=3 captures fail them by 1 px (textorigin first ink or control label x at tolerance 0).
+# had passed on final-stage captures that have since been deleted, and fresh N=3 captures fail them by 1 px (textorigin first ink or control label x at tolerance 0).
 NOT_DELIVERED_1PX = ("Reopened 16 October (F2 rebaseline, decision G70): fresh N=3 captures on stage fc4a39a89 fail by 1 px at tolerance 0 "
-                     "(textorigin first-ink or control-label x); the earlier passing captures are not on disk. Failing cases: ")
+                     "(textorigin first-ink or control-label x); the earlier passing captures on stage 6459bb8cd still exist (e.g. `blocks-6-10/swiftui.textfield/plain-v1/runs/20261015-050354`), and the deleted final-stage captures failed with the same 1 px deltas. Failing cases: ")
 OVERRIDES = {
     "swiftui.system-font": {"status": "not-delivered", "statusReason": "Reopened 16 October (decision G71): the blanket tolerance was replaced by per-row tolerances, which fail the independent block 28 gate on the final renderer (styles-large passes; 8 of 9 cases fail; unfitted sizes and weights, undersampled rows)."},
     "swiftui.textfield": {"status": "not-delivered", "statusReason": NOT_DELIVERED_1PX + "textfield automatic-style-v1, caret-empty-v1, filled-truncated-v1, placeholder-v1, plain-v1, prompt-v1."},
@@ -209,21 +216,33 @@ STATUS_VALUES = ["delivered", "delivered-with-caveats", "delivered-pending-revie
 HAND_REQUIRED = ("block", "statusDocBlock", "status", "cases", "verdict", "caveats")
 
 
-def status_doc_ids(text):
-    """The first cell of each docs/sr1-status.md table row ("I2", "7", "pixel-ties"), before the verdict/status separator."""
-    ids = set()
+def status_doc_rows(text):
+    """The first cell of each docs/sr1-status.md table row ("I2", "7", "pixel-ties") -> the whole row, before the verdict/status separator."""
+    rows = {}
     for line in text.split("\n---\n")[0].splitlines():
         if line.startswith("|"):
             m = re.match(r"([A-Za-z0-9][\w.-]*)\s", line.strip().strip("|").split("|")[0].strip() + " ")
             if m:
-                ids.add(m.group(1))
-    return ids
+                rows.setdefault(m.group(1), line)
+    return rows
+
+
+def status_doc_ids(text):
+    return set(status_doc_rows(text))
+
+
+def row_status(line):
+    """The bold status word of a docs/sr1-status.md row: the first bold token that is a status value, or None."""
+    for tok in re.findall(r"\*\*([a-z-]+)\*\*", line):
+        if tok in STATUS_VALUES:
+            return tok
+    return None
 
 
 def validate_hand_entries(entries, generated_ids, status_text, root=ROOT):
     """Hand entries are verbatim, so each one is checked: required keys, an allowed status, cases and evidence paths that exist,
     a row in docs/sr1-status.md, and no block id that the generator already emits. Returns a list of violations (empty = valid)."""
-    errors, seen, doc_ids = [], set(), status_doc_ids(status_text)
+    errors, seen, rows = [], set(), status_doc_rows(status_text)
     for i, e in enumerate(entries):
         name = e.get("block", f"entry {i}")
         for k in HAND_REQUIRED:
@@ -237,12 +256,22 @@ def validate_hand_entries(entries, generated_ids, status_text, root=ROOT):
         seen.add(bid)
         if e.get("status") not in STATUS_VALUES:
             errors.append(f"{name}: status {e.get('status')!r} is not one of {STATUS_VALUES}")
-        if e.get("statusDocBlock") not in doc_ids:
+        row = rows.get(e.get("statusDocBlock"))
+        if row is None:
             errors.append(f"{name}: no row {e.get('statusDocBlock')!r} in docs/sr1-status.md")
+        elif e.get("status") != row_status(row):
+            errors.append(f"{name}: status {e.get('status')!r} differs from the bold status {row_status(row)!r} in its docs/sr1-status.md row")
+        if "cases" in e and not e["cases"]:
+            errors.append(f"{name}: cases is empty")
+        if "caveats" in e and not isinstance(e["caveats"], list):
+            errors.append(f"{name}: caveats is not a list")
+        source = (e.get("verdict") or {}).get("source", "")
+        if "verdict" in e and not re.search(r"(?:docs|factory)/\S+", source):
+            errors.append(f"{name}: verdict.source names no path")
         for c in e.get("cases", []):
             if not (root / "factory/pipeline" / c).exists():
                 errors.append(f"{name}: case path does not exist: {c}")
-        for tok in re.findall(r"(?:docs|factory)/\S+", (e.get("verdict") or {}).get("source", "")):
+        for tok in re.findall(r"(?:docs|factory)/\S+", source):
             tok = tok.rstrip(".,;)")
             if not (root / tok).exists():
                 errors.append(f"{name}: evidence path does not exist: {tok}")

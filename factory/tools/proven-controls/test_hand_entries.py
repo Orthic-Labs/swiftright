@@ -40,6 +40,20 @@ class HandEntryChecks(unittest.TestCase):
         self.assertIn("no row 'ZZ'", text)
         self.assertIn("duplicate hand entry", text)
 
+    def test_structural_violations_are_rejected(self):
+        drift = copy.deepcopy(GOOD); drift["status"] = "delivered"                # the I2 row says delivered-pending-review
+        empty = copy.deepcopy(GOOD); empty["cases"] = []
+        nopath = copy.deepcopy(GOOD); nopath["verdict"]["source"] = "the I2 row and its evidence"
+        caveats = copy.deepcopy(GOOD); caveats["caveats"] = "one caveat as a string"
+        errors = "\n".join(g.validate_hand_entries([drift, empty, nopath, caveats], self.generated, self.status))
+        self.assertIn("differs from the bold status 'delivered-pending-review'", errors)
+        self.assertIn("cases is empty", errors)
+        self.assertIn("verdict.source names no path", errors)
+        self.assertIn("caveats is not a list", errors)
+
+    def test_good_entry_has_no_structural_errors(self):
+        self.assertEqual(g.validate_hand_entries([copy.deepcopy(GOOD)], self.generated, self.status), [])
+
 
 if __name__ == "__main__":
     unittest.main()

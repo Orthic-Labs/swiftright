@@ -17,9 +17,6 @@ The grade is the best block's; read that block's caveats in `docs/proven-control
 | `Animation.linear` | A | swiftui.animation | 7/7 |
 | `AnimationCompletionCriteria.logicallyComplete` | A | swiftui.animation | 7/7 |
 | `AnimationCompletionCriteria.removed` | A | swiftui.animation | 7/7 |
-| `AnyTransition` | A | swiftui.opacity-transition | 7/7 |
-| `AnyTransition.move` | A | swiftui.opacity-transition | 7/7 |
-| `AnyTransition.opacity` | A | swiftui.opacity-transition | 7/7 |
 | `append` | A | swiftui.binding | 4/4 |
 | `at` | A | swiftui.animation | 7/7 |
 | `Binding` | A | swiftui.binding | 4/4 |
@@ -57,11 +54,6 @@ The grade is the best block's; read that block's caveats in `docs/proven-control
 | `FactoryAnim` | A | swiftui.animation | 7/7 |
 | `FactoryClock` | A | swiftui.animation | 7/7 |
 | `fill` | A | swiftui.stack-overlay | 1/1 |
-| `focused` | A | swiftui.focus-state | 4/4 |
-| `FocusState` | A | swiftui.focus-state | 4/4 |
-| `FocusState.Binding` | A | swiftui.focus-state | 4/4 |
-| `FocusState.projectedValue` | A | swiftui.focus-state | 4/4 |
-| `FocusState.wrappedValue` | A | swiftui.focus-state | 4/4 |
 | `Font` | A | swiftui.text.bundled-font | 1/1 |
 | `font` | A | swiftui.text.bundled-font | 1/1 |
 | `Font.custom` | A | swiftui.text.bundled-font | 1/1 |
@@ -69,7 +61,6 @@ The grade is the best block's; read that block's caveats in `docs/proven-control
 | `ForEach.id` | A | swiftui.list | 13/13 |
 | `foregroundStyle` | A | swiftui.image | 4/4 |
 | `frame` | A | swiftui.shapes.fill-stroke | 5/5 |
-| `Hashable` | A | swiftui.focus-state | 4/4 |
 | `HStack` | A | swiftui.scroll-view | 4/4 |
 | `Image` | A | swiftui.image | 4/4 |
 | `Image.bundle` | A | swiftui.image | 4/4 |
@@ -104,7 +95,6 @@ The grade is the best block's; read that block's caveats in `docs/proven-control
 | `onDelete` | A | swiftui.list | 13/13 |
 | `onMove` | A | swiftui.list | 13/13 |
 | `onPreferenceChange` | A | swiftui.preference-key | 2/2 |
-| `opacity` | A | swiftui.opacity-transition | 7/7 |
 | `overlay` | A | swiftui.stack-overlay | 1/1 |
 | `padding` | A | swiftui.padding-frame | 5/5 |
 | `place` | A | swiftui.custom-layout | 2/2 |
@@ -139,27 +129,22 @@ The grade is the best block's; read that block's caveats in `docs/proven-control
 | `Text` | A | swiftui.stack-overlay | 1/1 |
 | `Text.font` | A | swiftui.text.bundled-font | 1/1 |
 | `Text.verbatim` | A | swiftui.text.bundled-font | 1/1 |
-| `TextField` | A | swiftui.focus-state | 4/4 |
-| `textFieldStyle` | A | swiftui.focus-state | 4/4 |
+| `TextField` | A | swiftui.alert | 9/9 |
 | `Toggle` | A | swiftui.disabled | 9/9 |
 | `toggleStyle` | A | swiftui.disabled | 9/9 |
 | `Transaction` | A | swiftui.binding | 4/4 |
 | `transaction` | A | swiftui.binding | 4/4 |
 | `Transaction.disablesAnimations` | A | swiftui.animation | 7/7 |
-| `transition` | A | swiftui.opacity-transition | 7/7 |
 | `View.alert` | A | swiftui.alert | 9/9 |
 | `View.animation` | A | swiftui.animation | 7/7 |
 | `View.buttonStyle` | A | swiftui.button | 19/19 |
 | `View.confirmationDialog` | A | swiftui.alert | 9/9 |
 | `View.disabled` | A | swiftui.disabled | 9/9 |
-| `View.focused` | A | swiftui.focus-state | 4/4 |
 | `View.frame` | A | swiftui.padding-frame | 5/5 |
 | `View.keyboardShortcut` | A | swiftui.button | 19/19 |
 | `View.listStyle` | A | swiftui.list | 13/13 |
-| `View.opacity` | A | swiftui.opacity-transition | 7/7 |
 | `View.overlay` | A | swiftui.stack-overlay | 1/1 |
 | `View.padding` | A | swiftui.padding-frame | 5/5 |
-| `View.transition` | A | swiftui.opacity-transition | 7/7 |
 | `VStack` | A | swiftui.scroll-view | 4/4 |
 | `withAnimation.` | A | swiftui.animation | 7/7 |
 | `withAnimation.completionCriteria` | A | swiftui.animation | 7/7 |
@@ -173,6 +158,9 @@ The grade is the best block's; read that block's caveats in `docs/proven-control
 | `accessibilityHint` | B | swiftui.accessibility | 5/5 |
 | `accessibilityLabel` | B | swiftui.accessibility | 5/5 |
 | `accessibilityValue` | B | swiftui.accessibility | 5/5 |
+| `AnyTransition` | B | swiftui.opacity-transition | 7/7 |
+| `AnyTransition.move` | B | swiftui.opacity-transition | 7/7 |
+| `AnyTransition.opacity` | B | swiftui.opacity-transition | 7/7 |
 | `AnyView` | B | swiftui.text-views | 8/8 |
 | `AsyncStream` | B | swiftui.task-asyncstream | 6/6 |
 | `Bindable` | B | swiftui.observation | 6/6 |
@@ -186,8 +174,14 @@ The grade is the best block's; read that block's caveats in `docs/proven-control
 | `continuation` | B | swiftui.task-asyncstream | 6/6 |
 | `decode` | B | swiftui.image-data | 3/3 |
 | `Divider` | B | swiftui.spacer-divider | 15/15 |
+| `focused` | B | swiftui.focus-state | 4/4 |
+| `FocusState` | B | swiftui.focus-state | 4/4 |
+| `FocusState.Binding` | B | swiftui.focus-state | 4/4 |
+| `FocusState.projectedValue` | B | swiftui.focus-state | 4/4 |
+| `FocusState.wrappedValue` | B | swiftui.focus-state | 4/4 |
 | `gray` | B | swiftui.observation | 6/6 |
 | `green` | B | swiftui.observation | 6/6 |
+| `Hashable` | B | swiftui.focus-state | 4/4 |
 | `id` | B | swiftui.text-views | 8/8 |
 | `ImageDecoder` | B | swiftui.image-data | 3/3 |
 | `init` | B | swiftui.text-views | 8/8 |
@@ -197,6 +191,7 @@ The grade is the best block's; read that block's caveats in `docs/proven-control
 | `makeStream` | B | swiftui.task-asyncstream | 6/6 |
 | `modifier` | B | swiftui.text-views | 8/8 |
 | `Observation.Observable` | B | swiftui.observation | 6/6 |
+| `opacity` | B | swiftui.opacity-transition | 7/7 |
 | `orange` | B | swiftui.observation | 6/6 |
 | `purple` | B | swiftui.observation | 6/6 |
 | `red` | B | swiftui.observation | 6/6 |
@@ -207,8 +202,13 @@ The grade is the best block's; read that block's caveats in `docs/proven-control
 | `system` | B | swiftui.system-symbols | 9/9 |
 | `task` | B | swiftui.task-asyncstream | 6/6 |
 | `textCase` | B | swiftui.font-custom | 6/6 |
+| `textFieldStyle` | B | swiftui.focus-state | 4/4 |
 | `toggle` | B | swiftui.observation | 6/6 |
+| `transition` | B | swiftui.opacity-transition | 7/7 |
+| `View.focused` | B | swiftui.focus-state | 4/4 |
+| `View.opacity` | B | swiftui.opacity-transition | 7/7 |
 | `View.task` | B | swiftui.task-asyncstream | 6/6 |
+| `View.transition` | B | swiftui.opacity-transition | 7/7 |
 | `ViewModifier` | B | swiftui.text-views | 8/8 |
 | `yield` | B | swiftui.task-asyncstream | 6/6 |
 | `antialiased` | C | foundations.image-layout | 10/10 at N=20 (200 pairs); negative controls: 3 of 4 fail on both cases, straight-alpha fails on the alpha case |
@@ -251,4 +251,4 @@ The grade is the best block's; read that block's caveats in `docs/proven-control
 | `View.textFieldStyle` | E | swiftui.textfield | 7/7 |
 | `weight` | E | swiftui.system-font | 9/9 |
 
-Totals: A: 160, B: 44, C: 5, E: 34 (243 APIs).
+Totals: A: 145, B: 59, C: 5, E: 34 (243 APIs).
