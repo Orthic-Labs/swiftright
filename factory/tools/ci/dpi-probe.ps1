@@ -94,9 +94,10 @@ try {
         $modes = @{}
         for ($m = 0; ; $m++) {
             $em = New-Object byte[] 220; [BitConverter]::GetBytes([uint16]220).CopyTo($em, 68)
-            if (-not [DpiNative]::EnumDisplaySettings($null, $m, $em)) { break }
+            if (-not [DpiNative]::EnumDisplaySettings($null, $m, $em)) { if ($m -eq 0) { Log "EnumDisplaySettingsW(index 0) failed, Win32 error $([Runtime.InteropServices.Marshal]::GetLastWin32Error())" }; break }
             $w = [BitConverter]::ToUInt32($em, 172); $h = [BitConverter]::ToUInt32($em, 176); $bpp = [BitConverter]::ToUInt32($em, 168)
-            if ($bpp -eq 32) { $modes["${w}x${h}"] = [pscustomobject]@{ w = $w; h = $h } }
+            if ($m -lt 5) { Log "mode $m : ${w}x${h} bpp=$bpp" }
+            if ($w -gt 0 -and $h -gt 0) { $modes["${w}x${h}"] = [pscustomobject]@{ w = $w; h = $h } }
         }
         $cands = @($modes.Values | Sort-Object { $_.w * $_.h } -Descending | Select-Object -First 6)
         $report.supportedModes = @($modes.Keys)
