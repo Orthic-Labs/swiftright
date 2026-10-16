@@ -958,6 +958,9 @@ public final class Graph {
     private var dirty: [NodeID: Node] = [:]
     /// True while the dirty nodes are being evaluated: a transaction boundary inside an evaluation is not a new transaction.
     private var evaluating = false
+    /// A transaction-boundary settle evaluated changes outside a flush: they still need their commit (and the onChange actions they queued their
+    /// run), though no node is dirty any more. `scheduleFlush` honours it; `flush` clears it.
+    private var settledAwaitingFlush = false
     private var flushScheduled = false
     private(set) var sequence = 0
     private var instanceCounter = 0
@@ -1008,6 +1011,7 @@ public final class Graph {
         nodes[node.id] = node
         nodesByString[node.idString] = node
         evaluate(node)
+        TransactionContext.register(self)
     }
 
     // MARK: Public test surface
@@ -1051,14 +1055,15 @@ public final class Graph {
         let flushStart = profile == nil ? 0 : GraphProfile.now()
         var rounds = 0
         var presentedBeforeAppear = false
-        TransactionContext.boundary = { [weak self] in self?.settleAtTransactionBoundary() }
+        settledAwaitingFlush = false
         while rounds < 64 {
             drainDirty(&rounds)
             if !preferenceObserverNodes.isEmpty { deliverPreferenceChanges() }
             applyWindowSchemeRequest()
             if dirty.isEmpty, !pendingChanges.isEmpty {
-                // The update has been evaluated: commit it, then run the onChange actions it queued. Their writes are the next pass.
-                commit()
+                // The update has been evaluated: run the onChange actions it queued. Their writes are the next pass. No commit here: the
+                // transactions queued so far stay queued, so the next pass (and the commit that ends the flush) carries the transaction that
+                // triggered the action (SwiftUI: a write inside onChange during an animated transaction inherits it).
                 let actions = pendingChanges
                 pendingChanges = []
                 for action in actions { action() }
@@ -1081,6 +1086,7 @@ public final class Graph {
             profile!.flushes += 1
             profile!.evaluateNS &+= GraphProfile.now() &- flushStart
         }
+        settledAwaitingFlush = false
         if !presentedBeforeAppear { commit() }
     }
 
@@ -1111,10 +1117,14 @@ public final class Graph {
     /// A transaction boundary (`withAnimation`, `withTransaction`, before their body runs): the changes made so far are a transaction of their own, so the
     /// dirty nodes they dirtied are evaluated now, before the new transaction's changes are made. Nothing is committed here; the next flush commits.
     /// Mac (SwiftUI): `onAppear { value = 1; value = 2; withAnimation { value = 3; value = 4 } }` evaluates the body with 0, 2, 4, 4, never 1.
-    private func settleAtTransactionBoundary() {
+    func settleAtTransactionBoundary() {
         guard !evaluating, !closed, !dirty.isEmpty else { return }
         var rounds = 0
         drainDirty(&rounds)
+        // The settle evaluated outside a flush. A caller that is not in one (a Task, a timer) leaves no dirty node for the scheduled flush to find, so
+        // the settled state and any onChange actions it queued would wait for an unrelated flush: ask for one.
+        settledAwaitingFlush = true
+        scheduleFlush()
     }
 
     public func snapshot() -> ResolvedNode? {
@@ -1286,7 +1296,9 @@ public final class Graph {
         }
     }
 
-    /// `AnyView` (any depth) around `EmptyView`: a view with no content.
+    /// `AnyView` (any depth) around `EmptyView`: a view with no content. Only a modifier directly around it is dropped (`expand`). Stacked modifiers
+    /// (`AnyView(EmptyView()).padding().frame(...)`) are left as they were: only the single frame over it was measured on macOS 27 (block 41
+    /// any-view), and what SwiftUI lays out for padding or a background over an empty view was not, so extending the rule would be a guess.
     private func isErasedEmpty(_ view: any View) -> Bool {
         if view is EmptyView { return true }
         if let erased = view as? AnyView { return isErasedEmpty(erased.wrapped) }
@@ -1821,7 +1833,7 @@ public final class Graph {
         Task { @MainActor [weak self] in
             guard let self else { return }
             self.flushScheduled = false
-            if !self.dirty.isEmpty { self.flush() }
+            if !self.dirty.isEmpty || self.settledAwaitingFlush || !self.pendingChanges.isEmpty { self.flush() }
         }
     }
 

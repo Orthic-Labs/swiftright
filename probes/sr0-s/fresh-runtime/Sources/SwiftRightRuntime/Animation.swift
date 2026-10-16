@@ -402,11 +402,22 @@ enum TransactionContext {
     private static var queued: [AnimationTransaction] = []
     static var deferred: [() -> Void] = []
     static var queuedCount: Int { queued.count }
-    /// Set by the graph that flushes: evaluates the changes made so far as their own transaction (see `Graph.settleAtTransactionBoundary`).
-    static var boundary: (() -> Void)?
+    private final class WeakGraph {
+        weak var graph: Graph?
+        init(_ graph: Graph) { self.graph = graph }
+    }
+    /// Every live graph (one per window). `withAnimation` has no graph argument, so the boundary cannot know which graph owns the state the
+    /// body will write; each graph settles only its own pending changes, so every live graph is told and none is mistaken for another.
+    private static var graphs: [WeakGraph] = []
 
-    /// A new transaction begins: the changes made before it are settled first, so they are not coalesced with its changes.
-    static func begin() { boundary?() }
+    static func register(_ graph: Graph) { graphs.append(WeakGraph(graph)) }
+
+    /// A new transaction begins: the changes each graph made before it are settled first (see `Graph.settleAtTransactionBoundary`), so they
+    /// are not coalesced with the new transaction's changes.
+    static func begin() {
+        graphs.removeAll { $0.graph == nil }
+        for entry in graphs { entry.graph?.settleAtTransactionBoundary() }
+    }
 
     static func enqueue(_ transaction: AnimationTransaction) {
         queued.append(transaction)
