@@ -184,6 +184,15 @@ jobs:
           "before LogPixels: $((Get-ItemProperty -Path $k -Name LogPixels -ErrorAction SilentlyContinue).LogPixels)"
           Set-ItemProperty -Path $k -Name LogPixels -Value 240 -Type DWord
           "after LogPixels: $((Get-ItemProperty -Path $k -Name LogPixels).LogPixels)"
+          # Fallback 1 (coordinator): per-user scale, then restart explorer so the interactive session re-reads it
+          $u = 'HKCU:\Control Panel\Desktop'
+          Set-ItemProperty -Path $u -Name LogPixels -Value 240 -Type DWord
+          Set-ItemProperty -Path $u -Name Win8DpiScaling -Value 1 -Type DWord
+          Stop-Process -Name explorer -Force -ErrorAction SilentlyContinue
+          Start-Sleep -Seconds 10
+          Get-Process explorer -ErrorAction SilentlyContinue | ForEach-Object { "explorer restarted pid $($_.Id)" }
+          Add-Type -MemberDefinition '[DllImport("user32.dll")] public static extern uint GetDpiForSystem();' -Name Dpi -Namespace Probe
+          "GetDpiForSystem in a new process: $([Probe.Dpi]::GetDpiForSystem())"
       - name: Stage the product tree (git archive HEAD)
         id: stage
         run: |
