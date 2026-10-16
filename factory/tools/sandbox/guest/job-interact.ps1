@@ -75,6 +75,26 @@ public static class IxNative {
   return (int)SendInput(1,new INPUT[]{i},Marshal.SizeOf(typeof(INPUT)));
  }
  public static string Cur(){POINT p; GetCursorPos(out p); return p.x+","+p.y;}
+ [DllImport("user32.dll")] public static extern IntPtr WindowFromPoint(POINT p);
+ [DllImport("user32.dll")] public static extern IntPtr GetAncestor(IntPtr h,uint flags);
+ [DllImport("user32.dll")] public static extern bool IsChild(IntPtr parent,IntPtr child);
+ static string Who(IntPtr w){ if(w==IntPtr.Zero) return "none"; uint pid; GetWindowThreadProcessId(w,out pid); string pn="?"; try{ pn=System.Diagnostics.Process.GetProcessById((int)pid).ProcessName; }catch{} return "hwnd="+w.ToInt64()+" class="+Cls(w)+" title="+Txt(w)+" pid="+pid+" process="+pn; }
+ // WindowFromPoint at a screen point: the host itself, one of its children, a root that is the host, or another window (named by hwnd, class, pid, process).
+ public static string PointWho(int x,int y,IntPtr host){
+  POINT p=new POINT(); p.x=x; p.y=y;
+  IntPtr w=WindowFromPoint(p);
+  string rel = w==IntPtr.Zero ? "none" : w==host ? "host" : IsChild(host,w) ? "child-of-host" : GetAncestor(w,2)==host ? "root-is-host" : "other";
+  return "WindowFromPoint[" + rel + "] " + Who(w);
+ }
+ // Z order of the host among the visible top-level windows (index 0 = top), the foreground window, and every window above the host that overlaps the client area.
+ public static string ZInfo(IntPtr host,int[] client){
+  var l=new List<IntPtr>(); EnumWindows(delegate(IntPtr h,IntPtr x){ if(IsWindowVisible(h)) l.Add(h); return true; },IntPtr.Zero);
+  int idx=l.IndexOf(host); IntPtr fg=GetForegroundWindow();
+  var cov=new List<string>(); int lim = idx<0 ? l.Count : idx;
+  for(int i=0;i<lim;i++){ RECT r; if(GetWindowRect(l[i],out r) && r.left<client[0]+client[2] && r.right>client[0] && r.top<client[1]+client[3] && r.bottom>client[1]) cov.Add("["+i+"] "+Who(l[i])); }
+  string top = l.Count>0 ? "[0] "+Who(l[0]) : "none";
+  return "zpos=" + (idx<0 ? "not-visible" : idx.ToString()) + " of " + l.Count + " visible; top=" + top + "; foreground=" + Who(fg) + " host-is-foreground=" + (fg==host) + "; above-and-overlapping-client=" + (cov.Count==0 ? "none" : string.Join(" | ",cov));
+ }
  [DllImport("user32.dll")] public static extern bool SetForegroundWindow(IntPtr h);
  [DllImport("user32.dll")] public static extern IntPtr GetForegroundWindow();
  [DllImport("user32.dll")] public static extern bool AttachThreadInput(uint a,uint b,bool f);
@@ -285,7 +305,8 @@ function Do-Step($proc, $mainH, $step, [string]$out, [string]$n) {
                 if ($sent -ne 1) { throw "SendInput injected $sent of 1 input(s) for the cursor move to $tx,$ty (virtual screen $(([IxNative]::Virt()) -join ','))" }
                 Start-Sleep -Milliseconds 80
                 $cur = [IxNative]::Cur()
-                Add-Content -LiteralPath (Join-Path $out "cursor-$n.txt") -Value ("move client=$x,$y screen=$tx,$ty cursor-after=$cur")
+                $who = [IxNative]::PointWho($tx, $ty, $h); $zi = [IxNative]::ZInfo($h, $cs)
+                Add-Content -LiteralPath (Join-Path $out "cursor-$n.txt") -Value ("move client=$x,$y screen=$tx,$ty cursor-after=$cur " + $who + " | " + $zi)
                 return "ok(cursor=$cur target=$tx,$ty)"
             }
             [void][IxNative]::PostMessageW($h, $WM.MOUSEMOVE, [IntPtr]$wp, [IxNative]::Lp($x, $y)); Start-Sleep -Milliseconds 40
@@ -316,7 +337,8 @@ function Do-Step($proc, $mainH, $step, [string]$out, [string]$n) {
                 Start-Sleep -Milliseconds 120
                 $cur = [IxNative]::Cur()
                 $outside = -not ([int]$pick[0] -ge $cs[0] -and [int]$pick[0] -lt ($cs[0] + $cs[2]) -and [int]$pick[1] -ge $cs[1] -and [int]$pick[1] -lt ($cs[1] + $cs[3]))
-                Add-Content -LiteralPath (Join-Path $out "cursor-$n.txt") -Value ("leave target=$($pick[0]),$($pick[1]) client=$($cs -join ',') cursor-after=$cur outside-client=$outside")
+                $who = [IxNative]::PointWho([int]$pick[0], [int]$pick[1], $h); $zi = [IxNative]::ZInfo($h, $cs)
+                Add-Content -LiteralPath (Join-Path $out "cursor-$n.txt") -Value ("leave target=$($pick[0]),$($pick[1]) client=$($cs -join ',') cursor-after=$cur outside-client=$outside " + $who + " | " + $zi)
                 return "ok(cursor=$cur target=$($pick[0]),$($pick[1]) outside-client=$outside)"
             }
             [void][IxNative]::PostMessageW($h, $WM.MOUSELEAVE, [IntPtr]0, [IntPtr]0); Start-Sleep -Milliseconds 40
@@ -443,6 +465,11 @@ try {
             do { Start-Sleep -Milliseconds 100; $p.Refresh(); if ($p.HasExited) { throw "host exited early code=$($p.ExitCode)" }; if ([DateTime]::UtcNow -gt $deadline) { throw 'window deadline' } } while ($p.MainWindowHandle -eq [IntPtr]::Zero)
             $h = $p.MainWindowHandle; $script:tWin = [DateTime]::UtcNow
             if (-not [IxNative]::SetWindowPos($h, [IntPtr]::new(1), 0, 0, 0, 0, 0x0013)) { throw 'SetWindowPos failed' }
+            # CI only (GITHUB_ACTIONS is set on runner steps, not in the Sandbox guest): HWND_TOPMOST with NOACTIVATE, so no other window sits above the host while the
+            # cursor moves (CI 38912970380: no WM_MOUSEMOVE reached the host). The Dell path keeps the bottom placement above.
+            $ciRun = ([string]$env:GITHUB_ACTIONS -eq 'true')
+            if ($ciRun -and -not [IxNative]::SetWindowPos($h, [IntPtr]::new(-1), 0, 0, 0, 0, 0x0013)) { throw 'SetWindowPos HWND_TOPMOST failed' }
+            Add-Content -LiteralPath (Join-Path $out "cursor-$n.txt") -Value ("start ci=$ciRun host=$($h.ToInt64()) " + [IxNative]::ZInfo($h, [IxNative]::ClientScreen($h)))
             Start-Sleep -Milliseconds $settle
             $k = 0
             foreach ($s in $steps) {
