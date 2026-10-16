@@ -2,7 +2,8 @@
  "phaseShots": [
   "start",
   "plain",
-  "animated"
+  "animated",
+  "nested"
  ],
  "hazeTolerance": 0,
  "excludeRects": [
@@ -11,17 +12,26 @@
    "rect": [
     100,
     50,
-    350,
+    290,
     120
    ]
   },
   {
    "name": "button label glyphs (Segoe UI vs SF, decision 2/11)",
    "rect": [
-    100,
-    140,
-    350,
-    210
+    300,
+    50,
+    490,
+    120
+   ]
+  },
+  {
+   "name": "button label glyphs (Segoe UI vs SF, decision 2/11)",
+   "rect": [
+    500,
+    50,
+    690,
+    120
    ]
   }
  ],
@@ -52,7 +62,7 @@
   },
   {
    "op": "wait",
-   "ms": 450
+   "ms": 800
   },
   {
    "op": "dump",
@@ -76,7 +86,7 @@
   },
   {
    "op": "wait",
-   "ms": 450
+   "ms": 800
   },
   {
    "op": "dump",
@@ -93,10 +103,34 @@
   {
    "op": "wait",
    "ms": 150
+  },
+  {
+   "op": "invoke",
+   "name": "Nested"
+  },
+  {
+   "op": "wait",
+   "ms": 800
+  },
+  {
+   "op": "dump",
+   "label": "nested"
+  },
+  {
+   "op": "wait",
+   "ms": 250
+  },
+  {
+   "op": "shot",
+   "label": "nested"
+  },
+  {
+   "op": "wait",
+   "ms": 150
   }
  ],
  "macArgs": [
   "--steps",
-  "[{\"op\":\"wait\",\"ms\":700},{\"op\":\"dump\",\"label\":\"start\"},{\"op\":\"wait\",\"ms\":250},{\"op\":\"shot\",\"label\":\"start\"},{\"op\":\"wait\",\"ms\":150},{\"op\":\"invoke\",\"name\":\"Plain\"},{\"op\":\"wait\",\"ms\":450},{\"op\":\"dump\",\"label\":\"plain\"},{\"op\":\"wait\",\"ms\":250},{\"op\":\"shot\",\"label\":\"plain\"},{\"op\":\"wait\",\"ms\":150},{\"op\":\"invoke\",\"name\":\"Animated\"},{\"op\":\"wait\",\"ms\":450},{\"op\":\"dump\",\"label\":\"animated\"},{\"op\":\"wait\",\"ms\":250},{\"op\":\"shot\",\"label\":\"animated\"},{\"op\":\"wait\",\"ms\":150}]"
+  "[{\"op\":\"wait\",\"ms\":700},{\"op\":\"dump\",\"label\":\"start\"},{\"op\":\"wait\",\"ms\":250},{\"op\":\"shot\",\"label\":\"start\"},{\"op\":\"wait\",\"ms\":150},{\"op\":\"invoke\",\"name\":\"Plain\"},{\"op\":\"wait\",\"ms\":800},{\"op\":\"dump\",\"label\":\"plain\"},{\"op\":\"wait\",\"ms\":250},{\"op\":\"shot\",\"label\":\"plain\"},{\"op\":\"wait\",\"ms\":150},{\"op\":\"invoke\",\"name\":\"Animated\"},{\"op\":\"wait\",\"ms\":800},{\"op\":\"dump\",\"label\":\"animated\"},{\"op\":\"wait\",\"ms\":250},{\"op\":\"shot\",\"label\":\"animated\"},{\"op\":\"wait\",\"ms\":150},{\"op\":\"invoke\",\"name\":\"Nested\"},{\"op\":\"wait\",\"ms\":800},{\"op\":\"dump\",\"label\":\"nested\"},{\"op\":\"wait\",\"ms\":250},{\"op\":\"shot\",\"label\":\"nested\"},{\"op\":\"wait\",\"ms\":150}]"
  ]
 }

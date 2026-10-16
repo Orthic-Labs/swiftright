@@ -27,8 +27,11 @@ struct MirrorScreen: View {
 final class ChainModel {
     var trigger = 0
     var follower = 0
+    var third = 0
     /// What the onChange of `trigger` does with the new value.
     var react: (ChainModel, Int) -> Void = { model, new in model.follower = new }
+    /// What the onChange of `follower` does (nothing by default).
+    var reactFollower: (ChainModel, Int) -> Void = { _, _ in }
 }
 
 /// Two boxes: the white one follows `trigger`, the black one follows `follower`, which an onChange of `trigger` writes.
@@ -38,8 +41,10 @@ struct ChainScreen: View {
         VStack(alignment: .leading, spacing: 0) {
             Color.white.frame(width: CGFloat(model.trigger + 10), height: 10)
             Color.black.frame(width: CGFloat(model.follower + 10), height: 10)
+            Color.gray.frame(width: CGFloat(model.third + 10), height: 10)
         }
         .onChange(of: model.trigger) { _, new in model.react(model, new) }
+        .onChange(of: model.follower) { _, new in model.reactFollower(model, new) }
     }
 }
 
@@ -237,7 +242,69 @@ final class TransactionBoundaryScopeTests: XCTestCase {
         model.trigger = 40
         graph.flush()
         XCTAssertEqual(records.items.count - base, 1)
-        XCTAssertEqual(widths(graph), [50, 50])
+        XCTAssertEqual(Array(widths(graph).prefix(2)), [50, 50])
+    }
+
+    // A withAnimation nested in the one an onChange action opened: the inner body ends first, so the outer transaction is the last explicit one and decides
+    // for every node the pass changed (that ordering predates the per-graph queue; recorded here, not changed). The outer one must not be committed early.
+    func testNestedWithAnimationInOnChangeKeepsTheOuterAnimationOnItsOwnWrite() {
+        let model = ChainModel()
+        model.react = { model, new in
+            withAnimation(.linear(duration: 2.0)) {
+                model.follower = new
+                withAnimation(.linear(duration: 1.0)) { model.third = new }
+            }
+        }
+        let (graph, records) = chain(model)
+        let base = records.items.count
+        model.trigger = 40
+        graph.flush()
+        XCTAssertEqual(records.items.count - base, 2, "the trigger's pass, then one pass for both writes")
+        XCTAssertNil(records.items[base].animation)
+        graph.tick(now: 0)
+        graph.tick(now: 0.5)
+        let mid = widths(graph)
+        XCTAssertEqual(mid[0], 50, accuracy: 1e-9, "the trigger snapped")
+        XCTAssertEqual(mid[1], 20, accuracy: 1e-9, "the outer write animates with the outer 2 s animation, not snapped")
+        XCTAssertEqual(mid[2], 20, accuracy: 1e-9, "the inner write is in the same pass: the last explicit transaction (the outer one) decides")
+    }
+
+    // T -> onChange: withAnimation(a) { follower } -> onChange of follower: withAnimation(nil) { third }
+    func testOnChangeChainEachPassCommitsUnderItsOwnTransaction() {
+        let model = ChainModel()
+        model.react = { model, new in withAnimation(.linear(duration: 1.0)) { model.follower = new } }
+        model.reactFollower = { model, new in withAnimation(nil) { model.third = new } }
+        let (graph, records) = chain(model)
+        let base = records.items.count
+        model.trigger = 40
+        graph.flush()
+        XCTAssertEqual(records.items.dropFirst(base).map { $0.animation }, [nil, "linear", nil],
+                       "trigger plain; the follower's pass under the animation; the nil write's pass snaps")
+        graph.tick(now: 0)
+        graph.tick(now: 0.5)
+        let mid = widths(graph)
+        XCTAssertEqual(mid[0], 50, accuracy: 1e-9)
+        XCTAssertEqual(mid[1], 30, accuracy: 1e-9, "the follower animates")
+        XCTAssertEqual(mid[2], 50, accuracy: 1e-9, "the third snaps")
+    }
+
+    // Two transactions one after the other in one action: the first pass commits under the first, the second under the second.
+    func testSequentialTransactionsInOneOnChangeActionCommitSeparately() {
+        let model = ChainModel()
+        model.react = { model, new in
+            withAnimation(.linear(duration: 1.0)) { model.follower = new }
+            withAnimation(.linear(duration: 2.0)) { model.third = new }
+        }
+        let (graph, records) = chain(model)
+        let base = records.items.count
+        model.trigger = 40
+        graph.flush()
+        XCTAssertEqual(records.items.dropFirst(base).map { $0.animation }, [nil, "linear", "linear"])
+        graph.tick(now: 0)
+        graph.tick(now: 0.5)
+        let mid = widths(graph)
+        XCTAssertEqual(mid[1], 30, accuracy: 1e-9, "the first write runs its own 1 s animation")
+        XCTAssertEqual(mid[2], 20, accuracy: 1e-9, "the second runs its own 2 s animation")
     }
 
     // A transaction belongs to the graph whose state its body wrote: another window's commit must not consume it.

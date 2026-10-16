@@ -425,9 +425,12 @@ enum TransactionContext {
     /// are not coalesced with the new transaction's changes. Its body is then a frame, closed by `end`.
     static func begin() {
         graphs.removeAll { $0.graph == nil }
+        // Only the outermost transaction an onChange action opens commits the triggering pass: a transaction nested in an open frame belongs to the
+        // frame's writes, whose transaction is queued when the frame ends, so committing here would commit them before it is queued.
+        let outermost = frames.isEmpty
         for entry in graphs {
             entry.graph?.settleAtTransactionBoundary()
-            entry.graph?.commitTriggerBeforeTransaction()
+            if outermost { entry.graph?.commitTriggerBeforeTransaction() }
         }
         frames.append(Frame())
     }
