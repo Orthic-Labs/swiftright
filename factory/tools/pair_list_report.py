@@ -39,6 +39,17 @@ def windows_rows(doc):
     return rel(lst.get("bounds")), rows
 
 
+LABEL_W = 150  # px: the label ink rect is x0 .. x0 + 150 (main)
+
+
+def background_x(row_x, row_w, label_x0):
+    """The x of the background sample: a pixel inside the row, just right of its label rect. That is the row's own background (the row
+    colour or the selection fill), never the list's trailing gutter (the gutter is 16.8 pt = 42 px at scale 2.5). None when no such
+    pixel lies inside the row."""
+    x = label_x0 + LABEL_W + 10
+    return x if row_x < x < row_x + row_w - 1 else None
+
+
 def label_ink(img, rect, bg):
     best, bp = -1, None
     for p in img.crop(rect).getdata():
@@ -77,8 +88,12 @@ def main():
         x0 = int(cfg["listRect"][0]) + (20 if "plain" in case.name else 40)
         for i, m in enumerate(mrows):
             y, h = int(round(m["frame"][1])), int(round(m["frame"][3]))
-            rect = (x0, y + h // 5, x0 + 150, y + h - h // 5)
-            bg_m, bg_w = im.getpixel((int(cfg["listRect"][2]) - 30, y + h // 2)), iw.getpixel((int(cfg["listRect"][2]) - 30, y + h // 2))
+            rect = (x0, y + h // 5, x0 + LABEL_W, y + h - h // 5)
+            bx = background_x(m["frame"][0], m["frame"][2], x0)   # the Mac frame; the rows match it within rtol above
+            if bx is None:
+                problems.append(f"row {i} has no background sample inside the row (frame {m['frame']})")
+                ink.append(dict(row=i, mac=None, windows=None, ok=False)); continue
+            bg_m, bg_w = im.getpixel((bx, y + h // 2)), iw.getpixel((bx, y + h // 2))
             a, b = label_ink(im, rect, bg_m), label_ink(iw, rect, bg_w)
             good = a is not None and b is not None and all(abs(p - q) <= ttol for p, q in zip(a, b))
             ink.append(dict(row=i, mac=a, windows=b, ok=good))
