@@ -41,7 +41,7 @@ struct ProbeSection: HubSection, @unchecked Sendable {
     print("HOST_HUB mode=\(mode) raw=\(rawFrame)"); fflush(stdout)
     if mode == 3 { return HubRootView(content: AnyView(Text("hello").padding(20))) }
     let engine = PulseHubFixtures.engine()
-    let context = HubContext(engine: engine, services: RecordingPlatformServices(), theme: PulseHub.theme, toasts: ToastSink())
+    let context = HubContext(engine: engine, services: ProbeHubServices(), theme: PulseHub.theme, toasts: ToastSink())
     let sections = PulseHub.sections(notch: PulseHubFixtures.notch())
     let section = sections[min(max(frame / 2, 0), sections.count - 1)]
     print("HOST_HUB frame=\(frame) section=\(section.id) scheme=\(frame % 2 == 1 ? "dark" : "light") sections=\(sections.map { $0.id }.joined(separator: ","))"); fflush(stdout)
