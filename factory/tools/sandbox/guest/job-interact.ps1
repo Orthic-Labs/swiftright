@@ -9,8 +9,9 @@
 #   {"op":"click","x":10,"y":20,"button":"left|right","count":1}   WM_MOUSEMOVE + button down/up
 #   {"op":"move","x":10,"y":20,"down":false}                   WM_MOUSEMOVE posted at the client point (wParam MK_LBUTTON when "down"): a pointer move, with no button (hover) or with the primary button held (a drag in steps)
 #   {"op":"drag","x0":10,"y0":20,"x1":90,"y1":20,"steps":6}    WM_MOUSEMOVE, left button down at (x0, y0), `steps` WM_MOUSEMOVE with MK_LBUTTON along the line, button up at (x1, y1)
-#   {"op":"leave","real":false}                                 WM_MOUSELEAVE posted (real: the cursor is moved just outside the window)
-#   ("move" with "real":true moves the real cursor to the client point instead of posting a message)
+#   {"op":"leave","real":false}                                 WM_MOUSELEAVE posted (real: the real cursor is moved just outside the window, by SendInput)
+#   ("move" with "real":true moves the REAL cursor to the client point by SendInput (absolute, virtual desk) instead of posting a message; the cursor position read back
+#    with GetCursorPos goes into the step result and into cursor-NN.txt. Never post synthetic WM_MOUSEMOVE for hover: the cases must prove real-cursor hover.)
 #   {"op":"ime","action":"compose","text":"にほ"}        ImmSetCompositionStringW(SCS_SETSTR) on the window's input context, then WM_IME_COMPOSITION(GCS_COMPSTR); falls back to posting
 #   {"op":"ime","action":"commit","text":"日本"}         WM_IME_COMPOSITION(GCS_RESULTSTR) when the IMM call is refused (recorded in the step log); "cancel" ends the composition
 #   {"op":"invoke","name":"OK"}                          UIA InvokePattern on the first element (in the target window) whose Name equals `name` (dialog buttons; the Sandbox cannot click a TaskDialog by pixels reliably)
@@ -55,6 +56,24 @@ public static class IxNative {
  [StructLayout(LayoutKind.Sequential)] public struct POINT {public int x,y;}
  public static int[] ClientScreen(IntPtr h){RECT r; GetClientRect(h,out r); POINT p=new POINT(); ClientToScreen(h,ref p); return new int[]{p.x,p.y,r.right-r.left,r.bottom-r.top};}
  [DllImport("user32.dll")] public static extern bool SetCursorPos(int x,int y);
+ // Real-cursor moves (CI windows-2025 Hyper-V runner: SetCursorPos never reached the window; SendInput with absolute coordinates is the input path under test).
+ [StructLayout(LayoutKind.Sequential)] public struct MOUSEINPUT {public int dx,dy; public uint mouseData,dwFlags,time; public IntPtr dwExtraInfo;}
+ [StructLayout(LayoutKind.Sequential)] public struct INPUT {public uint type; public MOUSEINPUT mi;}
+ [DllImport("user32.dll")] public static extern uint SendInput(uint n,INPUT[] inputs,int size);
+ [DllImport("user32.dll")] public static extern bool GetCursorPos(out POINT p);
+ [DllImport("user32.dll")] public static extern int GetSystemMetrics(int index);
+ // Virtual screen (SM_XVIRTUALSCREEN, SM_YVIRTUALSCREEN, SM_CXVIRTUALSCREEN, SM_CYVIRTUALSCREEN) in physical pixels (the process is per-monitor DPI aware).
+ public static int[] Virt(){return new int[]{GetSystemMetrics(76),GetSystemMetrics(77),GetSystemMetrics(78),GetSystemMetrics(79)};}
+ // Moves the real cursor to the screen point (x,y) with SendInput: MOUSEEVENTF_MOVE|ABSOLUTE|VIRTUALDESK, coordinates normalised to 0..65535 over the virtual screen.
+ // Returns the number of inputs injected (1 on success).
+ public static int SendAbsMove(int x,int y){
+  int[] v=Virt(); if(v[2]<2||v[3]<2) return -1;
+  INPUT i=new INPUT(); i.type=0;
+  i.mi.dx=(int)Math.Round((x-v[0])*65535.0/(v[2]-1)); i.mi.dy=(int)Math.Round((y-v[1])*65535.0/(v[3]-1));
+  i.mi.dwFlags=0x0001|0x8000|0x4000;
+  return (int)SendInput(1,new INPUT[]{i},Marshal.SizeOf(typeof(INPUT)));
+ }
+ public static string Cur(){POINT p; GetCursorPos(out p); return p.x+","+p.y;}
  [DllImport("user32.dll")] public static extern bool SetForegroundWindow(IntPtr h);
  [DllImport("user32.dll")] public static extern IntPtr GetForegroundWindow();
  [DllImport("user32.dll")] public static extern bool AttachThreadInput(uint a,uint b,bool f);
@@ -241,9 +260,14 @@ function Do-Step($proc, $mainH, $step, [string]$out, [string]$n) {
         'move' {
             $x = [int]$step.x; $y = [int]$step.y; $wp = $(if ($step.down) { 1 } else { 0 })
             if ($step.real) {
-                # the real cursor: the OS then sends WM_MOUSEMOVE and, when it leaves, WM_MOUSELEAVE (a posted move leaves the real cursor elsewhere, so the window's own mouse tracking reports a leave at once)
-                $cs = [IxNative]::ClientScreen($h); [void][IxNative]::SetCursorPos($cs[0] + $x, $cs[1] + $y); Start-Sleep -Milliseconds 80
-                return 'ok(cursor)'
+                # the real cursor, moved by SendInput: the OS then sends WM_MOUSEMOVE and, when it leaves, WM_MOUSELEAVE (a posted move leaves the real cursor elsewhere, so the window's own mouse tracking reports a leave at once)
+                $cs = [IxNative]::ClientScreen($h); $tx = $cs[0] + $x; $ty = $cs[1] + $y
+                $sent = [IxNative]::SendAbsMove($tx, $ty)
+                if ($sent -ne 1) { throw "SendInput injected $sent of 1 input(s) for the cursor move to $tx,$ty (virtual screen $(([IxNative]::Virt()) -join ','))" }
+                Start-Sleep -Milliseconds 80
+                $cur = [IxNative]::Cur()
+                Add-Content -LiteralPath (Join-Path $out "cursor-$n.txt") -Value ("move client=$x,$y screen=$tx,$ty cursor-after=$cur")
+                return "ok(cursor=$cur target=$tx,$ty)"
             }
             [void][IxNative]::PostMessageW($h, $WM.MOUSEMOVE, [IntPtr]$wp, [IxNative]::Lp($x, $y)); Start-Sleep -Milliseconds 40
             return 'ok'
@@ -260,7 +284,22 @@ function Do-Step($proc, $mainH, $step, [string]$out, [string]$n) {
             return 'ok'
         }
         'leave' {
-            if ($step.real) { $cs = [IxNative]::ClientScreen($h); [void][IxNative]::SetCursorPos($cs[0] + $cs[2] + 60, $cs[1] + $cs[3] + 60); Start-Sleep -Milliseconds 120; return 'ok(cursor)' }
+            if ($step.real) {
+                # the real cursor is moved by SendInput to the first point 60 px outside the client area (right, left, below, above) that lies on the virtual screen
+                $cs = [IxNative]::ClientScreen($h); $v = [IxNative]::Virt()
+                $mx = $cs[0] + [int]($cs[2] / 2); $my = $cs[1] + [int]($cs[3] / 2)
+                $cands = @(@(($cs[0] + $cs[2] + 60), $my), @(($cs[0] - 60), $my), @($mx, ($cs[1] + $cs[3] + 60)), @($mx, ($cs[1] - 60)))
+                $pick = $null
+                foreach ($c in $cands) { if ($c[0] -ge $v[0] -and $c[0] -lt ($v[0] + $v[2]) -and $c[1] -ge $v[1] -and $c[1] -lt ($v[1] + $v[3])) { $pick = $c; break } }
+                if ($null -eq $pick) { throw "no point 60 px outside the window lies on the virtual screen ($($v -join ','))" }
+                $sent = [IxNative]::SendAbsMove([int]$pick[0], [int]$pick[1])
+                if ($sent -ne 1) { throw "SendInput injected $sent of 1 input(s) for the cursor leave to $($pick[0]),$($pick[1])" }
+                Start-Sleep -Milliseconds 120
+                $cur = [IxNative]::Cur()
+                $outside = -not ([int]$pick[0] -ge $cs[0] -and [int]$pick[0] -lt ($cs[0] + $cs[2]) -and [int]$pick[1] -ge $cs[1] -and [int]$pick[1] -lt ($cs[1] + $cs[3]))
+                Add-Content -LiteralPath (Join-Path $out "cursor-$n.txt") -Value ("leave target=$($pick[0]),$($pick[1]) client=$($cs -join ',') cursor-after=$cur outside-client=$outside")
+                return "ok(cursor=$cur target=$($pick[0]),$($pick[1]) outside-client=$outside)"
+            }
             [void][IxNative]::PostMessageW($h, $WM.MOUSELEAVE, [IntPtr]0, [IntPtr]0); Start-Sleep -Milliseconds 40
             return 'ok'
         }
