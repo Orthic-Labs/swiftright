@@ -83,8 +83,8 @@ ROUND6_CAVEATS = {
     "swiftui.ime-traps": ["Hardware IME is deferred: the cases drive the in-process TextStore script and the NSTextInputClient path, not a real IME (H9(b)).",
                           "Extra CI evidence: `imet-badregion-v1` passes N=20 in run 38870003524 (stage 168328082-0766196a, commit 168328082) after the harness lease fix (H22); its mapped run stays 38860483220."],
     "swiftui.compat": ["Ported from OpenSwiftUI's MIT tests as view bodies and expectations only (H9a); EquatableView and animation completion are not ported and not delivered.",
-                       "Runtime change (commit ce47755c3): `withAnimation` and `withTransaction` settle pending changes before their body (state-nested-update is the case that measured it). The `onChange` transaction handling from that commit is being revised after an Oracle BLOCK on 5713ea1fe; block 41 stays delivered-pending-review only for its 5 measured cases.",
-                       "Runtime transaction fixes (commit 5713ea1fe, H23; under revision after the Oracle BLOCK): the transaction boundary is per graph (a weak graph registry, not the last-flushed graph); `onChange` writes inherit the triggering transaction with no mid-flush commit; a boundary settle outside a flush schedules a flush; `isErasedEmpty` stays single-modifier and is documented. Unit tests 434/434 at that commit. CI run 38865487951 (N=3): 38 of 39 cases pass; `ime-composing-v1` was lost to the fixed 10 s host lease, not to the change (it passes N=20 in run 38870003524 after H22)."],
+                       "Runtime change (commit ce47755c3): `withAnimation` and `withTransaction` settle pending changes before their body (state-nested-update is the case that measured it). The onChange transaction handling was revised in 7796b0b81: each write commits under the innermost open transaction (inner wins; measured on the Mac in run 38913665384). Independently reviewed 16 October (PASS); block 41 has six measured cases (onchange-animation-v1 added).",
+                       "Runtime transaction fixes (commit 5713ea1fe, H23; the onChange part was revised in 7796b0b81, see above): the transaction boundary is per graph (a weak graph registry, not the last-flushed graph); `onChange` writes inherit the triggering transaction with no mid-flush commit; a boundary settle outside a flush schedules a flush; `isErasedEmpty` stays single-modifier and is documented. Unit tests 434/434 at that commit. CI run 38865487951 (N=3): 38 of 39 cases pass; `ime-composing-v1` was lost to the fixed 10 s host lease, not to the change (it passes N=20 in run 38870003524 after H22)."],
 }
 ROUND4_CAVEATS.update(ROUND5_CAVEATS)
 ROUND4_CAVEATS.update(ROUND6_CAVEATS)
@@ -128,6 +128,17 @@ REVIEWED["swiftui.slider"] = {"review": "oracle 2026-10-16 (block 37: PASS-WITH-
     "Dark cases gate at hazeTolerance 2 (values-dark, disabled-dark); the light cases at 1 (decision H4, which says within 1 level).",
     "Negative controls exist (negative-fill-colour-v1, negative-thumb-offset-v1): they fail at N=3 on the local dirty stage and mutate the Mac witness, so they are not CI paired evidence."],
     "windowsDifferences": ["Stepped-slider tick marks are not drawn on Windows (decision H4 records the Mac's tick marks under a stepped slider)."]}
+# Round 6 review (16 October 2026, Oracle, PASS). Block 38 on-hover: delivered-with-caveats (H26). Block 41 compat: delivered-with-caveats after the
+# transaction rework of 7796b0b81 (H27). The caveats below are the review's, not a re-run.
+REVIEWED["swiftui.on-hover"] = {"review": "oracle 2026-10-16 (block 38: PASS, delivered-with-caveats)", "caveats": [
+    "Topmost placement (HWND_TOPMOST with NOACTIVATE) is CI-only (`GITHUB_ACTIONS`), so the host's placement differs between CI and the Dell (H25).",
+    "The HWND_BOTTOM cause of the failed runs is inferred: the z order was not logged before the topmost placement, so no covering window is named (H25).",
+    "The N=20 pass (run 38916701641) ran on d9423e953, before 7796b0b81. Hover does not touch transactions, so the pass is not re-run on 7796b0b81.",
+    "Leave is a genuine WM_MOUSELEAVE from TrackMouseEvent (view.rs:1308)."]}
+REVIEWED["swiftui.compat"] = {"review": "oracle 2026-10-16 (block 41, transaction rework 7796b0b81: PASS)", "caveats": [
+    "Open edge (Oracle finding A): a completion can run while an outer withAnimation is still open, so its writes animate with the outer transaction; SwiftUI runs completions asynchronously.",
+    "Open edge (Oracle finding B): an outer completion can fire early when a segment commit changes no layout.",
+    "Test-comment gap at TransactionBoundaryScopeTests.swift:272 (probes/sr0-s/fresh-runtime/Tests/SwiftRightRuntimeTests/)."]}
 # Blocks 14, 15, 19 (16 October): the N=3 layout-rules regression on stage 3d3c6f5c2 with renderer 0.7 failed them. The CI N=20 confirmation (renderer 0.10,
 # explicit scale 2.5, CI_CASE_RUN below) passes every case of each block, so the status on current code is no longer unknown.
 REVIEWED["swiftui.focus-state"]["caveats"].append("CI N=20 pass on renderer 0.10 (stage 06a3a0a85-5dfe7cc2 for bool-form-v1 and tab-order-v1; c4e83a68a-5dfe7cc2 for programmatic-v1 and shift-tab-v1), replacing the 16 October N=3 regression on renderer 0.7 (stage 3d3c6f5c2).")
@@ -143,6 +154,7 @@ CI_RUNS = {
     "38854967920": {"runDirs": "runs/20261016-051729", "stage": "06a3a0a85-5dfe7cc2", "commit": "06a3a0a85fc737df1ea7e24cc137636e6889bf2d"},
     "38860483220": {"runDirs": "runs/20261016-061908", "stage": "c4e83a68a-5dfe7cc2", "commit": "c4e83a68a06f2672766f3c83426b980d78d4c659"},
     "38872207896": {"runDirs": "runs/20261016-081325", "stage": "f81244b4f-9ce7a09e", "commit": "f81244b4f3b0995188439bd6dae4e15f34a13a04"},
+    "38916701641": {"runDirs": "runs/20261016-143349", "stage": "d9423e953-7ede36bc", "commit": "d9423e953ecae07e250e86fb765a0a252357705a"},
 }
 
 _CI_RUN_1 = [  # 27 cases that pass on the current gate, run 38854967920 (controls-b-v1 is in _CI_RUN_3: it failed its list gate there, H20)
@@ -167,7 +179,11 @@ _CI_RUN_2 = [  # 11 cases, run 38860483220: the 9 cases that hit the capture art
 _CI_RUN_3 = [  # 1 case, run 38872207896 (commit f81244b4f, H20 list gate with the H21 overflow-only gutter): controls-b passes its semantic, list and list-rect gates at N=20
     "blocks-37-38/swiftui.uia-walk/controls-b-v1",
 ]
-CI_CASE_RUN = {**{c: "38854967920" for c in _CI_RUN_1}, **{c: "38860483220" for c in _CI_RUN_2}, **{c: "38872207896" for c in _CI_RUN_3}}
+_CI_RUN_4 = [  # 2 cases, run 38916701641 (commit d9423e953, H25, CI-only topmost placement): block 38 on-hover at N=20; both failed locally on 3d3c6f5c2
+    "blocks-37-38/swiftui.on-hover/adjacent-v1", "blocks-37-38/swiftui.on-hover/rows-v1",
+]
+CI_CASE_RUN = {**{c: "38854967920" for c in _CI_RUN_1}, **{c: "38860483220" for c in _CI_RUN_2}, **{c: "38872207896" for c in _CI_RUN_3},
+               **{c: "38916701641" for c in _CI_RUN_4}}
 CI_CAVEAT = ("CI confirmation (16 October): the CI runners use the Windows WARP adapter at an explicit render scale of 2.5 (H17), not native 240 dpi. "
              "The Dell 240-dpi sandbox stays the reference; the CI and Dell captures were pixel-identical on click-track and labels.")
 PENDING_REVIEW -= set(REVIEWED)

@@ -171,9 +171,17 @@ The grade is the best block's; read that block's caveats in `docs/proven-control
 | `blue` | B | swiftui.observation | 6/6 |
 | `CGImageSourceCreateImageAtIndex` | B | swiftui.image-data | 3/3 |
 | `CGImageSourceCreateWithData` | B | swiftui.image-data | 3/3 |
+| `contains` | B | swiftui.on-hover | 4/4 |
 | `continuation` | B | swiftui.task-asyncstream | 6/6 |
 | `decode` | B | swiftui.image-data | 3/3 |
 | `Divider` | B | swiftui.spacer-divider | 15/15 |
+| `EmptyView` | B | swiftui.compat | 6/6 |
+| `Environment` | B | swiftui.compat | 6/6 |
+| `EnvironmentKey` | B | swiftui.compat | 6/6 |
+| `EnvironmentValues` | B | swiftui.compat | 6/6 |
+| `FactoryStandIn` | B | swiftui.on-hover | 4/4 |
+| `filter` | B | swiftui.on-hover | 4/4 |
+| `first` | B | swiftui.on-hover | 4/4 |
 | `focused` | B | swiftui.focus-state | 4/4 |
 | `FocusState` | B | swiftui.focus-state | 4/4 |
 | `FocusState.Binding` | B | swiftui.focus-state | 4/4 |
@@ -182,15 +190,20 @@ The grade is the best block's; read that block's caveats in `docs/proven-control
 | `gray` | B | swiftui.observation | 6/6 |
 | `green` | B | swiftui.observation | 6/6 |
 | `Hashable` | B | swiftui.focus-state | 4/4 |
+| `hasSuffix` | B | swiftui.on-hover | 4/4 |
 | `id` | B | swiftui.text-views | 8/8 |
 | `ImageDecoder` | B | swiftui.image-data | 3/3 |
 | `init` | B | swiftui.text-views | 8/8 |
+| `last` | B | swiftui.on-hover | 4/4 |
 | `layoutPriority` | B | swiftui.layout-priority | 6/6 |
 | `listRowBackground` | B | swiftui.list-row-style | 8/8 |
 | `listRowSeparator` | B | swiftui.list-row-style | 8/8 |
 | `makeStream` | B | swiftui.task-asyncstream | 6/6 |
 | `modifier` | B | swiftui.text-views | 8/8 |
 | `Observation.Observable` | B | swiftui.observation | 6/6 |
+| `onChange` | B | swiftui.compat | 6/6 |
+| `onHover` | B | swiftui.on-hover | 4/4 |
+| `onTapGesture` | B | swiftui.on-hover | 4/4 |
 | `opacity` | B | swiftui.opacity-transition | 7/7 |
 | `orange` | B | swiftui.observation | 6/6 |
 | `purple` | B | swiftui.observation | 6/6 |
@@ -203,6 +216,7 @@ The grade is the best block's; read that block's caveats in `docs/proven-control
 | `task` | B | swiftui.task-asyncstream | 6/6 |
 | `textCase` | B | swiftui.font-custom | 6/6 |
 | `textFieldStyle` | B | swiftui.focus-state | 4/4 |
+| `timeIntervalSince` | B | swiftui.compat | 6/6 |
 | `toggle` | B | swiftui.observation | 6/6 |
 | `transition` | B | swiftui.opacity-transition | 7/7 |
 | `View.focused` | B | swiftui.focus-state | 4/4 |
@@ -214,12 +228,7 @@ The grade is the best block's; read that block's caveats in `docs/proven-control
 | `antialiased` | C | foundations.image-layout | 10/10 at N=20 (200 pairs); negative controls: 3 of 4 fail on both cases, straight-alpha fails on the alpha case |
 | `aspectRatio` | C | foundations.image-layout | 10/10 at N=20 (200 pairs); negative controls: 3 of 4 fail on both cases, straight-alpha fails on the alpha case |
 | `clipped` | C | foundations.image-layout | 10/10 at N=20 (200 pairs); negative controls: 3 of 4 fail on both cases, straight-alpha fails on the alpha case |
-| `EmptyView` | C | swiftui.compat | 5/5 |
-| `Environment` | C | swiftui.compat | 5/5 |
-| `EnvironmentKey` | C | swiftui.compat | 5/5 |
-| `EnvironmentValues` | C | swiftui.compat | 5/5 |
 | `interpolation` | C | foundations.image-layout | 10/10 at N=20 (200 pairs); negative controls: 3 of 4 fail on both cases, straight-alpha fails on the alpha case |
-| `onChange` | C | swiftui.compat | 5/5 |
 | `scaledToFill` | C | foundations.image-layout | 10/10 at N=20 (200 pairs); negative controls: 3 of 4 fail on both cases, straight-alpha fails on the alpha case |
 | `BackgroundStyle` | E | swiftui.color-scheme | 12/12 |
 | `Color.accent` | E | swiftui.color-scheme | 12/12 |
@@ -228,16 +237,8 @@ The grade is the best block's; read that block's caveats in `docs/proven-control
 | `ColorScheme` | E | swiftui.color-scheme | 12/12 |
 | `ColorScheme.dark` | E | swiftui.color-scheme | 12/12 |
 | `ColorScheme.light` | E | swiftui.color-scheme | 12/12 |
-| `contains` | E | swiftui.on-hover | 2/4 |
 | `EnvironmentValues.colorScheme` | E | swiftui.color-scheme | 12/12 |
-| `FactoryStandIn` | E | swiftui.on-hover | 2/4 |
-| `filter` | E | swiftui.on-hover | 2/4 |
-| `first` | E | swiftui.on-hover | 2/4 |
-| `hasSuffix` | E | swiftui.on-hover | 2/4 |
-| `last` | E | swiftui.on-hover | 2/4 |
-| `onHover` | E | swiftui.on-hover | 2/4 |
 | `onSubmit` | E | swiftui.textfield | 7/7 |
-| `onTapGesture` | E | swiftui.on-hover | 2/4 |
 | `preferredColorScheme` | E | swiftui.color-scheme | 12/12 |
 | `ShapeStyle.A0` | E | swiftui.color-scheme | 12/12 |
 | `SubmitTriggers` | E | swiftui.textfield | 7/7 |
@@ -251,4 +252,4 @@ The grade is the best block's; read that block's caveats in `docs/proven-control
 | `View.textFieldStyle` | E | swiftui.textfield | 7/7 |
 | `weight` | E | swiftui.system-font | 9/9 |
 
-Totals: A: 145, B: 59, C: 10, E: 29 (243 APIs).
+Totals: A: 145, B: 73, C: 5, E: 21 (244 APIs).

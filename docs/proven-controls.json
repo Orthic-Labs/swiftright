@@ -785,6 +785,7 @@
         "58df259c5-4c63f440",
         "645396d04-5dfe7cc2",
         "6459bb8cd-d243b1c9",
+        "7796b0b81-3f77e0df",
         "c4e83a68a-5dfe7cc2",
         "d07df2581-cc18ed0f"
       ],
@@ -857,6 +858,7 @@
         "58df259c5-4c63f440",
         "645396d04-5dfe7cc2",
         "6459bb8cd-d243b1c9",
+        "7796b0b81-3f77e0df",
         "c4e83a68a-5dfe7cc2",
         "d07df2581-cc18ed0f"
       ],
@@ -1143,6 +1145,7 @@
         "5713ea1fe-94ff8023",
         "58df259c5-4c63f440",
         "6459bb8cd-d243b1c9",
+        "7796b0b81-3f77e0df",
         "94ca256e1-5dfe7cc2",
         "d07df2581-cc18ed0f"
       ],
@@ -2141,6 +2144,7 @@
         "5713ea1fe-94ff8023",
         "5e9c80ca2-9a0d7a03",
         "645396d04-5dfe7cc2",
+        "7796b0b81-3f77e0df",
         "c4e83a68a-5dfe7cc2",
         "ee84dc923-ae27d688"
       ],
@@ -2197,14 +2201,39 @@
         "blocks-37-38/swiftui.on-hover/rows-v1",
         "blocks-37-38/swiftui.on-hover/tap-container-v1"
       ],
-      "casesPassingDecidingGate": "2/4",
-      "caveats": [],
+      "casesPassingDecidingGate": "4/4",
+      "caveats": [
+        "CI confirmation (16 October): the CI runners use the Windows WARP adapter at an explicit render scale of 2.5 (H17), not native 240 dpi. The Dell 240-dpi sandbox stays the reference; the CI and Dell captures were pixel-identical on click-track and labels.",
+        "Hover and tap are specified (H6), and the Mac side is a witness stand-in (H5): the offscreen Mac window never receives pointer events, so the Mac counts come from the witness.",
+        "A view with a tap gesture publishes one pressable node named by its text (H7); the Mac tree shows its Text as static text, so the trees are not compared for these cases.",
+        "Topmost placement (HWND_TOPMOST with NOACTIVATE) is CI-only (`GITHUB_ACTIONS`), so the host's placement differs between CI and the Dell (H25).",
+        "The HWND_BOTTOM cause of the failed runs is inferred: the z order was not logged before the topmost placement, so no covering window is named (H25).",
+        "The N=20 pass (run 38916701641) ran on d9423e953, before 7796b0b81. Hover does not touch transactions, so the pass is not re-run on 7796b0b81.",
+        "Leave is a genuine WM_MOUSELEAVE from TrackMouseEvent (view.rs:1308)."
+      ],
+      "ciN20": {
+        "casesPassing": "2/4",
+        "renderScale": 2.5,
+        "renderer": "renderer-0.10-a15ebc5d",
+        "runDirs": {
+          "38916701641": "runs/20261016-143349"
+        },
+        "runs": [
+          "38916701641"
+        ],
+        "stages": [
+          "d9423e953-7ede36bc"
+        ],
+        "windowsAdapter": "WARP (CI runner)"
+      },
+      "review": "oracle 2026-10-16 (block 38: PASS, delivered-with-caveats)",
       "stage": [
         "2eca0dce1-75c5d11e",
         "3d3c6f5c2-0a0d1f39",
-        "645396d04-5dfe7cc2"
+        "645396d04-5dfe7cc2",
+        "d9423e953-7ede36bc"
       ],
-      "status": "not-delivered",
+      "status": "delivered-with-caveats",
       "statusDocBlock": 38,
       "verdict": {
         "date": "2026-10-15",
@@ -2212,7 +2241,7 @@
           "2026-10-16"
         ],
         "source": "docs/sr1-status.md table + factory/pipeline/closure/closure-table.json (blocks 1-20) / consolidation-table.json (blocks 21+)",
-        "text": "**2/4** on `3d3c6f5c2-0a0d1f39`: `body-ends-in-modifier-v1` (the #789 family) and `tap-container-v1` pass 20/20; **`adjacent-v1` fails** (19 of 200 pairs differ, bbox (100, 50, 350, 165)) and **`rows-v1` fails** (210 of 220 pairs differ, bbox (100, 50, 600, 465), cause not yet diagnosed). **not-delivered**: block 38 is not proven"
+        "text": "**4/4** at N=20: `body-ends-in-modifier-v1` and `tap-container-v1` pass 20/20 on `3d3c6f5c2-0a0d1f39`; `adjacent-v1` passes 200/200 pairs exact and `rows-v1` 220/220 pairs within the edge-antialias band (edge-aa<=32, maxdiff 3), both in CI run 38916701641 (N=20, stage `d9423e953-7ede36bc`, commit `d9423e953`, real SendInput moves with CI-only HWND_TOPMOST placement, H25). Local `3d3c6f5c2-0a0d1f39` was 2/4 (`adjacent-v1` 19 of 200 pairs differ; `rows-v1` 210 of 220 differ, cause then undiagnosed). **delivered-with-caveats** (independently reviewed 16 October, Oracle PASS, H26). Caveats: topmost placement is CI-only, so placement differs between CI and the Dell; the HWND_BOTTOM cause is inferred, because z order was not logged beforehand; the N=20 run was on `d9423e953`, before `7796b0b81` (hover does not touch transactions); leave is a genuine WM_MOUSELEAVE from TrackMouseEvent (view.rs:1308)"
       },
       "windowsDifferences": []
     },
@@ -2347,6 +2376,7 @@
         "3d3c6f5c2-0a0d1f39",
         "5713ea1fe-94ff8023",
         "645396d04-5dfe7cc2",
+        "7796b0b81-3f77e0df",
         "c4e83a68a-5dfe7cc2"
       ],
       "status": "delivered-pending-review",
@@ -2370,9 +2400,11 @@
             "fill",
             "frame",
             "id",
+            "linear",
             "onAppear",
             "onChange",
             "task",
+            "timeIntervalSince",
             "toggle"
           ],
           "types": [
@@ -2396,18 +2428,22 @@
         "blocks-37-38/swiftui.compat/any-view-v1",
         "blocks-37-38/swiftui.compat/environment-key-v1",
         "blocks-37-38/swiftui.compat/id-modifier-order-v1",
+        "blocks-37-38/swiftui.compat/onchange-animation-v1",
         "blocks-37-38/swiftui.compat/state-nested-update-v1",
         "blocks-37-38/swiftui.compat/task-id-v1"
       ],
-      "casesPassingDecidingGate": "5/5",
+      "casesPassingDecidingGate": "6/6",
       "caveats": [
         "CI confirmation (16 October): the CI runners use the Windows WARP adapter at an explicit render scale of 2.5 (H17), not native 240 dpi. The Dell 240-dpi sandbox stays the reference; the CI and Dell captures were pixel-identical on click-track and labels.",
         "Ported from OpenSwiftUI's MIT tests as view bodies and expectations only (H9a); EquatableView and animation completion are not ported and not delivered.",
-        "Runtime change (commit ce47755c3): `withAnimation` and `withTransaction` settle pending changes before their body (state-nested-update is the case that measured it). The `onChange` transaction handling from that commit is being revised after an Oracle BLOCK on 5713ea1fe; block 41 stays delivered-pending-review only for its 5 measured cases.",
-        "Runtime transaction fixes (commit 5713ea1fe, H23; under revision after the Oracle BLOCK): the transaction boundary is per graph (a weak graph registry, not the last-flushed graph); `onChange` writes inherit the triggering transaction with no mid-flush commit; a boundary settle outside a flush schedules a flush; `isErasedEmpty` stays single-modifier and is documented. Unit tests 434/434 at that commit. CI run 38865487951 (N=3): 38 of 39 cases pass; `ime-composing-v1` was lost to the fixed 10 s host lease, not to the change (it passes N=20 in run 38870003524 after H22)."
+        "Runtime change (commit ce47755c3): `withAnimation` and `withTransaction` settle pending changes before their body (state-nested-update is the case that measured it). The onChange transaction handling was revised in 7796b0b81: each write commits under the innermost open transaction (inner wins; measured on the Mac in run 38913665384). Independently reviewed 16 October (PASS); block 41 has six measured cases (onchange-animation-v1 added).",
+        "Runtime transaction fixes (commit 5713ea1fe, H23; the onChange part was revised in 7796b0b81, see above): the transaction boundary is per graph (a weak graph registry, not the last-flushed graph); `onChange` writes inherit the triggering transaction with no mid-flush commit; a boundary settle outside a flush schedules a flush; `isErasedEmpty` stays single-modifier and is documented. Unit tests 434/434 at that commit. CI run 38865487951 (N=3): 38 of 39 cases pass; `ime-composing-v1` was lost to the fixed 10 s host lease, not to the change (it passes N=20 in run 38870003524 after H22).",
+        "Open edge (Oracle finding A): a completion can run while an outer withAnimation is still open, so its writes animate with the outer transaction; SwiftUI runs completions asynchronously.",
+        "Open edge (Oracle finding B): an outer completion can fire early when a segment commit changes no layout.",
+        "Test-comment gap at TransactionBoundaryScopeTests.swift:272 (probes/sr0-s/fresh-runtime/Tests/SwiftRightRuntimeTests/)."
       ],
       "ciN20": {
-        "casesPassing": "5/5",
+        "casesPassing": "5/6",
         "renderScale": 2.5,
         "renderer": "renderer-0.10-a15ebc5d",
         "runDirs": {
@@ -2424,15 +2460,17 @@
         ],
         "windowsAdapter": "WARP (CI runner)"
       },
+      "review": "oracle 2026-10-16 (block 41, transaction rework 7796b0b81: PASS)",
       "stage": [
         "06a3a0a85-5dfe7cc2",
         "2eca0dce1-75c5d11e",
         "3d3c6f5c2-0a0d1f39",
         "5713ea1fe-94ff8023",
         "645396d04-5dfe7cc2",
+        "7796b0b81-3f77e0df",
         "c4e83a68a-5dfe7cc2"
       ],
-      "status": "delivered-pending-review",
+      "status": "delivered-with-caveats",
       "statusDocBlock": 41,
       "verdict": {
         "date": "2026-10-15",
@@ -2440,7 +2478,7 @@
           "2026-10-16"
         ],
         "source": "docs/sr1-status.md table + factory/pipeline/closure/closure-table.json (blocks 1-20) / consolidation-table.json (blocks 21+)",
-        "text": "**5/5** CI N=20 on renderer 0.10 at scale 2.5 (H17): `environment-key-v1`, `id-modifier-order-v1`, `state-nested-update-v1`, `task-id-v1` in run 38854967920 (stage 06a3a0a85-5dfe7cc2), `any-view-v1` in run 38860483220 (stage c4e83a68a-5dfe7cc2); pixel gate 0 fail on every case (the button glyph region is excluded, decision 2/11). Runtime change in ce47755c3: transaction boundary and onChange timing. Runtime transaction fixes in 5713ea1fe (H23): per-graph boundary, onChange writes inherit the triggering transaction, settle schedules a flush; CI run 38865487951 (N=3): 38 of 39 cases pass, `ime-composing-v1` lost to the 10 s host lease (H22). Local `3d3c6f5c2-0a0d1f39` was 3/5. **delivered-pending-review**"
+        "text": "**6/6** CI N=20 on renderer 0.10 at scale 2.5 (H17): `environment-key-v1`, `id-modifier-order-v1`, `state-nested-update-v1`, `task-id-v1` in run 38854967920 (stage 06a3a0a85-5dfe7cc2), `any-view-v1` in run 38860483220 (stage c4e83a68a-5dfe7cc2); `onchange-animation-v1` and `state-nested-update-v1` in run 38916914529 (stage 7796b0b81-3f77e0df); pixel gate 0 fail on every case (the button glyph region is excluded, decision 2/11). Transaction rework 7796b0b81: each write commits under the innermost open transaction (inner wins, measured on the Mac in run 38913665384); 39-case N=3 regression passes in run 38916920414 (06ccd699f). Earlier runtime changes: ce47755c3 (transaction boundary and onChange timing); 5713ea1fe (H23: per-graph boundary, onChange writes inherit the triggering transaction, settle schedules a flush); CI run 38865487951 (N=3): 38 of 39 cases pass, `ime-composing-v1` lost to the 10 s host lease (H22). **delivered-with-caveats** (independently reviewed 16 October, Oracle PASS, H27). Open edges: a completion can run while an outer withAnimation is still open, so its writes animate with the outer transaction (SwiftUI runs completions asynchronously); an outer completion can fire early when a segment commit changes no layout; a test-comment gap at TransactionBoundaryScopeTests.swift:272"
       },
       "windowsDifferences": []
     },
