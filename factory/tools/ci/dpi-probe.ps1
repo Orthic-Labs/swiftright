@@ -35,6 +35,7 @@ public static class DpiNative {
     [DllImport("user32.dll", EntryPoint = "CreateWindowExW", CharSet = CharSet.Unicode)] public static extern IntPtr CreateWindowEx(uint ex, string cls, string name, uint style, int x, int y, int w, int h, IntPtr parent, IntPtr menu, IntPtr inst, IntPtr param);
     [DllImport("user32.dll")] public static extern bool DestroyWindow(IntPtr hwnd);
     [DllImport("user32.dll")] public static extern int GetSystemMetrics(int index);
+    [DllImport("user32.dll", EntryPoint = "EnumDisplaySettingsW", CharSet = CharSet.Unicode)] public static extern bool EnumDisplaySettings(string device, int mode, byte[] devmode);
 }
 '@
 
@@ -89,20 +90,33 @@ try {
     if ($ti -lt 0) { throw "target $Target% is not in the scale table" }
     if ($r0.recommendedIndex + $r0.maxRel -lt $ti) {
         # step 2: the maximum allowed scale is below the target: raise the resolution, then re-read
-        $dm = New-Object byte[] 220                                              # DEVMODEW, Unicode
-        [BitConverter]::GetBytes([uint16]220).CopyTo($dm, 68)                    # dmSize
-        [BitConverter]::GetBytes([uint32](0x80000 -bor 0x100000)).CopyTo($dm, 72) # dmFields = DM_PELSWIDTH | DM_PELSHEIGHT
-        [BitConverter]::GetBytes([uint32]32).CopyTo($dm, 168)                    # dmBitsPerPel
-        [BitConverter]::GetBytes([uint32]2560).CopyTo($dm, 172)                  # dmPelsWidth
-        [BitConverter]::GetBytes([uint32]1600).CopyTo($dm, 176)                  # dmPelsHeight
-        $c = [DpiNative]::ChangeDisplaySettingsEx($null, $dm, [IntPtr]::Zero, 0, [IntPtr]::Zero)
-        Log "ChangeDisplaySettingsEx 2560x1600 returned $c (0 = DISP_CHANGE_SUCCESSFUL)"
-        $report.resolutionChange = $c
-        Start-Sleep -Seconds 3
-        $report.resolutionAfter = "$([DpiNative]::GetSystemMetrics(0))x$([DpiNative]::GetSystemMetrics(1))"
-        $r0 = Get-Range $src
-        $report.rangeAfterResolution = $r0
-        Log ("resolution {0}; scale range after resolution: min {1}% cur {2}% max {3}%" -f $report.resolutionAfter, $r0.minPct, $r0.curPct, $r0.maxPct)
+        # enumerate supported modes (2560x1600 is not offered on this display); try the largest distinct sizes until the maximum reaches the target
+        $modes = @{}
+        for ($m = 0; ; $m++) {
+            $em = New-Object byte[] 220; [BitConverter]::GetBytes([uint16]220).CopyTo($em, 68)
+            if (-not [DpiNative]::EnumDisplaySettings($null, $m, $em)) { break }
+            $w = [BitConverter]::ToUInt32($em, 172); $h = [BitConverter]::ToUInt32($em, 176); $bpp = [BitConverter]::ToUInt32($em, 168)
+            if ($bpp -eq 32) { $modes["${w}x${h}"] = [pscustomobject]@{ w = $w; h = $h } }
+        }
+        $cands = @($modes.Values | Sort-Object { $_.w * $_.h } -Descending | Select-Object -First 6)
+        $report.supportedModes = @($modes.Keys)
+        Log ("32-bit modes offered: {0}" -f ($modes.Keys -join ' '))
+        foreach ($cand in $cands) {
+            $dm = New-Object byte[] 220                                              # DEVMODEW, Unicode
+            [BitConverter]::GetBytes([uint16]220).CopyTo($dm, 68)                    # dmSize
+            [BitConverter]::GetBytes([uint32](0x80000 -bor 0x100000)).CopyTo($dm, 72) # dmFields = DM_PELSWIDTH | DM_PELSHEIGHT
+            [BitConverter]::GetBytes([uint32]32).CopyTo($dm, 168)                    # dmBitsPerPel
+            [BitConverter]::GetBytes([uint32]$cand.w).CopyTo($dm, 172)               # dmPelsWidth
+            [BitConverter]::GetBytes([uint32]$cand.h).CopyTo($dm, 176)               # dmPelsHeight
+            $c = [DpiNative]::ChangeDisplaySettingsEx($null, $dm, [IntPtr]::Zero, 0, [IntPtr]::Zero)
+            Start-Sleep -Seconds 3
+            $report.resolutionAfter = "$([DpiNative]::GetSystemMetrics(0))x$([DpiNative]::GetSystemMetrics(1))"
+            $r0 = Get-Range $src
+            Log ("ChangeDisplaySettingsEx {0}x{1} returned {2}; resolution now {3}; scale max {4}%" -f $cand.w, $cand.h, $c, $report.resolutionAfter, $r0.maxPct)
+            $report.resolutionChange = $c
+            $report.rangeAfterResolution = $r0
+            if ($c -eq 0 -and $r0.recommendedIndex + $r0.maxRel -ge $ti) { break }
+        }
         if ($r0.recommendedIndex + $r0.maxRel -lt $ti) { throw "maximum scale $($r0.maxPct)% is still below $Target% after the resolution change" }
     }
 
