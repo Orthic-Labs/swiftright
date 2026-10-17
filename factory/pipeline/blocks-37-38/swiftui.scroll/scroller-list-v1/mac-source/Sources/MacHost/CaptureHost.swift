@@ -300,6 +300,11 @@ final class Driver {
     //   to        at: "begin" | "mid" | "end" | points from the top: NSClipView.scroll(to:) + reflectScrolledClipView (what the scroller's action does)
     //   wheel     delta (default -1, negative = down), times (default 1): CGEvent(scrollWheelEvent2Source:units: .line, wheelCount 1, wheel1: delta) -> NSEvent -> NSScrollView.scrollWheel(with:)
     //   action    selector (e.g. "scrollPageDown:"), target "scrollview" (default) | "documentview" | "outline": sent with perform(_:); FAILS when the target does not respond
+    //   key       key (PageDown | PageUp | End | Home | Down | Up), target "auto" (default: the outline for a List, else the document view): a real key-down NSEvent (function key,
+    //             keyCode 121/116/119/115/125/126) tried in order until the offset moves, the winning route printed as path=: keyDown (window.makeFirstResponder + responder.keyDown(with:)),
+    //             interpretKeyEvents, windowSendEvent (window.sendEvent), tryToPerform (the paging selectors up the responder chain from the target, the clip view and the scroll view),
+    //             and only as the LAST resort derived: clip scroll(to:) by the amount AppKit would use (viewport less verticalPageScroll; the range end / start for End / Home), printed
+    //             status=DERIVED derived=true. A DERIVED line is a recorded value, never evidence that the key was delivered. FAIL when nothing moved.
     //   select    row: selects an outline row and gives the outline the keyboard (does not move)
     //   moveDown  times: NSTableView.moveDown(_:) on the outline (the arrow key's action)
     //   axvalue   value (default 0.5): the vertical NSScroller's accessibility value set in process (accessibilitySetValue:forAttribute: AXValue, then setAccessibilityValue:)
@@ -308,7 +313,7 @@ final class Driver {
     var scrollFailures: [String] = []
 
     struct ScrollReading {
-        var y = 0.0, top = 0.0, doc = 0.0, view = 0.0, scroller = -1.0, axValue = -1.0, knob = -1.0
+        var y = 0.0, top = 0.0, doc = 0.0, view = 0.0, scroller = -1.0, axValue = -1.0, knob = -1.0, pageScroll = 0.0, lineScroll = 0.0
         var flipped = true, hasScroller = false
         var insets = NSEdgeInsets()
     }
@@ -331,6 +336,7 @@ final class Driver {
         r.y = Double(vis.origin.y)
         r.top = r.flipped ? r.y : r.doc - r.y - r.view
         r.insets = sv.contentInsets
+        r.pageScroll = Double(sv.verticalPageScroll); r.lineScroll = Double(sv.verticalLineScroll)
         if let sc = sv.verticalScroller {
             r.hasScroller = true
             r.scroller = sc.doubleValue
@@ -347,12 +353,34 @@ final class Driver {
         return (lo, max(lo, r.doc - Double(sv.contentView.bounds.height) + Double(sv.contentInsets.bottom)))
     }
 
-    func scrollReport(_ label: String, _ how: String, before: ScrollReading, after a: ScrollReading, expectMove: Bool, note: String) {
+    func scrollReport(_ label: String, _ how: String, before: ScrollReading, after a: ScrollReading, expectMove: Bool, note: String, derived: Bool = false) {
         let moved = abs(a.y - before.y) > 0.01
         let ok = !expectMove || moved
         func f(_ v: Double) -> String { String(format: "%.3f", v) }
-        print("MAC_SCROLL label=\(label) how=\(how) status=\(ok ? "OK" : "FAIL") moved=\(moved) before=\(f(before.y)) offset=\(f(a.y)) top=\(f(a.top)) contentHeight=\(f(a.doc)) viewportHeight=\(f(a.view)) scrollerValue=\(f(a.scroller)) axValue=\(f(a.axValue)) knobProportion=\(f(a.knob)) hasScroller=\(a.hasScroller) flipped=\(a.flipped) insets=\(a.insets.top),\(a.insets.bottom) selected=\(table()?.selectedRow ?? -1) \(note)")
+        let status = !ok ? "FAIL" : (derived && moved ? "DERIVED" : "OK")
+        // pageAmount: the documentVisibleRect delta from the top (positive = scrolled down) of this step; verticalPageScroll / verticalLineScroll: the scroll view's own values
+        print("MAC_SCROLL label=\(label) how=\(how) status=\(status) moved=\(moved) before=\(f(before.y)) offset=\(f(a.y)) pageAmount=\(f(a.top - before.top)) verticalPageScroll=\(f(a.pageScroll)) verticalLineScroll=\(f(a.lineScroll)) top=\(f(a.top)) contentHeight=\(f(a.doc)) viewportHeight=\(f(a.view)) scrollerValue=\(f(a.scroller)) axValue=\(f(a.axValue)) knobProportion=\(f(a.knob)) hasScroller=\(a.hasScroller) flipped=\(a.flipped) insets=\(a.insets.top),\(a.insets.bottom) selected=\(table()?.selectedRow ?? -1) \(note)")
         if !ok { scrollFailures.append("\(label) (\(how)): documentVisibleRect.origin.y stayed \(f(before.y)) \(note)") }
+    }
+
+    /// M5: renders the vertical NSScroller view itself (the whole-window capture draws none) at the capture scale into scroller-NN-<label>.png beside the run png, and prints MAC_SCROLLER.
+    func scrollerPNG(_ label: String, png: String) throws {
+        guard let sv = scrollViewFound(), let sc = sv.verticalScroller else {
+            print("MAC_SCROLLER label=\(label) status=FAIL no vertical scroller"); scrollFailures.append("\(label) (scrollerpng): no vertical scroller"); return
+        }
+        pump(0.2); host.layoutSubtreeIfNeeded(); sc.needsDisplay = true; sc.displayIfNeeded()
+        let w = Int((sc.bounds.width * captureScale).rounded()), h = Int((sc.bounds.height * captureScale).rounded())
+        guard w > 0, h > 0, let rep = NSBitmapImageRep(bitmapDataPlanes: nil, pixelsWide: w, pixelsHigh: h, bitsPerSample: 8, samplesPerPixel: 4,
+                                                       hasAlpha: true, isPlanar: false, colorSpaceName: .deviceRGB, bytesPerRow: 0, bitsPerPixel: 0) else {
+            print("MAC_SCROLLER label=\(label) status=FAIL empty scroller bounds \(sc.bounds)"); scrollFailures.append("\(label) (scrollerpng): empty scroller bounds"); return
+        }
+        rep.size = sc.bounds.size   // points, so the drawing is scaled to the capture scale
+        sc.cacheDisplay(in: sc.bounds, to: rep)
+        let path = png.replacingOccurrences(of: "/run-", with: "/scroller-").replacingOccurrences(of: ".png", with: "-\(label).png")
+        guard let data = rep.representation(using: .png, properties: [:]) else { throw NSError(domain: "MacHost", code: 36) }
+        try data.write(to: URL(fileURLWithPath: path))
+        func r(_ x: NSRect) -> String { String(format: "%.3f,%.3f,%.3f,%.3f", x.origin.x, x.origin.y, x.width, x.height) }
+        print("MAC_SCROLLER label=\(label) status=OK scale=\(captureScale) png=\(path) pixels=\(w)x\(h) frame=\(r(sc.frame)) bounds=\(r(sc.bounds)) knobRect=\(r(sc.rect(for: .knob))) knobSlotRect=\(r(sc.rect(for: .knobSlot))) doubleValue=\(String(format: "%.4f", sc.doubleValue)) knobProportion=\(String(format: "%.4f", Double(sc.knobProportion))) style=\(sc.scrollerStyle.rawValue) controlSize=\(sc.controlSize.rawValue) isHidden=\(sc.isHidden) alpha=\(sc.alphaValue) isFlipped=\(sc.isFlipped) offset=\(String(format: "%.3f", Double(sv.documentVisibleRect.origin.y)))")
     }
 
     func scrollStep(_ s: [String: Any]) throws {
@@ -362,6 +390,7 @@ final class Driver {
         let anyMove = (s["expect"] as? String) == "any"
         var expectMove = !anyMove
         var note = ""
+        var derived = false
         func num(_ k: String, _ d: Double) -> Double { (s[k] as? NSNumber)?.doubleValue ?? d }
         switch how {
         case "to":
@@ -398,6 +427,58 @@ final class Driver {
             if responds { _ = obj.perform(sel, with: nil) }
             note = "selector=\(name) target=\(target) responds=\(responds)"
             if !responds { scrollFailures.append("\(label) (action): \(target) does not respond to \(name)") }
+        case "key":
+            let name = s["key"] as? String ?? "PageDown"
+            let keyTable: [String: (UInt16, Int, [String])] = [
+                "PageDown": (121, NSPageDownFunctionKey, ["pageDown:", "scrollPageDown:"]), "PageUp": (116, NSPageUpFunctionKey, ["pageUp:", "scrollPageUp:"]),
+                "End": (119, NSEndFunctionKey, ["scrollToEndOfDocument:", "moveToEndOfDocument:"]), "Home": (115, NSHomeFunctionKey, ["scrollToBeginningOfDocument:", "moveToBeginningOfDocument:"]),
+                "Down": (125, NSDownArrowFunctionKey, ["moveDown:"]), "Up": (126, NSUpArrowFunctionKey, ["moveUp:"]),
+            ]
+            guard let (code, fkey, sels) = keyTable[name] else { throw NSError(domain: "MacHost", code: 37, userInfo: [NSLocalizedDescriptionKey: "unknown key '\(name)'"]) }
+            let chars = String(UnicodeScalar(fkey)!)
+            guard let ev = NSEvent.keyEvent(with: .keyDown, location: .zero, modifierFlags: [.function], timestamp: ProcessInfo.processInfo.systemUptime, windowNumber: window.windowNumber,
+                                            context: nil, characters: chars, charactersIgnoringModifiers: chars, isARepeat: false, keyCode: code) else {
+                throw NSError(domain: "MacHost", code: 38, userInfo: [NSLocalizedDescriptionKey: "cannot build the key event"])
+            }
+            let target = s["target"] as? String ?? "auto"
+            let primary: NSResponder = target == "scrollview" ? sv : target == "clipview" ? sv.contentView : (table() ?? sv.documentView ?? sv)
+            let moved = { abs(Double(sv.documentVisibleRect.origin.y) - before.y) > 0.01 }
+            func settleKey() { pump(0.45); sv.layoutSubtreeIfNeeded() }
+            var path = "none", tried: [String] = []
+            func attempt(_ p: String, _ body: () -> Void) {
+                if path != "none" { return }
+                tried.append(p); body(); settleKey()
+                if moved() { path = p }
+            }
+            let firstOK = window.makeFirstResponder(primary)
+            attempt("keyDown") { primary.keyDown(with: ev) }
+            attempt("interpretKeyEvents") { primary.interpretKeyEvents([ev]) }
+            attempt("windowSendEvent") { window.sendEvent(ev) }
+            for sel in sels {
+                let chain: [(String, NSResponder)] = [("target", primary), ("clipview", sv.contentView), ("scrollview", sv)]
+                for (rn, r) in chain {
+                    attempt("tryToPerform:\(sel):\(rn)") { _ = r.tryToPerform(NSSelectorFromString(sel), with: nil) }
+                }
+            }
+            if path == "none" {
+                // LAST RESORT, a derived value (NOT a delivered key): scroll the clip view by the amount AppKit pages with (viewport less verticalPageScroll), or to the range end / start
+                let rd = scrollReading(sv), range = scrollRange(sv)
+                var top = rd.top
+                switch name {
+                case "PageDown": top += Swift.max(rd.view - rd.pageScroll, rd.view / 2)
+                case "PageUp": top -= Swift.max(rd.view - rd.pageScroll, rd.view / 2)
+                case "End": top = range.max
+                case "Home": top = range.min
+                case "Down": top += rd.lineScroll
+                default: top -= rd.lineScroll
+                }
+                top = Swift.min(Swift.max(top, range.min), range.max)
+                let y = rd.flipped ? top : rd.doc - top - Double(sv.contentView.bounds.height)
+                sv.contentView.scroll(to: NSPoint(x: sv.contentView.bounds.origin.x, y: CGFloat(y)))
+                sv.reflectScrolledClipView(sv.contentView)
+                path = "derived"; derived = true
+            }
+            note = "key=\(name) keyCode=\(code) target=\(target) firstResponder=\(type(of: window.firstResponder as Any)) madeFirstResponder=\(firstOK) path=\(path) derived=\(derived) tried=\(tried.joined(separator: ">"))"
         case "select":
             guard let tv = table() else { throw NSError(domain: "MacHost", code: 32, userInfo: [NSLocalizedDescriptionKey: "no outline to select in"]) }
             let row = Int(num("row", 0))
@@ -440,7 +521,7 @@ final class Driver {
         }
         pump(0.35)
         host.layoutSubtreeIfNeeded(); host.displayIfNeeded()
-        scrollReport(label, how, before: before, after: scrollReading(sv), expectMove: expectMove, note: note)
+        scrollReport(label, how, before: before, after: scrollReading(sv), expectMove: expectMove, note: note, derived: derived)
     }
 }
 
@@ -467,6 +548,7 @@ func runSteps(_ steps: [[String: Any]], driver: Driver, png: String, ax: String?
                 try driver.pressButton(where: { driver.label($0) == name })
             case "wait": pump(((s["ms"] as? NSNumber)?.doubleValue ?? 0) / 1000)
             case "scroll": try driver.scrollStep(s)
+            case "scrollerpng": try driver.scrollerPNG(s["label"] as? String ?? "step", png: png)
             case "listdump":
                 // the outline's row frames after this step: list-NN-<label>.json beside the ax dumps (issue #31); a witness without an outline writes nothing
                 if let ax, let dump = driver.listDump() {

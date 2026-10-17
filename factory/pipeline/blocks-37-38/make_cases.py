@@ -885,14 +885,14 @@ def sc_op(how, label, **kw):
     return dict({"op": "scroll", "how": how, "label": label}, **kw)
 
 
-def sc_case(name, typename, body, plan):
+def sc_case(name, typename, body, plan, scroller_png=False):
     """plan = [(label, [mac-only scroll ops]) or (label, [mac-only ops], [windows ops]), ...]. Mac steps: the ops, then dump + listdump + shot per label. Windows steps
     (pair.json "steps"): the windows ops (wheel / drag; none for the keys cases), then dump + shot, so both sides write the same labels."""
     mac, win, labels = [{"op": "wait", "ms": 700}], [{"op": "wait", "ms": 700}], []
     for entry in plan:
         label, ops = entry[0], entry[1]
         wops = entry[2] if len(entry) > 2 else []
-        mac += ops + [{"op": "wait", "ms": 300}, {"op": "dump", "label": label}, {"op": "listdump", "label": label}, {"op": "wait", "ms": 250}, {"op": "shot", "label": label}]
+        mac += ops + ([{"op": "wait", "ms": 300}, {"op": "scrollerpng", "label": label}] if scroller_png else []) + [{"op": "wait", "ms": 300}, {"op": "dump", "label": label}, {"op": "listdump", "label": label}, {"op": "wait", "ms": 250}, {"op": "shot", "label": label}]
         win += wops + [{"op": "wait", "ms": 300}, {"op": "dump", "label": label}, {"op": "wait", "ms": 250}, {"op": "shot", "label": label}]
         labels.append(label)
     mac.append({"op": "wait", "ms": 200}); win.append({"op": "wait", "ms": 200})
@@ -905,7 +905,7 @@ for _rows, _doc in SCR_DOCS:
     sc_case(f"swiftui.scroll/thumb-d{_doc}-v1", f"{SCR}thumb_d{_doc}", sc_list(f"{SCR}thumb_d{_doc}", _rows),
             [("o0", [sc_op("to", "o0-to", at="begin")], []),
              ("omid", [sc_op("to", "omid-to", at="mid")], scr_thumb(_doc, 0.0, 0.5)),
-             ("oend", [sc_op("to", "oend-to", at="end")], scr_thumb(_doc, 0.5, 1.0))])
+             ("oend", [sc_op("to", "oend-to", at="end")], scr_thumb(_doc, 0.5, 1.0))], scroller_png=True)
 
 # M2 wheel: CGEvent line scroll (-1) sent once, three times and ten times to the NSScrollView, from the top each time; a List and a ScrollView of each document.
 # Windows: the same notches, cumulative from the top (the launch is the top): 1, then 2 more (total 3), then 7 more (total 10), at the scroller's centre.
@@ -917,12 +917,14 @@ for _rows, _doc in SCR_DOCS:
                 [(f"w{n}", [sc_op("to", f"w{n}-reset", at="begin"), sc_op("wheel", f"w{n}-wheel", delta=-1, times=n)], scr_wheel(_prev, n))
                  for _prev, n in ((0, 1), (1, 3), (3, 10))])
 
-# M3 keyboard: the scroll view's page / end / beginning selectors; for the List also the outline's moveDown(_:) past the viewport (a selection, then 5 and 15 rows down)
+# M3 keyboard: a real key-down NSEvent (PageDown / End / Home) delivered to the outline (List) or the document view (ScrollView) after window.makeFirstResponder; the host tries keyDown,
+# interpretKeyEvents, window.sendEvent and tryToPerform up the responder chain, and only as a last resort derives the paged offset (status=DERIVED, never an input). MAC_SCROLL carries
+# pageAmount, verticalPageScroll and verticalLineScroll. For the List also the outline's moveDown(_:) past the viewport (a selection, then 5 and 15 rows down)
 _kb = [("k0", [sc_op("to", "k0-to", at="begin")]),
-       ("kpagedown", [sc_op("action", "kpagedown-act", selector="scrollPageDown:")]),
-       ("kpagedown2", [sc_op("action", "kpagedown2-act", selector="scrollPageDown:")]),
-       ("kend", [sc_op("action", "kend-act", selector="scrollToEndOfDocument:")]),
-       ("kbegin", [sc_op("action", "kbegin-act", selector="scrollToBeginningOfDocument:")])]
+       ("kpagedown", [sc_op("key", "kpagedown-key", key="PageDown")]),
+       ("kpagedown2", [sc_op("key", "kpagedown2-key", key="PageDown")]),
+       ("kend", [sc_op("key", "kend-key", key="End")]),
+       ("kbegin", [sc_op("key", "kbegin-key", key="Home")])]
 _tn = f"{SCR}keys_list"
 sc_case("swiftui.scroll/keys-list-v1", _tn, sc_list(_tn, 25, selection=True),
         _kb + [("ksel0", [sc_op("to", "ksel0-reset", at="begin"), sc_op("select", "ksel0-sel", row=0)]),
@@ -941,7 +943,7 @@ for _kind, _mk in (("list", sc_list), ("sv", sc_view)):
              ("sdouble05", [sc_op("to", "sdouble05-reset", at="begin"), sc_op("scroller", "sdouble05-dv", value=0.5)],
               scr_thumb(_c, 0.5, 0.0) + scr_thumb(_c, 0.0, 0.5)),
              ("sax10", [sc_op("to", "sax10-reset", at="begin"), sc_op("axvalue", "sax10-ax", value=1.0)],
-              scr_thumb(_c, 0.5, 0.0) + scr_thumb(_c, 0.0, 1.0))])
+              scr_thumb(_c, 0.5, 0.0) + scr_thumb(_c, 0.0, 1.0))], scroller_png=True)
 
 
 def main():
