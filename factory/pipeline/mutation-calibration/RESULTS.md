@@ -1,14 +1,14 @@
 # Mutation calibration results
 
-Generated 2026-10-17 by `factory/tools/mutation-calibration/calibrate.py` (see its README for every mutation). Offline: no capture, no Windows, no Sandbox. All 39 unmutated base fixtures pass their gates before any mutation is applied. The verdict of every row is the exit status of `pair.py <case> --recompare <run>`.
+Generated 2026-10-17 by `factory/tools/mutation-calibration/calibrate.py` (see its README for every mutation). Offline: no capture, no Windows, no Sandbox. All 40 unmutated base fixtures pass their gates before any mutation is applied. The verdict of every row is the exit status of `pair.py <case> --recompare <run>`.
 
-**367 of 372 seeded faults caught; 74 of 74 near-misses inside a tolerance passed; 0 over-strict gates.** 5 faults were not caught: 0 with no documented reason (findings A below), 5 that a decision or the gate's own contract says is not gated (B below).
+**371 of 376 seeded faults caught; 74 of 74 near-misses inside a tolerance passed; 0 over-strict gates.** 5 faults were not caught: 0 with no documented reason (findings A below), 5 that a decision or the gate's own contract says is not gated (B below).
 
 | Gate | Comparator | Caught / seeded | Missed (undocumented / documented exclusion) | Near-misses passed | Over-strict | Probes |
 |---|---|---|---|---|---|---|
 | pixel | `pair.py` | 27 / 29 | 2 (0 / 2) | 5 / 5 | 0 | 7 |
 | text | `pair_text_report.py` | 7 / 7 | 0 (0 / 0) | 3 / 3 | 0 | 0 |
-| text-colour | `pair_textcolour_report.py` | 64 / 64 | 0 (0 / 0) | 8 / 8 | 0 | 0 |
+| text-colour | `pair_textcolour_report.py` | 68 / 68 | 0 (0 / 0) | 8 / 8 | 0 | 1 |
 | button | `pair_button_report.py` | 38 / 38 | 0 (0 / 0) | 18 / 18 | 0 | 0 |
 | control | `pair_control_report.py` | 39 / 39 | 0 (0 / 0) | 7 / 7 | 0 | 0 |
 | list | `pair_list_report.py` | 34 / 34 (6 by the case's pixel gate) | 0 (0 / 0) | 3 / 3 | 0 | 0 |
@@ -52,6 +52,7 @@ None. Every near-miss placed exactly at or just inside a tolerance (edge-aa 32, 
 | probe-stroke+0.25px | fail |
 | probe-stroke+0.5px | fail |
 | probe-stroke+1.0px | fail |
+| line2-down-2px | fail |
 
 ## E. Gates and properties not calibrated offline
 
@@ -89,6 +90,7 @@ None. Every near-miss placed exactly at or just inside a tolerance (edge-aa 32, 
 | h34-textfield-auto | `blocks-6-10/swiftui.textfield/automatic-style-v1` | 20261017-000201 |
 | h34-textfield-plain | `blocks-6-10/swiftui.textfield/plain-v1` | 20261017-000201 |
 | img-star | `pilot-delivery-five-v1/text-shape-image/image-system-star-fill-v10` | 20261013-221400 |
+| line-limit-ml | `blocks-26-34/swiftui.system-font/line-limit-v1` | 20261017-014524 |
 | list-arrow | `blocks-11-16/swiftui.list/arrow-keys-v1` | 20261013-224316 |
 | list-var | `blocks-11-16/swiftui.list/variable-rows-selected-v1` | 20261014-025727 |
 | px-edge | `pilot-delivery-five-v1/text-shape-image/rounded-stroke-host-v1/continuous-geometry-delivery-v2` | 20261014-163619 |

@@ -66,6 +66,8 @@ BASES = {
     "h34-textfield-auto": (f"{B6}/swiftui.textfield/automatic-style-v1", "20261017-000201", ["mac/*", "windows/*", "*.json", "*.log"]),
     "h34-switch": (f"{B6}/swiftui.toggle/switch-labelled-on-v1", "20261017-000201", []),
     "h34-textdark": (f"{B17}/swiftui.color-scheme/text-dark-v1", "20261017-000201", []),
+    # multi-line placement (issue #7, G76): the line-limit-v1 captures of 20261017-014524 (two- and three-line rows), the multi-line mutation suite (s_multiline.py)
+    "line-limit-ml": ("blocks-26-34/swiftui.system-font/line-limit-v1", "20261017-014524", ["mac/ax-01*.json", "windows/uia-01*.json", "windows/host-01.stdout.txt"]),
 }
 
 

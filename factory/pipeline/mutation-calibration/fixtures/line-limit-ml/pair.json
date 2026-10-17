@@ -1,0 +1,115 @@
+{
+ "textColourGate": {
+  "tolerance": 40,
+  "regions": [
+   {
+    "name": "row 0",
+    "rect": [
+     100,
+     50,
+     375,
+     200
+    ],
+    "align": "leading",
+    "position": {
+     "firstInkYTolerancePx": 1,
+     "baselineTolerancePx": 1,
+     "inkCentreYTolerancePx": 0.5,
+     "firstInkXTolerancePx": 0,
+     "reason": "per-row fit (decision G71): system|size=12|weight=regular|design=default|, FIT set F2 runs 1-10 (stage fc4a39a89-f623e43e, renderer 0.8) plus fit capture 38986597492 runs 1-10 (stage b230f0135-82e12842, run 20261017-002951, descender-first rows excluded)"
+    }
+   },
+   {
+    "name": "row 1",
+    "rect": [
+     100,
+     200,
+     375,
+     350
+    ],
+    "align": "leading",
+    "position": {
+     "firstInkYTolerancePx": 1,
+     "baselineTolerancePx": 1,
+     "inkCentreYTolerancePx": 0.5,
+     "firstInkXTolerancePx": 0,
+     "reason": "per-row fit (decision G71): system|size=12|weight=regular|design=default|, FIT set F2 runs 1-10 (stage fc4a39a89-f623e43e, renderer 0.8) plus fit capture 38986597492 runs 1-10 (stage b230f0135-82e12842, run 20261017-002951, descender-first rows excluded)"
+    }
+   },
+   {
+    "name": "row 2",
+    "rect": [
+     100,
+     350,
+     375,
+     500
+    ],
+    "align": "leading",
+    "position": {
+     "firstInkYTolerancePx": 1,
+     "baselineTolerancePx": 1,
+     "inkCentreYTolerancePx": 0.5,
+     "firstInkXTolerancePx": 0,
+     "reason": "per-row fit (decision G71): system|size=12|weight=regular|design=default|, FIT set F2 runs 1-10 (stage fc4a39a89-f623e43e, renderer 0.8) plus fit capture 38986597492 runs 1-10 (stage b230f0135-82e12842, run 20261017-002951, descender-first rows excluded)"
+    }
+   }
+  ],
+  "position": {
+   "align": "leading",
+   "reason": "per-row tolerances (decision G71): each region carries its own tolerances fitted on the F2 FIT set (runs 1-10, stage fc4a39a89-f623e43e, renderer 0.8); unfitted rows carry none and are gated at 0 px (fail closed, pair_textcolour_report.py:62). The case-level tolerances were removed (they were one blanket set fitted on the judged runs).",
+   "lines": true,
+   "maxInkRightPx": 375
+  }
+ },
+ "excludeRects": [
+  {
+   "name": "row 0 glyph region (Segoe UI vs SF, decision 2); gated by the position gate of decision 19",
+   "rect": [
+    100,
+    50,
+    375,
+    200
+   ]
+  },
+  {
+   "name": "row 1 glyph region (Segoe UI vs SF, decision 2); gated by the position gate of decision 19",
+   "rect": [
+    100,
+    200,
+    375,
+    350
+   ]
+  },
+  {
+   "name": "row 2 glyph region (Segoe UI vs SF, decision 2); gated by the position gate of decision 19",
+   "rect": [
+    100,
+    350,
+    375,
+    500
+   ]
+  }
+ ],
+ "semanticGate": {
+  "fields": [
+   "role",
+   "name",
+   "count",
+   "order"
+  ],
+  "scope": "main",
+  "phases": [
+   ""
+  ]
+ },
+ "steps": [
+  {
+   "op": "wait",
+   "ms": 600
+  }
+ ],
+ "macArgs": [
+  "--steps",
+  "[{\"op\":\"wait\",\"ms\":600}]"
+ ]
+}

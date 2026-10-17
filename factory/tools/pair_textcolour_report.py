@@ -9,7 +9,7 @@ POSITION (sr1-decisions #19): the glyph pixels stay excluded (decision 2) but wh
 each region measures, on both sides, the ink (a pixel whose luminance is at least "coverage" (default 0.15) of the strongest ink's distance away from the region's background colour, the most
 common colour in the region or "background": relative, so an ink colour that moves within its own 24/255 tolerance never moves the edge it is measured at),
 its first glyph (the run of consecutive ink columns from the first ink column), and compares: firstInkY (top of the first glyph), baseline (bottom of the first glyph) and the
-mid-point of the two (the line is centred on both sides, Windows draws the 12 pt body font and the Mac 13 pt, so the top sits lower and the baseline higher by a measured
+mid-point of the two (for a region with more than one line band, lineBands > 1, the first band alone sets them; every band's lowest ink row (bandBottoms) is gated within the baseline tolerance, deltas printed; the line is centred on both sides, Windows draws the 12 pt body font and the Mac 13 pt, so the top sits lower and the baseline higher by a measured
 amount), plus x: for "leading" text the first ink column (firstInkXTolerancePx, default 0), for "centre" text the centre of the ink bbox (inkCentreXTolerancePx, default 0;
 the advance differs, the centring does not). A region can override "align". Every tolerance defaults to 0; a non-zero one is measured and carries "reason"."""
 import json, sys
@@ -50,14 +50,37 @@ def position(img, rect, background=None, coverage=0.15):
         run.add(c)
     xs = [x for x, _ in ink]
     rows = sorted({y for _, y in ink})
-    bands = 1 + sum(1 for a, b in zip(rows, rows[1:]) if b != a + 1)
-    return dict(firstInkX=cols[0], firstInkY=min(y for x, y in ink if x in run), baselineY=max(y for x, y in ink if x in run), inkCentreX=(min(xs) + max(xs) + 1) / 2,
-                inkRightX=max(xs) + 1, inkHeight=max(rows) - min(rows) + 1, lineBands=bands)
+    split = [i + 1 for i, (a, b) in enumerate(zip(rows, rows[1:])) if b != a + 1]
+    bands_rows = [rows[i:j] for i, j in zip([0] + split, split + [len(rows)])]
+    bands = len(bands_rows)
+    if bands == 1:   # single line: the whole block is the first band, the values are exactly those of the one-line report
+        return dict(firstInkX=cols[0], firstInkY=min(y for x, y in ink if x in run), baselineY=max(y for x, y in ink if x in run), inkCentreX=(min(xs) + max(xs) + 1) / 2,
+                    inkRightX=max(xs) + 1, inkHeight=max(rows) - min(rows) + 1, lineBands=bands)
+    # ROUND 6 (issue #7, G76): with more than one line band the vertical placement is the FIRST line's. The first glyph run is taken inside the first band only: a run over
+    # the whole block stops at whichever inter-glyph gap of a later line lines up with the gaps of the first, so its bottom moves with glyph positions of the other lines.
+    band1 = set(bands_rows[0])
+    ink1 = [(x, y) for x, y in ink if y in band1]
+    cols1 = sorted({x for x, _ in ink1})
+    run1 = {cols1[0]}
+    for c in cols1[1:]:
+        if c != max(run1) + 1:
+            break
+        run1.add(c)
+    band_bottoms = [max(y for x, y in ink if y in set(b)) for b in bands_rows]   # information: each line band's lowest ink row
+    return dict(firstInkX=cols[0], firstInkY=min(y for x, y in ink1 if x in run1), baselineY=max(y for x, y in ink1 if x in run1), inkCentreX=(min(xs) + max(xs) + 1) / 2,
+                inkRightX=max(xs) + 1, inkHeight=max(rows) - min(rows) + 1, lineBands=bands, bandBottoms=band_bottoms)
 
 
 def signed_range(cfg, sym, lo_key, hi_key):
     """H34 (sr1-decisions): the allowed [lo, hi] of a Windows-minus-Mac delta. Absent keys give the symmetric tolerance sym (default 0), so a case without them is gated as before."""
     return int(cfg.get(lo_key, -sym)), int(cfg.get(hi_key, sym))
+
+
+def band_deltas(m, w):
+    """Windows minus Mac bottom of each line band (multi-line regions only; None for one line or when the band counts differ)"""
+    if m is None or w is None or "bandBottoms" not in m or "bandBottoms" not in w or len(m["bandBottoms"]) != len(w["bandBottoms"]) or len(m["bandBottoms"]) < 2:
+        return None
+    return [b - a for a, b in zip(m["bandBottoms"], w["bandBottoms"])]
 
 
 def position_why(m, w, pos, align):
@@ -82,6 +105,12 @@ def position_why(m, w, pos, align):
     if "lineBands" in pos or pos.get("lines"):
         db_ = w["lineBands"] - m["lineBands"]
         if abs(db_) > t("lineBandsTolerance"): why.append(f"line count differs: mac {m['lineBands']} windows {w['lineBands']}")
+    # ROUND 7 (issue #7, decision of 17 October): every line band's bottom is gated, each within the row's baseline tolerance. A band-2 shift is then caught without
+    # any change to the first band; the per-band deltas are printed in `why` and reported as bandBottomDeltaWinMinusMacPx.
+    deltas = band_deltas(m, w)
+    if deltas:
+        bad = [k for k, d in enumerate(deltas) if abs(d) > t("baselineTolerancePx")]
+        if bad: why.append(f"line band bottoms differ by {deltas} px (band {', '.join(str(k + 1) for k in bad)} beyond tolerance {t('baselineTolerancePx'):g})")
     if "maxInkRightPx" in pos:
         for side, v in (("mac", m), ("windows", w)):
             if v["inkRightX"] > float(pos["maxInkRightPx"]): why.append(f"{side} ink ends at {v['inkRightX']} px, past {pos['maxInkRightPx']}")
@@ -135,6 +164,7 @@ def main():
                 pos = {**cfg["position"], **r.get("position", {})}   # a region may carry its own measured tolerances (and "reason")
                 why = position_why(pm, pw, pos, r.get("align", pos.get("align", "centre")))
                 pos_row = dict(mac=pm, windows=pw, ok=not why, why=why)
+                if band_deltas(pm, pw) is not None: pos_row.update(bandBottomDeltaWinMinusMacPx=band_deltas(pm, pw))   # information, every multi-line row
                 if r.get("align", pos.get("align", "centre")) == "leading" and pm and pw:
                     pos_row.update(firstInkDeltaWinMinusMacPx=pw["firstInkX"] - pm["firstInkX"], firstInkRangePx=list(signed_range(pos, float(pos.get("firstInkXTolerancePx", 0)), "firstInkMinPx", "firstInkMaxPx")))
                 reg.update(position=pos_row); good = good and not why; reg["ok"] = good

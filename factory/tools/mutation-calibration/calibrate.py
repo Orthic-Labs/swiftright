@@ -6,7 +6,7 @@ from pathlib import Path
 sys.path.insert(0, str(Path(__file__).resolve().parent))
 from core import run_one, ROOT
 
-SUITES = ["s_pixel", "s_text", "s_control", "s_semantic", "s_clock", "s_image", "s_textorigin", "s_multirun", "s_rowtol", "s_h34"]
+SUITES = ["s_pixel", "s_text", "s_control", "s_semantic", "s_clock", "s_image", "s_textorigin", "s_multirun", "s_rowtol", "s_h34", "s_multiline"]
 
 
 def main():

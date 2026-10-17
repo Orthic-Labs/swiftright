@@ -111,3 +111,27 @@ Not changed: `sizes-large-v1` (`Hxg Overview` already leads with `H`; its row 1 
 Tolerances: `pair.json` for truncate-v1 and line-limit-v1 is unchanged from HEAD. The restamp rewrites `pair.json` from the generator, which does not carry the per-row fitted tolerances (G71, G74), so the restamp output was discarded and the HEAD file restored. Restamping any fitted case needs the same restore.
 
 Wrapping: unmeasured. `Headroom` has the same letter count as `Overview` but different advance widths at 11.5, 12, 13 semibold and 18 pt, so the truncation point in the 240 pt rows and the word breaks in the 110 pt rows may move. The 110 pt rows break at word boundaries, so the line count changes if `Headroom of` does not fit on the line where `Overview of` did. The rows carry no evidence until the block is recaptured; the per-row fits were measured on the old text.
+
+## G76 multi-line placement: first line band only (17 October, Alchemist)
+
+Source: CI run 38992159094 (renderer-0.10-c13b62a4, Double host), case `line-limit-v1`, run dir `20261017-014524` (three runs). Comparator `factory/tools/pair_textcolour_report.py`, `position()`.
+
+Cause: with more than one line band, the first glyph run was a column run over the WHOLE block. The run stops at the first column that has no ink on the lines it reaches, so where it ends depends on the glyph positions of the later lines. On the Mac the run reached the `y` descender of "memory" on line 2 (bottom 161); on Windows it stopped earlier, giving baseline -6 px on rows 0 and 2 and a mid-point of -2.5 px. Per-line glyph bottoms and block heights (75, 113, 75 px) were equal on both sides. Single-line text is unaffected (one band: the whole block is the first band).
+
+Change: when `lineBands > 1`, `firstInkY` and `baselineY` (and so the mid-point) come from the first line band only, its first contiguous column run. Every line band's lowest ink row (`bandBottoms`) is also gated, each within the row's `baselineTolerancePx` (1 px on these rows), and the Windows-minus-Mac delta of each band is printed as `bandBottomDeltaWinMinusMacPx` (information on every multi-line row, the reason in `why` when it fails). Decision of 17 October (Legion, routine); this closes the line-2 gap described below. A one-line region returns exactly the values it returned before (no `bandBottoms` key). The `pair.json` of line-limit-v1 is unchanged. `inkHeight` is reported but not gated by `position_why()` (it was not gated before either); the line count is gated by `lineBands` as before.
+
+Line-limit-v1, run 20261017-014524: committed report (before) against the first-band recompare (after). Tolerances from the case's `pair.json`: dy 1, baseline 1, mid-point 0.5, dx 0.
+
+| row | lines | before: dy / db / dc | before | after: dy / db / dc | after |
+| --- | --- | --- | --- | --- | --- |
+| 0 | 2 | +1 / -6 / -2.5 | fail | +1 / 0 / +0.5 | pass |
+| 1 | 3 | +1 / +1 / +1 | fail | +1 / 0 / +0.5 | pass |
+| 2 | 2 | +1 / -6 / -2.5 | fail | +1 / 0 / +0.5 | pass |
+
+After: `text-colour-gate=3/3` in each of the three runs. Band bottoms (Mac / Windows): row 0 [118, 161] / [117, 162]; row 1 [249, 292, 329] / [248, 293, 330]; row 2 [417, 460] / [416, 461]. Band bottoms differ by 1 px (descender length); the first-line placement is equal. Margin: the first-ink dy of +1 and the mid-point of +0.5 sit exactly on their tolerance edges in all three rows, so the pass relies on the 1 px Windows offset being the same on every run.
+
+Single-line identity: `sizes-v1` run 20261017-014524 recomputed through the new comparator writes a `text-colour-report.json` byte-identical to the committed one (`cmp`). Unit test file: `factory/tools/test_pair_textcolour_report.py` (11 cases: one-line values equal to the one-line reference formula; two lines with a descender on line 2 only; a line-2 shift invisible to the first-band metric; three lines).
+
+Gap found on the first pass, then closed: a shift of line 2 alone was invisible to every gate that only looked at the first band. Seeded suite `factory/tools/mutation-calibration/s_multiline.py` (base `line-limit-ml`, a fixture of this run): line 2 of row 0 moved 3 px (1.2 pt at scale 2.5) down and up, and line 2 of row 1 moved 3 px down, all MISSED; line 1 of row 0 moved 3 px down is caught; line 2 moved 2 px down is a probe that passes. Before this change the line-2 faults failed only because the cross-line run moved the baseline on this already-failing capture, so that was not a line-level catch.
+
+Result after the band-bottom gate (calibration run 17 October, committed `results.json` and `RESULTS.md`): the three line-2 faults are caught by the text-colour gate (band 2 bottom +3 or -3 px against a tolerance of 1), `line1-down-3px` is caught by the first-band gate, and the `line2-down-2px` probe fails (its band-2 delta of 2 px is beyond 1). Totals: 371 of 376 seeded faults caught, 74 of 74 near-misses passed, 0 over-strict; the 5 misses are the documented exclusions (pixel `px-excl` x 2, semantic x 3). The 1 px band deltas of the committed capture (`[-1, 1]`, `[-1, 1, 1]`) pass.
