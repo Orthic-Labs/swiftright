@@ -233,4 +233,24 @@ final class ListPainterTests: XCTestCase {
         XCTAssertEqual(first.semantic?.role, .listItem)
         XCTAssertTrue(first.primitives.contains { if case .text = $0 { return true } else { return false } })
     }
+
+    /// Seven rows overflow by 28 pt (188 pt document, 160 pt list); two wheel notches scroll 2 lines = 20 pt = 50 px. Every row moves up by that, keeps its height.
+    func testRowsShiftUpByTheScrollOffsetAndKeepTheirHeights() throws {
+        let graph = Graph(Witness_ListSevenRows(), scale: 2.5)
+        graph.rootProposal = ProposedViewSize(width: 320, height: 240)
+        graph.flush()
+        let before = try XCTUnwrap(flatten(try XCTUnwrap(graph.snapshot())).first { $0.kind == "List" })
+        let bounds = Rect(x: 150, y: 100, w: 500, h: 400)
+        let rowsBefore = ListPainter.rows(of: before, bounds: bounds, scale: 2.5)
+        graph.scrollWheel(atX: 50, y: 50, lines: 2)
+        graph.flush()
+        let after = try XCTUnwrap(flatten(try XCTUnwrap(graph.snapshot())).first { $0.kind == "List" })
+        let rowsAfter = ListPainter.rows(of: after, bounds: bounds, scale: 2.5)
+        XCTAssertEqual(rowsAfter.count, rowsBefore.count)
+        for (a, b) in zip(rowsAfter, rowsBefore) {
+            XCTAssertEqual(b.rect.y - a.rect.y, 50, accuracy: 1)
+            XCTAssertEqual(a.rect.h, b.rect.h)
+            XCTAssertEqual(a.rect.w, b.rect.w)
+        }
+    }
 }

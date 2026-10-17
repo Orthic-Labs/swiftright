@@ -576,6 +576,12 @@ final class Node {
     /// Configured horizontal/vertical offsets; nil for legacy scroll nodes.
     var scrollOffsetX: CGFloat?
     var scrollOffsetY: CGFloat?
+    /// Scroll state of a List or vertical ScrollView, set by the layout pass (#31). Nil for other nodes.
+    var scrollState: ScrollState?
+    /// A scroll bar drag under way: the pointer's y and the offset when the drag began (#31).
+    var scrollDrag: (startY: CGFloat, startOffset: CGFloat)?
+    /// A List's row extents in document coordinates (0 at the List's top edge, unscrolled), keyed by row instance; set by the layout pass (#31).
+    var listRowExtents: [Int: (top: CGFloat, height: CGFloat)] = [:]
     /// Target opacity (own `.opacity` times the parent's target).
     var targetOpacity: Double = 1
     /// Presented (animated) values: what the last commit showed.
@@ -688,6 +694,9 @@ final class Node {
         presented = nil
         scrollOffsetX = nil
         scrollOffsetY = nil
+        scrollState = nil
+        scrollDrag = nil
+        listRowExtents = [:]
     }
 }
 
@@ -806,6 +815,9 @@ public struct ResolvedNode: Equatable, Sendable {
     public var rowStyle: ListRowStyle? = nil
     /// Slider nodes only (round 6 block 37): the value, bounds, step, track rectangle and thumb position.
     public var slider: ResolvedSlider? = nil
+    /// List and vertical ScrollView nodes only (#31): the offset, content and viewport heights and whether a scroller shows. Nil for other nodes.
+    /// A `var` with a nil default, like `slider` and `rowStyle`, so the memberwise initializer stays source compatible.
+    public var scroll: ScrollState? = nil
 }
 
 /// What `.listRowSeparator(_:)` and `.listRowBackground(_:)` ask of a List row.
@@ -835,7 +847,7 @@ extension ResolvedNode {
                      selection: selection, marked: marked, children: children, labelsHidden: labelsHidden, toggleStyle: toggleStyle,
                      fieldStyle: fieldStyle, placeholder: placeholder, accessibility: accessibility, style: style, image: image,
                      imageSizing: imageSizing, color: color, shapeStorage: shapeStorage, menu: menu, presentation: presentation, shortcut: shortcut,
-                     buttonStyle: buttonStyle, isDefaultButton: isDefaultButton, listStyle: listStyle, rowStyle: rowStyle, slider: slider)
+                     buttonStyle: buttonStyle, isDefaultButton: isDefaultButton, listStyle: listStyle, rowStyle: rowStyle, slider: slider, scroll: scroll)
     }
 }
 
@@ -1217,6 +1229,143 @@ public final class Graph {
         guard let node = node(id), case .scrollView(let configuration) = node.kind else { return nil }
         return LayoutPoint(x: configuration.axes.contains(.horizontal) ? (node.scrollOffsetX ?? 0) : 0,
                            y: configuration.axes.contains(.vertical) ? (node.scrollOffsetY ?? 0) : 0)
+    }
+
+    // MARK: Scrolling (#31)
+
+    /// The vertical offset of a scroll container (a List, a vertical ScrollView or the legacy scroll node), or nil for other nodes.
+    private func verticalOffset(_ target: Node) -> CGFloat? {
+        switch target.kind {
+        case .scroll: return target.scrollOffset
+        case .scrollView(let configuration): return configuration.axes.contains(.vertical) ? (target.scrollOffsetY ?? 0) : nil
+        case .stack(let spec) where spec.name == "List": return target.scrollOffsetY ?? 0
+        default: return nil
+        }
+    }
+
+    /// Stores a vertical offset (already clamped) and keeps the node's scroll state in step with it.
+    private func setVerticalOffset(_ target: Node, _ value: CGFloat) {
+        if case .scroll = target.kind { target.scrollOffset = value } else { target.scrollOffsetY = value }
+        if let state = target.scrollState {
+            target.scrollState = ScrollState(offsetY: Double(value), contentHeight: state.contentHeight, viewportHeight: state.viewportHeight,
+                                             showsScroller: state.showsScroller)
+        }
+    }
+
+    /// Moves a scroll container to `proposed`, clamped to 0...maxOffset. Returns whether the offset changed.
+    @discardableResult
+    private func moveScroll(_ target: Node, to proposed: CGFloat) -> Bool {
+        guard let state = target.scrollState, let current = verticalOffset(target) else { return false }
+        let clamped = min(max(0, proposed), CGFloat(state.maxOffset))
+        guard clamped != current else { return false }
+        setVerticalOffset(target, clamped)
+        return true
+    }
+
+    /// The page distance: the viewport less the page overlap, never negative.
+    private func pageDistance(_ target: Node) -> CGFloat? {
+        guard let state = target.scrollState else { return nil }
+        return max(0, CGFloat(state.viewportHeight) - ScrollerMetrics.pageOverlap)
+    }
+
+    /// The innermost scroll container (the deepest node with a scroll state) whose frame contains the point, in root points.
+    private func innermostScrollContainer(atX x: CGFloat, y: CGFloat) -> Node? {
+        var found: Node?
+        var foundDepth = -1
+        func visit(_ target: Node, depth: Int) {
+            let frame = target.frame
+            if target.scrollState != nil, x >= frame.minX, x < frame.maxX, y >= frame.minY, y < frame.maxY, depth >= foundDepth {
+                found = target
+                foundDepth = depth
+            }
+            for child in target.childNodes { visit(child, depth: depth + 1) }
+        }
+        if let root { visit(root, depth: 0) }
+        return found
+    }
+
+    /// Scrolls the innermost scroll container under a point (root space, logical points) by `lines` wheel lines. A positive `lines` moves the
+    /// content down (reveals content below, the offset grows); the host converts the wheel's delta (`ScrollerMetrics.pointsPerLine` per line).
+    /// Returns whether the offset changed; the change shows at the next flush.
+    @discardableResult
+    public func scrollWheel(atX x: Double, y: Double, lines: Double) -> Bool {
+        guard let target = innermostScrollContainer(atX: CGFloat(x), y: CGFloat(y)), let current = verticalOffset(target) else { return false }
+        return moveScroll(target, to: current + CGFloat(lines) * ScrollerMetrics.pointsPerLine)
+    }
+
+    /// Pages a scroll container down or up by a page (the viewport less `ScrollerMetrics.pageOverlap`). Returns whether the offset changed.
+    @discardableResult
+    public func scrollPage(_ id: String, down: Bool) -> Bool {
+        guard let target = node(id), let page = pageDistance(target), let current = verticalOffset(target) else { return false }
+        return moveScroll(target, to: current + (down ? page : -page))
+    }
+
+    /// Moves a scroll container to its end (`end: true`) or its start. Returns whether the offset changed.
+    @discardableResult
+    public func scrollToEdge(_ id: String, end: Bool) -> Bool {
+        guard let target = node(id), let state = target.scrollState else { return false }
+        return moveScroll(target, to: end ? CGFloat(state.maxOffset) : 0)
+    }
+
+    /// Geometry of a scroll bar in root points: the track's top, the thumb's top and length, and the offset with its maximum.
+    private struct ScrollBarGeometry {
+        let offset: CGFloat
+        let maxOffset: CGFloat
+        let track: CGFloat
+        let thumb: CGFloat
+        let thumbTop: CGFloat
+    }
+
+    private func scrollBarGeometry(_ target: Node) -> ScrollBarGeometry? {
+        guard let state = target.scrollState, let offset = verticalOffset(target) else { return nil }
+        let viewport = CGFloat(state.viewportHeight)
+        let track = ScrollerMetrics.trackLength(viewport: viewport)
+        let thumb = ScrollerMetrics.thumbLength(viewport: viewport, content: CGFloat(state.contentHeight))
+        let fraction = state.maxOffset > 0 ? offset / CGFloat(state.maxOffset) : 0
+        let thumbTop = target.frame.minY + ScrollerMetrics.thumbInsetTop + fraction * max(0, track - thumb)
+        return ScrollBarGeometry(offset: offset, maxOffset: CGFloat(state.maxOffset), track: track, thumb: thumb, thumbTop: thumbTop)
+    }
+
+    /// A press on a scroll bar at root `y`. In the thumb it starts a drag (`scrollBarDrag` maps the pointer to the offset). In the track it pages
+    /// toward the press once.
+    public func scrollBarPress(_ id: String, atY y: Double) {
+        guard let target = node(id), let geometry = scrollBarGeometry(target), let page = pageDistance(target) else { return }
+        let pointer = CGFloat(y)
+        if pointer >= geometry.thumbTop, pointer <= geometry.thumbTop + geometry.thumb {
+            target.scrollDrag = (startY: pointer, startOffset: geometry.offset)
+        } else {
+            target.scrollDrag = nil
+            moveScroll(target, to: geometry.offset + (pointer < geometry.thumbTop ? -page : page))
+        }
+    }
+
+    /// Drags the thumb begun by `scrollBarPress`: the offset moves by `dy * maxOffset / (track - thumb)`, clamped. Ignored without a drag.
+    public func scrollBarDrag(_ id: String, toY y: Double) {
+        guard let target = node(id), let drag = target.scrollDrag, let geometry = scrollBarGeometry(target) else { return }
+        let travel = geometry.track - geometry.thumb
+        guard travel > 0 else { return }
+        let delta = (CGFloat(y) - drag.startY) * geometry.maxOffset / travel
+        moveScroll(target, to: drag.startOffset + delta)
+    }
+
+    /// Ends the thumb drag, if one is under way.
+    public func scrollBarRelease(_ id: String) {
+        node(id)?.scrollDrag = nil
+    }
+
+    /// Moves a List's offset by the smallest amount that brings the row tagged `tag` fully into the viewport (no move when it is already visible).
+    /// Returns whether the offset changed. The row's extents come from the last layout.
+    @discardableResult
+    public func scrollListRow(_ listID: String, tag: AnyHashable) -> Bool {
+        guard let list = node(listID), let state = list.scrollState, let current = verticalOffset(list),
+              let row = taggedRows(of: list).first(where: { $0.tag == tag })?.node,
+              let extent = list.listRowExtents[row.instance] else { return false }
+        let top = extent.top
+        let bottom = extent.top + extent.height
+        let viewport = CGFloat(state.viewportHeight)
+        let target: CGFloat
+        if top < current { target = top } else if bottom > current + viewport { target = bottom - viewport } else { return false }
+        return moveScroll(list, to: target)
     }
 
     /// Edits the root environment (for example a host feeds the OS reduce-motion setting) and
@@ -2083,7 +2232,8 @@ public final class Graph {
             isDefaultButton: isDefaultButton,
             listStyle: listStyle,
             rowStyle: rowStyle,
-            slider: slider
+            slider: slider,
+            scroll: node.scrollState
         )
     }
 

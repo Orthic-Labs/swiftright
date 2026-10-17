@@ -147,6 +147,8 @@ pub static UI_THREAD: AtomicU32 = AtomicU32::new(0);
 pub static RUN_STARTED: AtomicBool = AtomicBool::new(false);
 /// Rev 0.9: the host asked for SWR_PTR_MOVE events (`swr_run_options.flags & RUN_POINTER_MOVES`).
 pub static POINTER_MOVES: AtomicBool = AtomicBool::new(false);
+/// Rev 0.11: the host asked for SWR_PTR_WHEEL events (`swr_run_options.flags & RUN_POINTER_WHEEL`).
+pub static POINTER_WHEEL: AtomicBool = AtomicBool::new(false);
 pub static SHUTDOWN: AtomicBool = AtomicBool::new(false);
 pub static WAKE_HANDLE: AtomicUsize = AtomicUsize::new(0);
 pub static MAIN_HWND: AtomicUsize = AtomicUsize::new(0);

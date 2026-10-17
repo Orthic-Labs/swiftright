@@ -331,6 +331,7 @@ pub extern "C" fn swr_run(opts: *const RunOptions, cb: *const HostCallbacks) -> 
         }
         scale::set_override(render_scale);
         POINTER_MOVES.store(o.flags & RUN_POINTER_MOVES != 0, SeqCst);
+        POINTER_WHEEL.store(o.flags & RUN_POINTER_WHEEL != 0, SeqCst);
         let host = Host::from_abi(&c);
         view::run(title, o.width_dip, o.height_dip, host, o.host_wake_handle as usize)
     })
@@ -984,6 +985,36 @@ pub extern "C" fn swr_bootstrap_query_v10(out: *mut BootstrapInfoV10, caller_siz
     })
 }
 
+/// Rev 0.11 discovery (additive): the 0.10 view at identical offsets (abi_minor 11; the 184-byte table and 22 functions are the
+/// 0.8 ones) + the wheel delta. The legacy and `_v07` to `_v10` exports are untouched.
+#[no_mangle]
+pub extern "C" fn swr_bootstrap_query_v11(out: *mut BootstrapInfoV11, caller_size: u32) -> Status {
+    guard!({
+        let need = std::mem::size_of::<BootstrapInfoV11>() as u32;
+        if out.is_null() || caller_size < need {
+            return E_BAD_ARG;
+        }
+        let mut v10 = std::mem::MaybeUninit::<BootstrapInfoV10>::uninit();
+        let rc = swr_bootstrap_query_v10(v10.as_mut_ptr(), std::mem::size_of::<BootstrapInfoV10>() as u32);
+        if rc != SWR_OK {
+            return rc;
+        }
+        let mut v10 = unsafe { v10.assume_init() };
+        v10.v09.v08.v07.base.abi_minor = ABI_MINOR_V11;
+        v10.v09.v08.v07.base.struct_size = need;
+        unsafe {
+            *out = BootstrapInfoV11 { v10, wheel_delta: WHEEL_DELTA as u32, reserved: 0 };
+        }
+        SWR_OK
+    })
+}
+
+/// Rev 0.11 function table: identical to the 0.8 table (no new functions; the wheel opt-in is a run-options flag).
+#[no_mangle]
+pub extern "C" fn swr_get_api_v11(out: *mut ApiV08, caller_size: u32) -> Status {
+    swr_get_api_v08(out, caller_size)
+}
+
 /// Rev 0.10 function table: identical to the 0.8 table (no new functions; the scale travels in the run options).
 #[no_mangle]
 pub extern "C" fn swr_get_api_v10(out: *mut ApiV08, caller_size: u32) -> Status {
@@ -1587,6 +1618,25 @@ mod v08_tests {
         assert_eq!(swr_bootstrap_query_v10(std::ptr::null_mut(), 136), E_BAD_ARG);
         let mut small = std::mem::MaybeUninit::<BootstrapInfoV10>::uninit();
         assert_eq!(swr_bootstrap_query_v10(small.as_mut_ptr(), 128), E_BAD_ARG);
+    }
+
+    #[test]
+    fn bootstrap_v11_extends_v10_and_reports_minor_11() {
+        let mut b = std::mem::MaybeUninit::<BootstrapInfoV11>::uninit();
+        assert_eq!(swr_bootstrap_query_v11(b.as_mut_ptr(), std::mem::size_of::<BootstrapInfoV11>() as u32), SWR_OK);
+        let b = unsafe { b.assume_init() };
+        assert_eq!(b.v10.v09.v08.v07.base.abi_minor, 11);
+        assert_eq!(b.v10.v09.v08.v07.base.struct_size, 144);
+        assert_eq!(b.wheel_delta, 120);
+        // The 0.10 view is untouched and the table is the 0.8 one.
+        let mut v10 = std::mem::MaybeUninit::<BootstrapInfoV10>::uninit();
+        assert_eq!(swr_bootstrap_query_v10(v10.as_mut_ptr(), std::mem::size_of::<BootstrapInfoV10>() as u32), SWR_OK);
+        assert_eq!(unsafe { v10.assume_init() }.v09.v08.v07.base.abi_minor, 10);
+        assert_eq!(b.v10.v09.v08.v07.base.api_table_size, 184);
+        assert_eq!(b.v10.v09.v08.v07.base.fn_count, 22);
+        assert_eq!(swr_bootstrap_query_v11(std::ptr::null_mut(), 144), E_BAD_ARG);
+        let mut small = std::mem::MaybeUninit::<BootstrapInfoV11>::uninit();
+        assert_eq!(swr_bootstrap_query_v11(small.as_mut_ptr(), 136), E_BAD_ARG);
     }
 
     #[test]

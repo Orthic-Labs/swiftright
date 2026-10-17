@@ -51,6 +51,49 @@ final class ScrollPaintTests: XCTestCase {
         XCTAssertEqual(ys(past), ys(at30))                                             // clamped to the content
     }
 
+    /// The same overflowing ScrollView with its default indicators: the legacy scroller is shown.
+    private var tallWithScroller: some View {
+        ScrollView(.vertical) {
+            VStack(spacing: 0) {
+                Rectangle().fill(Color.red).frame(height: 40)
+                Rectangle().fill(Color.green).frame(height: 40)
+                Rectangle().fill(Color.purple).frame(height: 40)
+            }
+        }.frame(width: 120, height: 100)
+    }
+
+    func testVerticalScrollerPaintsAboveTheContentAtTheTrailingEdge() throws {
+        let nodes = try commit(tallWithScroller, proposal: (320, 240))
+        let scroller = try XCTUnwrap(nodes.first { $0.id & (UInt64(1) << 62) != 0 })   // the scroller is its own node, id | flag
+        let siblings = nodes.filter { $0.parent == scroller.parent && $0.id != scroller.id }
+        XCTAssertFalse(siblings.isEmpty)                                   // the ScrollView's content
+        XCTAssertTrue(siblings.allSatisfy { $0.order < scroller.order })   // drawn after the content
+        XCTAssertEqual(scroller.bounds.x, 253, accuracy: 1)                // 19 pt strip at the trailing edge of the 300 px viewport
+        let thumb = try XCTUnwrap(scroller.primitives.compactMap { p -> Rect? in
+            if case .rect(let r, _, let radius, _, _) = p, radius > 0 { return r } else { return nil }
+        }.first)
+        XCTAssertEqual(thumb.x, 263, accuracy: 1)
+        XCTAssertEqual(thumb.y, 9.5, accuracy: 1)                          // value 0: the top inset
+        guard case .clipPush = try XCTUnwrap(scroller.primitives.first), case .clipPop = try XCTUnwrap(scroller.primitives.last) else {
+            return XCTFail("scroller is not clipped to its container")
+        }
+    }
+
+    func testScrollerRectAndThumbRectAreReadBackAfterCommit() throws {
+        let painter = ResolvedNodePainter(images: FakeImages(), scale: 2.5, log: { _ in })
+        let graph = Graph(tallWithScroller, scale: 2.5)
+        graph.rootProposal = ProposedViewSize(width: 320, height: 240)
+        graph.flush()
+        let root = try XCTUnwrap(graph.snapshot())
+        _ = try painter.commit(root: root, version: 1, previousLive: []) { _ in }
+        let view = try XCTUnwrap(flatten(root).first { $0.kind == "ScrollView" })
+        let strip = try XCTUnwrap(painter.scrollerRect(for: view))
+        let thumb = try XCTUnwrap(painter.thumbRect(for: view))
+        XCTAssertEqual(strip.maxX, 300, accuracy: 0.001)
+        XCTAssertGreaterThan(thumb.height, 0)
+        XCTAssertNil(painter.scrollerRect(for: try XCTUnwrap(flatten(root).first { $0.kind == "VStack" })))
+    }
+
     func testSemanticSystemColoursPaint() throws {
         for (color, rgba) in [(Color.orange, UInt32(0xff8d28ff)), (Color.green, 0x34c759ff), (Color.purple, 0xcb30e0ff)] {
             let nodes = try commit(Rectangle().fill(color).frame(width: 10, height: 10), proposal: (50, 50))

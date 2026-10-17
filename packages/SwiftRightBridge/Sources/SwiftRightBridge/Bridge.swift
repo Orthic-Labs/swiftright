@@ -2,6 +2,7 @@ import CSwiftRight
 import Foundation
 #if os(Windows)
 import CDispatchPrivate
+import WinSDK
 #endif
 
 /// The Swift side of the renderer ABI. One `Bridge` per process (ABI v0 opens one window).
@@ -70,6 +71,10 @@ public final class Bridge {
     public var supportsPointerMoves: Bool { revision >= .v09 }
     /// Rev 0.10 (decision H17): the renderer accepts an explicit render scale in `run(renderScale:)`. False on a 0.6 to 0.9 renderer.
     public var supportsRenderScale: Bool { revision >= .v10 }
+    /// Rev 0.11 (issue #31): the renderer emits SWR_PTR_WHEEL to a host that asks (`run(pointerWheel: true)`), and accepts a
+    /// `.scrollBar` node with a range. False on a 0.6 to 0.10 renderer: a scroll bar node is then published without a range.
+    public var supportsPointerWheel: Bool { revision >= .v11 }
+    public var supportsScrollBar: Bool { revision >= .v11 }
     /// The explicit render scale `run` was given, nil when the window's DPI decides. Set by `run` before the window opens.
     public internal(set) var renderScale: Float?
 
@@ -140,7 +145,12 @@ public final class Bridge {
     /// default) keeps the window's DPI, byte-for-byte as before. A value outside [0.25, 16] or not finite, or a renderer below
     /// 0.10 (check `supportsRenderScale`), throws: a requested scale is never silently dropped. If the window moves to a display
     /// with another DPI the scale stays S (see swiftright.h, REVISION 0.10).
-    public func run(title: String, width: UInt32, height: UInt32, pointerMoves: Bool = false, renderScale: Float? = nil) throws -> Int32 {
+    ///
+    /// `pointerWheel` (rev 0.11, issue #31): ask for SWR_PTR_WHEEL events (`BridgeEvent.wheel`). Like `pointerMoves`, ignored on a
+    /// renderer below 0.11 (check `supportsPointerWheel`); a host that does not ask never receives a wheel event, and the renderer
+    /// then leaves WM_MOUSEWHEEL to the window as before.
+    public func run(title: String, width: UInt32, height: UInt32, pointerMoves: Bool = false, renderScale: Float? = nil,
+                    pointerWheel: Bool = false) throws -> Int32 {
         let wireScale = try Bridge.runOptionsScale(requested: renderScale, rendererSupports: supportsRenderScale, revision: revision)
         self.renderScale = renderScale
         #if os(Windows)
@@ -151,7 +161,8 @@ public final class Bridge {
         let arena = Arena()
         let t = arena.string(title)
         var opts10 = Bridge.makeRunOptions(title: t.ptr, titleLen: t.len, wake: wake, width: width, height: height,
-                                           pointerMoves: pointerMoves && supportsPointerMoves, renderScale: wireScale)
+                                           pointerMoves: pointerMoves && supportsPointerMoves, renderScale: wireScale,
+                                           pointerWheel: pointerWheel && supportsPointerWheel)
         let rc = withUnsafePointer(to: &opts10) { o in
             o.withMemoryRebound(to: swr_run_options.self, capacity: 1) { base in withUnsafePointer(to: &cb) { runFn(base, $0) } }
         }
@@ -177,7 +188,7 @@ public final class Bridge {
     /// Builds the run options. With no render scale (`renderScale` 0) the struct_size is the 0.9 size, so the renderer sees exactly
     /// the options an older host sends; with one it is the 0.10 size and the scale word is read.
     static func makeRunOptions(title: UnsafePointer<CChar>?, titleLen: UInt32, wake: UnsafeMutableRawPointer?, width: UInt32, height: UInt32,
-                               pointerMoves: Bool, renderScale: Float) -> swr_run_options_v10 {
+                               pointerMoves: Bool, renderScale: Float, pointerWheel: Bool = false) -> swr_run_options_v10 {
         var v = swr_run_options_v10()
         v.base.struct_size = UInt32(renderScale == 0 ? MemoryLayout<swr_run_options>.size : MemoryLayout<swr_run_options_v10>.size)
         v.base.title = title
@@ -185,9 +196,33 @@ public final class Bridge {
         v.base.host_wake_handle = wake
         v.base.width_dip = width
         v.base.height_dip = height
-        v.base.flags = pointerMoves ? UInt32(SWR_RUN_POINTER_MOVES) : 0
+        v.base.flags = (pointerMoves ? UInt32(SWR_RUN_POINTER_MOVES) : 0) | (pointerWheel ? UInt32(SWR_RUN_POINTER_WHEEL) : 0)
         v.render_scale = renderScale
         return v
+    }
+
+    /// Windows lines per wheel notch (SPI_GETWHEELSCROLLLINES), 3 when the query fails or off Windows. 0 = the user turned wheel
+    /// scrolling off. `wheelScrollsPages` is true when the setting is WHEEL_PAGESCROLL (one page per notch); `wheelScrollLines` is then 3.
+    public static var wheelScrollLines: Int { wheelScrollSetting().lines }
+    public static var wheelScrollsPages: Bool { wheelScrollSetting().page }
+
+    /// Pure mapping of the raw SPI value (so it is unit-tested on every host): 0xFFFFFFFF (WHEEL_PAGESCROLL) is a page, anything
+    /// above a sane bound is the default, else the value.
+    static func wheelScrollSetting(raw: UInt32?) -> (lines: Int, page: Bool) {
+        guard let raw else { return (3, false) }
+        if raw == UInt32.max { return (3, true) }
+        if raw > 1000 { return (3, false) }
+        return (Int(raw), false)
+    }
+
+    static func wheelScrollSetting() -> (lines: Int, page: Bool) {
+        #if os(Windows)
+        var v: UInt32 = 3
+        let ok = SystemParametersInfoW(0x0068, 0, &v, 0) // SPI_GETWHEELSCROLLLINES
+        return wheelScrollSetting(raw: ok != 0 ? v : nil)
+        #else
+        return wheelScrollSetting(raw: nil)
+        #endif
     }
 
     /// The scale a measurement uses: the render scale when one is set (one scale source), else the request's own.
@@ -543,7 +578,7 @@ public final class BridgeWindow {
         let rc: Int32
         if bridge.supportsSliderRange {
             // Rev 0.9: the 88-byte transaction carries the range table (possibly empty).
-            let ranges = cRanges(t)
+            let ranges = cRanges(t, scrollBars: bridge.supportsScrollBar)
             var tx9 = swr_transaction_v09()
             tx9.base = tx
             tx9.base.struct_size = UInt32(MemoryLayout<swr_transaction_v09>.size)

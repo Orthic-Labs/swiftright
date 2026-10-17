@@ -387,7 +387,7 @@ pub unsafe fn commit(
 }
 
 /// Rev 0.9: the numeric range of a slider arrives in the transaction's range table. Every entry must name a node upserted by the
-/// same transaction whose role is SWR_ROLE_SLIDER; value, min, max, step and jump must be finite, min <= max, step and jump >= 0
+/// same transaction whose role is SWR_ROLE_SLIDER (rev 0.11: or SWR_ROLE_SCROLL_BAR, value 0..1); value, min, max, step and jump must be finite, min <= max, step and jump >= 0
 /// and the value inside [min, max]. Anything else is E_BAD_ARG and nothing is applied.
 fn check_ranges(ranges: &[RangeEntry], ups: &[Node]) -> Result<HashMap<u64, [f64; 5]>, Status> {
     let mut m: HashMap<u64, [f64; 5]> = HashMap::with_capacity(ranges.len());
@@ -399,7 +399,7 @@ fn check_ranges(ranges: &[RangeEntry], ups: &[Node]) -> Result<HashMap<u64, [f64
             && r.step >= 0.0
             && r.jump >= 0.0
             && r.flags == 0;
-        let slider = ups.iter().any(|n| n.id == r.id && n.has_semantic != 0 && n.semantic.role == ROLE_SLIDER);
+        let slider = ups.iter().any(|n| n.id == r.id && n.has_semantic != 0 && (n.semantic.role == ROLE_SLIDER || n.semantic.role == ROLE_SCROLL_BAR));
         if !ok || !slider || m.insert(r.id, [r.value, r.min, r.max, r.step, r.jump]).is_some() {
             return Err(E_BAD_ARG);
         }
@@ -911,6 +911,29 @@ mod tests {
         let r = unsafe { commit_ranges(&mut tree, &runs, &images, &t.raw(), &good) };
         assert_eq!(r.err(), Some(E_BAD_ARG));
         assert_eq!(tree.version, 2, "refused commits leave the version");
+    }
+
+    /// Rev 0.11 (issue #31): a scroll bar node takes its 0..1 value from the range table like a slider.
+    #[test]
+    fn scroll_bar_range_table() {
+        let (runs, images) = slabs();
+        let mut tree = Tree::default();
+        let mut tx = Tx::new(1);
+        tx.node(1, 0, 0, 0.0, Some("Scroll bar"), 0, 0);
+        tx.nodes[0].semantic.role = ROLE_SCROLL_BAR;
+        let entry = [RangeEntry { id: 1, value: 0.25, min: 0.0, max: 1.0, step: 0.0, jump: 0.0, flags: 0, reserved: 0 }];
+        let ax = unsafe { commit_ranges(&mut tree, &runs, &images, &tx.raw(), &entry) }.unwrap();
+        let n = ax.nodes.iter().find(|n| n.id == 1).unwrap();
+        assert_eq!(n.role, ROLE_SCROLL_BAR);
+        assert_eq!(n.range, Some([0.25, 0.0, 1.0, 0.0, 0.0]));
+        // A value outside [min, max] refuses the commit, as for a slider.
+        let mut tx2 = Tx::new(2);
+        tx2.node(1, 0, 0, 0.0, Some("Scroll bar"), 0, 0);
+        tx2.nodes[0].semantic.role = ROLE_SCROLL_BAR;
+        let bad = [RangeEntry { id: 1, value: 1.5, min: 0.0, max: 1.0, step: 0.0, jump: 0.0, flags: 0, reserved: 0 }];
+        let r = unsafe { commit_ranges(&mut tree, &runs, &images, &tx2.raw(), &bad) };
+        assert_eq!(r.err(), Some(E_BAD_ARG));
+        assert_eq!(tree.version, 1);
     }
 
     /// Random valid and invalid transactions: the incremental commit and the reference agree on the result, on the

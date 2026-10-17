@@ -372,6 +372,7 @@ typedef struct swr_primitive {
  * publishes the UIA RangeValuePattern (Value, Minimum, Maximum, SmallChange, LargeChange). Without one it is
  * a bare slider (no range). A 0.8 renderer does not know this role (a generic container). */
 #define SWR_ROLE_SLIDER     15
+/* SWR_ROLE_SCROLL_BAR (16) is declared in REVISION 0.11 below. */
 
 #define SWR_ACT_INVOKE         0x1u
 #define SWR_ACT_FOCUS          0x2u
@@ -1308,6 +1309,54 @@ typedef struct swr_bootstrap_info_v10 {
 SWR_API swr_status swr_bootstrap_query_v10(swr_bootstrap_info_v10 *out, uint32_t caller_size);
 /* The 0.8 table (SWR_E_ABI when caller_size < sizeof(swr_api_v08)). */
 SWR_API swr_status swr_get_api_v10(swr_api_v08 *out, uint32_t caller_size);
+
+/* ===========================================================================================
+ * REVISION 0.11 (additive): pointer wheel and the scroll bar role (issue #31).
+ *
+ * Everything above is unchanged. `swr_bootstrap_query`, `_v07` to `_v10` still describe 0.6 to 0.10, so an older host runs
+ * unchanged on a 0.11 renderer. A 0.11 renderer adds two NEW exports, swr_bootstrap_query_v11 and swr_get_api_v11; a 0.10
+ * renderer lacks both, and a 0.11 host then falls back to the 0.10 view and cannot receive wheel events (typed, never silent:
+ * check `supportsPointerWheel`). The function table is the 0.8 table (22 functions, 184 bytes). No struct grows except the
+ * bootstrap view: the opt-in is a bit of the existing swr_run_options.flags, exactly as pointer moves were negotiated in 0.9.
+ *
+ * Wheel opt-in. A 0.11 renderer emits SWR_PTR_WHEEL ONLY for a host that sets SWR_RUN_POINTER_WHEEL in swr_run_options.flags. A
+ * host that does not (every earlier host passes flags 0 or SWR_RUN_POINTER_MOVES only) never receives the event, and a renderer
+ * below 0.11 ignores the bit. Without the opt-in the renderer does not consume WM_MOUSEWHEEL / WM_MOUSEHWHEEL (they reach the window
+ * as before).
+ *
+ * SWR_EV_POINTER / SWR_PTR_WHEEL: x, y = the pointer position in physical px of the window client (the screen position the
+ * message carries, converted); node = the hit node under that point (0 = none); i0 = the vertical delta and i1 = the horizontal
+ * delta in WHEEL_DELTA units (SWR_WHEEL_DELTA = 120 per notch; a signed 16 bit value as Windows reports it). Windows sign: i0 > 0
+ * means the wheel moved away from the user (content scrolls UP), i1 > 0 means the wheel tilted right (content scrolls RIGHT).
+ * modifiers = SWR_MOD_*, plus SWR_MOD_PRECISE (0x100) when a delta is not a multiple of 120 (a precision touchpad or a high
+ * resolution wheel). The renderer consumes the message: GPUI does not also handle it. A message carries one axis, so one of
+ * i0 / i1 is 0. The number of lines per notch is the host's to read (Windows SPI_GETWHEELSCROLLLINES; Swift: Bridge.wheelScrollLines).
+ *
+ * Scroll bar role. SWR_ROLE_SCROLL_BAR (16): AccessKit Role::ScrollBar, orientation vertical, UIA ScrollBar control type. A scroll
+ * bar node carries its value in the transaction's range table like a slider: the entry names a node upserted in the same
+ * transaction with role SWR_ROLE_SCROLL_BAR (or SWR_ROLE_SLIDER), and the same rules apply. A host publishes value in [0, 1] with min 0 and
+ * max 1; the node's bounds are the scroll bar rect (physical px). There is no ScrollPattern: the bar is a RangeValue node.
+ * UIA SetValue on it is NOT routed to the host in 0.11.
+ * ===========================================================================================*/
+#define SWR_ABI_MINOR_V11 11
+
+#define SWR_RUN_POINTER_WHEEL  0x2u
+#define SWR_PTR_WHEEL          4
+#define SWR_WHEEL_DELTA        120
+#define SWR_MOD_PRECISE        0x100u
+#define SWR_ROLE_SCROLL_BAR    16
+
+/* 0.11 view of swr_bootstrap_info: the 136 bytes of the 0.10 view at identical offsets (abi_minor 11, api_table_size
+ * sizeof(swr_api_v08) = 184, fn_count 22), plus the wheel delta (144 bytes). */
+typedef struct swr_bootstrap_info_v11 {
+    swr_bootstrap_info_v10 v10;
+    uint32_t wheel_delta;                /* 120 (SWR_WHEEL_DELTA) */
+    uint32_t reserved;
+} swr_bootstrap_info_v11;
+
+SWR_API swr_status swr_bootstrap_query_v11(swr_bootstrap_info_v11 *out, uint32_t caller_size);
+/* The 0.8 table (SWR_E_ABI when caller_size < sizeof(swr_api_v08)). */
+SWR_API swr_status swr_get_api_v11(swr_api_v08 *out, uint32_t caller_size);
 
 #ifdef __cplusplus
 }

@@ -617,6 +617,56 @@ fn on_pointer_move(p: gpui::Point<Pixels>, left_down: bool, m: &gpui::Modifiers,
     push_event(e);
 }
 
+/// The fields of a WM_MOUSEWHEEL / WM_MOUSEHWHEEL message, before any window access: the signed WHEEL_DELTA units
+/// (`GET_WHEEL_DELTA_WPARAM`: the high word of wParam as i16), the key-state word (`GET_KEYSTATE_WPARAM`: the low word) and the
+/// SCREEN position (`GET_X_LPARAM` / `GET_Y_LPARAM`: signed 16 bit words, negative on a monitor left of or above the primary).
+pub(crate) fn wheel_message_fields(w: usize, l: isize) -> (i32, u32, i32, i32) {
+    let delta = ((w >> 16) & 0xFFFF) as u16 as i16 as i32;
+    let keys = (w & 0xFFFF) as u32;
+    let sx = (l & 0xFFFF) as u16 as i16 as i32;
+    let sy = ((l >> 16) & 0xFFFF) as u16 as i16 as i32;
+    (delta, keys, sx, sy)
+}
+
+/// Modifier bits for a wheel event: MK_SHIFT (0x4) and MK_CONTROL (0x8) from the message, Alt from the key state (the message
+/// has no Alt bit), SWR_MOD_PRECISE when a delta is not a whole number of notches.
+pub(crate) fn wheel_modifiers(keys: u32, alt: bool, d0: i32, d1: i32) -> u32 {
+    (if keys & 0x8 != 0 { MOD_CTRL } else { 0 })
+        | (if keys & 0x4 != 0 { MOD_SHIFT } else { 0 })
+        | (if alt { MOD_ALT } else { 0 })
+        | (if d0 % WHEEL_DELTA != 0 || d1 % WHEEL_DELTA != 0 { MOD_PRECISE } else { 0 })
+}
+
+/// Rev 0.11: WM_MOUSEWHEEL (vertical, `i0`) / WM_MOUSEHWHEEL (horizontal, `i1`) for a host that asked for them. The position is
+/// converted from screen coordinates to physical px of the client. True = the message is consumed (the host owns it); false = no
+/// live window, so the default handling stays.
+fn on_wheel(hwnd: *mut c_void, msg: u32, w: usize, l: isize) -> bool {
+    let win = LIVE_WINDOW.load(SeqCst);
+    if win == 0 {
+        return false;
+    }
+    let (delta, keys, sx, sy) = wheel_message_fields(w, l);
+    let mut pt = [sx, sy];
+    if unsafe { ScreenToClient(hwnd, &mut pt) } == 0 {
+        return false;
+    }
+    let (x, y) = (pt[0] as f32, pt[1] as f32);
+    let (d0, d1) = if msg == WM_MOUSEHWHEEL { (0, delta) } else { (delta, 0) };
+    let alt = unsafe { GetKeyState(0x12) } < 0; // VK_MENU
+    let node = with_ui(|ui| ui.tree.hit(x, y)).unwrap_or(0);
+    let mut e = Event::new(EV_POINTER, PTR_WHEEL);
+    e.window = win;
+    e.node = node;
+    e.snapshot = SNAPSHOT.load(SeqCst);
+    e.x = x;
+    e.y = y;
+    e.i0 = d0;
+    e.i1 = d1;
+    e.modifiers = wheel_modifiers(keys, alt, d0, d1);
+    push_event(e);
+    true
+}
+
 /// Rev 0.9: the pointer left the window.
 fn on_pointer_left() {
     if !POINTER_MOVES.load(SeqCst) {
@@ -1146,6 +1196,8 @@ extern "system" {
     fn GetWindowRect(hwnd: *mut c_void, rect: *mut [i32; 4]) -> i32;
     fn GetWindowThreadProcessId(hwnd: *mut c_void, pid: *mut u32) -> u32;
     fn GetCurrentProcessId() -> u32;
+    fn ScreenToClient(hwnd: *mut c_void, pt: *mut [i32; 2]) -> i32;
+    fn GetKeyState(vk: i32) -> i16;
 }
 #[link(name = "comctl32")]
 extern "system" {
@@ -1158,6 +1210,8 @@ extern "system" {
     fn DefSubclassProc(hwnd: *mut c_void, msg: u32, w: usize, l: isize) -> isize;
 }
 const WM_PAINT: u32 = 0x000F;
+const WM_MOUSEWHEEL: u32 = 0x020A;
+const WM_MOUSEHWHEEL: u32 = 0x020E;
 const WM_IME_SETCONTEXT: u32 = 0x0281;
 const WM_IME_NOTIFY: u32 = 0x0282;
 const WM_IME_STARTCOMPOSITION: u32 = 0x010D;
@@ -1316,6 +1370,11 @@ unsafe extern "system" fn ime_subclass_proc(hwnd: *mut c_void, msg: u32, w: usiz
     }
     if msg == WM_SWR_MODAL {
         on_modal_message();
+        return 0;
+    }
+    // Rev 0.11 (issue #31): a host that asked for SWR_PTR_WHEEL gets the wheel and GPUI does not also handle it. Any other host
+    // (flags without RUN_POINTER_WHEEL) leaves the message to GPUI exactly as before.
+    if (msg == WM_MOUSEWHEEL || msg == WM_MOUSEHWHEEL) && POINTER_WHEEL.load(SeqCst) && on_wheel(hwnd, msg, w, l) {
         return 0;
     }
     let out = DefSubclassProc(hwnd, msg, w, l);
@@ -1896,6 +1955,30 @@ mod client_size_tests {
     fn inverted_or_empty_rect_clamps_to_zero() {
         assert_eq!(client_size_px([0, 0, 0, 0]), (0, 0));
         assert_eq!(client_size_px([5, 5, 1, 1]), (0, 0));
+    }
+}
+
+#[cfg(test)]
+mod wheel_tests {
+    use super::*;
+
+    #[test]
+    fn message_fields_are_signed_words() {
+        // One notch away from the user (+120) at screen (100, 200), no keys.
+        assert_eq!(wheel_message_fields((120usize << 16) | 0, (200isize << 16) | 100), (120, 0, 100, 200));
+        // One notch toward the user (-120 = 0xFF88) with Ctrl (MK_CONTROL 0x8), on a monitor left of and above the primary.
+        let w = (0xFF88usize << 16) | 0x8;
+        let l = (((-50i16) as u16 as isize) << 16) | ((-300i16) as u16 as isize);
+        assert_eq!(wheel_message_fields(w, l), (-120, 0x8, -300, -50));
+    }
+
+    #[test]
+    fn modifiers_and_the_precise_bit() {
+        assert_eq!(wheel_modifiers(0, false, 120, 0), 0);
+        assert_eq!(wheel_modifiers(0, false, -240, 0), 0, "whole notches are not precise");
+        assert_eq!(wheel_modifiers(0x4 | 0x8, true, 120, 0), MOD_SHIFT | MOD_CTRL | MOD_ALT);
+        assert_eq!(wheel_modifiers(0, false, 30, 0), MOD_PRECISE);
+        assert_eq!(wheel_modifiers(0, false, 0, -15), MOD_PRECISE);
     }
 }
 

@@ -279,6 +279,8 @@ extension Graph {
             let content = measureGroup(node, ProposedViewSize(width: rect.width, height: nil))
             let maxOffset = max(0, content.height - rect.height)
             node.scrollOffset = min(max(0, node.scrollOffset), maxOffset)
+            node.scrollState = ScrollState(offsetY: Double(node.scrollOffset), contentHeight: Double(content.height), viewportHeight: Double(rect.height),
+                                           showsScroller: maxOffset > 0)
             let contentRect = LayoutRect(x: rect.minX, y: rect.minY - node.scrollOffset, width: rect.width, height: content.height)
             placeGroup(node, in: contentRect, proposal: ProposedViewSize(width: rect.width, height: nil))
         case .scrollView(let configuration):
@@ -295,6 +297,11 @@ extension Graph {
             let offsetY = min(max(0, node.scrollOffsetY ?? (anchor.map { maxY * $0.y } ?? 0)), maxY)
             node.scrollOffsetX = offsetX
             node.scrollOffsetY = offsetY
+            // Vertical scrolling only: a horizontal-only ScrollView has no vertical scroll state (#31).
+            node.scrollState = configuration.axes.contains(.vertical)
+                ? ScrollState(offsetY: Double(offsetY), contentHeight: Double(content.height), viewportHeight: Double(rect.height),
+                              showsScroller: maxY > 0 && configuration.showsIndicators)
+                : nil
             let contentRect = LayoutRect(
                 x: rect.minX - offsetX,
                 y: rect.minY - offsetY,
@@ -338,8 +345,9 @@ extension Graph {
 
     // MARK: List
 
-    /// Rows top to bottom, each `ListMetrics.rowHeight` tall with its content centred and inset from the leading edge (see `ListMetrics`). Rows below the
-    /// List's bottom edge are laid out and clipped by the host; there is no scrolling.
+    /// Rows top to bottom, each `ListMetrics.rowHeight` tall with its content centred and inset from the leading edge (see `ListMetrics`). The rows are
+    /// shifted up by the List's scroll offset (#31), which is clamped to the document: 0...(document height less the viewport). Rows outside the viewport
+    /// are laid out and clipped by the host.
     private func placeList(_ node: Node, in rect: LayoutRect) {
         let look = ListLook(style: node.environment.listStyleMetadata)
         let inset = ListMetrics.contentInset(look)
@@ -351,12 +359,24 @@ extension Graph {
         let gutter = ListMetrics.trailingGutter(look, overflows: ListMetrics.overflows(look, rowHeights: heights, viewportHeight: rect.height))
         // A row spans the list less the trailing scroller gutter, so the content's proposal is the row's width less the two insets.
         let proposal = ProposedViewSize(width: max(0, rect.width - gutter - 2 * inset), height: nil)
-        var y = rect.minY + ListMetrics.topInset(look)
-        for child in children {
-            let size = measure(child, proposal)
-            let rowHeight = ListMetrics.rowHeight(forContent: size.height)
+        // The document is the rows as placed at this width, so the offset's clamp uses their real heights (a wrapped row is taller here than at full width).
+        let sizes = children.map { measure($0, proposal) }
+        let rowHeights = sizes.map { ListMetrics.rowHeight(forContent: $0.height) }
+        let viewport = rect.height
+        let document = ListMetrics.documentHeight(look, rowHeights: rowHeights)
+        let maxOffset = max(0, document - viewport)
+        let offset = min(max(0, node.scrollOffsetY ?? 0), maxOffset)
+        node.scrollOffsetY = offset
+        node.scrollState = ScrollState(offsetY: Double(offset), contentHeight: Double(document), viewportHeight: Double(viewport),
+                                       showsScroller: document > viewport)
+        node.listRowExtents = [:]
+        var y = rect.minY + ListMetrics.topInset(look) - offset
+        for (index, child) in children.enumerated() {
+            let size = sizes[index]
+            let rowHeight = rowHeights[index]
             let content = LayoutRect(x: rect.minX + inset, y: y + (rowHeight - size.height) / 2, width: size.width, height: size.height)
             placeChild(child, in: content, within: node, bounds: rect, proposal: proposal)
+            node.listRowExtents[child.instance] = (top: y + offset - rect.minY, height: rowHeight)
             y += rowHeight
         }
     }

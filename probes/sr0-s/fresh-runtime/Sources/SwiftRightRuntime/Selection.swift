@@ -170,6 +170,7 @@ extension Graph {
                 list.selectionAnchor = tags[target]
             }
             list.selectionCursor = tags[target]
+            scrollListRow(listID, tag: tags[target])   // #31: keep the keyboard-selected row in view (smallest move)
             return true
         }
     }

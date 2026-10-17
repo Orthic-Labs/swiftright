@@ -50,10 +50,30 @@ public final class ResolvedNodePainter {
     var pendingFieldLayouts: [String: TextFieldLayout] = [:]
     /// Where each TextField of the last committed tree put its text (runtime id), for caret placement and IME candidate anchoring.
     public private(set) var fieldLayouts: [String: TextFieldLayout] = [:]
+    /// The legacy scroller of each List and ScrollView in the last committed tree, by runtime id (window pixels; see `scrollerRect(for:)`).
+    public private(set) var scrollerLayouts: [String: ScrollerLayout] = [:]
+    /// Bridge id bit of a scroller node: a List or ScrollView's scroller is a child node of its own, `id | scrollerNodeFlag`.
+    static let scrollerNodeFlag: UInt64 = 1 << 62
+    /// Whether the renderer takes a `.scrollBar` node (`Bridge.supportsScrollBar`, rev 0.11). When true, a scroller publishes a scroll bar
+    /// semantic with its range (value 0...1); when false it stays a plain painted node, since an older renderer refuses the role.
+    public let publishesScrollBars: Bool
 
     public init(images: ImageRegistering, scale: Float, text: TextRunSource? = nil, systemImages: SystemImageRegistry? = nil,
-                log: @escaping (String) -> Void = { print($0) }) {
+                publishesScrollBars: Bool = false, log: @escaping (String) -> Void = { print($0) }) {
         self.images = images; self.scale = scale; self.text = text; self.systemImages = systemImages; self.log = log
+        self.publishesScrollBars = publishesScrollBars
+    }
+
+    /// The scroll bar semantic of a scroller: role `.scrollBar` (vertical in the renderer), the range the thumb's position on 0...1, with the
+    /// arrow step (one wheel line) and the page (the viewport less the page overlap) as fractions of the offset travel, so UIA's SmallChange and
+    /// LargeChange match the keyboard and the wheel. Nil when the renderer does not publish scroll bars.
+    func scrollBarSemantic(for scroll: ScrollState) -> SemanticNode? {
+        guard publishesScrollBars else { return nil }
+        let maxOffset = scroll.maxOffset
+        let step = maxOffset > 0 ? Double(ScrollerMetrics.pointsPerLine) / maxOffset : 0
+        let page = Double(max(0, CGFloat(scroll.viewportHeight) - ScrollerMetrics.pageOverlap))
+        let jump = maxOffset > 0 ? page / maxOffset : 0
+        return SemanticNode(role: .scrollBar, label: "", range: SliderRange(value: scroll.value, min: 0, max: 1, step: step, jump: jump))
     }
 
     public func beginCommit() { pendingShapeImages = [:]; pendingPixelImages = [:]; pendingFieldLayouts = [:] }
@@ -86,6 +106,17 @@ public final class ResolvedNodePainter {
         pixelImages = [:]
         pendingPixelImages = [:]
         lastPixelKey = [:]
+    }
+
+    /// The strip of a List or ScrollView's legacy vertical scroller in the last committed tree, in window pixels (the space of the node bounds the
+    /// commit upserts); nil when the node shows none (not a List or ScrollView, or its content does not overflow). For hit-testing by the case host.
+    public func scrollerRect(for node: ResolvedNode) -> CGRect? {
+        scrollerLayouts[node.id].map { ScrollerPainter.cgRect($0.strip) }
+    }
+
+    /// The thumb of the scroller `scrollerRect(for:)` describes, in window pixels; nil when there is none.
+    public func thumbRect(for node: ResolvedNode) -> CGRect? {
+        scrollerLayouts[node.id].map { ScrollerPainter.cgRect($0.thumb) }
     }
 
     /// A solid backdrop node under the whole tree (the window background).
@@ -153,6 +184,7 @@ public final class ResolvedNodePainter {
         var nodes: [NodeUpsert] = []
         var current: Set<UInt64> = []
         var runtimeIDs: [UInt64: String] = [:]
+        var scrollers: [String: ScrollerLayout] = [:]
         if let background {
             nodes.append(NodeUpsert(id: background.id, bounds: background.bounds, primitives: [.rect(background.bounds, color: background.color)]))
             current.insert(background.id)
@@ -225,10 +257,24 @@ public final class ResolvedNodePainter {
             } else {
                 for (index, child) in n.children.enumerated() { try walk(child, parent: id, order: UInt32(index), clip: childClip, textColor: childTextColor, inButton: childInButton || n.kind == "Button" || n.kind == "modifier.onTapGesture", a11y: childA11y, hidden: childHidden) }
             }
+            // The legacy scroller of a List or ScrollView is painted above its content: a child node ordered after the last child, clipped to the container.
+            if n.kind == "List" || n.kind == "ScrollView", let scroll = n.scroll, let layout = ScrollerPainter.layout(frame: bounds, scale: scale, scroll: scroll) {
+                let scrollerID = id | Self.scrollerNodeFlag
+                current.insert(scrollerID)
+                runtimeIDs[scrollerID] = n.id
+                scrollers[n.id] = layout
+                let scrollerClip = Self.intersection(clip, bounds)
+                var scrollerPrimitives: [Primitive] = [.clipPush(scrollerClip)]
+                scrollerPrimitives += ScrollerPainter.primitives(for: layout, scale: scale)
+                scrollerPrimitives.append(.clipPop)
+                nodes.append(NodeUpsert(id: scrollerID, parent: id, order: UInt32(n.children.count), bounds: layout.strip, primitives: scrollerPrimitives,
+                                        semantic: scrollBarSemantic(for: scroll)))
+            }
         }
         try walk(root, parent: background?.id ?? 0, order: 0, clip: nil)
         try submit(SwiftRightBridge.Transaction(version: version, focus: focusedField.map { UInt64($0.instance + 1) } ?? 0, upserts: nodes, removes: Array(previousLive.subtracting(current))))
         committed = true
+        scrollerLayouts = scrollers
         return Committed(live: current, runtimeIDs: runtimeIDs, nodeCount: nodes.count)
     }
 

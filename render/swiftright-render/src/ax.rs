@@ -7,7 +7,7 @@ use std::collections::HashMap;
 use std::sync::{Arc, Mutex};
 
 use accesskit::{
-    Action, ActionData, ActionHandler, ActionRequest, ActivationHandler, Node, NodeId, Rect, Role,
+    Action, ActionData, ActionHandler, ActionRequest, ActivationHandler, Node, NodeId, Orientation, Rect, Role,
     TextDirection, TextPosition, TextSelection, Toggled, TreeId, TreeInfo, TreeUpdate,
 };
 
@@ -116,6 +116,9 @@ pub fn build_tree() -> TreeUpdate {
             ROLE_DIALOG => Role::Dialog,
             // Rev 0.9. accesskit Role::Slider -> UIA Slider; with a numeric value accesskit_windows publishes RangeValuePattern.
             ROLE_SLIDER => Role::Slider,
+            // Rev 0.11 (issue #31). Role::ScrollBar -> UIA ScrollBar (accesskit_windows 0.35.1 node.rs control_type); the range entry
+            // (value 0..1) gives it the RangeValue pattern (is_range_value_pattern_supported = numeric_value is some).
+            ROLE_SCROLL_BAR => Role::ScrollBar,
             _ => Role::GenericContainer,
         };
         let mut node = Node::new(role);
@@ -163,6 +166,9 @@ pub fn build_tree() -> TreeUpdate {
             node.set_max_numeric_value(max);
             node.set_numeric_value_step(step);
             node.set_numeric_value_jump(jump);
+        }
+        if n.role == ROLE_SCROLL_BAR {
+            node.set_orientation(Orientation::Vertical);
         }
         if n.flags & SEM_SELECTABLE != 0 {
             node.set_selected(n.flags & SEM_SELECTED != 0);

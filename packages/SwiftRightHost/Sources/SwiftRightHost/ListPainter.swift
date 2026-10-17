@@ -51,19 +51,21 @@ public enum ListPainter {
 
     /// The rectangle of every row (direct child) of a List, top to bottom, in window pixels, from the layout rules (`ListMetrics`): the list's width, less
     /// the legacy scroller's gutter (16.8 pt, 42 px at scale 2.5) only when the rows overflow the list (see `ListMetrics`), and edges at whole device pixels
-    /// (a half pixel rounds up, as AppKit lays the first row of a list at a half-pixel position).
+    /// (a half pixel rounds up, as AppKit lays the first row of a list at a half-pixel position). A scrolled list (`ResolvedNode.scroll`) moves its rows up
+    /// by the offset in points; the rows that leave the list are clipped by `primitives(for:)` and by the list's content clip.
     public static func rows(of list: ResolvedNode, bounds: Rect, scale: Float) -> [Row] {
         let look = look(of: list)
         let rowHeights = list.children.map { ListMetrics.rowHeight(forContent: CGFloat($0.frame.height)) }
         let overflows = ListMetrics.overflows(look, rowHeights: rowHeights, viewportHeight: CGFloat(bounds.h / scale))
         let gutter = (Float(ListMetrics.trailingGutter(look, overflows: overflows)) * scale).rounded(.toNearestOrAwayFromZero)
         let rowWidth = max(0, bounds.w - gutter)
-        var edge = (bounds.y + Float(ListMetrics.topInset(look)) * scale).rounded(.toNearestOrAwayFromZero)
+        let shift = Float(list.scroll?.offsetY ?? 0)
+        var edge = (bounds.y + (Float(ListMetrics.topInset(look)) - shift) * scale).rounded(.toNearestOrAwayFromZero)
         var out: [Row] = []
         var cursor = Float(ListMetrics.topInset(look))
         for (child, height) in zip(list.children, rowHeights) {
             cursor += Float(height)
-            let next = (bounds.y + cursor * scale).rounded(.toNearestOrAwayFromZero)
+            let next = (bounds.y + (cursor - shift) * scale).rounded(.toNearestOrAwayFromZero)
             let style = rowStyle(of: child)
             out.append(Row(rect: Rect(x: bounds.x, y: edge, w: rowWidth, h: next - edge), isSelected: child.accessibility.isSelected, isEnabled: child.accessibility.isEnabled,
                            separatorHidden: style.separatorHidden ?? false, background: style.background, backgroundUnsupported: style.unsupported))

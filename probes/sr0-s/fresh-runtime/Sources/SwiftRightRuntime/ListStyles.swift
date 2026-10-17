@@ -79,3 +79,55 @@ public enum ListMetrics {
         return LayoutRect(x: listFrame.minX, y: top, width: listFrame.width - trailingGutter, height: height)
     }
 }
+
+/// The scroll state of a List or a vertical ScrollView after layout (#31). Points. `offsetY` is clamped to 0...maxOffset.
+/// `showsScroller` is true when the content overflows (and, for a ScrollView, its indicators are shown).
+public struct ScrollState: Equatable, Sendable {
+    public let offsetY: Double
+    public let contentHeight: Double
+    public let viewportHeight: Double
+    public let showsScroller: Bool
+
+    public init(offsetY: Double, contentHeight: Double, viewportHeight: Double, showsScroller: Bool) {
+        self.offsetY = offsetY
+        self.contentHeight = contentHeight
+        self.viewportHeight = viewportHeight
+        self.showsScroller = showsScroller
+    }
+
+    /// The largest offset: how far the content is taller than the viewport (0 when it fits).
+    public var maxOffset: Double { max(0, contentHeight - viewportHeight) }
+    /// The position of the offset in 0...1 (the scroller's accessibility value); 0 when nothing scrolls.
+    public var value: Double { maxOffset > 0 ? offsetY / maxOffset : 0 }
+}
+
+/// Scroll wheel and scroll bar metrics (#31). Every value is provisional until the Mac measurement (M1-M3, #31) lands; each is marked TO MEASURE.
+public enum ScrollerMetrics {
+    /// Points the content moves for one wheel line. // TO MEASURE (M1-M3, #31)
+    public static let pointsPerLine: CGFloat = 10
+    /// Overlap kept between pages: a page is the viewport less this. // TO MEASURE (M1-M3, #31)
+    public static let pageOverlap: CGFloat = 10
+    /// Width of the scroll bar at the trailing edge (H21: AXScrollBar 19 pt). // TO MEASURE (M1-M3, #31)
+    public static let width: CGFloat = 19
+    /// Thumb inset from the bar's leading edge. // TO MEASURE (M1-M3, #31)
+    public static let thumbInsetLeading: CGFloat = 4
+    /// Thumb inset from the bar's trailing edge. // TO MEASURE (M1-M3, #31)
+    public static let thumbInsetTrailing: CGFloat = 4.2
+    /// Track inset from the top of the viewport. // TO MEASURE (M1-M3, #31)
+    public static let thumbInsetTop: CGFloat = 3.8
+    /// Track inset from the bottom of the viewport. // TO MEASURE (M1-M3, #31)
+    public static let thumbInsetBottom: CGFloat = 6.2
+    /// Thumb width. // TO MEASURE (M1-M3, #31)
+    public static let thumbWidth: CGFloat = 10.8
+    /// Shortest thumb. // TO MEASURE (M1-M3, #31)
+    public static let minThumbLength: CGFloat = 18
+
+    /// The track's length: the viewport less the top and bottom insets.
+    public static func trackLength(viewport: CGFloat) -> CGFloat { max(0, viewport - thumbInsetTop - thumbInsetBottom) }
+
+    /// The thumb's length: track x viewport / content, at least `minThumbLength`.
+    public static func thumbLength(viewport: CGFloat, content: CGFloat) -> CGFloat {
+        guard content > 0 else { return minThumbLength }
+        return max(minThumbLength, trackLength(viewport: viewport) * viewport / content)
+    }
+}

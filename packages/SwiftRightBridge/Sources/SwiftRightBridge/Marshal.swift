@@ -134,11 +134,13 @@ func cTransaction(_ t: Transaction, window: UInt64, arena: Arena) -> swr_transac
     return tx
 }
 
-/// Rev 0.9: the range table of a transaction (one entry per slider node that carries a range).
-func cRanges(_ t: Transaction) -> [swr_range_entry] {
+/// Rev 0.9: the range table of a transaction (one entry per slider node that carries a range). Rev 0.11: also one per `.scrollBar`
+/// node, when the renderer supports them (`scrollBars`); an older renderer would refuse the whole commit for a range on an unknown
+/// role, so there the scroll bar's range is dropped (typed by `Bridge.supportsScrollBar`, never guessed).
+func cRanges(_ t: Transaction, scrollBars: Bool = true) -> [swr_range_entry] {
     var out: [swr_range_entry] = []
     for n in t.upserts {
-        guard let s = n.semantic, s.role == .slider, let r = s.range else { continue }
+        guard let s = n.semantic, s.role == .slider || (scrollBars && s.role == .scrollBar), let r = s.range else { continue }
         var e = swr_range_entry()
         e.id = n.id; e.value = r.value; e.min = r.min; e.max = r.max; e.step = r.step; e.jump = r.jump
         out.append(e)

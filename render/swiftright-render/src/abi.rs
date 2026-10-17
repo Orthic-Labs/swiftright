@@ -16,8 +16,12 @@ pub const API_V08_FN_COUNT: u32 = 22;
 pub const ABI_MINOR_V09: u32 = 9;
 /// Rev 0.10 (additive): minor reported ONLY by the `_v10` discovery exports (the 0.8 function table is unchanged: 22 functions).
 pub const ABI_MINOR_V10: u32 = 10;
+/// Rev 0.11 (additive): minor reported ONLY by the `_v11` discovery exports (the 0.8 function table is unchanged: 22 functions).
+pub const ABI_MINOR_V11: u32 = 11;
 /// Rev 0.9: AccessKit Role::Slider (UIA Slider; RangeValuePattern when a range entry is sent).
 pub const ROLE_SLIDER: u32 = 15;
+/// Rev 0.11: AccessKit Role::ScrollBar (UIA ScrollBar; RangeValuePattern from a range entry, value 0..1).
+pub const ROLE_SCROLL_BAR: u32 = 16;
 pub const FEATURES_MAX: usize = 16;
 pub const FALLBACKS_MAX: usize = 8;
 pub const FACE_AXES_MAX: usize = 8;
@@ -157,6 +161,13 @@ pub const KEY_UP: u32 = 2;
 pub const PTR_DOWN: u32 = 1;
 pub const PTR_UP: u32 = 2;
 pub const PTR_MOVE: u32 = 3;
+/// Rev 0.11 (issue #31): a wheel notch or precision-touchpad delta. Emitted only to a host that set `RUN_POINTER_WHEEL`.
+pub const PTR_WHEEL: u32 = 4;
+/// Rev 0.11: `swr_run_options.flags` bit 1. Only a host that sets it receives SWR_PTR_WHEEL events (and the renderer consumes
+/// WM_MOUSEWHEEL / WM_MOUSEHWHEEL only for such a host).
+pub const RUN_POINTER_WHEEL: u32 = 0x2;
+/// WHEEL_DELTA: units per wheel notch.
+pub const WHEEL_DELTA: i32 = 120;
 /// Rev 0.9 (decision H3): `swr_run_options.flags` bit 0. Only a host that sets it receives SWR_PTR_MOVE events (hover and drag);
 /// every earlier host (flags 0) sees exactly the events it saw before.
 pub const RUN_POINTER_MOVES: u32 = 0x1;
@@ -175,6 +186,8 @@ pub const MOD_CTRL: u32 = 0x1;
 pub const MOD_ALT: u32 = 0x2;
 pub const MOD_SHIFT: u32 = 0x4;
 pub const MOD_PLATFORM: u32 = 0x8;
+/// Rev 0.11: a wheel delta is not a multiple of WHEEL_DELTA (precision touchpad or high-resolution wheel).
+pub const MOD_PRECISE: u32 = 0x100;
 
 pub const EVENT_TEXT_CAP: usize = 64;
 
@@ -868,6 +881,15 @@ pub struct BootstrapInfoV10 {
     pub reserved: u32,
 }
 
+/// Rev 0.11 `swr_bootstrap_info_v11` (144 bytes): the 0.10 view at identical offsets (abi_minor 11) + the wheel delta word.
+#[repr(C)]
+#[derive(Clone, Copy)]
+pub struct BootstrapInfoV11 {
+    pub v10: BootstrapInfoV10,
+    pub wheel_delta: u32,
+    pub reserved: u32,
+}
+
 /// Rev 0.8 `swr_api_v08` (184 bytes): the 18 pointers of `ApiV07` at unchanged offsets + the 0.8 entries.
 #[repr(C)]
 #[derive(Clone, Copy)]
@@ -973,6 +995,8 @@ const _: () = assert!(std::mem::offset_of!(RunOptionsV10, render_scale) == 40);
 const _: () = assert!(std::mem::size_of::<BootstrapInfoV10>() == 136);
 const _: () = assert!(std::mem::offset_of!(BootstrapInfoV10, run_options_v10_size) == 128);
 const _: () = assert!(std::mem::offset_of!(BootstrapInfoV09, range_entry_size) == 120);
+const _: () = assert!(std::mem::size_of::<BootstrapInfoV11>() == 144);
+const _: () = assert!(std::mem::offset_of!(BootstrapInfoV11, wheel_delta) == 136);
 const _: () = assert!(std::mem::offset_of!(BootstrapInfoV08, measure_request_v08_size) == 96);
 const _: () = assert!(std::mem::offset_of!(BootstrapInfoV08, system_fonts_size) == 112);
 const _: () = assert!(std::mem::size_of::<ApiV08>() == 184);

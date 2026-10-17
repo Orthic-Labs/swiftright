@@ -24,6 +24,9 @@ public enum NodeRole: UInt32 {
     case checkbox = 8, switchControl, image, menu, menuItem, alert, dialog
     /// ABI rev 0.9 (decision H1). AccessKit Role::Slider / UIA Slider; a `SemanticNode.range` adds the UIA RangeValue pattern.
     case slider = 15
+    /// ABI rev 0.11 (issue #31). AccessKit Role::ScrollBar, vertical / UIA ScrollBar; a `SemanticNode.range` of value 0...1 (min 0, max 1)
+    /// adds the UIA RangeValue pattern. The node's bounds are the scroll bar rect. Needs `Bridge.supportsScrollBar`.
+    case scrollBar = 16
 }
 
 /// ABI rev 0.6: checked / pressed / on state (AccessKit Toggled, UIA TogglePattern).
@@ -133,7 +136,7 @@ public struct SemanticNode {
     /// ABI rev 0.6: SWR_SEM_DISABLED. UIA IsEnabled = false and no invoke/toggle/select; the
     /// renderer also swallows pointer presses on a disabled node (event node 0).
     public var disabled: Bool
-    /// ABI rev 0.9: the numeric range of a `.slider` node; nil = none.
+    /// ABI rev 0.9: the numeric range of a `.slider` node (rev 0.11: or a `.scrollBar`, value 0...1); nil = none.
     public var range: SliderRange?
     public init(role: NodeRole, label: String = "", value: String = "", actions: AXActions = [],
                 multiline: Bool = false, runs: [AXTextRun] = [],
@@ -263,6 +266,38 @@ public struct BridgeEvent {
     }
     /// Rev 0.6: true when a menu / dialog could not be shown at all (i1 == -2).
     public var modalFailed: Bool { kind == .modalResult && (action == 2 || action == 3) && i1 == -2 }
+
+    /// Rev 0.11 (issue #31): a pointer wheel event (`SWR_PTR_WHEEL`), only for a host that ran with `pointerWheel: true`.
+    /// `deltaY` / `deltaX` are in WHEEL_DELTA units (120 per notch), Windows sign: deltaY > 0 = the wheel moved away from the user
+    /// (content scrolls UP); deltaX > 0 = tilted right. `precise` = a delta is not a whole notch (touchpad). x, y are physical px.
+    public struct Wheel: Equatable {
+        public var x: Float, y: Float
+        public var deltaY: Int32, deltaX: Int32
+        public var precise: Bool
+        public var node: NodeID
+        public var modifiers: UInt32
+        public init(x: Float, y: Float, deltaY: Int32, deltaX: Int32, precise: Bool, node: NodeID = 0, modifiers: UInt32 = 0) {
+            self.x = x; self.y = y; self.deltaY = deltaY; self.deltaX = deltaX; self.precise = precise
+            self.node = node; self.modifiers = modifiers
+        }
+    }
+    public static let wheelAction: UInt32 = UInt32(SWR_PTR_WHEEL)
+    public static let wheelDelta: Int32 = Int32(SWR_WHEEL_DELTA)
+    public static let modPrecise: UInt32 = UInt32(SWR_MOD_PRECISE)
+
+    /// A pointer wheel event, nil for every other event. `precise` follows SWR_MOD_PRECISE.
+    public var wheel: Wheel? {
+        guard kind == .pointer, action == BridgeEvent.wheelAction else { return nil }
+        return Wheel(x: x, y: y, deltaY: i0, deltaX: i1, precise: modifiers & BridgeEvent.modPrecise != 0, node: node,
+                     modifiers: modifiers & ~BridgeEvent.modPrecise)
+    }
+
+    /// For hosts and tests that build a wheel event themselves.
+    public static func wheel(x: Float, y: Float, deltaY: Int32, deltaX: Int32 = 0, precise: Bool = false, node: NodeID = 0,
+                             modifiers: UInt32 = 0) -> BridgeEvent {
+        BridgeEvent(kindRaw: Kind.pointer.rawValue, action: wheelAction, node: node, x: x, y: y, i0: deltaY, i1: deltaX,
+                    modifiers: modifiers | (precise ? modPrecise : 0))
+    }
 
     public var kind: Kind? { Kind(rawValue: kindRaw) }
     public var axAction: AXAction? { kind == .axAction ? AXAction(rawValue: action) : nil }
