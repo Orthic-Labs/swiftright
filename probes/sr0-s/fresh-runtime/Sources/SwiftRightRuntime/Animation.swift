@@ -230,8 +230,8 @@ final class AnimationTransaction {
     /// True while the `withAnimation` / `withTransaction` body that made this transaction is still running (`TransactionContext.begin` .. `end`). A segment
     /// commit made inside a nested block must not settle it: the body may still write state, and the completion fires only after those writes commit.
     var frameOpen = false
-    /// The body wrote no state itself but contained nested transactions (which committed their own writes): this transaction only settles its completion
-    /// and never decides the animation of a later, unrelated write that happens to take it from the unattached list.
+    /// The body wrote no state itself (nested blocks, if any, committed their own writes): this transaction only settles its completion and never decides
+    /// the animation of a later, unrelated write or removal.
     var settlesOnly = false
 
     init(animation: Animation?, completion: (() -> Void)?, criteria: AnimationCompletionCriteria = .logicallyComplete,
@@ -416,14 +416,13 @@ enum TransactionContext {
         let transaction: AnimationTransaction
         var touched: [Graph] = []
         var everTouched = false
-        var hadNested = false
         init(_ transaction: AnimationTransaction) { self.transaction = transaction }
     }
     /// Every live graph (one per window). `withAnimation` has no graph argument, so the boundary cannot know which graph owns the state the
     /// body will write; each graph settles only its own pending changes, so every live graph is told and none is mistaken for another.
     private static var graphs: [WeakGraph] = []
     private static var frames: [Frame] = []
-    /// Transactions whose body wrote no graph's state: the next commit of any graph takes them (they only settle their completion).
+    /// Always empty since issue #30: a body that wrote no graph's state settles its completion at once and is never kept (kept for `Graph.counts` and `pendingTransactions`).
     private static var unattached: [AnimationTransaction] = []
     /// A settled completion waits while any graph still queues a transaction for its next commit (and while a frame is open): a write it makes would
     /// otherwise coalesce into the commit that applies that transaction, however the completion came to settle (inside a nested block, or at a tick with
@@ -453,7 +452,6 @@ enum TransactionContext {
             if outermost { entry.graph?.commitTriggerBeforeTransaction() }
         }
         if let parent = frames.last {
-            parent.hadNested = true
             let touched = parent.touched
             parent.touched = []
             for graph in touched { graph.commitSegment(parent.transaction) }
@@ -462,12 +460,19 @@ enum TransactionContext {
         frames.append(Frame(transaction))
     }
 
-    /// The body ended: its transaction is queued on each graph it wrote and not yet committed (or left unattached when it wrote none). Nested in another
+    /// The body ended: its transaction is queued on each graph it wrote and not yet committed (a body that wrote none only settles its completion). Nested in another
     /// transaction, its writes are committed now under it, so the enclosing transaction's later writes do not take its place as the decisive one.
     static func end(_ transaction: AnimationTransaction) {
         guard let frame = frames.popLast() else { return }
         transaction.frameOpen = false
-        if !frame.everTouched { transaction.settlesOnly = frame.hadNested; unattached.append(transaction); drainIfIdle(); return }
+        if !frame.everTouched {
+            // A body that wrote nothing governs no later write or removal (measured on macOS 27, issue #30: an empty withAnimation animates nothing after it),
+            // nested blocks or not. Its transaction only settles its completion, which runs at once (no layer waits on it).
+            transaction.settlesOnly = true
+            transaction.settleIfDone()
+            drainIfIdle()
+            return
+        }
         var enqueued = false
         if frames.isEmpty {
             for graph in frame.touched where graph.enqueue(transaction) { enqueued = true }

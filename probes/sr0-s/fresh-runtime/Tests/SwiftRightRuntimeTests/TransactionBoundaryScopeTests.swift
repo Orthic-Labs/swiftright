@@ -616,6 +616,50 @@ final class TransactionBoundaryScopeTests: XCTestCase {
         XCTAssertTrue(fired, "the scheduled flush took the queued transaction and settled it")
     }
 
+    // Issue #30 (measured on macOS 27): a withAnimation / withTransaction whose body wrote nothing governs no later write. (a) empty withAnimation.
+    func testEmptyWithAnimationDoesNotAnimateALaterPlainWrite() {
+        let model = ChainModel()
+        model.react = { _, _ in }
+        let (graph, records) = chain(model)
+        withAnimation(.linear(duration: 2.0)) {}
+        let base = records.items.count
+        model.follower = 40
+        graph.flush()
+        graph.tick(now: 0)
+        graph.tick(now: 0.5)
+        XCTAssertEqual(widths(graph)[1], 50, accuracy: 1e-9, "the later write snaps")
+        XCTAssertTrue(records.items.dropFirst(base).allSatisfy { $0.animation == nil })
+    }
+
+    // (b) an empty block's completion still fires, once, and the later write snaps.
+    func testEmptyWithAnimationCompletionFiresOnceAndALaterWriteSnaps() {
+        let model = ChainModel()
+        model.react = { _, _ in }
+        let (graph, _) = chain(model)
+        var fired = 0
+        withAnimation(.linear(duration: 2.0)) {} completion: { fired += 1 }
+        XCTAssertEqual(fired, 1, "the completion runs: nothing waits on it")
+        model.follower = 40
+        graph.flush()
+        graph.tick(now: 0)
+        graph.tick(now: 0.5)
+        XCTAssertEqual(widths(graph)[1], 50, accuracy: 1e-9, "the later write snaps")
+        XCTAssertEqual(fired, 1, "once")
+    }
+
+    // (c) an empty withTransaction likewise.
+    func testEmptyWithTransactionDoesNotAnimateALaterPlainWrite() {
+        let model = ChainModel()
+        model.react = { _, _ in }
+        let (graph, _) = chain(model)
+        withTransaction(Transaction(animation: .linear(duration: 2.0))) {}
+        model.follower = 40
+        graph.flush()
+        graph.tick(now: 0)
+        graph.tick(now: 0.5)
+        XCTAssertEqual(widths(graph)[1], 50, accuracy: 1e-9, "the later write snaps")
+    }
+
     // A transaction belongs to the graph whose state its body wrote: another window's commit must not consume it.
     func testQueuedTransactionIsNotConsumedByAnotherWindow() {
         let modelA = MirrorModel(), modelB = MirrorModel()
