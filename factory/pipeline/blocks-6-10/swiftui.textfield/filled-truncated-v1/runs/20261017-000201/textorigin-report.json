@@ -1,0 +1,130 @@
+{
+ "gate": "text origin (first ink x, first ink y, baseline, selection colour and start x)",
+ "yTolerancesPx": {
+  "firstInkY": 2,
+  "baseline": 2,
+  "inkCentreY": 0.5
+ },
+ "yToleranceReason": "measured over the 20 captured runs of every bezeled TextField case (dy,dbaseline px, Windows minus Mac): (2,-2) (2,-1) (1,-2) (1,-1), constant across runs: Windows draws the body font at 12 pt and the Mac at 13 pt (decision 2), so the glyphs are shorter and, with the line centred on both sides, the top sits 1-2 px lower and the baseline 1-2 px higher; the mid-point of the two stays within 0.5 px",
+ "firstInkTolerancePx": 0,
+ "firstInkToleranceReason": null,
+ "selectionStartTolerancePx": 0,
+ "checks": 3,
+ "fail": 3,
+ "rows": [
+  {
+   "run": 1,
+   "field": 0,
+   "frame": [
+    25,
+    25,
+    225,
+    85
+   ],
+   "ok": false,
+   "why": [
+    "first ink x differs by 1 px (mac 42, win 43, tolerance 0)"
+   ],
+   "mac": {
+    "background": [
+     255,
+     255,
+     255
+    ],
+    "firstInkX": 42,
+    "firstInkY": 44,
+    "baselineY": 67,
+    "selection": null,
+    "caretX": null
+   },
+   "windows": {
+    "background": [
+     255,
+     255,
+     255
+    ],
+    "firstInkX": 43,
+    "firstInkY": 45,
+    "baselineY": 67,
+    "selection": null,
+    "caretX": null
+   }
+  },
+  {
+   "run": 2,
+   "field": 0,
+   "frame": [
+    25,
+    25,
+    225,
+    85
+   ],
+   "ok": false,
+   "why": [
+    "first ink x differs by 1 px (mac 42, win 43, tolerance 0)"
+   ],
+   "mac": {
+    "background": [
+     255,
+     255,
+     255
+    ],
+    "firstInkX": 42,
+    "firstInkY": 44,
+    "baselineY": 67,
+    "selection": null,
+    "caretX": null
+   },
+   "windows": {
+    "background": [
+     255,
+     255,
+     255
+    ],
+    "firstInkX": 43,
+    "firstInkY": 45,
+    "baselineY": 67,
+    "selection": null,
+    "caretX": null
+   }
+  },
+  {
+   "run": 3,
+   "field": 0,
+   "frame": [
+    25,
+    25,
+    225,
+    85
+   ],
+   "ok": false,
+   "why": [
+    "first ink x differs by 1 px (mac 42, win 43, tolerance 0)"
+   ],
+   "mac": {
+    "background": [
+     255,
+     255,
+     255
+    ],
+    "firstInkX": 42,
+    "firstInkY": 44,
+    "baselineY": 67,
+    "selection": null,
+    "caretX": null
+   },
+   "windows": {
+    "background": [
+     255,
+     255,
+     255
+    ],
+    "firstInkX": 43,
+    "firstInkY": 45,
+    "baselineY": 67,
+    "selection": null,
+    "caretX": null
+   }
+  }
+ ]
+}

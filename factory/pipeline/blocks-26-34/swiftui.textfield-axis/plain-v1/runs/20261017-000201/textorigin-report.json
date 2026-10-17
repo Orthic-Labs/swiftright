@@ -1,0 +1,130 @@
+{
+ "gate": "text origin (first ink x, first ink y, baseline, selection colour and start x)",
+ "yTolerancesPx": {
+  "firstInkY": 2,
+  "baseline": 2,
+  "inkCentreY": 0.5
+ },
+ "yToleranceReason": "as textfield/placeholder-v1 (decision 14): Windows draws the body font at 12 pt and the Mac at 13 pt, measured per run",
+ "firstInkTolerancePx": 0,
+ "firstInkToleranceReason": null,
+ "selectionStartTolerancePx": 0,
+ "checks": 3,
+ "fail": 3,
+ "rows": [
+  {
+   "run": 1,
+   "field": 0,
+   "frame": [
+    245,
+    275,
+    555,
+    325
+   ],
+   "ok": false,
+   "why": [
+    "first ink x differs by 1 px (mac 252, win 253, tolerance 0)"
+   ],
+   "mac": {
+    "background": [
+     255,
+     255,
+     255
+    ],
+    "firstInkX": 252,
+    "firstInkY": 289,
+    "baselineY": 312,
+    "selection": null,
+    "caretX": null
+   },
+   "windows": {
+    "background": [
+     255,
+     255,
+     255
+    ],
+    "firstInkX": 253,
+    "firstInkY": 290,
+    "baselineY": 312,
+    "selection": null,
+    "caretX": null
+   }
+  },
+  {
+   "run": 2,
+   "field": 0,
+   "frame": [
+    245,
+    275,
+    555,
+    325
+   ],
+   "ok": false,
+   "why": [
+    "first ink x differs by 1 px (mac 252, win 253, tolerance 0)"
+   ],
+   "mac": {
+    "background": [
+     255,
+     255,
+     255
+    ],
+    "firstInkX": 252,
+    "firstInkY": 289,
+    "baselineY": 312,
+    "selection": null,
+    "caretX": null
+   },
+   "windows": {
+    "background": [
+     255,
+     255,
+     255
+    ],
+    "firstInkX": 253,
+    "firstInkY": 290,
+    "baselineY": 312,
+    "selection": null,
+    "caretX": null
+   }
+  },
+  {
+   "run": 3,
+   "field": 0,
+   "frame": [
+    245,
+    275,
+    555,
+    325
+   ],
+   "ok": false,
+   "why": [
+    "first ink x differs by 1 px (mac 252, win 253, tolerance 0)"
+   ],
+   "mac": {
+    "background": [
+     255,
+     255,
+     255
+    ],
+    "firstInkX": 252,
+    "firstInkY": 289,
+    "baselineY": 312,
+    "selection": null,
+    "caretX": null
+   },
+   "windows": {
+    "background": [
+     255,
+     255,
+     255
+    ],
+    "firstInkX": 253,
+    "firstInkY": 290,
+    "baselineY": 312,
+    "selection": null,
+    "caretX": null
+   }
+  }
+ ]
+}
