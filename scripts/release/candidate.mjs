@@ -7,8 +7,8 @@
 // Azure federated credential; until those exist those jobs fail at their login/identity steps, by design.
 import { appendFileSync, existsSync, mkdirSync, readFileSync, readdirSync, statSync, writeFileSync } from "node:fs";
 import { spawnSync } from "node:child_process";
-import { createHash } from "node:crypto";
 import path from "node:path";
+import { pathToFileURL } from "node:url";
 
 const env = process.env;
 if (env.GITHUB_ACTIONS !== "true") throw new Error("Release execution requires generated hosted CI");
@@ -33,6 +33,7 @@ if (action === "admit") {
   const fields = { version, source_revision: revision, signed_qualification: env.RIGHT_GIT_SIGNED_QUALIFICATION, publish: "false", dry_run: env.RIGHT_GIT_DRY_RUN, artifact_suffix: `${version}-${revision}` };
   appendFileSync(env.GITHUB_OUTPUT, Object.entries(fields).map(([k, v]) => `${k}=${v}\n`).join(""));
 } else if (action === "summary") {
+  const { sha256File } = await import(pathToFileURL(path.join(repo, "node_modules", "@rightkit", "release", "native-release-finalization.mjs")).href);
   const root = env.RIGHT_GIT_STAGE_ROOT;
   mkdirSync(root, { recursive: true });
   const evidenceRoot = env.RIGHT_GIT_STAGE_EVIDENCE_ROOT;
@@ -42,7 +43,7 @@ if (action === "admit") {
     for (const name of readdirSync(dir)) {
       const file = path.join(dir, name);
       if (statSync(file).isDirectory()) walk(file);
-      else artifacts.push({ file: path.relative(evidenceRoot, file).split(path.sep).join("/"), size_bytes: statSync(file).size, sha256: createHash("sha256").update(readFileSync(file)).digest("hex") });
+      else artifacts.push({ file: path.relative(evidenceRoot, file).split(path.sep).join("/"), size_bytes: statSync(file).size, sha256: sha256File(file) });
     }
   };
   if (env.RIGHT_GIT_STAGE_ACTION === "finalize") walk(evidenceRoot);

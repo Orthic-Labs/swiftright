@@ -48,7 +48,16 @@ JSON
     [[ "$expected" == "$actual" ]] || { echo "::error::DMG sha256 $actual differs from build identity $expected"; exit 1; }
     hdiutil verify "$cand"
     mnt="$(mktemp -d "${RUNNER_TEMP:-/tmp}/sliceapp-dmg-XXXXXX")"
-    cleanup() { hdiutil detach "$mnt" -force >/dev/null 2>&1 || true; }
+    # Bounded detach (retry, then -force) owned by RightKit hdiutil-detach.mjs; attach stays a raw call (no RightKit attach helper).
+    cleanup() {
+      MOUNT="$mnt" RK_RELEASE="$repo/node_modules/@rightkit/release" node --input-type=module -e '
+        import { spawnSync } from "node:child_process";
+        import { pathToFileURL } from "node:url";
+        const { detachWithRetrySync } = await import(pathToFileURL(process.env.RK_RELEASE + "/hdiutil-detach.mjs").href);
+        const r = detachWithRetrySync({ mount: process.env.MOUNT, detach: (args) => spawnSync("hdiutil", args, { encoding: "utf8" }), log: (e) => console.error(JSON.stringify(e)) });
+        process.exit(r.ok ? 0 : 1);
+      ' >/dev/null 2>&1 || true
+    }
     trap cleanup EXIT
     hdiutil attach "$cand" -readonly -nobrowse -noautoopen -mountpoint "$mnt"
     mapp="$mnt/SliceApp.app"

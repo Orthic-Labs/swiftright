@@ -4,7 +4,6 @@
 //   qualify   verify the finalized Windows package (seal, Authenticode via RightKit) and install/uninstall it on the runner
 //   verify-evidence | publish   fail closed: SliceApp candidates never publish (admission forces publish=false)
 // This file only orchestrates. Signing, notarization, stapling, DMG and MSIX mechanics all come from @rightkit/release.
-import { createHash } from "node:crypto";
 import { cpSync, existsSync, mkdirSync, mkdtempSync, readFileSync, readdirSync, rmSync, statSync, writeFileSync } from "node:fs";
 import { spawnSync } from "node:child_process";
 import path from "node:path";
@@ -17,8 +16,14 @@ const release = path.join(repo, "node_modules", "@rightkit", "release");
 const mode = process.argv[2];
 
 const need = (name) => { const v = env[name]; if (!v) throw new Error(`${name} is not set`); return v; };
-const sha256 = (file) => createHash("sha256").update(readFileSync(file)).digest("hex");
 const rk = (name) => import(pathToFileURL(path.join(release, name)).href);
+const { sha256File: sha256 } = await rk("native-release-finalization.mjs");
+// Bounded detach (retry, then -force) from RightKit. A mount that will not detach fails the step: it is never silently left behind.
+const { detachWithRetrySync } = await rk("hdiutil-detach.mjs");
+const detachMount = (mount) => {
+  const result = detachWithRetrySync({ mount, detach: (args) => spawnSync("hdiutil", args, { stdio: "inherit" }), log: (event) => console.log(JSON.stringify(event)) });
+  if (!result.ok) throw new Error(`hdiutil could not detach ${mount} after ${result.attempts} attempts`);
+};
 const run = (cmd, args, options = {}) => {
   const r = spawnSync(cmd, args, { stdio: "inherit", ...options });
   if (r.error || r.status !== 0) throw new Error(`${path.basename(cmd)} ${args.slice(0, 2).join(" ")} failed (${r.status ?? r.error?.message})`);
@@ -136,7 +141,7 @@ async function finalizeMacos() {
   const app = path.join(work, "SliceApp.app");
   run("hdiutil", ["attach", dmg, "-readonly", "-nobrowse", "-noautoopen", "-mountpoint", mount]);
   try { run("/usr/bin/ditto", [path.join(mount, "SliceApp.app"), app]); }
-  finally { spawnSync("hdiutil", ["detach", mount, "-force"], { stdio: "inherit" }); }
+  finally { detachMount(mount); }
   const exeSha = sha256(path.join(app, "Contents", "MacOS", "SliceApp"));
   if (exeSha !== identity.executableSha256) throw new Error(`candidate app executable ${exeSha} differs from the candidate identity ${identity.executableSha256}`);
   log("candidate app executable matches the candidate identity");
@@ -172,7 +177,7 @@ async function finalizeMacos() {
     run("codesign", ["--verify", "--deep", "--strict", "--verbose=2", mounted]);
     run("spctl", ["--assess", "--type", "execute", "--verbose=4", mounted]);
     run("xcrun", ["stapler", "validate", mounted]);
-  } finally { spawnSync("hdiutil", ["detach", check, "-force"], { stdio: "inherit" }); }
+  } finally { detachMount(check); }
 
   writeJson(path.join(outRoot, "finalize-evidence.json"), {
     schema: 1, platform: "macos", architecture: "arm64", sourceRevision: revision,

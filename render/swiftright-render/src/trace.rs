@@ -311,7 +311,12 @@ pub fn dump() {
             out.push('\n');
         }
     }
-    match std::fs::write(&path, out) {
+    // rightkit-logs writes the buffer in one append (its own trailing newline ends the file, as before).
+    // A 1-byte rotation threshold rolls the previous run's non-empty file to `<name>.1` first, so the
+    // named file holds only this run, as `fs::write` made it. A failed roll refuses the write above
+    // 2 bytes; that error is returned and reported below.
+    let writer = rightkit_logs::RotatingTextWriter::new(&path, 1);
+    match writer.write_line(out.trim_end_matches('\n')) {
         Ok(()) => eprintln!("[swiftright-render] trace written: {path}"),
         Err(e) => eprintln!("[swiftright-render] trace write failed: {path}: {e}"),
     }

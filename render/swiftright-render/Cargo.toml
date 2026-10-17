@@ -27,5 +27,9 @@ raw-window-handle = "=0.6.2"
 # Same version gpui 0.2.2 resolves to (Cargo.lock). DirectWrite is already enabled by gpui; named here because the face resolver
 # (src/dwr.rs, ABI 0.8) calls it directly. Same pin and features as probes/f0-text-facts, which compiles in CI.
 windows = { version = "=0.61.3", features = ["Win32_Graphics_DirectWrite", "Win32_Foundation", "Win32_Graphics_Gdi"] }
+# RightKit's rotating plain-text writer (SWR_FRAME_LOG trace file). Exact pin; default features
+# off so the `http` (ureq) upload stack stays out of the renderer. No tracing or global subscriber:
+# the writer is constructed at the point of use, so nothing is initialised for the host.
+rightkit-logs = { version = "=0.3.0", default-features = false }
 
 [workspace]

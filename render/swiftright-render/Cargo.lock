@@ -4388,6 +4388,41 @@ dependencies = [
 ]
 
 [[package]]
+name = "rightkit-child-process"
+version = "0.4.1"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "350a8d206d64762e658a8300412997e200b44b023a98321b63f99eed8b782e85"
+dependencies = [
+ "libc",
+ "windows 0.62.2",
+]
+
+[[package]]
+name = "rightkit-fs"
+version = "0.4.1"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "8e176344cb4e65a2070178beff8ff6ba956a867013c0e22ef32972dc0b6ef531"
+dependencies = [
+ "libc",
+ "thiserror 2.0.21",
+]
+
+[[package]]
+name = "rightkit-logs"
+version = "0.3.0"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "6abb112248e0be197f2a067fa5a9bbbeb5ebf819386ed6e741f70167b8936f47"
+dependencies = [
+ "getrandom 0.4.3",
+ "libc",
+ "rightkit-child-process",
+ "rightkit-fs",
+ "serde",
+ "serde_json",
+ "windows-sys 0.61.2",
+]
+
+[[package]]
 name = "ring"
 version = "0.17.14"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -5000,18 +5035,6 @@ dependencies = [
 ]
 
 [[package]]
-name = "swiftright-render"
-version = "0.0.3"
-dependencies = [
- "accesskit",
- "accesskit_windows",
- "gpui",
- "image",
- "raw-window-handle",
- "windows 0.61.3",
-]
-
-[[package]]
 name = "stable_deref_trait"
 version = "1.2.1"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -5219,6 +5242,19 @@ dependencies = [
  "skrifa",
  "yazi",
  "zeno",
+]
+
+[[package]]
+name = "swiftright-render"
+version = "0.0.3"
+dependencies = [
+ "accesskit",
+ "accesskit_windows",
+ "gpui",
+ "image",
+ "raw-window-handle",
+ "rightkit-logs",
+ "windows 0.61.3",
 ]
 
 [[package]]
@@ -7333,4 +7369,3 @@ dependencies = [
  "syn 3.0.6",
  "winnow 1.0.4",
 ]
-
