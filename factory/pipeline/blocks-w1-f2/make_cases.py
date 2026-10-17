@@ -175,6 +175,60 @@ for d in ("monospaced", "serif", "rounded"): design_case(d)
 baseline_case(); hub_case(); digits_case()
 
 
+# ---- F2 fit capture for the keys block 28 uses that F2 never measured (issue #7, decision G71: "an N=20 fit capture of the missing sizes and weights on the F2 witness").
+# Each row is an HStack of two cells, width 150: the PLAIN placement (natural height, in the VStack) and the FRAMED placement (frame(width: 150, height: the line height, topLeading)).
+# Row order is the Swift source order of the .font(...) expressions, which position_stats.py relies on. Report-only: the block-level position carries zero tolerances,
+# so the comparator measures the first-ink and baseline positions of every region and nothing is fitted or tuned from these runs.
+FIT_ZERO = {"firstInkYTolerancePx": 0, "baselineTolerancePx": 0, "inkCentreYTolerancePx": 0, "firstInkXTolerancePx": 0,
+            "reason": "G71 fit capture, report-only: zero tolerances so the position block is measured; no tolerance is fitted or gated by this case"}
+CELL_W = 150
+
+
+def fit_case(name, rows, spacing, w=300):
+    """rows: [(font expr, line height in pt, plain-placement text, framed-placement text)]; the line height is the Mac table's (sys_line / style_line)."""
+    ox, oy = (320 - w) / 2, 20
+    parts, regions, y = [], [], 0.0
+    for i, (f, lh, tp, tf) in enumerate(rows):
+        parts.append(f"            HStack(alignment: .top, spacing: 0) {{\n"
+                     f'                Text("{tp}").font({f}).frame(width: {CELL_W}, alignment: .leading)\n'
+                     f'                Text("{tf}").font({f}).frame(width: {CELL_W}, height: {fmt(lh)}, alignment: .topLeading)\n'
+                     "            }")
+        for c, x0 in ((0, 0), (1, CELL_W)):
+            regions.append({"name": f"row {i} item {c} {f}", "rect": rect(ox, oy, x0, y, x0 + CELL_W, y + lh), "align": "leading"})
+        y += lh + spacing
+    assert y - spacing <= 200.0001, (name, y)
+    body = "        VStack(alignment: .leading, spacing: %s) {\n%s\n        }" % (fmt(spacing), "\n".join(parts))
+    CASES[name] = (body, w, gate(regions, ox, oy, extra_pos=FIT_ZERO))
+
+
+def fit_size18_weights():
+    """size 18 at the nine weights; per row the plain text 'HIEFLT Hxz' and the framed text 'HIH 0123' (different texts). 9 rows, no spacing (descender-free, as the other F2 stacks)."""
+    rows = [(f"Font.system(size: 18, weight: .{wt})", sys_line(18)[0], "HIEFLT Hxz", "HIH 0123") for wt in WEIGHTS]
+    fit_case("fit-size18-weights-v1", rows, 0)
+
+
+def fit_fractional():
+    """12.5 regular, 11.5 semibold, 12 regular, caption2; three texts (short, long with descenders, digits) x two placements. 2 pt between rows (descenders stay inside the gap)."""
+    keys = [("Font.system(size: 12.5, weight: .regular)", sys_line(12.5)[0]), ("Font.system(size: 11.5, weight: .semibold)", sys_line(11.5)[0]),
+            ("Font.system(size: 12, weight: .regular)", sys_line(12)[0]), ("Font.caption2", style_line("caption2")[0])]
+    texts = ["HIH", "Hamburgefonts gjpqy", "0123456789 42"]
+    rows = [(f, lh, t, t) for f, lh in keys for t in texts]
+    fit_case("fit-fractional-v1", rows, 2)
+
+
+def fit_sizes_large(name, keys):
+    """two texts ('HIH' and 'gjpqy 42', the second with descenders) x two placements per key; 2 pt between rows."""
+    rows = [(f, lh, t, t) for f, lh in keys for t in ("HIH", "gjpqy 42")]
+    fit_case(name, rows, 2)
+
+
+# 28 r, 15 r, 18 r: 6 rows (157 pt). headline r and title3 sb: a separate case, because all five keys (10 rows, 218 pt) exceed the 200 pt witness height.
+fit_sizes_large("fit-sizes-large-v1", [("Font.system(size: 28, weight: .regular)", sys_line(28)[0]), ("Font.system(size: 15, weight: .regular)", sys_line(15)[0]),
+                                       ("Font.system(size: 18, weight: .regular)", sys_line(18)[0])])
+fit_sizes_large("fit-sizes-large-b-v1", [("Font.headline.weight(.regular)", style_line("headline")[0]), ("Font.title3.weight(.semibold)", style_line("title3")[0])])
+fit_size18_weights(); fit_fractional()
+
+
 def main():
     only = sys.argv[1:]
     for name, (body, w, pair) in CASES.items():

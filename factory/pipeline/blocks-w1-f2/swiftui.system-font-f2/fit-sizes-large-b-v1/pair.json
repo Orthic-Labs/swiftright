@@ -1,0 +1,193 @@
+{
+ "textColourGate": {
+  "tolerance": 40,
+  "regions": [
+   {
+    "name": "row 0 item 0 Font.headline.weight(.regular)",
+    "rect": [
+     25,
+     50,
+     400,
+     90
+    ],
+    "align": "leading"
+   },
+   {
+    "name": "row 0 item 1 Font.headline.weight(.regular)",
+    "rect": [
+     400,
+     50,
+     775,
+     90
+    ],
+    "align": "leading"
+   },
+   {
+    "name": "row 1 item 0 Font.headline.weight(.regular)",
+    "rect": [
+     25,
+     95,
+     400,
+     135
+    ],
+    "align": "leading"
+   },
+   {
+    "name": "row 1 item 1 Font.headline.weight(.regular)",
+    "rect": [
+     400,
+     95,
+     775,
+     135
+    ],
+    "align": "leading"
+   },
+   {
+    "name": "row 2 item 0 Font.title3.weight(.semibold)",
+    "rect": [
+     25,
+     140,
+     400,
+     188
+    ],
+    "align": "leading"
+   },
+   {
+    "name": "row 2 item 1 Font.title3.weight(.semibold)",
+    "rect": [
+     400,
+     140,
+     775,
+     188
+    ],
+    "align": "leading"
+   },
+   {
+    "name": "row 3 item 0 Font.title3.weight(.semibold)",
+    "rect": [
+     25,
+     193,
+     400,
+     241
+    ],
+    "align": "leading"
+   },
+   {
+    "name": "row 3 item 1 Font.title3.weight(.semibold)",
+    "rect": [
+     400,
+     193,
+     775,
+     241
+    ],
+    "align": "leading"
+   }
+  ],
+  "position": {
+   "align": "leading",
+   "reason": "G71 fit capture, report-only: zero tolerances so the position block is measured; no tolerance is fitted or gated by this case",
+   "firstInkYTolerancePx": 0,
+   "baselineTolerancePx": 0,
+   "inkCentreYTolerancePx": 0,
+   "firstInkXTolerancePx": 0
+  }
+ },
+ "excludeRects": [
+  {
+   "name": "row 0 item 0 Font.headline.weight(.regular) glyph region (Segoe UI vs SF, decision 2); gated by the position gate of decision 19 and the semantic frame gate",
+   "rect": [
+    25,
+    50,
+    400,
+    90
+   ]
+  },
+  {
+   "name": "row 0 item 1 Font.headline.weight(.regular) glyph region (Segoe UI vs SF, decision 2); gated by the position gate of decision 19 and the semantic frame gate",
+   "rect": [
+    400,
+    50,
+    775,
+    90
+   ]
+  },
+  {
+   "name": "row 1 item 0 Font.headline.weight(.regular) glyph region (Segoe UI vs SF, decision 2); gated by the position gate of decision 19 and the semantic frame gate",
+   "rect": [
+    25,
+    95,
+    400,
+    135
+   ]
+  },
+  {
+   "name": "row 1 item 1 Font.headline.weight(.regular) glyph region (Segoe UI vs SF, decision 2); gated by the position gate of decision 19 and the semantic frame gate",
+   "rect": [
+    400,
+    95,
+    775,
+    135
+   ]
+  },
+  {
+   "name": "row 2 item 0 Font.title3.weight(.semibold) glyph region (Segoe UI vs SF, decision 2); gated by the position gate of decision 19 and the semantic frame gate",
+   "rect": [
+    25,
+    140,
+    400,
+    188
+   ]
+  },
+  {
+   "name": "row 2 item 1 Font.title3.weight(.semibold) glyph region (Segoe UI vs SF, decision 2); gated by the position gate of decision 19 and the semantic frame gate",
+   "rect": [
+    400,
+    140,
+    775,
+    188
+   ]
+  },
+  {
+   "name": "row 3 item 0 Font.title3.weight(.semibold) glyph region (Segoe UI vs SF, decision 2); gated by the position gate of decision 19 and the semantic frame gate",
+   "rect": [
+    25,
+    193,
+    400,
+    241
+   ]
+  },
+  {
+   "name": "row 3 item 1 Font.title3.weight(.semibold) glyph region (Segoe UI vs SF, decision 2); gated by the position gate of decision 19 and the semantic frame gate",
+   "rect": [
+    400,
+    193,
+    775,
+    241
+   ]
+  }
+ ],
+ "semanticGate": {
+  "fields": [
+   "role",
+   "name",
+   "count",
+   "order",
+   "boundsY",
+   "boundsX"
+  ],
+  "scope": "main",
+  "phases": [
+   ""
+  ]
+ },
+ "steps": [
+  {
+   "op": "wait",
+   "ms": 600
+  }
+ ],
+ "macArgs": [
+  "--steps",
+  "[{\"op\":\"wait\",\"ms\":600}]"
+ ]
+}
