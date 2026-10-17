@@ -334,25 +334,40 @@
       ],
       "casesPassingDecidingGate": "6/6",
       "caveats": [
-        "Reopened 16 October (F2 rebaseline, decision G70): fresh N=3 captures on stage fc4a39a89 fail by 1 px at tolerance 0 (textorigin first-ink or control-label x); the earlier passing captures on stage 6459bb8cd still exist (e.g. `blocks-6-10/swiftui.textfield/plain-v1/runs/20261015-050354`), and the deleted final-stage captures failed with the same 1 px deltas. Failing cases: toggle switch-labelled-on-v1, checkbox-labelled-on-v1."
+        "CI confirmation (16 October): the CI runners use the Windows WARP adapter at an explicit render scale of 2.5 (H17), not native 240 dpi. The Dell 240-dpi sandbox stays the reference; the CI and Dell captures were pixel-identical on click-track and labels.",
+        "Label first ink x and leading x are gated at [0, +1] px (Windows minus Mac, H34 side bearing; measured +1 in 20/20 runs); the checkbox label-to-box gap at [0, +1] px. The text origin is not read directly in this block, so a +1 px origin drift would pass. The checkbox gap range has no seeded-mutation proof (s_h34 covers the switch only)."
       ],
-      "review": "oracle 2026-10-15",
+      "ciN20": {
+        "casesPassing": "6/6",
+        "renderScale": 2.5,
+        "renderer": "renderer-0.10-a15ebc5d",
+        "runDirs": {
+          "38987638974": "runs/20261017-004328"
+        },
+        "runs": [
+          "38987638974"
+        ],
+        "stages": [
+          "93c6fe320-82e12842"
+        ],
+        "windowsAdapter": "WARP (CI runner)"
+      },
+      "review": "oracle 2026-10-17 (PASS-WITH-CAVEATS, H34 re-delivery)",
       "stage": [
         "58df259c5-4c63f440",
         "6459bb8cd-d243b1c9",
+        "93c6fe320-82e12842",
         "d07df2581-cc18ed0f"
       ],
-      "status": "not-delivered",
+      "status": "delivered-with-caveats",
       "statusDocBlock": 7,
-      "statusFromSources": "delivered",
-      "statusReason": "Reopened 16 October (F2 rebaseline, decision G70): fresh N=3 captures on stage fc4a39a89 fail by 1 px at tolerance 0 (textorigin first-ink or control-label x); the earlier passing captures on stage 6459bb8cd still exist (e.g. `blocks-6-10/swiftui.textfield/plain-v1/runs/20261015-050354`), and the deleted final-stage captures failed with the same 1 px deltas. Failing cases: toggle switch-labelled-on-v1, checkbox-labelled-on-v1.",
       "verdict": {
         "date": "2026-10-17",
         "runDates": [
           "2026-10-15"
         ],
         "source": "docs/sr1-status.md table + factory/pipeline/closure/closure-table.json (blocks 1-20) / consolidation-table.json (blocks 21+)",
-        "text": "6/6 jobs pass their deciding gates, 18 runs at N=3, on `6459bb8cd-d243b1c9` (**not-delivered**; labelled switch and checkbox fail, F2 rebaseline (3cb231a98, stage fc4a39a89, decision G70): fresh N=3 captures fail by 1 px; the earlier passing captures on stage 6459bb8cd still exist (e.g. `blocks-6-10/swiftui.textfield/plain-v1/runs/20261015-050354`), and the deleted final-stage captures failed with the same 1 px deltas. **not-delivered** until these pass again)"
+        "text": "6/6 jobs pass their deciding gates, 18 runs at N=3, on `6459bb8cd-d243b1c9`; re-delivered under H34 on CI run 38987638974 (N=20, commit 93c6fe320, stage 93c6fe320-82e12842, renderer 0.10 at scale 2.5), 6/6 cases at N=20 (**delivered-with-caveats**, reviewed 17 October, issue #4: Oracle PASS-WITH-CAVEATS, H35; the 16 October G70 1 px failures are cleared by the H34 range, caveats in `docs/proven-controls.json`)"
       },
       "windowsDifferences": []
     },
@@ -701,25 +716,40 @@
       ],
       "casesPassingDecidingGate": "7/7",
       "caveats": [
-        "Reopened 16 October (F2 rebaseline, decision G70): fresh N=3 captures on stage fc4a39a89 fail by 1 px at tolerance 0 (textorigin first-ink or control-label x); the earlier passing captures on stage 6459bb8cd still exist (e.g. `blocks-6-10/swiftui.textfield/plain-v1/runs/20261015-050354`), and the deleted final-stage captures failed with the same 1 px deltas. Failing cases: textfield automatic-style-v1, caret-empty-v1, filled-truncated-v1, placeholder-v1, plain-v1, prompt-v1."
+        "CI confirmation (16 October): the CI runners use the Windows WARP adapter at an explicit render scale of 2.5 (H17), not native 240 dpi. The Dell 240-dpi sandbox stays the reference; the CI and Dell captures were pixel-identical on click-track and labels.",
+        "Body-text first ink x is gated at [0, +1] px (H34 side bearing; +1 in 20/20 runs on six cases, 0 on submit-v1). The text origin is gated at 0 px only by the caret (caret-empty-v1, 40 = 40.00) and the selection start (submit-v1, 40 = 40); in the other five cases a +1 px origin drift would pass."
       ],
-      "review": "oracle 2026-10-15",
+      "ciN20": {
+        "casesPassing": "7/7",
+        "renderScale": 2.5,
+        "renderer": "renderer-0.10-a15ebc5d",
+        "runDirs": {
+          "38987638974": "runs/20261017-004328"
+        },
+        "runs": [
+          "38987638974"
+        ],
+        "stages": [
+          "93c6fe320-82e12842"
+        ],
+        "windowsAdapter": "WARP (CI runner)"
+      },
+      "review": "oracle 2026-10-17 (PASS-WITH-CAVEATS, H34 re-delivery)",
       "stage": [
         "58df259c5-4c63f440",
         "6459bb8cd-d243b1c9",
+        "93c6fe320-82e12842",
         "d07df2581-cc18ed0f"
       ],
-      "status": "not-delivered",
+      "status": "delivered-with-caveats",
       "statusDocBlock": 13,
-      "statusFromSources": "delivered",
-      "statusReason": "Reopened 16 October (F2 rebaseline, decision G70): fresh N=3 captures on stage fc4a39a89 fail by 1 px at tolerance 0 (textorigin first-ink or control-label x); the earlier passing captures on stage 6459bb8cd still exist (e.g. `blocks-6-10/swiftui.textfield/plain-v1/runs/20261015-050354`), and the deleted final-stage captures failed with the same 1 px deltas. Failing cases: textfield automatic-style-v1, caret-empty-v1, filled-truncated-v1, placeholder-v1, plain-v1, prompt-v1.",
       "verdict": {
         "date": "2026-10-17",
         "runDates": [
           "2026-10-15"
         ],
         "source": "docs/sr1-status.md table + factory/pipeline/closure/closure-table.json (blocks 1-20) / consolidation-table.json (blocks 21+)",
-        "text": "7/7 jobs pass their deciding gates, 140 runs at N=20, on `6459bb8cd-d243b1c9` (**not-delivered**; six cases fail, F2 rebaseline (3cb231a98, stage fc4a39a89, decision G70): fresh N=3 captures fail by 1 px; the earlier passing captures on stage 6459bb8cd still exist (e.g. `blocks-6-10/swiftui.textfield/plain-v1/runs/20261015-050354`), and the deleted final-stage captures failed with the same 1 px deltas. **not-delivered** until these pass again)"
+        "text": "7/7 jobs pass their deciding gates, 140 runs at N=20, on `6459bb8cd-d243b1c9`; re-delivered under H34 on CI run 38987638974 (N=20, commit 93c6fe320, stage 93c6fe320-82e12842, renderer 0.10 at scale 2.5), 7/7 cases at N=20 (**delivered-with-caveats**, reviewed 17 October, issue #5: Oracle PASS-WITH-CAVEATS, H35; the 16 October G70 1 px failures are cleared by the H34 range)"
       },
       "windowsDifferences": []
     },
@@ -1217,25 +1247,40 @@
       ],
       "casesPassingDecidingGate": "12/12",
       "caveats": [
-        "Reopened 16 October (F2 rebaseline, decision G70): fresh N=3 captures on stage fc4a39a89 fail by 1 px at tolerance 0 (textorigin first-ink or control-label x); the earlier passing captures on stage 6459bb8cd still exist (e.g. `blocks-6-10/swiftui.textfield/plain-v1/runs/20261015-050354`), and the deleted final-stage captures failed with the same 1 px deltas. Failing cases: color-scheme text-dark-v1."
+        "CI confirmation (16 October): the CI runners use the Windows WARP adapter at an explicit render scale of 2.5 (H17), not native 240 dpi. The Dell 240-dpi sandbox stays the reference; the CI and Dell captures were pixel-identical on click-track and labels.",
+        "text-dark-v1 first ink x is gated at [0, +1] px (H34 side bearing; 22 against 23 in 20/20 runs). The other eleven cases draw no text, are untouched by H34 and stand on their N=20 pass at 58df259c5 and the post-F2 N=3 pass at fc4a39a89; they have no N=20 on the current stage."
       ],
-      "review": "oracle 2026-10-15",
+      "ciN20": {
+        "casesPassing": "1/12",
+        "renderScale": 2.5,
+        "renderer": "renderer-0.10-a15ebc5d",
+        "runDirs": {
+          "38987638974": "runs/20261017-004328"
+        },
+        "runs": [
+          "38987638974"
+        ],
+        "stages": [
+          "93c6fe320-82e12842"
+        ],
+        "windowsAdapter": "WARP (CI runner)"
+      },
+      "review": "oracle 2026-10-17 (PASS-WITH-CAVEATS, H34 re-delivery)",
       "stage": [
         "58df259c5-4c63f440",
         "6459bb8cd-d243b1c9",
+        "93c6fe320-82e12842",
         "d07df2581-cc18ed0f"
       ],
-      "status": "not-delivered",
+      "status": "delivered-with-caveats",
       "statusDocBlock": 20,
-      "statusFromSources": "delivered",
-      "statusReason": "Reopened 16 October (F2 rebaseline, decision G70): fresh N=3 captures on stage fc4a39a89 fail by 1 px at tolerance 0 (textorigin first-ink or control-label x); the earlier passing captures on stage 6459bb8cd still exist (e.g. `blocks-6-10/swiftui.textfield/plain-v1/runs/20261015-050354`), and the deleted final-stage captures failed with the same 1 px deltas. Failing cases: color-scheme text-dark-v1.",
       "verdict": {
         "date": "2026-10-17",
         "runDates": [
           "2026-10-15"
         ],
         "source": "docs/sr1-status.md table + factory/pipeline/closure/closure-table.json (blocks 1-20) / consolidation-table.json (blocks 21+)",
-        "text": "12/12 jobs pass their deciding gates, 240 runs at N=20, on `6459bb8cd-d243b1c9` (**not-delivered**; text-dark fails, F2 rebaseline (3cb231a98, stage fc4a39a89, decision G70): fresh N=3 captures fail by 1 px; the earlier passing captures on stage 6459bb8cd still exist (e.g. `blocks-6-10/swiftui.textfield/plain-v1/runs/20261015-050354`), and the deleted final-stage captures failed with the same 1 px deltas. **not-delivered** until these pass again)"
+        "text": "12/12 jobs pass their deciding gates, 240 runs at N=20, on `6459bb8cd-d243b1c9`; re-delivered under H34 on CI run 38987638974 (N=20, commit 93c6fe320, stage 93c6fe320-82e12842, renderer 0.10 at scale 2.5) for text-dark-v1 (22 against 23; the other eleven cases draw no text and stand on their earlier passes, see caveats) (**delivered-with-caveats**, reviewed 17 October, issue #6: Oracle PASS-WITH-CAVEATS, H35)"
       },
       "windowsDifferences": []
     },
@@ -1979,22 +2024,39 @@
       ],
       "casesPassingDecidingGate": "2/2",
       "caveats": [
-        "Reopened 16 October (F2 rebaseline, decision G70): fresh N=3 captures on stage fc4a39a89 fail by 1 px at tolerance 0 (textorigin first-ink or control-label x); the earlier passing captures on stage 6459bb8cd still exist (e.g. `blocks-6-10/swiftui.textfield/plain-v1/runs/20261015-050354`), and the deleted final-stage captures failed with the same 1 px deltas. Failing cases: textfield-axis plain-v1.",
-        "`axis: .vertical` is the single-line field: no growth over several lines and no wrapping (decision F9)."
+        "CI confirmation (16 October): the CI runners use the Windows WARP adapter at an explicit render scale of 2.5 (H17), not native 240 dpi. The Dell 240-dpi sandbox stays the reference; the CI and Dell captures were pixel-identical on click-track and labels.",
+        "`axis: .vertical` is the single-line field: no growth over several lines and no wrapping (decision F9).",
+        "plain-v1 first ink x is gated at [0, +1] px (H34 side bearing; 252 against 253 in 20/20 runs) and scanned from the frame edge (scanInteriorPx 0); the origin is not read by caret or selection in this block. rounded-v1 stays at 0 px."
       ],
-      "review": "oracle 2026-10-15",
-      "stage": "9080b3139-e685b237",
-      "status": "not-delivered",
+      "ciN20": {
+        "casesPassing": "2/2",
+        "renderScale": 2.5,
+        "renderer": "renderer-0.10-a15ebc5d",
+        "runDirs": {
+          "38987638974": "runs/20261017-004328"
+        },
+        "runs": [
+          "38987638974"
+        ],
+        "stages": [
+          "93c6fe320-82e12842"
+        ],
+        "windowsAdapter": "WARP (CI runner)"
+      },
+      "review": "oracle 2026-10-17 (PASS-WITH-CAVEATS, H34 re-delivery)",
+      "stage": [
+        "9080b3139-e685b237",
+        "93c6fe320-82e12842"
+      ],
+      "status": "delivered-with-caveats",
       "statusDocBlock": 34,
-      "statusFromSources": "delivered-with-caveats",
-      "statusReason": "Reopened 16 October (F2 rebaseline, decision G70): fresh N=3 captures on stage fc4a39a89 fail by 1 px at tolerance 0 (textorigin first-ink or control-label x); the earlier passing captures on stage 6459bb8cd still exist (e.g. `blocks-6-10/swiftui.textfield/plain-v1/runs/20261015-050354`), and the deleted final-stage captures failed with the same 1 px deltas. Failing cases: textfield-axis plain-v1.",
       "verdict": {
         "date": "2026-10-17",
         "runDates": [
           "2026-10-15"
         ],
         "source": "docs/sr1-status.md table + factory/pipeline/closure/closure-table.json (blocks 1-20) / consolidation-table.json (blocks 21+)",
-        "text": "40/40 on `9080b3139-e685b237` (**not-delivered**; plain fails, F2 rebaseline (3cb231a98, stage fc4a39a89, decision G70): fresh N=3 captures fail by 1 px; the earlier passing captures on stage 6459bb8cd still exist (e.g. `blocks-6-10/swiftui.textfield/plain-v1/runs/20261015-050354`), and the deleted final-stage captures failed with the same 1 px deltas. **not-delivered** until these pass again; `axis: .vertical` is the single-line field, decision F9)"
+        "text": "40/40 on `9080b3139-e685b237`; re-delivered under H34 on CI run 38987638974 (N=20, commit 93c6fe320, stage 93c6fe320-82e12842, renderer 0.10 at scale 2.5), 2/2 cases at N=20 (**delivered-with-caveats**, reviewed 17 October, issue #8: Oracle PASS-WITH-CAVEATS, H35; `axis: .vertical` is the single-line field, decision F9)"
       },
       "windowsDifferences": []
     },

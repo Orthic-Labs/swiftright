@@ -143,7 +143,7 @@ def main():
         row.update(ok=same_size and gate_ok and label_ok and x_ok and 'error' not in row, xGate=dict(ok=x_ok, why=x_why, **xinfo), controlBBox=dict(mac=mb, windows=wb, dxWindowsMinusMac=dx, dyWindowsMinusMac=wb[1] - mb[1]), sameSizeAndY=same_size,
                    controlGate=gate, labelInkBBox=dict(mac=lm, windows=lw, centreToleranceOk=label_ok), labelDifferingPixelsReported=diff_px)
     ok = sum(1 for r in rows if r.get("ok"))
-    rep = dict(case=case.name, run=out.name, pairs=len(rows), gatePassed=ok, gate="control size equal, y within %d px; control (translated by dx) exact with edge-aa<=%d; label vertical centre within %d px; row leading x, label first ink x (tolerances %d, %d px) and label-to-control gap (%d px); label pixels reported only" % (ytol, aa, tol, lead_tol, lab_tol, gap_tol), rows=rows)
+    rep = dict(case=case.name, run=out.name, pairs=len(rows), gatePassed=ok, gate="control size equal, y within %d px; control (translated by dx) exact with edge-aa<=%d; label vertical centre within %d px; row leading x (label leads: first-ink range [%d, %d] px; label right of control: +-%d px), label first ink x (range [%d, %d] px, H34) and label-to-control gap (range [%d, %d] px); label pixels reported only" % (ytol, aa, tol, ink_lo, ink_hi, lead_tol, ink_lo, ink_hi, gap_lo, gap_hi), rows=rows)
     (out / "control-report.json").write_text(json.dumps(rep, indent=1))
     dxs = sorted({r["controlBBox"]["dxWindowsMinusMac"] for r in rows if "controlBBox" in r})
     worst = max((r["controlGate"]["maxInBand"] for r in rows if "controlGate" in r), default=None)

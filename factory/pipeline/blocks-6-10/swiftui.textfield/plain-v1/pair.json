@@ -45,7 +45,7 @@
   "firstInkMaxPx": 1,
   "firstInkToleranceReason": "H34 side bearing",
   "scanInteriorPx": 0,
-  "scanInteriorReason": "no bezel: the text starts 1 px inside the frame edge (x 27 of a frame at 25 on Mac), inside the 2 px side margin of bezeled fields, so the scan starts at the frame edge"
+  "scanInteriorReason": "no bezel: the text starts 2 px inside the frame edge (x 27 of a frame at 25 on Mac, 27 - 25); the 2 px interior margin of bezeled fields would hide leftward shifts of 1 px or more, so the scan starts at the frame edge (scanInteriorPx 0)"
  },
  "steps": [
   {

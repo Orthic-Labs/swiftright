@@ -110,6 +110,12 @@ REVIEWED = {bid: {"review": REVIEW, "caveats": []} for bid in
             [NUM2ID[n] for n in range(1, 21)] + ["cross-cutting.pixel-ties"] + [NUM2ID[n] for n in list(range(21, 27)) + list(range(28, 37))]}
 REVIEWED["swiftui.text-views"]["caveats"] = ["Text position is ungated (the pixels and the semantic tree are)."]
 REVIEWED["swiftui.system-font"]["caveats"] = ["The blanket tolerance set was replaced by per-row tolerances (decision G71); on the final renderer (fc4a39a89, renderer 0.8) the independent gate fails for 8 of 9 cases."]
+# Re-delivery under H34 (17 October, issues #4, #5, #6, #8): Oracle PASS-WITH-CAVEATS on CI run 38987638974 (N=20, commit 93c6fe320, decision H35).
+REVIEW_H34 = "oracle 2026-10-17 (PASS-WITH-CAVEATS, H34 re-delivery)"
+REVIEWED["swiftui.toggle"] = {"review": REVIEW_H34, "caveats": ["Label first ink x and leading x are gated at [0, +1] px (Windows minus Mac, H34 side bearing; measured +1 in 20/20 runs); the checkbox label-to-box gap at [0, +1] px. The text origin is not read directly in this block, so a +1 px origin drift would pass. The checkbox gap range has no seeded-mutation proof (s_h34 covers the switch only)."]}
+REVIEWED["swiftui.textfield"] = {"review": REVIEW_H34, "caveats": ["Body-text first ink x is gated at [0, +1] px (H34 side bearing; +1 in 20/20 runs on six cases, 0 on submit-v1). The text origin is gated at 0 px only by the caret (caret-empty-v1, 40 = 40.00) and the selection start (submit-v1, 40 = 40); in the other five cases a +1 px origin drift would pass."]}
+REVIEWED["swiftui.color-scheme"] = {"review": REVIEW_H34, "caveats": ["text-dark-v1 first ink x is gated at [0, +1] px (H34 side bearing; 22 against 23 in 20/20 runs). The other eleven cases draw no text, are untouched by H34 and stand on their N=20 pass at 58df259c5 and the post-F2 N=3 pass at fc4a39a89; they have no N=20 on the current stage."]}
+REVIEWED["swiftui.textfield-axis"] = {"review": REVIEW_H34, "caveats": ["plain-v1 first ink x is gated at [0, +1] px (H34 side bearing; 252 against 253 in 20/20 runs) and scanned from the frame edge (scanInteriorPx 0); the origin is not read by caret or selection in this block. rounded-v1 stays at 0 px."]}
 # Block 27 Text cases (16 October block gate, Oracle lift reviewed 17 October, H33): the eight Text cases pass the block gate 8/8 at N=20 on stage
 # 3d3c6f5c2-0a0d1f39 (strict recompare; block-gate.json in each run dir). They are not rows of the consolidation table: TEXT_CASE_RUNS_27 below adds them to block 27.
 # The Oracle narrowing of 15 October is lifted on those verdicts (Oracle 17 October: PASS-WITH-CAVEATS, issue #12).
@@ -180,6 +186,7 @@ CI_RUNS = {
     "38860483220": {"runDirs": "runs/20261016-061908", "stage": "c4e83a68a-5dfe7cc2", "commit": "c4e83a68a06f2672766f3c83426b980d78d4c659"},
     "38872207896": {"runDirs": "runs/20261016-081325", "stage": "f81244b4f-9ce7a09e", "commit": "f81244b4f3b0995188439bd6dae4e15f34a13a04"},
     "38916701641": {"runDirs": "runs/20261016-143349", "stage": "d9423e953-7ede36bc", "commit": "d9423e953ecae07e250e86fb765a0a252357705a"},
+    "38987638974": {"runDirs": "runs/20261017-004328", "stage": "93c6fe320-82e12842", "commit": "93c6fe320a443bf86224ac34c3455105a4c399ac"},
 }
 
 _CI_RUN_1 = [  # 27 cases that pass on the current gate, run 38854967920 (controls-b-v1 is in _CI_RUN_3: it failed its list gate there, H20)
@@ -207,23 +214,24 @@ _CI_RUN_3 = [  # 1 case, run 38872207896 (commit f81244b4f, H20 list gate with t
 _CI_RUN_4 = [  # 2 cases, run 38916701641 (commit d9423e953, H25, CI-only topmost placement): block 38 on-hover at N=20; both failed locally on 3d3c6f5c2
     "blocks-37-38/swiftui.on-hover/adjacent-v1", "blocks-37-38/swiftui.on-hover/rows-v1",
 ]
+_CI_RUN_5 = [  # 16 cases, run 38987638974 (commit 93c6fe320, H34 re-delivery, 17 October): block 7 toggle (6), block 13 textfield (7), block 20 text-dark-v1 (1 of 12), block 34 textfield-axis (2)
+    "blocks-6-10/swiftui.toggle/checkbox-labelled-on-v1", "blocks-6-10/swiftui.toggle/checkbox-off-v1", "blocks-6-10/swiftui.toggle/checkbox-on-v1",
+    "blocks-6-10/swiftui.toggle/switch-labelled-on-v1", "blocks-6-10/swiftui.toggle/switch-off-v1", "blocks-6-10/swiftui.toggle/switch-on-v1",
+    "blocks-6-10/swiftui.textfield/automatic-style-v1", "blocks-6-10/swiftui.textfield/caret-empty-v1", "blocks-6-10/swiftui.textfield/filled-truncated-v1",
+    "blocks-6-10/swiftui.textfield/placeholder-v1", "blocks-6-10/swiftui.textfield/plain-v1", "blocks-6-10/swiftui.textfield/prompt-v1", "blocks-6-10/swiftui.textfield/submit-v1",
+    "blocks-17-20/swiftui.color-scheme/text-dark-v1",
+    "blocks-26-34/swiftui.textfield-axis/plain-v1", "blocks-26-34/swiftui.textfield-axis/rounded-v1",
+]
 CI_CASE_RUN = {**{c: "38854967920" for c in _CI_RUN_1}, **{c: "38860483220" for c in _CI_RUN_2}, **{c: "38872207896" for c in _CI_RUN_3},
-               **{c: "38916701641" for c in _CI_RUN_4}}
+               **{c: "38916701641" for c in _CI_RUN_4}, **{c: "38987638974" for c in _CI_RUN_5}}
 CI_CAVEAT = ("CI confirmation (16 October): the CI runners use the Windows WARP adapter at an explicit render scale of 2.5 (H17), not native 240 dpi. "
              "The Dell 240-dpi sandbox stays the reference; the CI and Dell captures were pixel-identical on click-track and labels.")
 PENDING_REVIEW -= set(REVIEWED)
 
-# No hand-set status: the closure run reran blocks 13-15 (text-origin fix, decision 12) and every block 1-20 is derived from its cases (delivered-pending-review).
-# Reopened 16 October on the F2 rebaseline (3cb231a98, factory/pipeline/blocks-w1-f2/rebaseline-final-verdicts.json, stage fc4a39a89, decision G70): these blocks
-# had passed on final-stage captures that have since been deleted, and fresh N=3 captures fail them by 1 px (textorigin first ink or control label x at tolerance 0).
-NOT_DELIVERED_1PX = ("Reopened 16 October (F2 rebaseline, decision G70): fresh N=3 captures on stage fc4a39a89 fail by 1 px at tolerance 0 "
-                     "(textorigin first-ink or control-label x); the earlier passing captures on stage 6459bb8cd still exist (e.g. `blocks-6-10/swiftui.textfield/plain-v1/runs/20261015-050354`), and the deleted final-stage captures failed with the same 1 px deltas. Failing cases: ")
+# No hand-set status except system-font (G71): every other block 1-20 is derived from its cases. Blocks 7, 13, 20 and 34 were reopened on the F2
+# rebaseline (G70, 16 October) and re-delivered under H34 on CI run 38987638974 (17 October; the G70 reasons are in docs/sr1-status.md).
 OVERRIDES = {
     "swiftui.system-font": {"status": "not-delivered", "statusReason": "Reopened 16 October (decision G71): the blanket tolerance was replaced by per-row tolerances, which fail the independent block 28 gate on the final renderer (styles-large passes; 8 of 9 cases fail; unfitted sizes and weights, undersampled rows)."},
-    "swiftui.textfield": {"status": "not-delivered", "statusReason": NOT_DELIVERED_1PX + "textfield automatic-style-v1, caret-empty-v1, filled-truncated-v1, placeholder-v1, plain-v1, prompt-v1."},
-    "swiftui.toggle": {"status": "not-delivered", "statusReason": NOT_DELIVERED_1PX + "toggle switch-labelled-on-v1, checkbox-labelled-on-v1."},
-    "swiftui.color-scheme": {"status": "not-delivered", "statusReason": NOT_DELIVERED_1PX + "color-scheme text-dark-v1."},
-    "swiftui.textfield-axis": {"status": "not-delivered", "statusReason": NOT_DELIVERED_1PX + "textfield-axis plain-v1."},
 }
 WIN_KEYS = re.compile(r"Windows|Segoe|Sandbox|hardware|narrower|focus ring|TSF|\bIME\b|UIA|Mac side|Mac's|\bSF\b|scale 2\.5|light only|measured in light", re.I)
 NOT_SWIFTUI = set("""Int Int8 Int16 Int32 Int64 UInt Double Float CGFloat CGSize CGPoint CGRect String Bool Array Dictionary Set
