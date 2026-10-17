@@ -77,11 +77,11 @@ ROUND6_CAVEATS = {
                          "Controls-b passes N=20 in CI run 38872207896 (stage f81244b4f-9ce7a09e, commit f81244b4f, renderer 0.10 at scale 2.5): the semantic tree, the list gate and the list-rect pixels, after the H21 gutter. Controls-a passes N=20 in run 38854967920.",
                          "H16 rows are covered by the list-rect region pixel gate plus listGate (H20, H21), and the offscreen Mac harness exposes no row content, so the rows are not compared semantically.",
                          "H21: the scroller gutter applies only when the list overflows with legacy scrollers; the CI Mac is pinned to legacy (`factory/tools/mac-accessibility.sh`). An overflowing List clips on Windows with no scroll bar drawn (a known gap). Unproven: that overlay scrollers take no gutter. Every runner logged `ax.scrollerStyle=overlay` before the pin, yet the pre-pin run 38854967920 drew an AXScrollBar and the 16.8 pt gutter.",
-                         "The semantic comparator folds a toggle's nested label into the Mac AX shape (H14): a switch's label is a sibling before an unnamed switch, a checkbox's duplicate label child is dropped; role, name, toggle, enabled and bounds are still compared.",
+                         "The semantic comparator folds a toggle's nested label into the Mac AX shape (H14): a switch's label is a sibling before an unnamed switch, a checkbox's duplicate label child is dropped; role, name, toggle, enabled, value, count and order are gated. Bounds are reported, not gated, and controls-a pixels are report-only, so no geometry of controls-a is gated.",
                          "Controls-b list rows are gated by pair_list_report.py (count, text, order, selected, frame within 1 px, label ink) and the list-rect pixels (H20), not by the semantic comparator (H16): the offscreen Mac harness's AX tree exposes its rows as AXUnknown with no content; a normal macOS List exposes AXRow/AXCell, which was not measured here.",
                          "An unlabelled `Image(systemName: \"star.fill\")` is named `Favorite`; the name comes from a measured SF-symbol description table that holds measured symbols only (one entry so far: star.fill, English, macOS 27). Other symbols fall back to the symbol name, which will not match the Mac."],
     "swiftui.ime-traps": ["Hardware IME is deferred: the cases drive the in-process TextStore script and the NSTextInputClient path, not a real IME (H9(b)).",
-                          "Pixels are report-only on every block 40 case (`pair.json` `pixels: report-only`, H28, issue #3): the semantic, text-origin and IME gates decide; no exclusion rectangles are named.",
+                          "Pixels are report-only on every block 40 case (`pixels: report-only`, H28, issue #3). Only the semantic gate decides: role, name, value and enabled of the two fields and the value line, in the end state. No text-origin or IME marked-range gate is declared, so intermediate composition state is not gated.",
                           "Extra CI evidence: `imet-badregion-v1` passes N=20 in run 38870003524 (stage 168328082-0766196a, commit 168328082) after the harness lease fix (H22); its mapped run stays 38860483220."],
     "swiftui.compat": ["Ported from OpenSwiftUI's MIT tests as view bodies and expectations only (H9a); EquatableView and animation completion are not ported and not delivered.",
                        "Runtime change (commit ce47755c3): `withAnimation` and `withTransaction` settle pending changes before their body (state-nested-update is the case that measured it). The onChange transaction handling was revised in 7796b0b81: each write commits under the innermost open transaction (inner wins; measured on the Mac in run 38913665384). Independently reviewed 16 October (PASS); block 41 has six measured cases (onchange-animation-v1 added).",
@@ -110,10 +110,10 @@ REVIEWED = {bid: {"review": REVIEW, "caveats": []} for bid in
             [NUM2ID[n] for n in range(1, 21)] + ["cross-cutting.pixel-ties"] + [NUM2ID[n] for n in list(range(21, 27)) + list(range(28, 37))]}
 REVIEWED["swiftui.text-views"]["caveats"] = ["Text position is ungated (the pixels and the semantic tree are)."]
 REVIEWED["swiftui.system-font"]["caveats"] = ["The blanket tolerance set was replaced by per-row tolerances (decision G71); on the final renderer (fc4a39a89, renderer 0.8) the independent gate fails for 8 of 9 cases."]
-# Text in priority groups: the eight text cases pass at N=20 on stage 3d3c6f5c2-0a0d1f39 (L1-L8); the Oracle narrowing is lifted, the review is not repeated.
-# Block 27 (16 October): the eight Text cases pass the block gate 8/8 at N=20 on stage 3d3c6f5c2-0a0d1f39 (strict recompare; block-gate.json in each run dir).
-# The Oracle narrowing of 15 October is lifted on those verdicts; the block is not independently re-reviewed.
-REVIEWED["swiftui.layout-priority"] = {"review": "oracle 2026-10-15 (narrowed); narrowing lifted 2026-10-16 on the block-gate verdicts, not re-reviewed", "caveats": [
+# Block 27 Text cases (16 October block gate, Oracle lift reviewed 17 October, H33): the eight Text cases pass the block gate 8/8 at N=20 on stage
+# 3d3c6f5c2-0a0d1f39 (strict recompare; block-gate.json in each run dir). They are not rows of the consolidation table: TEXT_CASE_RUNS_27 below adds them to block 27.
+# The Oracle narrowing of 15 October is lifted on those verdicts (Oracle 17 October: PASS-WITH-CAVEATS, issue #12).
+REVIEWED["swiftui.layout-priority"] = {"review": "oracle 2026-10-17 (block 27 Text narrowing lift: PASS-WITH-CAVEATS)", "caveats": [
     "Text coverage is Tinos-only (`.custom(\"Tinos-Regular\")`); system fonts in priority groups are not covered.",
     "Three of the eight Text cases (text-labels, text-zero-proposal, line-limit-two) contain no layoutPriority.",
     "The block gate ignores blocks under 8 px (about 3.2 pt) (pair_blocks_report.py:50).",
@@ -121,7 +121,25 @@ REVIEWED["swiftui.layout-priority"] = {"review": "oracle 2026-10-15 (narrowed); 
     "A cut Text gets a 9 pt width tolerance and the x allowance accumulates (pair_blocks_report.py:93, :97, :100), so equal and priority splits of all-cut rows can pass.",
     "hub-rows is gated at the cut tolerance throughout; its row 2 blue block differs by about 7 px and passes.",
     "The eight Text verdicts ran on renderer 0.7 (`renderer-0.7-baseline`, sha 82513ae0…) and are not yet confirmed on renderer 0.8.",
-    "text-line-limit-two (system-font) measures an 8.4 pt width difference on row 1, a cut Text, against the 9 pt cut tolerance: 0.6 pt of slack, and the tolerance was set from that same 8.4 pt measurement; the case has no layoutPriority."]}
+    "text-line-limit-two (system-font) measures an 8.4 pt width difference on row 1, a cut Text, against the 9 pt cut tolerance: 0.6 pt of slack, and the tolerance was set from that same 8.4 pt measurement; the case has no layoutPriority.",
+    "The eight Text cases fail the pixel gate in 20/20 runs each (report.json); the deciding gate is the block gate, which compares only overlay block geometry (colour order, x and width) and does not compare glyph rendering.",
+    "No committed block-gate verdict on a pre-fix capture; detection of the L1/L3 inversion is shown by the pre-fix pixel captures (text-priority runs/20261015-154852), not by the gate's own output.",
+    "The fix db29b0c5e is not cleared of the unattributed N=3 verdict changes in other blocks (factory/pipeline/layout-rules-regression/README.md)."]}
+# Block 27 Text cases: the block gate passes at N=20 on stage 3d3c6f5c2-0a0d1f39; each entry is the run dir that holds its passing block-gate.json (pass true, 20 runs, pixel report fail 20).
+TEXT_CASE_RUNS_27 = {
+    "blocks-26-34/swiftui.layout-priority/text-priority-v1": "20261015-214710",
+    "blocks-26-34/swiftui.layout-priority/text-labels-v1": "20261015-213922",
+    "blocks-26-34/swiftui.layout-priority/text-three-groups-v1": "20261015-220452",
+    "blocks-26-34/swiftui.layout-priority/text-spacer-v1": "20261015-221021",
+    "blocks-26-34/swiftui.layout-priority/hub-rows-v1": "20261015-222758",
+    "blocks-26-34/swiftui.text-views/text-zero-proposal-v1": "20261015-230257",
+    "blocks-26-34/swiftui.text-views/text-fixed-size-v1": "20261015-231839",
+    "blocks-26-34/swiftui.system-font/text-line-limit-two-v1": "20261015-232623",
+}
+TEXT_STAGE_27 = "3d3c6f5c2-0a0d1f39"
+# Block 27 (hand-set): both stages named; the count string states the two gates separately.
+STAGE_27 = ["3d58196a3-3dc0ffc8", TEXT_STAGE_27]
+CASES_GATE_27 = "6/6 pixel-exact on 3d58196a3-3dc0ffc8 + 8/8 block gate at N=20 on 3d3c6f5c2-0a0d1f39"
 # Block 37 slider (Oracle, 16 October 2026: PASS-WITH-CAVEATS). Delivered with caveats; the caveats below are the review's, not a re-run.
 REVIEWED["swiftui.slider"] = {"review": "oracle 2026-10-16 (block 37: PASS-WITH-CAVEATS)", "caveats": [
     "Labels and value labels are checked semantically only (role, name, value, enabled, range, count, order); they have no position gate of their own.",
@@ -136,6 +154,12 @@ REVIEWED["swiftui.on-hover"] = {"review": "oracle 2026-10-16 (block 38: PASS, de
     "The HWND_BOTTOM cause of the failed runs is inferred: the z order was not logged before the topmost placement, so no covering window is named (H25).",
     "The N=20 pass (run 38916701641) ran on d9423e953, before 7796b0b81. Hover does not touch transactions, so the pass is not re-run on 7796b0b81.",
     "Leave is a genuine WM_MOUSELEAVE from TrackMouseEvent (view.rs:1308)."]}
+# Blocks 39 and 40 (Oracle, 17 October 2026: PASS-WITH-CAVEATS; issues #9 and #10). delivered-with-caveats; the caveats are the review's, not a re-run.
+REVIEWED["swiftui.uia-walk"] = {"review": "oracle 2026-10-17 (PASS-WITH-CAVEATS)", "status": "delivered-with-caveats", "caveats": [
+    "The N=20 list gate in run 38872207896 sampled the label-ink background in the list gutter (fixed in 943f64db4); the gutter is white on both platforms in that run, so the result stands; the fixed sampler is proven at N=3 only (run 38916920414).",
+    "H16 accepted: rows are gated by the list gate and the list-rect pixels. H21 accepted for legacy scrollers; the overlay-scroller gutter stays unknown."]}
+REVIEWED["swiftui.ime-traps"] = {"review": "oracle 2026-10-17 (PASS-WITH-CAVEATS)", "status": "delivered-with-caveats", "caveats": [
+    "imet-badregion-v1 exercises the invalid and inverted composing regions on Windows only (AppKit raises on them); the Mac reference is the unchanged field after compose and cancel, so the case proves Windows refuses the region without a crash or a value change, not parity of bad-region handling."]}
 REVIEWED["swiftui.compat"] = {"review": "oracle 2026-10-16 (block 41, transaction rework 7796b0b81: PASS)", "caveats": [
     "Open edges A and B (Oracle findings 16 October: a completion could run while an outer withAnimation was still open, and an outer completion could fire early when a segment commit changed no layout) are coded against in the working tree (H29, issue #2: frameOpen, gated deferred completions, settlesOnly) with six unit tests and the new case `completion-timing-v1`, read-only reviewed PASS-WITH-CAVEATS; NOT yet built, tested or captured, so both edges remain open until the unit suite and the block 41 N=20 CI run pass.",
     "The test-comment gap at the former TransactionBoundaryScopeTests.swift:272 is corrected in the same working-tree change."]}
@@ -149,7 +173,7 @@ REVIEWED["swiftui.opacity-transition"]["caveats"].append("CI N=20 pass on render
 
 # CI N=20 confirmation (16 October 2026; docs/sr1-status.md, "CI N=20 confirmation"). Each case below passed its deciding gate at N=20 in the CI run
 # named here, on renderer 0.10 with the explicit render scale 2.5 (ABI 0.10, decision H17). The stage and commit are those recorded in each run's build.json.
-# The run directories are not committed, so the mapping is hand-set here; each case was checked against its run directory's deciding gate
+# The run directories are committed under the pipeline tree, but the mapping is hand-set here; each case was checked against its run directory's deciding gate
 # (pixel, semantic, text-origin or clock report) when it was mapped.
 CI_RUNS = {
     "38854967920": {"runDirs": "runs/20261016-051729", "stage": "06a3a0a85-5dfe7cc2", "commit": "06a3a0a85fc737df1ea7e24cc137636e6889bf2d"},
@@ -356,6 +380,8 @@ def build():
         return int(n) if n.isdigit() else n
     table = [r for r in json.loads(CLOSURE_TABLE.read_text())["rows"] if not (isinstance(top(r), int) and top(r) > 20)] + \
             [r for r in json.loads(TABLE.read_text()) if isinstance(top(r), int) and top(r) > 20]
+    table += [{"block": "27 layout-priority", "case": c, "exit": 0, "stage": TEXT_STAGE_27, "out": str(ROOT / "factory/pipeline" / c / "runs" / run)}
+              for c, run in TEXT_CASE_RUNS_27.items()]     # block 27 Text cases (block gate, H33)
     manifest = json.loads(MANIFEST.read_text())
     mblocks = {b["id"]: b for b in manifest["blocks"]}
     sdate, rows, gaps = parse_status()
@@ -423,6 +449,8 @@ def build():
                           "casesPassing": f"{sum(1 for c in cases if c['case'] in CI_CASE_RUN)}/{len(cases)}",
                           "renderer": "renderer-0.10-a15ebc5d", "renderScale": 2.5, "windowsAdapter": "WARP (CI runner)",
                           "runDirs": {r: CI_RUNS[r]["runDirs"] for r in ci_runs}}
+        if bid == "swiftui.layout-priority":                 # hand-set: two stages and two gates (H33)
+            e["stage"], e["casesPassingDecidingGate"] = STAGE_27, CASES_GATE_27
         ov = OVERRIDES.get(bid)
         if ov:
             e["statusFromSources"] = e["status"]

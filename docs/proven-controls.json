@@ -1592,11 +1592,16 @@
       "apis": {
         "fromCaseSources": {
           "modifiersAndMembers": [
+            "custom",
             "fill",
+            "fixedSize",
+            "font",
             "frame",
             "layoutPriority",
+            "lineLimit",
             "onAppear",
             "opacity",
+            "overlay",
             "padding"
           ],
           "types": [
@@ -1604,6 +1609,7 @@
             "HStack",
             "Rectangle",
             "Spacer",
+            "Text",
             "VStack",
             "ZStack"
           ]
@@ -1613,13 +1619,21 @@
       "block": "swiftui.layout-priority",
       "cases": [
         "blocks-26-34/swiftui.layout-priority/fits-v1",
+        "blocks-26-34/swiftui.layout-priority/hub-rows-v1",
+        "blocks-26-34/swiftui.layout-priority/text-labels-v1",
+        "blocks-26-34/swiftui.layout-priority/text-priority-v1",
+        "blocks-26-34/swiftui.layout-priority/text-spacer-v1",
+        "blocks-26-34/swiftui.layout-priority/text-three-groups-v1",
         "blocks-26-34/swiftui.layout-priority/three-levels-v1",
         "blocks-26-34/swiftui.layout-priority/through-wrappers-v1",
         "blocks-26-34/swiftui.layout-priority/two-views-v1",
         "blocks-26-34/swiftui.layout-priority/vertical-v1",
-        "blocks-26-34/swiftui.layout-priority/with-spacer-v1"
+        "blocks-26-34/swiftui.layout-priority/with-spacer-v1",
+        "blocks-26-34/swiftui.system-font/text-line-limit-two-v1",
+        "blocks-26-34/swiftui.text-views/text-fixed-size-v1",
+        "blocks-26-34/swiftui.text-views/text-zero-proposal-v1"
       ],
-      "casesPassingDecidingGate": "6/6",
+      "casesPassingDecidingGate": "6/6 pixel-exact on 3d58196a3-3dc0ffc8 + 8/8 block gate at N=20 on 3d3c6f5c2-0a0d1f39",
       "caveats": [
         "A priority set beneath `padding` or a frame modifier does not forward (measured); only HStack/VStack distribution is proven, not Layout protocol containers.",
         "Text coverage is Tinos-only (`.custom(\"Tinos-Regular\")`); system fonts in priority groups are not covered.",
@@ -1629,10 +1643,16 @@
         "A cut Text gets a 9 pt width tolerance and the x allowance accumulates (pair_blocks_report.py:93, :97, :100), so equal and priority splits of all-cut rows can pass.",
         "hub-rows is gated at the cut tolerance throughout; its row 2 blue block differs by about 7 px and passes.",
         "The eight Text verdicts ran on renderer 0.7 (`renderer-0.7-baseline`, sha 82513ae0…) and are not yet confirmed on renderer 0.8.",
-        "text-line-limit-two (system-font) measures an 8.4 pt width difference on row 1, a cut Text, against the 9 pt cut tolerance: 0.6 pt of slack, and the tolerance was set from that same 8.4 pt measurement; the case has no layoutPriority."
+        "text-line-limit-two (system-font) measures an 8.4 pt width difference on row 1, a cut Text, against the 9 pt cut tolerance: 0.6 pt of slack, and the tolerance was set from that same 8.4 pt measurement; the case has no layoutPriority.",
+        "The eight Text cases fail the pixel gate in 20/20 runs each (report.json); the deciding gate is the block gate, which compares only overlay block geometry (colour order, x and width) and does not compare glyph rendering.",
+        "No committed block-gate verdict on a pre-fix capture; detection of the L1/L3 inversion is shown by the pre-fix pixel captures (text-priority runs/20261015-154852), not by the gate's own output.",
+        "The fix db29b0c5e is not cleared of the unattributed N=3 verdict changes in other blocks (factory/pipeline/layout-rules-regression/README.md)."
       ],
-      "review": "oracle 2026-10-15 (narrowed); narrowing lifted 2026-10-16 on the block-gate verdicts, not re-reviewed",
-      "stage": "3d58196a3-3dc0ffc8",
+      "review": "oracle 2026-10-17 (block 27 Text narrowing lift: PASS-WITH-CAVEATS)",
+      "stage": [
+        "3d58196a3-3dc0ffc8",
+        "3d3c6f5c2-0a0d1f39"
+      ],
       "status": "delivered-with-caveats",
       "statusDocBlock": 27,
       "verdict": {
@@ -1641,7 +1661,7 @@
           "2026-10-15"
         ],
         "source": "docs/sr1-status.md table + factory/pipeline/closure/closure-table.json (blocks 1-20) / consolidation-table.json (blocks 21+)",
-        "text": "**delivered-with-caveats** (block-gate verdicts 8/8 at N=20 on the strict recompare, 16 October; caveats in `docs/proven-controls.json`). The eight Text verdicts ran on renderer 0.7 (`renderer-0.7-baseline`, sha 82513ae0…) and are not yet confirmed on renderer 0.8. text-line-limit-two (system-font) measures an 8.4 pt width difference on row 1, a cut Text, against the 9 pt cut tolerance: 0.6 pt of slack, and the tolerance was set from that same 8.4 pt measurement; the case has no layoutPriority. The Oracle narrowing (15 October) is lifted: Text in priority groups now passes N=20 (8/8, decisions L1-L8, probes `probes/layout-rules`, cases `factory/pipeline/blocks-26-34/swiftui.layout-priority/*text*`, `hub-rows`). Priority beneath padding/frame does not forward (unchanged). The review is not repeated."
+        "text": "**delivered-with-caveats**, independently reviewed 17 October (block-gate verdicts 8/8 at N=20 on the strict recompare, 16 October; caveats in `docs/proven-controls.json`). The eight Text verdicts ran on renderer 0.7 (`renderer-0.7-baseline`, sha 82513ae0…) and are not yet confirmed on renderer 0.8. text-line-limit-two (system-font) measures an 8.4 pt width difference on row 1, a cut Text, against the 9 pt cut tolerance: 0.6 pt of slack, and the tolerance was set from that same 8.4 pt measurement; the case has no layoutPriority. The Oracle narrowing (15 October) is lifted: Text in priority groups now passes N=20 (8/8, decisions L1-L8, probes `probes/layout-rules`, cases `factory/pipeline/blocks-26-34/swiftui.layout-priority/*text*`, `hub-rows`). Priority beneath padding/frame does not forward (unchanged). Oracle 17 October: PASS-WITH-CAVEATS on the lift (H33, issue #12)."
       },
       "windowsDifferences": []
     },
@@ -2286,9 +2306,11 @@
         "Controls-b passes N=20 in CI run 38872207896 (stage f81244b4f-9ce7a09e, commit f81244b4f, renderer 0.10 at scale 2.5): the semantic tree, the list gate and the list-rect pixels, after the H21 gutter. Controls-a passes N=20 in run 38854967920.",
         "H16 rows are covered by the list-rect region pixel gate plus listGate (H20, H21), and the offscreen Mac harness exposes no row content, so the rows are not compared semantically.",
         "H21: the scroller gutter applies only when the list overflows with legacy scrollers; the CI Mac is pinned to legacy (`factory/tools/mac-accessibility.sh`). An overflowing List clips on Windows with no scroll bar drawn (a known gap). Unproven: that overlay scrollers take no gutter. Every runner logged `ax.scrollerStyle=overlay` before the pin, yet the pre-pin run 38854967920 drew an AXScrollBar and the 16.8 pt gutter.",
-        "The semantic comparator folds a toggle's nested label into the Mac AX shape (H14): a switch's label is a sibling before an unnamed switch, a checkbox's duplicate label child is dropped; role, name, toggle, enabled and bounds are still compared.",
+        "The semantic comparator folds a toggle's nested label into the Mac AX shape (H14): a switch's label is a sibling before an unnamed switch, a checkbox's duplicate label child is dropped; role, name, toggle, enabled, value, count and order are gated. Bounds are reported, not gated, and controls-a pixels are report-only, so no geometry of controls-a is gated.",
         "Controls-b list rows are gated by pair_list_report.py (count, text, order, selected, frame within 1 px, label ink) and the list-rect pixels (H20), not by the semantic comparator (H16): the offscreen Mac harness's AX tree exposes its rows as AXUnknown with no content; a normal macOS List exposes AXRow/AXCell, which was not measured here.",
-        "An unlabelled `Image(systemName: \"star.fill\")` is named `Favorite`; the name comes from a measured SF-symbol description table that holds measured symbols only (one entry so far: star.fill, English, macOS 27). Other symbols fall back to the symbol name, which will not match the Mac."
+        "An unlabelled `Image(systemName: \"star.fill\")` is named `Favorite`; the name comes from a measured SF-symbol description table that holds measured symbols only (one entry so far: star.fill, English, macOS 27). Other symbols fall back to the symbol name, which will not match the Mac.",
+        "The N=20 list gate in run 38872207896 sampled the label-ink background in the list gutter (fixed in 943f64db4); the gutter is white on both platforms in that run, so the result stands; the fixed sampler is proven at N=3 only (run 38916920414).",
+        "H16 accepted: rows are gated by the list gate and the list-rect pixels. H21 accepted for legacy scrollers; the overlay-scroller gutter stays unknown."
       ],
       "ciN20": {
         "casesPassing": "2/2",
@@ -2308,11 +2330,12 @@
         ],
         "windowsAdapter": "WARP (CI runner)"
       },
+      "review": "oracle 2026-10-17 (PASS-WITH-CAVEATS)",
       "stage": [
         "06a3a0a85-5dfe7cc2",
         "f81244b4f-9ce7a09e"
       ],
-      "status": "delivered-pending-review",
+      "status": "delivered-with-caveats",
       "statusDocBlock": 39,
       "verdict": {
         "date": "2026-10-17",
@@ -2320,7 +2343,7 @@
           "2026-10-16"
         ],
         "source": "docs/sr1-status.md table + factory/pipeline/closure/closure-table.json (blocks 1-20) / consolidation-table.json (blocks 21+)",
-        "text": "**delivered-pending-review**. CI N=20 on renderer 0.10 at scale 2.5 (H17). `controls-a-v1`: run 38854967920, stage 06a3a0a85-5dfe7cc2, semantic gate 20/20 (pixels report-only). `controls-b-v1`: run 38872207896, stage f81244b4f-9ce7a09e (commit f81244b4f, `runs/20261016-081325`): semantic tree, list gate and list-rect pixels pass 20/20 after the H21 gutter. Without the gutter (run 38854967920) the Windows list rows were 16.8 pt wider than the Mac's. The local 0/2 on `3d3c6f5c2-0a0d1f39` predates the H14 fold. Caveats: H16 rows are covered by the region pixel gate plus listGate, since the offscreen Mac harness exposes no row content; the H21 gutter applies only when the list overflows under legacy scrollers, and the CI Mac is pinned to legacy; an overflowing List clips on Windows with no scroll bar drawn (a known gap); whether an overlay scroller takes a gutter is unproven (H21), so an overflowing-List reference is not yet established on any machine"
+        "text": "**delivered-with-caveats**, independently reviewed 17 October (Oracle PASS-WITH-CAVEATS, issue #9). CI N=20 on renderer 0.10 at scale 2.5 (H17). `controls-a-v1`: run 38854967920, stage 06a3a0a85-5dfe7cc2, semantic gate 20/20 (pixels report-only). `controls-b-v1`: run 38872207896, stage f81244b4f-9ce7a09e (commit f81244b4f, `runs/20261016-081325`): semantic tree, list gate and list-rect pixels pass 20/20 after the H21 gutter. Without the gutter (run 38854967920) the Windows list rows were 16.8 pt wider than the Mac's. The local 0/2 on `3d3c6f5c2-0a0d1f39` predates the H14 fold. Caveats: H16 rows are covered by the region pixel gate plus listGate, since the offscreen Mac harness exposes no row content; the H21 gutter applies only when the list overflows under legacy scrollers, and the CI Mac is pinned to legacy; an overflowing List clips on Windows with no scroll bar drawn (a known gap); whether an overlay scroller takes a gutter is unproven (H21), so an overflowing-List reference is not yet established on any machine"
       },
       "windowsDifferences": []
     },
@@ -2351,8 +2374,9 @@
       "caveats": [
         "CI confirmation (16 October): the CI runners use the Windows WARP adapter at an explicit render scale of 2.5 (H17), not native 240 dpi. The Dell 240-dpi sandbox stays the reference; the CI and Dell captures were pixel-identical on click-track and labels.",
         "Hardware IME is deferred: the cases drive the in-process TextStore script and the NSTextInputClient path, not a real IME (H9(b)).",
-        "Pixels are report-only on every block 40 case (`pair.json` `pixels: report-only`, H28, issue #3): the semantic, text-origin and IME gates decide; no exclusion rectangles are named.",
-        "Extra CI evidence: `imet-badregion-v1` passes N=20 in run 38870003524 (stage 168328082-0766196a, commit 168328082) after the harness lease fix (H22); its mapped run stays 38860483220."
+        "Pixels are report-only on every block 40 case (`pixels: report-only`, H28, issue #3). Only the semantic gate decides: role, name, value and enabled of the two fields and the value line, in the end state. No text-origin or IME marked-range gate is declared, so intermediate composition state is not gated.",
+        "Extra CI evidence: `imet-badregion-v1` passes N=20 in run 38870003524 (stage 168328082-0766196a, commit 168328082) after the harness lease fix (H22); its mapped run stays 38860483220.",
+        "imet-badregion-v1 exercises the invalid and inverted composing regions on Windows only (AppKit raises on them); the Mac reference is the unchanged field after compose and cancel, so the case proves Windows refuses the region without a crash or a value change, not parity of bad-region handling."
       ],
       "ciN20": {
         "casesPassing": "4/4",
@@ -2372,6 +2396,7 @@
         ],
         "windowsAdapter": "WARP (CI runner)"
       },
+      "review": "oracle 2026-10-17 (PASS-WITH-CAVEATS)",
       "stage": [
         "06a3a0a85-5dfe7cc2",
         "168328082-0766196a",
@@ -2381,7 +2406,7 @@
         "7796b0b81-3f77e0df",
         "c4e83a68a-5dfe7cc2"
       ],
-      "status": "delivered-pending-review",
+      "status": "delivered-with-caveats",
       "statusDocBlock": 40,
       "verdict": {
         "date": "2026-10-17",
@@ -2389,7 +2414,7 @@
           "2026-10-16"
         ],
         "source": "docs/sr1-status.md table + factory/pipeline/closure/closure-table.json (blocks 1-20) / consolidation-table.json (blocks 21+)",
-        "text": "**4/4** CI N=20 on renderer 0.10 at scale 2.5 (H17): `imet-focuschange-v1`, `imet-hangul-v1`, `imet-reconvert-v1` in run 38854967920 (stage 06a3a0a85-5dfe7cc2), `imet-badregion-v1` in run 38860483220 (stage c4e83a68a-5dfe7cc2; its run 38854967920 capture hit the artifact); semantic gate 20/20 each. Local `3d3c6f5c2-0a0d1f39` was 2/4; extra CI evidence: `imet-badregion-v1` N=20 pass in run 38870003524, stage 168328082-0766196a (H22). **delivered-pending-review**"
+        "text": "**4/4** CI N=20 on renderer 0.10 at scale 2.5 (H17): `imet-focuschange-v1`, `imet-hangul-v1`, `imet-reconvert-v1` in run 38854967920 (stage 06a3a0a85-5dfe7cc2), `imet-badregion-v1` in run 38860483220 (stage c4e83a68a-5dfe7cc2; its run 38854967920 run 1 failed GetClientRect (the fixed 10 s host lease, H22)); semantic gate 20/20 each. Local `3d3c6f5c2-0a0d1f39` was 2/4; extra CI evidence: `imet-badregion-v1` N=20 pass in run 38870003524, stage 168328082-0766196a (H22). **delivered-with-caveats**, independently reviewed 17 October (Oracle PASS-WITH-CAVEATS, issue #10)"
       },
       "windowsDifferences": []
     },
@@ -2570,13 +2595,16 @@
       "caveats": [
         "Oracle is SwiftUI's ImageRenderer at scale 2.5 (decision G50, provisional), not the on-screen NSHostingView path; on-screen confirmation is pending the Mac being free.",
         "Fitted filters per level (G52): none nearest; low and default bilinear; medium bilinear after 2x2 box halvings; high the same halvings with a Mitchell-Netravali cubic (B 0.72, C 0.12), an extra beyond the five named filters.",
-        "ratios-checker PASSES only after decision G73: the 3x medium 1 px checker cell has a per-channel mean residual of 0.88 (max 1 level) that the filter does not model exactly; the tolerance (mean 0.9, from the calibration including 1 px checker pages) absorbs it. The residual is 0.878, which passes only because it rounds to 0.9. This is a named limit, not a fit.",
+        "ratios-checker passes only after G73: the 3x 1 px checker cells at both low and medium measure a per-channel mean of 0.879 (maximum 1 level) and failed the original 0.7 in 20/20 runs. The 0.9 tolerance comes from a calibration page (seed 60) that was added after that failure. It is a named limit, not a fit.",
         "Odd-sized sources reduced by more than 2:1 are not reproduced (G53). `.high` at 1:1 smooths on the Mac, so 1:1 is exact only for none, low, medium and default.",
-        "A named Mac-side corner artifact (macCornerSpill, G55) is allowed one pixel above the rect with antialiased fractional origins; it is counted and reported.",
-        "The transient live-resize path (isLiveResizing) is unit-tested only; there is no settled-capture gate for it. aspectRatio is an Image modifier only."
+        "Mac corner spill (G55): the gate lets up to two Mac pixels per cell, in the row just above the cell's top-left corner (x = left-1 and left), be within 60 levels of the ground wherever Windows is exactly ground. This applies to every cell, not only antialiased fractional ones. Measured spill: 1-2 pixels per run in aa, mip and one-to-one.",
+        "The transient live-resize path (isLiveResizing) is unit-tested only; there is no settled-capture gate for it. aspectRatio is an Image modifier only.",
+        "Gating-set changes made after capture: aa, fill, mip and one-to-one failed the gate at capture time and pass on re-judgement after a gate change that was never committed (the cause for fill is not recorded). The five ratios cases were recaptured after their odd-side >2:1 medium/high cells were removed (G53). Raw captures are not retained; the evidence is the committed reports only.",
+        "Proven on stage cf9d48dab-77823e0e with renderer 0.7 only; not re-gated on renderer 0.8 or later, or on the explicit render scale (H17)."
       ],
+      "review": "oracle 2026-10-17 (PASS-WITH-CAVEATS)",
       "stage": "cf9d48dab-77823e0e (git archive of commit cf9d48dab); renderer 0.7 baseline 82513ae0c1e2",
-      "status": "delivered-pending-review",
+      "status": "delivered-with-caveats",
       "statusDocBlock": "I2",
       "verdict": {
         "date": "2026-10-15",
@@ -2584,7 +2612,7 @@
           "2026-10-15"
         ],
         "source": "docs/sr1-status.md I2 row + factory/pipeline/blocks-w1-i2/evidence",
-        "text": "10/10 gate cases pass at N=20 (**delivered-pending-review**; decisions G50-G59 and G73); checker pass rests on the calibrated tolerance widened by G73"
+        "text": "10/10 gate cases pass at N=20 (**delivered-with-caveats**, Oracle 17 October PASS-WITH-CAVEATS; decisions G50-G59, G73, H32); checker pass rests on the calibrated tolerance widened by G73"
       },
       "windowsDifferences": []
     }
