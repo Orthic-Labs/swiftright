@@ -1,0 +1,294 @@
+{
+ "edgeAAToleranceLevels": 32,
+ "pairs": 3,
+ "frames": null,
+ "exact": 0,
+ "exactWithExclusions": 3,
+ "edgeAA": 0,
+ "fail": 0,
+ "maxdiff": 0,
+ "diffbbox": null,
+ "rows": [
+  {
+   "run": 1,
+   "verdict": "exact-with-exclusions",
+   "gate": {
+    "verdict": "exact",
+    "totalDiff": 0,
+    "inBandDiff": 0,
+    "outOfBandDiff": 0,
+    "maxInBand": 0,
+    "maxOutOfBand": 0,
+    "bandPixels": 5686
+   },
+   "exact": false,
+   "differentPixels": 0,
+   "maxdiff": 0,
+   "diffbbox": null,
+   "fullFrameDifferentPixels": 1967,
+   "excluded": [
+    {
+     "name": "'Count n' text glyph region (Segoe UI vs SF, sr1-decisions #2); gated by the semantic tree",
+     "rect": [
+      200,
+      195,
+      600,
+      245
+     ],
+     "diffPixels": 1230,
+     "macInkBBox": [
+      343,
+      209,
+      454,
+      234
+     ],
+     "winInkBBox": [
+      347,
+      210,
+      451,
+      233
+     ]
+    },
+    {
+     "name": "button width and label glyphs (Segoe UI vs SF, decision 2); the button artwork is gated by swiftui.button/bordered-v1, its action by the tree and the counter squares",
+     "rect": [
+      200,
+      260,
+      600,
+      330
+     ],
+     "diffPixels": 737,
+     "macInkBBox": [
+      340,
+      265,
+      461,
+      325
+     ],
+     "winInkBBox": [
+      340,
+      265,
+      460,
+      325
+     ]
+    }
+   ]
+  },
+  {
+   "run": 2,
+   "verdict": "exact-with-exclusions",
+   "gate": {
+    "verdict": "exact",
+    "totalDiff": 0,
+    "inBandDiff": 0,
+    "outOfBandDiff": 0,
+    "maxInBand": 0,
+    "maxOutOfBand": 0,
+    "bandPixels": 5686
+   },
+   "exact": false,
+   "differentPixels": 0,
+   "maxdiff": 0,
+   "diffbbox": null,
+   "fullFrameDifferentPixels": 1967,
+   "excluded": [
+    {
+     "name": "'Count n' text glyph region (Segoe UI vs SF, sr1-decisions #2); gated by the semantic tree",
+     "rect": [
+      200,
+      195,
+      600,
+      245
+     ],
+     "diffPixels": 1230,
+     "macInkBBox": [
+      343,
+      209,
+      454,
+      234
+     ],
+     "winInkBBox": [
+      347,
+      210,
+      451,
+      233
+     ]
+    },
+    {
+     "name": "button width and label glyphs (Segoe UI vs SF, decision 2); the button artwork is gated by swiftui.button/bordered-v1, its action by the tree and the counter squares",
+     "rect": [
+      200,
+      260,
+      600,
+      330
+     ],
+     "diffPixels": 737,
+     "macInkBBox": [
+      340,
+      265,
+      461,
+      325
+     ],
+     "winInkBBox": [
+      340,
+      265,
+      460,
+      325
+     ]
+    }
+   ]
+  },
+  {
+   "run": 3,
+   "verdict": "exact-with-exclusions",
+   "gate": {
+    "verdict": "exact",
+    "totalDiff": 0,
+    "inBandDiff": 0,
+    "outOfBandDiff": 0,
+    "maxInBand": 0,
+    "maxOutOfBand": 0,
+    "bandPixels": 5686
+   },
+   "exact": false,
+   "differentPixels": 0,
+   "maxdiff": 0,
+   "diffbbox": null,
+   "fullFrameDifferentPixels": 1967,
+   "excluded": [
+    {
+     "name": "'Count n' text glyph region (Segoe UI vs SF, sr1-decisions #2); gated by the semantic tree",
+     "rect": [
+      200,
+      195,
+      600,
+      245
+     ],
+     "diffPixels": 1230,
+     "macInkBBox": [
+      343,
+      209,
+      454,
+      234
+     ],
+     "winInkBBox": [
+      347,
+      210,
+      451,
+      233
+     ]
+    },
+    {
+     "name": "button width and label glyphs (Segoe UI vs SF, decision 2); the button artwork is gated by swiftui.button/bordered-v1, its action by the tree and the counter squares",
+     "rect": [
+      200,
+      260,
+      600,
+      330
+     ],
+     "diffPixels": 737,
+     "macInkBBox": [
+      340,
+      265,
+      461,
+      325
+     ],
+     "winInkBBox": [
+      340,
+      265,
+      460,
+      325
+     ]
+    }
+   ]
+  }
+ ],
+ "build": {
+  "mac": {
+   "osVersion": "27.0.1",
+   "osBuild": "26A434",
+   "swiftc": "Apple Swift version 6.4 (swiftlang-6.4.0.34.1 clang-2100.3.34.1)",
+   "clockHost": "os=Version_27.0.1_(Build_26A434) pinnedDisplayScale=2.5 windowBackingScale=2.5 effectiveDisplayScale=2.5 screens=[1024x768@1.0x]",
+   "scaleGuard": {
+    "captureScale": 2.5,
+    "status": "OK",
+    "runs": 3,
+    "reported": 3,
+    "distinct": [
+     [
+      2.5,
+      "2.5",
+      2.5
+     ]
+    ],
+    "screens": [
+     "[1024x768@1.0x]"
+    ],
+    "mismatches": [],
+    "unreportedRuns": []
+   }
+  },
+  "stage": {
+   "name": "824696b1d-931573f0",
+   "commit": "824696b1d2a0f4b7b2c8685bbf7fe322395552ce",
+   "ref": "HEAD",
+   "mode": "git-archive",
+   "dirty": false,
+   "treeSha256": "sha256:931573f01aed34ec0042d0fb3b68dbab24fbe57153f5a32ec9246236833738a0",
+   "files": 408,
+   "paths": [
+    "packages/SwiftRightBridge",
+    "packages/SwiftRightHost",
+    "probes/sr0-s/fresh-runtime",
+    "factory/pipeline/blocks-w0-i1/corpus",
+    "factory/pipeline/blocks-w0-i1/expected"
+   ],
+   "stagedUtc": "2026-10-17T07:11:55Z"
+  },
+  "renderer": {
+   "path": "D:\\a\\_temp\\renderer\\swiftright_render.dll",
+   "label": "renderer-0.10-c13b62a4",
+   "sha256": "4afe19d0c561a4a4ffb3e0cdc75cd197aaf0e2eec6121fdef266ed780107d817"
+  },
+  "windows": {
+   "runner": {
+    "os": "Windows",
+    "image": "win25-vs2026",
+    "video": [
+     "Microsoft Hyper-V Video 10.0.26100.1150"
+    ],
+    "exeSha256": "e304e7d0b2acdea5ba67327b7db531c29fb1ac9a0c76a12c9c5b0e55bcc1f994",
+    "rendererSha256": "4afe19d0c561a4a4ffb3e0cdc75cd197aaf0e2eec6121fdef266ed780107d817"
+   },
+   "capture": {
+    "ok": true,
+    "runs": 3,
+    "done": 3,
+    "bad": [],
+    "guestOk": true,
+    "guestError": null
+   },
+   "captureKind": "interact"
+  }
+ },
+ "gate": "exact outside excluded regions",
+ "excludedRegions": [
+  {
+   "name": "'Count n' text glyph region (Segoe UI vs SF, sr1-decisions #2); gated by the semantic tree",
+   "rect": [
+    200,
+    195,
+    600,
+    245
+   ]
+  },
+  {
+   "name": "button width and label glyphs (Segoe UI vs SF, decision 2); the button artwork is gated by swiftui.button/bordered-v1, its action by the tree and the counter squares",
+   "rect": [
+    200,
+    260,
+    600,
+    330
+   ]
+  }
+ ]
+}

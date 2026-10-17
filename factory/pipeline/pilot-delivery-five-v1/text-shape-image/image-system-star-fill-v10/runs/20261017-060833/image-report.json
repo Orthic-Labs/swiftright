@@ -1,0 +1,290 @@
+{
+ "case": "image-system-star-fill-v10",
+ "run": "20261017-060833",
+ "pairs": 3,
+ "gatePassed": 3,
+ "inkBoxModelSource": "scale-class model",
+ "generalisationEvidence": true,
+ "gate": "frame (logged frame + exact outside frame), half-coverage ink bbox, tint colour; glyph shape reported only",
+ "shapeExclusion": {
+  "name": "image-system-star-fill glyph shape",
+  "rect": [
+   -4,
+   -3,
+   84,
+   83
+  ],
+  "reason": "SF Symbols cannot ship on Windows; provider maps to Segoe Fluent Icons (docs/sr1-decisions.md item 3)"
+ },
+ "summary": {
+  "frameMatches": 3,
+  "inkBBoxMatches": 3,
+  "tintMatches": 3,
+  "glyphShapeDiffPixels": [
+   638
+  ]
+ },
+ "rows": [
+  {
+   "run": 1,
+   "ok": true,
+   "frame": {
+    "match": true,
+    "expectedRectPx": [
+     0,
+     1,
+     80,
+     79
+    ],
+    "windowsLoggedRectPx": [
+     0,
+     1,
+     80,
+     79
+    ],
+    "differingPixelsOutsideShapeRegion": 0
+   },
+   "inkBBox": {
+    "match": true,
+    "macCaptureEqualsModel": true,
+    "modelInkBoxPx": [
+     1,
+     0,
+     78,
+     75
+    ],
+    "modelSource": "scale-class model",
+    "rule": "half-coverage (>=50% of tint) bounding box, px relative to the frame origin",
+    "mac": [
+     1,
+     0,
+     78,
+     75
+    ],
+    "windows": [
+     1,
+     0,
+     78,
+     75
+    ],
+    "anyCoverageMac": [
+     0,
+     0,
+     79,
+     75
+    ],
+    "anyCoverageWindows": [
+     0,
+     -1,
+     79,
+     75
+    ]
+   },
+   "tint": {
+    "match": true,
+    "expectedRGB": [
+     255,
+     204,
+     0
+    ],
+    "macFullCoverageRGB": [
+     255,
+     204,
+     0
+    ],
+    "windowsFullCoverageRGB": [
+     255,
+     204,
+     0
+    ],
+    "macFullCoveragePixels": 2420,
+    "windowsFullCoveragePixels": 2649
+   },
+   "glyphShape": {
+    "excludedFromExactGate": true,
+    "region": "image-system-star-fill glyph shape",
+    "rect": [
+     -4,
+     -3,
+     84,
+     83
+    ],
+    "differingPixels": 638
+   }
+  },
+  {
+   "run": 2,
+   "ok": true,
+   "frame": {
+    "match": true,
+    "expectedRectPx": [
+     0,
+     1,
+     80,
+     79
+    ],
+    "windowsLoggedRectPx": [
+     0,
+     1,
+     80,
+     79
+    ],
+    "differingPixelsOutsideShapeRegion": 0
+   },
+   "inkBBox": {
+    "match": true,
+    "macCaptureEqualsModel": true,
+    "modelInkBoxPx": [
+     1,
+     0,
+     78,
+     75
+    ],
+    "modelSource": "scale-class model",
+    "rule": "half-coverage (>=50% of tint) bounding box, px relative to the frame origin",
+    "mac": [
+     1,
+     0,
+     78,
+     75
+    ],
+    "windows": [
+     1,
+     0,
+     78,
+     75
+    ],
+    "anyCoverageMac": [
+     0,
+     0,
+     79,
+     75
+    ],
+    "anyCoverageWindows": [
+     0,
+     -1,
+     79,
+     75
+    ]
+   },
+   "tint": {
+    "match": true,
+    "expectedRGB": [
+     255,
+     204,
+     0
+    ],
+    "macFullCoverageRGB": [
+     255,
+     204,
+     0
+    ],
+    "windowsFullCoverageRGB": [
+     255,
+     204,
+     0
+    ],
+    "macFullCoveragePixels": 2420,
+    "windowsFullCoveragePixels": 2649
+   },
+   "glyphShape": {
+    "excludedFromExactGate": true,
+    "region": "image-system-star-fill glyph shape",
+    "rect": [
+     -4,
+     -3,
+     84,
+     83
+    ],
+    "differingPixels": 638
+   }
+  },
+  {
+   "run": 3,
+   "ok": true,
+   "frame": {
+    "match": true,
+    "expectedRectPx": [
+     0,
+     1,
+     80,
+     79
+    ],
+    "windowsLoggedRectPx": [
+     0,
+     1,
+     80,
+     79
+    ],
+    "differingPixelsOutsideShapeRegion": 0
+   },
+   "inkBBox": {
+    "match": true,
+    "macCaptureEqualsModel": true,
+    "modelInkBoxPx": [
+     1,
+     0,
+     78,
+     75
+    ],
+    "modelSource": "scale-class model",
+    "rule": "half-coverage (>=50% of tint) bounding box, px relative to the frame origin",
+    "mac": [
+     1,
+     0,
+     78,
+     75
+    ],
+    "windows": [
+     1,
+     0,
+     78,
+     75
+    ],
+    "anyCoverageMac": [
+     0,
+     0,
+     79,
+     75
+    ],
+    "anyCoverageWindows": [
+     0,
+     -1,
+     79,
+     75
+    ]
+   },
+   "tint": {
+    "match": true,
+    "expectedRGB": [
+     255,
+     204,
+     0
+    ],
+    "macFullCoverageRGB": [
+     255,
+     204,
+     0
+    ],
+    "windowsFullCoverageRGB": [
+     255,
+     204,
+     0
+    ],
+    "macFullCoveragePixels": 2420,
+    "windowsFullCoveragePixels": 2649
+   },
+   "glyphShape": {
+    "excludedFromExactGate": true,
+    "region": "image-system-star-fill glyph shape",
+    "rect": [
+     -4,
+     -3,
+     84,
+     83
+    ],
+    "differingPixels": 638
+   }
+  }
+ ]
+}

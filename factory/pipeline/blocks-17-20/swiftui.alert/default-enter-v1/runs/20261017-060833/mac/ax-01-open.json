@@ -1,0 +1,118 @@
+{
+  "scale" : 2.5,
+  "windows" : [
+    {
+      "frame" : [
+        0,
+        0,
+        320,
+        240
+      ],
+      "kind" : "window",
+      "main" : true,
+      "title" : "",
+      "tree" : {
+        "bounds" : [
+          0,
+          0,
+          320,
+          240
+        ],
+        "children" : [
+          {
+            "bounds" : [
+              0,
+              0,
+              320,
+              240
+            ],
+            "children" : [
+              {
+                "bounds" : [
+                  137.19999999999999,
+                  136,
+                  45.599999999999994,
+                  16
+                ],
+                "children" : [
+
+                ],
+                "enabled" : true,
+                "focus" : false,
+                "role" : "AXStaticText",
+                "value" : "Waiting"
+              }
+            ],
+            "enabled" : false,
+            "focus" : false,
+            "role" : "AXGroup",
+            "subrole" : "AXHostingView"
+          }
+        ],
+        "enabled" : true,
+        "focus" : false,
+        "name" : "",
+        "role" : "AXWindow"
+      }
+    },
+    {
+      "kind" : "alert",
+      "main" : false,
+      "title" : "Save changes?",
+      "tree" : {
+        "children" : [
+          {
+            "children" : [
+
+            ],
+            "enabled" : true,
+            "focus" : false,
+            "role" : "AXStaticText",
+            "value" : "Your changes will be lost otherwise."
+          },
+          {
+            "cancel" : false,
+            "children" : [
+
+            ],
+            "default" : true,
+            "destructive" : false,
+            "enabled" : true,
+            "focus" : false,
+            "name" : "Save",
+            "role" : "AXButton"
+          },
+          {
+            "cancel" : false,
+            "children" : [
+
+            ],
+            "default" : false,
+            "destructive" : true,
+            "enabled" : true,
+            "focus" : false,
+            "name" : "Don't save",
+            "role" : "AXButton"
+          },
+          {
+            "cancel" : true,
+            "children" : [
+
+            ],
+            "default" : false,
+            "destructive" : false,
+            "enabled" : true,
+            "focus" : false,
+            "name" : "Cancel",
+            "role" : "AXButton"
+          }
+        ],
+        "enabled" : true,
+        "focus" : true,
+        "name" : "Save changes?",
+        "role" : "AXWindow",
+        "subrole" : "AXDialog"
+      }
+    }
+  ]
+}
