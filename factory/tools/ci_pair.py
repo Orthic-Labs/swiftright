@@ -66,6 +66,9 @@ RENDERERS = {
     # Same ABI 0.10 plus the measured Mac per-line snap for wrapped system-font lines (decision G76(b)); supersedes a79258d6 for multi-line text. render-windows CI run 38991925100 on c13b62a44.
     "renderer-0.10-c13b62a4": dict(runId=38991925100, artifact="swiftright-render-c13b62a446b1fa01afe624410711ab9720aacd82",
                                    sha256="4afe19d0c561a4a4ffb3e0cdc75cd197aaf0e2eec6121fdef266ed780107d817"),
+    # ABI 0.11 (#31): opt-in wheel event SWR_PTR_WHEEL and the scroll bar role; same text and layout behaviour as c13b62a4. render-windows CI run 39063620618 on ffd1abe2082f8dfe8f3f9699372e90d688b4f5c8.
+    "renderer-0.11-ffd1abe2": dict(runId=39063620618, artifact="swiftright-render-ffd1abe2082f8dfe8f3f9699372e90d688b4f5c8",
+                                   sha256="cea9dcc2ccdc589c1b29ba4f86d14970a34884a913948bb80695bb6909b7e9e6"),
 }
 BLOCK_LABELS = {"swiftui.slider": "37 slider", "swiftui.on-hover": "38 on-hover", "swiftui.uia-walk": "39 uia-walk",
                 "swiftui.compat": "41 compat", "swiftui.ime-traps": "40 ime-traps"}
