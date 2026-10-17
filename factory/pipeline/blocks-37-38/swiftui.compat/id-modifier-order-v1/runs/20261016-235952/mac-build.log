@@ -1,0 +1,92 @@
+$ /usr/bin/xcrun swiftc -parse-as-library -O -module-cache-path /Users/runner/work/_temp/swiftright-cache/build/pair/mc -o /Users/runner/work/_temp/swiftright-cache/run/pair-id-modifier-order-v1-20261016-235952/bin/host /Users/runner/work/swiftright/swiftright/factory/pipeline/blocks-37-38/swiftui.compat/id-modifier-order-v1/mac-source/Sources/MacHost/CaptureHost.swift /Users/runner/work/swiftright/swiftright/factory/pipeline/blocks-37-38/swiftui.compat/id-modifier-order-v1/mac-source/Sources/MacHost/Witness.swift /Users/runner/work/swiftright/swiftright/factory/tools/mac-ax-dump/AXDump.swift /Users/runner/work/swiftright/swiftright/factory/tools/mac-ax-dump/AlertHooks.swift /Users/runner/work/swiftright/swiftright/factory/tools/mac-scale-pin/ScalePin.swift
+--stdout--
+
+--stderr--
+/Users/runner/work/swiftright/swiftright/factory/pipeline/blocks-37-38/swiftui.compat/id-modifier-order-v1/mac-source/Sources/MacHost/CaptureHost.swift:100:27: warning: use '#selector' instead of explicitly constructing a 'Selector'
+ 98 | 
+ 99 |     func children(_ o: NSObject) -> [NSObject] {
+100 |         if o.responds(to: Selector("accessibilityChildren")), let k = o.perform(Selector("accessibilityChildren"))?.takeUnretainedValue() as? [Any] {
+    |                           `- warning: use '#selector' instead of explicitly constructing a 'Selector'
+101 |             let objs = k.compactMap { $0 as? NSObject }
+102 |             if !objs.isEmpty { return objs }
+
+/Users/runner/work/swiftright/swiftright/factory/pipeline/blocks-37-38/swiftui.compat/id-modifier-order-v1/mac-source/Sources/MacHost/CaptureHost.swift:100:81: warning: use '#selector' instead of explicitly constructing a 'Selector'
+ 98 | 
+ 99 |     func children(_ o: NSObject) -> [NSObject] {
+100 |         if o.responds(to: Selector("accessibilityChildren")), let k = o.perform(Selector("accessibilityChildren"))?.takeUnretainedValue() as? [Any] {
+    |                                                                                 `- warning: use '#selector' instead of explicitly constructing a 'Selector'
+101 |             let objs = k.compactMap { $0 as? NSObject }
+102 |             if !objs.isEmpty { return objs }
+
+/Users/runner/work/swiftright/swiftright/factory/pipeline/blocks-37-38/swiftui.compat/id-modifier-order-v1/mac-source/Sources/MacHost/CaptureHost.swift:107:57: warning: use '#selector' instead of explicitly constructing a 'Selector'
+105 |     }
+106 | 
+107 |     func role(_ o: NSObject) -> String { o.responds(to: Selector("accessibilityRole")) ? ((o.value(forKey: "accessibilityRole") as? String) ?? "") : "" }
+    |                                                         `- warning: use '#selector' instead of explicitly constructing a 'Selector'
+108 |     func label(_ o: NSObject) -> String { o.responds(to: Selector("accessibilityLabel")) ? ((o.value(forKey: "accessibilityLabel") as? String) ?? "") : "" }
+109 | 
+
+/Users/runner/work/swiftright/swiftright/factory/pipeline/blocks-37-38/swiftui.compat/id-modifier-order-v1/mac-source/Sources/MacHost/CaptureHost.swift:108:58: warning: use '#selector' instead of explicitly constructing a 'Selector'
+106 | 
+107 |     func role(_ o: NSObject) -> String { o.responds(to: Selector("accessibilityRole")) ? ((o.value(forKey: "accessibilityRole") as? String) ?? "") : "" }
+108 |     func label(_ o: NSObject) -> String { o.responds(to: Selector("accessibilityLabel")) ? ((o.value(forKey: "accessibilityLabel") as? String) ?? "") : "" }
+    |                                                          `- warning: use '#selector' instead of explicitly constructing a 'Selector'
+109 | 
+110 |     /// The frame of an accessibility element in the host's top-left point space.
+
+/Users/runner/work/swiftright/swiftright/factory/pipeline/blocks-37-38/swiftui.compat/id-modifier-order-v1/mac-source/Sources/MacHost/CaptureHost.swift:112:30: warning: use '#selector' instead of explicitly constructing a 'Selector'
+110 |     /// The frame of an accessibility element in the host's top-left point space.
+111 |     func frame(_ o: NSObject) -> CGRect? {
+112 |         guard o.responds(to: Selector("accessibilityFrame")), let r = (o.value(forKey: "accessibilityFrame") as? NSValue)?.rectValue else { return nil }
+    |                              `- warning: use '#selector' instead of explicitly constructing a 'Selector'
+113 |         let w = window.convertFromScreen(r)
+114 |         return CGRect(x: w.origin.x, y: host.bounds.height - (w.origin.y + w.height), width: w.width, height: w.height)
+
+/Users/runner/work/swiftright/swiftright/factory/pipeline/blocks-37-38/swiftui.compat/id-modifier-order-v1/mac-source/Sources/MacHost/CaptureHost.swift:123:62: warning: use '#selector' instead of explicitly constructing a 'Selector'
+121 | 
+122 |     func number(_ o: NSObject, _ key: String) -> Double? { o.responds(to: Selector(key)) ? (o.value(forKey: key) as? NSNumber)?.doubleValue : nil }
+123 |     func isEnabled(_ o: NSObject) -> Bool { !(o.responds(to: Selector("isAccessibilityEnabled")) && (o.value(forKey: "accessibilityEnabled") as? Bool) == false) }
+    |                                                              `- warning: use '#selector' instead of explicitly constructing a 'Selector'
+124 | 
+125 |     /// The slider the keyboard is in (round 6 block 37): the one a click or drag last acted on.
+
+/Users/runner/work/swiftright/swiftright/factory/pipeline/blocks-37-38/swiftui.compat/id-modifier-order-v1/mac-source/Sources/MacHost/CaptureHost.swift:164:27: warning: use '#selector' instead of explicitly constructing a 'Selector'
+162 |         guard let b = all.first(where: match) else { throw NSError(domain: "MacHost", code: 6, userInfo: [NSLocalizedDescriptionKey: "no button matches (\(all.count) buttons)"]) }
+163 |         // a disabled button refuses the press, as a click on it does nothing
+164 |         if b.responds(to: Selector("isAccessibilityEnabled")), (b.value(forKey: "accessibilityEnabled") as? Bool) == false { return }
+    |                           `- warning: use '#selector' instead of explicitly constructing a 'Selector'
+165 |         guard (b as AnyObject).accessibilityPerformPress() else { throw NSError(domain: "MacHost", code: 7, userInfo: [NSLocalizedDescriptionKey: "press refused"]) }
+166 |     }
+/Users/runner/work/swiftright/swiftright/factory/tools/mac-ax-dump/AXDump.swift:45:32: warning: use '#selector' instead of explicitly constructing a 'Selector'
+ 43 | 
+ 44 |     @MainActor static func children(of object: NSObject) -> [NSObject] {
+ 45 |         if object.responds(to: Selector("accessibilityChildren")), let kids = object.perform(Selector("accessibilityChildren"))?.takeUnretainedValue() as? [Any] {
+    |                                `- warning: use '#selector' instead of explicitly constructing a 'Selector'
+ 46 |             let objs = kids.compactMap { $0 as? NSObject }
+ 47 |             if !objs.isEmpty { return objs }
+
+/Users/runner/work/swiftright/swiftright/factory/tools/mac-ax-dump/AXDump.swift:45:94: warning: use '#selector' instead of explicitly constructing a 'Selector'
+ 43 | 
+ 44 |     @MainActor static func children(of object: NSObject) -> [NSObject] {
+ 45 |         if object.responds(to: Selector("accessibilityChildren")), let kids = object.perform(Selector("accessibilityChildren"))?.takeUnretainedValue() as? [Any] {
+    |                                                                                              `- warning: use '#selector' instead of explicitly constructing a 'Selector'
+ 46 |             let objs = kids.compactMap { $0 as? NSObject }
+ 47 |             if !objs.isEmpty { return objs }
+
+/Users/runner/work/swiftright/swiftright/factory/tools/mac-ax-dump/AXDump.swift:87:45: warning: conditional downcast from 'NSResponder?' to 'NSObject' is equivalent to an implicit conversion to an optional 'NSObject'
+ 85 |         var rec: [String: Any] = ["main": main, "kind": kind, "title": w.title, "frame": [Double(frame.minX), Double(frame.minY), Double(frame.width), Double(frame.height)],
+ 86 |                                   "tree": ["role": "AXWindow", "name": w.title, "enabled": true, "focus": w.isKeyWindow, "bounds": [0.0, 0.0, Double(frame.width), Double(frame.height)], "children": [tree]] as [String: Any]]
+ 87 |         if let responder = w.firstResponder as? NSObject, !(responder is NSWindow) { rec["firstResponder"] = String(describing: type(of: responder)) }
+    |                                             `- warning: conditional downcast from 'NSResponder?' to 'NSObject' is equivalent to an implicit conversion to an optional 'NSObject'
+ 88 |         return rec
+ 89 |     }
+
+/Users/runner/work/swiftright/swiftright/factory/tools/mac-ax-dump/AXDump.swift:107:44: warning: conditional downcast from 'NSResponder?' to 'NSObject' is equivalent to an implicit conversion to an optional 'NSObject'
+105 |         }
+106 |         var doc: [String: Any] = ["scale": scale, "windows": windows]
+107 |         if let focus = main.firstResponder as? NSObject, !(focus is NSWindow) {
+    |                                            `- warning: conditional downcast from 'NSResponder?' to 'NSObject' is equivalent to an implicit conversion to an optional 'NSObject'
+108 |             doc["focusedElement"] = ["name": string(get(focus, "accessibilityLabel")) ?? string(get(focus, "accessibilityTitle")) ?? "", "role": string(get(focus, "accessibilityRole")) ?? "AXGroup"]
+109 |         }
+
+exit=0
