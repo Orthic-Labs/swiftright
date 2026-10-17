@@ -340,6 +340,25 @@ pub(crate) fn exact_baseline_placement(line_height: f32, ascent: f32, descent: f
     (target_dip * scale, (target_dip - gpui) * scale)
 }
 
+/// Mac (CoreText/SwiftUI) multi-line Text pitch (decision G75b). SwiftUI's block height is `round(n x pitch)` rounded once (12 pt at 2.5x: pitch 37.5 px,
+/// 1 line 38, 2 lines 75, 3 lines 113; measured). Line tops advance by the fractional pitch `k x pitch`, exactly as GPUI paints wrapped lines
+/// (the Mac's own per-line snapping is NOT measured, so it is not imitated). The host sends the pitch as `line_height` together with a
+/// `baseline_dip` (system fonts only); a request without one keeps the plain `n x line_px` stacking.
+pub(crate) fn mac_round(v: f32, mac: bool) -> f32 {
+    if mac { (v + 0.5).floor() } else { v }
+}
+
+/// Height in px of an `n` line block whose line pitch is `line_px`.
+pub(crate) fn block_height_px(n: usize, line_px: f32, mac: bool) -> f32 {
+    mac_round(n as f32 * line_px, mac)
+}
+
+/// Top in px of line `k` (0 based) of a block whose line pitch is `line_px`: the fractional advance GPUI paints with, so the reported
+/// geometry equals the painted geometry.
+pub(crate) fn line_top_px(k: usize, line_px: f32) -> f32 {
+    k as f32 * line_px
+}
+
 /// Ordinal of the glyph cluster that contains byte `b`, given the sorted unique cluster start offsets of a paragraph.
 pub(crate) fn cluster_ordinal(starts: &[usize], b: usize) -> usize {
     starts.partition_point(|&s| s <= b).saturating_sub(1)
@@ -360,6 +379,7 @@ pub fn shape(ts: &WindowTextSystem, r: &Request, key: u64) -> Result<Measured, S
     let g = scale / k;
     let lh = r.line_height;
     let line_px = lh * scale;
+    let mac = r.ext.map_or(false, |e| e.baseline_dip.is_some());
     let chars: Vec<char> = r.text.chars().collect();
 
     if r.text.is_empty() {
@@ -377,7 +397,7 @@ pub fn shape(ts: &WindowTextSystem, r: &Request, key: u64) -> Result<Measured, S
                 reserved: 0.0,
             }],
             width: 0.0,
-            height: lh * scale,
+            height: block_height_px(1, line_px, mac),
             first_baseline: empty_baseline,
             last_baseline: empty_baseline,
             line_height_dip: lh,
@@ -545,7 +565,7 @@ pub fn shape(ts: &WindowTextSystem, r: &Request, key: u64) -> Result<Measured, S
                 has_break: !is_last_para,
             });
         }
-        wrapped.push((wl, line_base as f32 * line_px));
+        wrapped.push((wl, line_top_px(line_base, line_px)));
         line_base += n_local;
         para_base += ptext.len() + 1;
     }
@@ -583,8 +603,8 @@ pub fn shape(ts: &WindowTextSystem, r: &Request, key: u64) -> Result<Measured, S
             utf8_start: p.first as u32,
             utf8_len: (p.end - p.first + extra) as u32,
             width: p.width,
-            top: k as f32 * line_px,
-            baseline: k as f32 * line_px + baseline_in_line,
+            top: line_top_px(k, line_px),
+            baseline: line_top_px(k, line_px) + baseline_in_line,
             reserved: 0.0,
         });
     }
@@ -593,9 +613,9 @@ pub fn shape(ts: &WindowTextSystem, r: &Request, key: u64) -> Result<Measured, S
         wrapped,
         cells,
         width,
-        height: n_lines as f32 * line_px,
+        height: block_height_px(n_lines, line_px, mac),
         first_baseline: baseline_in_line,
-        last_baseline: (n_lines as f32 - 1.0) * line_px + baseline_in_line,
+        last_baseline: line_top_px(n_lines - 1, line_px) + baseline_in_line,
         lines: infos,
         line_height_dip: lh,
         scale,
@@ -660,5 +680,31 @@ mod baseline_gpui_ascent_tests {
         assert_eq!(b, 40.0);
         let gpui_px = ((20.0 - 20.8935547) / 2.0 + 17.0) * 2.5;
         assert!((gpui_px + dy - 40.0).abs() < 0.01);
+    }
+}
+
+#[cfg(test)]
+mod mac_block_tests {
+    use super::{block_height_px, line_top_px};
+
+    #[test]
+    fn mac_block_is_rounded_once_from_the_pitch() {
+        // 12 pt system font at 2.5x: pitch 15 DIP = 37.5 px. Mac textH 15.2 / 30.0 / 45.2 pt = 38 / 75 / 113 px.
+        let p = 15.0 * 2.5;
+        assert_eq!(block_height_px(1, p, true), 38.0);
+        assert_eq!(block_height_px(2, p, true), 75.0);
+        assert_eq!(block_height_px(3, p, true), 113.0);
+        // The Windows stacking of the 38 px single-line height (76, 114) is kept without a host baseline.
+        assert_eq!(block_height_px(2, 38.0, false), 76.0);
+        assert_eq!(block_height_px(3, 38.0, false), 114.0);
+    }
+
+    #[test]
+    fn line_tops_advance_by_the_fractional_pitch_as_gpui_paints() {
+        // Per-line Mac baselines are unmeasured (the committed PNG does not contain the lineLimit rows): the reported top is the painted one.
+        assert_eq!(line_top_px(0, 37.5), 0.0);
+        assert_eq!(line_top_px(1, 37.5), 37.5);
+        assert_eq!(line_top_px(2, 37.5), 75.0);
+        assert_eq!(line_top_px(1, 38.0), 38.0);
     }
 }

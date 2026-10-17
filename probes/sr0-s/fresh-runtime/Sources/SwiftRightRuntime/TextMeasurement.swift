@@ -27,11 +27,14 @@ public struct TextMeasurement: Equatable, Sendable {
     public let size: LayoutSize
     public let baseline: CGFloat
     public let lineCount: Int
+    /// The last line's baseline from the block top when the measurer knows it (a renderer that stacks lines by a pitch that is not height / lineCount); nil derives it from the height.
+    public let lastBaseline: CGFloat?
 
-    public init(size: LayoutSize, baseline: CGFloat, lineCount: Int) {
+    public init(size: LayoutSize, baseline: CGFloat, lineCount: Int, lastBaseline: CGFloat? = nil) {
         self.size = size
         self.baseline = baseline
         self.lineCount = lineCount
+        self.lastBaseline = lastBaseline
     }
 }
 

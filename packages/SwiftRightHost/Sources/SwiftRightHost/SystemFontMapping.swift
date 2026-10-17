@@ -51,6 +51,10 @@ public struct SystemFontPlan: Equatable {
     public var sizeDIP: Float
     /// Mac one-line height in DIP at the request's scale (F1 table).
     public var lineHeightDIP: Float
+    /// Mac line pitch in DIP (decision G75b): the table's scale-1 line height, which SwiftUI stacks lines by at every scale and rounds once per block
+    /// (round(n x pitch x scale) px). Equals `lineHeightDIP` unless the scale-1 height times the scale does not round (half-up) to the measured
+    /// single-line height, in which case the pitch is not derivable from the table and the old per-line stacking stays.
+    public var linePitchDIP: Float
     /// Mac first baseline from the line top in DIP at the request's scale (F1 table).
     public var firstBaselineDIP: Float
     public var features: [OpenTypeFeature]
@@ -198,7 +202,7 @@ public struct SystemFontMapper: Sendable {
         var adaptations: [FontAdaptation] = []
 
         // size, weight and the Mac line from the table
-        let sizeDIP: Float, requestedWeight: Font.Weight, line: FontMetricTable.Line, styleName: String?
+        let sizeDIP: Float, requestedWeight: Font.Weight, line: FontMetricTable.Line, line1: FontMetricTable.Line?, styleName: String?
         if let style = md.textStyle {
             guard let entry = MacTextStyles.all[style] else { throw TextMeasureError.unsupportedFont("textStyle.\(style)") }
             sizeDIP = entry.size
@@ -206,6 +210,7 @@ public struct SystemFontMapper: Sendable {
             let variant = design == .default ? "default" : "design-\(design.rawValue)"
             guard let l = table.style(style, variant: variant, scale: s) else { throw TextMeasureError.systemFontMetricsUnavailable("textStyle \(style) \(variant) scale \(s)") }
             line = l; styleName = style
+            line1 = table.style(style, variant: variant, scale: 1)
         } else {
             guard let point = md.pointSize.map(Float.init), point.isFinite, point > 0, point <= 512 else { throw TextMeasureError.invalidPointSize }
             sizeDIP = point
@@ -214,6 +219,7 @@ public struct SystemFontMapper: Sendable {
                 throw TextMeasureError.systemFontMetricsUnavailable("system size \(point) design \(design.rawValue) scale \(s) (measured: 9 to 40 pt in half points)")
             }
             line = l; styleName = nil
+            line1 = table.system(size: Double(point), weight: "regular", design: design.rawValue, scale: 1)
         }
 
         // the Windows face
@@ -264,7 +270,10 @@ public struct SystemFontMapper: Sendable {
 
         // device-pixel exact DIP values: the table's heights and baselines are multiples of 1/scale (G21)
         func dip(_ v: Double) -> Float { let px = (v * s).rounded(); return abs(v * s - px) < 1e-6 ? Float(px / s) : Float(v) }
-        return SystemFontPlan(family: family, weight: mapping.weight, sizeDIP: sizeDIP, lineHeightDIP: dip(line.height), firstBaselineDIP: dip(line.firstBaseline),
+        // the Mac multi-line pitch (G75b): the scale-1 height, valid only when it reproduces the measured single line at this scale (half-up px)
+        var pitch = dip(line.height)
+        if let h1 = line1?.height, ((h1 * s) + 0.5).rounded(.down) == (line.height * s).rounded() { pitch = Float(h1) }
+        return SystemFontPlan(family: family, weight: mapping.weight, sizeDIP: sizeDIP, lineHeightDIP: dip(line.height), linePitchDIP: pitch, firstBaselineDIP: dip(line.firstBaseline),
                               features: features, simulations: .forbidAll, fallbackFamilies: fallbacks, adaptations: adaptations, textStyle: styleName)
     }
 

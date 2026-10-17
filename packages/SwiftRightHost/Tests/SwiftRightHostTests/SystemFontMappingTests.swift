@@ -103,6 +103,37 @@ final class SystemFontMappingTests: XCTestCase {
         XCTAssertEqual(try plan(Font.system(size: 15), scale: 1).lineHeightDIP, 19)
     }
 
+    // MARK: multi-line pitch (G75b)
+
+    func testTwelvePointPitchIs15DIPAndStacksToTheMacBlockHeights() throws {
+        let p = try plan(Font.system(size: 12), scale: 2.5)
+        XCTAssertEqual(p.lineHeightDIP, 15.2)   // the single line: 38 px
+        XCTAssertEqual(p.linePitchDIP, 15)      // the table's scale-1 height: 37.5 px per line
+        let pitchPX = Double(p.linePitchDIP) * 2.5
+        func blockPX(_ n: Int) -> Double { (Double(n) * pitchPX + 0.5).rounded(.down) }   // rounded once per block, half up
+        XCTAssertEqual(blockPX(1), 38); XCTAssertEqual(blockPX(2), 75); XCTAssertEqual(blockPX(3), 113)
+        // centred in a 60 pt (150 px) frame: tops 37.5 px and 18.5 px before snap (Mac textTop 435.0 and 487.4 pt in frames at 420 and 480)
+        XCTAssertEqual((150 - blockPX(2)) / 2, 37.5); XCTAssertEqual((150 - blockPX(3)) / 2, 18.5)
+        XCTAssertEqual(blockPX(2) / 2.5, 30.0); XCTAssertEqual(blockPX(3) / 2.5, 45.2, accuracy: 1e-9)
+    }
+
+    func testShapingRequestCarriesThePitchAsLineHeight() throws {
+        let req = TextMeasureRequest(text: "a b", fontID: "f", proposedWidth: 44, scale: 2.5, fontMetadata: Font.system(size: 12).metadata, lineLimit: 2)
+        let m = try TextRequestAdapter.shapingRequest(for: req, body: BodyFontProfile(family: "Segoe UI", fontSizeDIP: 12, lineHeightDIP: 16), fonts: nil, scale: 2.5, textColor: 0)
+        XCTAssertEqual(m.lineHeight, 15)
+    }
+
+    func testPitchRoundsHalfUpToTheMeasuredSingleLineAtEverySystemSize() throws {
+        // where the scale-1 height reproduces the 2.5 single line the pitch is that height; elsewhere the single-line height stays
+        for size in stride(from: 9.0, through: 40.0, by: 0.5) {
+            let p = try plan(Font.system(size: CGFloat(size)), scale: 2.5)
+            let h1 = try XCTUnwrap(table.system(size: size, scale: 1)).height
+            XCTAssertEqual(Double(p.linePitchDIP), h1, "\(size)")
+            XCTAssertEqual((Double(p.linePitchDIP) * 2.5 + 0.5).rounded(.down), Double(p.lineHeightDIP) * 2.5, accuracy: 1e-4, "\(size)")
+            XCTAssertEqual(try plan(Font.system(size: CGFloat(size)), scale: 1).linePitchDIP, p.linePitchDIP.rounded(), "\(size)")
+        }
+    }
+
     func testNineWeightsMapToExistingInstancesAndEveryAdaptationIsReported() throws {
         // Segoe UI Variable instances on this build: Light 300, Regular 400, Semibold 600, Bold 700; Black 900 only in static Segoe UI (G11)
         let expected: [(Font.Weight, UInt32, String, Bool)] = [(.ultraLight, 300, "Segoe UI Variable Text", true), (.thin, 300, "Segoe UI Variable Text", true),

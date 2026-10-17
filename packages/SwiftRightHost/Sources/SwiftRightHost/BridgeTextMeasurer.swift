@@ -124,7 +124,7 @@ public enum TextRequestAdapter {
         let maxWidth = Float(request.proposedWidth ?? 0) * scale
         if let plan = try systemPlan(for: request, scale: scale, systemFonts: systemFonts) {
             return MeasureRequest(text: request.text, fontFamily: plan.family, weight: plan.weight, color: textColor,
-                                  fontSize: plan.sizeDIP, lineHeight: plan.lineHeightDIP, scale: scale, maxWidth: maxWidth)
+                                  fontSize: plan.sizeDIP, lineHeight: plan.linePitchDIP, scale: scale, maxWidth: maxWidth)   // the Mac pitch: the renderer rounds the block once (G75b)
         }
         guard let metadata = request.fontMetadata, metadata.isCustom, let name = metadata.familyName else { throw TextMeasureError.unsupportedFont(request.fontID) }
         guard let pointSize = metadata.pointSize.map(Float.init), pointSize.isFinite, pointSize > 0, pointSize <= 512 else {
@@ -307,6 +307,8 @@ public final class BridgeTextMeasurer: TextMeasurer, TextRunSource {
             if let plan { record(plan.adaptations + SystemFontMapper.abi07Limits(of: plan)) }
             else { record(SystemFontMapper.abi07CustomLimits) }
             r.extension = nil
+            // The Mac pitch needs the renderer to round the block (it does so only with a 0.8 baseline): a 0.7 renderer keeps the single-line height per line.
+            if let plan { r.lineHeight = plan.lineHeightDIP }
         }
         return try bridge.measure(r)
     }
@@ -347,13 +349,15 @@ public final class BridgeTextMeasurer: TextMeasurer, TextRunSource {
                 let plan = try TextRequestAdapter.systemPlan(for: request, scale: scale, systemFonts: systemFonts)
                 if let plan { firstBaselines[request] = plan.firstBaselineDIP }
                 let shaping = try TextRequestAdapter.shapingRequest(for: request, body: body, fonts: fonts, scale: scale, textColor: textColor, systemFonts: systemFonts)
-                log("TEXT_MEASURE text=\(request.text) fontID=\(request.fontID) family=\(shaping.fontFamily) weight=\(shaping.weight) fontSizeDIP=\(shaping.fontSize) lineHeightDIP=\(shaping.lineHeight) proposedDIP=\(request.proposedWidth.map(String.init(describing:)) ?? "nil") widthPX=\(result.width) heightPX=\(result.height) firstBaselinePX=\(result.firstBaseline) layoutBaselineDIP=\(firstBaselines[request].map { String(describing: $0) } ?? "renderer") lines=\(result.lineCount) lineLimit=\(request.lineLimit.map(String.init) ?? "nil") scale=\(scale)")
+                let sentLineHeight = rendererHasExtendedRequest ? shaping.lineHeight : (plan?.lineHeightDIP ?? shaping.lineHeight)   // the value measureOnce sent
+                log("TEXT_MEASURE text=\(request.text) fontID=\(request.fontID) family=\(shaping.fontFamily) weight=\(shaping.weight) fontSizeDIP=\(shaping.fontSize) lineHeightDIP=\(sentLineHeight) proposedDIP=\(request.proposedWidth.map(String.init(describing:)) ?? "nil") widthPX=\(result.width) heightPX=\(result.height) firstBaselinePX=\(result.firstBaseline) layoutBaselineDIP=\(firstBaselines[request].map { String(describing: $0) } ?? "renderer") lines=\(result.lineCount) lineLimit=\(request.lineLimit.map(String.init) ?? "nil") scale=\(scale)")
             }
             // A system font's frame and first baseline are the Mac's (F1 table, decision G70): the layout baseline is the table's, whichever renderer paints it.
             let baseline = firstBaselines[request].map(CGFloat.init) ?? CGFloat(result.firstBaseline / scale)
             let reportedWidth = TextReportedWidth.clamp(result.width, proposedDIP: request.proposedWidth, scale: scale)
             return SwiftRightRuntime.TextMeasurement(size: LayoutSize(width: CGFloat(reportedWidth / scale), height: CGFloat(result.height / scale)),
-                                                     baseline: baseline, lineCount: result.lineCount)
+                                                     baseline: baseline, lineCount: result.lineCount,
+                                                     lastBaseline: result.lastBaseline.isFinite && result.lineCount > 0 ? baseline + CGFloat((result.lastBaseline - result.firstBaseline) / scale) : nil)
         } catch {
             failures.append("measure '\(request.text.prefix(40))' fontID=\(request.fontID): \(error)")
             return SwiftRightRuntime.TextMeasurement(size: .zero, baseline: 0, lineCount: 0)

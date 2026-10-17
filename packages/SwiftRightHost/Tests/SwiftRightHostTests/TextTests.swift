@@ -108,7 +108,7 @@ final class SystemFontAdapterTests: XCTestCase {
     func testSystemFontIsASegoeVariableFamilyAtTheRequestedSizeAndWeightWithTheMacLine() throws {
         let m = try shape(Font.system(size: 18, weight: .semibold))
         XCTAssertEqual(m.fontFamily, "Segoe UI Variable Text"); XCTAssertEqual(m.fontSize, 18); XCTAssertEqual(m.weight, 600)
-        XCTAssertEqual(m.lineHeight, Float(FontMetricTable.shared.system(size: 18, scale: 2.5)!.height))   // the Mac table, not round(ascent) + round(descent)
+        XCTAssertEqual(m.lineHeight, Float(FontMetricTable.shared.system(size: 18, scale: 1)!.height))   // the Mac table's scale-1 height (the G75b pitch; 21.2 DIP single line at 2.5 = round(21 x 2.5) px), not round(ascent) + round(descent)
         XCTAssertEqual(try shape(Font.system(size: 11.5)).fontSize, 11.5)
         XCTAssertEqual(try shape(Font.system(size: 11.5)).fontFamily, "Segoe UI Variable Small")
         XCTAssertEqual(try shape(Font.system(size: 12)).weight, 400)

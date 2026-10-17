@@ -845,7 +845,8 @@ extension Graph {
         node.memo[wrapWidth] = size
         // the first line's baseline, and the last line's (lines are as tall as the line height: the measured height over the line count)
         let lineHeight = measured.lineCount > 0 ? measured.size.height / CGFloat(measured.lineCount) : 0
-        node.memoBase[wrapWidth] = (measured.baseline, measured.baseline + CGFloat(max(0, measured.lineCount - 1)) * lineHeight)
+        // a measurer that reports its own last baseline (the renderer stacks by the Mac pitch, not height / lineCount) wins
+        node.memoBase[wrapWidth] = (measured.baseline, measured.lastBaseline ?? (measured.baseline + CGFloat(max(0, measured.lineCount - 1)) * lineHeight))
         return size
     }
 
