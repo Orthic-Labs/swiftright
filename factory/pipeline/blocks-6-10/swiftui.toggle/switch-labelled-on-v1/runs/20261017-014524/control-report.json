@@ -1,0 +1,246 @@
+{
+ "case": "switch-labelled-on-v1",
+ "run": "20261017-014524",
+ "pairs": 3,
+ "gatePassed": 3,
+ "gate": "control size equal, y within 0 px; control (translated by dx) exact with edge-aa<=32; label vertical centre within 1 px; row leading x (label leads: first-ink range [0, 1] px; label right of control: +-0 px), label first ink x (range [0, 1] px, H34) and label-to-control gap (range [-1, 1] px); label pixels reported only",
+ "rows": [
+  {
+   "run": 1,
+   "ok": true,
+   "xGate": {
+    "ok": true,
+    "why": [],
+    "leadingX": {
+     "mac": 2,
+     "windows": 3,
+     "deltaWinMinusMac": 1
+    },
+    "labelLeadingX": {
+     "mac": 2,
+     "windows": 3,
+     "deltaWinMinusMac": 1
+    },
+    "labelLeftOfControl": {
+     "mac": true,
+     "windows": true
+    },
+    "controlGap": {
+     "mac": 23,
+     "windows": 22,
+     "deltaWinMinusMac": -1
+    },
+    "allowedRangePx": {
+     "inkLeadingX": [
+      0,
+      1
+     ],
+     "controlGap": [
+      -1,
+      1
+     ]
+    }
+   },
+   "controlBBox": {
+    "mac": [
+     142,
+     0,
+     277,
+     60
+    ],
+    "windows": [
+     134,
+     0,
+     269,
+     60
+    ],
+    "dxWindowsMinusMac": -8,
+    "dyWindowsMinusMac": 0
+   },
+   "sameSizeAndY": true,
+   "controlGate": {
+    "verdict": "edge-aa<=32",
+    "totalDiff": 1656,
+    "inBandDiff": 1656,
+    "outOfBandDiff": 0,
+    "maxInBand": 18,
+    "maxOutOfBand": 0,
+    "bandPixels": 3536
+   },
+   "labelInkBBox": {
+    "mac": [
+     2,
+     18,
+     119,
+     44
+    ],
+    "windows": [
+     3,
+     19,
+     112,
+     43
+    ],
+    "centreToleranceOk": true
+   },
+   "labelDifferingPixelsReported": 1859
+  },
+  {
+   "run": 2,
+   "ok": true,
+   "xGate": {
+    "ok": true,
+    "why": [],
+    "leadingX": {
+     "mac": 2,
+     "windows": 3,
+     "deltaWinMinusMac": 1
+    },
+    "labelLeadingX": {
+     "mac": 2,
+     "windows": 3,
+     "deltaWinMinusMac": 1
+    },
+    "labelLeftOfControl": {
+     "mac": true,
+     "windows": true
+    },
+    "controlGap": {
+     "mac": 23,
+     "windows": 22,
+     "deltaWinMinusMac": -1
+    },
+    "allowedRangePx": {
+     "inkLeadingX": [
+      0,
+      1
+     ],
+     "controlGap": [
+      -1,
+      1
+     ]
+    }
+   },
+   "controlBBox": {
+    "mac": [
+     142,
+     0,
+     277,
+     60
+    ],
+    "windows": [
+     134,
+     0,
+     269,
+     60
+    ],
+    "dxWindowsMinusMac": -8,
+    "dyWindowsMinusMac": 0
+   },
+   "sameSizeAndY": true,
+   "controlGate": {
+    "verdict": "edge-aa<=32",
+    "totalDiff": 1656,
+    "inBandDiff": 1656,
+    "outOfBandDiff": 0,
+    "maxInBand": 18,
+    "maxOutOfBand": 0,
+    "bandPixels": 3536
+   },
+   "labelInkBBox": {
+    "mac": [
+     2,
+     18,
+     119,
+     44
+    ],
+    "windows": [
+     3,
+     19,
+     112,
+     43
+    ],
+    "centreToleranceOk": true
+   },
+   "labelDifferingPixelsReported": 1859
+  },
+  {
+   "run": 3,
+   "ok": true,
+   "xGate": {
+    "ok": true,
+    "why": [],
+    "leadingX": {
+     "mac": 2,
+     "windows": 3,
+     "deltaWinMinusMac": 1
+    },
+    "labelLeadingX": {
+     "mac": 2,
+     "windows": 3,
+     "deltaWinMinusMac": 1
+    },
+    "labelLeftOfControl": {
+     "mac": true,
+     "windows": true
+    },
+    "controlGap": {
+     "mac": 23,
+     "windows": 22,
+     "deltaWinMinusMac": -1
+    },
+    "allowedRangePx": {
+     "inkLeadingX": [
+      0,
+      1
+     ],
+     "controlGap": [
+      -1,
+      1
+     ]
+    }
+   },
+   "controlBBox": {
+    "mac": [
+     142,
+     0,
+     277,
+     60
+    ],
+    "windows": [
+     134,
+     0,
+     269,
+     60
+    ],
+    "dxWindowsMinusMac": -8,
+    "dyWindowsMinusMac": 0
+   },
+   "sameSizeAndY": true,
+   "controlGate": {
+    "verdict": "edge-aa<=32",
+    "totalDiff": 1656,
+    "inBandDiff": 1656,
+    "outOfBandDiff": 0,
+    "maxInBand": 18,
+    "maxOutOfBand": 0,
+    "bandPixels": 3536
+   },
+   "labelInkBBox": {
+    "mac": [
+     2,
+     18,
+     119,
+     44
+    ],
+    "windows": [
+     3,
+     19,
+     112,
+     43
+    ],
+    "centreToleranceOk": true
+   },
+   "labelDifferingPixelsReported": 1859
+  }
+ ]
+}
