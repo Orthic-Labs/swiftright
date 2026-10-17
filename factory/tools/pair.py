@@ -117,6 +117,7 @@ def mac(case, name, runs, out, clock=None, strict=False):
         srcs.append(str(Path(__file__).resolve().parent / "mac-scale-pin/ScalePin.swift"))   # decision C12: the window/displayScale pin and its MAC_ENV report
     pj = case / "pair.json"
     mac_args = json.loads(pj.read_text()).get("macArgs", []) if pj.is_file() else []   # extra host arguments for the case (e.g. ["--press", "1"])
+    mac_args = [a.replace("{repo}", str(Path(__file__).resolve().parents[2])) for a in mac_args]   # "{repo}" makes a resource path independent of the working directory (CI, Dell, Mac)
     sh(["/usr/bin/xcrun", "swiftc", "-parse-as-library", "-O", "-module-cache-path", str(build / "mc"),
         "-o", str(cache / "bin/host"), *srcs], log=out / "mac-build.log")
     # the host only accepts scratch roots under a prefix hard-coded in its source
