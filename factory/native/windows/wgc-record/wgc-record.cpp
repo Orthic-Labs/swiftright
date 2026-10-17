@@ -33,9 +33,9 @@
 #include <thread>
 #include <vector>
 using namespace winrt;
-using namespace Windows::Graphics::Capture;
-using namespace Windows::Graphics::DirectX;
-using namespace Windows::Graphics::DirectX::Direct3D11;
+using namespace winrt::Windows::Graphics::Capture;
+using namespace winrt::Windows::Graphics::DirectX;
+using namespace winrt::Windows::Graphics::DirectX::Direct3D11;
 namespace fs = std::filesystem;
 
 struct Job { int index; int width; int height; std::vector<BYTE> bgra; };   // bgra is width*height*4, tightly packed
@@ -120,7 +120,7 @@ int wmain(int argc, wchar_t** argv) {
   auto session = pool.CreateCaptureSession(item);
   try { session.IsCursorCaptureEnabled(false); cursorSet = true; cursorNote = "IsCursorCaptureEnabled=false"; } catch (hresult_error const& e) { cursorNote = "unavailable: " + narrow(std::wstring(e.message())); }
   try { session.IsBorderRequired(false); borderSet = true; borderNote = "IsBorderRequired=false"; } catch (hresult_error const& e) { borderNote = "unavailable or refused: " + narrow(std::wstring(e.message())); }
-  com_ptr<ID3D11Texture2D> staging; D3D11_TEXTURE2D_DESC stagingDesc{}; Windows::Graphics::SizeInt32 poolSize = size;
+  com_ptr<ID3D11Texture2D> staging; D3D11_TEXTURE2D_DESC stagingDesc{}; winrt::Windows::Graphics::SizeInt32 poolSize = size;
   writer = std::thread(writer_thread, dir);
   item.Closed([&](GraphicsCaptureItem const&, IInspectable const&) { itemClosed = true; });
   auto token = pool.FrameArrived([&](Direct3D11CaptureFramePool const& sender, IInspectable const&) {
