@@ -677,7 +677,9 @@ impl Render for RootView {
 /// line. The positions are `WrappedLine::paint`'s own (gpui text_system/line.rs paint_line, left aligned, no decorations): the
 /// first glyph of a wrapped line sits at the origin, the line moves down by `line_height`, and the baseline is half-leading +
 /// ascent below the line top. Emoji go through `paint_emoji`, everything else through `paint_glyph`.
-fn paint_tracked(wl: &gpui::WrappedLine, origin: gpui::Point<Pixels>, line_height: Pixels, track_dip: f32, color: u32, window: &mut Window) {
+///
+/// `line_offsets` (the Mac rule, G75b) gives every visual line's top below `origin` (snapped px, as reported); None advances by `line_height`.
+fn paint_tracked(wl: &gpui::WrappedLine, origin: gpui::Point<Pixels>, line_height: Pixels, track_dip: f32, color: u32, line_offsets: Option<&[Pixels]>, window: &mut Window) {
     let layout = &wl.unwrapped_layout;
     let baseline_y = (line_height - layout.ascent - layout.descent) / 2. + layout.ascent;
     let c: gpui::Hsla = gpui::Rgba::from(gpui::rgba(color)).into();
@@ -686,6 +688,7 @@ fn paint_tracked(wl: &gpui::WrappedLine, origin: gpui::Point<Pixels>, line_heigh
     window.paint_layer(bounds, |window| {
         let mut wraps = wl.wrap_boundaries.iter().peekable();
         let mut line_top = origin.y;
+        let mut line_ix = 0usize;
         let mut line_start_x = px(0.0);
         let mut ordinal = 0usize;
         let mut prev_index: Option<usize> = None;
@@ -693,7 +696,11 @@ fn paint_tracked(wl: &gpui::WrappedLine, origin: gpui::Point<Pixels>, line_heigh
             for (glyph_ix, g) in run.glyphs.iter().enumerate() {
                 if wraps.peek().map_or(false, |b| b.run_ix == run_ix && b.glyph_ix == glyph_ix) {
                     wraps.next();
-                    line_top += line_height;
+                    line_ix += 1;
+                    line_top = match line_offsets.and_then(|o| o.get(line_ix)) {
+                        Some(off) => origin.y + *off,
+                        None => line_top + line_height,
+                    };
                     line_start_x = g.position.x;
                     ordinal = 0;
                     prev_index = None;
@@ -777,15 +784,24 @@ fn paint_tree(
                     }
                     // Rev 0.6: one GPUI WrappedLine per paragraph, stacked by `top` (run-local px).
                     let lh = px(run.line_height_dip * run.gpui_ratio);
+                    let mut line_base = 0usize;
+                    let tops: Vec<f32> = run.lines.iter().map(|l| l.top).collect();
                     for (wl, top) in run.wrapped.iter() {
+                        let n_vis = wl.wrap_boundaries.len() + 1;
+                        let offs: Option<Vec<Pixels>> = if run.ext.mac_lines {
+                            Some(crate::text::paragraph_line_offsets(&tops, line_base, n_vis, run.line_height_dip * run.scale).into_iter().map(|d| px(d * inv)).collect())
+                        } else {
+                            None
+                        };
+                        line_base += n_vis;
                         let o = point(
                             origin.x + px((*x + tx.0) * inv),
                             origin.y + px((*y + *top + tx.1) * inv),
                         );
-                        if run.ext.track_dip != 0.0 {
+                        if run.ext.track_dip != 0.0 || offs.is_some() {
                             // Rev 0.8 tracking: shape with gpui, paint every glyph at its layout position plus the tracking
                             // (G14: Window::paint_glyph is public). Tracking 0 keeps the unchanged path above.
-                            masked(window, clip, |w| paint_tracked(wl, o, lh, run.ext.track_dip * run.gpui_ratio, run.ext.color, w));
+                            masked(window, clip, |w| paint_tracked(wl, o, lh, run.ext.track_dip * run.gpui_ratio, run.ext.color, offs.as_deref(), w));
                         } else {
                             masked(window, clip, |w| {
                                 let _ = wl.paint(o, lh, TextAlign::Left, None, w, cx);

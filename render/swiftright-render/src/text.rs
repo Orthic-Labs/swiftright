@@ -87,6 +87,8 @@ pub struct MeasuredExt {
     /// 0xRRGGBBAA, for glyph-positioned painting.
     pub color: u32,
     pub font_size: f32,
+    /// Mac multi-line rule (G75b): every visual line is painted at its reported (snapped) top instead of advancing by the line height.
+    pub mac_lines: bool,
 }
 
 /// Generation-tagged slab of retained, owner-freed objects (shaped runs, images). Handle:
@@ -341,9 +343,10 @@ pub(crate) fn exact_baseline_placement(line_height: f32, ascent: f32, descent: f
 }
 
 /// Mac (CoreText/SwiftUI) multi-line Text pitch (decision G75b). SwiftUI's block height is `round(n x pitch)` rounded once (12 pt at 2.5x: pitch 37.5 px,
-/// 1 line 38, 2 lines 75, 3 lines 113; measured). Line tops advance by the fractional pitch `k x pitch`, exactly as GPUI paints wrapped lines
-/// (the Mac's own per-line snapping is NOT measured, so it is not imitated). The host sends the pitch as `line_height` together with a
-/// `baseline_dip` (system fonts only); a request without one keeps the plain `n x line_px` stacking.
+/// 1 line 38, 2 lines 75, 3 lines 113) and line k's baseline sits `round-half-up(k x pitch)` px below the first (measured, frame-centring-facts-b-v1:
+/// 12 pt lineLimit 2: +38 px; lineLimit 3: +75 px over two advances). The host sends the pitch as `line_height` together with a
+/// `baseline_dip` (system fonts only); a request without one keeps the plain `n x line_px` stacking. `MeasuredExt::mac_lines` makes the
+/// painter place every visual line at its reported top.
 pub(crate) fn mac_round(v: f32, mac: bool) -> f32 {
     if mac { (v + 0.5).floor() } else { v }
 }
@@ -353,10 +356,16 @@ pub(crate) fn block_height_px(n: usize, line_px: f32, mac: bool) -> f32 {
     mac_round(n as f32 * line_px, mac)
 }
 
-/// Top in px of line `k` (0 based) of a block whose line pitch is `line_px`: the fractional advance GPUI paints with, so the reported
-/// geometry equals the painted geometry.
-pub(crate) fn line_top_px(k: usize, line_px: f32) -> f32 {
-    k as f32 * line_px
+/// Top in px of line `k` (0 based) of a block whose line pitch is `line_px` (half-up snapped under the Mac rule).
+pub(crate) fn line_top_px(k: usize, line_px: f32, mac: bool) -> f32 {
+    mac_round(k as f32 * line_px, mac)
+}
+
+/// Offsets in px of the `n` visual lines of the paragraph starting at global line `base`, from that paragraph's own top, taken from the
+/// reported line tops (a missing top falls back to the plain `j x line_px` advance).
+pub(crate) fn paragraph_line_offsets(tops: &[f32], base: usize, n: usize, line_px: f32) -> Vec<f32> {
+    let t0 = tops.get(base).copied().unwrap_or(0.0);
+    (0..n).map(|j| tops.get(base + j).map_or(j as f32 * line_px, |t| t - t0)).collect()
 }
 
 /// Ordinal of the glyph cluster that contains byte `b`, given the sorted unique cluster start offsets of a paragraph.
@@ -565,7 +574,7 @@ pub fn shape(ts: &WindowTextSystem, r: &Request, key: u64) -> Result<Measured, S
                 has_break: !is_last_para,
             });
         }
-        wrapped.push((wl, line_top_px(line_base, line_px)));
+        wrapped.push((wl, line_top_px(line_base, line_px, mac)));
         line_base += n_local;
         para_base += ptext.len() + 1;
     }
@@ -603,8 +612,8 @@ pub fn shape(ts: &WindowTextSystem, r: &Request, key: u64) -> Result<Measured, S
             utf8_start: p.first as u32,
             utf8_len: (p.end - p.first + extra) as u32,
             width: p.width,
-            top: line_top_px(k, line_px),
-            baseline: line_top_px(k, line_px) + baseline_in_line,
+            top: line_top_px(k, line_px, mac),
+            baseline: line_top_px(k, line_px, mac) + baseline_in_line,
             reserved: 0.0,
         });
     }
@@ -615,7 +624,7 @@ pub fn shape(ts: &WindowTextSystem, r: &Request, key: u64) -> Result<Measured, S
         width,
         height: block_height_px(n_lines, line_px, mac),
         first_baseline: baseline_in_line,
-        last_baseline: line_top_px(n_lines - 1, line_px) + baseline_in_line,
+        last_baseline: line_top_px(n_lines - 1, line_px, mac) + baseline_in_line,
         lines: infos,
         line_height_dip: lh,
         scale,
@@ -628,6 +637,7 @@ pub fn shape(ts: &WindowTextSystem, r: &Request, key: u64) -> Result<Measured, S
             track_dip: r.ext.map_or(0.0, |e| e.track_dip),
             color: r.color,
             font_size: r.font_size,
+            mac_lines: mac,
         },
     })
 }
@@ -685,7 +695,7 @@ mod baseline_gpui_ascent_tests {
 
 #[cfg(test)]
 mod mac_block_tests {
-    use super::{block_height_px, line_top_px};
+    use super::{block_height_px, line_top_px, paragraph_line_offsets};
 
     #[test]
     fn mac_block_is_rounded_once_from_the_pitch() {
@@ -700,11 +710,24 @@ mod mac_block_tests {
     }
 
     #[test]
-    fn line_tops_advance_by_the_fractional_pitch_as_gpui_paints() {
-        // Per-line Mac baselines are unmeasured (the committed PNG does not contain the lineLimit rows): the reported top is the painted one.
-        assert_eq!(line_top_px(0, 37.5), 0.0);
-        assert_eq!(line_top_px(1, 37.5), 37.5);
-        assert_eq!(line_top_px(2, 37.5), 75.0);
-        assert_eq!(line_top_px(1, 38.0), 38.0);
+    fn mac_line_tops_are_the_measured_snapped_baseline_advances() {
+        // Measured on the Mac (12 pt, 2.5x): lineLimit 2 baselines 15.2 pt = 38 px apart; lineLimit 3 two advances = 30.0 pt = 75 px.
+        assert_eq!(line_top_px(0, 37.5, true), 0.0);
+        assert_eq!(line_top_px(1, 37.5, true), 38.0);
+        assert_eq!(line_top_px(2, 37.5, true), 75.0);
+        assert_eq!(line_top_px(3, 37.5, true), 113.0);
+        // last baseline = first + round-half-up((n - 1) x pitch): 38 px for 2 lines, 75 px for 3
+        // The non-Mac path keeps the plain stacking.
+        assert_eq!(line_top_px(1, 38.0, false), 38.0);
+        assert_eq!(line_top_px(2, 37.5, false), 75.0);
+        assert_eq!(line_top_px(1, 37.5, false), 37.5);
+    }
+
+    #[test]
+    fn paragraph_offsets_come_from_the_reported_tops() {
+        let tops = [0.0, 38.0, 75.0, 113.0];
+        assert_eq!(paragraph_line_offsets(&tops, 0, 3, 37.5), vec![0.0, 38.0, 75.0]);
+        assert_eq!(paragraph_line_offsets(&tops, 2, 2, 37.5), vec![0.0, 38.0]);   // second paragraph: 113 - 75
+        assert_eq!(paragraph_line_offsets(&tops, 3, 2, 37.5), vec![0.0, 37.5]);   // missing top: plain advance
     }
 }
