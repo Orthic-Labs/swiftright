@@ -242,7 +242,7 @@ jobs:
           $src = Join-Path $env:GITHUB_WORKSPACE 'factory\native\windows\wgc-record\wgc-record.cpp'
           $exe = Join-Path $outDir 'FactoryWGCRecord.exe'
           $bat = Join-Path $outDir 'build.bat'
-          $line = "cl /nologo /std:c++20 /EHsc /O2 /W3 /DUNICODE /D_UNICODE `"$src`" /Fo`"$outDir\wgc-record.obj`" /Fe`"$exe`" /link /SUBSYSTEM:CONSOLE windowsapp.lib d3d11.lib dxgi.lib windowscodecs.lib ole32.lib"
+          $line = "cl /nologo /std:c++20 /EHsc /O2 /W3 /DUNICODE /D_UNICODE `"$src`" /Fo`"$outDir\wgc-record.obj`" /Fe`"$exe`" /link /SUBSYSTEM:CONSOLE windowsapp.lib d3d11.lib dxgi.lib windowscodecs.lib ole32.lib user32.lib"
           Set-Content -LiteralPath $bat -Value @('@echo off', "call `"$vcvars`" >nul", $line, 'exit /b %ERRORLEVEL%') -Encoding ASCII
           & cmd.exe /c $bat
           if ($LASTEXITCODE -ne 0) { throw "cl exit code $LASTEXITCODE" }
