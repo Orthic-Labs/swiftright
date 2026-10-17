@@ -825,13 +825,42 @@ case("swiftui.compat/empty-withanimation-v1", CO + "empty", compat_empty, {"cloc
 # Block swiftui.scroll (issue #31, lane L1): MEASUREMENT of how the Mac scrolls a 180 x 90 pt inset List and ScrollView (thumb geometry, wheel, keyboard, scroller value).
 # The Mac host's scroll stand-ins (shared-mac-host/CaptureHost.template.swift, op "scroll") drive the NSScrollView and FAIL when an expected move does not happen; every step prints a
 # MAC_SCROLL line (offset, contentHeight, viewportHeight, scroller value; mac-run-NN.log) and `dump` / `listdump` write ax-NN-<label>.json (AXScrollBar, AXValueIndicator frames and
-# AXValue) and list-NN-<label>.json (outline row frames). Windows scrolling is not implemented (H39): the Windows side only lays the witness out (steps wait / dump / shot) and the pair is
-# report-only by one named full-frame exclusion; nothing is gated against Windows. Rows are the default 24 pt rows (H21), so a document is 10 + 24 n + 10 pt: 3 rows = 92 pt, 8 rows = 212 pt
-# (the nearest whole-row document to 200 pt), 25 rows = 620 pt (to 600 pt). Case list: ci-lists/scroll-31-measure.txt.
+# AXValue) and list-NN-<label>.json (outline row frames). The Windows side (shared-windows-host/CaptureHost.template.swift, job-interact.ps1 ops "wheel" and "drag") drives the same
+# labels: WM_MOUSEWHEEL notches into the List / ScrollView and thumb drags on the legacy scroller, and prints one WIN_SCROLL line per settled scroll input (label=in<k>, k = the
+# scroll inputs that had landed). Mac -> Windows label map: w0 = in0; w1 = in1; w3 = in3; w10 = in10 (wheel, cumulative from the top); o0 = in0, omid = in1, oend = in2 (thumb);
+# s0 = in0, sax05 = in1, sdouble05 = in3 (reset in2), sax10 = in5 (reset in4). The pairs stay report-only by one named full-frame exclusion; nothing is gated against Windows.
+# Rows are the default 24 pt rows (H21), so a document is 10 + 24 n + 10 pt: 3 rows = 92 pt, 8 rows = 212 pt (the nearest whole-row document to 200 pt), 25 rows = 620 pt (to 600 pt);
+# a ScrollView (no insets) of 25 rows is 600 pt. Case list: ci-lists/scroll-31-measure.txt.
 # =====================================================================================================================================================================
 SCR = "Witness_sc_"
 SCR_DOCS = [(3, 92), (8, 212), (25, 620)]
-SCR_EXCLUDE = [{"name": "report-only: scroll measurement (issue #31). Windows does not scroll and draws no scroll bar (H39); the Mac reference is read from the MAC_SCROLL lines and the ax / list dumps, never compared pixel for pixel", "rect": [0, 0, 800, 600]}]
+SCR_EXCLUDE = [{"name": "report-only: scroll measurement (issue #31). The Windows scroll values are the WIN_SCROLL lines, the Mac reference the MAC_SCROLL lines and the ax / list dumps; the pair is never compared pixel for pixel", "rect": [0, 0, 800, 600]}]
+# Windows geometry (pt): the runtime centres the witness (new-case.py, ZStack in the 320 x 240 pt viewport), so the 180 x 90 pt scroller sits at (70, 75).
+# The legacy scroller strip is 19 pt wide at the trailing edge; the thumb is 10.8 pt wide at x + 4.0; the track is the frame less 3.0 pt top and 3.2 pt bottom,
+# and the thumb is max(20, track * 90 / content) long (ScrollerMetrics in ListStyles). A thumb drag moves the thumb by the pointer's distance, so a value change
+# of v is a drag of (track - thumb) * v, in client px (SCALE 2.5).
+SCR_OX, SCR_OY, SCR_W, SCR_H = 70, 75, 180, 90
+SCR_TRACK = SCR_H - 3.0 - 3.2
+SCR_THUMB_X = SCR_OX + SCR_W - 19 + 4.0 + 10.8 / 2
+SCR_WHEEL = (SCR_OX + SCR_W / 2, SCR_OY + SCR_H / 2)   # the centre of the scroller, pt (the job-interact "wheel" op takes points)
+
+
+def scr_wheel(n_from, n_to):
+    """Windows steps for a wheel phase: the notches that take the scroller from n_from to n_to total (WHEEL_DELTA -120 = one notch down)."""
+    if n_to <= n_from: return []
+    return [{"op": "wheel", "x": SCR_WHEEL[0], "y": SCR_WHEEL[1], "delta": -120, "times": n_to - n_from}]
+
+
+def scr_thumb(content, cur, target):
+    """Windows steps for a thumb drag from value cur to value target (0...1) of a scroller whose document is content pt tall: press at the thumb centre,
+    drag by the travel times the value change (the job-interact "drag" op, client px)."""
+    if abs(target - cur) < 1e-9: return []
+    length = min(SCR_TRACK, max(20.0, SCR_TRACK * SCR_H / content))
+    travel = SCR_TRACK - length
+    cx = round(SCR_THUMB_X * SCALE)
+    cy = round((SCR_OY + 3.0 + travel * cur + length / 2) * SCALE)
+    dy = round(travel * (target - cur) * SCALE)
+    return [{"op": "drag", "x0": cx, "y0": cy, "x1": cx, "y1": cy + dy, "steps": 6}]
 
 
 def sc_list(tn, rows, selection=False):
@@ -857,11 +886,14 @@ def sc_op(how, label, **kw):
 
 
 def sc_case(name, typename, body, plan):
-    """plan = [(label, [mac-only scroll ops]), ...]. Mac steps: the ops, then dump + listdump + shot per label. Windows steps (pair.json "steps"): wait, dump, shot only, so both sides write the same labels."""
+    """plan = [(label, [mac-only scroll ops]) or (label, [mac-only ops], [windows ops]), ...]. Mac steps: the ops, then dump + listdump + shot per label. Windows steps
+    (pair.json "steps"): the windows ops (wheel / drag; none for the keys cases), then dump + shot, so both sides write the same labels."""
     mac, win, labels = [{"op": "wait", "ms": 700}], [{"op": "wait", "ms": 700}], []
-    for label, ops in plan:
+    for entry in plan:
+        label, ops = entry[0], entry[1]
+        wops = entry[2] if len(entry) > 2 else []
         mac += ops + [{"op": "wait", "ms": 300}, {"op": "dump", "label": label}, {"op": "listdump", "label": label}, {"op": "wait", "ms": 250}, {"op": "shot", "label": label}]
-        win += [{"op": "wait", "ms": 300}, {"op": "dump", "label": label}, {"op": "wait", "ms": 250}, {"op": "shot", "label": label}]
+        win += wops + [{"op": "wait", "ms": 300}, {"op": "dump", "label": label}, {"op": "wait", "ms": 250}, {"op": "shot", "label": label}]
         labels.append(label)
     mac.append({"op": "wait", "ms": 200}); win.append({"op": "wait", "ms": 200})
     case(name, typename, body, {"phaseShots": labels, "hazeTolerance": 1, "excludeRects": SCR_EXCLUDE}, win)
@@ -871,14 +903,19 @@ def sc_case(name, typename, body, plan):
 # M1 thumb geometry: an inset List of 3, 8 and 25 rows at the top, the middle and the end of its range
 for _rows, _doc in SCR_DOCS:
     sc_case(f"swiftui.scroll/thumb-d{_doc}-v1", f"{SCR}thumb_d{_doc}", sc_list(f"{SCR}thumb_d{_doc}", _rows),
-            [("o0", [sc_op("to", "o0-to", at="begin")]), ("omid", [sc_op("to", "omid-to", at="mid")]), ("oend", [sc_op("to", "oend-to", at="end")])])
+            [("o0", [sc_op("to", "o0-to", at="begin")], []),
+             ("omid", [sc_op("to", "omid-to", at="mid")], scr_thumb(_doc, 0.0, 0.5)),
+             ("oend", [sc_op("to", "oend-to", at="end")], scr_thumb(_doc, 0.5, 1.0))])
 
-# M2 wheel: CGEvent line scroll (-1) sent once, three times and ten times to the NSScrollView, from the top each time; a List and a ScrollView of each document
+# M2 wheel: CGEvent line scroll (-1) sent once, three times and ten times to the NSScrollView, from the top each time; a List and a ScrollView of each document.
+# Windows: the same notches, cumulative from the top (the launch is the top): 1, then 2 more (total 3), then 7 more (total 10), at the scroller's centre.
 for _rows, _doc in SCR_DOCS:
     for _kind, _mk in (("list", sc_list), ("sv", sc_view)):
         _tn = f"{SCR}wheel_{_kind}_d{_doc}"
         sc_case(f"swiftui.scroll/wheel-{_kind}-d{_doc}-v1", _tn, _mk(_tn, _rows),
-                [("w0", [sc_op("to", "w0-to", at="begin")])] + [(f"w{n}", [sc_op("to", f"w{n}-reset", at="begin"), sc_op("wheel", f"w{n}-wheel", delta=-1, times=n)]) for n in (1, 3, 10)])
+                [("w0", [sc_op("to", "w0-to", at="begin")], [])] +
+                [(f"w{n}", [sc_op("to", f"w{n}-reset", at="begin"), sc_op("wheel", f"w{n}-wheel", delta=-1, times=n)], scr_wheel(_prev, n))
+                 for _prev, n in ((0, 1), (1, 3), (3, 10))])
 
 # M3 keyboard: the scroll view's page / end / beginning selectors; for the List also the outline's moveDown(_:) past the viewport (a selection, then 5 and 15 rows down)
 _kb = [("k0", [sc_op("to", "k0-to", at="begin")]),
@@ -896,11 +933,15 @@ sc_case("swiftui.scroll/keys-sv-v1", _tn, sc_view(_tn, 25), _kb)
 # M4 the scroll bar's value: the vertical NSScroller's accessibility value set in process (0.5, then 1.0) and NSScroller.doubleValue + action (0.5), each from the top
 for _kind, _mk in (("list", sc_list), ("sv", sc_view)):
     _tn = f"{SCR}scroller_{_kind}"
+    _c = 620 if _kind == "list" else 600   # 25 rows: the List's document with its insets, the ScrollView's without
     sc_case(f"swiftui.scroll/scroller-{_kind}-v1", _tn, _mk(_tn, 25),
-            [("s0", [sc_op("to", "s0-to", at="begin")]),
-             ("sax05", [sc_op("to", "sax05-reset", at="begin"), sc_op("axvalue", "sax05-ax", value=0.5)]),
-             ("sdouble05", [sc_op("to", "sdouble05-reset", at="begin"), sc_op("scroller", "sdouble05-dv", value=0.5)]),
-             ("sax10", [sc_op("to", "sax10-reset", at="begin"), sc_op("axvalue", "sax10-ax", value=1.0)])])
+            [("s0", [sc_op("to", "s0-to", at="begin")], []),
+             ("sax05", [sc_op("to", "sax05-reset", at="begin"), sc_op("axvalue", "sax05-ax", value=0.5)], scr_thumb(_c, 0.0, 0.5)),
+             # Windows: the reset to the top is a drag back (the value is 0.5 after sax05); each later label starts from the top
+             ("sdouble05", [sc_op("to", "sdouble05-reset", at="begin"), sc_op("scroller", "sdouble05-dv", value=0.5)],
+              scr_thumb(_c, 0.5, 0.0) + scr_thumb(_c, 0.0, 0.5)),
+             ("sax10", [sc_op("to", "sax10-reset", at="begin"), sc_op("axvalue", "sax10-ax", value=1.0)],
+              scr_thumb(_c, 0.5, 0.0) + scr_thumb(_c, 0.0, 1.0))])
 
 
 def main():

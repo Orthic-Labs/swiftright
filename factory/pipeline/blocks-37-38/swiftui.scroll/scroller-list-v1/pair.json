@@ -8,7 +8,7 @@
  "hazeTolerance": 1,
  "excludeRects": [
   {
-   "name": "report-only: scroll measurement (issue #31). Windows does not scroll and draws no scroll bar (H39); the Mac reference is read from the MAC_SCROLL lines and the ax / list dumps, never compared pixel for pixel",
+   "name": "report-only: scroll measurement (issue #31). The Windows scroll values are the WIN_SCROLL lines, the Mac reference the MAC_SCROLL lines and the ax / list dumps; the pair is never compared pixel for pixel",
    "rect": [
     0,
     0,
@@ -39,6 +39,14 @@
    "label": "s0"
   },
   {
+   "op": "drag",
+   "x0": 601,
+   "y0": 220,
+   "x1": 601,
+   "y1": 300,
+   "steps": 6
+  },
+  {
    "op": "wait",
    "ms": 300
   },
@@ -55,6 +63,22 @@
    "label": "sax05"
   },
   {
+   "op": "drag",
+   "x0": 601,
+   "y0": 300,
+   "x1": 601,
+   "y1": 220,
+   "steps": 6
+  },
+  {
+   "op": "drag",
+   "x0": 601,
+   "y0": 220,
+   "x1": 601,
+   "y1": 300,
+   "steps": 6
+  },
+  {
    "op": "wait",
    "ms": 300
   },
@@ -69,6 +93,22 @@
   {
    "op": "shot",
    "label": "sdouble05"
+  },
+  {
+   "op": "drag",
+   "x0": 601,
+   "y0": 300,
+   "x1": 601,
+   "y1": 220,
+   "steps": 6
+  },
+  {
+   "op": "drag",
+   "x0": 601,
+   "y0": 220,
+   "x1": 601,
+   "y1": 380,
+   "steps": 6
   },
   {
    "op": "wait",

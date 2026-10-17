@@ -9,6 +9,9 @@
 #   {"op":"click","x":10,"y":20,"button":"left|right","count":1}   WM_MOUSEMOVE + button down/up
 #   {"op":"move","x":10,"y":20,"down":false}                   WM_MOUSEMOVE posted at the client point (wParam MK_LBUTTON when "down"): a pointer move, with no button (hover) or with the primary button held (a drag in steps)
 #   {"op":"drag","x0":10,"y0":20,"x1":90,"y1":20,"steps":6}    WM_MOUSEMOVE, left button down at (x0, y0), `steps` WM_MOUSEMOVE with MK_LBUTTON along the line, button up at (x1, y1)
+#   {"op":"wheel","x":160,"y":120,"delta":-120,"times":3}      WM_MOUSEWHEEL posted to the target window (window-targeted like the other ops: no SendInput, no focus change). x, y are POINTS
+#        (client px = pt * scale, scale = the step's "scale", default 2.5 = the host's factoryRenderScale); lParam is the screen point (ClientToScreen), wParam's high word the
+#        delta (WHEEL_DELTA units, -120 = one notch with the content moving toward its end); `times` notches, 120 ms apart. Result "ok(screen=X,Y delta=D times=N)".
 #   {"op":"leave","real":false}                                 WM_MOUSELEAVE posted (real: the real cursor is moved just outside the window, by SendInput)
 #   ("move" with "real":true moves the REAL cursor to the client point by SendInput (absolute, virtual desk) instead of posting a message; the cursor position read back
 #    with GetCursorPos goes into the step result and into cursor-NN.txt. Never post synthetic WM_MOUSEMOVE for hover: the cases must prove real-cursor hover.)
@@ -142,7 +145,7 @@ public static class IxNative {
 '@
 [void][IxNative]::SetThreadDpiAwarenessContext([IntPtr]::new(-4))
 
-$WM = @{ KEYDOWN = 0x100; KEYUP = 0x101; CHAR = 0x102; SYSKEYDOWN = 0x104; SYSKEYUP = 0x105; MOUSEMOVE = 0x200; LBUTTONDOWN = 0x201; LBUTTONUP = 0x202; RBUTTONDOWN = 0x204; RBUTTONUP = 0x205
+$WM = @{ KEYDOWN = 0x100; KEYUP = 0x101; CHAR = 0x102; SYSKEYDOWN = 0x104; SYSKEYUP = 0x105; MOUSEMOVE = 0x200; MOUSEWHEEL = 0x20A; LBUTTONDOWN = 0x201; LBUTTONUP = 0x202; RBUTTONDOWN = 0x204; RBUTTONUP = 0x205
          MOUSELEAVE = 0x2A3; IME_STARTCOMPOSITION = 0x10D; IME_ENDCOMPOSITION = 0x10E; IME_COMPOSITION = 0x10F }
 $VK = @{ Tab = 9; Enter = 13; Return = 13; Escape = 27; Esc = 27; Space = 32; Left = 37; Up = 38; Right = 39; Down = 40; Backspace = 8; Delete = 46; Home = 36; End = 35; PageUp = 33; PageDown = 34; Shift = 16; Ctrl = 17; Alt = 18 }
 function Get-Vk([string]$k) {
@@ -327,6 +330,20 @@ function Do-Step($proc, $mainH, $step, [string]$out, [string]$n) {
             }
             [void][IxNative]::PostMessageW($h, $WM.LBUTTONUP, [IntPtr]0, [IxNative]::Lp($x1, $y1)); Start-Sleep -Milliseconds 40
             return 'ok'
+        }
+        'wheel' {
+            # WM_MOUSEWHEEL posted to the target window: no SendInput, no focus change. Points -> client px -> screen point (ClientToScreen) for lParam.
+            $scale = $(if ($null -ne $step.scale) { [double]$step.scale } else { 2.5 })
+            $cs = [IxNative]::ClientScreen($h)
+            $sx = [int][math]::Round($cs[0] + [double]$step.x * $scale); $sy = [int][math]::Round($cs[1] + [double]$step.y * $scale)
+            $delta = [int]$step.delta
+            $wp = [IntPtr]([long](($delta -band 0xFFFF) -shl 16))
+            $lp = [IxNative]::Lp($sx, $sy)
+            $times = $(if ($step.times) { [int]$step.times } else { 1 })
+            for ($i = 0; $i -lt $times; $i++) {
+                [void][IxNative]::PostMessageW($h, $WM.MOUSEWHEEL, $wp, $lp); Start-Sleep -Milliseconds 120
+            }
+            return "ok(screen=$sx,$sy delta=$delta times=$times)"
         }
         'leave' {
             if ($step.real) {
