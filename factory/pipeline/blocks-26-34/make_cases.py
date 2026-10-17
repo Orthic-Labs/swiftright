@@ -400,7 +400,7 @@ extension View {
     func factText(_ key: String) -> some View {
         HStack(alignment: .firstTextBaseline, spacing: 0) {
             self
-                .overlay(alignment: .firstTextBaseline) {
+                .overlay(alignment: Alignment(horizontal: .leading, vertical: .firstTextBaseline)) {
                     Color.clear.frame(height: 0).background(GeometryReader { g in
                         let _ = FactLedger.shared.record(key, "baselineOverlayTop", Double(g.frame(in: .global).minY))
                         Color.clear

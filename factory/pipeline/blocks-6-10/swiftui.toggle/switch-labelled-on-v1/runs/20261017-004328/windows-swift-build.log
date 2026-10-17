@@ -1,0 +1,39 @@
+Building for production...
+[0/8] Write swift-version--6EFE585CA23B32F2.txt
+[1/8] Write sources
+[5/8] Compiling CDispatchPrivate shim.c
+[7/9] Compiling SwiftRightRuntime Alignment.swift
+D:\a\_temp\ci-work\product-stage\93c6fe320-82e12842\probes\sr0-s\fresh-runtime\Sources\SwiftRightRuntime\WindowsSystemImageProvider.swift:114:13: warning: variable 'units' was never mutated; consider changing to 'let' constant [#VariableNeverMutated]
+112 |         defer { _ = DeleteDC(dc) }
+113 |         let fontHeight = Int32(max(request.targetWidth, request.targetHeight))
+114 |         var units = Array(request.providerFamily.utf16) + [0]
+    |             `- warning: variable 'units' was never mutated; consider changing to 'let' constant [#VariableNeverMutated]
+115 |         let font: HFONT? = units.withUnsafeBufferPointer { family in
+116 |             CreateFontW(-fontHeight, 0, 0, 0, Int32(FW_NORMAL), 0, 0, 0,
+
+[#VariableNeverMutated]: <https://docs.swift.org/compiler/documentation/diagnostics/variable-never-mutated>
+[8/10] Compiling SwiftRightBridge Bridge.swift
+[9/11] Compiling SwiftRightHost BridgeTextMeasurer.swift
+D:\a\_temp\ci-work\product-stage\93c6fe320-82e12842\packages\SwiftRightHost\Sources\SwiftRightHost\ResolvedNodePainter.swift:181:17: warning: variable 'childInButton' was never mutated; consider changing to 'let' constant [#VariableNeverMutated]
+179 |             var childA11y = a11y
+180 |             var childHidden = hidden
+181 |             var childInButton = inButton
+    |                 `- warning: variable 'childInButton' was never mutated; consider changing to 'let' constant [#VariableNeverMutated]
+182 |             if n.kind.hasPrefix("modifier.accessibility") {
+183 |                 let acc = n.accessibility
+
+D:\a\_temp\ci-work\product-stage\93c6fe320-82e12842\packages\SwiftRightHost\Sources\SwiftRightHost\SliderArtwork.swift:83:14: warning: immutable value 'thumbW' was never used; consider replacing with '_' or removing it [#NoUsage]
+ 81 |         let margin = marginPX(scale: scale)
+ 82 |         let outW = widthPX + 2 * margin, outH = heightPX + 2 * margin
+ 83 |         let (thumbW, thumbH) = thumbPX(scale: scale)
+    |              `- warning: immutable value 'thumbW' was never used; consider replacing with '_' or removing it [#NoUsage]
+ 84 |         let trackH = exact ? SliderArtworkData.trackHeightPX : max(1, Int((14 * k).rounded()))
+ 85 |         let trackTop = (heightPX - trackH) / 2
+
+[#NoUsage]: <https://docs.swift.org/compiler/documentation/diagnostics/no-usage>
+[#VariableNeverMutated]: <https://docs.swift.org/compiler/documentation/diagnostics/variable-never-mutated>
+[10/12] Compiling FactoryProbe FactoryViewport.swift
+[10/12] Write Objects.LinkFileList
+[11/12] Linking FactoryProbe.exe
+Build complete! (132.48s)
+warning: '--build-system native' has been deprecated and will be removed in a future release; please report an issue at https://github.com/swiftlang/swift-package-manager/issues if you are unable to adopt the default build system.
