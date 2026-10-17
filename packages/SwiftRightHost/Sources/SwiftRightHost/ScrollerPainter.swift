@@ -4,12 +4,12 @@ import SwiftRightBridge
 
 /// Colours of the legacy vertical scroller, 0xRRGGBB, painted opaque.
 public enum ScrollerColors {
-    // TO MEASURE (M5, #31)
+    // Measured M5 (CI run 39070397269, NSScroller.drawKnobSlot/drawKnob into a bitmap at scale 2.5, legacy style, light appearance):
+    // the knob slot is rgb(250,250,250) with soft edges near rgb(232-237) and the knob rgb(125,125,125). The strip outside the slot is not drawn
+    // by drawKnobSlot; it takes the slot colour here (unmeasured, #31 caveat), with a light leading separator.
     public static let track: UInt32 = 0xfafafa
-    // TO MEASURE (M5, #31)
-    public static let trackBorder: UInt32 = 0xebebeb
-    // TO MEASURE (M5, #31)
-    public static let thumb: UInt32 = 0xc2c2c2
+    public static let trackBorder: UInt32 = 0xebebeb   // unmeasured leading separator (#31 caveat)
+    public static let thumb: UInt32 = 0x7d7d7d
 }
 
 /// Where a legacy vertical scroller is drawn, in window pixels: the strip at the container's trailing edge and the thumb inside it.
