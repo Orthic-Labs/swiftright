@@ -12,6 +12,25 @@ out="${1:?usage: mac-accessibility.sh <out-file>}"
 here="$(cd "$(dirname "$0")" && pwd)"
 keys="reduceMotion reduceTransparency increaseContrast differentiateWithoutColor"
 
+# scroller request (H21, issue #16a): a case may ask for an overlay scroller with "macScrollerStyle": "overlay" in its pair.json. CASE (repo-relative case
+# directory) names the case; the workflow's accessibility step must pass it in its env. Absent CASE or key: legacy, the reference. An unreadable pair.json or an
+# unknown value fails closed. Overlay is set with AppleShowScrollBars WhenScrolling on a GitHub Actions runner; legacy with Always (as before).
+repo="$(cd "$here/../.." && pwd)"
+request=legacy
+if [ -n "${CASE:-}" ]; then
+  pj="$repo/$CASE/pair.json"
+  if [ -f "$pj" ] && request="$(python3 -I -c 'import json,sys; print(json.load(open(sys.argv[1])).get("macScrollerStyle", "legacy"))' "$pj" 2>/dev/null)"; then
+    :
+  else
+    echo "::error::cannot read macScrollerStyle from $pj (CASE=$CASE); capture refused" >&2; exit 1
+  fi
+fi
+case "$request" in
+  legacy) want_style=legacy; want_value=Always ;;
+  overlay) want_style=overlay; want_value=WhenScrolling ;;
+  *) echo "::error::macScrollerStyle '$request' is not legacy or overlay (CASE=${CASE:-none}); capture refused" >&2; exit 1 ;;
+esac
+
 # defaults: 1 = on; absent or 0 = off; anything else is reported raw and counts as on (fail closed)
 read_default() {
   local v
@@ -39,6 +58,7 @@ snapshot() {
 }
 
 {
+  echo "scroller request: $request (CASE=${CASE:-none})"
   snapshot before
   fixed=0
   for k in $keys; do
@@ -71,20 +91,20 @@ for k in reduceMotion reduceTransparency increaseContrast differentiateWithoutCo
     *) echo "::error::NSWorkspace readback for $k missing or unparsed: '$line'"; fail=1 ;;
   esac
 done
-# scroller style (H21): required legacy; AppleShowScrollBars is logged only
+# scroller style (H21): required is the case's request (legacy by default, overlay only when its pair.json asks); AppleShowScrollBars is logged only
 scroll_style() { swift "$here/mac-accessibility.swift" 2>&1 | grep -E '^ax\.scrollerStyle=' | head -1 || true; }
 style_line="$(printf '%s\n' "$ws" | grep -E '^ax\.scrollerStyle=' | head -1 || true)"
 echo "defaults.AppleShowScrollBars=$(read_global AppleShowScrollBars) (logged, not required)"
 echo "scroller: ${style_line:-missing}"
-if [ "$style_line" != "ax.scrollerStyle=legacy" ]; then
+if [ "$style_line" != "ax.scrollerStyle=$want_style" ]; then
   if [ "${GITHUB_ACTIONS:-}" = true ]; then
-    echo "set AppleShowScrollBars: $(read_global AppleShowScrollBars) -> Always (GitHub Actions runner; scroller style '${style_line:-missing}' is not legacy)"
-    defaults write -g AppleShowScrollBars Always || echo "defaults write AppleShowScrollBars failed"
+    echo "set AppleShowScrollBars: $(read_global AppleShowScrollBars) -> $want_value (GitHub Actions runner; scroller style '${style_line:-missing}' is not $want_style)"
+    defaults write -g AppleShowScrollBars "$want_value" || echo "defaults write AppleShowScrollBars failed"
     style_line="$(scroll_style)"
     echo "re-read: defaults.AppleShowScrollBars=$(read_global AppleShowScrollBars); scroller: ${style_line:-missing}"
   fi
-  if [ "$style_line" != "ax.scrollerStyle=legacy" ]; then
-    echo "::error::scroller style is '${style_line:-missing}'; the Mac reference requires legacy scrollers (H21); on a local Mac this is refused, not written"; fail=1
+  if [ "$style_line" != "ax.scrollerStyle=$want_style" ]; then
+    echo "::error::scroller style is '${style_line:-missing}'; the case requires $want_style scrollers (macScrollerStyle $request; H21); on a local Mac this is refused, not written"; fail=1
   fi
 fi
 if [ "$fail" != 0 ]; then echo "::error::Mac accessibility environment does not match the reference; capture refused" >&2; exit 1; fi

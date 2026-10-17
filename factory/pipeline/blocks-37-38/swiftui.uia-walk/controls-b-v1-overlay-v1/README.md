@@ -1,0 +1,3 @@
+# controls-b-v1-overlay-v1 (issue #16a, H21)
+
+Measures, on the CI Mac under an overlay scroller style (`"macScrollerStyle": "overlay"`, AppleShowScrollBars WhenScrolling), whether the overflowing 180 x 90 pt inset List still takes the 16.8 pt trailing gutter that controls-b-v1 shows under legacy scrollers. Read `runs/<ts>/mac/ax-01.json` (AXScrollBar presence and x) and `runs/<ts>/mac/list-01.json` (row frames); `mac-accessibility.txt` records the requested and effective scroller style. The List's pixel and list gates are removed on purpose (report-only for this question, so a gutter result is not asserted); the semantic gate still decides the other controls. Same source and steps as controls-b-v1 otherwise.

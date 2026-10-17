@@ -1,0 +1,105 @@
+{
+ "semanticGate": {
+  "fields": [
+   "role",
+   "name",
+   "enabled",
+   "toggle",
+   "value",
+   "count",
+   "order"
+  ],
+  "scope": "main",
+  "ignoreNames": [],
+  "listRows": "pixels-only",
+  "pixels": "report-only"
+ },
+ "excludeRects": [
+  {
+   "name": "outside the list rect: Star, gear, Hidden and the Level slider (glyphs and symbol artwork, Segoe vs SF, decision 2/3); reported, not gated",
+   "rect": [
+    0,
+    0,
+    800,
+    270
+   ]
+  },
+  {
+   "name": "outside the list rect: below the list (reported, not gated)",
+   "rect": [
+    0,
+    495,
+    800,
+    600
+   ]
+  },
+  {
+   "name": "outside the list rect: left margin (reported, not gated)",
+   "rect": [
+    0,
+    270,
+    100,
+    495
+   ]
+  },
+  {
+   "name": "outside the list rect: right margin (reported, not gated)",
+   "rect": [
+    550,
+    270,
+    800,
+    495
+   ]
+  },
+  {
+   "name": "row 0 label glyphs (Segoe UI vs SF, decision 2); text, order, selection and frame gated by pair_list_report.py",
+   "rect": [
+    136,
+    308,
+    206,
+    344
+   ]
+  },
+  {
+   "name": "row 1 label glyphs (Segoe UI vs SF, decision 2); text, order, selection and frame gated by pair_list_report.py",
+   "rect": [
+    136,
+    369,
+    204,
+    403
+   ]
+  },
+  {
+   "name": "row 2 label glyphs (Segoe UI vs SF, decision 2); text, order, selection and frame gated by pair_list_report.py",
+   "rect": [
+    136,
+    428,
+    230,
+    462
+   ]
+  }
+ ],
+ "steps": [
+  {
+   "op": "wait",
+   "ms": 700
+  },
+  {
+   "op": "key",
+   "key": "Tab"
+  },
+  {
+   "op": "wait",
+   "ms": 300
+  },
+  {
+   "op": "wait",
+   "ms": 200
+  }
+ ],
+ "macArgs": [
+  "--steps",
+  "[{\"op\":\"wait\",\"ms\":700},{\"op\":\"key\",\"key\":\"Tab\"},{\"op\":\"wait\",\"ms\":300},{\"op\":\"wait\",\"ms\":200}]"
+ ],
+ "macScrollerStyle": "overlay"
+}

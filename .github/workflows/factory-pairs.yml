@@ -41,6 +41,11 @@ on:
         required: false
         default: false
         type: boolean
+      screen_record:
+        description: "Windows interact capture: record the whole desktop at 60 fps per run (ffmpeg gdigrab, ffv1) to windows/record-NN.mkv with a record-NN.json sidecar. Diagnostic; off for normal runs."
+        required: false
+        default: false
+        type: boolean
 
 permissions:
   contents: read
@@ -112,6 +117,8 @@ jobs:
       # Reduce Motion and the other accessibility display settings change SwiftUI's transitions (a move becomes a crossfade). The
       # reference is the local Mac with all four off. Logs before/after, sets any on setting off, and fails closed before capture.
       - name: Mac accessibility environment (log, match the reference, fail closed)
+        env:
+          CASE: ${{ matrix.case }}
         run: |
           set -euo pipefail
           mkdir -p "$RUNNER_TEMP/pairs"
@@ -197,6 +204,22 @@ jobs:
           & $swift.FullName --version
       - name: Toolchain
         run: swift --version
+      # ffmpeg is not in the windows-2025 image readme (checked 17 Oct 2026), so the screen recording installs it from Chocolatey (Chocolatey 2.7.4 is listed).
+      # Runs only when the screen_record input is true; the version is logged here and written into each record-NN.json sidecar.
+      - name: Install ffmpeg for the screen recording (screen_record only)
+        if: ${{ inputs.screen_record }}
+        shell: pwsh
+        run: |
+          $ErrorActionPreference = 'Stop'
+          choco install ffmpeg -y --no-progress
+          if ($LASTEXITCODE -ne 0) { throw "choco install ffmpeg exit code $LASTEXITCODE" }
+          Add-Content -Path $env:GITHUB_PATH -Value 'C:\ProgramData\chocolatey\bin'
+          $env:Path = 'C:\ProgramData\chocolatey\bin;' + $env:Path
+          $ff = Get-Command ffmpeg -ErrorAction Stop
+          $fp = Get-Command ffprobe -ErrorAction Stop
+          Write-Host "ffmpeg: $($ff.Source)"
+          & $ff.Source -hide_banner -version | Select-Object -First 1
+          & $fp.Source -hide_banner -version | Select-Object -First 1
       # The runner's display (Hyper-V: 1024x768 at 125% at most) cannot reach 240 dpi, so the capture host does not depend on it: it passes the
       # explicit render scale 2.5 through the public API (decision H17; HOST_SCALE_GUARD in the host log must read PASS). This step only logs
       # what the display is, so a result can be read against it. It cannot fail the job.
@@ -243,6 +266,7 @@ jobs:
           WORK: ${{ steps.stage.outputs.work }}
           DLL: ${{ steps.renderer.outputs.dll }}
           FLICKER_PROBE: ${{ inputs.flicker_probe }}
+          SWIFTRIGHT_SCREEN_RECORD: ${{ inputs.screen_record && '1' || '' }}
         run: |
           set -euo pipefail
           probe=()

@@ -21,12 +21,15 @@
 #   {"op":"shot","label":"mid"}                          extra PrintWindow capture -> native-NN-<label>.png
 # After the steps: settle, final UIA dump of EVERY top-level window the process owns (name, role/control type, value, bounds, focus, enabled, toggle state, automation id, class) -> uia-NN.json,
 # then PrintWindow of the main window -> native-NN.png. steps-NN.json logs what each step did (ok/error). done.json has one row per run.
+# SWIFTRIGHT_SCREEN_RECORD=1 (factory-pairs input screen_record): per run, a continuous ffmpeg recording of the whole desktop -> record-NN.mkv and its sidecar record-NN.json
+# (see Start-ScreenRecord). Unset, nothing below runs.
 param([Parameter(Mandatory)][string]$JobDir)
 $ErrorActionPreference = 'Stop'
 $job = Get-Content -LiteralPath "$JobDir\job.json" -Raw | ConvertFrom-Json
 $runs = $(if ($job.args.runs) { [int]$job.args.runs } else { 1 })
 $settle = $(if ($null -ne $job.args.settleMs) { [int]$job.args.settleMs } else { 500 })
 $script:probe = [bool]$job.args.flickerProbe   # args.flickerProbe: the screen-grab probe in Save-SettledShot (flicker-*.tsv); absent for a normal run
+$script:screenRecord = ([string]$env:SWIFTRIGHT_SCREEN_RECORD -eq '1')   # opt-in continuous recording (Start-ScreenRecord); absent for a normal run
 $steps = @($job.args.steps)
 $res = [ordered]@{ kind = 'interact'; ok = $false; runs = $runs; exe_source = [string]$job.args.exe; steps = $steps.Count }
 
@@ -420,6 +423,52 @@ public static class FlickerScreen {
 }
 '@
 }
+# Opt-in continuous screen recording (env SWIFTRIGHT_SCREEN_RECORD=1). Per run: ffmpeg gdigrab of the whole virtual screen at 60 fps, ffv1 (lossless), started after the
+# initial settle and before the first input step, stopped in the run's finally after the last settle. It takes no focus, injects no input and opens no console window.
+# The sidecar record-NN.json holds the host client rect, the virtual screen, the anchors (UTC epoch seconds and QPC) and each input step's start and end, so the frames
+# align to the steps (factory/tools/flicker_scan.py). -use_wallclock_as_timestamps with -copyts keeps the frame times on the UTC epoch.
+$script:rec = $null; $script:stepTimes = @(); $script:anchorEpoch = 0.0; $script:anchorQpc = [long]0
+function Get-Qpc { return [System.Diagnostics.Stopwatch]::GetTimestamp() }
+function Epoch-Of([long]$qpc) { return $script:anchorEpoch + ([double]($qpc - $script:anchorQpc) / [double][System.Diagnostics.Stopwatch]::Frequency) }
+function Start-ScreenRecord([string]$dir, [string]$name, [IntPtr]$h) {
+    $ff = Get-Command ffmpeg -ErrorAction SilentlyContinue
+    if (-not $ff) { throw 'screen record requested (SWIFTRIGHT_SCREEN_RECORD=1) but ffmpeg is not on PATH' }
+    $ver = [string](& $ff.Source -hide_banner -version 2>&1 | Select-Object -First 1)
+    $file = Join-Path $dir ($name + '.mkv')
+    $ffArgs = '-hide_banner -loglevel warning -nostats -use_wallclock_as_timestamps 1 -f gdigrab -framerate 60 -draw_mouse 0 -i desktop -copyts -fps_mode passthrough -c:v ffv1 -level 3 -g 1 -y "' + $file + '"'
+    $si = [Diagnostics.ProcessStartInfo]::new($ff.Source, $ffArgs)
+    $si.UseShellExecute = $false; $si.CreateNoWindow = $true
+    $si.RedirectStandardInput = $true; $si.RedirectStandardError = $true; $si.RedirectStandardOutput = $true
+    $script:anchorEpoch = ([DateTime]::UtcNow - [DateTime]::new(1970, 1, 1, 0, 0, 0, [DateTimeKind]::Utc)).TotalSeconds
+    $script:anchorQpc = Get-Qpc
+    $vs = [IxNative]::Virt(); $cs = [IxNative]::ClientScreen($h)
+    $p = [Diagnostics.Process]::Start($si)
+    $errTask = $p.StandardError.ReadToEndAsync(); $outTask = $p.StandardOutput.ReadToEndAsync()
+    Start-Sleep -Milliseconds 300
+    if ($p.HasExited) { throw "ffmpeg exited at start code=$($p.ExitCode)" }
+    $script:rec = [ordered]@{ proc = $p; errTask = $errTask; outTask = $outTask; file = $file; name = $name; ffmpeg = $ff.Source; version = $ver; args = $ffArgs; virt = $vs; client = $cs; hwnd = [int64]$h }
+    $script:stepTimes = @()
+}
+function Stop-ScreenRecord([string]$jsonPath) {
+    $r = $script:rec; $p = $r.proc
+    $stopQpc = Get-Qpc; $stopEpoch = Epoch-Of $stopQpc
+    try { $p.StandardInput.WriteLine('q'); $p.StandardInput.Flush() } catch { }
+    $exited = [bool]$p.WaitForExit(30000)
+    if (-not $exited) { try { $p.Kill() } catch { }; [void]$p.WaitForExit(10000) }
+    $err = ''; try { [void]$r.errTask.Wait(5000); $err = [string]$r.errTask.Result } catch { }
+    if ($err.Length -gt 2000) { $err = $err.Substring($err.Length - 2000) }
+    $side = [ordered]@{
+        schema = 'screen-record/v1'; run = $r.name; record = [IO.Path]::GetFileName($r.file); source = 'gdigrab desktop (whole virtual screen)'; codec = 'ffv1'; framerate = 60
+        ffmpeg = $r.ffmpeg; ffmpegVersion = $r.version; ffmpegArgs = $r.args; ffmpegExited = $exited; ffmpegExitCode = $(if ($exited) { $p.ExitCode } else { $null }); ffmpegStderr = $err
+        hostHwnd = $r.hwnd; hostClient = $r.client; virtualScreen = $r.virt
+        anchorEpoch = $script:anchorEpoch; anchorQpc = $script:anchorQpc; qpcFrequency = [System.Diagnostics.Stopwatch]::Frequency
+        stopEpoch = $stopEpoch; stopQpc = $stopQpc; steps = @($script:stepTimes)
+    }
+    [IO.File]::WriteAllText($jsonPath, (ConvertTo-Json -InputObject $side -Depth 6), (New-Object Text.UTF8Encoding($false)))
+    try { $p.Dispose() } catch { }
+    $script:rec = $null
+}
+
 try {
     $env:Path = 'C:\swiftrt;' + $env:Path
     $renderer = $(if ($job.args.renderer) { [string]$job.args.renderer } else { 'D:\Claude\swiftright\.factory-work\inputs\renderer\swiftright_render.dll' })
@@ -471,12 +520,15 @@ try {
             if ($ciRun -and -not [IxNative]::SetWindowPos($h, [IntPtr]::new(-1), 0, 0, 0, 0, 0x0013)) { throw 'SetWindowPos HWND_TOPMOST failed' }
             Add-Content -LiteralPath (Join-Path $out "cursor-$n.txt") -Value ("start ci=$ciRun host=$($h.ToInt64()) " + [IxNative]::ZInfo($h, [IxNative]::ClientScreen($h)))
             Start-Sleep -Milliseconds $settle
+            if ($script:screenRecord) { Start-ScreenRecord $out "record-$n" $h }
             $k = 0
             foreach ($s in $steps) {
                 $k++
                 $r = 'ok'; $t0 = Window-Ms
+                $q0 = $(if ($script:rec) { Get-Qpc } else { [long]0 })
                 try { $r = Do-Step $p $h $s $out $n } catch { $r = 'ERROR: ' + $_.Exception.Message }
                 $log += [ordered]@{ step = $k; op = [string]$s.op; result = $r; window_ms_start = $t0; window_ms_end = (Window-Ms) }
+                if ($script:rec) { $q1 = Get-Qpc; $script:stepTimes += [ordered]@{ step = $k; op = [string]$s.op; result = $r; qpc0 = $q0; qpc1 = $q1; epoch0 = (Epoch-Of $q0); epoch1 = (Epoch-Of $q1) } }
                 if ($r -like 'ERROR*') { throw "step $k ($($s.op)): $r" }
                 if ($p.HasExited -or -not (Test-Alive $h)) { throw (Gone-Report "during step $k ($($s.op))") }
             }
@@ -487,6 +539,7 @@ try {
             $status = 'ok'
         } catch { $status = [string]$_ }
         finally {
+            if ($script:rec) { try { Stop-ScreenRecord (Join-Path $out "record-$n.json") } catch { $status = "$status | screen record stop: " + $_.Exception.Message } }
             [IO.File]::WriteAllText((Join-Path $out "steps-$n.json"), (ConvertTo-Json -InputObject @($log) -Depth 5), (New-Object Text.UTF8Encoding($false)))
             if ($p) {
                 try { if (-not $p.HasExited) { $p.Kill() }; [void]$p.WaitForExit(10000) } catch { }
