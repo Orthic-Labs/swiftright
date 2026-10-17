@@ -9,7 +9,7 @@ import UniformTypeIdentifiers
 private let fixedWidth = CGFloat(320)
 private let fixedHeight = CGFloat(240)
 private let defaultRenderScale = CGFloat(2.5)
-private let scratchPrefix = "/Users/adrdsouza/Library/Caches/SwiftRightFactory/sr1/custom-layout-rtl-original-v1/scratch/"
+private let scratchPrefix = ProcessInfo.processInfo.environment["SWIFTRIGHT_CACHE_ROOT"].map { $0 + "/run" } ?? NSHomeDirectory() + "/Library/Caches/SwiftRightFactory"
 
 private func argument(_ key: String) -> String? {
     guard let index = CommandLine.arguments.firstIndex(of: key),
