@@ -7,6 +7,7 @@ Glyph shapes stay excluded (decision 2: Segoe UI vs SF), but WHERE the text star
   1. first ink x: the leftmost column holding a pixel more than 32/255 darker than the darkest background colour present (the field fill, and the selection
      highlight when one is drawn: the AA band of decision 5), caret columns removed. Mac and Windows must agree within "firstInkTolerancePx" (default 0).
      A non-zero tolerance is a named, measured value in pair.json with its reason ("firstInkToleranceReason"), never a default.
+     H34: "firstInkMinPx" and "firstInkMaxPx" give a signed range for Windows minus Mac instead (absent: the symmetric tolerance); the row prints the signed delta and the range.
   2. selection: present on one side and not the other fails. When both draw one: the colour must be identical (the Mac's NSColor.selectedTextBackgroundColor
      over white, (179,215,255)) and the start x (the leftmost column of >= 10 pixels of that exact colour) must be equal within "selectionStartTolerancePx"
      (default 0). The selection's end x and height follow the glyph advances and the line height (Segoe vs SF) and are reported, not gated.
@@ -38,10 +39,11 @@ def lum(p):
     return (299 * p[0] + 587 * p[1] + 114 * p[2]) / 1000
 
 
-def analyse(im, frame):
+def analyse(im, frame, margin=2):
     x0, y0, x1, y1 = frame
-    # the interior without the rounded corners: 2 px in from the sides, 10 px in from the top and bottom (corner radius 15 px)
-    rx0, ry0, rx1, ry1 = x0 + 2, y0 + 10, x1 - 2, y1 - 10
+    # the interior without the rounded corners: `margin` px in from the sides (2 for a bezeled field, which skips the bezel's ink; 0 for a plain
+    # field, "scanInteriorPx" in pair.json), 10 px in from the top and bottom (corner radius 15 px)
+    rx0, ry0, rx1, ry1 = x0 + margin, y0 + 10, x1 - margin, y1 - 10
     px = im.load()
     pts = [(x, y, px[x, y]) for y in range(ry0, ry1) for x in range(rx0, rx1)]
     bg = Counter(p for _, _, p in pts).most_common(1)[0][0]
@@ -75,8 +77,14 @@ def analyse(im, frame):
     return dict(background=list(bg), firstInkX=min(ink) if ink else None, firstInkY=first_y, baselineY=base_y, selection=sel, caretX=caret_x or None)
 
 
+def signed_range(cfg, sym, lo_key, hi_key):
+    """H34 (sr1-decisions): the allowed [lo, hi] of a Windows-minus-Mac delta. Absent keys give the symmetric tolerance sym (default 0), so a case without them is gated as before."""
+    return int(cfg.get(lo_key, -sym)), int(cfg.get(hi_key, sym))
+
+
 def gate(mac, win, cfg):
     tol_ink = int(cfg.get("firstInkTolerancePx", 0))
+    lo_ink, hi_ink = signed_range(cfg, tol_ink, "firstInkMinPx", "firstInkMaxPx")
     tol_sel = int(cfg.get("selectionStartTolerancePx", 0))
     why = []
     if mac["firstInkX"] is None or win["firstInkX"] is None:
@@ -84,8 +92,8 @@ def gate(mac, win, cfg):
             why.append(f"no ink: mac={mac['firstInkX']} win={win['firstInkX']}")
     else:
         d = win["firstInkX"] - mac["firstInkX"]
-        if abs(d) > tol_ink:
-            why.append(f"first ink x differs by {d} px (mac {mac['firstInkX']}, win {win['firstInkX']}, tolerance {tol_ink})")
+        if not lo_ink <= d <= hi_ink:
+            why.append(f"first ink x differs by {d} px (mac {mac['firstInkX']}, win {win['firstInkX']}, allowed {lo_ink}..{hi_ink} px)")
     if mac.get("firstInkY") is not None and win.get("firstInkY") is not None:
         tol_y, tol_b, tol_c = (float(cfg.get(k, 0)) for k in ("firstInkYTolerancePx", "baselineTolerancePx", "inkCentreYTolerancePx"))
         dy = win["firstInkY"] - mac["firstInkY"]
@@ -118,6 +126,7 @@ def mac_caret_px(out, n):
 def main():
     case, out = Path(sys.argv[1]).resolve(), Path(sys.argv[2]).resolve()
     cfg = json.loads((case / "pair.json").read_text())["textOriginGate"]
+    margin = int(cfg.get("scanInteriorPx", 2))   # the side margin of the scanned interior (see analyse)
     rows, bad = [], 0
     for mac_png in sorted((out / "mac").glob("run-[0-9][0-9].png")):
         n = mac_png.stem.split("-")[1]
@@ -126,7 +135,7 @@ def main():
             rows.append(dict(run=int(n), ok=False, why=["missing windows capture"])); bad += 1; continue
         im, iw = Image.open(mac_png).convert("RGB"), Image.open(win_png).convert("RGB")
         for k, frame in enumerate(cfg["fields"]):
-            m, w = analyse(im, frame), analyse(iw, frame)
+            m, w = analyse(im, frame, margin), analyse(iw, frame, margin)
             why = gate(m, w, cfg)
             if k == 0 and cfg.get("caret") == "macFact":
                 mc, wc = mac_caret_px(out, n), (w["caretX"] or [None])[0]
@@ -135,10 +144,11 @@ def main():
                     why.append(f"caret: mac insertion point {mc}, windows caret column {wc}")
                 elif abs(wc - mc) > float(cfg.get("caretTolerancePx", 0)):
                     why.append(f"caret x mac {mc:.2f} != windows column {wc} (tolerance {cfg.get('caretTolerancePx', 0)} px)")
-            rows.append(dict(run=int(n), field=k, frame=frame, ok=not why, why=why, mac=m, windows=w))
+            d_ink = (w["firstInkX"] - m["firstInkX"]) if m["firstInkX"] is not None and w["firstInkX"] is not None else None
+            rows.append(dict(run=int(n), field=k, frame=frame, ok=not why, why=why, mac=m, windows=w, firstInkDeltaWinMinusMacPx=d_ink, firstInkRangePx=list(signed_range(cfg, int(cfg.get("firstInkTolerancePx", 0)), "firstInkMinPx", "firstInkMaxPx")), scanInteriorPx=margin))
             bad += bool(why)
     rep = dict(gate="text origin (first ink x, first ink y, baseline, selection colour and start x)", yTolerancesPx=dict(firstInkY=cfg.get("firstInkYTolerancePx", 0), baseline=cfg.get("baselineTolerancePx", 0), inkCentreY=cfg.get("inkCentreYTolerancePx", 0)), yToleranceReason=cfg.get("yToleranceReason"), firstInkTolerancePx=cfg.get("firstInkTolerancePx", 0),
-               firstInkToleranceReason=cfg.get("firstInkToleranceReason"), selectionStartTolerancePx=cfg.get("selectionStartTolerancePx", 0),
+               firstInkToleranceReason=cfg.get("firstInkToleranceReason"), firstInkRangePx=list(signed_range(cfg, int(cfg.get("firstInkTolerancePx", 0)), "firstInkMinPx", "firstInkMaxPx")), scanInteriorPx=margin, selectionStartTolerancePx=cfg.get("selectionStartTolerancePx", 0),
                checks=len(rows), fail=bad, rows=rows)
     (out / "textorigin-report.json").write_text(json.dumps(rep, indent=1))
     for r in rows[:3] + [r for r in rows[3:] if not r["ok"]]:
@@ -147,9 +157,9 @@ def main():
         m, w = r["mac"], r["windows"]
         sm, sw = m["selection"], w["selection"]
         print(f"  textorigin run {r['run']:02d} field {r['field']}: {'ok' if r['ok'] else 'FAIL ' + '; '.join(r['why'])} first-ink mac={m['firstInkX']} win={w['firstInkX']} y(top/baseline) mac={m['firstInkY']}/{m['baselineY']} win={w['firstInkY']}/{w['baselineY']}"
-              + (f" selection mac x={sm['startX']} {tuple(sm['colour'])} win x={sw['startX']} {tuple(sw['colour'])}" if sm and sw else "") + (f" caret win x={w['caretX']}" if w["caretX"] else "") + (f" caret mac insertion x={m['caretXpx']}" if m.get("caretXpx") is not None else ""))
+              + (f" selection mac x={sm['startX']} {tuple(sm['colour'])} win x={sw['startX']} {tuple(sw['colour'])}" if sm and sw else "") + (f" first-ink delta win-mac={r['firstInkDeltaWinMinusMacPx']:+d} range={r['firstInkRangePx']} scan={r['scanInteriorPx']}" if r["firstInkDeltaWinMinusMacPx"] is not None else "") + (f" caret win x={w['caretX']}" if w["caretX"] else "") + (f" caret mac insertion x={m['caretXpx']}" if m.get("caretXpx") is not None else ""))
     d = Counter((r["windows"]["firstInkX"] - r["mac"]["firstInkX"]) for r in rows if "mac" in r and r["mac"]["firstInkX"] is not None and r["windows"]["firstInkX"] is not None)
-    print(f"textorigin checks={len(rows)} pass={len(rows) - bad} fail={bad} first-ink delta (win-mac px): {dict(sorted(d.items()))}")
+    print(f"textorigin checks={len(rows)} pass={len(rows) - bad} fail={bad} first-ink delta (win-mac px): {dict(sorted(d.items()))} allowed range {rows[0]['firstInkRangePx'] if rows else None} scanInteriorPx={margin}")
     sys.exit(1 if bad else 0)
 
 

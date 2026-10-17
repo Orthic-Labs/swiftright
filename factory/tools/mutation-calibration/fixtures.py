@@ -61,6 +61,11 @@ BASES = {
     # (the block 28 styles-small case fails its own unmutated run at caption2 (decision G71), so it cannot be a calibration base)
     "rowtol-serif":  ("blocks-w1-f2/swiftui.system-font-f2/design-serif-v1", "20261015-151417", ["mac/ax-01*.json", "windows/uia-01*.json", "windows/host-01.stdout.txt"]),
     "rowtol-grid13": ("blocks-w1-f2/swiftui.system-font-f2/grid-13-v1", "20261015-152228", ["mac/ax-01*.json", "windows/uia-01*.json", "windows/host-01.stdout.txt"]),
+    # H34 (sr1-decisions): the one-sided body-text first ink range, on the 20261017-000201 captures (the H34 mutation suite, s_h34.py)
+    "h34-textfield-plain": (f"{B6}/swiftui.textfield/plain-v1", "20261017-000201", ["mac/*", "windows/*", "*.json", "*.log"]),
+    "h34-textfield-auto": (f"{B6}/swiftui.textfield/automatic-style-v1", "20261017-000201", ["mac/*", "windows/*", "*.json", "*.log"]),
+    "h34-switch": (f"{B6}/swiftui.toggle/switch-labelled-on-v1", "20261017-000201", []),
+    "h34-textdark": (f"{B17}/swiftui.color-scheme/text-dark-v1", "20261017-000201", []),
 }
 
 

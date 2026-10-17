@@ -1,0 +1,17 @@
+{
+ "controlGate": {
+  "helper": "factory/tools/pair_control_report.py",
+  "minControlHeightPx": 50,
+  "labelCentreTolerancePx": 1,
+  "edgeAA": 32,
+  "note": "The label text differs by docs/sr1-decisions.md decision 2 (Segoe UI vs SF), so the switch sits at a different x. The gate compares the switch itself (size and y exact, pixels exact with edge-aa<=32 after translating by dx) and the label's vertical position; dx and the label pixels are reported.",
+  "labelCentreToleranceReason": "measured: the label's vertical centre differs by 0.5 px on every run (Segoe UI Variable Text 13 DIP (G70) vs SF 13 pt, decision 2); was 3 px",
+  "leadingXTolerancePx": 0,
+  "labelLeadingXTolerancePx": 0,
+  "controlGapTolerancePx": 1,
+  "controlGapToleranceReason": "switch: the label's last glyph ('d') has a different right side bearing in Segoe UI and SF, so the ink-to-switch gap measured 23 px on the Mac and 22 px on Windows on every run",
+  "firstInkMinPx": 0,
+  "firstInkMaxPx": 1,
+  "firstInkToleranceReason": "H34 side bearing"
+ }
+}

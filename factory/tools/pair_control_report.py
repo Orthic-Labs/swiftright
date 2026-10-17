@@ -80,12 +80,20 @@ def label_box(img, c):
     return None if best is None else best[1]
 
 
+def signed_range(cfg, sym, lo_key, hi_key):
+    """H34 (sr1-decisions): the allowed [lo, hi] of a Windows-minus-Mac delta. Absent keys give the symmetric tolerance sym (default 0), so a case without them is gated as before."""
+    return int(cfg.get(lo_key, -sym)), int(cfg.get(hi_key, sym))
+
+
 def main():
     case, out = Path(sys.argv[1]).resolve(), Path(sys.argv[2]).resolve()
     cfg = json.loads((case / "pair.json").read_text())["controlGate"]
     min_h, tol, aa = int(cfg.get("minControlHeightPx", 50)), int(cfg.get("labelCentreTolerancePx", 3)), int(cfg.get("edgeAA", 32))
     ytol = int(cfg.get("controlYTolerancePx", 0))
     lead_tol, lab_tol, gap_tol = (int(cfg.get(k, 0)) for k in ("leadingXTolerancePx", "labelLeadingXTolerancePx", "controlGapTolerancePx"))
+    # H34: the body-text first ink (label leading x, and the leading x when the label leads) and the checkbox control gap each take a one-sided range
+    ink_lo, ink_hi = signed_range(cfg, 0, "firstInkMinPx", "firstInkMaxPx")
+    gap_lo, gap_hi = signed_range(cfg, gap_tol, "controlGapMinPx", "controlGapMaxPx")
     rows = []
     for mac in sorted((out / "mac").glob("run-*.png")):
         n = mac.stem.split("-")[1]
@@ -119,11 +127,13 @@ def main():
             left_m, left_w = lm[2] <= mb[0], lw[2] <= wb[0]          # the label is left of the control
             gap_m = mb[0] - lm[2] if left_m else lm[0] - mb[2]
             gap_w = wb[0] - lw[2] if left_w else lw[0] - wb[2]
-            xinfo = dict(leadingX=dict(mac=lead_m, windows=lead_w), labelLeadingX=dict(mac=lm[0], windows=lw[0]), labelLeftOfControl=dict(mac=left_m, windows=left_w), controlGap=dict(mac=gap_m, windows=gap_w))
+            xinfo = dict(leadingX=dict(mac=lead_m, windows=lead_w, deltaWinMinusMac=lead_w - lead_m), labelLeadingX=dict(mac=lm[0], windows=lw[0], deltaWinMinusMac=lw[0] - lm[0]), labelLeftOfControl=dict(mac=left_m, windows=left_w), controlGap=dict(mac=gap_m, windows=gap_w, deltaWinMinusMac=gap_w - gap_m),
+                         allowedRangePx=dict(inkLeadingX=[ink_lo, ink_hi], controlGap=[gap_lo, gap_hi]))
             if left_m != left_w: x_why.append(f"label side differs (left of the control: mac {left_m}, windows {left_w})")
-            if abs(lead_w - lead_m) > lead_tol: x_why.append(f"row leading x differs by {lead_w - lead_m} px (mac {lead_m}, windows {lead_w}, tolerance {lead_tol})")
-            if abs(lw[0] - lm[0]) > lab_tol: x_why.append(f"label first ink x differs by {lw[0] - lm[0]} px (mac {lm[0]}, windows {lw[0]}, tolerance {lab_tol})")
-            if abs(gap_w - gap_m) > gap_tol: x_why.append(f"label-to-control gap differs by {gap_w - gap_m} px (mac {gap_m}, windows {gap_w}, tolerance {gap_tol})")
+            lead_lo, lead_hi = (ink_lo, ink_hi) if left_m else (-lead_tol, lead_tol)   # the leading edge is the label's first ink only when the label leads
+            if not lead_lo <= lead_w - lead_m <= lead_hi: x_why.append(f"row leading x differs by {lead_w - lead_m} px (mac {lead_m}, windows {lead_w}, allowed {lead_lo}..{lead_hi})")
+            if not ink_lo <= lw[0] - lm[0] <= ink_hi: x_why.append(f"label first ink x differs by {lw[0] - lm[0]} px (mac {lm[0]}, windows {lw[0]}, allowed {ink_lo}..{ink_hi})")
+            if not gap_lo <= gap_w - gap_m <= gap_hi: x_why.append(f"label-to-control gap differs by {gap_w - gap_m} px (mac {gap_m}, windows {gap_w}, allowed {gap_lo}..{gap_hi})")
             x_ok = not x_why
         diff_px = None
         if lm and lw:

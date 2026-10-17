@@ -37,10 +37,15 @@
     65
    ]
   ],
-  "yToleranceReason": "plain-v1 (no bezel) measured on all 20 runs (Windows minus Mac, px): first glyph top +1, baseline 0 (the 12 pt Segoe UI glyph is 1 px shorter than the 13 pt SF one, decision 2); the line is placed the same way",
+  "yToleranceReason": "plain-v1 (no bezel) measured on all 20 runs (Windows minus Mac, px): first glyph top +1, baseline 0 (the 13 DIP Segoe UI Variable Text (G70) glyph is 1 px shorter than the 13 pt SF one, decision 2); the line is placed the same way",
   "firstInkYTolerancePx": 1,
   "baselineTolerancePx": 0,
-  "inkCentreYTolerancePx": 0.5
+  "inkCentreYTolerancePx": 0.5,
+  "firstInkMinPx": 0,
+  "firstInkMaxPx": 1,
+  "firstInkToleranceReason": "H34 side bearing",
+  "scanInteriorPx": 0,
+  "scanInteriorReason": "no bezel: the text starts 1 px inside the frame edge (x 27 of a frame at 25 on Mac), inside the 2 px side margin of bezeled fields, so the scan starts at the frame edge"
  },
  "steps": [
   {

@@ -55,6 +55,11 @@ def position(img, rect, background=None, coverage=0.15):
                 inkRightX=max(xs) + 1, inkHeight=max(rows) - min(rows) + 1, lineBands=bands)
 
 
+def signed_range(cfg, sym, lo_key, hi_key):
+    """H34 (sr1-decisions): the allowed [lo, hi] of a Windows-minus-Mac delta. Absent keys give the symmetric tolerance sym (default 0), so a case without them is gated as before."""
+    return int(cfg.get(lo_key, -sym)), int(cfg.get(hi_key, sym))
+
+
 def position_why(m, w, pos, align):
     """-> list of reasons the line's position differs beyond its tolerances (empty: ok)"""
     if m is None or w is None:
@@ -67,7 +72,8 @@ def position_why(m, w, pos, align):
     if abs((dy + db) / 2) > t("inkCentreYTolerancePx"): why.append(f"ink vertical centre differs by {(dy + db) / 2:g} px (tolerance {t('inkCentreYTolerancePx'):g})")
     if align == "leading":
         dx = w["firstInkX"] - m["firstInkX"]
-        if abs(dx) > t("firstInkXTolerancePx"): why.append(f"first ink x differs by {dx} px (tolerance {t('firstInkXTolerancePx'):g})")
+        lo_x, hi_x = signed_range(pos, t("firstInkXTolerancePx"), "firstInkMinPx", "firstInkMaxPx")
+        if not lo_x <= dx <= hi_x: why.append(f"first ink x differs by {dx} px (allowed {lo_x}..{hi_x} px)")
     else:
         dx = w["inkCentreX"] - m["inkCentreX"]
         if abs(dx) > t("inkCentreXTolerancePx"): why.append(f"ink centre x differs by {dx:g} px (tolerance {t('inkCentreXTolerancePx'):g})")
@@ -128,7 +134,10 @@ def main():
                 pm, pw = position(im, tuple(r["rect"]), bg, cov), position(iw, tuple(r["rect"]), bg, cov)
                 pos = {**cfg["position"], **r.get("position", {})}   # a region may carry its own measured tolerances (and "reason")
                 why = position_why(pm, pw, pos, r.get("align", pos.get("align", "centre")))
-                reg.update(position=dict(mac=pm, windows=pw, ok=not why, why=why)); good = good and not why; reg["ok"] = good
+                pos_row = dict(mac=pm, windows=pw, ok=not why, why=why)
+                if r.get("align", pos.get("align", "centre")) == "leading" and pm and pw:
+                    pos_row.update(firstInkDeltaWinMinusMacPx=pw["firstInkX"] - pm["firstInkX"], firstInkRangePx=list(signed_range(pos, float(pos.get("firstInkXTolerancePx", 0)), "firstInkMinPx", "firstInkMaxPx")))
+                reg.update(position=pos_row); good = good and not why; reg["ok"] = good
             ok &= good
             row["regions"].append(reg)
         for g in cfg.get("baselineAlign", []):

@@ -51,6 +51,10 @@ class TextOrigin(unittest.TestCase):
         self.assertEqual(a["firstInkX"], 60)
         self.assertEqual(a["selection"]["startX"], 40)
 
+    def test_plain_scan_reaches_frame_edge(self):      # scanInteriorPx 0 (plain field): ink at the frame's first column is seen; the bezeled margin 2 skips it
+        self.assertEqual(r.analyse(field(25), FRAME, 0)["firstInkX"], 25)
+        self.assertEqual(r.analyse(field(25), FRAME)["firstInkX"], 27)
+
     def test_caret_is_reported_not_ink(self):
         a = r.analyse(field(60, None, 41), FRAME)
         self.assertEqual(a["firstInkX"], 60)

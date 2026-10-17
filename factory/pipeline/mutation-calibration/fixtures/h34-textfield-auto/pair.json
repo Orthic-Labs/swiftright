@@ -1,0 +1,54 @@
+{
+ "excludeRects": [
+  {
+   "name": "typed text glyphs",
+   "rect": [
+    35,
+    30,
+    315,
+    80
+   ]
+  }
+ ],
+ "semanticGate": {
+  "fields": [
+   "role",
+   "name",
+   "value",
+   "enabled",
+   "boundsY",
+   "boundsX"
+  ],
+  "boundsXRoles": [
+   "textfield"
+  ],
+  "scope": "main",
+  "roles": [
+   "textfield",
+   "text"
+  ]
+ },
+ "textOriginGate": {
+  "fields": [
+   [
+    25,
+    25,
+    325,
+    85
+   ]
+  ],
+  "firstInkYTolerancePx": 2,
+  "baselineTolerancePx": 2,
+  "inkCentreYTolerancePx": 0.5,
+  "yToleranceReason": "measured over the 20 captured runs of every bezeled TextField case (dy,dbaseline px, Windows minus Mac): (2,-2) (2,-1) (1,-2) (1,-1), constant across runs: Windows draws the body font at 13 DIP Segoe UI Variable Text (G70) and the Mac at 13 pt (decision 2), so the glyphs are shorter and, with the line centred on both sides, the top sits 1-2 px lower and the baseline 1-2 px higher; the mid-point of the two stays within 0.5 px",
+  "firstInkMinPx": 0,
+  "firstInkMaxPx": 1,
+  "firstInkToleranceReason": "H34 side bearing"
+ },
+ "steps": [
+  {
+   "op": "wait",
+   "ms": 300
+  }
+ ]
+}

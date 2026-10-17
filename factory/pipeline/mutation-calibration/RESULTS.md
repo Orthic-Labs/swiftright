@@ -1,22 +1,22 @@
 # Mutation calibration results
 
-Generated 2026-10-15 by `factory/tools/mutation-calibration/calibrate.py` (see its README for every mutation). Offline: no capture, no Windows, no Sandbox. All 35 unmutated base fixtures pass their gates before any mutation is applied. The verdict of every row is the exit status of `pair.py <case> --recompare <run>`.
+Generated 2026-10-17 by `factory/tools/mutation-calibration/calibrate.py` (see its README for every mutation). Offline: no capture, no Windows, no Sandbox. All 39 unmutated base fixtures pass their gates before any mutation is applied. The verdict of every row is the exit status of `pair.py <case> --recompare <run>`.
 
-**339 of 344 seeded faults caught; 70 of 70 near-misses inside a tolerance passed; 0 over-strict gates.** 5 faults were not caught: 0 with no documented reason (findings A below), 5 that a decision or the gate's own contract says is not gated (B below).
+**367 of 372 seeded faults caught; 74 of 74 near-misses inside a tolerance passed; 0 over-strict gates.** 5 faults were not caught: 0 with no documented reason (findings A below), 5 that a decision or the gate's own contract says is not gated (B below).
 
 | Gate | Comparator | Caught / seeded | Missed (undocumented / documented exclusion) | Near-misses passed | Over-strict | Probes |
 |---|---|---|---|---|---|---|
 | pixel | `pair.py` | 27 / 29 | 2 (0 / 2) | 5 / 5 | 0 | 7 |
 | text | `pair_text_report.py` | 7 / 7 | 0 (0 / 0) | 3 / 3 | 0 | 0 |
-| text-colour | `pair_textcolour_report.py` | 57 / 57 | 0 (0 / 0) | 7 / 7 | 0 | 0 |
+| text-colour | `pair_textcolour_report.py` | 64 / 64 | 0 (0 / 0) | 8 / 8 | 0 | 0 |
 | button | `pair_button_report.py` | 38 / 38 | 0 (0 / 0) | 18 / 18 | 0 | 0 |
-| control | `pair_control_report.py` | 32 / 32 | 0 (0 / 0) | 6 / 6 | 0 | 0 |
+| control | `pair_control_report.py` | 39 / 39 | 0 (0 / 0) | 7 / 7 | 0 | 0 |
 | list | `pair_list_report.py` | 34 / 34 (6 by the case's pixel gate) | 0 (0 / 0) | 3 / 3 | 0 | 0 |
 | semantic | `pair_semantic_report.py` | 52 / 55 | 3 (0 / 3) | 2 / 2 | 0 | 0 |
 | ime | `pair_ime_report.py` | 11 / 11 | 0 (0 / 0) | 1 / 1 | 0 | 0 |
 | clock | `pair_clock_report.py` | 34 / 34 | 0 (0 / 0) | 11 / 11 | 0 | 0 |
 | image | `pair_image_report.py` | 11 / 11 | 0 (0 / 0) | 2 / 2 | 0 | 0 |
-| text-origin | `pair_textorigin_report.py` | 24 / 24 | 0 (0 / 0) | 4 / 4 | 0 | 0 |
+| text-origin | `pair_textorigin_report.py` | 38 / 38 | 0 (0 / 0) | 6 / 6 | 0 | 0 |
 | multi-run | `pair.py` | 12 / 12 | 0 (0 / 0) | 8 / 8 | 0 | 0 |
 
 `text-origin` is the TextField text-origin and selection-colour gate (decisions 12, 13 and 14, commits ddff82031, 09e184945 and d07df2581 and the y gate of 15 October); it is included. `ime` is the IME range gate of decision 15, new on 15 October; the findings that opened this pass (marked-text range, 2-3 px clock translation, text-origin y, control x, alert default button, text position and colour) are all gated now (decisions 14 to 19).
@@ -84,6 +84,10 @@ None. Every near-miss placed exactly at or just inside a tolerance (edge-aa 32, 
 | clk-spring | `blocks-6-10/swiftui.animation/default-spring-v1` | 20261013-232853 |
 | ctl-checkbox | `blocks-6-10/swiftui.toggle/checkbox-labelled-on-v1` | 20261014-180300 |
 | ctl-switch | `blocks-6-10/swiftui.toggle/switch-labelled-on-v1` | 20261014-175720 |
+| h34-switch | `blocks-6-10/swiftui.toggle/switch-labelled-on-v1` | 20261017-000201 |
+| h34-textdark | `blocks-17-20/swiftui.color-scheme/text-dark-v1` | 20261017-000201 |
+| h34-textfield-auto | `blocks-6-10/swiftui.textfield/automatic-style-v1` | 20261017-000201 |
+| h34-textfield-plain | `blocks-6-10/swiftui.textfield/plain-v1` | 20261017-000201 |
 | img-star | `pilot-delivery-five-v1/text-shape-image/image-system-star-fill-v10` | 20261013-221400 |
 | list-arrow | `blocks-11-16/swiftui.list/arrow-keys-v1` | 20261013-224316 |
 | list-var | `blocks-11-16/swiftui.list/variable-rows-selected-v1` | 20261014-025727 |
