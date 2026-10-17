@@ -218,8 +218,8 @@ public final class Bridge {
     static func wheelScrollSetting() -> (lines: Int, page: Bool) {
         #if os(Windows)
         var v: UInt32 = 3
-        let ok = SystemParametersInfoW(0x0068, 0, &v, 0) // SPI_GETWHEELSCROLLLINES
-        return wheelScrollSetting(raw: ok != 0 ? v : nil)
+        let ok: Bool = SystemParametersInfoW(0x0068, 0, &v, 0) == true // SPI_GETWHEELSCROLLLINES (BOOL imports as Bool/WindowsBool)
+        return wheelScrollSetting(raw: ok ? v : nil)
         #else
         return wheelScrollSetting(raw: nil)
         #endif
