@@ -106,14 +106,16 @@ public enum ScrollerMetrics {
     /// Points a ScrollView's content moves for one wheel line: 10 (measured M2, run 39062962549: 1, 3, 10 lines -> 10, 30, 100 pt).
     /// A List moves by one row height per line instead (measured: 24 pt rows -> 24, 72, 240 pt), see `Graph.scrollWheel`.
     public static let pointsPerLine: CGFloat = 10
-    /// Overlap kept between pages: a page is the viewport less this. // TO MEASURE (M3 stand-ins failed: NSScrollView ignored the page selectors, #31)
+    /// Overlap kept between pages: a page is the viewport less this (measured M3, run 39068737526: Page Down moves 79.6 pt in an 89.6 pt clip,
+    /// NSScrollView.verticalPageScroll = 10).
     public static let pageOverlap: CGFloat = 10
-    /// Width of the scroll bar at the trailing edge (H21 and M1: AXScrollBar 19 pt).
-    public static let width: CGFloat = 19
-    /// Thumb inset from the bar's leading edge (M1: 4.0 pt in every case).
-    public static let thumbInsetLeading: CGFloat = 4
-    /// Thumb inset from the bar's trailing edge (19 - 4 - 10.8).
-    public static let thumbInsetTrailing: CGFloat = 4.2
+    /// Width of the drawn scroller at the trailing edge: 17 pt (measured M5, run 39068737526: NSScroller frame x 163, w 17 in a 180 pt scroll view).
+    /// The 19 pt AXScrollBar of H21/M1 is its accessibility frame, 1 pt wider on each side.
+    public static let width: CGFloat = 17
+    /// Thumb inset from the drawn scroller's leading edge (M5: knobRect x 3.0; 4.0 from the AX frame's edge in M1).
+    public static let thumbInsetLeading: CGFloat = 3
+    /// Thumb inset from the drawn scroller's trailing edge (17 - 3 - 10.8).
+    public static let thumbInsetTrailing: CGFloat = 3.2
     /// Track start below the viewport's top (M1: the bar spans the viewport plus 1 pt each side, the track starts 4.0 pt into the bar).
     public static let thumbInsetTop: CGFloat = 3.0
     /// Track end above the viewport's bottom (M1: the track ends 4.2 pt before the bar's end; track = viewport - 6.2).

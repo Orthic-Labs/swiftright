@@ -68,11 +68,11 @@ final class ScrollPaintTests: XCTestCase {
         let siblings = nodes.filter { $0.parent == scroller.parent && $0.id != scroller.id }
         XCTAssertFalse(siblings.isEmpty)                                   // the ScrollView's content
         XCTAssertTrue(siblings.allSatisfy { $0.order < scroller.order })   // drawn after the content
-        XCTAssertEqual(scroller.bounds.x, 253, accuracy: 1)                // 19 pt strip at the trailing edge of the 300 px viewport
+        XCTAssertEqual(scroller.bounds.x, 257.5, accuracy: 1)              // 17 pt strip at the trailing edge of the 300 px viewport (M5)
         let thumb = try XCTUnwrap(scroller.primitives.compactMap { p -> Rect? in
             if case .rect(let r, _, let radius, _, _) = p, radius > 0 { return r } else { return nil }
         }.first)
-        XCTAssertEqual(thumb.x, 263, accuracy: 1)
+        XCTAssertEqual(thumb.x, 265, accuracy: 1)
         XCTAssertEqual(thumb.y, 7.5, accuracy: 1)                          // value 0: the 3.0 pt top inset (M1)
         guard case .clipPush = try XCTUnwrap(scroller.primitives.first), case .clipPop = try XCTUnwrap(scroller.primitives.last) else {
             return XCTFail("scroller is not clipped to its container")

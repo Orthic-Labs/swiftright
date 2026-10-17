@@ -18,7 +18,7 @@ final class ScrollerPainterTests: XCTestCase {
 
     func testStripIsTheMeasuredWidthAtTheTrailingEdge() throws {
         let l = try layout(state())
-        XCTAssertEqual(l.strip.x, 253, accuracy: 1)            // 300 px less 19 pt * 2.5 = 47.5 px, snapped
+        XCTAssertEqual(l.strip.x, 257.5, accuracy: 1)          // 300 px less 17 pt * 2.5 = 42.5 px (M5)
         XCTAssertEqual(l.strip.x + l.strip.w, 300, accuracy: 0.001)
         XCTAssertEqual(l.strip.y, 0); XCTAssertEqual(l.strip.h, 250)
     }
@@ -27,7 +27,7 @@ final class ScrollerPainterTests: XCTestCase {
         let l = try layout(state(offset: 0))
         XCTAssertEqual(l.thumb.y, 7.5, accuracy: 1)            // 3.0 pt top inset
         XCTAssertEqual(l.thumb.h, 195.4, accuracy: 1)          // 78.17 pt thumb
-        XCTAssertEqual(l.thumb.x, 263, accuracy: 1)            // strip + 4 pt leading inset
+        XCTAssertEqual(l.thumb.x, 265, accuracy: 1)            // strip + 3 pt leading inset (M5)
         XCTAssertEqual(l.thumb.w, 27, accuracy: 1)             // 10.8 pt
     }
 
