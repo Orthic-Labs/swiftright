@@ -69,7 +69,7 @@ final class TaskIDTests: XCTestCase {
 
         model.key = "b"
         graph.flush()
-        try await settle()
+        try await settle(until: { log.results == ["b"] && log.events.contains("commit=false a") })
         XCTAssertTrue(log.events.contains("cancelled a"), "old run cancelled on id change")
         XCTAssertTrue(log.events.contains("start b"), "new run started")
         XCTAssertTrue(log.events.contains("commit=false a"), "old run's commit rejected")
@@ -86,7 +86,7 @@ final class TaskIDTests: XCTestCase {
 
         model.other += 1
         graph.flush()
-        try await settle()
+        try await settle(until: { log.results == ["a"] })
         XCTAssertEqual(log.events.filter { $0 == "start a" }.count, 1, "no restart for an unchanged id")
         XCTAssertEqual(log.results, ["a"])
     }
@@ -100,7 +100,7 @@ final class TaskIDTests: XCTestCase {
 
         model.visible = false
         graph.flush()
-        try await settle()
+        try await settle(until: { log.events.contains("commit=false a") && log.events.contains("disappear a") })
         XCTAssertTrue(log.events.contains("cancelled a"))
         XCTAssertTrue(log.events.contains("commit=false a"))
         XCTAssertTrue(log.events.contains("disappear a"))

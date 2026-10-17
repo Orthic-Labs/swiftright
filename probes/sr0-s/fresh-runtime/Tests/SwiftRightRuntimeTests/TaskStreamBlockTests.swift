@@ -95,13 +95,13 @@ final class TaskStreamBlockTests: XCTestCase {
     func testStreamDrivesStateInOrderAndTheTaskStartsOnAppear() async throws {
         let model = StreamModel(), feed = StreamFeed()
         let graph = make(DrivesState(model: model, feed: feed))
-        try await settle(); graph.flush()
+        try await settle(until: { graph.flush(); return texts(graph) == ["value=0 log= phase=running"] }); graph.flush()
         XCTAssertEqual(texts(graph), ["value=0 log= phase=running"])
         for v in [3, 1, 2] { feed.pair.continuation.yield(v) }
-        try await settle(); graph.flush()
+        try await settle(until: { graph.flush(); return texts(graph) == ["value=2 log=3,1,2 phase=running"] }); graph.flush()
         XCTAssertEqual(texts(graph), ["value=2 log=3,1,2 phase=running"], "a burst arrives in order and the write redraws")
         feed.pair.continuation.yield(3)
-        try await settle(); graph.flush()
+        try await settle(until: { graph.flush(); return model.log == [3, 1, 2, 3] }); graph.flush()
         XCTAssertEqual(model.log, [3, 1, 2, 3])
     }
 
@@ -112,7 +112,7 @@ final class TaskStreamBlockTests: XCTestCase {
         feed.pair.continuation.yield(3)
         try await settle()
         feed.pair.continuation.finish()
-        try await settle(); graph.flush()
+        try await settle(until: { graph.flush(); return texts(graph) == ["value=3 log=3 phase=done"] }); graph.flush()
         XCTAssertEqual(texts(graph), ["value=3 log=3 phase=done"])
         feed.pair.continuation.yield(1)
         try await settle(); graph.flush()
@@ -125,11 +125,11 @@ final class TaskStreamBlockTests: XCTestCase {
         let graph = make(CancelHost(model: model, feed: feed))
         try await settle()
         feed.pair.continuation.yield(3)
-        try await settle(); graph.flush()
+        try await settle(until: { graph.flush(); return texts(graph).last == "value=3 phase=listening shown=1" }); graph.flush()
         XCTAssertEqual(texts(graph).last, "value=3 phase=listening shown=1")
         model.shown = false
         graph.flush()
-        try await settle(); graph.flush()
+        try await settle(until: { graph.flush(); return texts(graph) == ["value=3 phase=ended shown=0"] }); graph.flush()
         XCTAssertEqual(texts(graph), ["value=3 phase=ended shown=0"], "the loop ended on cancellation and the statement after it ran")
         feed.pair.continuation.yield(1)
         try await settle(); graph.flush()
@@ -141,17 +141,17 @@ final class TaskStreamBlockTests: XCTestCase {
         let graph = make(RestartHost(model: model, feed: feed))
         try await settle()
         feed.perGen[0]?.continuation.yield(1)
-        try await settle(); graph.flush()
+        try await settle(until: { graph.flush(); return texts(graph) == ["gen=0 value=1 started=0"] }); graph.flush()
         XCTAssertEqual(texts(graph), ["gen=0 value=1 started=0"])
         model.gen = 1
         graph.flush()
-        try await settle(); graph.flush()
+        try await settle(until: { graph.flush(); return texts(graph) == ["gen=1 value=1 started=0,1"] }); graph.flush()
         XCTAssertEqual(texts(graph), ["gen=1 value=1 started=0,1"])
         feed.perGen[0]?.continuation.yield(9)
         try await settle(); graph.flush()
         XCTAssertEqual(texts(graph), ["gen=1 value=1 started=0,1"], "the old run's stream is no longer listened to")
         feed.perGen[1]?.continuation.yield(3)
-        try await settle(); graph.flush()
+        try await settle(until: { graph.flush(); return texts(graph) == ["gen=1 value=3 started=0,1"] }); graph.flush()
         XCTAssertEqual(texts(graph), ["gen=1 value=3 started=0,1"])
     }
 }

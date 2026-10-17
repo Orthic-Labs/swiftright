@@ -251,6 +251,16 @@ func settle() async throws {
     try await Task.sleep(for: .milliseconds(120))
 }
 
+/// Polls `condition` in 10 ms steps until it holds or `timeout` elapses (then returns normally, so the assertions that follow report the real failure).
+/// Use it where a test awaits something a task's sleep produces: a fixed window is shorter than a stalled CI runner. A "does not happen" check keeps the
+/// fixed `settle()`, since a condition that already holds would end the wait before a wrong late effect could appear.
+@MainActor
+func settle(timeout: Duration = .seconds(2), until condition: @MainActor () -> Bool) async throws {
+    for _ in 0..<3 { await Task.yield() }
+    let deadline = ContinuousClock.now + timeout
+    while !condition(), ContinuousClock.now < deadline { try await Task.sleep(for: .milliseconds(10)) }
+}
+
 // MARK: - Tests
 
 @MainActor
@@ -327,7 +337,7 @@ final class RuntimeTests: XCTestCase {
         let markRemoved = store.log.count
         store.rows.remove(at: 3)
         graph.flush()
-        try await settle()
+        try await settle(until: { rowLog(store, from: markRemoved) == ["disappear r3", "cancelled r3", "commit=false r3"] })
         XCTAssertNil(graph.nodeInstance(before), "removed node is gone")
         XCTAssertEqual(rowLog(store, from: markRemoved), ["disappear r3", "cancelled r3", "commit=false r3"])
 
@@ -337,7 +347,7 @@ final class RuntimeTests: XCTestCase {
         XCTAssertNotEqual(graph.nodeInstance(rowNodeID(graph, removed.id)), tokenBefore, "reinsertion is a new node")
         XCTAssertNotNil(serialBefore)
         XCTAssertEqual(serialText(graph, removed.id), serialBefore, "List keeps reinserted row @State")
-        try await settle()
+        try await settle(until: { rowLog(store, from: markReinserted) == ["appear r3", "commit=true r3"] })
         XCTAssertEqual(rowLog(store, from: markReinserted), ["appear r3", "commit=true r3"], "onAppear and task restart fire")
         XCTAssertTrue(store.results.contains("r3"), "restarted task commits")
     }
@@ -356,7 +366,7 @@ final class RuntimeTests: XCTestCase {
         let markRemoved = store.log.count
         store.rows.remove(at: 3)
         graph.flush()
-        try await settle()
+        try await settle(until: { rowLog(store, from: markRemoved) == ["disappear r3", "cancelled r3", "commit=false r3"] })
         XCTAssertNil(graph.nodeInstance(before), "removed node is gone")
         XCTAssertEqual(rowLog(store, from: markRemoved), ["disappear r3", "cancelled r3", "commit=false r3"])
 
@@ -365,7 +375,7 @@ final class RuntimeTests: XCTestCase {
         graph.flush()
         XCTAssertNotEqual(graph.nodeInstance(rowNodeID(graph, removed.id)), tokenBefore, "reinsertion is a new node")
         XCTAssertNotEqual(serialText(graph, removed.id), serialBefore, "VStack resets reinserted row @State")
-        try await settle()
+        try await settle(until: { rowLog(store, from: markReinserted) == ["appear r3", "commit=true r3"] })
         XCTAssertEqual(rowLog(store, from: markReinserted), ["appear r3", "commit=true r3"], "onAppear and task restart fire")
     }
 
@@ -402,7 +412,7 @@ final class RuntimeTests: XCTestCase {
         let removed = store.rows[2]
         store.rows.remove(at: 2)
         graph.flush()
-        try await settle()
+        try await settle(until: { store.log.contains("commit=false r2") && store.results.contains("r0") })
 
         XCTAssertFalse(store.results.contains("r2"), "stale result must not commit")
         XCTAssertTrue(store.log.contains("cancelled r2"), "cancellation delivered")

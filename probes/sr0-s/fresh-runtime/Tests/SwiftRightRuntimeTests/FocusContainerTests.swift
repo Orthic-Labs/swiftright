@@ -131,7 +131,7 @@ final class LazyContainerTests: XCTestCase {
         let markRemoved = store.log.count
         store.rows.remove(at: 3)
         graph.flush()
-        try await settle()
+        try await settle(until: { rowLog(store, from: markRemoved) == ["disappear r3", "cancelled r3", "commit=false r3"] })
         XCTAssertNil(graph.nodeInstance(before), "removed node is gone")
         XCTAssertEqual(rowLog(store, from: markRemoved), ["disappear r3", "cancelled r3", "commit=false r3"])
 
@@ -140,7 +140,7 @@ final class LazyContainerTests: XCTestCase {
         graph.flush()
         XCTAssertNotEqual(graph.nodeInstance(rowNodeID(graph, removed.id)), tokenBefore, "reinsertion is a new node")
         XCTAssertNotEqual(serialText(graph, removed.id), serialBefore, "LazyVStack resets reinserted row @State")
-        try await settle()
+        try await settle(until: { rowLog(store, from: markReinserted) == ["appear r3", "commit=true r3"] })
         XCTAssertEqual(rowLog(store, from: markReinserted), ["appear r3", "commit=true r3"])
     }
 }

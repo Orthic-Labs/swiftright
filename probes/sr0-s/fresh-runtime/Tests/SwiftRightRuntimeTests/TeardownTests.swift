@@ -144,7 +144,7 @@ final class TeardownTests: XCTestCase {
         graph.flush()
 
         graph.tearDown()
-        try await settle()
+        try await settle(until: { log.events.filter { $0 == "cancelled" }.count == 1 && log.events.filter { $0 == "disappear" }.count == 1 })
         XCTAssertEqual(log.events.filter { $0 == "disappear" }.count, 1)
         XCTAssertEqual(log.events.filter { $0 == "cancelled" }.count, 1)
         XCTAssertEqual(records.count, 2)
