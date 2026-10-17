@@ -212,6 +212,18 @@ public enum SingleLineText {
     }
 }
 
+/// Float renderer values to the layout's Double DIP without Float rounding noise (the renderer measures in whole or half device pixels; 83 px / 2.5 is 33.2 in Double,
+/// 33.2000008 in Float, and that noise decides which way a half-pixel centring tie snaps).
+public enum TextLayoutPrecision {
+    /// A device-pixel value from the renderer as DIP, divided in Double.
+    public static func dip(px: Float, scale: Float) -> CGFloat { CGFloat(Double(px) / Double(scale)) }
+    /// A Float DIP value that is a whole number of device pixels (the F1 table's heights and baselines, G21) as the exact Double DIP; any other value is only widened.
+    public static func exactDIP(_ dip: Float, scale: Float) -> CGFloat {
+        let s = Double(scale), d = Double(dip), px = (d * s).rounded()
+        return CGFloat(abs(d * s - px) < 1e-3 ? px / s : d)
+    }
+}
+
 /// The width a Text reports for an offered width. SwiftUI never reports more width than it was offered (macOS 27 measured, decision L1): a Text offered 0 reports 0, a
 /// truncated single line reports at most the offer, and a line with no room for even its ellipsis reports the offer itself (the glyphs are clipped, not laid out wider).
 /// The shaped run keeps its own (possibly wider) extent; only the reported frame is clamped, and `RetainedRunChoice` is given the same clamped width.
@@ -353,11 +365,12 @@ public final class BridgeTextMeasurer: TextMeasurer, TextRunSource {
                 log("TEXT_MEASURE text=\(request.text) fontID=\(request.fontID) family=\(shaping.fontFamily) weight=\(shaping.weight) fontSizeDIP=\(shaping.fontSize) lineHeightDIP=\(sentLineHeight) proposedDIP=\(request.proposedWidth.map(String.init(describing:)) ?? "nil") widthPX=\(result.width) heightPX=\(result.height) firstBaselinePX=\(result.firstBaseline) layoutBaselineDIP=\(firstBaselines[request].map { String(describing: $0) } ?? "renderer") lines=\(result.lineCount) lineLimit=\(request.lineLimit.map(String.init) ?? "nil") scale=\(scale)")
             }
             // A system font's frame and first baseline are the Mac's (F1 table, decision G70): the layout baseline is the table's, whichever renderer paints it.
-            let baseline = firstBaselines[request].map(CGFloat.init) ?? CGFloat(result.firstBaseline / scale)
+            // Float to CGFloat only through `TextLayoutPrecision`: a Float quotient (33.2 as 33.2000008) moves a half-pixel centring tie and drives the layout by rounding noise.
+            let baseline = firstBaselines[request].map { TextLayoutPrecision.exactDIP($0, scale: scale) } ?? TextLayoutPrecision.dip(px: result.firstBaseline, scale: scale)
             let reportedWidth = TextReportedWidth.clamp(result.width, proposedDIP: request.proposedWidth, scale: scale)
-            return SwiftRightRuntime.TextMeasurement(size: LayoutSize(width: CGFloat(reportedWidth / scale), height: CGFloat(result.height / scale)),
+            return SwiftRightRuntime.TextMeasurement(size: LayoutSize(width: TextLayoutPrecision.dip(px: reportedWidth, scale: scale), height: TextLayoutPrecision.dip(px: result.height, scale: scale)),
                                                      baseline: baseline, lineCount: result.lineCount,
-                                                     lastBaseline: result.lastBaseline.isFinite && result.lineCount > 0 ? baseline + CGFloat((result.lastBaseline - result.firstBaseline) / scale) : nil)
+                                                     lastBaseline: result.lastBaseline.isFinite && result.lineCount > 0 ? baseline + TextLayoutPrecision.dip(px: result.lastBaseline - result.firstBaseline, scale: scale) : nil)
         } catch {
             failures.append("measure '\(request.text.prefix(40))' fontID=\(request.fontID): \(error)")
             return SwiftRightRuntime.TextMeasurement(size: .zero, baseline: 0, lineCount: 0)

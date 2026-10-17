@@ -1,0 +1,108 @@
+{
+ "edgeAAToleranceLevels": 32,
+ "pairs": 1,
+ "frames": null,
+ "exact": 0,
+ "exactWithExclusions": 0,
+ "edgeAA": 0,
+ "fail": 1,
+ "maxdiff": 224,
+ "diffbbox": [
+  101,
+  95,
+  497,
+  568
+ ],
+ "rows": [
+  {
+   "run": 1,
+   "verdict": "fail",
+   "gate": {
+    "verdict": "fail",
+    "totalDiff": 16363,
+    "inBandDiff": 16163,
+    "outOfBandDiff": 200,
+    "maxInBand": 224,
+    "maxOutOfBand": 224,
+    "bandPixels": 29438
+   },
+   "exact": false,
+   "differentPixels": 16363,
+   "maxdiff": 224,
+   "diffbbox": [
+    101,
+    95,
+    497,
+    568
+   ]
+  }
+ ],
+ "build": {
+  "mac": {
+   "osVersion": "27.0.1",
+   "osBuild": "26A434",
+   "swiftc": "Apple Swift version 6.4 (swiftlang-6.4.0.34.1 clang-2100.3.34.1)",
+   "clockHost": "os=Version_27.0.1_(Build_26A434) pinnedDisplayScale=2.5 windowBackingScale=2.5 effectiveDisplayScale=2.5 screens=[1024x768@1.0x]",
+   "scaleGuard": {
+    "captureScale": 2.5,
+    "status": "OK",
+    "runs": 1,
+    "reported": 1,
+    "distinct": [
+     [
+      2.5,
+      "2.5",
+      2.5
+     ]
+    ],
+    "screens": [
+     "[1024x768@1.0x]"
+    ],
+    "mismatches": [],
+    "unreportedRuns": []
+   }
+  },
+  "stage": {
+   "name": "072e4b967-2ecb98ef",
+   "commit": "072e4b967c84cc81319301da3bf5f7518a3118be",
+   "ref": "HEAD",
+   "mode": "git-archive",
+   "dirty": false,
+   "treeSha256": "sha256:2ecb98ef0a65728b11de728d8707455b0b88452c833828745a992ef7f4bcf257",
+   "files": 407,
+   "paths": [
+    "packages/SwiftRightBridge",
+    "packages/SwiftRightHost",
+    "probes/sr0-s/fresh-runtime",
+    "factory/pipeline/blocks-w0-i1/corpus",
+    "factory/pipeline/blocks-w0-i1/expected"
+   ],
+   "stagedUtc": "2026-10-17T01:37:04Z"
+  },
+  "renderer": {
+   "path": "D:\\a\\_temp\\renderer\\swiftright_render.dll",
+   "label": "renderer-0.10-a15ebc5d",
+   "sha256": "c533438a0900bc5aeaee10661a70c9c3ee0e1d87e774a5ac4aea81589f25f996"
+  },
+  "windows": {
+   "runner": {
+    "os": "Windows",
+    "image": "win25-vs2026",
+    "video": [
+     "Microsoft Hyper-V Video 10.0.26100.1150"
+    ],
+    "exeSha256": "5a10c5572c29c1c2cd68b824b29bdf2eae83c09a4d3564c18c5d48a48d445cd6",
+    "rendererSha256": "c533438a0900bc5aeaee10661a70c9c3ee0e1d87e774a5ac4aea81589f25f996"
+   },
+   "capture": {
+    "ok": true,
+    "runs": 1,
+    "done": 1,
+    "bad": [],
+    "guestOk": true,
+    "guestError": null
+   },
+   "captureKind": "interact"
+  }
+ }
+}
