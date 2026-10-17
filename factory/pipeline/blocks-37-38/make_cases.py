@@ -24,9 +24,9 @@ def rect(x0, y0, x1, y1):
     return [round((OX + x0) * SCALE), round((OY + y0) * SCALE), round((OX + x1) * SCALE), round((OY + y1) * SCALE)]
 
 
-def case(name, typename, body, pair=None, steps=None, dark=None):
+def case(name, typename, body, pair=None, steps=None, dark=None, clock=None):
     """dark: None, or (appearance, scheme): the blocks-17-20 style full-viewport host (the witness fills 320 x 240 itself), e.g. ("darkAqua", "dark")"""
-    CASES[name] = dict(type=typename, body=body, pair=pair, steps=steps, dark=dark)
+    CASES[name] = dict(type=typename, body=body, pair=pair, steps=steps, dark=dark, clock=clock)
 
 
 def click(x, y):
@@ -768,6 +768,33 @@ _ctime_steps = [{"op": "wait", "ms": 700}, {"op": "dump", "label": "start"}, {"o
                 {"op": "dump", "label": "end"}, {"op": "wait", "ms": 250}, {"op": "shot", "label": "end"}, {"op": "wait", "ms": 150}]
 case("swiftui.compat/completion-timing-v1", CO + "ctime", compat_ctime, {"phaseShots": ["start", "mid", "end"], "hazeTolerance": 0, "excludeRects": _ctime_ex}, _ctime_steps)
 
+# A manual-clock case (F1; the removal-fade cases of blocks 6-10 are the model): the action runs at clock time 0 on both hosts and the frames are held at t = 0 and
+# t = 0.5 after it, so a removal the outer 1 s linear transaction governed shows a half-faded ghost at t = 0.5 and a plain removal shows none. An interaction case
+# cannot discriminate here: the Windows settled-frame shot and the Mac pump both land after a 1 s fade has finished.
+compat_settles = r'''// Block swiftui.compat, case settles-only-removal: an outer withAnimation(.linear(duration: 1)) whose only write is inside a nested withAnimation(nil), then a
+// separate plain write that removes a view with an opacity transition. Whether the outer transaction governs that later removal is what the Mac capture decides:
+// the blue bar fades (a ghost at half opacity at t = 0.5) if it does, and is gone at once if it does not. Nothing here is asserted from SwiftUI documentation.
+struct Witness_co_settles: View {
+    @State private var x = 0
+    @State private var shown = true
+    var body: some View {
+        VStack(alignment: .leading, spacing: 4) {
+            Color.orange.frame(width: CGFloat(x) * 20 + 10, height: 6)
+            VStack(spacing: 0) {
+                if shown { Color.blue.frame(width: 60, height: 20).transition(.opacity) }
+            }.frame(width: 60, height: 20, alignment: .top)
+        }
+        .frame(width: 200, height: 80, alignment: .topLeading)
+        .onAppear {
+            FactoryClock.at(0) {
+                withAnimation(FactoryAnim.wrap(.linear(duration: 1))) { withAnimation(nil) { x = 1 } }
+                shown = false
+            }
+        }
+    }
+}'''
+case("swiftui.compat/settles-only-removal-v1", CO + "settles", compat_settles, {"clockGate": {"tracks": [], "extentTolerancePx": 1.0, "progressTolerance": 0.004, "stripPx": 1}}, None, None, "0.0,0.5")
+
 def main():
     only = sys.argv[1:]
     for name, c in CASES.items():
@@ -779,6 +806,7 @@ def main():
                 p = Path(d) / "pair.json"; p.write_text(json.dumps(c["pair"])); cmd += ["--pair-json", str(p)]
             if c["steps"]:
                 s = Path(d) / "steps.json"; s.write_text(json.dumps(c["steps"])); cmd += ["--steps", str(s)]
+            if c.get("clock"): cmd += ["--clock", c["clock"]]
             if c.get("dark"): cmd += ["--dark-host", "--appearance", c["dark"][0], "--scheme", c["dark"][1]]
             subprocess.check_call(cmd)
 

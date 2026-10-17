@@ -1798,10 +1798,19 @@ public final class Graph {
 
     // MARK: Invalidation
 
-    func enqueue(_ transaction: AnimationTransaction) { queued.append(transaction) }
+    /// Queues `transaction` for this graph's next commit. A closed graph never commits again, so it takes none (false).
+    @discardableResult
+    func enqueue(_ transaction: AnimationTransaction) -> Bool {
+        guard !closed else { return false }
+        queued.append(transaction)
+        return true
+    }
 
     /// Whether `transaction` waits in this graph's queue for its next commit.
     func isQueued(_ transaction: AnimationTransaction) -> Bool { queued.contains { $0 === transaction } }
+
+    /// Whether any transaction waits in this graph's queue for its next commit.
+    var hasQueuedTransactions: Bool { !closed && !queued.isEmpty }
 
     /// The transactions pending for the next commit of this graph (a removal reads them to decide whether it animates).
     var pendingTransactions: [AnimationTransaction] { queued + TransactionContext.unattachedTransactions }
@@ -1876,7 +1885,7 @@ public final class Graph {
         Task { @MainActor [weak self] in
             guard let self else { return }
             self.flushScheduled = false
-            if !self.dirty.isEmpty || self.settledAwaitingFlush || !self.pendingChanges.isEmpty { self.flush() }
+            if !self.dirty.isEmpty || self.settledAwaitingFlush || !self.pendingChanges.isEmpty || !self.queued.isEmpty { self.flush() }
         }
     }
 
@@ -1920,7 +1929,7 @@ public final class Graph {
         if profiling { lap(&profile!.diffNS) }
         applyTransactions(transactions, changed: changed)
         if profiling { lap(&profile!.transactionNS) }
-        emit(animationNames: transactions.compactMap { $0.animation?.name })
+        emit(animationNames: transactions.filter { !$0.settlesOnly }.compactMap { $0.animation?.name })   // a settles-only block animated nothing: it names no animation
         TransactionContext.drainDeferred()
     }
 

@@ -425,20 +425,15 @@ enum TransactionContext {
     private static var frames: [Frame] = []
     /// Transactions whose body wrote no graph's state: the next commit of any graph takes them (they only settle their completion).
     private static var unattached: [AnimationTransaction] = []
-    /// A settled completion and the transactions of the frames open when it settled (outermost first). It runs only after those frames have closed and no
-    /// graph still queues their transactions: a write it makes would otherwise coalesce into the commit that applies a still-queued enclosing transaction.
-    private struct Deferred {
-        let run: () -> Void
-        let gates: [AnimationTransaction]
-    }
-    private static var queuedCompletions: [Deferred] = []
-    static var deferred: [() -> Void] { queuedCompletions.map(\.run) }
+    /// A settled completion waits while any graph still queues a transaction for its next commit (and while a frame is open): a write it makes would
+    /// otherwise coalesce into the commit that applies that transaction, however the completion came to settle (inside a nested block, or at a tick with
+    /// no block open) and whichever window queued it. It runs after the commit that takes the queue, which drains again once the queue is empty.
+    private static var queuedCompletions: [() -> Void] = []
+    static var deferred: [() -> Void] { queuedCompletions }
     static func deferCompletion(_ completion: @escaping () -> Void) {
-        queuedCompletions.append(Deferred(run: completion, gates: frames.map(\.transaction)))
+        queuedCompletions.append(completion)
     }
-    private static func isGated(_ item: Deferred) -> Bool {
-        item.gates.contains { gate in graphs.contains { $0.graph?.isQueued(gate) == true } }
-    }
+    private static var anyTransactionQueued: Bool { graphs.contains { $0.graph?.hasQueuedTransactions == true } }
     private static var draining = false
     static var hasOpenFrame: Bool { !frames.isEmpty }
 
@@ -475,14 +470,14 @@ enum TransactionContext {
         if !frame.everTouched { transaction.settlesOnly = frame.hadNested; unattached.append(transaction); drainIfIdle(); return }
         var enqueued = false
         if frames.isEmpty {
-            for graph in frame.touched { graph.enqueue(transaction); enqueued = true }
+            for graph in frame.touched where graph.enqueue(transaction) { enqueued = true }
         } else {
             for graph in frame.touched { graph.commitSegment(transaction) }
         }
         // Writes of this body that a nested block's segment commit already committed leave nothing to queue. The completion then waits only for the
         // animation: settle now unless a graph still holds the transaction for its next commit (which settles it).
         if !enqueued && !graphs.contains(where: { $0.graph?.isQueued(transaction) == true }) { transaction.settleIfDone() }
-        // Completions that settled inside this body stay queued while a graph still holds this (or an enclosing) transaction; they run at that graph's commit.
+        // Completions that settled inside this body stay queued while a graph still holds a transaction; they run at that graph's commit.
         drainIfIdle()
     }
 
@@ -507,16 +502,14 @@ enum TransactionContext {
 
     static var unattachedTransactions: [AnimationTransaction] { unattached }
 
-    /// Runs completions in order, only while no transaction frame is open, and skipping any whose gating transactions are still queued on a graph (they
-    /// stay queued, in order, and run at the commit that takes those transactions). A completion may schedule more, so this loops until none is runnable.
+    /// Runs completions in order, only while no transaction frame is open and no graph queues a transaction. Otherwise they stay queued, in order, and run
+    /// at the commit that takes the queue. A completion may schedule more, so this loops until the queue is empty or gated again.
     static func drainDeferred() {
         guard !draining else { return }
         draining = true
         defer { draining = false }
-        while frames.isEmpty {
-            guard let index = queuedCompletions.firstIndex(where: { !isGated($0) }) else { return }
-            let item = queuedCompletions.remove(at: index)
-            item.run()
+        while frames.isEmpty, !anyTransactionQueued, !queuedCompletions.isEmpty {
+            queuedCompletions.removeFirst()()
         }
     }
 }

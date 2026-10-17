@@ -48,6 +48,27 @@ struct ChainScreen: View {
     }
 }
 
+@Observable
+@MainActor
+final class SettlesModel {
+    var x = 0
+    var y = 0
+    var shown = true
+}
+
+/// A removable blue bar (opacity transition) above a red bar that follows `x` and a green bar that follows `y`.
+struct SettlesScreen: View {
+    let model: SettlesModel
+    var body: some View {
+        VStack(spacing: 0) {
+            if model.shown { Color.blue.frame(width: 50, height: 10).transition(.opacity) }
+            Color.red.frame(width: CGFloat(model.x) * 20 + 10, height: 10)
+            Color.green.frame(width: CGFloat(model.y) * 20 + 10, height: 10)
+        }
+        .frame(width: 200, height: 80, alignment: .top)
+    }
+}
+
 @MainActor
 final class TransactionBoundaryScopeTests: XCTestCase {
     final class Records { var items: [CommitRecord] = [] }
@@ -490,6 +511,109 @@ final class TransactionBoundaryScopeTests: XCTestCase {
         graphB.tick(now: 0.5)
         XCTAssertEqual(widths(graphA)[2], 50, accuracy: 1e-9, "A's completion write is plain, not B's 2 s animation")
         XCTAssertEqual(widths(graphB)[1], 20, accuracy: 1e-9, "B's own write animates under its transaction")
+    }
+
+    // Issue #29 (1): a completion that settles at a tick with no block open, while an unrelated transaction is queued on its graph, does not run until that
+    // transaction's commit has taken the queue; its write is then plain, and the unrelated write animates.
+    func testTickSettledCompletionDoesNotTakeAnUnrelatedQueuedTransaction() {
+        let model = ChainModel()
+        model.react = { _, _ in }
+        let (graph, _) = chain(model)
+        var completed = false
+        withAnimation(.linear(duration: 1.0)) { model.trigger = 40 } completion: {
+            completed = true
+            model.third = 40
+        }
+        graph.flush()
+        graph.tick(now: 0)
+        withAnimation(.linear(duration: 2.0)) { model.follower = 40 }  // unrelated, queued on the graph, not yet committed
+        graph.tick(now: 1.0)  // the first animation ends here and its completion settles
+        XCTAssertFalse(completed, "the completion waits for the queued transaction's commit")
+        graph.flush()
+        XCTAssertTrue(completed, "it runs after the commit that took the queue")
+        graph.flush()  // commits the completion's write, plain
+        graph.tick(now: 1.0)
+        graph.tick(now: 1.5)
+        let mid = widths(graph)
+        XCTAssertEqual(mid[1], 20, accuracy: 1e-9, "the unrelated write runs its own 2 s animation")
+        XCTAssertEqual(mid[2], 50, accuracy: 1e-9, "the completion's write snaps")
+    }
+
+    // Issue #29 (2a): an outer withAnimation whose only writes are in nested blocks only settles its completion: a later unrelated write is plain, and the
+    // commit record names no animation (issue #29 item 4).
+    func testSettlesOnlyOuterBlockDoesNotAnimateALaterUnrelatedWrite() {
+        let model = SettlesModel()
+        let graph = Graph(SettlesScreen(model: model))
+        let records = Records()
+        graph.commitSink = { records.items.append($0) }
+        graph.flush()
+        withAnimation(.linear(duration: 2.0)) { withAnimation(nil) { model.x = 1 } }
+        let base = records.items.count
+        model.y = 1  // plain, later, unrelated
+        graph.flush()
+        graph.tick(now: 0)
+        graph.tick(now: 0.5)
+        var nodes: [ResolvedNode] = []
+        collect(graph.snapshot(), into: &nodes) { $0.kind == "Color" }
+        XCTAssertEqual(Double(nodes[2].frame.width), 30, accuracy: 1e-9, "the later write snaps: the outer 2 s animation governs nothing")
+        XCTAssertTrue(records.items.dropFirst(base).allSatisfy { $0.animation == nil }, "no commit after the block names an animation")
+    }
+
+    // Issue #29 (2b): the same outer block governs no later removal (Transition.swift removalTransaction): no ghost is kept.
+    func testSettlesOnlyOuterBlockDoesNotAnimateALaterRemoval() {
+        let model = SettlesModel()
+        let graph = Graph(SettlesScreen(model: model))
+        graph.flush()
+        XCTAssertEqual(colourCount(graph), 3)
+        withAnimation(.linear(duration: 2.0)) { withAnimation(nil) { model.x = 1 } }
+        model.shown = false  // plain removal
+        graph.flush()
+        graph.tick(now: 0)
+        graph.tick(now: 0.5)
+        XCTAssertEqual(colourCount(graph), 2, "the removed bar is gone at once: no fade-out ghost")
+    }
+
+    // Issue #29 hardening: a graph torn down inside a withAnimation body after a write takes no queued transaction (it never commits again), so the block's
+    // completion still runs and no completion in the process is held back.
+    func testTearDownInsideABodyDoesNotStrandTheCompletion() {
+        let model = ChainModel()
+        model.react = { _, _ in }
+        let (graph, _) = chain(model)
+        var fired = false
+        withAnimation(.linear(duration: 1.0)) {
+            model.trigger = 40
+            graph.tearDown()
+        } completion: {
+            fired = true
+        }
+        XCTAssertTrue(fired, "the completion runs: the closed graph holds no queued transaction")
+        // an unrelated completion elsewhere is not held back either
+        let other = ChainModel()
+        other.react = { _, _ in }
+        let (otherGraph, _) = chain(other)
+        var otherFired = false
+        withAnimation(.linear(duration: 1.0)) { other.trigger = 40 } completion: { otherFired = true }
+        otherGraph.flush()
+        otherGraph.tick(now: 0)
+        otherGraph.tick(now: 1.0)
+        XCTAssertTrue(otherFired)
+    }
+
+    // Issue #29 hardening: flush() called synchronously inside a body commits before the body ends; the transaction is queued at the end of the body with
+    // nothing dirty. The scheduled flush still commits a non-empty queue, so the completion runs.
+    func testSynchronousFlushInsideABodyDoesNotStrandTheQueuedTransaction() async throws {
+        let model = ChainModel()
+        model.react = { _, _ in }
+        let (graph, _) = chain(model)
+        var fired = false
+        withAnimation(.linear(duration: 1.0)) {
+            model.trigger = 40
+            graph.flush()
+        } completion: {
+            fired = true
+        }
+        try await settle(until: { fired })
+        XCTAssertTrue(fired, "the scheduled flush took the queued transaction and settled it")
     }
 
     // A transaction belongs to the graph whose state its body wrote: another window's commit must not consume it.

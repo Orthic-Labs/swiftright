@@ -7,7 +7,7 @@ import argparse, json, shutil, subprocess, sys
 from pathlib import Path
 H = Path(__file__).resolve().parent
 ap = argparse.ArgumentParser(); ap.add_argument("case"); ap.add_argument("witness_file"); ap.add_argument("expr")
-ap.add_argument("--settle", default="0.3"); ap.add_argument("--dark-host", action="store_true", help="blocks-17-20 style full-viewport host: the witness fills the 320 x 240 viewport itself and the case chooses --appearance / --scheme"); ap.add_argument("--font", action="append", default=[], help="bundled font file: copied to package/Resources (Windows registers it through the renderer) and passed to the Mac host as --fonts"); ap.add_argument("--appearance", default="aqua"); ap.add_argument("--scheme", default="light"); ap.add_argument("--steps"); ap.add_argument("--pair-json")
+ap.add_argument("--clock", help="F1 manual clock: comma-separated seconds; uses the blocks-6-10 Mac clock host and writes pair.json \"clock\" (the Windows host already reads SWIFTRIGHT_CLOCK / SWIFTRIGHT_FRAME)"); ap.add_argument("--settle", default="0.3"); ap.add_argument("--dark-host", action="store_true", help="blocks-17-20 style full-viewport host: the witness fills the 320 x 240 viewport itself and the case chooses --appearance / --scheme"); ap.add_argument("--font", action="append", default=[], help="bundled font file: copied to package/Resources (Windows registers it through the renderer) and passed to the Mac host as --fonts"); ap.add_argument("--appearance", default="aqua"); ap.add_argument("--scheme", default="light"); ap.add_argument("--steps"); ap.add_argument("--pair-json")
 a = ap.parse_args()
 case = H / a.case; w = Path(a.witness_file).read_bytes()
 (case / "package/Sources/FactoryProbe").mkdir(parents=True, exist_ok=True)
@@ -26,7 +26,7 @@ if a.dark_host:
         cfg["steps"] = steps; cfg["macArgs"] = ["--steps", json.dumps(steps, separators=(",", ":"))]
     if cfg: (case / "pair.json").write_text(json.dumps(cfg, indent=1) + "\n")
     print("stamped (dark host)", case); sys.exit(0)
-t = (H / "shared-mac-host/CaptureHost.template.swift").read_text()
+t = (H / ("../blocks-6-10/MacClockHost.template.swift" if a.clock else "shared-mac-host/CaptureHost.template.swift")).read_text()
 assert "ScalePin." in t, "Mac host template does not pin the window/displayScale (decision C12; factory/tools/mac-scale-pin/pin_hosts.py)"
 (case / "mac-source/Sources/MacHost/CaptureHost.swift").write_text(t.replace("@@WITNESS@@", a.expr).replace("@@SETTLE@@", a.settle))
 subprocess.check_call([sys.executable, str(H.parent / "pilot-delivery-five-v1/shared-windows-host/stamp-case.py"), str(case), "--witness", a.expr, "--centered"], stdout=subprocess.DEVNULL)
@@ -40,6 +40,7 @@ if a.pair_json: cfg.update(json.loads(Path(a.pair_json).read_text()))
 if a.steps:
     steps = json.loads(Path(a.steps).read_text()); steps = steps["steps"] if isinstance(steps, dict) else steps
     cfg["steps"] = steps; cfg["macArgs"] = ["--steps", json.dumps(steps, separators=(",", ":"))]
+if a.clock: cfg["clock"] = [float(x) for x in a.clock.split(",")]
 if a.font:
     res = case / "package/Resources"; res.mkdir(parents=True, exist_ok=True)
     for f in a.font: shutil.copy(f, res / Path(f).name)
