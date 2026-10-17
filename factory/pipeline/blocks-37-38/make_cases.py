@@ -856,9 +856,10 @@ def wheel_pairs(kind, rows):
     """scrollGate pairs of a wheel case. perLine w3 <-> in1 (one notch = 3 lines) only where 3 lines fit inside the range; clamp w10 <-> in10 only where both sides
     reach their range end (the range is the document less the 90 pt viewport; a range below 0 has no scroll, so no pair)."""
     rng = scr_doc(kind, rows) - SCR_H
+    line = LINE_PT if kind == "list" else 10.0   # measured M2: a List line is one row (24 pt), a ScrollView line 10 pt
     pairs = []
-    if rng >= 0 and 3 * LINE_PT < rng: pairs.append({"mac": "w3", "win": "in1", "perLine": True, "macLines": 3, "winLines": 3})
-    if rng >= 0 and 10 * LINE_PT > rng: pairs.append({"mac": "w10", "win": "in10", "clamp": True})
+    if rng >= 0 and 3 * line < rng: pairs.append({"mac": "w3", "win": "in1", "perLine": True, "macLines": 3, "winLines": 3})
+    if rng >= 0 and 10 * line > rng + 1: pairs.append({"mac": "w10", "win": "in10", "clamp": True})   # Mac 10 lines must reach its end
     return pairs
 
 
@@ -964,7 +965,7 @@ for _kind, _mk in (("list", sc_list), ("sv", sc_view)):
               scr_thumb(_c, 0.5, 0.0) + scr_thumb(_c, 0.0, 0.5)),
              ("sax10", [sc_op("to", "sax10-reset", at="begin"), sc_op("axvalue", "sax10-ax", value=1.0)],
               scr_thumb(_c, 0.5, 0.0) + scr_thumb(_c, 0.0, 1.0))], scroller_png=True,
-            scroll_pairs=[{"mac": "s0", "win": "in0"}, {"mac": "sax05", "win": "in1"}, {"mac": "sdouble05", "win": "in3"}, {"mac": "sax10", "win": "in5"}])
+            scroll_pairs=[{"mac": "s0", "win": "in0"}, {"mac": "sax05", "win": "in1"}, {"mac": "sax10", "win": "in5"}])   # sdouble05 not paired: setting NSScroller.doubleValue + action scrolls to 0.15, not 0.5 (stand-in, not a reference)
 
 
 def main():

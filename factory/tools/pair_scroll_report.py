@@ -50,13 +50,16 @@ def mac_reading(lines, label):
     return dict(status=d.get("status"), offset=number(d, "offset"), content=number(d, "contentHeight"), view=number(d, "viewportHeight"), value=number(d, "scrollerValue"))
 
 
-def win_reading(lines, label):
-    """The settled WIN_SCROLL reading of input <label> (in<k>): the last line printed for that label."""
+def win_reading(lines, label, upto=False):
+    """The settled WIN_SCROLL reading of input <label> (in<k>): the last line printed for that label. With upto (clamp pairs), the last line of
+    any input k' <= k: an input that hits the range end changes nothing, so the host prints no new line for it."""
     found = None
+    want = int(label[2:]) if upto and label.startswith("in") and label[2:].isdigit() else None
     for l in lines:
         if l.startswith("WIN_SCROLL "):
             d = fields(l[len("WIN_SCROLL "):])
-            if d.get("label") == label:
+            lab = d.get("label", "")
+            if lab == label or (want is not None and lab.startswith("in") and lab[2:].isdigit() and int(lab[2:]) <= want):
                 found = d
     if found is None:
         return None
@@ -89,10 +92,20 @@ def judge(pair, m, w, rest, tol):
         diff = abs(w["offset"] / wl - rel / ml) * ml
         if diff > tol: probs.append(f"{tag}: per-line amount differs by {diff:.2f} pt over {ml:g} lines (mac {rel:.2f} pt / {ml:g} lines, windows {w['offset']:.2f} pt / {wl:g} lines)")
     else:
-        if abs(w["offset"] - rel) > tol: probs.append(f"{tag}: offset mac {rel:.2f} windows {w['offset']:.2f} (tolerance {tol:g} pt)")
+        # A Windows drag moves the thumb in whole device pixels (0.4 pt at scale 2.5): one pixel of thumb travel is maxOffset * 0.4 / travel pt of
+        # offset, so the drag target can only be met to within that quantum (the Mac sets its value exactly). Track and thumb as ScrollerMetrics (M1).
+        track = w["view"] - 6.2
+        thumb = max(20.0, track * w["view"] / w["content"]) if w["content"] > 0 else 20.0
+        travel = track - thumb
+        quantum = wmax * 0.4 / travel if travel > 0 and wmax > 0 else 0.0
+        dtol = tol + quantum
+        if abs(w["offset"] - rel) > dtol: probs.append(f"{tag}: offset mac {rel:.2f} windows {w['offset']:.2f} (tolerance {dtol:.2f} pt = {tol:g} + one thumb pixel {quantum:.2f})")
+        mval = rel / mmax if mmax > 0 else 0.0      # the Mac value relative to its rest offset (its own scrollerValue counts the 0.2 pt rest)
         if m["value"] is None or m["value"] < 0: probs.append(f"{tag}: mac has no scroller value")
         elif w["value"] is None: probs.append(f"{tag}: windows has no value")
-        elif abs(w["value"] - m["value"]) > VALUE_TOL: probs.append(f"{tag}: value mac {m['value']:.3f} windows {w['value']:.3f} (tolerance {VALUE_TOL})")
+        else:
+            vtol = VALUE_TOL + (quantum / wmax if wmax > 0 else 0.0)
+            if abs(w["value"] - mval) > vtol: probs.append(f"{tag}: value mac {mval:.3f} windows {w['value']:.3f} (tolerance {vtol:.3f})")
     return not probs, probs
 
 
@@ -123,7 +136,7 @@ def main():
         if not pairs:
             row["problems"].append("scrollGate declares no pairs")
         for p in pairs:
-            m, w = mac_reading(mlines, p["mac"]), win_reading(wlines, p["win"])
+            m, w = mac_reading(mlines, p["mac"]), win_reading(wlines, p["win"], upto=bool(p.get("clamp")))
             ok, probs = judge(p, m, w, rest, tol)
             row["pairs"].append(dict(mac=p["mac"], win=p["win"], kind=kind(p), ok=ok, problems=probs, macReading=m, windowsReading=w))
             row["problems"] += probs

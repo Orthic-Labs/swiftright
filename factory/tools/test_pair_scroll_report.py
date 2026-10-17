@@ -93,24 +93,24 @@ class ClampPair(unittest.TestCase):
 
 class DragPair(unittest.TestCase):
     def mac(self, label, offset, value, status="OK"):
-        return [mac_line("o0-to", REST, scroller=0.0), mac_line(f"{label}-to", offset, status=status, scroller=value)]
+        return [mac_line("o0-to", REST, content=169.6, scroller=0.0), mac_line(f"{label}-to", offset, status=status, content=169.6, scroller=value)]   # Mac range 80
 
     def test_offset_and_value_agree(self):
-        ok, probs = judge({"mac": "omid", "win": "in1"}, self.mac("omid", 40.2, 0.5), [win_line("in1", 40.0, value=0.5)], first="o0")
+        ok, probs = judge({"mac": "omid", "win": "in1"}, self.mac("omid", 40.2, 0.5), [win_line("in1", 40.0, value=0.5, content=170.0)], first="o0")
         self.assertTrue(ok, probs)
 
     def test_offset_disagreement_fails(self):
-        ok, probs = judge({"mac": "omid", "win": "in1"}, self.mac("omid", 40.2, 0.5), [win_line("in1", 30.0, value=0.5)], first="o0")
+        ok, probs = judge({"mac": "omid", "win": "in1"}, self.mac("omid", 40.2, 0.5), [win_line("in1", 30.0, value=0.5, content=170.0)], first="o0")
         self.assertFalse(ok)
         self.assertTrue(any("offset mac" in p for p in probs), probs)
 
     def test_value_disagreement_fails(self):
-        ok, probs = judge({"mac": "omid", "win": "in1"}, self.mac("omid", 40.2, 0.5), [win_line("in1", 40.0, value=0.6)], first="o0")
+        ok, probs = judge({"mac": "omid", "win": "in1"}, self.mac("omid", 40.2, 0.5), [win_line("in1", 40.0, value=0.6, content=170.0)], first="o0")
         self.assertFalse(ok)
         self.assertTrue(any("value" in p for p in probs), probs)
 
     def test_no_mac_scroller_fails(self):
-        ok, probs = judge({"mac": "omid", "win": "in1"}, self.mac("omid", 40.2, -1.0), [win_line("in1", 40.0, value=0.5)], first="o0")
+        ok, probs = judge({"mac": "omid", "win": "in1"}, self.mac("omid", 40.2, -1.0), [win_line("in1", 40.0, value=0.5, content=170.0)], first="o0")
         self.assertFalse(ok)
         self.assertTrue(any("no scroller value" in p for p in probs), probs)
 
