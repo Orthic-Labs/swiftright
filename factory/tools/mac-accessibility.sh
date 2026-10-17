@@ -53,6 +53,7 @@ snapshot() {
   echo "== $label"
   for k in $keys; do echo "defaults.$k=$(read_default "$k")"; done
   echo "defaults.AppleShowScrollBars=$(read_global AppleShowScrollBars)"
+  echo "defaults.AppleScrollerPagingBehavior=$(read_global AppleScrollerPagingBehavior)"   # logged only (issue #31): 0/absent = jump to the next page, 1 = jump to the spot clicked
   swift "$here/mac-accessibility.swift" 2>&1
   echo "sw_vers: $(sw_vers -productVersion) $(sw_vers -buildVersion)"
 }

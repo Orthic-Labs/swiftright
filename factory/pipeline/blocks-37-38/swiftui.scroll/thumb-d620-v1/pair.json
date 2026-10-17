@@ -1,0 +1,81 @@
+{
+ "phaseShots": [
+  "o0",
+  "omid",
+  "oend"
+ ],
+ "hazeTolerance": 1,
+ "excludeRects": [
+  {
+   "name": "report-only: scroll measurement (issue #31). Windows does not scroll and draws no scroll bar (H39); the Mac reference is read from the MAC_SCROLL lines and the ax / list dumps, never compared pixel for pixel",
+   "rect": [
+    0,
+    0,
+    800,
+    600
+   ]
+  }
+ ],
+ "steps": [
+  {
+   "op": "wait",
+   "ms": 700
+  },
+  {
+   "op": "wait",
+   "ms": 300
+  },
+  {
+   "op": "dump",
+   "label": "o0"
+  },
+  {
+   "op": "wait",
+   "ms": 250
+  },
+  {
+   "op": "shot",
+   "label": "o0"
+  },
+  {
+   "op": "wait",
+   "ms": 300
+  },
+  {
+   "op": "dump",
+   "label": "omid"
+  },
+  {
+   "op": "wait",
+   "ms": 250
+  },
+  {
+   "op": "shot",
+   "label": "omid"
+  },
+  {
+   "op": "wait",
+   "ms": 300
+  },
+  {
+   "op": "dump",
+   "label": "oend"
+  },
+  {
+   "op": "wait",
+   "ms": 250
+  },
+  {
+   "op": "shot",
+   "label": "oend"
+  },
+  {
+   "op": "wait",
+   "ms": 200
+  }
+ ],
+ "macArgs": [
+  "--steps",
+  "[{\"op\":\"wait\",\"ms\":700},{\"op\":\"scroll\",\"how\":\"to\",\"label\":\"o0-to\",\"at\":\"begin\"},{\"op\":\"wait\",\"ms\":300},{\"op\":\"dump\",\"label\":\"o0\"},{\"op\":\"listdump\",\"label\":\"o0\"},{\"op\":\"wait\",\"ms\":250},{\"op\":\"shot\",\"label\":\"o0\"},{\"op\":\"scroll\",\"how\":\"to\",\"label\":\"omid-to\",\"at\":\"mid\"},{\"op\":\"wait\",\"ms\":300},{\"op\":\"dump\",\"label\":\"omid\"},{\"op\":\"listdump\",\"label\":\"omid\"},{\"op\":\"wait\",\"ms\":250},{\"op\":\"shot\",\"label\":\"omid\"},{\"op\":\"scroll\",\"how\":\"to\",\"label\":\"oend-to\",\"at\":\"end\"},{\"op\":\"wait\",\"ms\":300},{\"op\":\"dump\",\"label\":\"oend\"},{\"op\":\"listdump\",\"label\":\"oend\"},{\"op\":\"wait\",\"ms\":250},{\"op\":\"shot\",\"label\":\"oend\"},{\"op\":\"wait\",\"ms\":200}]"
+ ]
+}

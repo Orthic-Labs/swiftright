@@ -292,6 +292,156 @@ final class Driver {
         }
         if !window.performKeyEquivalent(with: ev) { (window.firstResponder ?? host).keyDown(with: ev) }
     }
+
+    // MARK: scroll stand-ins (issue #31 lane L1, measurement of the Mac's scrolling)
+    // The offscreen window never receives a real wheel, key or mouse event (see FactoryStandIn), so each scroll step drives the NSScrollView the way the event would and then
+    // READS THE RESULT BACK: a step that expects the document to move FAILS (recorded in `scrollFailures`, thrown after the final capture so every later step is still measured)
+    // when documentVisibleRect did not move. Every step prints one greppable `MAC_SCROLL` line (mac-run-NN.log). Op: {"op":"scroll","how":...,"label":...}; hows:
+    //   to        at: "begin" | "mid" | "end" | points from the top: NSClipView.scroll(to:) + reflectScrolledClipView (what the scroller's action does)
+    //   wheel     delta (default -1, negative = down), times (default 1): CGEvent(scrollWheelEvent2Source:units: .line, wheelCount 1, wheel1: delta) -> NSEvent -> NSScrollView.scrollWheel(with:)
+    //   action    selector (e.g. "scrollPageDown:"), target "scrollview" (default) | "documentview" | "outline": sent with perform(_:); FAILS when the target does not respond
+    //   select    row: selects an outline row and gives the outline the keyboard (does not move)
+    //   moveDown  times: NSTableView.moveDown(_:) on the outline (the arrow key's action)
+    //   axvalue   value (default 0.5): the vertical NSScroller's accessibility value set in process (accessibilitySetValue:forAttribute: AXValue, then setAccessibilityValue:)
+    //   scroller  value (default 0.5): NSScroller.doubleValue = value, then its action sent to its target
+    // "expect": "move" (default for to/wheel/action/moveDown/axvalue/scroller, but a `to` whose target equals the current offset expects none) | "any".
+    var scrollFailures: [String] = []
+
+    struct ScrollReading {
+        var y = 0.0, top = 0.0, doc = 0.0, view = 0.0, scroller = -1.0, axValue = -1.0, knob = -1.0
+        var flipped = true, hasScroller = false
+        var insets = NSEdgeInsets()
+    }
+
+    func scrollViewFound() -> NSScrollView? {
+        func find(_ v: NSView) -> NSScrollView? {
+            if let s = v as? NSScrollView, s.documentView != nil { return s }
+            for c in v.subviews { if let f = find(c) { return f } }
+            return nil
+        }
+        return find(host)
+    }
+
+    func scrollReading(_ sv: NSScrollView) -> ScrollReading {
+        var r = ScrollReading()
+        let vis = sv.documentVisibleRect
+        r.doc = Double(sv.documentView?.frame.height ?? 0)
+        r.view = Double(vis.height)
+        r.flipped = sv.documentView?.isFlipped ?? true
+        r.y = Double(vis.origin.y)
+        r.top = r.flipped ? r.y : r.doc - r.y - r.view
+        r.insets = sv.contentInsets
+        if let sc = sv.verticalScroller {
+            r.hasScroller = true
+            r.scroller = sc.doubleValue
+            r.knob = Double(sc.knobProportion)
+            r.axValue = (sc.accessibilityValue() as? NSNumber)?.doubleValue ?? -1
+        }
+        return r
+    }
+
+    /// The scroll range from the top in points: -inset.top ... doc - viewport + inset.bottom.
+    func scrollRange(_ sv: NSScrollView) -> (min: Double, max: Double) {
+        let r = scrollReading(sv)
+        let lo = -Double(sv.contentInsets.top)
+        return (lo, max(lo, r.doc - Double(sv.contentView.bounds.height) + Double(sv.contentInsets.bottom)))
+    }
+
+    func scrollReport(_ label: String, _ how: String, before: ScrollReading, after a: ScrollReading, expectMove: Bool, note: String) {
+        let moved = abs(a.y - before.y) > 0.01
+        let ok = !expectMove || moved
+        func f(_ v: Double) -> String { String(format: "%.3f", v) }
+        print("MAC_SCROLL label=\(label) how=\(how) status=\(ok ? "OK" : "FAIL") moved=\(moved) before=\(f(before.y)) offset=\(f(a.y)) top=\(f(a.top)) contentHeight=\(f(a.doc)) viewportHeight=\(f(a.view)) scrollerValue=\(f(a.scroller)) axValue=\(f(a.axValue)) knobProportion=\(f(a.knob)) hasScroller=\(a.hasScroller) flipped=\(a.flipped) insets=\(a.insets.top),\(a.insets.bottom) selected=\(table()?.selectedRow ?? -1) \(note)")
+        if !ok { scrollFailures.append("\(label) (\(how)): documentVisibleRect.origin.y stayed \(f(before.y)) \(note)") }
+    }
+
+    func scrollStep(_ s: [String: Any]) throws {
+        let label = s["label"] as? String ?? "step", how = s["how"] as? String ?? ""
+        guard let sv = scrollViewFound() else { throw NSError(domain: "MacHost", code: 30, userInfo: [NSLocalizedDescriptionKey: "no NSScrollView under the host"]) }
+        let before = scrollReading(sv)
+        let anyMove = (s["expect"] as? String) == "any"
+        var expectMove = !anyMove
+        var note = ""
+        func num(_ k: String, _ d: Double) -> Double { (s[k] as? NSNumber)?.doubleValue ?? d }
+        switch how {
+        case "to":
+            let range = scrollRange(sv)
+            var top: Double
+            switch s["at"] {
+            case let n as NSNumber: top = n.doubleValue
+            case let str as String where str == "end": top = range.max
+            case let str as String where str == "mid": top = (range.min + range.max) / 2
+            default: top = range.min
+            }
+            top = Swift.min(Swift.max(top, range.min), range.max)
+            let y = before.flipped ? top : before.doc - top - Double(sv.contentView.bounds.height)
+            if abs(top - before.top) < 0.5 { expectMove = false }
+            sv.contentView.scroll(to: NSPoint(x: sv.contentView.bounds.origin.x, y: CGFloat(y)))
+            sv.reflectScrolledClipView(sv.contentView)
+            note = "targetTop=\(top) range=\(range.min)...\(range.max)"
+        case "wheel":
+            let delta = Int32(num("delta", -1)), times = Int(num("times", 1))
+            for _ in 0..<times {
+                guard let cg = CGEvent(scrollWheelEvent2Source: nil, units: .line, wheelCount: 1, wheel1: delta, wheel2: 0, wheel3: 0), let ev = NSEvent(cgEvent: cg) else {
+                    throw NSError(domain: "MacHost", code: 31, userInfo: [NSLocalizedDescriptionKey: "cannot build the scroll wheel event"])
+                }
+                sv.scrollWheel(with: ev)
+                pump(0.05)
+            }
+            note = "delta=\(delta) times=\(times)"
+        case "action":
+            let name = s["selector"] as? String ?? ""
+            let target = s["target"] as? String ?? "scrollview"
+            let obj: NSObject = target == "documentview" ? (sv.documentView ?? sv) : target == "outline" ? (table() ?? sv) : sv
+            let sel = NSSelectorFromString(name)
+            let responds = obj.responds(to: sel)
+            if responds { _ = obj.perform(sel, with: nil) }
+            note = "selector=\(name) target=\(target) responds=\(responds)"
+            if !responds { scrollFailures.append("\(label) (action): \(target) does not respond to \(name)") }
+        case "select":
+            guard let tv = table() else { throw NSError(domain: "MacHost", code: 32, userInfo: [NSLocalizedDescriptionKey: "no outline to select in"]) }
+            let row = Int(num("row", 0))
+            if window.firstResponder !== tv { _ = window.makeFirstResponder(tv) }
+            tv.selectRowIndexes([row], byExtendingSelection: false)
+            expectMove = false
+            note = "row=\(row) selectedNow=\(tv.selectedRow)"
+            if tv.selectedRow != row { scrollFailures.append("\(label) (select): row \(row) not selected (\(tv.selectedRow))") }
+        case "moveDown":
+            guard let tv = table() else { throw NSError(domain: "MacHost", code: 33, userInfo: [NSLocalizedDescriptionKey: "no outline to move in"]) }
+            if window.firstResponder !== tv { _ = window.makeFirstResponder(tv) }
+            let times = Int(num("times", 1))
+            for _ in 0..<times { tv.moveDown(nil); pump(0.05) }
+            note = "times=\(times) rows=\(tv.numberOfRows)"
+        case "axvalue", "scroller":
+            guard let sc = sv.verticalScroller else {
+                scrollFailures.append("\(label) (\(how)): the scroll view has no vertical scroller"); print("MAC_SCROLL label=\(label) how=\(how) status=FAIL no vertical scroller"); return
+            }
+            let v = num("value", 0.5)
+            if how == "scroller" {
+                sc.doubleValue = v
+                if let action = sc.action { _ = sc.sendAction(action, to: sc.target) }
+                note = "value=\(v) action=\(sc.action.map { NSStringFromSelector($0) } ?? "nil") target=\(sc.target.map { String(describing: type(of: $0)) } ?? "nil") hitPart=\(sc.hitPart.rawValue)"
+            } else {
+                var path = "none"
+                let first = Selector("accessibilitySetValue:forAttribute:"), second = Selector("setAccessibilityValue:")
+                if sc.responds(to: first) {
+                    _ = sc.perform(first, with: NSNumber(value: v), with: "AXValue" as NSString); path = "accessibilitySetValue:forAttribute:"
+                    pump(0.3); sv.layoutSubtreeIfNeeded()
+                    if abs(Double(sv.documentVisibleRect.origin.y) - before.y) < 0.01, sc.responds(to: second) {
+                        _ = sc.perform(second, with: NSNumber(value: v)); path += ">setAccessibilityValue:"
+                    }
+                } else if sc.responds(to: second) {
+                    _ = sc.perform(second, with: NSNumber(value: v)); path = "setAccessibilityValue:"
+                }
+                note = "value=\(v) path=\(path)"
+            }
+        default:
+            throw NSError(domain: "MacHost", code: 34, userInfo: [NSLocalizedDescriptionKey: "unknown scroll how '\(how)'"])
+        }
+        pump(0.35)
+        host.layoutSubtreeIfNeeded(); host.displayIfNeeded()
+        scrollReport(label, how, before: before, after: scrollReading(sv), expectMove: expectMove, note: note)
+    }
 }
 
 @MainActor
@@ -316,6 +466,13 @@ func runSteps(_ steps: [[String: Any]], driver: Driver, png: String, ax: String?
                 let name = s["name"] as? String ?? ""
                 try driver.pressButton(where: { driver.label($0) == name })
             case "wait": pump(((s["ms"] as? NSNumber)?.doubleValue ?? 0) / 1000)
+            case "scroll": try driver.scrollStep(s)
+            case "listdump":
+                // the outline's row frames after this step: list-NN-<label>.json beside the ax dumps (issue #31); a witness without an outline writes nothing
+                if let ax, let dump = driver.listDump() {
+                    let p = ax.replacingOccurrences(of: "/ax-", with: "/list-").replacingOccurrences(of: ".json", with: "-\(s["label"] as? String ?? "step").json")
+                    try JSONSerialization.data(withJSONObject: dump, options: [.prettyPrinted]).write(to: URL(fileURLWithPath: p))
+                }
             case "dump":
                 if let ax { try AXDump.write(main: driver.window, scale: Double(captureScale), to: ax.replacingOccurrences(of: ".json", with: "-\(s["label"] as? String ?? "step").json")) }
             case "shot":
@@ -375,6 +532,9 @@ func capture(_ witness: AnyView, width: CGFloat, height: CGFloat, to path: Strin
         try JSONSerialization.data(withJSONObject: dump, options: [.prettyPrinted]).write(to: URL(fileURLWithPath: listPath))
     }
     print("MAC_CAPTURE \(Int((width * captureScale).rounded()))x\(Int((height * captureScale).rounded())) scale=\(captureScale) appearance=\(window.effectiveAppearance.name.rawValue) png=\(path)")
+    if !driver.scrollFailures.isEmpty {
+        throw NSError(domain: "MacHost", code: 35, userInfo: [NSLocalizedDescriptionKey: "scroll stand-in failed (\(driver.scrollFailures.count)): " + driver.scrollFailures.joined(separator: "; ")])
+    }
 }
 
 @main

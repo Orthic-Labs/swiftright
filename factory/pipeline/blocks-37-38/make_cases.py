@@ -821,6 +821,88 @@ struct Witness_co_empty: View {
 }'''
 case("swiftui.compat/empty-withanimation-v1", CO + "empty", compat_empty, {"clockGate": {"tracks": [], "extentTolerancePx": 1.0, "progressTolerance": 0.004, "stripPx": 1}}, None, None, "0.0,0.5")
 
+# =====================================================================================================================================================================
+# Block swiftui.scroll (issue #31, lane L1): MEASUREMENT of how the Mac scrolls a 180 x 90 pt inset List and ScrollView (thumb geometry, wheel, keyboard, scroller value).
+# The Mac host's scroll stand-ins (shared-mac-host/CaptureHost.template.swift, op "scroll") drive the NSScrollView and FAIL when an expected move does not happen; every step prints a
+# MAC_SCROLL line (offset, contentHeight, viewportHeight, scroller value; mac-run-NN.log) and `dump` / `listdump` write ax-NN-<label>.json (AXScrollBar, AXValueIndicator frames and
+# AXValue) and list-NN-<label>.json (outline row frames). Windows scrolling is not implemented (H39): the Windows side only lays the witness out (steps wait / dump / shot) and the pair is
+# report-only by one named full-frame exclusion; nothing is gated against Windows. Rows are the default 24 pt rows (H21), so a document is 10 + 24 n + 10 pt: 3 rows = 92 pt, 8 rows = 212 pt
+# (the nearest whole-row document to 200 pt), 25 rows = 620 pt (to 600 pt). Case list: ci-lists/scroll-31-measure.txt.
+# =====================================================================================================================================================================
+SCR = "Witness_sc_"
+SCR_DOCS = [(3, 92), (8, 212), (25, 620)]
+SCR_EXCLUDE = [{"name": "report-only: scroll measurement (issue #31). Windows does not scroll and draws no scroll bar (H39); the Mac reference is read from the MAC_SCROLL lines and the ax / list dumps, never compared pixel for pixel", "rect": [0, 0, 800, 600]}]
+
+
+def sc_list(tn, rows, selection=False):
+    head = "    @State private var sel: Int? = nil\n" if selection else ""
+    lst = "List(selection: $sel)" if selection else "List"
+    return f"""struct {tn}: View {{
+{head}    var body: some View {{
+        {lst} {{ ForEach(0..<{rows}, id: \\.self) {{ i in Text("Row \\(i)") }} }}.frame(width: 180, height: 90)
+    }}
+}}"""
+
+
+def sc_view(tn, rows):
+    return f"""struct {tn}: View {{
+    var body: some View {{
+        ScrollView {{ VStack(spacing: 0) {{ ForEach(0..<{rows}, id: \\.self) {{ i in Text("Row \\(i)").frame(width: 160, height: 24) }} }} }}.frame(width: 180, height: 90)
+    }}
+}}"""
+
+
+def sc_op(how, label, **kw):
+    return dict({"op": "scroll", "how": how, "label": label}, **kw)
+
+
+def sc_case(name, typename, body, plan):
+    """plan = [(label, [mac-only scroll ops]), ...]. Mac steps: the ops, then dump + listdump + shot per label. Windows steps (pair.json "steps"): wait, dump, shot only, so both sides write the same labels."""
+    mac, win, labels = [{"op": "wait", "ms": 700}], [{"op": "wait", "ms": 700}], []
+    for label, ops in plan:
+        mac += ops + [{"op": "wait", "ms": 300}, {"op": "dump", "label": label}, {"op": "listdump", "label": label}, {"op": "wait", "ms": 250}, {"op": "shot", "label": label}]
+        win += [{"op": "wait", "ms": 300}, {"op": "dump", "label": label}, {"op": "wait", "ms": 250}, {"op": "shot", "label": label}]
+        labels.append(label)
+    mac.append({"op": "wait", "ms": 200}); win.append({"op": "wait", "ms": 200})
+    case(name, typename, body, {"phaseShots": labels, "hazeTolerance": 1, "excludeRects": SCR_EXCLUDE}, win)
+    CASES[name]["macSteps"] = mac
+
+
+# M1 thumb geometry: an inset List of 3, 8 and 25 rows at the top, the middle and the end of its range
+for _rows, _doc in SCR_DOCS:
+    sc_case(f"swiftui.scroll/thumb-d{_doc}-v1", f"{SCR}thumb_d{_doc}", sc_list(f"{SCR}thumb_d{_doc}", _rows),
+            [("o0", [sc_op("to", "o0-to", at="begin")]), ("omid", [sc_op("to", "omid-to", at="mid")]), ("oend", [sc_op("to", "oend-to", at="end")])])
+
+# M2 wheel: CGEvent line scroll (-1) sent once, three times and ten times to the NSScrollView, from the top each time; a List and a ScrollView of each document
+for _rows, _doc in SCR_DOCS:
+    for _kind, _mk in (("list", sc_list), ("sv", sc_view)):
+        _tn = f"{SCR}wheel_{_kind}_d{_doc}"
+        sc_case(f"swiftui.scroll/wheel-{_kind}-d{_doc}-v1", _tn, _mk(_tn, _rows),
+                [("w0", [sc_op("to", "w0-to", at="begin")])] + [(f"w{n}", [sc_op("to", f"w{n}-reset", at="begin"), sc_op("wheel", f"w{n}-wheel", delta=-1, times=n)]) for n in (1, 3, 10)])
+
+# M3 keyboard: the scroll view's page / end / beginning selectors; for the List also the outline's moveDown(_:) past the viewport (a selection, then 5 and 15 rows down)
+_kb = [("k0", [sc_op("to", "k0-to", at="begin")]),
+       ("kpagedown", [sc_op("action", "kpagedown-act", selector="scrollPageDown:")]),
+       ("kpagedown2", [sc_op("action", "kpagedown2-act", selector="scrollPageDown:")]),
+       ("kend", [sc_op("action", "kend-act", selector="scrollToEndOfDocument:")]),
+       ("kbegin", [sc_op("action", "kbegin-act", selector="scrollToBeginningOfDocument:")])]
+_tn = f"{SCR}keys_list"
+sc_case("swiftui.scroll/keys-list-v1", _tn, sc_list(_tn, 25, selection=True),
+        _kb + [("ksel0", [sc_op("to", "ksel0-reset", at="begin"), sc_op("select", "ksel0-sel", row=0)]),
+               ("kdown5", [sc_op("moveDown", "kdown5-down", times=5)]), ("kdown15", [sc_op("moveDown", "kdown15-down", times=10)])])
+_tn = f"{SCR}keys_sv"
+sc_case("swiftui.scroll/keys-sv-v1", _tn, sc_view(_tn, 25), _kb)
+
+# M4 the scroll bar's value: the vertical NSScroller's accessibility value set in process (0.5, then 1.0) and NSScroller.doubleValue + action (0.5), each from the top
+for _kind, _mk in (("list", sc_list), ("sv", sc_view)):
+    _tn = f"{SCR}scroller_{_kind}"
+    sc_case(f"swiftui.scroll/scroller-{_kind}-v1", _tn, _mk(_tn, 25),
+            [("s0", [sc_op("to", "s0-to", at="begin")]),
+             ("sax05", [sc_op("to", "sax05-reset", at="begin"), sc_op("axvalue", "sax05-ax", value=0.5)]),
+             ("sdouble05", [sc_op("to", "sdouble05-reset", at="begin"), sc_op("scroller", "sdouble05-dv", value=0.5)]),
+             ("sax10", [sc_op("to", "sax10-reset", at="begin"), sc_op("axvalue", "sax10-ax", value=1.0)])])
+
+
 def main():
     only = sys.argv[1:]
     for name, c in CASES.items():
@@ -835,6 +917,8 @@ def main():
             if c.get("clock"): cmd += ["--clock", c["clock"]]
             if c.get("dark"): cmd += ["--dark-host", "--appearance", c["dark"][0], "--scheme", c["dark"][1]]
             subprocess.check_call(cmd)
+            if c.get("macSteps"):    # the Mac host takes steps the Windows job-interact.ps1 does not know (op scroll / listdump): macArgs differ from the pair.json "steps" (issue #31)
+                pj = H / name / "pair.json"; cfg = json.loads(pj.read_text()); cfg["macArgs"] = ["--steps", json.dumps(c["macSteps"], separators=(",", ":"))]; pj.write_text(json.dumps(cfg, indent=1) + "\n")
 
 
 if __name__ == "__main__":

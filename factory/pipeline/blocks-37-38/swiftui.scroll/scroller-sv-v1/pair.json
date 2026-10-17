@@ -1,0 +1,98 @@
+{
+ "phaseShots": [
+  "s0",
+  "sax05",
+  "sdouble05",
+  "sax10"
+ ],
+ "hazeTolerance": 1,
+ "excludeRects": [
+  {
+   "name": "report-only: scroll measurement (issue #31). Windows does not scroll and draws no scroll bar (H39); the Mac reference is read from the MAC_SCROLL lines and the ax / list dumps, never compared pixel for pixel",
+   "rect": [
+    0,
+    0,
+    800,
+    600
+   ]
+  }
+ ],
+ "steps": [
+  {
+   "op": "wait",
+   "ms": 700
+  },
+  {
+   "op": "wait",
+   "ms": 300
+  },
+  {
+   "op": "dump",
+   "label": "s0"
+  },
+  {
+   "op": "wait",
+   "ms": 250
+  },
+  {
+   "op": "shot",
+   "label": "s0"
+  },
+  {
+   "op": "wait",
+   "ms": 300
+  },
+  {
+   "op": "dump",
+   "label": "sax05"
+  },
+  {
+   "op": "wait",
+   "ms": 250
+  },
+  {
+   "op": "shot",
+   "label": "sax05"
+  },
+  {
+   "op": "wait",
+   "ms": 300
+  },
+  {
+   "op": "dump",
+   "label": "sdouble05"
+  },
+  {
+   "op": "wait",
+   "ms": 250
+  },
+  {
+   "op": "shot",
+   "label": "sdouble05"
+  },
+  {
+   "op": "wait",
+   "ms": 300
+  },
+  {
+   "op": "dump",
+   "label": "sax10"
+  },
+  {
+   "op": "wait",
+   "ms": 250
+  },
+  {
+   "op": "shot",
+   "label": "sax10"
+  },
+  {
+   "op": "wait",
+   "ms": 200
+  }
+ ],
+ "macArgs": [
+  "--steps",
+  "[{\"op\":\"wait\",\"ms\":700},{\"op\":\"scroll\",\"how\":\"to\",\"label\":\"s0-to\",\"at\":\"begin\"},{\"op\":\"wait\",\"ms\":300},{\"op\":\"dump\",\"label\":\"s0\"},{\"op\":\"listdump\",\"label\":\"s0\"},{\"op\":\"wait\",\"ms\":250},{\"op\":\"shot\",\"label\":\"s0\"},{\"op\":\"scroll\",\"how\":\"to\",\"label\":\"sax05-reset\",\"at\":\"begin\"},{\"op\":\"scroll\",\"how\":\"axvalue\",\"label\":\"sax05-ax\",\"value\":0.5},{\"op\":\"wait\",\"ms\":300},{\"op\":\"dump\",\"label\":\"sax05\"},{\"op\":\"listdump\",\"label\":\"sax05\"},{\"op\":\"wait\",\"ms\":250},{\"op\":\"shot\",\"label\":\"sax05\"},{\"op\":\"scroll\",\"how\":\"to\",\"label\":\"sdouble05-reset\",\"at\":\"begin\"},{\"op\":\"scroll\",\"how\":\"scroller\",\"label\":\"sdouble05-dv\",\"value\":0.5},{\"op\":\"wait\",\"ms\":300},{\"op\":\"dump\",\"label\":\"sdouble05\"},{\"op\":\"listdump\",\"label\":\"sdouble05\"},{\"op\":\"wait\",\"ms\":250},{\"op\":\"shot\",\"label\":\"sdouble05\"},{\"op\":\"scroll\",\"how\":\"to\",\"label\":\"sax10-reset\",\"at\":\"begin\"},{\"op\":\"scroll\",\"how\":\"axvalue\",\"label\":\"sax10-ax\",\"value\":1.0},{\"op\":\"wait\",\"ms\":300},{\"op\":\"dump\",\"label\":\"sax10\"},{\"op\":\"listdump\",\"label\":\"sax10\"},{\"op\":\"wait\",\"ms\":250},{\"op\":\"shot\",\"label\":\"sax10\"},{\"op\":\"wait\",\"ms\":200}]"
+ ]
+}
