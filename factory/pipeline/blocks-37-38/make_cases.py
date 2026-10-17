@@ -837,12 +837,13 @@ SCR = "Witness_sc_"
 SCR_DOCS = [(3, 92), (8, 212), (25, 620)]
 SCR_EXCLUDE = [{"name": "report-only: scroll measurement (issue #31). The Windows scroll values are the WIN_SCROLL lines, the Mac reference the MAC_SCROLL lines and the ax / list dumps; the pair is never compared pixel for pixel", "rect": [0, 0, 800, 600]}]
 # Windows geometry (pt): the runtime centres the witness (new-case.py, ZStack in the 320 x 240 pt viewport), so the 180 x 90 pt scroller sits at (70, 75).
-# The legacy scroller strip is 19 pt wide at the trailing edge; the thumb is 10.8 pt wide at x + 4.0; the track is the frame less 3.0 pt top and 3.2 pt bottom,
-# and the thumb is max(20, track * 90 / content) long (ScrollerMetrics in ListStyles). A thumb drag moves the thumb by the pointer's distance, so a value change
-# of v is a drag of (track - thumb) * v, in client px (SCALE 2.5).
+# The legacy scroller strip is 17 pt wide at the trailing edge (ScrollerMetrics.width); the thumb is 10.8 pt wide, inset 3.0 pt from the strip's leading edge
+# (ScrollerMetrics.thumbInsetLeading, thumbWidth); the track is the frame less 3.0 pt top and 3.2 pt bottom, and the thumb is max(20, track * 90 / content) long
+# (ScrollerMetrics in ListStyles). A thumb drag moves the thumb by the pointer's distance, so a value change of v is a drag of (track - thumb) * v, in client px (SCALE 2.5).
 SCR_OX, SCR_OY, SCR_W, SCR_H = 70, 75, 180, 90
+SCR_STRIP, SCR_THUMB_INSET, SCR_THUMB_W = 17.0, 3.0, 10.8
 SCR_TRACK = SCR_H - 3.0 - 3.2
-SCR_THUMB_X = SCR_OX + SCR_W - 19 + 4.0 + 10.8 / 2
+SCR_THUMB_X = SCR_OX + SCR_W - SCR_STRIP + SCR_THUMB_INSET + SCR_THUMB_W / 2
 SCR_WHEEL = (SCR_OX + SCR_W / 2, SCR_OY + SCR_H / 2)   # the centre of the scroller, pt (the job-interact "wheel" op takes points)
 LINE_PT = 24   # the default row height (H21): one Mac line of a List / ScrollView row is taken as 24 pt for the choice of pairs only; the gate measures the Mac offsets
 
@@ -941,17 +942,32 @@ for _rows, _doc in SCR_DOCS:
 # M3 keyboard: a real key-down NSEvent (PageDown / End / Home) delivered to the outline (List) or the document view (ScrollView) after window.makeFirstResponder; the host tries keyDown,
 # interpretKeyEvents, window.sendEvent and tryToPerform up the responder chain, and only as a last resort derives the paged offset (status=DERIVED, never an input). MAC_SCROLL carries
 # pageAmount, verticalPageScroll and verticalLineScroll. For the List also the outline's moveDown(_:) past the viewport (a selection, then 5 and 15 rows down)
-_kb = [("k0", [sc_op("to", "k0-to", at="begin")]),
-       ("kpagedown", [sc_op("key", "kpagedown-key", key="PageDown")]),
-       ("kpagedown2", [sc_op("key", "kpagedown2-key", key="PageDown")]),
-       ("kend", [sc_op("key", "kend-key", key="End")]),
-       ("kbegin", [sc_op("key", "kbegin-key", key="Home")])]
+# Windows keys (issue #31): the job-interact "key" ops post WM_KEYDOWN/UP to the window with the Mac's key names (PageDown, End, Home). A key pages the List
+# that holds the keyboard, else the scroll container under the last pointer position: the List is clicked on its centre first (a row click selects it and makes
+# it active), and the ScrollView is clicked on its centre (no focus, so the pointer's container is the one paged). Windows labels: in1 = kpagedown, in2 = kpagedown2,
+# in3 = kend, in4 = kbegin. Pairs only where the Mac reading is OK: keys-list all four (kpagedown / kpagedown2 drag offsets, kend clamp, kbegin offset 0);
+# keys-sv only the two PageDowns (its End / Home were DERIVED on the Mac: no reference, no pair).
+def kb_click():
+    return [{"op": "click", "x": round(SCR_WHEEL[0] * SCALE), "y": round(SCR_WHEEL[1] * SCALE)}]
+
+
+def kb_plan(click):
+    return [("k0", [sc_op("to", "k0-to", at="begin")], click),
+            ("kpagedown", [sc_op("key", "kpagedown-key", key="PageDown")], [{"op": "key", "key": "PageDown"}]),
+            ("kpagedown2", [sc_op("key", "kpagedown2-key", key="PageDown")], [{"op": "key", "key": "PageDown"}]),
+            ("kend", [sc_op("key", "kend-key", key="End")], [{"op": "key", "key": "End"}]),
+            ("kbegin", [sc_op("key", "kbegin-key", key="Home")], [{"op": "key", "key": "Home"}])]
+
+
 _tn = f"{SCR}keys_list"
 sc_case("swiftui.scroll/keys-list-v1", _tn, sc_list(_tn, 25, selection=True),
-        _kb + [("ksel0", [sc_op("to", "ksel0-reset", at="begin"), sc_op("select", "ksel0-sel", row=0)]),
-               ("kdown5", [sc_op("moveDown", "kdown5-down", times=5)]), ("kdown15", [sc_op("moveDown", "kdown15-down", times=10)])])
+        kb_plan(kb_click()) + [("ksel0", [sc_op("to", "ksel0-reset", at="begin"), sc_op("select", "ksel0-sel", row=0)]),
+               ("kdown5", [sc_op("moveDown", "kdown5-down", times=5)]), ("kdown15", [sc_op("moveDown", "kdown15-down", times=10)])],
+        scroll_pairs=[{"mac": "kpagedown", "win": "in1"}, {"mac": "kpagedown2", "win": "in2"}, {"mac": "kend", "win": "in3", "clamp": True},
+                      {"mac": "kbegin", "win": "in4"}])
 _tn = f"{SCR}keys_sv"
-sc_case("swiftui.scroll/keys-sv-v1", _tn, sc_view(_tn, 25), _kb)
+sc_case("swiftui.scroll/keys-sv-v1", _tn, sc_view(_tn, 25), kb_plan(kb_click()),
+        scroll_pairs=[{"mac": "kpagedown", "win": "in1"}, {"mac": "kpagedown2", "win": "in2"}])
 
 # M4 the scroll bar's value: the vertical NSScroller's accessibility value set in process (0.5, then 1.0) and NSScroller.doubleValue + action (0.5), each from the top
 for _kind, _mk in (("list", sc_list), ("sv", sc_view)):

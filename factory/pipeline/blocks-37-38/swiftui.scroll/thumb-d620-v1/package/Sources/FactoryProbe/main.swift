@@ -120,6 +120,8 @@ struct HostPlacement {
     var scrollPrintPending = false
     /// The first WIN_SCROLL (the state before any input) has printed.
     var scrollStartPrinted = false
+    /// The last pointer position in root points (issue #31): the container a key pages when no List holds the keyboard.
+    var pointerPoint: (x: Double, y: Double)?
     init(_ bridge: Bridge) { self.bridge = bridge }
 
     func ready(_ window: BridgeWindow) {
@@ -221,6 +223,8 @@ struct HostPlacement {
             if let id = runtimeIDs[event.node], !graph.tapButton(id) { if !graph.activateToggle(id) { _ = graph.invokeTapGesture(id) } }
             graph.flush()
         case .pointer:
+            // The last pointer position (root points) for a key that pages a container with no focused List; a leave keeps the last position.
+            if !(event.action == 3 && event.i0 & 2 != 0) { pointerPoint = (Double((event.x - placement.dx) / scale), Double((event.y - placement.dy) / scale)) }
             // A wheel notch (issue #31, rev 0.11): the innermost scroll container under the point scrolls by the system's lines per notch.
             if let w = event.wheel {
                 if HostScrollInput.wheel(w, graph: graph, scale: scale, wheelScrollLines: Bridge.wheelScrollLines) { scrollInputs += 1; scrollPrintPending = true; graph.flush() }
@@ -304,6 +308,20 @@ struct HostPlacement {
             case "home": _ = graph.sliderSet(slider, toBound: false); graph.flush(); return
             case "end": _ = graph.sliderSet(slider, toBound: true); graph.flush(); return
             default: break
+            }
+        }
+        // Page / Home / End (issue #31): the List that holds the keyboard, else the scroll container under the last pointer position, pages or jumps.
+        // With a container present the key never reaches onMove; without one the keys below keep their behaviour.
+        if let scrollKey = HostScrollKey(bridgeName: name) {
+            let container = (painter?.listIsActive == true ? firstListID() : nil) ?? pointerPoint.flatMap { graph.scrollContainerID(atX: $0.x, y: $0.y) }
+            // Only a container that overflows (its scroller is painted) takes the key; a List that fits keeps the onMove route below.
+            if let c = container, painter?.scrollerLayouts[c] != nil {
+                if HostScrollInput.key(scrollKey, graph: graph, focusedOrHovered: c) {
+                    scrollInputs += 1; scrollPrintPending = true
+                    print("HOST_SCROLL_KEY key=\(name) container=\(c)"); fflush(stdout)
+                }
+                graph.flush()
+                return
             }
         }
         switch name {

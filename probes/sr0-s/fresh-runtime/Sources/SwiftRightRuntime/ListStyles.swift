@@ -101,7 +101,8 @@ public struct ScrollState: Equatable, Sendable {
     public var value: Double { maxOffset > 0 ? offsetY / maxOffset : 0 }
 }
 
-/// Scroll wheel and scroll bar metrics (#31). Every value is provisional until the Mac measurement (M1-M3, #31) lands; each is marked TO MEASURE.
+/// Scroll wheel and scroll bar metrics (#31), measured on the Mac (CI runs 39062962549, 39068737526; decisions H40/H41). Each constant cites its measurement.
+/// Not modelled: the Mac clip view is 0.4 pt shorter than its container (89.6 in 90), which the factory's scroll gate tolerates (H41).
 public enum ScrollerMetrics {
     /// Points a ScrollView's content moves for one wheel line: 10 (measured M2, run 39062962549: 1, 3, 10 lines -> 10, 30, 100 pt).
     /// A List moves by one row height per line instead (measured: 24 pt rows -> 24, 72, 240 pt), see `Graph.scrollWheel`.

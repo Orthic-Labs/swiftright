@@ -50,9 +50,51 @@ extension HostWindowOptions {
     }
 }
 
+/// The keys that page or jump a scroll container (issue #31, Windows keyboard). The bridge reports a key by name in `BridgeEvent.text` (lowercased
+/// by the host), and a Windows virtual key code maps to the same key: VK_PRIOR 0x21, VK_NEXT 0x22, VK_END 0x23, VK_HOME 0x24.
+public enum HostScrollKey: Equatable {
+    case pageUp, pageDown, home, end
+
+    /// The key of a bridge key name ("pageup", "pagedown", "home", "end"), nil for every other key.
+    public init?(bridgeName name: String) {
+        switch name.lowercased() {
+        case "pageup": self = .pageUp
+        case "pagedown": self = .pageDown
+        case "home": self = .home
+        case "end": self = .end
+        default: return nil
+        }
+    }
+
+    /// The key of a Windows virtual key code, nil for every other code.
+    public init?(virtualKey: UInt32) {
+        switch virtualKey {
+        case 0x21: self = .pageUp
+        case 0x22: self = .pageDown
+        case 0x23: self = .end
+        case 0x24: self = .home
+        default: return nil
+        }
+    }
+}
+
 /// Wheel and scroll bar input of a window that asked for `pointerWheel` (issue #31). Pure conversions are static; the routing calls the
 /// runtime's scroll API and the painter's scroller geometry. The host calls `flush` after any input that returns true, as after other input.
 public enum HostScrollInput {
+    /// Pages or jumps the scroll container `focusedOrHovered` names: the List that holds the keyboard, else the innermost scroll container under
+    /// the last pointer position (`Graph.scrollContainerID(atX:y:)`). PageUp and PageDown move one page; Home and End go to the ends. A nil id
+    /// (no scroll container) scrolls nothing. Returns whether the offset changed; the host flushes after it, as after other input.
+    @MainActor
+    public static func key(_ key: HostScrollKey, graph: Graph, focusedOrHovered: String?) -> Bool {
+        guard let id = focusedOrHovered else { return false }
+        switch key {
+        case .pageUp: return graph.scrollPage(id, down: false)
+        case .pageDown: return graph.scrollPage(id, down: true)
+        case .home: return graph.scrollToEdge(id, end: false)
+        case .end: return graph.scrollToEdge(id, end: true)
+        }
+    }
+
     /// Lines one wheel event scrolls. `deltaY` is in WHEEL_DELTA units with the Windows sign (positive = the wheel moved away from the user,
     /// content scrolls up), so one notch at the default 3 lines is -3 (content moves down for a negative count, up for a positive one).
     /// Precise touchpad deltas give fractional lines. `wheelScrollLines` 0 (the user turned wheel scrolling off) scrolls nothing.

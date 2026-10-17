@@ -12,7 +12,8 @@ The pixels of these cases are report-only (a named full-frame exclusion). This g
 Rules (tolerancePt in points, value in 0...1):
   - rest = the Mac offset at the case's first label (pair.json phaseShots[0]); the Mac's +0.2 pt List rest offset cancels, and the Mac's
     0.4 pt shorter clip stays inside tolerancePt. Mac offset relative to the rest = mac.offset - rest.
-  - a pair whose Mac line has status FAIL, or whose Mac or Windows reading is missing or incomplete, fails closed.
+  - a pair whose Mac line has status FAIL or DERIVED (the Mac's paged or end offset was derived, not read from the responder), or whose Mac or
+    Windows reading is missing or incomplete, fails closed: a derived value is not a reference.
   - drag pair: |win.offset - (mac.offset - rest)| <= tolerancePt and |win.value - mac.scrollerValue| <= 0.02 (a Mac scrollerValue below 0 is no scroller: fails).
   - perLine pair: the per-line amounts agree over the Mac's line span, |win.offset / winLines - (mac.offset - rest) / macLines| * macLines <= tolerancePt.
     A reading at its own range end (clamped) is no per-line amount: the pair fails.
@@ -71,8 +72,8 @@ def judge(pair, m, w, rest, tol):
     tag = f"mac {pair['mac']} / windows {pair['win']}"
     if m is None:
         return False, [f"{tag}: no MAC_SCROLL line for {pair['mac']}"]
-    if m["status"] == "FAIL":
-        return False, [f"{tag}: mac status FAIL (fails closed)"]
+    if m["status"] in ("FAIL", "DERIVED"):
+        return False, [f"{tag}: mac status {m['status']} (fails closed: a derived value is not a reference)"]
     if w is None:
         return False, [f"{tag}: no WIN_SCROLL line for {pair['win']}"]
     if rest is None:

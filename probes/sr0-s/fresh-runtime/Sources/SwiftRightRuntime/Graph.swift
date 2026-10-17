@@ -1295,6 +1295,12 @@ public final class Graph {
         return moveScroll(target, to: current + CGFloat(lines) * line)
     }
 
+    /// The id of the innermost scroll container under a point (root space, logical points), nil when none. A host pages it with a key when no
+    /// List holds the keyboard (`HostScrollInput.key`, issue #31).
+    public func scrollContainerID(atX x: Double, y: Double) -> String? {
+        innermostScrollContainer(atX: CGFloat(x), y: CGFloat(y))?.idString
+    }
+
     /// Pages a scroll container down or up by a page (the viewport less `ScrollerMetrics.pageOverlap`). Returns whether the offset changed.
     @discardableResult
     public func scrollPage(_ id: String, down: Bool) -> Bool {

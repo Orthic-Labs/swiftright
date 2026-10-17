@@ -18,12 +18,30 @@
    ]
   }
  ],
+ "scrollGate": {
+  "pairs": [
+   {
+    "mac": "kpagedown",
+    "win": "in1"
+   },
+   {
+    "mac": "kpagedown2",
+    "win": "in2"
+   }
+  ],
+  "tolerancePt": 1.0
+ },
  "steps": [
   {
    "op": "wait",
    "ms": 700
   },
   {
+   "op": "click",
+   "x": 400,
+   "y": 300
+  },
+  {
    "op": "wait",
    "ms": 300
   },
@@ -38,6 +56,10 @@
   {
    "op": "shot",
    "label": "k0"
+  },
+  {
+   "op": "key",
+   "key": "PageDown"
   },
   {
    "op": "wait",
@@ -56,6 +78,10 @@
    "label": "kpagedown"
   },
   {
+   "op": "key",
+   "key": "PageDown"
+  },
+  {
    "op": "wait",
    "ms": 300
   },
@@ -72,6 +98,10 @@
    "label": "kpagedown2"
   },
   {
+   "op": "key",
+   "key": "End"
+  },
+  {
    "op": "wait",
    "ms": 300
   },
@@ -86,6 +116,10 @@
   {
    "op": "shot",
    "label": "kend"
+  },
+  {
+   "op": "key",
+   "key": "Home"
   },
   {
    "op": "wait",

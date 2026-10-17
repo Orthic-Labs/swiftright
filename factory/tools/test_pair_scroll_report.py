@@ -121,6 +121,12 @@ class FailClosed(unittest.TestCase):
         self.assertFalse(ok)
         self.assertTrue(any("FAIL" in p for p in probs), probs)
 
+    def test_derived_mac_status_fails_closed(self):
+        # keys-sv End / Home: the Mac offset was derived from the responder chain, not read, so it is no reference
+        ok, probs = judge(WHEEL_PAIRS[0], wheel_mac(status="DERIVED"), wheel_win(in1=72.0))
+        self.assertFalse(ok)
+        self.assertTrue(any("DERIVED" in p and "fails closed" in p for p in probs), probs)
+
     def test_missing_windows_line_fails(self):
         ok, probs = judge(WHEEL_PAIRS[0], wheel_mac(), wheel_win(in1=72.0)[:1])   # no in1
         self.assertFalse(ok)

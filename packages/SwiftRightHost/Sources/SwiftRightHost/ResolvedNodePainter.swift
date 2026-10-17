@@ -66,11 +66,12 @@ public final class ResolvedNodePainter {
 
     /// The scroll bar semantic of a scroller: role `.scrollBar` (vertical in the renderer), the range the thumb's position on 0...1, with the
     /// arrow step (one wheel line) and the page (the viewport less the page overlap) as fractions of the offset travel, so UIA's SmallChange and
-    /// LargeChange match the keyboard and the wheel. Nil when the renderer does not publish scroll bars.
-    func scrollBarSemantic(for scroll: ScrollState) -> SemanticNode? {
+    /// LargeChange match the keyboard and the wheel. `lineHeight` is one wheel line: a List's row height, a ScrollView's 10 pt (issue #31).
+    /// Nil when the renderer does not publish scroll bars.
+    func scrollBarSemantic(for scroll: ScrollState, lineHeight: CGFloat = ScrollerMetrics.pointsPerLine) -> SemanticNode? {
         guard publishesScrollBars else { return nil }
         let maxOffset = scroll.maxOffset
-        let step = maxOffset > 0 ? Double(ScrollerMetrics.pointsPerLine) / maxOffset : 0
+        let step = maxOffset > 0 ? Double(lineHeight) / maxOffset : 0
         let page = Double(max(0, CGFloat(scroll.viewportHeight) - ScrollerMetrics.pageOverlap))
         let jump = maxOffset > 0 ? page / maxOffset : 0
         return SemanticNode(role: .scrollBar, label: "", range: SliderRange(value: scroll.value, min: 0, max: 1, step: step, jump: jump))
@@ -267,8 +268,10 @@ public final class ResolvedNodePainter {
                 var scrollerPrimitives: [Primitive] = [.clipPush(scrollerClip)]
                 scrollerPrimitives += ScrollerPainter.primitives(for: layout, scale: scale)
                 scrollerPrimitives.append(.clipPop)
+                // One wheel line is one row of a List (the runtime's `scrollWheel` line), 10 pt for a ScrollView.
+                let line = n.kind == "List" ? n.children.map { ListMetrics.rowHeight(forContent: CGFloat($0.frame.height)) }.min() ?? ScrollerMetrics.pointsPerLine : ScrollerMetrics.pointsPerLine
                 nodes.append(NodeUpsert(id: scrollerID, parent: id, order: UInt32(n.children.count), bounds: layout.strip, primitives: scrollerPrimitives,
-                                        semantic: scrollBarSemantic(for: scroll)))
+                                        semantic: scrollBarSemantic(for: scroll, lineHeight: line)))
             }
         }
         try walk(root, parent: background?.id ?? 0, order: 0, clip: nil)
