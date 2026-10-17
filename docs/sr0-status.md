@@ -4,6 +4,15 @@ Updated 17 October 2026 (W08 Oracle review PASS-WITH-CAVEATS recorded, issue #19
 
 **Tuple 12 stage identity (17 Oct):** canonical stage commit `a9556b77f50315afcae27fc8fc44c0cd274959e2` (compiled closure = source manifest `f45b9e0d…`); renderer `7578cd5d…` admitted. See `docs/sr1-decisions.md`, section "17 October: tuple 12 stage identity and renderer admission".
 
+**Tuple 12 staged (17 Oct, build-only, STAGE_OK).** Root `D:\Claude\swiftright\.work\sr0-r12-retry2` (the runbook's `-Restart` sibling: the first canonical `sr0-r12` clone died when the launching SSH session dropped, and `sr0-r12-retry` failed the pinned header check because the Dell's system gitconfig sets `core.autocrlf=true`; the final run set `core.autocrlf=false` in the stage process environment only, scripts and system config unchanged; both partial roots are left in place, nothing deleted). Source `a9556b77f50315afcae27fc8fc44c0cd274959e2` (match, tracked tree clean); scripts from `sr0-overrides` = the 16 files of `transfer-manifest-r2.json` at a9556b77f (all 16 hashes verified on the Dell; parse `PS_PARSE_ALL_OK count=16`); bridge header 41,937 B `12764e1f…` verified. Members (post-stage audit):
+- renderer `7578CD5DA8A6831900C66680C4B94F89E64B6B294623709817848B02219AEAC2` (admitted, staged from the sealed input)
+- FreshOnBridge `438F1AA83DF90AE7E25DE64C1E2E6A02037B98B293E764D2B48659DDD17E56CC` (rebuild; differs from the pinned member `87b8cb27…`, which stays the tuple member per the Sage decision: reproducibility note, not a re-pin)
+- BridgeSmoke `064E5D420ED5458F9069395284F4CE5E6AF41C17C142AC7BA6346320D319B0EA`; BridgePixels `DF07FE6B4A20025E52D3BE7D72EE7958305B81BA86DFF08F6E4C90FEADEF97A7`
+- WorkloadWin `79721BC067D3CB96834CBA7A37E2AFB5A9BE6B5B3743931EF1B9840B15E17EBB`
+- TextGeom06 `27F0821E303BB0E1B5FB3194DC94CD501C9C848BFE5019C323C665B07413664A`; Modal06 `B0C487674FD3806BB6DFDA5753BB28443F2924B2052ED2228E610368368DF9D1`; ColdOpen06 `49103843A53C0E491B1EF193E35602A6C9BA352FF53F05CDAD81723170CA433B`
+
+Receipts: `probes/sr0-s/fresh-on-bridge/out/tuple12-stage-r12-retry2/` (post-stage audit, stage run logs, the 14 `stage-tools` logs, matching the audit's STAGE_LOG hashes 14/14, `build.json`, `incremental.json`, `SOURCE-HEAD.txt`, the launch wrapper). Requalification (#20: matrix, smoke, pixels, text, modal, R9, R10, package, cross recordings) is next and partly waits on Adrian (cross recordings, Dell GUI pause wording).
+
 ## 13 Oct 2026 tuple 12 Windows matrix (SR0 still OPEN)
 - Windows Full16 x20 = 320/320 qualified (`probes/sr0-s/fresh-on-bridge/out/tuple12-startupguard-matrix-v1/full16-r1-report.json`, notes in `RESULT.md` there). F3 68 s ready delay = host I/O stall in harness ready-file read, not product.
 - Windows cross recordings x20: 301/320 (`.../tuple12-cross20-r1/`); remaining F7 r11, F8 r20, F9 r4-20; paused on Adrian's order, Dell lock free. Mac 20 refs exist only for F1; F2-F9 held on no-prompt signer, so cross-compare beyond F1 is open.
