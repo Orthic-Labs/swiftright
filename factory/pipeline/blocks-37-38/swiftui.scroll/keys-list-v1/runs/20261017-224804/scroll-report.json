@@ -1,0 +1,120 @@
+{
+ "case": "keys-list-v1",
+ "run": "20261017-224804",
+ "gate": "scroll readings: per-line / drag / clamp pairs, tolerance 1 pt, value 0.02; pixels report-only",
+ "tolerancePt": 1.0,
+ "pairs": [
+  {
+   "mac": "kpagedown",
+   "win": "in1"
+  },
+  {
+   "mac": "kpagedown2",
+   "win": "in2"
+  },
+  {
+   "mac": "kend",
+   "win": "in3",
+   "clamp": true
+  },
+  {
+   "mac": "kbegin",
+   "win": "in4"
+  }
+ ],
+ "runs": 1,
+ "gatePassed": 1,
+ "rows": [
+  {
+   "run": 1,
+   "ok": true,
+   "problems": [],
+   "pairs": [
+    {
+     "mac": "kpagedown",
+     "win": "in1",
+     "kind": "drag",
+     "ok": true,
+     "problems": [],
+     "macReading": {
+      "status": "OK",
+      "offset": 79.8,
+      "content": 620.0,
+      "view": 89.6,
+      "value": 0.15
+     },
+     "windowsReading": {
+      "status": null,
+      "offset": 80.0,
+      "content": 620.0,
+      "view": 90.0,
+      "value": 0.1509433962264151
+     }
+    },
+    {
+     "mac": "kpagedown2",
+     "win": "in2",
+     "kind": "drag",
+     "ok": true,
+     "problems": [],
+     "macReading": {
+      "status": "OK",
+      "offset": 159.4,
+      "content": 620.0,
+      "view": 89.6,
+      "value": 0.301
+     },
+     "windowsReading": {
+      "status": null,
+      "offset": 160.0,
+      "content": 620.0,
+      "view": 90.0,
+      "value": 0.3018867924528302
+     }
+    },
+    {
+     "mac": "kend",
+     "win": "in3",
+     "kind": "clamp",
+     "ok": true,
+     "problems": [],
+     "macReading": {
+      "status": "OK",
+      "offset": 530.2,
+      "content": 620.0,
+      "view": 89.6,
+      "value": 1.0
+     },
+     "windowsReading": {
+      "status": null,
+      "offset": 530.0,
+      "content": 620.0,
+      "view": 90.0,
+      "value": 1.0
+     }
+    },
+    {
+     "mac": "kbegin",
+     "win": "in4",
+     "kind": "drag",
+     "ok": true,
+     "problems": [],
+     "macReading": {
+      "status": "OK",
+      "offset": -0.2,
+      "content": 620.0,
+      "view": 89.6,
+      "value": 0.0
+     },
+     "windowsReading": {
+      "status": null,
+      "offset": 0.0,
+      "content": 620.0,
+      "view": 90.0,
+      "value": 0.0
+     }
+    }
+   ]
+  }
+ ]
+}

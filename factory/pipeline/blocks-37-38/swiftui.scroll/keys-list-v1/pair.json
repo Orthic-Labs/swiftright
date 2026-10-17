@@ -4,10 +4,7 @@
   "kpagedown",
   "kpagedown2",
   "kend",
-  "kbegin",
-  "ksel0",
-  "kdown5",
-  "kdown15"
+  "kbegin"
  ],
  "hazeTolerance": 1,
  "excludeRects": [
@@ -151,59 +148,11 @@
   },
   {
    "op": "wait",
-   "ms": 300
-  },
-  {
-   "op": "dump",
-   "label": "ksel0"
-  },
-  {
-   "op": "wait",
-   "ms": 250
-  },
-  {
-   "op": "shot",
-   "label": "ksel0"
-  },
-  {
-   "op": "wait",
-   "ms": 300
-  },
-  {
-   "op": "dump",
-   "label": "kdown5"
-  },
-  {
-   "op": "wait",
-   "ms": 250
-  },
-  {
-   "op": "shot",
-   "label": "kdown5"
-  },
-  {
-   "op": "wait",
-   "ms": 300
-  },
-  {
-   "op": "dump",
-   "label": "kdown15"
-  },
-  {
-   "op": "wait",
-   "ms": 250
-  },
-  {
-   "op": "shot",
-   "label": "kdown15"
-  },
-  {
-   "op": "wait",
    "ms": 200
   }
  ],
  "macArgs": [
   "--steps",
-  "[{\"op\":\"wait\",\"ms\":700},{\"op\":\"scroll\",\"how\":\"to\",\"label\":\"k0-to\",\"at\":\"begin\"},{\"op\":\"wait\",\"ms\":300},{\"op\":\"dump\",\"label\":\"k0\"},{\"op\":\"listdump\",\"label\":\"k0\"},{\"op\":\"wait\",\"ms\":250},{\"op\":\"shot\",\"label\":\"k0\"},{\"op\":\"scroll\",\"how\":\"key\",\"label\":\"kpagedown-key\",\"key\":\"PageDown\"},{\"op\":\"wait\",\"ms\":300},{\"op\":\"dump\",\"label\":\"kpagedown\"},{\"op\":\"listdump\",\"label\":\"kpagedown\"},{\"op\":\"wait\",\"ms\":250},{\"op\":\"shot\",\"label\":\"kpagedown\"},{\"op\":\"scroll\",\"how\":\"key\",\"label\":\"kpagedown2-key\",\"key\":\"PageDown\"},{\"op\":\"wait\",\"ms\":300},{\"op\":\"dump\",\"label\":\"kpagedown2\"},{\"op\":\"listdump\",\"label\":\"kpagedown2\"},{\"op\":\"wait\",\"ms\":250},{\"op\":\"shot\",\"label\":\"kpagedown2\"},{\"op\":\"scroll\",\"how\":\"key\",\"label\":\"kend-key\",\"key\":\"End\"},{\"op\":\"wait\",\"ms\":300},{\"op\":\"dump\",\"label\":\"kend\"},{\"op\":\"listdump\",\"label\":\"kend\"},{\"op\":\"wait\",\"ms\":250},{\"op\":\"shot\",\"label\":\"kend\"},{\"op\":\"scroll\",\"how\":\"key\",\"label\":\"kbegin-key\",\"key\":\"Home\"},{\"op\":\"wait\",\"ms\":300},{\"op\":\"dump\",\"label\":\"kbegin\"},{\"op\":\"listdump\",\"label\":\"kbegin\"},{\"op\":\"wait\",\"ms\":250},{\"op\":\"shot\",\"label\":\"kbegin\"},{\"op\":\"scroll\",\"how\":\"to\",\"label\":\"ksel0-reset\",\"at\":\"begin\"},{\"op\":\"scroll\",\"how\":\"select\",\"label\":\"ksel0-sel\",\"row\":0},{\"op\":\"wait\",\"ms\":300},{\"op\":\"dump\",\"label\":\"ksel0\"},{\"op\":\"listdump\",\"label\":\"ksel0\"},{\"op\":\"wait\",\"ms\":250},{\"op\":\"shot\",\"label\":\"ksel0\"},{\"op\":\"scroll\",\"how\":\"moveDown\",\"label\":\"kdown5-down\",\"times\":5},{\"op\":\"wait\",\"ms\":300},{\"op\":\"dump\",\"label\":\"kdown5\"},{\"op\":\"listdump\",\"label\":\"kdown5\"},{\"op\":\"wait\",\"ms\":250},{\"op\":\"shot\",\"label\":\"kdown5\"},{\"op\":\"scroll\",\"how\":\"moveDown\",\"label\":\"kdown15-down\",\"times\":10},{\"op\":\"wait\",\"ms\":300},{\"op\":\"dump\",\"label\":\"kdown15\"},{\"op\":\"listdump\",\"label\":\"kdown15\"},{\"op\":\"wait\",\"ms\":250},{\"op\":\"shot\",\"label\":\"kdown15\"},{\"op\":\"wait\",\"ms\":200}]"
+  "[{\"op\":\"wait\",\"ms\":700},{\"op\":\"scroll\",\"how\":\"to\",\"label\":\"k0-to\",\"at\":\"begin\"},{\"op\":\"wait\",\"ms\":300},{\"op\":\"dump\",\"label\":\"k0\"},{\"op\":\"listdump\",\"label\":\"k0\"},{\"op\":\"wait\",\"ms\":250},{\"op\":\"shot\",\"label\":\"k0\"},{\"op\":\"scroll\",\"how\":\"key\",\"label\":\"kpagedown-key\",\"key\":\"PageDown\"},{\"op\":\"wait\",\"ms\":300},{\"op\":\"dump\",\"label\":\"kpagedown\"},{\"op\":\"listdump\",\"label\":\"kpagedown\"},{\"op\":\"wait\",\"ms\":250},{\"op\":\"shot\",\"label\":\"kpagedown\"},{\"op\":\"scroll\",\"how\":\"key\",\"label\":\"kpagedown2-key\",\"key\":\"PageDown\"},{\"op\":\"wait\",\"ms\":300},{\"op\":\"dump\",\"label\":\"kpagedown2\"},{\"op\":\"listdump\",\"label\":\"kpagedown2\"},{\"op\":\"wait\",\"ms\":250},{\"op\":\"shot\",\"label\":\"kpagedown2\"},{\"op\":\"scroll\",\"how\":\"key\",\"label\":\"kend-key\",\"key\":\"End\"},{\"op\":\"wait\",\"ms\":300},{\"op\":\"dump\",\"label\":\"kend\"},{\"op\":\"listdump\",\"label\":\"kend\"},{\"op\":\"wait\",\"ms\":250},{\"op\":\"shot\",\"label\":\"kend\"},{\"op\":\"scroll\",\"how\":\"key\",\"label\":\"kbegin-key\",\"key\":\"Home\"},{\"op\":\"wait\",\"ms\":300},{\"op\":\"dump\",\"label\":\"kbegin\"},{\"op\":\"listdump\",\"label\":\"kbegin\"},{\"op\":\"wait\",\"ms\":250},{\"op\":\"shot\",\"label\":\"kbegin\"},{\"op\":\"wait\",\"ms\":200}]"
  ]
 }

@@ -961,8 +961,7 @@ def kb_plan(click):
 
 _tn = f"{SCR}keys_list"
 sc_case("swiftui.scroll/keys-list-v1", _tn, sc_list(_tn, 25, selection=True),
-        kb_plan(kb_click()) + [("ksel0", [sc_op("to", "ksel0-reset", at="begin"), sc_op("select", "ksel0-sel", row=0)]),
-               ("kdown5", [sc_op("moveDown", "kdown5-down", times=5)]), ("kdown15", [sc_op("moveDown", "kdown15-down", times=10)])],
+        kb_plan(kb_click()),   # no moveDown steps: SwiftUIOutlineListView does not implement moveDown: (NSInvalidArgumentException, run 39076469504); arrow scroll-into-view unmeasured
         scroll_pairs=[{"mac": "kpagedown", "win": "in1"}, {"mac": "kpagedown2", "win": "in2"}, {"mac": "kend", "win": "in3", "clamp": True},
                       {"mac": "kbegin", "win": "in4"}])
 _tn = f"{SCR}keys_sv"
