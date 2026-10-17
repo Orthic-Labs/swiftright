@@ -762,7 +762,7 @@ struct Witness_co_ctime: View {
     }
 }'''
 _ctime_ex = [_btn_ex[0]]
-# a mid-animation sample (400 ms into the outer 1 s animation), then the settled state
+# a mid-animation sample (after the Run step; the host pumps about 0.95 s on the Mac and waits for a settled frame on Windows, so this is a settled frame, not a mid-animation sample), then the settled state
 _ctime_steps = [{"op": "wait", "ms": 700}, {"op": "dump", "label": "start"}, {"op": "wait", "ms": 250}, {"op": "shot", "label": "start"}, {"op": "wait", "ms": 150},
                 {"op": "invoke", "name": "Run"}, {"op": "wait", "ms": 350}, {"op": "dump", "label": "mid"}, {"op": "shot", "label": "mid"}, {"op": "wait", "ms": 1200},
                 {"op": "dump", "label": "end"}, {"op": "wait", "ms": 250}, {"op": "shot", "label": "end"}, {"op": "wait", "ms": 150}]

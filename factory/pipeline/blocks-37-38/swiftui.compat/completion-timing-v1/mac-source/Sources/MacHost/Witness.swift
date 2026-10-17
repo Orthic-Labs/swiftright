@@ -51,8 +51,8 @@ struct Witness_co_ctime: View {
                 } completion: { ctp.markOuter = ctp.late() }
             }.frame(width: 100, height: 28)
             // x (orange) is written under the inner withAnimation(nil) and snaps. y (blue) is written by the inner completion: if SwiftUI runs that completion
-            // after the outer transaction closes (asynchronously), y does not take the outer 1 s linear animation and is 50 pt at the mid sample; if it ran
-            // inside the open outer transaction, y animates (about 26 pt at 0.4 s). The marks record when each completion ran (green = after 0.15 s, red = at once,
+            // after the outer transaction closes (asynchronously), y does not take the outer 1 s linear animation and the outer completion fires at once (red mark); if it ran
+            // inside the open outer transaction, y would animate and the outer completion would fire late (green mark). The captured frames are settled frames, not mid-animation samples, so the marks carry the evidence. The marks record when each completion ran (green = after 0.15 s, red = at once,
             // gray = never). Nothing here is asserted from SwiftUI documentation: the Mac capture is the reference.
             VStack(alignment: .leading, spacing: 1) {
                 Color.orange.frame(width: CGFloat(x) * 20 + 10, height: 6)
