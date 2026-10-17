@@ -73,6 +73,11 @@ def model_for(layout, scale, container):
     return dict(viewFramePx=[l, t, vw, vh], inkBoxPx=ink, source=source)
 
 
+def _pixels(im):
+    """Pixel sequence on Pillow 11 (getdata, the CI pin) and Pillow 12+ (get_flattened_data)."""
+    return im.get_flattened_data() if hasattr(im, "get_flattened_data") else im.getdata()
+
+
 def main():
     case, out = Path(sys.argv[1]).resolve(), Path(sys.argv[2]).resolve()
     cfg = json.loads((case / "pair.json").read_text())["imageFrame"]
@@ -109,8 +114,8 @@ def main():
         shape_a, shape_b = im.crop(rect), iw.crop(rect)
         for img in (a, b):
             img.paste(BG, rect)
-        outside = sum(1 for p, q in zip(a.get_flattened_data(), b.get_flattened_data()) if p != q)
-        shape = sum(1 for p, q in zip(shape_a.get_flattened_data(), shape_b.get_flattened_data()) if p != q)
+        outside = sum(1 for p, q in zip(_pixels(a), _pixels(b)) if p != q)
+        shape = sum(1 for p, q in zip(_pixels(shape_a), _pixels(shape_b)) if p != q)
         ma, wa = analyse(im, frame, tint), analyse(iw, frame, tint)
         frame_ok = logged == frame and outside == 0
         bbox_ok = ma["inkBBoxHalfCoverage"] is not None and ma["inkBBoxHalfCoverage"] == wa["inkBBoxHalfCoverage"]
