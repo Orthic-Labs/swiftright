@@ -377,11 +377,11 @@ font_rows("fractional-v1", None, [(f(s, w), TXT, "") for s, w in ((11.5, "regula
 font_rows("styles-large-v1", None, [(f"{'.font(.' + st + ')'}", TXT, "") for st in ("largeTitle", "title", "title2", "title3", "headline")], 36)
 font_rows("styles-small-v1", None, [(f"{'.font(.' + st + ')'}", TXT, "") for st in ("subheadline", "body", "callout", "footnote", "caption", "caption2")], 24)
 font_rows("style-weight-v1", None, [(".font(.body.weight(.bold))", TXT, ""), (".font(.headline.weight(.regular))", TXT, ""), (".font(.title3.weight(.semibold))", TXT, "")], 40)
-LONG = "Overview of memory pressure and swap activity across every running process"
+LONG = "Headroom of memory pressure and swap activity across every running process"
 font_rows("truncate-v1", None, [(f(12), LONG, ".lineLimit(1)"), (f(11.5), LONG, ".lineLimit(1)"), (f(13, "semibold"), LONG, ".lineLimit(1)"), (f(18), LONG, ".lineLimit(1)"),
-                               (f(12), "Short", ".lineLimit(1)")], 40, max_right=240)
+                               (f(12), "Hurry", ".lineLimit(1)")], 40, max_right=240)
 CASES["swiftui.system-font/truncate-v1"]["body"] = CASES["swiftui.system-font/truncate-v1"]["body"].replace('Text("%s").font(Font.system(size: 12, weight: .regular)).lineLimit(1).frame(width: 240' % LONG, 'Text("%s").font(Font.system(size: 12, weight: .regular)).lineLimit(1).frame(width: 240' % LONG, 1)
-font_rows("line-limit-v1", None, [(f(12), LONG, ".lineLimit(2)"), (f(12), LONG, ".lineLimit(3)"), (f(12), "Overview of memory pressure", ".lineLimit(3)")], 60, lines=True, max_right=110, frame_w=110)
+font_rows("line-limit-v1", None, [(f(12), LONG, ".lineLimit(2)"), (f(12), LONG, ".lineLimit(3)"), (f(12), "Headroom of memory pressure", ".lineLimit(3)")], 60, lines=True, max_right=110, frame_w=110)
 # frame-centring-facts-v1 (issue #7, G74 placement context): measurement only, report-only (no gates)
 FC_PROBE = r'''#if os(Windows)
 extension View {

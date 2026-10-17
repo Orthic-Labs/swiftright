@@ -94,3 +94,20 @@ Dry check, block 28 captures `20261017-000201` re-run through `pair_textcolour_r
 | styles-large | not run | no `20261017-000201` capture for this case (latest runs 20261015) |
 
 Placement-context rows no per-key fit can close: truncate 0, 1, 2, 4 and line-limit 0-2 (item 3 above; the same key reads db 0 in `sizes`, -1 in `truncate`, -2/+1/-1 in `line-limit`), plus sizes-large row 1. Truncate 0 and 4 and line-limit 1 passing is an effect of the 12 regular refit (digit text, different placement), not evidence that the context dependence is resolved; both would flip if the key's db were back at 0. Next to close them: gate by context, or resolve the vertical placement in the text layout (other lane).
+
+## G75 text change (17 October): block 28 baseline rows lead with a flat-bottom glyph
+
+Per G75(a), the single-line and multi-line rows whose baseline is gated now start with `H`, as the fit witnesses do. The generator is `factory/pipeline/blocks-26-34/make_cases.py` (block 28 section). Restamp: `python3 make_cases.py truncate-v1 line-limit-v1` from `factory/pipeline/blocks-26-34`; the mac-source and package `Witness.swift` files are byte-identical after it.
+
+| case | row | old text | new text |
+| --- | --- | --- | --- |
+| truncate-v1 | 0-3 (12, 11.5, 13 semibold, 18) | `Overview of memory pressure and swap activity across every running process` | `Headroom of memory pressure and swap activity across every running process` |
+| truncate-v1 | 4 (12 regular) | `Short` | `Hurry` |
+| line-limit-v1 | 0-1 (lineLimit 2 and 3, 12 regular) | `Overview of memory pressure and swap activity across every running process` | `Headroom of memory pressure and swap activity across every running process` |
+| line-limit-v1 | 2 (lineLimit 3, 12 regular) | `Overview of memory pressure` | `Headroom of memory pressure` |
+
+Not changed: `sizes-large-v1` (`Hxg Overview` already leads with `H`; its row 1 is a placement-context case, not a text case); `FC_LONG` in `frame-centring-facts-v1` (report-only probe whose Mac facts run 38989516616 measured the old text); the other block 28 cases, which use `Hxg Overview` (`H`).
+
+Tolerances: `pair.json` for truncate-v1 and line-limit-v1 is unchanged from HEAD. The restamp rewrites `pair.json` from the generator, which does not carry the per-row fitted tolerances (G71, G74), so the restamp output was discarded and the HEAD file restored. Restamping any fitted case needs the same restore.
+
+Wrapping: unmeasured. `Headroom` has the same letter count as `Overview` but different advance widths at 11.5, 12, 13 semibold and 18 pt, so the truncation point in the 240 pt rows and the word breaks in the 110 pt rows may move. The 110 pt rows break at word boundaries, so the line count changes if `Headroom of` does not fit on the line where `Overview of` did. The rows carry no evidence until the block is recaptured; the per-row fits were measured on the old text.

@@ -8,11 +8,11 @@ import SwiftUI
 struct Witness_sf_truncate: View {
     var body: some View {
         VStack(alignment: .leading, spacing: 0) {
-            Text("Overview of memory pressure and swap activity across every running process").font(Font.system(size: 12, weight: .regular)).lineLimit(1).frame(width: 240, height: 40, alignment: .leading)
-            Text("Overview of memory pressure and swap activity across every running process").font(Font.system(size: 11.5, weight: .regular)).lineLimit(1).frame(width: 240, height: 40, alignment: .leading)
-            Text("Overview of memory pressure and swap activity across every running process").font(Font.system(size: 13, weight: .semibold)).lineLimit(1).frame(width: 240, height: 40, alignment: .leading)
-            Text("Overview of memory pressure and swap activity across every running process").font(Font.system(size: 18, weight: .regular)).lineLimit(1).frame(width: 240, height: 40, alignment: .leading)
-            Text("Short").font(Font.system(size: 12, weight: .regular)).lineLimit(1).frame(width: 240, height: 40, alignment: .leading)
+            Text("Headroom of memory pressure and swap activity across every running process").font(Font.system(size: 12, weight: .regular)).lineLimit(1).frame(width: 240, height: 40, alignment: .leading)
+            Text("Headroom of memory pressure and swap activity across every running process").font(Font.system(size: 11.5, weight: .regular)).lineLimit(1).frame(width: 240, height: 40, alignment: .leading)
+            Text("Headroom of memory pressure and swap activity across every running process").font(Font.system(size: 13, weight: .semibold)).lineLimit(1).frame(width: 240, height: 40, alignment: .leading)
+            Text("Headroom of memory pressure and swap activity across every running process").font(Font.system(size: 18, weight: .regular)).lineLimit(1).frame(width: 240, height: 40, alignment: .leading)
+            Text("Hurry").font(Font.system(size: 12, weight: .regular)).lineLimit(1).frame(width: 240, height: 40, alignment: .leading)
         }.frame(width: 240, height: 200, alignment: .topLeading)
     }
 }
