@@ -52,3 +52,45 @@ Raw extraction: `position_stats.py` logic over `runs/20261017-000201/text-colour
 - No mapping table needs these values. The Windows side takes Mac line height and first baseline from the generated F1 table (`FontMetricTableData.swift`, header "do not edit"; Mac-measured; `SystemFontMapping.swift` `dip()`); baselines in the new data agree with the Mac to 0 px on 29 of 38 rows (the nine others are the truncate, line-limit, 28 pt and caption2 rows above). The only per-key values the gate reads are the tolerances in `pair.json` (fitted by `position_stats.py --write` from the F2 FIT set).
 - Fitting the unfitted keys from these 3 runs would mean writing tolerances from the GATE set (the method in `position_stats.py` and G71 forbids tuning on GATE, and a tolerance written after a failing gate is a widening). Not done. No tolerance, pair.json, row-tolerances.json or runtime file was changed.
 - What a fit needs (G71, caveat 1): an N=20 FIT capture on the F2 witness (varied texts and placements, not more runs of these cases) for 12.5 regular, 11.5 semibold, 18 (nine weights), 28 regular, headline regular, title3 semibold, 15 regular; plus caption2 and 12 pt in more than one text and one placement. Caveat on this: a per-key fit cannot cover the truncate/line-limit rows until the context dependence (item 3) is resolved in the text layout (owned by another lane) or the gate is keyed by context.
+
+## G71 fit capture applied (issue #7; 17 October 2026)
+
+FIT capture: the four `fit-*` cases of F2 (`blocks-w1-f2/swiftui.system-font-f2/fit-*-v1/runs/20261017-002951`, stage `b230f0135-82e12842`, N=20, witness-side text-colour reports). Method as G71, `position_stats.py --with-fit-capture --write --b28-only`: FIT = runs 1-10, tolerance per key and metric = ceil(max |delta|) (mid-point to the next half); GATE = runs 11-20 of the same cases (not tuned). The F2 run directories of the original 107-key fit are not in this checkout, so for a key that was already fitted the combined fit is the element-wise maximum of the committed tolerance and the new one (identical to ceil of the combined maximum). Nothing was fitted on the block 28 captures (they remain the independent gate).
+
+Exclusion, stated and measured: a region whose text STARTS with a descender letter (the `gjpqy 42` rows, 10 regions in `fit-sizes-large` and `fit-sizes-large-b`; `row-tolerances.json` `fitCapture.excludedDescenderFirstRegions`) is not fitted. The first-glyph run (`pair_textcolour_report.py:54`) is the first group of touching ink columns; on Windows `g` and `j` touch, on the Mac `g` stands alone, so firstInkY reads the `j` dot (28 pt: dy -14, db +2, 15 pt: -8/+2, 18 pt: -8/+1, headline -7/+1, title3 -8/+2, all constant over 20 runs). That measures glyph adjacency, not the font; fitting it would set 28 pt firstInkY to 14 px and make the gate meaningless. Block 28's witness text is `Hxg Overview` (first glyph H), so it is not affected. G70 already states descender text is ungated.
+
+Fitted tolerances (px, w - m; zero run-to-run variance in this capture, so GATE max equals FIT max and the GATE passes by construction: 20 of 20 per key; it confirms stability, not independence):
+
+| key | FIT max dy,db,dc,dx | tolerance dy,db,dc,dx | GATE |
+|---|---|---|---|
+| 12.5 regular | 1,1,0.5,1 | 1,1,0.5,1 | pass |
+| 11.5 semibold | 1,1,0.5,0 | 1,1,0.5,0 | pass |
+| 28 regular | 1,0,0.5,2 | 1,0,0.5,2 | pass |
+| 15 regular | 0,0,0,0 | 0,0,0,0 | pass |
+| 18 regular | 1,0,0.5,1 | 1,0,0.5,1 | pass |
+| 18 ultraLight, thin, light, medium, semibold | 1,0,0.5,1 | 1,0,0.5,1 | pass (each) |
+| 18 bold, heavy, black | 1,0,0.5,0 | 1,0,0.5,0 | pass (each) |
+| headline regular | 1,0,0.5,1 | 1,0,0.5,1 | pass |
+| title3 semibold | 0,0,0,0 | 0,0,0,0 | pass |
+| 12 regular (refit, 60 obs) | 1,1,0.5,0 | 1,1,0.5,0 (was 1,0,0.5,0) | pass |
+| caption2 (refit, 60 obs) | 1,1,0,0 | 1,1,0,0 (was 0,0,0,0) | pass |
+
+Refit changes: 12 regular baseline 0 -> 1 (the digit text `0123456789 42` reads db -1 at 12.5, 11.5 semibold, 12 and caption2 at the same placement; the `HIH` and long-text rows read 0). caption2: first ink y 0 -> 1 and baseline 0 -> 1 (the same digit row, dy +1, db -1); its mid-point stays 0 because dy +1 and db -1 cancel, so caption2 as measured in block 28 (dy +1, db +1, dc +1) still exceeds the fitted mid-point tolerance. The fit never saw both +1 together; no tolerance was raised for it.
+
+Written: `blocks-w1-f2/row-tolerances.json` (122 keys: 107 + 17 new, 2 refit), the nine block 28 `pair.json` files (rows that carry these keys only; other rows unchanged). The F2 case `pair.json` files were not rewritten (not in this lane's scope): their caption2 and 12 regular rows still carry the old values and need `position_stats.py --with-fit-capture --write` by their owner.
+
+Dry check, block 28 captures `20261017-000201` re-run through `pair_textcolour_report.py` into `/Volumes/D/scratch/a6/f2-fit-recompare` (committed captures, new tolerances; no capture, nothing committed):
+
+| case | result | rows still failing |
+|---|---|---|
+| fractional | 3/3 pass | none (12.5 regular and 11.5 semibold now fitted) |
+| sizes | 3/3 pass | none (15, 18 regular fitted) |
+| style-weight | 3/3 pass | none (headline regular, title3 semibold fitted) |
+| weights | 3/3 pass | none (18 at nine weights fitted) |
+| sizes-large | 0/3 | row 1 (28 regular): db -1 vs fitted 0; placement context (60 pt frame, vertically centred, `Hxg Overview`; the fit rows are top-aligned `HIH`) |
+| styles-small | 0/3 | row 5 caption2: dc +1 vs 0 (dy +1, db +1, within 1 each) |
+| truncate | 0/3 | rows 1 (11.5 regular) and 2 (13 semibold): db -1 vs 0; rows 0 and 4 (12 regular) now pass only because the refit 12 regular db is 1 |
+| line-limit | 0/3 | row 0 (-2,-2): dy, db, dc; row 2 (-1,-1): dc; row 1 (-1,+1) passes on the refit 12 regular db 1 |
+| styles-large | not run | no `20261017-000201` capture for this case (latest runs 20261015) |
+
+Placement-context rows no per-key fit can close: truncate 0, 1, 2, 4 and line-limit 0-2 (item 3 above; the same key reads db 0 in `sizes`, -1 in `truncate`, -2/+1/-1 in `line-limit`), plus sizes-large row 1. Truncate 0 and 4 and line-limit 1 passing is an effect of the 12 regular refit (digit text, different placement), not evidence that the context dependence is resolved; both would flip if the key's db were back at 0. Next to close them: gate by context, or resolve the vertical placement in the text layout (other lane).

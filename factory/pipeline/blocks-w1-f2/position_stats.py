@@ -13,6 +13,12 @@ Nothing is tuned on the GATE set. The case-level blanket tolerances are removed 
   position_stats.py --write        fit on the FIT set; write per-region tolerances into every F2 and block 28 pair.json (regions of unfitted keys get none)
   position_stats.py --recompare    judge the GATE set against the pair.json tolerances (no capture); prints the verdict per case, writes gate-verdicts.json
   position_stats.py --summary      the delta table of the FIT set and GATE set (read only)
+
+G71 fit capture (issue #7): the four fit-* cases of F2 (runs/20261017-002951, stage b230f0135-82e12842, N=20) add keys block 28 uses that F2 never measured.
+  --with-fit-capture               add runs 1-10 of the fit-* cases to FIT and runs 11-20 to GATE (the fit cases are report-only; their pair.json is never written)
+  --b28-only                       with --write: write block 28 pair.json and row-tolerances.json only (the F2 case pair.json files are not touched)
+  A region whose text STARTS with a descender letter (g j p q y) is excluded from the fit and listed: the first-glyph run (pair_textcolour_report.py:54) then merges the touching
+  neighbours on one side and not the other (Windows 'gj' joins, the Mac's 'g' stays alone: firstInkY -14 px at 28 pt, baseline +2), so the metric no longer measures the font.
 """
 import argparse, glob, json, math, re, sys
 from pathlib import Path
@@ -23,6 +29,9 @@ F2 = HERE / "swiftui.system-font-f2"
 B28 = PIPE / "blocks-26-34" / "swiftui.system-font"
 STAGE, RENDERER = "fc4a39a89-f623e43e", "renderer-0.8-fc4a39a8"
 FIT_MAX_RUN = 10
+FITCAP_RUN = "20261017-002951"
+FITCAP_STAGE = "b230f0135-82e12842"
+DESCENDER_FIRST = set("gjpqy")
 METRICS = ("dy", "db", "dc", "dx")
 TOLKEY = {"dy": "firstInkYTolerancePx", "db": "baselineTolerancePx", "dc": "inkCentreYTolerancePx", "dx": "firstInkXTolerancePx"}
 
@@ -86,8 +95,14 @@ def observations(case, report, keys):
     return out
 
 
-def load_sets():
+def region_texts(case):
+    src = (case / "mac-source/Sources/MacHost/Witness.swift").read_text()
+    return re.findall(r'Text\("([^"]*)"\)\s*\.font\(', src)
+
+
+def load_sets(with_fit=False):
     fit, gate, cases = [], [], {}
+    excluded = []
     res = [json.loads(l) for l in (HERE / "results.jsonl").read_text().splitlines() if l.strip()]
     f2_latest = {}
     for r in res:
@@ -102,17 +117,38 @@ def load_sets():
         cases[case.name] = dict(set="F2", report=str(rp), keys=keys, path=case / "pair.json")
         fit += [o for o in obs if o["run"] <= FIT_MAX_RUN]
         gate += [o for o in obs if o["run"] > FIT_MAX_RUN]
+    if with_fit:
+        for case in sorted(F2.glob("fit-*")):
+            rp = case / "runs" / FITCAP_RUN / "text-colour-report.json"
+            b = json.loads((rp.parent / "build.json").read_text())
+            if (b.get("stage") or {}).get("name") != FITCAP_STAGE: raise SystemExit(f"{case.name}: unexpected stage")
+            pj = json.loads((case / "pair.json").read_text())
+            keys = [region_key(r["name"]) for r in pj["textColourGate"]["regions"]]
+            texts = region_texts(case)
+            if len(texts) != len(keys): raise SystemExit(f"{case.name}: {len(texts)} texts, {len(keys)} regions")
+            bad = {j for j, t in enumerate(texts) if t[:1] in DESCENDER_FIRST}
+            obs = observations(case, rp, keys)
+            for j in sorted(bad): excluded.append((case.name, j, keys[j], texts[j]))
+            obs = [o for o in obs if o["region"] not in bad]
+            cases[case.name] = dict(set="FITCAP", report=str(rp), keys=keys, path=case / "pair.json")
+            fit += [o for o in obs if o["run"] <= FIT_MAX_RUN]
+            gate += [dict(o, case=case.name) for o in obs if o["run"] > FIT_MAX_RUN]
     for case in sorted(B28.glob("*")):
         if not (case / "pair.json").is_file(): continue
         rp = final_report(case)
-        if rp is None: continue
-        keys = witness_keys(case)
+        if rp is None and not with_fit: continue
+        try: keys = witness_keys(case)
+        except ValueError:
+            if rp is None: continue   # not a system-font witness (custom font): no per-row keys
+            raise
         pj = json.loads((case / "pair.json").read_text())
         if len(keys) != len(pj["textColourGate"]["regions"]): raise SystemExit(f"{case.name}: {len(keys)} font expressions, {len(pj['textColourGate']['regions'])} regions")
+        if rp is None:   # block 28 captures are on an older stage: they are not read for the fit (independent gate); the case is registered so --write can set its row tolerances
+            cases[case.name] = dict(set="B28", report=None, keys=keys, path=case / "pair.json"); continue
         obs = observations(case, rp, keys)
         cases[case.name] = dict(set="B28", report=str(rp), keys=keys, path=case / "pair.json")
         gate += obs
-    return fit, gate, cases
+    return fit, gate, cases, excluded
 
 
 def fit_table(fit):
@@ -140,17 +176,27 @@ def judge(o, tol):
 
 def main():
     ap = argparse.ArgumentParser(); ap.add_argument("--write", action="store_true"); ap.add_argument("--recompare", action="store_true"); ap.add_argument("--summary", action="store_true")
+    ap.add_argument("--with-fit-capture", action="store_true"); ap.add_argument("--b28-only", action="store_true")
     a = ap.parse_args()
-    fit, gate, cases = load_sets()
+    fit, gate, cases, excluded = load_sets(a.with_fit_capture)
+    for e in excluded: print("EXCLUDED from fit (first glyph is a descender letter):", e)
     table = fit_table(fit)
+    if a.with_fit_capture:
+        # the F2 run directories (runs 1-10 of the 15 F2 cases) are not in this checkout: the committed 107-key table IS the F2 FIT result. The combined fit of a key is
+        # ceil(max |delta|) over F2 runs 1-10 and the fit capture runs 1-10, which equals the element-wise maximum of the two tolerances (both are ceil of a maximum).
+        prior = json.loads((HERE / "row-tolerances.json").read_text())["table"]
+        for k, t in prior.items():
+            table[k] = {m: max(t[m], table[k][m]) for m in t} if k in table else dict(t)
     if a.summary or not (a.write or a.recompare):
         for name, grp in (("FIT (F2 runs 1-10)", fit), ("GATE (F2 runs 11-20 and block 28)", gate)):
             print(name, len(grp), "observations")
             for k in sorted({o["key"] for o in grp}):
                 rows = [o for o in grp if o["key"] == k]
                 print(f"  {k:60s} n={len(rows):3d} " + " ".join(f"{m} {min(r[m] for r in rows):+g}..{max(r[m] for r in rows):+g}" for m in METRICS))
+    fitcap_keys = {o["key"] for o in fit if o["case"].startswith("fit-")}
     if a.write:
         for name, c in cases.items():
+            if c["set"] == "FITCAP" or (a.b28_only and c["set"] != "B28"): continue
             pj = json.loads(c["path"].read_text()); tg = pj["textColourGate"]
             base = {k: v for k, v in tg.get("position", {}).items() if k not in TOLKEY.values()}
             unfit = 0
@@ -158,13 +204,14 @@ def main():
                 reg.pop("position", None)
                 tol = table.get(c["keys"][j])
                 if tol is None: unfit += 1; continue
-                reg["position"] = dict(tol, reason=f"per-row fit (decision G71): {c['keys'][j]}, FIT set F2 runs 1-10 (stage {STAGE}, renderer 0.8)")
+                reg["position"] = dict(tol, reason=f"per-row fit (decision G71): {c['keys'][j]}, FIT set F2 runs 1-10 (stage {STAGE}, renderer 0.8)" + (f" plus fit capture runs 1-10 (stage {FITCAP_STAGE}, {FITCAP_RUN}, descender-first rows excluded)" if a.with_fit_capture and c["keys"][j] in fitcap_keys else ""))
             base["reason"] = ("per-row tolerances (decision G71): each region carries its own tolerances fitted on the F2 FIT set (runs 1-10, stage " + STAGE + ", renderer 0.8); "
                               "unfitted rows carry none and are gated at 0 px (fail closed, pair_textcolour_report.py:62). The case-level tolerances were removed (they were one blanket set fitted on the judged runs).")
             tg["position"] = dict(base, align=tg.get("position", {}).get("align", "leading"))
             c["path"].write_text(json.dumps(pj, indent=1) + "\n")
             print(f"{name}: {len(tg['regions']) - unfit} regions with per-row tolerances, {unfit} unfitted")
-        (HERE / "row-tolerances.json").write_text(json.dumps(dict(stage=STAGE, renderer=RENDERER, fitRuns=f"1-{FIT_MAX_RUN}", table=table), indent=1) + "\n")
+        extra = dict(fitCapture=dict(stage=FITCAP_STAGE, run=FITCAP_RUN, runs=f"1-{FIT_MAX_RUN}", excludedDescenderFirstRegions=[list(e) for e in excluded])) if a.with_fit_capture else {}
+        (HERE / "row-tolerances.json").write_text(json.dumps(dict(stage=STAGE, renderer=RENDERER, fitRuns=f"1-{FIT_MAX_RUN}", **extra, table=table), indent=1) + "\n")
         print("row-tolerances.json written:", len(table), "keys")
     if a.recompare:
         verdicts = {}
@@ -172,7 +219,7 @@ def main():
             c = cases[o["case"]]
             pj = json.loads(c["path"].read_text())
             r = pj["textColourGate"]["regions"][o["region"]]
-            tol = r.get("position")
+            tol = table.get(o["key"]) if c["set"] == "FITCAP" else r.get("position")   # the fit cases carry zero tolerances (report-only): judge them on the fitted table
             verdicts.setdefault(o["case"], {}).setdefault(o["run"], []).append(judge(o, tol))
         out = {}
         for case, runs in sorted(verdicts.items()):
