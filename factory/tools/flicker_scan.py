@@ -237,6 +237,7 @@ def load_wgc_frames(frame_dir, side, time_base):
     lines = [json.loads(l) for l in (frame_dir / "frames.jsonl").read_text(encoding="utf-8-sig").splitlines() if l.strip()]
     out = []
     missing = 0
+    unreadable = 0
     offsets = []
     for rec in lines:
         png = frame_dir / ("frame-%06d.png" % int(rec["index"]))
@@ -247,10 +248,13 @@ def load_wgc_frames(frame_dir, side, time_base):
         srt_qpc = float(rec["systemRelativeTimeTicks"]) * freq / 1e7
         offsets.append((srt_qpc - qpc) / freq)
         epoch = ae + ((srt_qpc if time_base == "srt" else qpc) - aq) / freq
-        with Image.open(png) as im:
-            out.append((epoch, im.convert("RGBA")))
+        try:
+            with Image.open(png) as im:
+                out.append((epoch, im.convert("RGBA")))
+        except (OSError, ValueError):   # a PNG cut short when the recorder was stopped mid-write; counted, not scanned
+            unreadable += 1
     offsets.sort()
-    diag = {"framesInJsonl": len(lines), "framesMissingPng": missing, "timeBase": time_base,
+    diag = {"framesInJsonl": len(lines), "framesMissingPng": missing, "framesUnreadablePng": unreadable, "timeBase": time_base,
             "srtMinusArrivalMs": None if not offsets else {"median": round(offsets[len(offsets) // 2] * 1000, 2), "min": round(offsets[0] * 1000, 2), "max": round(offsets[-1] * 1000, 2)}}
     return out, diag
 
