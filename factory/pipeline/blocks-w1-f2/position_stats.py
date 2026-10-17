@@ -95,6 +95,16 @@ def observations(case, report, keys):
     return out
 
 
+FITCAP_CI = "38986597492"
+
+
+def row_reason(key, new_keys, fitcap_keys):
+    cap = f"fit capture {FITCAP_CI} runs 1-10 (stage {FITCAP_STAGE}, run {FITCAP_RUN}, descender-first rows excluded)"
+    if key in new_keys: return f"per-row fit (decision G71, G74): {key}, {cap}"
+    base = f"per-row fit (decision G71): {key}, FIT set F2 runs 1-10 (stage {STAGE}, renderer 0.8)"
+    return base + (f" plus {cap}" if key in fitcap_keys else "")
+
+
 def region_texts(case):
     src = (case / "mac-source/Sources/MacHost/Witness.swift").read_text()
     return re.findall(r'Text\("([^"]*)"\)\s*\.font\(', src)
@@ -194,7 +204,20 @@ def main():
                 rows = [o for o in grp if o["key"] == k]
                 print(f"  {k:60s} n={len(rows):3d} " + " ".join(f"{m} {min(r[m] for r in rows):+g}..{max(r[m] for r in rows):+g}" for m in METRICS))
     fitcap_keys = {o["key"] for o in fit if o["case"].startswith("fit-")}
+    prior_meta = json.loads((HERE / "row-tolerances.json").read_text()).get("fitCapture", {})
+    new_keys = set(prior_meta.get("newKeys", [])) | ({k for k in fitcap_keys if k not in prior} if a.with_fit_capture else set())   # keys F2 never measured
     if a.write:
+        if a.with_fit_capture and not a.b28_only:
+            # F2 cases (their run directories are not in the checkout, so they are not in `cases`): refresh the region tolerances of keys the fit capture re-fitted (in F2 and in the capture)
+            refit = {k for k in fitcap_keys if k not in new_keys}
+            for pjp in sorted(F2.glob("*/pair.json")):
+                if pjp.parent.name.startswith("fit-"): continue   # fit data, not gates: zero tolerances stay
+                pj = json.loads(pjp.read_text()); regs = pj["textColourGate"]["regions"]; n = 0
+                for reg in regs:
+                    k = region_key(reg["name"])
+                    if k in refit and "position" in reg:
+                        reg["position"] = dict(table[k], reason=row_reason(k, new_keys, fitcap_keys)); n += 1
+                if n: pjp.write_text(json.dumps(pj, indent=1) + "\n"); print(f"{pjp.parent.name}: {n} refit regions refreshed")
         for name, c in cases.items():
             if c["set"] == "FITCAP" or (a.b28_only and c["set"] != "B28"): continue
             pj = json.loads(c["path"].read_text()); tg = pj["textColourGate"]
@@ -204,13 +227,13 @@ def main():
                 reg.pop("position", None)
                 tol = table.get(c["keys"][j])
                 if tol is None: unfit += 1; continue
-                reg["position"] = dict(tol, reason=f"per-row fit (decision G71): {c['keys'][j]}, FIT set F2 runs 1-10 (stage {STAGE}, renderer 0.8)" + (f" plus fit capture runs 1-10 (stage {FITCAP_STAGE}, {FITCAP_RUN}, descender-first rows excluded)" if a.with_fit_capture and c["keys"][j] in fitcap_keys else ""))
+                reg["position"] = dict(tol, reason=row_reason(c["keys"][j], new_keys, fitcap_keys if a.with_fit_capture else set()))
             base["reason"] = ("per-row tolerances (decision G71): each region carries its own tolerances fitted on the F2 FIT set (runs 1-10, stage " + STAGE + ", renderer 0.8); "
                               "unfitted rows carry none and are gated at 0 px (fail closed, pair_textcolour_report.py:62). The case-level tolerances were removed (they were one blanket set fitted on the judged runs).")
             tg["position"] = dict(base, align=tg.get("position", {}).get("align", "leading"))
             c["path"].write_text(json.dumps(pj, indent=1) + "\n")
             print(f"{name}: {len(tg['regions']) - unfit} regions with per-row tolerances, {unfit} unfitted")
-        extra = dict(fitCapture=dict(stage=FITCAP_STAGE, run=FITCAP_RUN, runs=f"1-{FIT_MAX_RUN}", excludedDescenderFirstRegions=[list(e) for e in excluded])) if a.with_fit_capture else {}
+        extra = dict(fitCapture=dict(stage=FITCAP_STAGE, run=FITCAP_RUN, ci=FITCAP_CI, newKeys=sorted(new_keys), runs=f"1-{FIT_MAX_RUN}", excludedDescenderFirstRegions=[list(e) for e in excluded])) if a.with_fit_capture else {}
         (HERE / "row-tolerances.json").write_text(json.dumps(dict(stage=STAGE, renderer=RENDERER, fitRuns=f"1-{FIT_MAX_RUN}", **extra, table=table), indent=1) + "\n")
         print("row-tolerances.json written:", len(table), "keys")
     if a.recompare:

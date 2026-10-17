@@ -77,7 +77,7 @@ Fitted tolerances (px, w - m; zero run-to-run variance in this capture, so GATE 
 
 Refit changes: 12 regular baseline 0 -> 1 (the digit text `0123456789 42` reads db -1 at 12.5, 11.5 semibold, 12 and caption2 at the same placement; the `HIH` and long-text rows read 0). caption2: first ink y 0 -> 1 and baseline 0 -> 1 (the same digit row, dy +1, db -1); its mid-point stays 0 because dy +1 and db -1 cancel, so caption2 as measured in block 28 (dy +1, db +1, dc +1) still exceeds the fitted mid-point tolerance. The fit never saw both +1 together; no tolerance was raised for it.
 
-Written: `blocks-w1-f2/row-tolerances.json` (122 keys: 107 + 17 new, 2 refit), the nine block 28 `pair.json` files (rows that carry these keys only; other rows unchanged). The F2 case `pair.json` files were not rewritten (not in this lane's scope): their caption2 and 12 regular rows still carry the old values and need `position_stats.py --with-fit-capture --write` by their owner.
+Written: `blocks-w1-f2/row-tolerances.json` (122 keys: 107 + 15 new, 2 refit), the nine block 28 `pair.json` files (rows that carry these keys only; other rows unchanged). The F2 cases `hub-theme-v1` and `styles-regular-v1` (the only ones with caption2 or 12 regular rows) were refreshed to the refit values (`position_stats.py --with-fit-capture --write`); the four `fit-*` cases keep zero tolerances (fit data, not gates).
 
 Dry check, block 28 captures `20261017-000201` re-run through `pair_textcolour_report.py` into `/Volumes/D/scratch/a6/f2-fit-recompare` (committed captures, new tolerances; no capture, nothing committed):
 
