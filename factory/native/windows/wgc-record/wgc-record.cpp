@@ -122,7 +122,7 @@ int wmain(int argc, wchar_t** argv) {
   try { session.IsBorderRequired(false); borderSet = true; borderNote = "IsBorderRequired=false"; } catch (hresult_error const& e) { borderNote = "unavailable or refused: " + narrow(std::wstring(e.message())); }
   com_ptr<ID3D11Texture2D> staging; D3D11_TEXTURE2D_DESC stagingDesc{}; winrt::Windows::Graphics::SizeInt32 poolSize = size;
   writer = std::thread(writer_thread, dir);
-  item.Closed([&](GraphicsCaptureItem const&, IInspectable const&) { itemClosed = true; });
+  item.Closed([&](GraphicsCaptureItem const&, winrt::Windows::Foundation::IInspectable const&) { itemClosed = true; });
   auto token = pool.FrameArrived([&](Direct3D11CaptureFramePool const& sender, winrt::Windows::Foundation::IInspectable const&) {
    // One call per FrameArrived; drain every frame that is queued (TryGetNextFrame returns null when none is left).
    for (;;) {
