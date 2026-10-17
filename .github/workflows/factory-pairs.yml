@@ -42,10 +42,14 @@ on:
         default: false
         type: boolean
       screen_record:
-        description: "Windows interact capture: record the whole desktop at 60 fps per run (ffmpeg gdigrab, ffv1) to windows/record-NN.mkv with a record-NN.json sidecar. Diagnostic; off for normal runs."
+        description: "Windows interact capture: record per run, diagnostic, off for normal runs. none = no recording. gdigrab = whole desktop at 60 fps (ffmpeg gdigrab, ffv1) to windows/record-NN.mkv. wgc = every Windows.Graphics.Capture frame of the host HWND (FactoryWGCRecord.exe, factory/native/windows/wgc-record) to windows/record-NN-wgc/ (frames.jsonl + PNGs). Each has a record-NN.json sidecar."
         required: false
-        default: false
-        type: boolean
+        default: "none"
+        type: choice
+        options:
+          - none
+          - gdigrab
+          - wgc
 
 permissions:
   contents: read
@@ -205,9 +209,9 @@ jobs:
       - name: Toolchain
         run: swift --version
       # ffmpeg is not in the windows-2025 image readme (checked 17 Oct 2026), so the screen recording installs it from Chocolatey (Chocolatey 2.7.4 is listed).
-      # Runs only when the screen_record input is true; the version is logged here and written into each record-NN.json sidecar.
+      # Runs only when the screen_record input is gdigrab; the version is logged here and written into each record-NN.json sidecar.
       - name: Install ffmpeg for the screen recording (screen_record only)
-        if: ${{ inputs.screen_record }}
+        if: ${{ inputs.screen_record == 'gdigrab' }}
         shell: pwsh
         run: |
           $ErrorActionPreference = 'Stop'
@@ -220,6 +224,30 @@ jobs:
           Write-Host "ffmpeg: $($ff.Source)"
           & $ff.Source -hide_banner -version | Select-Object -First 1
           & $fp.Source -hide_banner -version | Select-Object -First 1
+      # screen_record=wgc: compile the WGC recorder with the runner's Visual Studio (vswhere -> vcvars64.bat) into $RUNNER_TEMP\wgc-record and export its path
+      # to the job as SWIFTRIGHT_WGC_RECORDER (read by job-interact.ps1). The compile log is printed; a failed compile fails the job before any capture.
+      - name: Compile the WGC recorder (screen_record=wgc only)
+        if: ${{ inputs.screen_record == 'wgc' }}
+        shell: pwsh
+        run: |
+          $ErrorActionPreference = 'Stop'
+          $vswhere = Join-Path ${env:ProgramFiles(x86)} 'Microsoft Visual Studio\Installer\vswhere.exe'
+          $vs = & $vswhere -latest -products * -requires Microsoft.VisualStudio.Component.VC.Tools.x86.x64 -property installationPath
+          if (-not $vs) { throw 'no Visual Studio with the C++ x64 tools found by vswhere' }
+          $vcvars = Join-Path $vs 'VC\Auxiliary\Build\vcvars64.bat'
+          if (-not (Test-Path -LiteralPath $vcvars)) { throw "vcvars64.bat missing: $vcvars" }
+          $outDir = Join-Path $env:RUNNER_TEMP 'wgc-record'
+          New-Item -ItemType Directory -Force -Path $outDir | Out-Null
+          $src = Join-Path $env:GITHUB_WORKSPACE 'factory\native\windows\wgc-record\wgc-record.cpp'
+          $exe = Join-Path $outDir 'FactoryWGCRecord.exe'
+          $bat = Join-Path $outDir 'build.bat'
+          $line = "cl /nologo /std:c++17 /EHsc /O2 /W3 /DUNICODE /D_UNICODE `"$src`" /Fo`"$outDir\wgc-record.obj`" /Fe`"$exe`" /link /SUBSYSTEM:CONSOLE windowsapp.lib d3d11.lib dxgi.lib windowscodecs.lib ole32.lib"
+          Set-Content -LiteralPath $bat -Value @('@echo off', "call `"$vcvars`" >nul", $line, 'exit /b %ERRORLEVEL%') -Encoding ASCII
+          & cmd.exe /c $bat
+          if ($LASTEXITCODE -ne 0) { throw "cl exit code $LASTEXITCODE" }
+          if (-not (Test-Path -LiteralPath $exe)) { throw "FactoryWGCRecord.exe not produced at $exe" }
+          Write-Host "wgc recorder: $exe sha256 $((Get-FileHash -LiteralPath $exe -Algorithm SHA256).Hash.ToLower())"
+          Add-Content -Path $env:GITHUB_ENV -Value "SWIFTRIGHT_WGC_RECORDER=$exe"
       # The runner's display (Hyper-V: 1024x768 at 125% at most) cannot reach 240 dpi, so the capture host does not depend on it: it passes the
       # explicit render scale 2.5 through the public API (decision H17; HOST_SCALE_GUARD in the host log must read PASS). This step only logs
       # what the display is, so a result can be read against it. It cannot fail the job.
@@ -266,7 +294,7 @@ jobs:
           WORK: ${{ steps.stage.outputs.work }}
           DLL: ${{ steps.renderer.outputs.dll }}
           FLICKER_PROBE: ${{ inputs.flicker_probe }}
-          SWIFTRIGHT_SCREEN_RECORD: ${{ inputs.screen_record && '1' || '' }}
+          SWIFTRIGHT_SCREEN_RECORD: ${{ (inputs.screen_record == 'gdigrab' || inputs.screen_record == 'wgc') && inputs.screen_record || '' }}
         run: |
           set -euo pipefail
           probe=()

@@ -21,15 +21,17 @@
 #   {"op":"shot","label":"mid"}                          extra PrintWindow capture -> native-NN-<label>.png
 # After the steps: settle, final UIA dump of EVERY top-level window the process owns (name, role/control type, value, bounds, focus, enabled, toggle state, automation id, class) -> uia-NN.json,
 # then PrintWindow of the main window -> native-NN.png. steps-NN.json logs what each step did (ok/error). done.json has one row per run.
-# SWIFTRIGHT_SCREEN_RECORD=1 (factory-pairs input screen_record): per run, a continuous ffmpeg recording of the whole desktop -> record-NN.mkv and its sidecar record-NN.json
-# (see Start-ScreenRecord). Unset, nothing below runs.
+# SWIFTRIGHT_SCREEN_RECORD (factory-pairs input screen_record): gdigrab (legacy value 1 also means gdigrab) = per run, a continuous ffmpeg recording of the whole desktop ->
+# record-NN.mkv and its sidecar record-NN.json; wgc = per run, FactoryWGCRecord.exe (env SWIFTRIGHT_WGC_RECORDER) writes every Windows.Graphics.Capture frame of the host HWND ->
+# record-NN-wgc\ (frames.jsonl + frame-NNNNNN.png) and the same sidecar record-NN.json (recorder:"wgc"). See Start-ScreenRecord. Unset or none, nothing below runs.
 param([Parameter(Mandatory)][string]$JobDir)
 $ErrorActionPreference = 'Stop'
 $job = Get-Content -LiteralPath "$JobDir\job.json" -Raw | ConvertFrom-Json
 $runs = $(if ($job.args.runs) { [int]$job.args.runs } else { 1 })
 $settle = $(if ($null -ne $job.args.settleMs) { [int]$job.args.settleMs } else { 500 })
 $script:probe = [bool]$job.args.flickerProbe   # args.flickerProbe: the screen-grab probe in Save-SettledShot (flicker-*.tsv); absent for a normal run
-$script:screenRecord = ([string]$env:SWIFTRIGHT_SCREEN_RECORD -eq '1')   # opt-in continuous recording (Start-ScreenRecord); absent for a normal run
+$script:recMode = $(switch (([string]$env:SWIFTRIGHT_SCREEN_RECORD).Trim().ToLowerInvariant()) { '1' { 'gdigrab' } 'gdigrab' { 'gdigrab' } 'wgc' { 'wgc' } default { '' } })
+$script:screenRecord = ($script:recMode -ne '')   # opt-in continuous recording (Start-ScreenRecord); absent for a normal run
 $steps = @($job.args.steps)
 $res = [ordered]@{ kind = 'interact'; ok = $false; runs = $runs; exe_source = [string]$job.args.exe; steps = $steps.Count }
 
@@ -423,16 +425,43 @@ public static class FlickerScreen {
 }
 '@
 }
-# Opt-in continuous screen recording (env SWIFTRIGHT_SCREEN_RECORD=1). Per run: ffmpeg gdigrab of the whole virtual screen at 60 fps, ffv1 (lossless), started after the
+# Opt-in continuous screen recording (env SWIFTRIGHT_SCREEN_RECORD=gdigrab or wgc; 1 = gdigrab; the wgc path is Start-WgcRecord). Per run: ffmpeg gdigrab of the whole virtual screen at 60 fps, ffv1 (lossless), started after the
 # initial settle and before the first input step, stopped in the run's finally after the last settle. It takes no focus, injects no input and opens no console window.
 # The sidecar record-NN.json holds the host client rect, the virtual screen, the anchors (UTC epoch seconds and QPC) and each input step's start and end, so the frames
 # align to the steps (factory/tools/flicker_scan.py). -use_wallclock_as_timestamps with -copyts keeps the frame times on the UTC epoch.
 $script:rec = $null; $script:stepTimes = @(); $script:anchorEpoch = 0.0; $script:anchorQpc = [long]0
 function Get-Qpc { return [System.Diagnostics.Stopwatch]::GetTimestamp() }
 function Epoch-Of([long]$qpc) { return $script:anchorEpoch + ([double]($qpc - $script:anchorQpc) / [double][System.Diagnostics.Stopwatch]::Frequency) }
+function Start-WgcRecord([string]$dir, [string]$name, [IntPtr]$h) {
+    $exe = [string]$env:SWIFTRIGHT_WGC_RECORDER
+    if (-not $exe -or -not (Test-Path -LiteralPath $exe -PathType Leaf)) { throw "screen record wgc requested but SWIFTRIGHT_WGC_RECORDER is not a file: '$exe'" }
+    $frameDir = Join-Path $dir ($name + '-wgc')
+    New-Item -ItemType Directory -Force -Path $frameDir | Out-Null
+    $stopFile = Join-Path $dir ($name + '-wgc.stop')
+    Remove-Item -LiteralPath $stopFile -Force -ErrorAction SilentlyContinue
+    $wArgs = '--hwnd ' + [int64]$h + ' --out "' + $frameDir + '" --seconds 900 --stop-file "' + $stopFile + '"'
+    $si = [Diagnostics.ProcessStartInfo]::new($exe, $wArgs)
+    $si.UseShellExecute = $false; $si.CreateNoWindow = $true
+    $si.RedirectStandardError = $true; $si.RedirectStandardOutput = $true
+    $script:anchorEpoch = ([DateTime]::UtcNow - [DateTime]::new(1970, 1, 1, 0, 0, 0, [DateTimeKind]::Utc)).TotalSeconds
+    $script:anchorQpc = Get-Qpc
+    $vs = [IxNative]::Virt(); $cs = [IxNative]::ClientScreen($h)
+    $p = [Diagnostics.Process]::Start($si)
+    $errTask = $p.StandardError.ReadToEndAsync(); $outTask = $p.StandardOutput.ReadToEndAsync()
+    $ready = Join-Path $frameDir 'ready.txt'
+    $limit = [DateTime]::UtcNow.AddSeconds(10)
+    while (-not (Test-Path -LiteralPath $ready)) {
+        if ($p.HasExited) { [void]$errTask.Wait(2000); throw "FactoryWGCRecord exited at start code=$($p.ExitCode) stdout=$($outTask.Result) stderr=$($errTask.Result)" }
+        if ([DateTime]::UtcNow -gt $limit) { try { $p.Kill() } catch { }; throw 'FactoryWGCRecord did not become ready within 10 s' }
+        Start-Sleep -Milliseconds 50
+    }
+    $script:rec = [ordered]@{ recorder = 'wgc'; proc = $p; errTask = $errTask; outTask = $outTask; file = $frameDir; frameDir = $frameDir; stopFile = $stopFile; name = $name; ffmpeg = $exe; version = ''; args = $wArgs; virt = $vs; client = $cs; hwnd = [int64]$h }
+    $script:stepTimes = @()
+}
 function Start-ScreenRecord([string]$dir, [string]$name, [IntPtr]$h) {
+    if ($script:recMode -eq 'wgc') { Start-WgcRecord $dir $name $h; return }
     $ff = Get-Command ffmpeg -ErrorAction SilentlyContinue
-    if (-not $ff) { throw 'screen record requested (SWIFTRIGHT_SCREEN_RECORD=1) but ffmpeg is not on PATH' }
+    if (-not $ff) { throw 'screen record requested (SWIFTRIGHT_SCREEN_RECORD=gdigrab) but ffmpeg is not on PATH' }
     $ver = [string](& $ff.Source -hide_banner -version 2>&1 | Select-Object -First 1)
     $file = Join-Path $dir ($name + '.mkv')
     $ffArgs = '-hide_banner -loglevel warning -nostats -use_wallclock_as_timestamps 1 -f gdigrab -framerate 60 -draw_mouse 0 -i desktop -copyts -fps_mode passthrough -c:v ffv1 -level 3 -g 1 -y "' + $file + '"'
@@ -446,10 +475,37 @@ function Start-ScreenRecord([string]$dir, [string]$name, [IntPtr]$h) {
     $errTask = $p.StandardError.ReadToEndAsync(); $outTask = $p.StandardOutput.ReadToEndAsync()
     Start-Sleep -Milliseconds 300
     if ($p.HasExited) { throw "ffmpeg exited at start code=$($p.ExitCode)" }
-    $script:rec = [ordered]@{ proc = $p; errTask = $errTask; outTask = $outTask; file = $file; name = $name; ffmpeg = $ff.Source; version = $ver; args = $ffArgs; virt = $vs; client = $cs; hwnd = [int64]$h }
+    $script:rec = [ordered]@{ recorder = 'gdigrab'; proc = $p; errTask = $errTask; outTask = $outTask; file = $file; name = $name; ffmpeg = $ff.Source; version = $ver; args = $ffArgs; virt = $vs; client = $cs; hwnd = [int64]$h }
     $script:stepTimes = @()
 }
+function Stop-WgcRecord([string]$jsonPath) {
+    $r = $script:rec; $p = $r.proc
+    $stopQpc = Get-Qpc; $stopEpoch = Epoch-Of $stopQpc
+    try { [IO.File]::WriteAllText($r.stopFile, 'stop') } catch { }
+    $exited = [bool]$p.WaitForExit(30000)
+    if (-not $exited) { try { $p.Kill() } catch { }; [void]$p.WaitForExit(10000) }
+    $out = ''; $err = ''
+    try { [void]$r.outTask.Wait(5000); $out = [string]$r.outTask.Result } catch { }
+    try { [void]$r.errTask.Wait(5000); $err = [string]$r.errTask.Result } catch { }
+    if ($err.Length -gt 2000) { $err = $err.Substring($err.Length - 2000) }
+    $summary = $null
+    try { $summary = ConvertFrom-Json ([IO.File]::ReadAllText((Join-Path $r.frameDir 'summary.json'))) } catch { }
+    $side = [ordered]@{
+        schema = 'screen-record/v1'; recorder = 'wgc'; run = $r.name; record = [IO.Path]::GetFileName($r.frameDir); frameDir = [IO.Path]::GetFileName($r.frameDir)
+        source = 'Windows.Graphics.Capture of the host HWND (every FrameArrived; frames only on content change)'; codec = 'png'
+        recorderExe = $r.ffmpeg; recorderArgs = $r.args; recorderExited = $exited; recorderExitCode = $(if ($exited) { $p.ExitCode } else { $null }); recorderStdout = $out; recorderStderr = $err
+        wgcSummary = $summary
+        hostHwnd = $r.hwnd; hostClient = $r.client; virtualScreen = $r.virt
+        anchorEpoch = $script:anchorEpoch; anchorQpc = $script:anchorQpc; qpcFrequency = [System.Diagnostics.Stopwatch]::Frequency
+        stopEpoch = $stopEpoch; stopQpc = $stopQpc; steps = @($script:stepTimes)
+    }
+    [IO.File]::WriteAllText($jsonPath, (ConvertTo-Json -InputObject $side -Depth 8), (New-Object Text.UTF8Encoding($false)))
+    try { Remove-Item -LiteralPath $r.stopFile -Force -ErrorAction SilentlyContinue } catch { }
+    try { $p.Dispose() } catch { }
+    $script:rec = $null
+}
 function Stop-ScreenRecord([string]$jsonPath) {
+    if ($script:rec.recorder -eq 'wgc') { Stop-WgcRecord $jsonPath; return }
     $r = $script:rec; $p = $r.proc
     $stopQpc = Get-Qpc; $stopEpoch = Epoch-Of $stopQpc
     try { $p.StandardInput.WriteLine('q'); $p.StandardInput.Flush() } catch { }
@@ -458,7 +514,7 @@ function Stop-ScreenRecord([string]$jsonPath) {
     $err = ''; try { [void]$r.errTask.Wait(5000); $err = [string]$r.errTask.Result } catch { }
     if ($err.Length -gt 2000) { $err = $err.Substring($err.Length - 2000) }
     $side = [ordered]@{
-        schema = 'screen-record/v1'; run = $r.name; record = [IO.Path]::GetFileName($r.file); source = 'gdigrab desktop (whole virtual screen)'; codec = 'ffv1'; framerate = 60
+        schema = 'screen-record/v1'; recorder = 'gdigrab'; run = $r.name; record = [IO.Path]::GetFileName($r.file); source = 'gdigrab desktop (whole virtual screen)'; codec = 'ffv1'; framerate = 60
         ffmpeg = $r.ffmpeg; ffmpegVersion = $r.version; ffmpegArgs = $r.args; ffmpegExited = $exited; ffmpegExitCode = $(if ($exited) { $p.ExitCode } else { $null }); ffmpegStderr = $err
         hostHwnd = $r.hwnd; hostClient = $r.client; virtualScreen = $r.virt
         anchorEpoch = $script:anchorEpoch; anchorQpc = $script:anchorQpc; qpcFrequency = [System.Diagnostics.Stopwatch]::Frequency

@@ -1,9 +1,14 @@
 #!/usr/bin/env python3
 """Flicker scan for the H19 screen recordings (issue #15).
 
-Reads the continuous screen recordings that job-interact.ps1 writes under SWIFTRIGHT_SCREEN_RECORD=1:
-    <run>/windows/record-NN.mkv    ffv1, ffmpeg gdigrab of the whole virtual screen at 60 fps
+Reads the screen recordings that job-interact.ps1 writes under SWIFTRIGHT_SCREEN_RECORD=gdigrab|wgc (legacy 1 = gdigrab):
+    <run>/windows/record-NN.mkv    gdigrab: ffv1, ffmpeg gdigrab of the whole virtual screen at 60 fps
+    <run>/windows/record-NN-wgc/   wgc: frames.jsonl + frame-NNNNNN.png, every Windows.Graphics.Capture frame of the host HWND
+                                   (FactoryWGCRecord.exe; frames arrive only when the window content changes, so gaps are normal)
     <run>/windows/record-NN.json   sidecar: host client rect, virtual screen, anchors, and each input step's start and end
+A WGC recording is aligned to the sidecar through each frame's QPC arrival time (epoch = anchorEpoch + (qpc - anchorQpc) / qpcFrequency).
+A WGC frame is the whole window, so the host rect crop is skipped; a window capture cannot show what is behind the window, so a frame
+whose content is missing shows as black, or as alpha 0 (reported as "transparent": every pixel of a row run has alpha 0).
 
 For every recording it decodes each frame, crops the host client rect and reports, for each input step, the frames in
 [step end, step end + window] (default 1000 ms):
@@ -99,9 +104,21 @@ def crop_box(sidecar, width, height):
 
 def black_row_runs(img):
     """Row runs (start, length) where every pixel is exactly (0,0,0). 'L' of the per-pixel channel maximum is 0 only for black."""
-    w, h = img.size
     mx = ImageChops.lighter(ImageChops.lighter(img.getchannel(0), img.getchannel(1)), img.getchannel(2))
-    if mx.getextrema()[0] > 0:          # no black pixel at all: no black row
+    return zero_row_runs(mx)
+
+
+def alpha_zero_row_runs(img):
+    """Row runs where every pixel has alpha 0 (RGBA frames only; an RGB frame has none)."""
+    if img.mode != "RGBA":
+        return []
+    return zero_row_runs(img.getchannel(3))
+
+
+def zero_row_runs(mx):
+    """Row runs (start, length) of an 'L' image whose every pixel is 0."""
+    w, h = mx.size
+    if mx.getextrema()[0] > 0:          # no zero pixel at all: no zero row
         return []
     runs = []
     start = None
@@ -121,12 +138,15 @@ def features(timed_frames, box, min_band_rows):
     """Per-frame features from (time_seconds, image) pairs: digest of the host rect, full-black flag, band flag and longest band."""
     out = []
     for t, img in timed_frames:
-        c = img.crop(box)
-        digest = hashlib.sha256(c.tobytes()).hexdigest()
+        c = img if box is None else img.crop(box)     # box None: the whole frame (a WGC window capture)
+        digest = hashlib.sha256(c.tobytes() + repr(c.size).encode()).hexdigest()
         runs = black_row_runs(c)
         longest = max((length for _, length in runs), default=0)
+        aruns = alpha_zero_row_runs(c)
+        alongest = max((length for _, length in aruns), default=0)
         out.append({"t": t, "digest": digest, "black": longest == c.size[1], "band": longest >= min_band_rows, "band_rows": longest,
-                    "band_runs": len(runs)})
+                    "band_runs": len(runs), "transparent": alongest >= max(1, min_band_rows), "transparent_rows": alongest,
+                    "transparent_full": alongest == c.size[1]})
     return out
 
 
@@ -137,7 +157,8 @@ def plateaus(feats):
         if out and out[-1]["digest"] == f["digest"]:
             out[-1]["end"] = i
             continue
-        out.append({"digest": f["digest"], "start": i, "end": i, "t0": f["t"], "black": f["black"], "band": f["band"], "band_rows": f["band_rows"]})
+        out.append({"digest": f["digest"], "start": i, "end": i, "t0": f["t"], "black": f["black"], "band": f["band"], "band_rows": f["band_rows"],
+                    "transparent": f.get("transparent", False), "transparent_rows": f.get("transparent_rows", 0)})
     for p in out:
         p["frames"] = p["end"] - p["start"] + 1
         p["t1"] = feats[p["end"] + 1]["t"] if p["end"] + 1 < len(feats) else None
@@ -161,8 +182,9 @@ def gaps(feats):
     return out
 
 
-def analyse(feats, steps, window_ms):
-    """Per-step events in [step end, step end + window_ms] and recording-wide totals. steps: [{'step','op','end'}] with end in the frame time base."""
+def analyse(feats, steps, window_ms, on_change=False):
+    """Per-step events in [step end, step end + window_ms] and recording-wide totals. steps: [{'step','op','end'}] with end in the frame time base.
+    on_change: the frames are delivered only on a content change (WGC), so no fixed period exists: gaps are not dropped frames and are not listed."""
     plats = plateaus(feats)
     window = window_ms / 1000.0
     rec = {"frames": len(feats)}
@@ -170,7 +192,11 @@ def analyse(feats, steps, window_ms):
         span = feats[-1]["t"] - feats[0]["t"]
         rec["achievedFps"] = round((len(feats) - 1) / span, 2) if span > 0 else None
         rec["durationS"] = round(span, 3)
-    rec["gaps"] = gaps(feats)
+    rec["gaps"] = [] if on_change else gaps(feats)
+    if on_change:
+        rec["onChangeOnly"] = True
+        rec["intervalsOver50ms"] = sum(1 for i in range(1, len(feats)) if feats[i]["t"] - feats[i - 1]["t"] > 0.05)
+        rec["transparentFrames"] = sum(1 for f in feats if f.get("transparent"))
     rec["blackFrames"] = sum(1 for f in feats if f["black"])
     rec["bandFrames"] = sum(1 for f in feats if f["band"])
     rec["transients"] = sum(1 for p in plats if p["transient"])
@@ -187,19 +213,73 @@ def analyse(feats, steps, window_ms):
                 continue
             if start > t1:
                 break
-            if p["transient"] or p["black"] or p["band"]:
+            if p["transient"] or p["black"] or p["band"] or p["transparent"]:
                 events.append({"startMs": round((start - t0) * 1000, 1), "durationMs": None if p["dur"] is None else round(p["dur"] * 1000, 1),
-                               "frames": p["frames"], "transient": p["transient"], "black": p["black"], "band": p["band"], "bandRows": p["band_rows"]})
+                               "frames": p["frames"], "transient": p["transient"], "black": p["black"], "band": p["band"], "bandRows": p["band_rows"],
+                               "transparent": p["transparent"], "transparentRows": p["transparent_rows"]})
         per_step.append({"step": s["step"], "op": s["op"], "endEpochS": round(t0, 4), "framesInWindow": len(inwin),
                          "blackFrameMs": [round((f["t"] - t0) * 1000, 1) for f in inwin if f["black"]],
                          "bandFrameMs": [round((f["t"] - t0) * 1000, 1) for f in inwin if f["band"]],
+                         "transparentFrameMs": [round((f["t"] - t0) * 1000, 1) for f in inwin if f.get("transparent")],
                          "events": events, "clean": not events})
     rec["steps"] = per_step
     return rec
 
 
-def scan_recording(sidecar_path, window_ms, min_band_rows):
+def load_wgc_frames(frame_dir, side, time_base):
+    """(epoch seconds, RGBA image) per line of frames.jsonl, plus a diagnostic dict. Time base 'qpc' (default) is the QPC at the FrameArrived call;
+    'srt' is frame.SystemRelativeTime converted from 100 ns ticks to QPC counts (assumes SystemRelativeTime shares the QPC origin: unverified)."""
+    freq = float(side.get("qpcFrequency") or 0.0)
+    aq = float(side.get("anchorQpc") or 0.0)
+    ae = float(side.get("anchorEpoch") or 0.0)
+    if freq <= 0:
+        raise ValueError("sidecar has no qpcFrequency")
+    lines = [json.loads(l) for l in (frame_dir / "frames.jsonl").read_text(encoding="utf-8-sig").splitlines() if l.strip()]
+    out = []
+    missing = 0
+    offsets = []
+    for rec in lines:
+        png = frame_dir / ("frame-%06d.png" % int(rec["index"]))
+        if not rec.get("png", True) or not png.is_file():
+            missing += 1
+            continue
+        qpc = float(rec["qpc"])
+        srt_qpc = float(rec["systemRelativeTimeTicks"]) * freq / 1e7
+        offsets.append((srt_qpc - qpc) / freq)
+        epoch = ae + ((srt_qpc if time_base == "srt" else qpc) - aq) / freq
+        with Image.open(png) as im:
+            out.append((epoch, im.convert("RGBA")))
+    offsets.sort()
+    diag = {"framesInJsonl": len(lines), "framesMissingPng": missing, "timeBase": time_base,
+            "srtMinusArrivalMs": None if not offsets else {"median": round(offsets[len(offsets) // 2] * 1000, 2), "min": round(offsets[0] * 1000, 2), "max": round(offsets[-1] * 1000, 2)}}
+    return out, diag
+
+
+def scan_wgc(sidecar_path, side, window_ms, min_band_rows, time_base):
+    frame_dir = sidecar_path.with_name(side.get("frameDir") or side["record"])
+    if not (frame_dir / "frames.jsonl").is_file():
+        raise FileNotFoundError(f"frames.jsonl missing: {frame_dir}")
+    frames, diag = load_wgc_frames(frame_dir, side, time_base)
+    if not frames:
+        raise RuntimeError(f"no WGC frames in {frame_dir}")
+    feats = features(frames, None, min_band_rows)
+    steps = []
+    for st in side.get("steps", []):
+        if str(st.get("op")) in INPUT_EXCLUDE or st.get("epoch1") is None:
+            continue
+        steps.append({"step": st.get("step"), "op": st.get("op"), "end": float(st["epoch1"])})
+    rec = analyse(feats, steps, window_ms, on_change=True)
+    summ = side.get("wgcSummary") or {}
+    rec.update({"record": frame_dir.name, "recorder": "wgc", "run": side.get("run"), "frameSizes": sorted({str(f[1].size) for f in frames}),
+                "wgc": diag, "recorderExitCode": side.get("recorderExitCode"), "recorderErrors": summ.get("errors"),
+                "hostCropPx": None})
+    return rec
+
+
+def scan_recording(sidecar_path, window_ms, min_band_rows, time_base="qpc"):
     side = json.loads(Path(sidecar_path).read_text(encoding="utf-8-sig"))
+    if side.get("recorder") == "wgc":
+        return scan_wgc(sidecar_path, side, window_ms, min_band_rows, time_base)
     mkv = sidecar_path.with_name(side.get("record") or sidecar_path.with_suffix(".mkv").name)
     if not mkv.is_file():
         raise FileNotFoundError(f"recording missing: {mkv}")
@@ -232,18 +312,19 @@ def scan_recording(sidecar_path, window_ms, min_band_rows):
 def summarise(recs, window_ms):
     if not recs:
         return "flicker-scan: no recordings"
-    in_win = {"black": 0, "band": 0, "transient": 0, "steps": 0, "cleanSteps": 0}
+    in_win = {"black": 0, "band": 0, "transient": 0, "steps": 0, "cleanSteps": 0, "transparent": 0}
     for r in recs:
         for s in r["steps"]:
             in_win["steps"] += 1
             in_win["cleanSteps"] += 1 if s["clean"] else 0
             in_win["black"] += len(s["blackFrameMs"])
             in_win["band"] += len(s["bandFrameMs"])
+            in_win["transparent"] += len(s.get("transparentFrameMs", []))
             in_win["transient"] += sum(1 for e in s["events"] if e["transient"])
-    fps = [r["achievedFps"] for r in recs if r.get("achievedFps")]
+    fps = [r["achievedFps"] for r in recs if r.get("achievedFps") and not r.get("onChangeOnly")]
     gap_n = sum(len(r["gaps"]) for r in recs)
     return (f"flicker-scan: {len(recs)} recording(s), {in_win['steps']} input step(s) scanned {window_ms} ms each: "
-            f"{in_win['cleanSteps']} clean; black frames {in_win['black']}, band frames {in_win['band']}, transients {in_win['transient']}; "
+            f"{in_win['cleanSteps']} clean; black frames {in_win['black']}, band frames {in_win['band']}, alpha-0 frames {in_win['transparent']}, transients {in_win['transient']}; "
             f"fps {min(fps) if fps else 'n/a'}-{max(fps) if fps else 'n/a'}, gaps {gap_n}")
 
 
@@ -319,6 +400,39 @@ def selftest():
             w, h, pts = probe_video(mkv)
             n = sum(1 for _ in iter_frames(mkv, w, h))
             check("ffmpeg round trip: decoded frames = probed frames (30)", n == len(pts) == 30 and (w, h) == (W, H))
+    # Synthetic WGC directory: frames.jsonl + RGBA PNGs + sidecar, aligned through the QPC anchor.
+    with tempfile.TemporaryDirectory(prefix="flicker-selftest-wgc-") as tmp:
+        root = Path(tmp)
+        fdir = root / "record-01-wgc"
+        fdir.mkdir()
+        freq, anchor_q, anchor_e = 10_000_000, 5_000_000, 1000.0
+        step_end = anchor_e + 2.0   # the step ends 2.0 s after the anchor
+        A4, B4 = (200, 200, 200, 255), (90, 90, 200, 255)
+        plan = [(-0.20, A4), (0.10, B4), (0.20, A4), (0.40, (0, 0, 0, 0)), (0.50, A4), (0.60, (0, 0, 0, 255)), (0.70, A4), (1.50, A4)]
+        with (fdir / "frames.jsonl").open("w", encoding="utf-8") as jl:
+            for i, (dt, color) in enumerate(plan, 1):
+                Image.new("RGBA", (W, H), color).save(fdir / ("frame-%06d.png" % i))
+                qpc = anchor_q + int((step_end - anchor_e + dt) * freq)
+                jl.write(json.dumps({"index": i, "systemRelativeTimeTicks": int(qpc * 1e7 / freq) - 3000, "qpc": qpc, "contentSize": [W, H], "width": W, "height": H, "png": True}) + "\n")
+        side = {"schema": "screen-record/v1", "recorder": "wgc", "run": "record-01", "record": "record-01-wgc", "frameDir": "record-01-wgc",
+                "anchorEpoch": anchor_e, "anchorQpc": anchor_q, "qpcFrequency": freq,
+                "steps": [{"step": 1, "op": "click", "epoch1": step_end}, {"step": 2, "op": "wait", "epoch1": step_end}]}
+        sc = root / "record-01.json"
+        sc.write_text(json.dumps(side), encoding="utf-8")
+        r = scan_recording(sc, 1000, 1)
+        w1 = r["steps"][0]
+        check("wgc: recorder wgc, on-change, 8 frames, no gaps listed", r["recorder"] == "wgc" and r["onChangeOnly"] and r["frames"] == 8 and r["gaps"] == [])
+        check("wgc: wait step skipped (one input step)", len(r["steps"]) == 1)
+        check("wgc: frames in window = 6 (0.10..0.70; 1.50 is outside)", w1["framesInWindow"] == 6)
+        check("wgc: alpha-0 frame found at +400 ms", len(w1["transparentFrameMs"]) == 1 and abs(w1["transparentFrameMs"][0] - 400.0) < 0.5)
+        check("wgc: black frames = alpha-0 frame + opaque black frame", len(w1["blackFrameMs"]) == 2)
+        check("wgc: three transients (colour, alpha-0, black)", sum(1 for e in w1["events"] if e["transient"]) == 3)
+        check("wgc: transparent event is flagged", any(e["transparent"] and e["transient"] for e in w1["events"]))
+        check("wgc: opaque black is black but not transparent", any(e["black"] and not e["transparent"] for e in w1["events"]))
+        check("wgc: srt-minus-arrival diagnostic is -0.3 ms", r["wgc"]["srtMinusArrivalMs"]["median"] == -0.3)
+        r2 = scan_recording(sc, 1000, 1, "srt")
+        check("wgc: srt time base shifts frames by 0.3 ms", abs(r2["steps"][0]["transparentFrameMs"][0] - 399.7) < 0.05)
+        check("wgc: summary mentions alpha-0 frames", "alpha-0 frames 1" in summarise([r], 1000))
     failed = [name for name, ok in checks if not ok]
     for name, ok in checks:
         print(("ok   " if ok else "FAIL ") + name)
@@ -336,6 +450,7 @@ def main(argv):
     ap.add_argument("--window-ms", type=int, default=1000, help="window after each input step (ms, default 1000)")
     ap.add_argument("--min-band-rows", type=int, default=1, help="shortest run of all-black rows that counts as a band (default 1)")
     ap.add_argument("--stable-frames", type=int, default=1, help="frames a plateau must last to count as the stable frame around a transient (default 1)")
+    ap.add_argument("--wgc-time", choices=("qpc", "srt"), default="qpc", help="WGC frame time: qpc at FrameArrived (default) or SystemRelativeTime")
     ap.add_argument("--selftest", action="store_true", help="run the synthetic self-test and exit")
     a = ap.parse_args(argv)
     if a.selftest:
@@ -352,7 +467,7 @@ def main(argv):
     errors = []
     for sp in sidecars:
         try:
-            r = scan_recording(sp, a.window_ms, a.min_band_rows)
+            r = scan_recording(sp, a.window_ms, a.min_band_rows, a.wgc_time)
             r["sidecar"] = str(sp.relative_to(root))
             recs.append(r)
         except (RuntimeError, ValueError, FileNotFoundError, subprocess.CalledProcessError, KeyError, json.JSONDecodeError) as e:
