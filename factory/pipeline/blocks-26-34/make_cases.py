@@ -466,6 +466,93 @@ def frame_facts():
 frame_facts()
 
 
+# frame-centring-facts-b-v1 (issue #7): the lineLimit rows of v1 sat below the 320 x 240 pt captured area, so this case holds only rows that fit inside it,
+# stacked from the top of the 240 x 200 pt witness (window frame tops 20, 80, 140, 200 pt; bottoms 80, 140, 200, 240 pt). Same MAC_FACT mechanism as v1,
+# plus the last-line baseline (lastBaseline, lastBaselineOverlayTop). Measurement only, report-only (no gates). Probe modifiers compile out on Windows.
+FC_PROBE_B = r'''#if os(Windows)
+extension View {
+    func factText(_ key: String) -> some View { self }
+    func factFrame(_ key: String) -> some View { self }
+}
+#else
+final class FactLedger: @unchecked Sendable {
+    static let shared = FactLedger()
+    func record(_ key: String, _ field: String, _ v: Double) {
+        print("MAC_FACT row=\(key) \(field)=\((v * 100).rounded() / 100)")
+        fflush(nil)
+    }
+}
+extension View {
+    func factText(_ key: String) -> some View {
+        HStack(alignment: .firstTextBaseline, spacing: 0) {
+            self
+                .overlay(alignment: Alignment(horizontal: .leading, vertical: .firstTextBaseline)) {
+                    Color.clear.frame(height: 0).background(GeometryReader { g in
+                        let _ = FactLedger.shared.record(key, "baselineOverlayTop", Double(g.frame(in: .global).minY))
+                        Color.clear
+                    })
+                }
+                .overlay(alignment: Alignment(horizontal: .leading, vertical: .lastTextBaseline)) {
+                    Color.clear.frame(height: 0).background(GeometryReader { g in
+                        let _ = FactLedger.shared.record(key, "lastBaselineOverlayTop", Double(g.frame(in: .global).minY))
+                        Color.clear
+                    })
+                }
+                .alignmentGuide(.firstTextBaseline) { d in
+                    let b = d[.firstTextBaseline]
+                    FactLedger.shared.record(key, "baseline", Double(b))
+                    return b
+                }
+                .alignmentGuide(.lastTextBaseline) { d in
+                    let b = d[.lastTextBaseline]
+                    FactLedger.shared.record(key, "lastBaseline", Double(b))
+                    return b
+                }
+                .background(GeometryReader { g in
+                    let _ = FactLedger.shared.record(key, "textTop", Double(g.frame(in: .global).minY))
+                    let _ = FactLedger.shared.record(key, "textH", Double(g.size.height))
+                    Color.clear
+                })
+            Text("|").font(.system(size: 8)).opacity(0).frame(width: 0)
+        }
+    }
+    func factFrame(_ key: String) -> some View {
+        self.background(GeometryReader { g in
+            let _ = FactLedger.shared.record(key, "frameTop", Double(g.frame(in: .global).minY))
+            let _ = FactLedger.shared.record(key, "frameH", Double(g.size.height))
+            Color.clear
+        })
+    }
+}
+#endif
+
+'''
+# (key, frame width, frame height, frame alignment, text, extra modifiers); all 12 pt regular
+FC_B_ROWS = [
+    ("ll2-w110h60", 110, 60, ".leading", LONG, ".lineLimit(2)"),
+    ("ll3-w110h60", 110, 60, ".leading", LONG, ".lineLimit(3)"),
+    ("f12r-w110h60", 110, 60, ".leading", "Headroom", ""),
+    ("f12r-h40", 240, 40, ".center", "Hxg Overview", ""),
+]
+
+
+def frame_facts_b():
+    lines = []
+    for key, w, h, align, text, extra in FC_B_ROWS:
+        lines.append(f'            Text("{text}").font(Font.system(size: 12, weight: .regular)){extra}.factText("{key}").frame(width: {w}, height: {h}, alignment: {align}).factFrame("{key}")')
+    body = FC_PROBE_B + """struct Witness_sf_frame_centring_facts_b: View {
+    var body: some View {
+        VStack(alignment: .leading, spacing: 0) {
+""" + "\n".join(lines) + """
+        }.frame(width: 240, height: 200, alignment: .topLeading)
+    }
+}"""
+    case("swiftui.system-font/frame-centring-facts-b-v1", "Witness_sf_frame_centring_facts_b", body, steps=[{"op": "wait", "ms": 600}])
+
+
+frame_facts_b()
+
+
 # =====================================================================================================================================================================
 # block 31: swiftui.paint-states (transparent fills, dark Divider); full-viewport witnesses (320 x 240) on the blocks-17-20 style host, light and dark
 # =====================================================================================================================================================================
