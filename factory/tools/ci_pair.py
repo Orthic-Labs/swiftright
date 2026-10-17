@@ -60,6 +60,9 @@ RENDERERS = {
     # The same plus the settled-size log line at ready (the early-sample line removed). render-windows CI run 38842731404 on a15ebc5d14bef5128c0b8e531f66ffb15ebe9758.
     "renderer-0.10-a15ebc5d": dict(runId=38842731404, artifact="swiftright-render-a15ebc5d14bef5128c0b8e531f66ffb15ebe9758",
                                    sha256="c533438a0900bc5aeaee10661a70c9c3ee0e1d87e774a5ac4aea81589f25f996"),
+    # Same ABI 0.10 plus the Mac multi-line pitch (decision G75(b): block height rounded once from the scale-1 pitch, fractional line advance). render-windows CI run 38991236961 on a79258d63703da15e1ea4ede1ee745388d136156 (68 Rust tests pass).
+    "renderer-0.10-a79258d6": dict(runId=38991236961, artifact="swiftright-render-a79258d63703da15e1ea4ede1ee745388d136156",
+                                   sha256="1a256d4594618a3a931b791b3c2d3f9996520301ba0928acde9e863f1c49bd11"),
 }
 BLOCK_LABELS = {"swiftui.slider": "37 slider", "swiftui.on-hover": "38 on-hover", "swiftui.uia-walk": "39 uia-walk",
                 "swiftui.compat": "41 compat", "swiftui.ime-traps": "40 ime-traps"}
