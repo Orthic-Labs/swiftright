@@ -63,6 +63,9 @@ RENDERERS = {
     # Same ABI 0.10 plus the Mac multi-line pitch (decision G75(b): block height rounded once from the scale-1 pitch, fractional line advance). render-windows CI run 38991236961 on a79258d63703da15e1ea4ede1ee745388d136156 (68 Rust tests pass).
     "renderer-0.10-a79258d6": dict(runId=38991236961, artifact="swiftright-render-a79258d63703da15e1ea4ede1ee745388d136156",
                                    sha256="1a256d4594618a3a931b791b3c2d3f9996520301ba0928acde9e863f1c49bd11"),
+    # Same ABI 0.10 plus the measured Mac per-line snap for wrapped system-font lines (decision G76(b)); supersedes a79258d6 for multi-line text. render-windows CI run 38991925100 on c13b62a44.
+    "renderer-0.10-c13b62a4": dict(runId=38991925100, artifact="swiftright-render-c13b62a446b1fa01afe624410711ab9720aacd82",
+                                   sha256="4afe19d0c561a4a4ffb3e0cdc75cd197aaf0e2eec6121fdef266ed780107d817"),
 }
 BLOCK_LABELS = {"swiftui.slider": "37 slider", "swiftui.on-hover": "38 on-hover", "swiftui.uia-walk": "39 uia-walk",
                 "swiftui.compat": "41 compat", "swiftui.ime-traps": "40 ime-traps"}
