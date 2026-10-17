@@ -6,14 +6,14 @@ Tuple 12 staging was stopped at 2026-10-11 11:04–11:05 local, after stop was r
 
 | Field | Pin |
 |---|---|
-| Stage source commit | `0e201571e4320a3b6ccce14313fd2ad67e523904` |
+| Stage source commit | `a9556b77f50315afcae27fc8fc44c0cd274959e2` |
 | Product fixes commit | `4b1ca6d0fb89963ee20cd5bd7adf8b7c8b9b24e2` |
-| Renderer source | `D:\.rightkit-managed\rightkit-build-control\ws\864173e69427\g\001\target\x86_64-pc-windows-msvc\release\swiftright_render.dll` |
+| Renderer source | `D:\Claude\swiftright\.work\sr0-stage-inputs\swiftright_render.dll` |
 | Renderer sha256 | `7578CD5DA8A6831900C66680C4B94F89E64B6B294623709817848B02219AEAC2` |
 | Staging root | `D:\Claude\swiftright\.work\sr0-r12` |
 | Stage capture | `/Volumes/D/sr0-artifacts/stage-r12.log` |
 
-The source commit is the staging-script commit; it contains product fixes from `4b1ca6d0`. ABI remains 0.6. Renderer was built from `4b1ca6d0` by RightKit build broker. No tuple member hash is accepted from transcript shorthand.
+The source commit is canonical stage commit `a9556b77f` (base `0e201571` + startup-guard overlay r2, Sage 17 October); it contains product fixes from `4b1ca6d0`. ABI remains 0.6. Renderer was built from `4b1ca6d0` by RightKit build broker. No tuple member hash is accepted from transcript shorthand.
 
 ## Receipts required
 
@@ -28,7 +28,7 @@ Expected receipt paths after successful staging:
 
 ## Safe commands
 
-Copy exact pinned source scripts into `D:\Claude\swiftright\.work\sr0-overrides` using repo-relative paths. Include `stage-tuple.ps1`, `audit-tuple.ps1`, `resume-tuple.ps1`, `preflight-ps1.ps1` & every file listed by preflight. `-ScriptOverride` selects these reviewed files while clone stays clean. Parse every stage script before audit:
+Copy exact pinned source scripts from commit `a9556b77f50315afcae27fc8fc44c0cd274959e2` into `D:\Claude\swiftright\.work\sr0-overrides` using repo-relative paths, then check each copied file's SHA-256 against `probes/sr0-s/fresh-on-bridge/out/tuple12-stage-takeover-r1/transfer-manifest-r2.json`. Include `stage-tuple.ps1`, `audit-tuple.ps1`, `resume-tuple.ps1`, `preflight-ps1.ps1` & every file listed by preflight. `-ScriptOverride` selects these reviewed files while clone stays clean. Parse every stage script before audit:
 
 ```powershell
 powershell -NoProfile -ExecutionPolicy Bypass -File D:\Claude\swiftright\.work\preflight-ps1.ps1 -Root D:\Claude\swiftright\.work\sr0-overrides *> D:\Claude\swiftright\.work\sr0-r12-ps-parse.txt
@@ -37,7 +37,7 @@ powershell -NoProfile -ExecutionPolicy Bypass -File D:\Claude\swiftright\.work\p
 Parse must emit `PS_PARSE_ALL_OK`; then run audit only:
 
 ```powershell
-powershell -NoProfile -ExecutionPolicy Bypass -File D:\Claude\swiftright\.work\audit-tuple.ps1 *> D:\Claude\swiftright\.work\sr0-r12-audit.txt
+powershell -NoProfile -ExecutionPolicy Bypass -File D:\Claude\swiftright\.work\audit-tuple.ps1 -Commit a9556b77f50315afcae27fc8fc44c0cd274959e2 -RendererDll "D:\Claude\swiftright\.work\sr0-stage-inputs\swiftright_render.dll" -ExpectRenderer 7578CD5DA8A6831900C66680C4B94F89E64B6B294623709817848B02219AEAC2 *> D:\Claude\swiftright\.work\sr0-r12-audit.txt
 ```
 
 Before build, run bridge-header preflight against cloned source. It reads resolved bytes only & rejects one-line Git symlink text; expected tuple12 source header is 41,937 bytes, SHA-256 `12764e1f5e24457617a2a46b993ce405bde3f9b25625882425a997e4a8f2689b`:
@@ -49,7 +49,7 @@ powershell -NoProfile -ExecutionPolicy Bypass -File D:\Claude\swiftright\.work\s
 After root confirms no matching process/task, desktop lock is `free` & Mac broker is quiescent, resume partial tree:
 
 ```powershell
-powershell -NoProfile -ExecutionPolicy Bypass -File D:\Claude\swiftright\.work\resume-tuple.ps1 -ScriptOverride D:\Claude\swiftright\.work\sr0-overrides *> D:\Claude\swiftright\.work\sr0-r12-resume.txt
+powershell -NoProfile -ExecutionPolicy Bypass -File D:\Claude\swiftright\.work\resume-tuple.ps1 -ScriptOverride D:\Claude\swiftright\.work\sr0-overrides -Commit a9556b77f50315afcae27fc8fc44c0cd274959e2 -RendererDll "D:\Claude\swiftright\.work\sr0-stage-inputs\swiftright_render.dll" -ExpectRenderer 7578CD5DA8A6831900C66680C4B94F89E64B6B294623709817848B02219AEAC2 *> D:\Claude\swiftright\.work\sr0-r12-resume.txt
 ```
 
 Root-side broker read: `rightkit list`; do not submit while RustRight fix install is unverified.
@@ -57,7 +57,7 @@ Root-side broker read: `rightkit list`; do not submit while RustRight fix instal
 If source clone is incomplete, leave `sr0-r12` in place & use fresh sibling root; this is additive & does not delete old evidence:
 
 ```powershell
-powershell -NoProfile -ExecutionPolicy Bypass -File D:\Claude\swiftright\.work\resume-tuple.ps1 -ScriptOverride D:\Claude\swiftright\.work\sr0-overrides -Restart *> D:\Claude\swiftright\.work\sr0-r12-restart.txt
+powershell -NoProfile -ExecutionPolicy Bypass -File D:\Claude\swiftright\.work\resume-tuple.ps1 -ScriptOverride D:\Claude\swiftright\.work\sr0-overrides -Restart -Commit a9556b77f50315afcae27fc8fc44c0cd274959e2 -RendererDll "D:\Claude\swiftright\.work\sr0-stage-inputs\swiftright_render.dll" -ExpectRenderer 7578CD5DA8A6831900C66680C4B94F89E64B6B294623709817848B02219AEAC2 *> D:\Claude\swiftright\.work\sr0-r12-restart.txt
 ```
 
 `resume-tuple.ps1` invokes build-only staging. It does not launch an app, create scheduled tasks, remove files or contact broker. `Copy-Tree` is additive `robocopy /E` without purge/mirror flags; all staged copies & content writes fail closed. Build scripts must use retained unique scratch/log paths; any `Remove-Item`, `rmdir`, `/MIR`, `/PURGE` or destructive cleanup is a preflight violation.

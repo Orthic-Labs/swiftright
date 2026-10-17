@@ -5,6 +5,7 @@ Updated 11 October 2026. F1 background smoke r3 is admitted with native 17/17. F
 ## Pinned inputs
 
 - source commit: `0e201571e4320a3b6ccce14313fd2ad67e523904`
+- canonical tuple 12 stage commit (17 Oct, sage adjudication): `a9556b77f50315afcae27fc8fc44c0cd274959e2` (base `0e201571` + overlay r2 `0d537b83…`; source manifest `f45b9e0d…`); `--source-commit 0e201571` in the commands below is kept because it ties recorded receipts
 - renderer: `7578CD5DA8A6831900C66680C4B94F89E64B6B294623709817848B02219AEAC2`
 - RightKit release adopted by source: `@rightkit/release` `0.2.151`
 - tuple candidate: `qualification/tuple12-candidate.json`
