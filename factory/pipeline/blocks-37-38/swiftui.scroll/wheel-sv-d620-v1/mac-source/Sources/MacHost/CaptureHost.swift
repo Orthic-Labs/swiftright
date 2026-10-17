@@ -363,24 +363,112 @@ final class Driver {
         if !ok { scrollFailures.append("\(label) (\(how)): documentVisibleRect.origin.y stayed \(f(before.y)) \(note)") }
     }
 
-    /// M5: renders the vertical NSScroller view itself (the whole-window capture draws none) at the capture scale into scroller-NN-<label>.png beside the run png, and prints MAC_SCROLLER.
+    /// M5: renders the vertical NSScroller view itself (the whole-window capture draws none) at the capture scale. cacheDisplay draws nothing for the layer-backed scroller (run 39068737526: all-transparent PNG), so three methods are tried in order and each one that yields non-transparent pixels writes scroller-NN-<label>-<method>.png and a MAC_SCROLLER line (method=) plus a MAC_SCROLLER_PX line; status=FAIL when every method is blank.
     func scrollerPNG(_ label: String, png: String) throws {
         guard let sv = scrollViewFound(), let sc = sv.verticalScroller else {
             print("MAC_SCROLLER label=\(label) status=FAIL no vertical scroller"); scrollFailures.append("\(label) (scrollerpng): no vertical scroller"); return
         }
         pump(0.2); host.layoutSubtreeIfNeeded(); sc.needsDisplay = true; sc.displayIfNeeded()
-        let w = Int((sc.bounds.width * captureScale).rounded()), h = Int((sc.bounds.height * captureScale).rounded())
-        guard w > 0, h > 0, let rep = NSBitmapImageRep(bitmapDataPlanes: nil, pixelsWide: w, pixelsHigh: h, bitsPerSample: 8, samplesPerPixel: 4,
-                                                       hasAlpha: true, isPlanar: false, colorSpaceName: .deviceRGB, bytesPerRow: 0, bitsPerPixel: 0) else {
+        let bw = sc.bounds.width, bh = sc.bounds.height
+        let w = Int((bw * captureScale).rounded()), h = Int((bh * captureScale).rounded())
+        guard w > 0, h > 0 else {
             print("MAC_SCROLLER label=\(label) status=FAIL empty scroller bounds \(sc.bounds)"); scrollFailures.append("\(label) (scrollerpng): empty scroller bounds"); return
         }
-        rep.size = sc.bounds.size   // points, so the drawing is scaled to the capture scale
-        sc.cacheDisplay(in: sc.bounds, to: rep)
-        let path = png.replacingOccurrences(of: "/run-", with: "/scroller-").replacingOccurrences(of: ".png", with: "-\(label).png")
-        guard let data = rep.representation(using: .png, properties: [:]) else { throw NSError(domain: "MacHost", code: 36) }
-        try data.write(to: URL(fileURLWithPath: path))
         func r(_ x: NSRect) -> String { String(format: "%.3f,%.3f,%.3f,%.3f", x.origin.x, x.origin.y, x.width, x.height) }
-        print("MAC_SCROLLER label=\(label) status=OK scale=\(captureScale) png=\(path) pixels=\(w)x\(h) frame=\(r(sc.frame)) bounds=\(r(sc.bounds)) knobRect=\(r(sc.rect(for: .knob))) knobSlotRect=\(r(sc.rect(for: .knobSlot))) doubleValue=\(String(format: "%.4f", sc.doubleValue)) knobProportion=\(String(format: "%.4f", Double(sc.knobProportion))) style=\(sc.scrollerStyle.rawValue) controlSize=\(sc.controlSize.rawValue) isHidden=\(sc.isHidden) alpha=\(sc.alphaValue) isFlipped=\(sc.isFlipped) offset=\(String(format: "%.3f", Double(sv.documentVisibleRect.origin.y)))")
+        func newRep() -> NSBitmapImageRep? {
+            let rep = NSBitmapImageRep(bitmapDataPlanes: nil, pixelsWide: w, pixelsHigh: h, bitsPerSample: 8, samplesPerPixel: 4,
+                                       hasAlpha: true, isPlanar: false, colorSpaceName: .deviceRGB, bytesPerRow: 0, bitsPerPixel: 0)
+            rep?.size = sc.bounds.size   // points, so the drawing is scaled to the capture scale
+            return rep
+        }
+        /// Draws into a fresh bitmap rep with `body` under a current NSGraphicsContext (flipped like the scroller when it is).
+        func drawLegacy(flipped: Bool, _ body: () -> Void) -> NSBitmapImageRep? {
+            guard let rep = newRep(), let gc = NSGraphicsContext(bitmapImageRep: rep) else { return nil }
+            NSGraphicsContext.saveGraphicsState()
+            NSGraphicsContext.current = gc
+            if flipped { gc.cgContext.translateBy(x: 0, y: bh); gc.cgContext.scaleBy(x: 1, y: -1) }
+            body()
+            gc.flushGraphics()
+            NSGraphicsContext.restoreGraphicsState()
+            return rep
+        }
+        func count(_ rep: NSBitmapImageRep) -> Int {
+            var n = 0
+            for y in 0..<rep.pixelsHigh { for x in 0..<rep.pixelsWide { if let c = rep.colorAt(x: x, y: y), c.alphaComponent > 0.001 { n += 1 } } }
+            return n
+        }
+        func rgba(_ rep: NSBitmapImageRep, _ x: Int, _ y: Int) -> String {
+            let px = min(max(x, 0), rep.pixelsWide - 1), py = min(max(y, 0), rep.pixelsHigh - 1)
+            guard let c = rep.colorAt(x: px, y: py)?.usingColorSpace(.deviceRGB) else { return "none" }
+            func b(_ v: CGFloat) -> Int { Int((v * 255).rounded()) }
+            return "\(b(c.redComponent)),\(b(c.greenComponent)),\(b(c.blueComponent)),\(b(c.alphaComponent))@\(px),\(py)"
+        }
+        // view-coordinate point -> pixel (top-origin rows, which is what colorAt uses)
+        func pix(_ p: NSPoint) -> (Int, Int) {
+            let vy = sc.isFlipped ? p.y : bh - p.y
+            return (Int((p.x * captureScale).rounded(.down)), Int((vy * captureScale).rounded(.down)))
+        }
+        let knob = sc.rect(for: .knob), slot = sc.rect(for: .knobSlot)
+        let knobC = pix(NSPoint(x: knob.midX, y: knob.midY))
+        // slot centre away from the knob: the middle of the larger slot remainder above or below it
+        let below = max(0, knob.minY - slot.minY), above = max(0, slot.maxY - knob.maxY)
+        let trackY = below >= above ? (slot.minY + knob.minY) / 2 : (knob.maxY + slot.maxY) / 2
+        let trackC = pix(NSPoint(x: slot.midX, y: trackY))
+        func border(_ rep: NSBitmapImageRep) -> String {
+            // most frequent opaque colour of the leading 1 px column (x = 0) over all rows
+            var tally: [String: Int] = [:]
+            for y in 0..<rep.pixelsHigh { if let c = rep.colorAt(x: 0, y: y)?.usingColorSpace(.deviceRGB), c.alphaComponent > 0.001 {
+                tally[rgba(rep, 0, y).split(separator: "@")[0].description, default: 0] += 1 } }
+            guard let best = tally.max(by: { $0.value < $1.value }) else { return "none" }
+            return "\(best.key)x\(best.value)"
+        }
+
+        var made: [(String, NSBitmapImageRep?)] = []
+        // (1) the layer rendered into a CGContext bitmap at the capture scale
+        var rep1: NSBitmapImageRep?
+        if let layer = sc.layer {
+            layer.layoutIfNeeded(); layer.displayIfNeeded()
+            if let cg = CGContext(data: nil, width: w, height: h, bitsPerComponent: 8, bytesPerRow: 0, space: CGColorSpace(name: CGColorSpace.sRGB)!,
+                                  bitmapInfo: CGImageAlphaInfo.premultipliedLast.rawValue) {
+                cg.scaleBy(x: captureScale, y: captureScale)
+                layer.render(in: cg)
+                if let img = cg.makeImage() { rep1 = NSBitmapImageRep(cgImage: img) }
+            }
+        }
+        made.append(("layer", rep1))
+        // (2) legacy drawing of the live scroller's slot and knob
+        made.append(("legacydraw", drawLegacy(flipped: sc.isFlipped) {
+            sc.drawKnobSlot(in: sc.rect(for: .knobSlot), highlight: false)
+            sc.drawKnob()
+        }))
+        // (3) a throwaway non-layer-backed legacy NSScroller of the same size drawn with draw(_:)
+        let tmp = NSScroller(frame: sc.frame)
+        tmp.scrollerStyle = .legacy
+        tmp.controlSize = sc.controlSize
+        tmp.knobProportion = sc.knobProportion
+        tmp.doubleValue = sc.doubleValue
+        tmp.wantsLayer = false
+        made.append(("throwaway", drawLegacy(flipped: tmp.isFlipped) { tmp.draw(tmp.bounds) }))
+
+        var wrote = 0
+        for (method, rep) in made {
+            let n = rep.map(count) ?? 0
+            let base = "label=\(label) method=\(method) scale=\(captureScale) pixels=\(w)x\(h) opaquePixels=\(n)"
+            guard let rep = rep, n > 0 else {
+                print("MAC_SCROLLER \(base) status=BLANK")
+                continue
+            }
+            let path = png.replacingOccurrences(of: "/run-", with: "/scroller-").replacingOccurrences(of: ".png", with: "-\(label)-\(method).png")
+            guard let data = rep.representation(using: .png, properties: [:]) else { throw NSError(domain: "MacHost", code: 36) }
+            try data.write(to: URL(fileURLWithPath: path))
+            wrote += 1
+            print("MAC_SCROLLER \(base) status=OK png=\(path) frame=\(r(sc.frame)) bounds=\(r(sc.bounds)) knobRect=\(r(knob)) knobSlotRect=\(r(slot)) doubleValue=\(String(format: "%.4f", sc.doubleValue)) knobProportion=\(String(format: "%.4f", Double(sc.knobProportion))) style=\(sc.scrollerStyle.rawValue) controlSize=\(sc.controlSize.rawValue) isHidden=\(sc.isHidden) alpha=\(sc.alphaValue) isFlipped=\(sc.isFlipped) wantsLayer=\(sc.wantsLayer) offset=\(String(format: "%.3f", Double(sv.documentVisibleRect.origin.y)))")
+            print("MAC_SCROLLER_PX method=\(method) track=\(rgba(rep, trackC.0, trackC.1)) knob=\(rgba(rep, knobC.0, knobC.1)) edge=\(rgba(rep, 0, h / 2)) border=\(border(rep))")
+        }
+        if wrote == 0 {
+            print("MAC_SCROLLER label=\(label) status=FAIL every method (layer, legacydraw, throwaway) rendered a fully transparent image")
+            scrollFailures.append("\(label) (scrollerpng): every render method came back fully transparent")
+        }
     }
 
     func scrollStep(_ s: [String: Any]) throws {
