@@ -357,6 +357,7 @@
         "58df259c5-4c63f440",
         "6459bb8cd-d243b1c9",
         "93c6fe320-82e12842",
+        "cfc9bffd3-59caa9c3",
         "d07df2581-cc18ed0f"
       ],
       "status": "delivered-with-caveats",
@@ -739,6 +740,7 @@
         "58df259c5-4c63f440",
         "6459bb8cd-d243b1c9",
         "93c6fe320-82e12842",
+        "cfc9bffd3-59caa9c3",
         "d07df2581-cc18ed0f"
       ],
       "status": "delivered-with-caveats",
@@ -817,6 +819,7 @@
         "6459bb8cd-d243b1c9",
         "7796b0b81-3f77e0df",
         "c4e83a68a-5dfe7cc2",
+        "cfc9bffd3-59caa9c3",
         "d07df2581-cc18ed0f"
       ],
       "status": "delivered-with-caveats",
@@ -891,6 +894,7 @@
         "6459bb8cd-d243b1c9",
         "7796b0b81-3f77e0df",
         "c4e83a68a-5dfe7cc2",
+        "cfc9bffd3-59caa9c3",
         "d07df2581-cc18ed0f"
       ],
       "status": "delivered-with-caveats",
@@ -1178,6 +1182,7 @@
         "6459bb8cd-d243b1c9",
         "7796b0b81-3f77e0df",
         "94ca256e1-5dfe7cc2",
+        "cfc9bffd3-59caa9c3",
         "d07df2581-cc18ed0f"
       ],
       "status": "delivered-with-caveats",
@@ -1270,6 +1275,7 @@
         "58df259c5-4c63f440",
         "6459bb8cd-d243b1c9",
         "93c6fe320-82e12842",
+        "cfc9bffd3-59caa9c3",
         "d07df2581-cc18ed0f"
       ],
       "status": "delivered-with-caveats",
@@ -1742,24 +1748,49 @@
       ],
       "casesPassingDecidingGate": "9/9",
       "caveats": [
-        "Reopened 16 October (decision G71): the blanket tolerance was replaced by per-row tolerances, which fail the independent block 28 gate on the final renderer (styles-large passes; 8 of 9 cases fail; unfitted sizes and weights, undersampled rows).",
-        "Segoe UI at the requested size: Windows lines are 1-3 pt taller from 15 pt up and glyphs a little larger; the text position gate carries measured tolerances (decision F1).",
+        "CI confirmation (16 October): the CI runners use the Windows WARP adapter at an explicit render scale of 2.5 (H17), not native 240 dpi. The Dell 240-dpi sandbox stays the reference; the CI and Dell captures were pixel-identical on click-track and labels.",
+        "Segoe UI at the requested size: Windows lines are 1-3 pt taller from 15 pt up and glyphs a little larger; the text position gate carries per-row tolerances (decisions G71, G74-G77).",
         "`Font.width` is carried, not drawn; serif, rounded and monospaced designs are refused; `lineLimit(n)` truncation falls back to the ellipsis alone when nothing fits (macOS clips instead).",
-        "The blanket tolerance set was replaced by per-row tolerances (decision G71); on the final renderer (fc4a39a89, renderer 0.8) the independent gate fails for 8 of 9 cases."
+        "Proven at N=20 on staged tree f2322127 (stages d4267ce69, 1d309081d and 49680e32d; renderer-0.10-c13b62a4, sha 4afe19d0...); CI runs 38994003228, 38994825461 and 38995241565; 9/9 cases, every row, zero run-to-run variance.",
+        "Every row passes on its fitted tolerance edge in at least one metric (typically first ink y +1 against 1 and mid-point +0.5 against 0.5); the tolerances equal the measured deltas, so the gate tests stability of a constant offset.",
+        "The baseline tolerances of 12, 12.5 and 11.5 semibold (and 13 regular, G71) are 1 px, fitted on digit text that leads with a round glyph (overshoot, G75(a)); on fractional rows 1-2, sizes rows 1-2 and truncate rows 0 and 4 a 1 px (0.4 pt) upward shift passes.",
+        "Multi-line rows (G77): the first line, the line count and every line's bottom within 1 px are gated; the observed line-bottom deltas are +/-1 (descender length and anti-aliasing), at that edge; a later line moved up by 2 px or moved right is not caught.",
+        "Text width (SF vs Segoe advances) is reported, not gated: up to 12 px (4.8 pt) per row; truncation points follow it.",
+        "Text that starts with a descender letter is not gated (the first-glyph metric reads glyph adjacency, G74); all block 28 rows start with H.",
+        "The G74 fit's own gate is not independent (zero variance); block 28's captures are the independent check."
       ],
-      "review": "oracle 2026-10-15",
-      "stage": "9080b3139-e685b237",
-      "status": "not-delivered",
+      "ciN20": {
+        "casesPassing": "9/9",
+        "renderScale": 2.5,
+        "renderer": "renderer-0.10-c13b62a4",
+        "runDirs": {
+          "38994003228": "runs/20261017-021255",
+          "38994825461": "runs/20261017-022522",
+          "38995241565": "runs/20261017-023141"
+        },
+        "runs": [
+          "38994003228",
+          "38994825461",
+          "38995241565"
+        ],
+        "stages": [
+          "1d309081d-f2322127",
+          "49680e32d-f2322127",
+          "d4267ce69-f2322127"
+        ],
+        "windowsAdapter": "WARP (CI runner)"
+      },
+      "review": "oracle 2026-10-17 (PASS-WITH-CAVEATS, G74-G77 re-delivery)",
+      "stage": "staged tree f2322127 (stages d4267ce69-f2322127, 1d309081d-f2322127, 49680e32d-f2322127; renderer-0.10-c13b62a4)",
+      "status": "delivered-with-caveats",
       "statusDocBlock": 28,
-      "statusFromSources": "delivered-with-caveats",
-      "statusReason": "Reopened 16 October (decision G71): the blanket tolerance was replaced by per-row tolerances, which fail the independent block 28 gate on the final renderer (styles-large passes; 8 of 9 cases fail; unfitted sizes and weights, undersampled rows).",
       "verdict": {
         "date": "2026-10-17",
         "runDates": [
           "2026-10-15"
         ],
         "source": "docs/sr1-status.md table + factory/pipeline/closure/closure-table.json (blocks 1-20) / consolidation-table.json (blocks 21+)",
-        "text": "**reopened 16 October (G71): not delivered on the final renderer.** Earlier 180/180 on `9080b3139-e685b237` (renderer 0.7) under one blanket tolerance set (superseded). On `fc4a39a89-f623e43e` (renderer 0.8): styles-large 3/3 pass; fractional, line-limit, sizes-large, sizes, style-weight, styles-small, truncate, weights fail (unfitted sizes 15, 18, 28, 11.5, 12.5 and two styles; caption2 and 12 pt undersampled, G71)"
+        "text": "**delivered-with-caveats** (Oracle PASS-WITH-CAVEATS, reviewed 17 October, issue #7; H37). N=20 on staged tree f2322127 (stages d4267ce69, 1d309081d and 49680e32d; renderer 0.10 `c13b62a4`): CI runs 38994003228 (fractional, sizes-large, style-weight, styles-large, styles-small, truncate, weights), 38994825461 (line-limit) and 38995241565 (sizes-v1) pass 9/9 cases, every row, zero run-to-run variance. Earlier 180/180 on `9080b3139-e685b237` (renderer 0.7) under one blanket tolerance set (superseded); the 16 October reopening (G71, `fc4a39a89`) is superseded by this re-delivery"
       },
       "windowsDifferences": []
     },
@@ -2046,7 +2077,8 @@
       "review": "oracle 2026-10-17 (PASS-WITH-CAVEATS, H34 re-delivery)",
       "stage": [
         "9080b3139-e685b237",
-        "93c6fe320-82e12842"
+        "93c6fe320-82e12842",
+        "cfc9bffd3-59caa9c3"
       ],
       "status": "delivered-with-caveats",
       "statusDocBlock": 34,
@@ -2229,6 +2261,7 @@
         "645396d04-5dfe7cc2",
         "7796b0b81-3f77e0df",
         "c4e83a68a-5dfe7cc2",
+        "cfc9bffd3-59caa9c3",
         "ee84dc923-ae27d688"
       ],
       "status": "delivered-with-caveats",
@@ -2466,7 +2499,8 @@
         "5713ea1fe-94ff8023",
         "645396d04-5dfe7cc2",
         "7796b0b81-3f77e0df",
-        "c4e83a68a-5dfe7cc2"
+        "c4e83a68a-5dfe7cc2",
+        "cfc9bffd3-59caa9c3"
       ],
       "status": "delivered-with-caveats",
       "statusDocBlock": 40,
@@ -2557,7 +2591,8 @@
         "645396d04-5dfe7cc2",
         "6c69c61fb-a295aaa0",
         "7796b0b81-3f77e0df",
-        "c4e83a68a-5dfe7cc2"
+        "c4e83a68a-5dfe7cc2",
+        "cfc9bffd3-59caa9c3"
       ],
       "status": "delivered-with-caveats",
       "statusDocBlock": 41,

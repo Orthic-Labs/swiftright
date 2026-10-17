@@ -56,7 +56,7 @@ ROUND4_CAVEATS = {
 ROUND5_CAVEATS = {
     "swiftui.text-views": ["`AnyView` is transparent: a bare AnyView cannot be a graph root (wrap it in a user view).", "`Text(verbatim:)` has no localisation lookup (the runtime has none)."],
     "swiftui.layout-priority": ["A priority set beneath `padding` or a frame modifier does not forward (measured); only HStack/VStack distribution is proven, not Layout protocol containers."],
-    "swiftui.system-font": ["Segoe UI at the requested size: Windows lines are 1-3 pt taller from 15 pt up and glyphs a little larger; the text position gate carries measured tolerances (decision F1).",
+    "swiftui.system-font": ["Segoe UI at the requested size: Windows lines are 1-3 pt taller from 15 pt up and glyphs a little larger; the text position gate carries per-row tolerances (decisions G71, G74-G77).",
                             "`Font.width` is carried, not drawn; serif, rounded and monospaced designs are refused; `lineLimit(n)` truncation falls back to the ellipsis alone when nothing fits (macOS clips instead)."],
     "swiftui.system-symbols": ["Shapes are Segoe Fluent Icons, never gated (12 weak mappings); regular, semibold and bold font-sized symbols only; only star.fill keeps a resizable layout.", "Sizes between the measured ones are interpolated."],
     "swiftui.continuous-shape-large": ["The anti-aliasing differs from Apple's on large-radius shoulders: named edge-AA tolerances 130-220 (decision F4); a stroked pill is NOT delivered (SwiftUI's stroker draws ticks)."],
@@ -109,7 +109,17 @@ REVIEW = "oracle 2026-10-15"
 REVIEWED = {bid: {"review": REVIEW, "caveats": []} for bid in
             [NUM2ID[n] for n in range(1, 21)] + ["cross-cutting.pixel-ties"] + [NUM2ID[n] for n in list(range(21, 27)) + list(range(28, 37))]}
 REVIEWED["swiftui.text-views"]["caveats"] = ["Text position is ungated (the pixels and the semantic tree are)."]
-REVIEWED["swiftui.system-font"]["caveats"] = ["The blanket tolerance set was replaced by per-row tolerances (decision G71); on the final renderer (fc4a39a89, renderer 0.8) the independent gate fails for 8 of 9 cases."]
+# Re-delivery 17 October (issue #7, H37): Oracle PASS-WITH-CAVEATS on CI runs 38994003228, 38994825461 and 38995241565 (CI_RUNS, CI_CASE_RUN). The two frame-centring probes are not table rows, so they are not counted.
+REVIEW_28 = "oracle 2026-10-17 (PASS-WITH-CAVEATS, G74-G77 re-delivery)"
+REVIEWED["swiftui.system-font"] = {"review": REVIEW_28, "status": "delivered-with-caveats", "caveats": [
+    "Proven at N=20 on staged tree f2322127 (stages d4267ce69, 1d309081d and 49680e32d; renderer-0.10-c13b62a4, sha 4afe19d0...); CI runs 38994003228, 38994825461 and 38995241565; 9/9 cases, every row, zero run-to-run variance.",
+    "Every row passes on its fitted tolerance edge in at least one metric (typically first ink y +1 against 1 and mid-point +0.5 against 0.5); the tolerances equal the measured deltas, so the gate tests stability of a constant offset.",
+    "The baseline tolerances of 12, 12.5 and 11.5 semibold (and 13 regular, G71) are 1 px, fitted on digit text that leads with a round glyph (overshoot, G75(a)); on fractional rows 1-2, sizes rows 1-2 and truncate rows 0 and 4 a 1 px (0.4 pt) upward shift passes.",
+    "Multi-line rows (G77): the first line, the line count and every line's bottom within 1 px are gated; the observed line-bottom deltas are +/-1 (descender length and anti-aliasing), at that edge; a later line moved up by 2 px or moved right is not caught.",
+    "Text width (SF vs Segoe advances) is reported, not gated: up to 12 px (4.8 pt) per row; truncation points follow it.",
+    "Text that starts with a descender letter is not gated (the first-glyph metric reads glyph adjacency, G74); all block 28 rows start with H.",
+    "The G74 fit's own gate is not independent (zero variance); block 28's captures are the independent check.",
+]}
 # Re-delivery under H34 (17 October, issues #4, #5, #6, #8): Oracle PASS-WITH-CAVEATS on CI run 38987638974 (N=20, commit 93c6fe320, decision H35).
 REVIEW_H34 = "oracle 2026-10-17 (PASS-WITH-CAVEATS, H34 re-delivery)"
 REVIEWED["swiftui.toggle"] = {"review": REVIEW_H34, "caveats": ["Label first ink x and leading x are gated at [0, +1] px (Windows minus Mac, H34 side bearing; measured +1 in 20/20 runs); the checkbox label-to-box gap at [0, +1] px. The text origin is not read directly in this block, so a +1 px origin drift would pass. The checkbox gap range has no seeded-mutation proof (s_h34 covers the switch only)."]}
@@ -187,6 +197,9 @@ CI_RUNS = {
     "38872207896": {"runDirs": "runs/20261016-081325", "stage": "f81244b4f-9ce7a09e", "commit": "f81244b4f3b0995188439bd6dae4e15f34a13a04"},
     "38916701641": {"runDirs": "runs/20261016-143349", "stage": "d9423e953-7ede36bc", "commit": "d9423e953ecae07e250e86fb765a0a252357705a"},
     "38987638974": {"runDirs": "runs/20261017-004328", "stage": "93c6fe320-82e12842", "commit": "93c6fe320a443bf86224ac34c3455105a4c399ac"},
+    "38994003228": {"runDirs": "runs/20261017-021255", "stage": "d4267ce69-f2322127", "commit": "d4267ce696967d31b1f10d8d16532a327f68a8a7", "renderer": "renderer-0.10-c13b62a4"},
+    "38994825461": {"runDirs": "runs/20261017-022522", "stage": "1d309081d-f2322127", "commit": "1d309081dfef42a5212aef18c9c389031baa6bb6", "renderer": "renderer-0.10-c13b62a4"},
+    "38995241565": {"runDirs": "runs/20261017-023141", "stage": "49680e32d-f2322127", "commit": "49680e32dc10d2eac59bdf948e2cc1b907ec1fce", "renderer": "renderer-0.10-c13b62a4"},
 }
 
 _CI_RUN_1 = [  # 27 cases that pass on the current gate, run 38854967920 (controls-b-v1 is in _CI_RUN_3: it failed its list gate there, H20)
@@ -222,17 +235,23 @@ _CI_RUN_5 = [  # 16 cases, run 38987638974 (commit 93c6fe320, H34 re-delivery, 1
     "blocks-17-20/swiftui.color-scheme/text-dark-v1",
     "blocks-26-34/swiftui.textfield-axis/plain-v1", "blocks-26-34/swiftui.textfield-axis/rounded-v1",
 ]
+_CI_RUN_6 = [  # 7 block 28 cases, run 38994003228 (re-delivery, 17 October, issue #7; stage d4267ce69)
+    "blocks-26-34/swiftui.system-font/fractional-v1", "blocks-26-34/swiftui.system-font/sizes-large-v1", "blocks-26-34/swiftui.system-font/style-weight-v1",
+    "blocks-26-34/swiftui.system-font/styles-large-v1", "blocks-26-34/swiftui.system-font/styles-small-v1", "blocks-26-34/swiftui.system-font/truncate-v1",
+    "blocks-26-34/swiftui.system-font/weights-v1",
+]
+_CI_RUN_7 = ["blocks-26-34/swiftui.system-font/line-limit-v1"]  # run 38994825461 (stage 1d309081d)
+_CI_RUN_8 = ["blocks-26-34/swiftui.system-font/sizes-v1"]       # run 38995241565 (stage 49680e32d)
 CI_CASE_RUN = {**{c: "38854967920" for c in _CI_RUN_1}, **{c: "38860483220" for c in _CI_RUN_2}, **{c: "38872207896" for c in _CI_RUN_3},
-               **{c: "38916701641" for c in _CI_RUN_4}, **{c: "38987638974" for c in _CI_RUN_5}}
+               **{c: "38916701641" for c in _CI_RUN_4}, **{c: "38987638974" for c in _CI_RUN_5},
+               **{c: "38994003228" for c in _CI_RUN_6}, **{c: "38994825461" for c in _CI_RUN_7}, **{c: "38995241565" for c in _CI_RUN_8}}
 CI_CAVEAT = ("CI confirmation (16 October): the CI runners use the Windows WARP adapter at an explicit render scale of 2.5 (H17), not native 240 dpi. "
              "The Dell 240-dpi sandbox stays the reference; the CI and Dell captures were pixel-identical on click-track and labels.")
 PENDING_REVIEW -= set(REVIEWED)
 
-# No hand-set status except system-font (G71): every other block 1-20 is derived from its cases. Blocks 7, 13, 20 and 34 were reopened on the F2
+# No hand-set status: every block is derived from its cases and REVIEWED (block 28 re-delivered 17 October, H37). Blocks 7, 13, 20 and 34 were reopened on the F2
 # rebaseline (G70, 16 October) and re-delivered under H34 on CI run 38987638974 (17 October; the G70 reasons are in docs/sr1-status.md).
-OVERRIDES = {
-    "swiftui.system-font": {"status": "not-delivered", "statusReason": "Reopened 16 October (decision G71): the blanket tolerance was replaced by per-row tolerances, which fail the independent block 28 gate on the final renderer (styles-large passes; 8 of 9 cases fail; unfitted sizes and weights, undersampled rows)."},
-}
+OVERRIDES = {}
 WIN_KEYS = re.compile(r"Windows|Segoe|Sandbox|hardware|narrower|focus ring|TSF|\bIME\b|UIA|Mac side|Mac's|\bSF\b|scale 2\.5|light only|measured in light", re.I)
 NOT_SWIFTUI = set("""Int Int8 Int16 Int32 Int64 UInt Double Float CGFloat CGSize CGPoint CGRect String Bool Array Dictionary Set
 Optional Character Void Any AnyObject Self Date Data URL UUID Never Result Error Task DispatchQueue Foundation TimeInterval
@@ -382,6 +401,12 @@ def case_passes(row):
     return row["exit"] == 0 or row["case"] in CI_CASE_RUN
 
 
+def _renderers(ci_runs):
+    """One renderer label per entry; runs before 17 October carry the default (renderer-0.10-a15ebc5d)."""
+    labels = sorted({CI_RUNS[r].get("renderer", "renderer-0.10-a15ebc5d") for r in ci_runs})
+    return labels[0] if len(labels) == 1 else labels
+
+
 def build():
     def top(r):
         n = r["block"].split()[0]
@@ -455,10 +480,12 @@ def build():
         if ci_runs:
             e["ciN20"] = {"runs": ci_runs, "stages": sorted({CI_RUNS[r]["stage"] for r in ci_runs}),
                           "casesPassing": f"{sum(1 for c in cases if c['case'] in CI_CASE_RUN)}/{len(cases)}",
-                          "renderer": "renderer-0.10-a15ebc5d", "renderScale": 2.5, "windowsAdapter": "WARP (CI runner)",
+                          "renderer": _renderers(ci_runs), "renderScale": 2.5, "windowsAdapter": "WARP (CI runner)",
                           "runDirs": {r: CI_RUNS[r]["runDirs"] for r in ci_runs}}
         if bid == "swiftui.layout-priority":                 # hand-set: two stages and two gates (H33)
             e["stage"], e["casesPassingDecidingGate"] = STAGE_27, CASES_GATE_27
+        if bid == "swiftui.system-font":                     # hand-set: the three N=20 stages share one staged tree (H37); older passing rows are history
+            e["stage"] = "staged tree f2322127 (stages d4267ce69-f2322127, 1d309081d-f2322127, 49680e32d-f2322127; renderer-0.10-c13b62a4)"
         ov = OVERRIDES.get(bid)
         if ov:
             e["statusFromSources"] = e["status"]

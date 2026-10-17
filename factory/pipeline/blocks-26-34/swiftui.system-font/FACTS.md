@@ -135,3 +135,13 @@ Single-line identity: `sizes-v1` run 20261017-014524 recomputed through the new 
 Gap found on the first pass, then closed: a shift of line 2 alone was invisible to every gate that only looked at the first band. Seeded suite `factory/tools/mutation-calibration/s_multiline.py` (base `line-limit-ml`, a fixture of this run): line 2 of row 0 moved 3 px (1.2 pt at scale 2.5) down and up, and line 2 of row 1 moved 3 px down, all MISSED; line 1 of row 0 moved 3 px down is caught; line 2 moved 2 px down is a probe that passes. Before this change the line-2 faults failed only because the cross-line run moved the baseline on this already-failing capture, so that was not a line-level catch.
 
 Result after the band-bottom gate (calibration run 17 October, committed `results.json` and `RESULTS.md`): the three line-2 faults are caught by the text-colour gate (band 2 bottom +3 or -3 px against a tolerance of 1), `line1-down-3px` is caught by the first-band gate, and the `line2-down-2px` probe fails (its band-2 delta of 2 px is beyond 1). Totals: 371 of 376 seeded faults caught, 74 of 74 near-misses passed, 0 over-strict; the 5 misses are the documented exclusions (pixel `px-excl` x 2, semantic x 3). The 1 px band deltas of the committed capture (`[-1, 1]`, `[-1, 1, 1]`) pass.
+
+## 17 October: block 28 re-delivery evidence (H37)
+
+Oracle PASS-WITH-CAVEATS, 17 October (issue #7; caveats in `docs/sr1-decisions.md` H37 and `docs/proven-controls.json`). Nine cases at N=20, 9/9, every row, zero run-to-run variance, on the staged tree f2322127 (408 files) at three stages (d4267ce69, 1d309081d, 49680e32d), renderer-0.10-c13b62a4:
+
+- CI run 38994003228, run directories `runs/20261017-021255`: fractional-v1, sizes-large-v1, style-weight-v1, styles-large-v1, styles-small-v1, truncate-v1, weights-v1.
+- CI run 38994825461, `runs/20261017-022522`: line-limit-v1.
+- CI run 38995241565, `runs/20261017-023141`: sizes-v1.
+
+The two `frame-centring-facts` probes are report-only (exit 1 by design) and are not block 28 cases; they are not in the consolidation table and are not counted.
