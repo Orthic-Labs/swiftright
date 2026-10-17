@@ -4,7 +4,7 @@ import SwiftRightRuntime
 import SwiftRightBridge
 
 /// The legacy vertical scroller's geometry and paint (`ScrollerPainter`), at scale 2.5. Frame 300 x 250 px (120 x 100 pt); a 100 pt viewport over
-/// 120 pt of content gives a 90 pt track (3.8 pt top inset, 6.2 pt bottom) and a 75 pt thumb (90 * 100 / 120), 15 pt of travel.
+/// 120 pt of content gives a 93.8 pt track (3.0 pt top inset, 3.2 pt bottom; measured M1, #31) and a 78.17 pt thumb (93.8 * 100 / 120), 15.63 pt of travel.
 final class ScrollerPainterTests: XCTestCase {
     private let frame = Rect(x: 0, y: 0, w: 300, h: 250)
 
@@ -25,30 +25,30 @@ final class ScrollerPainterTests: XCTestCase {
 
     func testThumbIsAtTheTopInsetAndTheTrailingInsideTheStripAtValueZero() throws {
         let l = try layout(state(offset: 0))
-        XCTAssertEqual(l.thumb.y, 9.5, accuracy: 1)            // 3.8 pt top inset
-        XCTAssertEqual(l.thumb.h, 187.5, accuracy: 1)          // 75 pt thumb
+        XCTAssertEqual(l.thumb.y, 7.5, accuracy: 1)            // 3.0 pt top inset
+        XCTAssertEqual(l.thumb.h, 195.4, accuracy: 1)          // 78.17 pt thumb
         XCTAssertEqual(l.thumb.x, 263, accuracy: 1)            // strip + 4 pt leading inset
         XCTAssertEqual(l.thumb.w, 27, accuracy: 1)             // 10.8 pt
     }
 
     func testThumbIsHalfwayThroughItsTravelAtValueHalf() throws {
         let l = try layout(state(offset: 10))                   // maxOffset 20: value 0.5
-        XCTAssertEqual(l.thumb.y, 28.25, accuracy: 1)           // 3.8 + 7.5 pt
-        XCTAssertEqual(l.thumb.h, 187.5, accuracy: 1)
+        XCTAssertEqual(l.thumb.y, 27.0, accuracy: 1)            // 3.0 + 7.82 pt
+        XCTAssertEqual(l.thumb.h, 195.4, accuracy: 1)
     }
 
     func testThumbEndsAtTheBottomInsetAtValueOne() throws {
         let l = try layout(state(offset: 20))                   // value 1
-        XCTAssertEqual(l.thumb.y, 47, accuracy: 1)              // 3.8 + 15 pt
-        XCTAssertEqual(l.thumb.y + l.thumb.h, 234.5, accuracy: 1)   // 250 px less the 6.2 pt bottom inset (15.5 px)
+        XCTAssertEqual(l.thumb.y, 46.6, accuracy: 1)            // 3.0 + 15.63 pt
+        XCTAssertEqual(l.thumb.y + l.thumb.h, 242, accuracy: 1)     // 250 px less the 3.2 pt bottom inset (8 px)
     }
 
     func testThumbNeverShorterThanTheMinimumLength() throws {
-        // 100 pt over 1000 pt: the proportion is 9 pt, the minimum 18 pt.
+        // 100 pt over 1000 pt: the proportion is 9.4 pt, the minimum 20 pt (measured M1).
         let l = try XCTUnwrap(ScrollerPainter.layout(frame: frame, scale: 2.5, scroll: state(offset: 0, content: 1000)))
-        XCTAssertEqual(l.thumb.h, 45, accuracy: 0.5)            // 18 pt * 2.5
+        XCTAssertEqual(l.thumb.h, 50, accuracy: 0.5)            // 20 pt * 2.5
         let end = try XCTUnwrap(ScrollerPainter.layout(frame: frame, scale: 2.5, scroll: state(offset: 900, content: 1000)))
-        XCTAssertEqual(end.thumb.y + end.thumb.h, 234.5, accuracy: 1)
+        XCTAssertEqual(end.thumb.y + end.thumb.h, 242, accuracy: 1)
     }
 
     func testNoScrollerWhenTheContentDoesNotOverflowOrTheHostHidesIt() {

@@ -141,13 +141,14 @@ final class ScrollStateTests: XCTestCase {
 
     // MARK: Wheel
 
-    func testWheelLinesMoveTenPointsEach() {
+    /// A List scrolls one row (24 pt) per wheel line (measured M2, run 39062962549: 1, 3, 10 lines -> 24, 72, 240 pt).
+    func testListWheelLineIsOneRow() {
         let (graph, _) = resolved(TenRows())
         XCTAssertTrue(graph.scrollWheel(atX: 100, y: 50, lines: 3))
-        XCTAssertEqual(listScroll(graph)?.offsetY ?? -1, 30, accuracy: 1e-9)
-        XCTAssertEqual(rowMid(graph.snapshot()!, 0), -8, accuracy: 0.5)
+        XCTAssertEqual(listScroll(graph)?.offsetY ?? -1, 72, accuracy: 1e-9)
+        XCTAssertEqual(rowMid(graph.snapshot()!, 0), 22 - 72, accuracy: 0.5)
         XCTAssertTrue(graph.scrollWheel(atX: 100, y: 50, lines: -1))
-        XCTAssertEqual(listScroll(graph)?.offsetY ?? -1, 20, accuracy: 1e-9)
+        XCTAssertEqual(listScroll(graph)?.offsetY ?? -1, 48, accuracy: 1e-9)
     }
 
     func testWheelOutsideTheListDoesNothing() {
@@ -211,9 +212,12 @@ final class ScrollStateTests: XCTestCase {
     // MARK: Scroll bar
 
     func testThumbLengthAndTrackFormulas() {
-        XCTAssertEqual(ScrollerMetrics.trackLength(viewport: 100), 90, accuracy: 1e-9)
-        // track 90 x viewport 100 / content 260 = 34.615..., above the 18 pt minimum.
-        XCTAssertEqual(ScrollerMetrics.thumbLength(viewport: 100, content: 260), 90 * 100 / 260, accuracy: 1e-9)
+        // Measured M1: track = viewport - 6.2; thumb = track x viewport / content, at least 20 (89.6 pt viewport: 92 -> 81.2, 212 -> 35.2, 620 -> 20.0).
+        XCTAssertEqual(ScrollerMetrics.trackLength(viewport: 100), 93.8, accuracy: 1e-9)
+        XCTAssertEqual(ScrollerMetrics.thumbLength(viewport: 100, content: 260), 93.8 * 100 / 260, accuracy: 1e-9)
+        XCTAssertEqual(ScrollerMetrics.thumbLength(viewport: 89.6, content: 92), 81.2, accuracy: 0.1)
+        XCTAssertEqual(ScrollerMetrics.thumbLength(viewport: 89.6, content: 212), 35.2, accuracy: 0.1)
+        XCTAssertEqual(ScrollerMetrics.thumbLength(viewport: 89.6, content: 620), 20.0, accuracy: 0.1)
         // A long document gives the minimum thumb.
         XCTAssertEqual(ScrollerMetrics.thumbLength(viewport: 100, content: 2000), ScrollerMetrics.minThumbLength, accuracy: 1e-9)
         XCTAssertEqual(ScrollerMetrics.thumbLength(viewport: 100, content: 0), ScrollerMetrics.minThumbLength, accuracy: 1e-9)
@@ -222,10 +226,10 @@ final class ScrollStateTests: XCTestCase {
     func testThumbDragMapsPointerDeltaToOffset() {
         let (graph, _) = resolved(TenRows())
         let id = listID(graph)
-        // The thumb spans 3.8 to 3.8 + 34.615 from the List's top; press at 13.8 is inside it.
-        graph.scrollBarPress(id, atY: 13.8)
-        // Travel is 90 - 34.615 = 55.385 pt of pointer for 160 pt of offset: half the travel is 80 pt.
-        graph.scrollBarDrag(id, toY: 13.8 + (90 - 90 * 100.0 / 260) / 2)
+        // The thumb spans 3.0 to 3.0 + 36.08 from the List's top; press at 13.0 is inside it.
+        graph.scrollBarPress(id, atY: 13.0)
+        // Travel is 93.8 - 36.08 pt of pointer for 160 pt of offset: half the travel is 80 pt.
+        graph.scrollBarDrag(id, toY: 13.0 + (93.8 - 93.8 * 100.0 / 260) / 2)
         XCTAssertEqual(listScroll(graph)?.offsetY ?? -1, 80, accuracy: 0.01)
         graph.scrollBarRelease(id)
         graph.scrollBarDrag(id, toY: 0)

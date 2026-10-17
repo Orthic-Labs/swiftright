@@ -73,7 +73,7 @@ final class ScrollPaintTests: XCTestCase {
             if case .rect(let r, _, let radius, _, _) = p, radius > 0 { return r } else { return nil }
         }.first)
         XCTAssertEqual(thumb.x, 263, accuracy: 1)
-        XCTAssertEqual(thumb.y, 9.5, accuracy: 1)                          // value 0: the top inset
+        XCTAssertEqual(thumb.y, 7.5, accuracy: 1)                          // value 0: the 3.0 pt top inset (M1)
         guard case .clipPush = try XCTUnwrap(scroller.primitives.first), case .clipPop = try XCTUnwrap(scroller.primitives.last) else {
             return XCTFail("scroller is not clipped to its container")
         }

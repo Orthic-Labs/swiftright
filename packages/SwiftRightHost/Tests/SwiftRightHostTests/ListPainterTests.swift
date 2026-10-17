@@ -247,8 +247,10 @@ final class ListPainterTests: XCTestCase {
         let after = try XCTUnwrap(flatten(try XCTUnwrap(graph.snapshot())).first { $0.kind == "List" })
         let rowsAfter = ListPainter.rows(of: after, bounds: bounds, scale: 2.5)
         XCTAssertEqual(rowsAfter.count, rowsBefore.count)
+        let offset = try XCTUnwrap(after.scroll).offsetY                       // a List wheel line is one row (measured M2); clamped at the end
+        XCTAssertGreaterThan(offset, 0)
         for (a, b) in zip(rowsAfter, rowsBefore) {
-            XCTAssertEqual(b.rect.y - a.rect.y, 50, accuracy: 1)
+            XCTAssertEqual(Double(b.rect.y - a.rect.y), offset * 2.5, accuracy: 1)
             XCTAssertEqual(a.rect.h, b.rect.h)
             XCTAssertEqual(a.rect.w, b.rect.w)
         }

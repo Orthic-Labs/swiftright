@@ -103,24 +103,25 @@ public struct ScrollState: Equatable, Sendable {
 
 /// Scroll wheel and scroll bar metrics (#31). Every value is provisional until the Mac measurement (M1-M3, #31) lands; each is marked TO MEASURE.
 public enum ScrollerMetrics {
-    /// Points the content moves for one wheel line. // TO MEASURE (M1-M3, #31)
+    /// Points a ScrollView's content moves for one wheel line: 10 (measured M2, run 39062962549: 1, 3, 10 lines -> 10, 30, 100 pt).
+    /// A List moves by one row height per line instead (measured: 24 pt rows -> 24, 72, 240 pt), see `Graph.scrollWheel`.
     public static let pointsPerLine: CGFloat = 10
-    /// Overlap kept between pages: a page is the viewport less this. // TO MEASURE (M1-M3, #31)
+    /// Overlap kept between pages: a page is the viewport less this. // TO MEASURE (M3 stand-ins failed: NSScrollView ignored the page selectors, #31)
     public static let pageOverlap: CGFloat = 10
-    /// Width of the scroll bar at the trailing edge (H21: AXScrollBar 19 pt). // TO MEASURE (M1-M3, #31)
+    /// Width of the scroll bar at the trailing edge (H21 and M1: AXScrollBar 19 pt).
     public static let width: CGFloat = 19
-    /// Thumb inset from the bar's leading edge. // TO MEASURE (M1-M3, #31)
+    /// Thumb inset from the bar's leading edge (M1: 4.0 pt in every case).
     public static let thumbInsetLeading: CGFloat = 4
-    /// Thumb inset from the bar's trailing edge. // TO MEASURE (M1-M3, #31)
+    /// Thumb inset from the bar's trailing edge (19 - 4 - 10.8).
     public static let thumbInsetTrailing: CGFloat = 4.2
-    /// Track inset from the top of the viewport. // TO MEASURE (M1-M3, #31)
-    public static let thumbInsetTop: CGFloat = 3.8
-    /// Track inset from the bottom of the viewport. // TO MEASURE (M1-M3, #31)
-    public static let thumbInsetBottom: CGFloat = 6.2
-    /// Thumb width. // TO MEASURE (M1-M3, #31)
+    /// Track start below the viewport's top (M1: the bar spans the viewport plus 1 pt each side, the track starts 4.0 pt into the bar).
+    public static let thumbInsetTop: CGFloat = 3.0
+    /// Track end above the viewport's bottom (M1: the track ends 4.2 pt before the bar's end; track = viewport - 6.2).
+    public static let thumbInsetBottom: CGFloat = 3.2
+    /// Thumb width (M1: 10.8 pt).
     public static let thumbWidth: CGFloat = 10.8
-    /// Shortest thumb. // TO MEASURE (M1-M3, #31)
-    public static let minThumbLength: CGFloat = 18
+    /// Shortest thumb (M1: a 620 pt document in an 89.6 pt viewport gives 20.0, where the proportion would give 12.1).
+    public static let minThumbLength: CGFloat = 20
 
     /// The track's length: the viewport less the top and bottom insets.
     public static func trackLength(viewport: CGFloat) -> CGFloat { max(0, viewport - thumbInsetTop - thumbInsetBottom) }

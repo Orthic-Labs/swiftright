@@ -1290,7 +1290,9 @@ public final class Graph {
     @discardableResult
     public func scrollWheel(atX x: Double, y: Double, lines: Double) -> Bool {
         guard let target = innermostScrollContainer(atX: CGFloat(x), y: CGFloat(y)), let current = verticalOffset(target) else { return false }
-        return moveScroll(target, to: current + CGFloat(lines) * ScrollerMetrics.pointsPerLine)
+        // A List scrolls one row per wheel line (NSTableView's line scroll is the row height; measured M2, #31); a ScrollView 10 pt.
+        let line = target.listRowExtents.values.map(\.height).min() ?? ScrollerMetrics.pointsPerLine   // only a List records row extents
+        return moveScroll(target, to: current + CGFloat(lines) * line)
     }
 
     /// Pages a scroll container down or up by a page (the viewport less `ScrollerMetrics.pageOverlap`). Returns whether the offset changed.
