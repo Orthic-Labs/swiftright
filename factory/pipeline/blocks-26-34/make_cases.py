@@ -382,6 +382,88 @@ font_rows("truncate-v1", None, [(f(12), LONG, ".lineLimit(1)"), (f(11.5), LONG, 
                                (f(12), "Short", ".lineLimit(1)")], 40, max_right=240)
 CASES["swiftui.system-font/truncate-v1"]["body"] = CASES["swiftui.system-font/truncate-v1"]["body"].replace('Text("%s").font(Font.system(size: 12, weight: .regular)).lineLimit(1).frame(width: 240' % LONG, 'Text("%s").font(Font.system(size: 12, weight: .regular)).lineLimit(1).frame(width: 240' % LONG, 1)
 font_rows("line-limit-v1", None, [(f(12), LONG, ".lineLimit(2)"), (f(12), LONG, ".lineLimit(3)"), (f(12), "Overview of memory pressure", ".lineLimit(3)")], 60, lines=True, max_right=110, frame_w=110)
+# frame-centring-facts-v1 (issue #7, G74 placement context): measurement only, report-only (no gates)
+FC_PROBE = r'''#if os(Windows)
+extension View {
+    func factText(_ key: String) -> some View { self }
+    func factFrame(_ key: String) -> some View { self }
+}
+#else
+final class FactLedger: @unchecked Sendable {
+    static let shared = FactLedger()
+    private var values: [String: [String: Double]] = [:]
+    private var done: Set<String> = []
+    func record(_ key: String, _ field: String, _ v: Double) {
+        values[key, default: [:]][field] = v
+        guard !done.contains(key), let d = values[key], d.count == 5 else { return }
+        done.insert(key)
+        print("MAC_FACT row=\(key) frameTop=\(r(d["frameTop"]!)) frameH=\(r(d["frameH"]!)) textTop=\(r(d["textTop"]!)) textH=\(r(d["textH"]!)) baseline=\(r(d["baseline"]!))")
+    }
+    private func r(_ v: Double) -> String { "\((v * 100).rounded() / 100)" }
+}
+extension View {
+    func factText(_ key: String) -> some View {
+        HStack(alignment: .firstTextBaseline, spacing: 0) {
+            self
+                .alignmentGuide(.firstTextBaseline) { d in
+                    let b = d[.firstTextBaseline]
+                    FactLedger.shared.record(key, "baseline", Double(b))
+                    return b
+                }
+                .background(GeometryReader { g in
+                    Color.clear.onAppear {
+                        FactLedger.shared.record(key, "textTop", Double(g.frame(in: .global).minY))
+                        FactLedger.shared.record(key, "textH", Double(g.size.height))
+                    }
+                })
+        }
+    }
+    func factFrame(_ key: String) -> some View {
+        self.background(GeometryReader { g in
+            Color.clear.onAppear {
+                FactLedger.shared.record(key, "frameTop", Double(g.frame(in: .global).minY))
+                FactLedger.shared.record(key, "frameH", Double(g.size.height))
+            }
+        })
+    }
+}
+#endif
+
+'''
+FC_LONG = "Overview of memory pressure and swap activity across every running process"
+FC_TXT = "Hxg Overview"
+# (key, font expression, text, frame height, frame alignment, extra modifiers)
+FC_ROWS = [
+    ("f11.5r-h40", "Font.system(size: 11.5, weight: .regular)", FC_TXT, 40, ".center", ""),
+    ("f12r-h40", "Font.system(size: 12, weight: .regular)", FC_TXT, 40, ".center", ""),
+    ("f13sb-h40", "Font.system(size: 13, weight: .semibold)", FC_TXT, 40, ".center", ""),
+    ("f18r-h40", "Font.system(size: 18, weight: .regular)", FC_TXT, 40, ".center", ""),
+    ("f24r-h40", "Font.system(size: 24, weight: .regular)", FC_TXT, 40, ".center", ""),
+    ("f28r-h40", "Font.system(size: 28, weight: .regular)", FC_TXT, 40, ".center", ""),
+    ("f28r-h60", "Font.system(size: 28, weight: .regular)", FC_TXT, 60, ".center", ""),
+    ("f32r-h40", "Font.system(size: 32, weight: .regular)", FC_TXT, 40, ".center", ""),
+    ("f32r-h60", "Font.system(size: 32, weight: .regular)", FC_TXT, 60, ".center", ""),
+    ("ll2-w110h60", "Font.system(size: 12, weight: .regular)", FC_LONG, 60, ".leading", ".lineLimit(2)"),
+    ("ll3-w110h60", "Font.system(size: 12, weight: .regular)", FC_LONG, 60, ".leading", ".lineLimit(3)"),
+]
+
+
+def frame_facts():
+    lines = []
+    for key, font, text, h, align, extra in FC_ROWS:
+        w = 110 if key.startswith("ll") else 240
+        lines.append(f'            Text("{text}").font({font}){extra}.factText("{key}").frame(width: {w}, height: {h}, alignment: {align}).factFrame("{key}")')
+    body = FC_PROBE + """struct Witness_sf_frame_centring_facts: View {
+    var body: some View {
+        VStack(alignment: .leading, spacing: 0) {
+""" + "\n".join(lines) + """
+        }.frame(width: 240, height: 200, alignment: .topLeading)
+    }
+}"""
+    case("swiftui.system-font/frame-centring-facts-v1", "Witness_sf_frame_centring_facts", body, steps=[{"op": "wait", "ms": 600}])
+
+
+frame_facts()
 
 
 # =====================================================================================================================================================================
