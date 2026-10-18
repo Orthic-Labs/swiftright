@@ -34,6 +34,8 @@ if (-not $Root) {
     }
 }
 $problems = New-Object System.Collections.Generic.List[string]
+# PeDigest is the only PE work left here: the signature-independent PE hash has no RightKit owner (bogusyogi/rightkit#445).
+# Remove it when #445 lands. The closure check below is a file-existence check; it does not parse imports (no dumpbin here).
 Add-Type -TypeDefinition @'
 using System; using System.IO; using System.Linq; using System.Security.Cryptography;
 public static class PeDigest {

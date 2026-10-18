@@ -1,6 +1,6 @@
 #!/usr/bin/env node
 // Swift-only-edit proof for SliceApp (F1/R2). Shows that a Swift-only change between the old (0.1.0) and new (0.1.1)
-// package left the renderer untouched and compiled no Rust. Pure file checks; runs anywhere with node.
+// package left the renderer untouched and compiled no Rust. File checks only; needs the SliceApp node_modules (@rightkit/release, zip reader).
 //
 //   node swift-only-proof.mjs --old-seal <msix-seal.json> --new-seal <msix-seal.json> \
 //        --old-commit <sha> --new-commit <sha> --repo <clone dir> --build-log <old.log> --build-log <new.log> \
@@ -19,9 +19,9 @@
 import { execFileSync } from "node:child_process";
 import { createHash } from "node:crypto";
 import { readFileSync } from "node:fs";
-import zlib from "node:zlib";
 import path from "node:path";
 import { fileURLToPath } from "node:url";
+import { readZipEntry } from "@rightkit/release/msix-signer.mjs";
 
 const here = path.dirname(fileURLToPath(import.meta.url));
 const args = process.argv.slice(2);
@@ -40,6 +40,7 @@ const pin = JSON.parse(readFileSync(one("--pin") ?? path.join(here, "..", "Windo
 const failures = [];
 
 // Authenticode digest of a PE/COFF image (SHA-256), per the Authenticode PE spec. Returns null if buf is not a PE.
+// Kept local: the signature-independent PE hash has no RightKit owner yet (bogusyogi/rightkit#445). Remove when #445 lands.
 export function authenticodeDigest(buf) {
   if (buf.length < 0x40 || buf.readUInt16LE(0) !== 0x5a4d) return null;
   const pe = buf.readUInt32LE(0x3c);
@@ -71,50 +72,15 @@ export function authenticodeDigest(buf) {
   return h.digest("hex");
 }
 
-// Minimal zip/zip64 reader (central directory; stored/deflate) -> Map(lowercased name -> Buffer).
-function readZip(file) {
-  const z = readFileSync(file);
-  let e = z.length - 22;
-  while (e >= 0 && z.readUInt32LE(e) !== 0x06054b50) e--;
-  if (e < 0) throw new Error(`${file}: not a zip`);
-  let count = z.readUInt16LE(e + 10);
-  let p = z.readUInt32LE(e + 16);
-  if (count === 0xffff || p === 0xffffffff) { // zip64: locator sits right before the EOCD
-    const r = Number(z.readBigUInt64LE(e - 20 + 8));
-    count = Number(z.readBigUInt64LE(r + 32));
-    p = Number(z.readBigUInt64LE(r + 48));
-  }
-  const out = new Map();
-  for (let i = 0; i < count; i++) {
-    const method = z.readUInt16LE(p + 10);
-    let csize = z.readUInt32LE(p + 20), usize = z.readUInt32LE(p + 24), lh = z.readUInt32LE(p + 42);
-    const nl = z.readUInt16LE(p + 28), xl = z.readUInt16LE(p + 30), cl = z.readUInt16LE(p + 32);
-    const name = z.toString("utf8", p + 46, p + 46 + nl);
-    for (let x = p + 46 + nl, xe = x + xl; x + 4 <= xe; x += 4 + z.readUInt16LE(x + 2)) {
-      if (z.readUInt16LE(x) !== 1) continue;
-      let q = x + 4; // zip64 extra: only the fields whose 32-bit value is 0xFFFFFFFF, in this order
-      if (usize === 0xffffffff) { usize = Number(z.readBigUInt64LE(q)); q += 8; }
-      if (csize === 0xffffffff) { csize = Number(z.readBigUInt64LE(q)); q += 8; }
-      if (lh === 0xffffffff) { lh = Number(z.readBigUInt64LE(q)); q += 8; }
-    }
-    const data = lh + 30 + z.readUInt16LE(lh + 26) + z.readUInt16LE(lh + 28);
-    const raw = z.subarray(data, data + csize);
-    if (!name.endsWith("/")) out.set(name.toLowerCase(), method === 0 ? raw : zlib.inflateRawSync(raw));
-    p += 46 + nl + xl + cl;
-  }
-  return out;
-}
-
 const sha = (b) => createHash("sha256").update(b).digest("hex");
-const payload = (seal, msix) => {
-  const files = msix ? readZip(msix) : null;
-  return new Map(JSON.parse(readFileSync(seal, "utf8")).payload.map((e) => {
-    const buf = files?.get(e.name.toLowerCase());
-    if (!buf) return [e.name.toLowerCase(), e.sha256.toLowerCase()];
-    const ac = authenticodeDigest(buf);
-    return [e.name.toLowerCase(), ac ? `authenticode:${ac}` : sha(buf)];
-  }));
-};
+// Entries are read through RightKit readZipEntry; its 4 MiB default cap is lifted because SwiftRight PEs exceed it.
+const MAX_ENTRY_BYTES = 512 * 1024 * 1024;
+const payload = (seal, msix) => new Map(JSON.parse(readFileSync(seal, "utf8")).payload.map((e) => {
+  const buf = msix ? readZipEntry(msix, e.name, { maxBytes: MAX_ENTRY_BYTES }) : null;
+  if (!buf) return [e.name.toLowerCase(), e.sha256.toLowerCase()];
+  const ac = authenticodeDigest(buf);
+  return [e.name.toLowerCase(), ac ? `authenticode:${ac}` : sha(buf)];
+}));
 const a = payload(oldSeal, one("--old-msix")), b = payload(newSeal, one("--new-msix"));
 const rname = pin.file.toLowerCase();
 const pinDigest = (pin.authenticodeSha256 ? `authenticode:${pin.authenticodeSha256.toLowerCase()}` : pin.sha256.toLowerCase());

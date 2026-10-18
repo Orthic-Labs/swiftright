@@ -1,0 +1,23 @@
+{
+  "name": "swiftright",
+  "private": true,
+  "license": "Apache-2.0",
+  "version": "0.0.0",
+  "description": "Workspace root for RightKit-rendered CI (right-git). Node exists only to satisfy the rendered install step; packaging runs from examples/SliceApp.",
+  "packageManager": "pnpm@11.24.0",
+  "devDependencies": {
+    "@rightkit/ci": "0.2.45",
+    "@rightkit/release": "0.2.162"
+  },
+  "scripts": {
+    "release:admit": "node scripts/release/candidate.mjs admit",
+    "release:summary": "node scripts/release/candidate.mjs summary",
+    "release:candidate": "node scripts/release/candidate.mjs build",
+    "release:check": "node scripts/release/candidate.mjs check",
+    "release:finalize-windows": "node scripts/release/finalize.mjs windows",
+    "release:finalize-macos": "node scripts/release/finalize.mjs macos",
+    "release:qualify-installed": "node scripts/release/finalize.mjs qualify",
+    "release:verify-evidence": "node scripts/release/finalize.mjs verify-evidence",
+    "release:publish-qualified": "node scripts/release/finalize.mjs publish"
+  }
+}

@@ -11,7 +11,15 @@
 # Inline ssh strips the manifest quotes; the build lives in this file.
 param([string]$Base = '')
 $ErrorActionPreference = 'Stop'
-$env:Path = 'C:\Users\adrds\AppData\Local\Programs\Swift\Runtimes\6.4.0\usr\bin;' + [Environment]::GetEnvironmentVariable('Path', 'Machine') + ';' + [Environment]::GetEnvironmentVariable('Path', 'User')
+# SWIFT_RUNTIME_BIN (CI and any non-Dell host) names the Swift runtime directory and keeps the process PATH, which already carries
+# Node, pnpm and the toolchain. Unset, the Dell layout below is used unchanged.
+$runtimeDir = $env:SWIFT_RUNTIME_BIN
+if ($runtimeDir) {
+    $env:Path = $runtimeDir + ';' + $env:Path
+} else {
+    $runtimeDir = 'C:\Users\adrds\AppData\Local\Programs\Swift\Runtimes\6.4.0\usr\bin'
+    $env:Path = $runtimeDir + ';' + [Environment]::GetEnvironmentVariable('Path', 'Machine') + ';' + [Environment]::GetEnvironmentVariable('Path', 'User')
+}
 
 $app = if ($Base) { Resolve-Path (Join-Path $Base 'examples\SliceApp') } else { Resolve-Path (Join-Path $PSScriptRoot '..') }
 if (-not $Base) { $Base = Resolve-Path (Join-Path $app '..\..') }
@@ -53,7 +61,6 @@ if ($text -notmatch '<dpiAwareness[^>]*>PerMonitorV2</dpiAwareness>') { throw 'e
 $dumpbin = Get-ChildItem 'C:\Program Files\Microsoft Visual Studio' -Recurse -Filter dumpbin.exe -ErrorAction SilentlyContinue |
     Where-Object { $_.FullName -match '\\Hostx64\\x64\\dumpbin\.exe$' } | Sort-Object FullName -Descending | Select-Object -First 1
 if (-not $dumpbin) { throw 'dumpbin.exe (Hostx64\x64) not found' }
-$runtimeDir = 'C:\Users\adrds\AppData\Local\Programs\Swift\Runtimes\6.4.0\usr\bin'
 $system32 = Join-Path $env:SystemRoot 'System32'
 function Get-Dependents([string]$file) {
     $lines = @(& $dumpbin.FullName /dependents $file)

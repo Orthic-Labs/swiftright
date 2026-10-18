@@ -5,13 +5,16 @@
 # it. This script fails closed unless the renderer matches Windows\renderer-pin.json byte for byte, copies it to
 # .build\renderer (swift-package.json windows.include picks it up and walks its import closure), and after staging
 # re-verifies the staged copy and the stage manifest.
+#   -Config          swift-package config (default swift-package.json; CI passes the generated swift-package.ci.json)
 #   -RendererSource  path to swiftright_render.dll (default: $env:SWIFTRIGHT_RENDERER_SRC, else the pin's defaultSource)
-param([string]$RendererSource = '')
+param([string]$RendererSource = '', [string]$Config = 'swift-package.json')
 $ErrorActionPreference = 'Stop'
 $app = Resolve-Path (Join-Path $PSScriptRoot '..')
 $pin = Get-Content (Join-Path $app 'Windows\renderer-pin.json') -Raw | ConvertFrom-Json
 if (-not $RendererSource) { $RendererSource = [Environment]::GetEnvironmentVariable($pin.sourceEnv) }
 if (-not $RendererSource) { $RendererSource = $pin.defaultSource }
+# A repository-relative source (the tracked tuple 12 renderer) resolves against the repository root, two levels above the app.
+if (-not [System.IO.Path]::IsPathRooted($RendererSource)) { $RendererSource = Join-Path (Resolve-Path (Join-Path $app '..\..')) $RendererSource }
 
 function Assert-Pinned([string]$file, [string]$what) {
     if (-not (Test-Path -LiteralPath $file)) { throw "$what missing: $file" }
@@ -33,7 +36,9 @@ $rendererCopy = Join-Path $rendererDir $pin.file
 Copy-Item -LiteralPath $RendererSource $rendererCopy -Force
 Assert-Pinned $rendererCopy 'renderer copy'
 
-& pnpm exec right-release swift-package windows-stage --config swift-package.json
+# RIGHT_RELEASE_CLI (CI) names the right-release entry point installed at the repository root; unset, pnpm exec resolves it here.
+if ($env:RIGHT_RELEASE_CLI) { & node $env:RIGHT_RELEASE_CLI swift-package windows-stage --config $Config }
+else { & pnpm exec right-release swift-package windows-stage --config $Config }
 if ($LASTEXITCODE -ne 0) { throw "windows-stage failed (exit $LASTEXITCODE)" }
 
 # Post-stage proof: the renderer is in the stage directory beside the exe, byte-identical to the pin, and the

@@ -17,3 +17,18 @@ probes/sr1-pulse-probe/out/
 
 # Runner-written oracle candidates that were not promoted
 conformance/candidates/
+
+# >50 MB evidence kept local (GitHub 100 MB limit)
+/factory/catalogue/public-ancestor-spike/external-owner-header-index-v1/developer-spatial-symbols/archive/tools/swiftc
+/factory/catalogue/public-ancestor-spike/independent-archive-resolver-review-v1/relocated-checkout/factory/catalogue/public-ancestor-spike/archive-inputs-v2/archive/tools/swift-frontend.archive.gz
+/factory/catalogue/public-ancestor-spike/independent-archive-resolver-review-v1/relocated-checkout/factory/catalogue/public-ancestor-spike/external-owner-header-index-v1/developer-spatial-symbols/staging/swiftc.archive.gz
+/factory/catalogue/public-ancestor-spike/public-ancestor-evidence-v1.json
+/factory/catalogue/public-ancestor-spike/public-ancestor-evidence-v2.json
+/factory/pipeline/workspace-cleanup-audit-v1/report.json
+/factory/runtime-additions/taskid-windows-direct-scp-v1/results/native-artifacts/compiler/swift-frontend.exe
+
+# Factory capture run output (2026-10-17, disk-hygiene): run directories are not committed by default.
+# Evidence runs referenced by a committed results.jsonl row are added explicitly with `git add -f <run dir>`.
+factory/pipeline/**/runs/
+factory/pipeline/**/.build-*.log
+tasks/handoffs/**/*.context.json
