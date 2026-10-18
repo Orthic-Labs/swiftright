@@ -1,0 +1,72 @@
+{
+    "schema":  "sr0-interrupt/v1",
+    "mode":  "CancelOperation",
+    "old_msix":  "C:\\Users\\WDAGUtilityAccount\\Desktop\\clean-machine\\packages\\old.msix",
+    "new_msix":  "C:\\Users\\WDAGUtilityAccount\\Desktop\\clean-machine\\packages\\new.msix",
+    "valid":  true,
+    "states":  [
+
+               ],
+    "old_version":  "0.1.0.0",
+    "new_version":  "0.1.1.0",
+    "attempts":  [
+                     {
+                         "n":  1,
+                         "method":  "CancelOperation",
+                         "trigger":  "staging",
+                         "extra_delay_ms":  360,
+                         "registered_before":  "0.1.0.0:Ok",
+                         "rows_sha_before":  "F91D1E6997329BCA16E82A450EA5F4442B3BD265B1A18401B19405FC09864D46",
+                         "staging_new_before_start":  false,
+                         "t_started_ms":  25,
+                         "trigger_seen":  true,
+                         "t_trigger_ms":  185,
+                         "op_status_at_interrupt":  "0",
+                         "client_alive_at_interrupt":  true,
+                         "t_interrupt_ms":  564,
+                         "op_status_after":  "2",
+                         "op_error_code":  "",
+                         "t_client_gone_ms":  647,
+                         "settle_timeline":  [
+                                                 "+709ms 0.1.0.0:Ok | staging_new=False"
+                                             ],
+                         "registered_after":  "0.1.0.0:Ok",
+                         "registered_count":  1,
+                         "all_users_count":  1,
+                         "staging_new_after":  false,
+                         "rows_sha_after":  "F91D1E6997329BCA16E82A450EA5F4442B3BD265B1A18401B19405FC09864D46",
+                         "new_registered_after":  false,
+                         "deployment_underway":  true,
+                         "interrupted":  true,
+                         "outcome":  "old-registered-ok",
+                         "appx_events":  [
+                                             "00:59:25.509 id=617 Verbose: Successfully updated the status for package OrthicLabs.SliceApp_0.1.0.0_x64__j3cejpx244dcr and user S-1-5-21-2047949552-857980807-821054962-504 (Clear=0x0, Set=",
+                                             "00:59:25.652 id=617 Verbose: Successfully updated the status for package OrthicLabs.SliceApp_0.1.0.0_x64__j3cejpx244dcr and user S-1-5-21-2047949552-857980807-821054962-504 (Clear=0x0, Set=",
+                                             "00:59:25.751 id=5507 Verbose: OrthicLabs.SliceApp_0.1.0.0_x64__j3cejpx244dcr : C:\\Program Files\\WindowsApps\\OrthicLabs.SliceApp_0.1.0.0_x64__j3cejpx244dcr\\microsoft.system.package.metadata\\S",
+                                             "00:59:25.752 id=5507 Verbose: OrthicLabs.SliceApp_0.1.0.0_x64__j3cejpx244dcr : C:\\Program Files\\WindowsApps\\OrthicLabs.SliceApp_0.1.0.0_x64__j3cejpx244dcr\\microsoft.system.package.metadata\\R",
+                                             "00:59:25.752 id=5507 Verbose: OrthicLabs.SliceApp_0.1.0.0_x64__j3cejpx244dcr : C:\\Program Files\\WindowsApps\\OrthicLabs.SliceApp_0.1.0.0_x64__j3cejpx244dcr\\microsoft.system.package.metadata\\S",
+                                             "00:59:25.752 id=5507 Verbose: OrthicLabs.SliceApp_0.1.0.0_x64__j3cejpx244dcr : C:\\Program Files\\WindowsApps\\OrthicLabs.SliceApp_0.1.0.0_x64__j3cejpx244dcr\\microsoft.system.package.metadata\\R",
+                                             "00:59:25.841 id=617 Verbose: Successfully updated the status for package OrthicLabs.SliceApp_0.1.0.0_x64__j3cejpx244dcr and user S-1-5-21-2047949552-857980807-821054962-504 (Clear=0x20, Set",
+                                             "00:59:25.841 id=617 Verbose: Successfully updated the status for package OrthicLabs.SliceApp_0.1.0.0_x64__j3cejpx244dcr and user S-1-5-21-2047949552-857980807-821054962-504 (Clear=0x20, Set",
+                                             "00:59:25.851 id=617 Verbose: Successfully updated the status for package OrthicLabs.SliceApp_0.1.0.0_x64__j3cejpx244dcr and user S-1-5-21-2047949552-857980807-821054962-504 (Clear=0x10000C0",
+                                             "00:59:25.882 id=400 Information: Deployment Add operation with target volume C: on Package OrthicLabs.SliceApp_0.1.0.0_x64__j3cejpx244dcr from: (old.msix) finished successfully.",
+                                             "00:59:25.966 id=613 Information: Performance summary of Deployment Add operation on Package OrthicLabs.SliceApp_0.1.0.0_x64__j3cejpx244dcr: Overall time: 2547 ms (Active time: 2547 ms) Enqueue ",
+                                             "00:59:26.316 id=603 Information: Started deployment Add operation on a package with main parameter new.msix and Options 0 and 0. See http://go.microsoft.com/fwlink/?LinkId=235160 for help diagn",
+                                             "00:59:26.406 id=10002 Verbose: Creating Resiliency File C:\\ProgramData\\Microsoft\\Windows\\AppRepository\\2f2025d5-0d50-4950-900e-2a442d677658_S-1-5-21-2047949552-857980807-821054962-504_46.rslc",
+                                             "00:59:26.408 id=607 Information: Deployment Add operation on package OrthicLabs.SliceApp_0.1.1.0_x64__j3cejpx244dcr has been de-queued and is running for user SID S-1-5-21-2047949552-857980807-",
+                                             "00:59:26.409 id=854 Information: Successfully added the following uri(s) to be processed: file:///C:/Users/WDAGUtilityAccount/Desktop/clean-machine/packages/new.msix.",
+                                             "00:59:26.438 id=574 Information: Preferred package version for package family is changing. Current preferred version is: OrthicLabs.SliceApp_0.1.0.0_x64__j3cejpx244dcr. New preferred version wi",
+                                             "00:59:26.448 id=855 Information: Finished resolving action lists. DeploymentRequest action lists: updateList: OrthicLabs.SliceApp_0.1.0.0_x64__j3cejpx244dcr is updating to OrthicLabs.SliceApp_0",
+                                             "00:59:26.872 id=615 Verbose: Deployment Add operation on package OrthicLabs.SliceApp_0.1.1.0_x64__j3cejpx244dcr has been cancelled by the caller.",
+                                             "00:59:26.880 id=605 Information: Error 0x80073CF8: Failure in the Staged state handler.",
+                                             "00:59:26.883 id=472 Verbose: Moving package folder \\\\?\\C:\\Program Files\\WindowsApps\\OrthicLabs.SliceApp_0.1.1.0_x64__j3cejpx244dcr to \\\\?\\C:\\Program Files\\WindowsApps\\Deleted\\OrthicLabs.Sli",
+                                             "00:59:26.910 id=401 Error: Deployment Add operation with target volume C: on Package OrthicLabs.SliceApp_0.1.1.0_x64__j3cejpx244dcr from: (new.msix) failed with error 0x80073CF8. See http",
+                                             "00:59:26.914 id=404 Error: AppX Deployment operation failed for package OrthicLabs.SliceApp_0.1.1.0_x64__j3cejpx244dcr with error 0x80073CF8. The specific error text for this failure is: ",
+                                             "00:59:26.915 id=613 Information: Performance summary of Deployment Add operation on Package OrthicLabs.SliceApp_0.1.1.0_x64__j3cejpx244dcr: Failed to reach state Staged Overall time: 594 ms (Ac"
+                                         ],
+                         "failed_to_reach_state":  "Staged"
+                     }
+                 ],
+    "genuine":  true,
+    "genuine_attempt":  1
+}

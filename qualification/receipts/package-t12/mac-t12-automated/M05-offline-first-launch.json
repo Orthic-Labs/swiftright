@@ -1,0 +1,41 @@
+{
+   "artifact_ids" : {
+      "rows_json_after_first_launch" : "sha256:ee1bfca6e4267f8fbede848908213681d6bb1f7a3c6ce396e3e4c49dc4f124dd"
+   },
+   "check_id" : "M05-offline-first-launch",
+   "check_name" : "Offline first launch writes rows.json",
+   "ended_utc" : "2026-10-18T19:25:45Z",
+   "environment" : {
+      "arch" : "arm64",
+      "host" : "Managed’s Virtual Machine",
+      "hv_vmm_present" : "1",
+      "hw_model" : "VirtualMac2,1",
+      "os_version" : "macOS 26.6.2 (25G83)",
+      "profile" : "automated",
+      "user" : "admin",
+      "vm" : "true"
+   },
+   "exit_status" : null,
+   "harness" : {
+      "name" : "mac-clean-run.sh",
+      "sha256" : "sha256:7e47eb881a44d262d8e5a13b9311d09d9378a93cd812c86b7a6c9e5593b9863a"
+   },
+   "implemented" : true,
+   "observations" : {
+      "gk_eval_allowed_first" : "2",
+      "gk_eval_denied_first" : "0",
+      "launch_first_alive" : "true",
+      "launch_first_method" : "direct exec of the binary from the guest SSH session (quarantined copy, Gatekeeper evaluates the exec; no first-open prompt)",
+      "launch_first_seconds_to_window" : "1",
+      "rows_json" : "present, schema 1",
+      "window_server_first" : "on-screen windows of the app process: 1, largest 900x450 (window server, via osascript CGWindowList)"
+   },
+   "platform" : "macos-arm64",
+   "product" : "SliceApp",
+   "reason" : null,
+   "record" : "check",
+   "run_id" : "t12-automated",
+   "schema" : "sr0-a.package-receipt/v2",
+   "started_utc" : "2026-10-18T19:25:37Z",
+   "status" : "pass"
+}

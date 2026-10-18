@@ -1,0 +1,46 @@
+{
+   "artifact_ids" : {},
+   "check_id" : "M09-rollback-readable",
+   "check_name" : "Old build reads data written by new build",
+   "ended_utc" : "2026-10-18T19:26:51Z",
+   "environment" : {
+      "arch" : "arm64",
+      "host" : "Managed’s Virtual Machine",
+      "hv_vmm_present" : "1",
+      "hw_model" : "VirtualMac2,1",
+      "os_version" : "macOS 26.6.2 (25G83)",
+      "profile" : "automated",
+      "user" : "admin",
+      "vm" : "true"
+   },
+   "exit_status" : 0,
+   "harness" : {
+      "name" : "mac-clean-run.sh",
+      "sha256" : "sha256:7e47eb881a44d262d8e5a13b9311d09d9378a93cd812c86b7a6c9e5593b9863a"
+   },
+   "implemented" : true,
+   "observations" : {
+      "gate_bundle_id" : "dev.orthic.sliceapp",
+      "gate_codesign_rc" : "0",
+      "gate_spctl_rc" : "0",
+      "gate_version" : "0.1.0",
+      "gk_eval_allowed_rollback" : "2",
+      "gk_eval_denied_rollback" : "0",
+      "install_rc" : "0",
+      "launch_rollback_alive" : "true",
+      "launch_rollback_method" : "direct exec of the binary from the guest SSH session (quarantined copy, Gatekeeper evaluates the exec; no first-open prompt)",
+      "launch_rollback_seconds_to_window" : "1",
+      "previous_bundle_moved_to" : "/Users/admin/clean-machine-work/t12-automated/previous/M09-rollback-readable-28797",
+      "rows_readable_by_old" : "true",
+      "rows_sha_before_rollback" : "sha256:ee1bfca6e4267f8fbede848908213681d6bb1f7a3c6ce396e3e4c49dc4f124dd",
+      "window_server_rollback" : "on-screen windows of the app process: 1, largest 900x450 (window server, via osascript CGWindowList)"
+   },
+   "platform" : "macos-arm64",
+   "product" : "SliceApp",
+   "reason" : null,
+   "record" : "check",
+   "run_id" : "t12-automated",
+   "schema" : "sr0-a.package-receipt/v2",
+   "started_utc" : "2026-10-18T19:26:44Z",
+   "status" : "pass"
+}

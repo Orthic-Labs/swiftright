@@ -1,0 +1,49 @@
+{
+   "artifact_ids" : {
+      "evidence" : "sha256:bb76bf234d9a93874124ceb9ff258791302f2cb59c189949c8cd5af1ea201468"
+   },
+   "check_id" : "M11-window-visible",
+   "check_name" : "Window visible on first launch (window server, unattended)",
+   "ended_utc" : "2026-10-18T19:24:02Z",
+   "environment" : {
+      "arch" : "arm64",
+      "host" : "Managed’s Virtual Machine",
+      "hv_vmm_present" : "1",
+      "hw_model" : "VirtualMac2,1",
+      "os_version" : "macOS 26.6.2 (25G83)",
+      "profile" : "window-server",
+      "user" : "admin",
+      "vm" : "true"
+   },
+   "exit_status" : null,
+   "harness" : {
+      "name" : "mac-clean-run.sh",
+      "sha256" : "sha256:7e47eb881a44d262d8e5a13b9311d09d9378a93cd812c86b7a6c9e5593b9863a"
+   },
+   "implemented" : true,
+   "observations" : {
+      "gate_bundle_id" : "dev.orthic.sliceapp",
+      "gate_codesign_rc" : "0",
+      "gate_spctl_rc" : "0",
+      "gate_version" : "0.1.0",
+      "gk_eval_allowed_first" : "2",
+      "gk_eval_denied_first" : "0",
+      "install_rc" : "0",
+      "launch_first_alive" : "true",
+      "launch_first_method" : "direct exec of the binary from the guest SSH session (quarantined copy, Gatekeeper evaluates the exec; no first-open prompt)",
+      "launch_first_seconds_to_window" : "1",
+      "method" : "window server (CGWindowList through osascript in the guest console session) lists an on-screen, visible layer-0 window of the app process; raw entries in M11-window-visible.windows.json; no pixels inspected, no screenshot (screencapture is denied by TCC Screen Recording)",
+      "observer" : "harness",
+      "quarantine_OLD" : "0081;6ad51ca9;Safari;5F306E6C-5D4A-4DFB-8371-AA0AC0305899",
+      "visible_window_largest" : "900x450",
+      "window_server_first" : "on-screen windows of the app process: 1, largest 900x450 (window server, via osascript CGWindowList)"
+   },
+   "platform" : "macos-arm64",
+   "product" : "SliceApp",
+   "reason" : null,
+   "record" : "check",
+   "run_id" : "t12-window-server",
+   "schema" : "sr0-a.package-receipt/v2",
+   "started_utc" : "2026-10-18T19:23:20Z",
+   "status" : "pass"
+}

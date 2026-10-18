@@ -1,0 +1,35 @@
+{
+   "artifact_ids" : {},
+   "check_id" : "M10-uninstall-keeps-data",
+   "check_name" : "Uninstall keeps rows.json",
+   "ended_utc" : "2026-10-18T19:26:52Z",
+   "environment" : {
+      "arch" : "arm64",
+      "host" : "Managed’s Virtual Machine",
+      "hv_vmm_present" : "1",
+      "hw_model" : "VirtualMac2,1",
+      "os_version" : "macOS 26.6.2 (25G83)",
+      "profile" : "automated",
+      "user" : "admin",
+      "vm" : "true"
+   },
+   "exit_status" : 0,
+   "harness" : {
+      "name" : "mac-clean-run.sh",
+      "sha256" : "sha256:7e47eb881a44d262d8e5a13b9311d09d9378a93cd812c86b7a6c9e5593b9863a"
+   },
+   "implemented" : true,
+   "observations" : {
+      "bundle_removed_rc" : "0",
+      "rows_sha_after" : "sha256:ee1bfca6e4267f8fbede848908213681d6bb1f7a3c6ce396e3e4c49dc4f124dd",
+      "rows_sha_before" : "sha256:ee1bfca6e4267f8fbede848908213681d6bb1f7a3c6ce396e3e4c49dc4f124dd"
+   },
+   "platform" : "macos-arm64",
+   "product" : "SliceApp",
+   "reason" : null,
+   "record" : "check",
+   "run_id" : "t12-automated",
+   "schema" : "sr0-a.package-receipt/v2",
+   "started_utc" : "2026-10-18T19:26:51Z",
+   "status" : "pass"
+}

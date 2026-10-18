@@ -1,0 +1,108 @@
+{
+    "schema":  "sr0-a.package-receipt/v2",
+    "record":  "run",
+    "product":  "SliceApp",
+    "platform":  "windows-x64",
+    "run_id":  "t12-Offline",
+    "status":  "fail",
+    "expected_checks":  [
+                            "W00-environment",
+                            "W01-artifacts-bound",
+                            "W02-signer-trust",
+                            "W03-install-old",
+                            "W04-launch-offline-old",
+                            "W05-write-data",
+                            "W06-upgrade-new",
+                            "W07-corrupt-update-rejected",
+                            "W08-interrupted-update",
+                            "W09-rollback-readable",
+                            "W10-uninstall-keeps-data",
+                            "W11-legacy-data-physical-path",
+                            "W13-renderer-layout-installed",
+                            "W14-deferred-update-in-use"
+                        ],
+    "checks":  [
+                   {
+                       "check_id":  "W00-environment",
+                       "status":  "pass",
+                       "implemented":  true
+                   },
+                   {
+                       "check_id":  "W01-artifacts-bound",
+                       "status":  "pass",
+                       "implemented":  true
+                   },
+                   {
+                       "check_id":  "W02-signer-trust",
+                       "status":  "pass",
+                       "implemented":  true
+                   },
+                   {
+                       "check_id":  "W03-install-old",
+                       "status":  "pass",
+                       "implemented":  true
+                   },
+                   {
+                       "check_id":  "W04-launch-offline-old",
+                       "status":  "pass",
+                       "implemented":  true
+                   },
+                   {
+                       "check_id":  "W05-write-data",
+                       "status":  "pass",
+                       "implemented":  true
+                   },
+                   {
+                       "check_id":  "W06-upgrade-new",
+                       "status":  "pass",
+                       "implemented":  true
+                   },
+                   {
+                       "check_id":  "W07-corrupt-update-rejected",
+                       "status":  "fail",
+                       "implemented":  true
+                   },
+                   {
+                       "check_id":  "W08-interrupted-update",
+                       "status":  "pass",
+                       "implemented":  true
+                   },
+                   {
+                       "check_id":  "W09-rollback-readable",
+                       "status":  "pass",
+                       "implemented":  true
+                   },
+                   {
+                       "check_id":  "W10-uninstall-keeps-data",
+                       "status":  "pass",
+                       "implemented":  true
+                   },
+                   {
+                       "check_id":  "W11-legacy-data-physical-path",
+                       "status":  "pass",
+                       "implemented":  true
+                   },
+                   {
+                       "check_id":  "W13-renderer-layout-installed",
+                       "status":  "pass",
+                       "implemented":  true
+                   },
+                   {
+                       "check_id":  "W14-deferred-update-in-use",
+                       "status":  "pass",
+                       "implemented":  true
+                   }
+               ],
+    "started_utc":  "2026-10-18T19:24:04Z",
+    "ended_utc":  "2026-10-18T19:31:47Z",
+    "reason":  "guest summary status is fail; W07-corrupt-update-rejected not passing: tampered changed-entry package accepted, refused only because the app was in use, installed version changed, or the genuine update failed",
+    "artifact_ids":  {
+                         "old_msix":  "sha256:0b0922cb9030d479b579c12f1292e0bd6813e2ecf715f49e9e004fe54cc6cb77",
+                         "new_msix":  "sha256:178e55f509e2bf0e7bfac88bb0c9663323ea010aafaf202ea787e6bbfb8014eb",
+                         "signer_cer":  "sha256:479406aee7eb587c7dcbc766d268604c547bcdaee850e7dadf2c65d10d96eb7a"
+                     },
+    "harness":  {
+                    "name":  "run-sandbox.ps1",
+                    "sha256":  "sha256:435421057c016529589d6d193dc775f33c414ab3531fb125dbe08a3e28d526a8"
+                }
+}

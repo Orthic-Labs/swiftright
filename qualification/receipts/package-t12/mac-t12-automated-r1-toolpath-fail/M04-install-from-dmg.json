@@ -1,0 +1,39 @@
+{
+   "artifact_ids" : {
+      "installed_binary" : "sha256:b1082ed5f9c6aba46368e2bf50db6233ad35d89873e9f0f0be660ebe4501719f"
+   },
+   "check_id" : "M04-install-from-dmg",
+   "check_name" : "Install old build from DMG (verify before copy)",
+   "ended_utc" : "2026-10-18T19:24:07Z",
+   "environment" : {
+      "arch" : "arm64",
+      "host" : "Managed’s Virtual Machine",
+      "hv_vmm_present" : "1",
+      "hw_model" : "VirtualMac2,1",
+      "os_version" : "macOS 26.6.2 (25G83)",
+      "profile" : "automated",
+      "user" : "admin",
+      "vm" : "true"
+   },
+   "exit_status" : 0,
+   "harness" : {
+      "name" : "mac-clean-run.sh",
+      "sha256" : "sha256:7e47eb881a44d262d8e5a13b9311d09d9378a93cd812c86b7a6c9e5593b9863a"
+   },
+   "implemented" : true,
+   "observations" : {
+      "gate_bundle_id" : "dev.orthic.sliceapp",
+      "gate_codesign_rc" : "0",
+      "gate_spctl_rc" : "0",
+      "gate_version" : "0.1.0",
+      "install_rc" : "0"
+   },
+   "platform" : "macos-arm64",
+   "product" : "SliceApp",
+   "reason" : null,
+   "record" : "check",
+   "run_id" : "t12-automated",
+   "schema" : "sr0-a.package-receipt/v2",
+   "started_utc" : "2026-10-18T19:24:07Z",
+   "status" : "pass"
+}

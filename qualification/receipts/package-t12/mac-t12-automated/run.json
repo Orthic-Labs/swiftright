@@ -1,0 +1,89 @@
+{
+   "artifact_ids" : {
+      "new_dmg" : "sha256:cc8bab86409a4ecf7ba52c6a5bb1ed3177683b39e235ed60019bf292badbc5fb",
+      "old_dmg" : "sha256:14d5874dcfd8782ddecf88916bd298824a0344a204fd2c5a179916736993a066"
+   },
+   "checks" : [
+      {
+         "check_id" : "M00-environment",
+         "implemented" : true,
+         "status" : "pass"
+      },
+      {
+         "check_id" : "M01-artifacts-bound",
+         "implemented" : true,
+         "status" : "pass"
+      },
+      {
+         "check_id" : "M02-quarantined-delivery",
+         "implemented" : true,
+         "status" : "pass"
+      },
+      {
+         "check_id" : "M03-gatekeeper-dmg",
+         "implemented" : true,
+         "status" : "pass"
+      },
+      {
+         "check_id" : "M04-install-from-dmg",
+         "implemented" : true,
+         "status" : "pass"
+      },
+      {
+         "check_id" : "M05-offline-first-launch",
+         "implemented" : true,
+         "status" : "pass"
+      },
+      {
+         "check_id" : "M06-upgrade-dmg-replace",
+         "implemented" : true,
+         "status" : "pass"
+      },
+      {
+         "check_id" : "M07-corrupt-binary-rejected",
+         "implemented" : true,
+         "status" : "pass"
+      },
+      {
+         "check_id" : "M08-interrupted-install",
+         "implemented" : true,
+         "status" : "pass"
+      },
+      {
+         "check_id" : "M09-rollback-readable",
+         "implemented" : true,
+         "status" : "pass"
+      },
+      {
+         "check_id" : "M10-uninstall-keeps-data",
+         "implemented" : true,
+         "status" : "pass"
+      }
+   ],
+   "ended_utc" : "2026-10-18T19:26:52Z",
+   "expected_checks" : [
+      "M00-environment",
+      "M01-artifacts-bound",
+      "M02-quarantined-delivery",
+      "M03-gatekeeper-dmg",
+      "M04-install-from-dmg",
+      "M05-offline-first-launch",
+      "M06-upgrade-dmg-replace",
+      "M07-corrupt-binary-rejected",
+      "M08-interrupted-install",
+      "M09-rollback-readable",
+      "M10-uninstall-keeps-data"
+   ],
+   "harness" : {
+      "name" : "mac-clean-run.sh",
+      "sha256" : "sha256:7e47eb881a44d262d8e5a13b9311d09d9378a93cd812c86b7a6c9e5593b9863a"
+   },
+   "platform" : "macos-arm64",
+   "product" : "SliceApp",
+   "reason" : null,
+   "record" : "run",
+   "run_id" : "t12-automated",
+   "schema" : "sr0-a.package-receipt/v2",
+   "started_utc" : "2026-10-18T19:25:18Z",
+   "status" : "pass"
+}

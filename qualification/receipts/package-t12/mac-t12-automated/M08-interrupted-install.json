@@ -1,0 +1,60 @@
+{
+   "artifact_ids" : {
+      "interrupt_hook" : "sha256:893f91e40c4e30b53a6632a7aa106df32f4a26daf4e1f00e487f6e843475e807",
+      "interrupt_script" : "sha256:3de3267314d104ceef95ad5003355ec7ff968880070c631f4abc5f6dd671b688",
+      "m08_log_copy" : "sha256:43c3e209ae886a146fd78a351d07521e541de8e283e437cf7fb17bc7ac3fb3ca",
+      "m08_log_swap" : "sha256:ce964acd7935be21be90bab818afe74fa43dfca6d8ee5e8f515d0856b80b0f2d",
+      "m08_log_swap_term" : "sha256:95d92f7f3bbd34f7025b89f20eb423dc787ac45907e79a67f9ded23dd24227b7",
+      "node_bin" : "sha256:ebd2d552c7bebde593dd0390530963ad28de56bccde6ce387cdbe55fb0b6fb8e",
+      "right_release_cli" : "sha256:105eea0fb934e5b0ba03d5fa783dd23e634da1175faa1823ff01dbd0ac7f88dd"
+   },
+   "check_id" : "M08-interrupted-install",
+   "check_name" : "Interrupted install at copy/swap boundaries (real right-release install-app --recover)",
+   "ended_utc" : "2026-10-18T19:26:44Z",
+   "environment" : {
+      "arch" : "arm64",
+      "host" : "Managed’s Virtual Machine",
+      "hv_vmm_present" : "1",
+      "hw_model" : "VirtualMac2,1",
+      "os_version" : "macOS 26.6.2 (25G83)",
+      "profile" : "automated",
+      "user" : "admin",
+      "vm" : "true"
+   },
+   "exit_status" : 0,
+   "harness" : {
+      "name" : "mac-clean-run.sh",
+      "sha256" : "sha256:7e47eb881a44d262d8e5a13b9311d09d9378a93cd812c86b7a6c9e5593b9863a"
+   },
+   "implemented" : true,
+   "observations" : {
+      "copy_after_recover" : "OBSERVED: after --recover the installed app is the OLD bundle",
+      "copy_expect_fail" : "0",
+      "copy_expect_pass" : "8",
+      "copy_hook_fired" : "true",
+      "copy_post_interrupt" : "[post-interrupt] app present, verifies=1, version=0.1.0, CDHash=0fa7a3cd7b953c30eb4a9b9fa157cc9a031d3c81",
+      "copy_rc" : "0",
+      "node_version" : "v26.8.1",
+      "right_release_version" : "0.2.162",
+      "swap_after_recover" : "OBSERVED: after --recover the installed app is the OLD bundle",
+      "swap_expect_fail" : "0",
+      "swap_expect_pass" : "6",
+      "swap_hook_fired" : "true",
+      "swap_post_interrupt" : "[post-interrupt] app ABSENT",
+      "swap_rc" : "0",
+      "swap_term_after_recover" : "OBSERVED: after --recover the installed app is the OLD bundle",
+      "swap_term_expect_fail" : "0",
+      "swap_term_expect_pass" : "9",
+      "swap_term_hook_fired" : "true",
+      "swap_term_post_interrupt" : "[post-interrupt] app present, verifies=1, version=0.1.0, CDHash=0fa7a3cd7b953c30eb4a9b9fa157cc9a031d3c81",
+      "swap_term_rc" : "0"
+   },
+   "platform" : "macos-arm64",
+   "product" : "SliceApp",
+   "reason" : null,
+   "record" : "check",
+   "run_id" : "t12-automated",
+   "schema" : "sr0-a.package-receipt/v2",
+   "started_utc" : "2026-10-18T19:25:54Z",
+   "status" : "pass"
+}

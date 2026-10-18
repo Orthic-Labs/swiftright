@@ -1,0 +1,35 @@
+{
+    "schema":  "sr0-a.package-receipt/v2",
+    "record":  "check",
+    "product":  "SliceApp",
+    "platform":  "windows-x64",
+    "run_id":  "t12-Offline",
+    "check_id":  "W02-signer-trust",
+    "check_name":  "Signer trusted in the guest (public certificate only)",
+    "implemented":  true,
+    "status":  "pass",
+    "reason":  null,
+    "started_utc":  "2026-10-18T19:24:20Z",
+    "ended_utc":  "2026-10-18T19:24:20Z",
+    "exit_status":  null,
+    "observations":  {
+                         "verdict":  "PASS",
+                         "in_trusted_people":  "False",
+                         "signer_subject":  "CN=Damned Ventures LLC, O=Damned Ventures LLC, L=new york, S=New York, C=US",
+                         "signature_status_before":  "Valid",
+                         "manifest_publisher":  "CN=Damned Ventures LLC, O=Damned Ventures LLC, L=new york, S=New York, C=US",
+                         "imported_public_cer":  "False"
+                     },
+    "artifact_ids":  {
+                         "signer_cer":  "sha256:479406aee7eb587c7dcbc766d268604c547bcdaee850e7dadf2c65d10d96eb7a"
+                     },
+    "environment":  {
+                        "host":  "00C461CD-26A5-4",
+                        "os_version":  "Windows 10.0.26100.0 build 26100.9711 24H2",
+                        "user":  "WDAGUtilityAccount"
+                    },
+    "harness":  {
+                    "name":  "sandbox-run.ps1",
+                    "sha256":  "sha256:f6c6590d08744fe2063593e5dec2d4dbcb00683823ea94a1c9097855d86de1c8"
+                }
+}
