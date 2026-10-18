@@ -19,7 +19,9 @@ repo="$(cd "$here/../.." && pwd)"
 request=legacy
 if [ -n "${CASE:-}" ]; then
   pj="$repo/$CASE/pair.json"
-  if [ -f "$pj" ] && request="$(python3 -I -c 'import json,sys; print(json.load(open(sys.argv[1])).get("macScrollerStyle", "legacy"))' "$pj" 2>/dev/null)"; then
+  if [ ! -e "$pj" ]; then
+    request=legacy   # a case without pair.json asks for nothing: the legacy reference
+  elif request="$(python3 -I -c 'import json,sys; print(json.load(open(sys.argv[1])).get("macScrollerStyle", "legacy"))' "$pj" 2>/dev/null)"; then
     :
   else
     echo "::error::cannot read macScrollerStyle from $pj (CASE=$CASE); capture refused" >&2; exit 1
