@@ -282,6 +282,8 @@ public struct StepExtra: Codable, Sendable, Equatable {
     public var tree: UIANode?            // raw RawView tree with BoundingRectangle
     public var monoStartNs: UInt64?      // DispatchTime uptime at the first op of the step (same clock as the target's mono_ns)
     public var monoEndNs: UInt64?        // DispatchTime uptime when the observation was taken
+    public var foregroundAtSnapshot: Bool?  // target process owned the foreground when the tree was read (activated first if not)
+    public var focusSettleMs: Int?          // ms waited for a focused node to appear (0 when present at once; nil when none appeared)
 }
 
 public struct Sidecar: Codable, Sendable, Equatable {

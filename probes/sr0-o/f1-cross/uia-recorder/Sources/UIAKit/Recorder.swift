@@ -168,9 +168,24 @@ public final class Recorder {
             extra.focusedAutomationId = nil
             return (WObservation(stepId: spec.id, model: [:], focusedNodeId: nil, selection: nil, lifecycle: [], effects: [], axNodes: nil), extra)
         }
-        let tree = auto.walk(root)
+        // UIA keyboard focus exists only in the foreground window: a background driver can lose the foreground
+        // (Windows foreground lock), which reads as "no focus" though the fixture holds it in-process. Activate the
+        // target first, then wait up to 1 s for a focused node, and record both facts in the sidecar.
+        let fg = ensureForeground()
+        var tree = auto.walk(root)
+        var settle: Int? = 0
+        let t0 = DispatchTime.now().uptimeNanoseconds
+        while !tree.flatten().contains(where: { $0.hasFocus }) {
+            let waited = Int((DispatchTime.now().uptimeNanoseconds - t0) / 1_000_000)
+            if waited >= 1000 { settle = nil; break }
+            Thread.sleep(forTimeInterval: 0.05)
+            tree = auto.walk(root)
+            settle = Int((DispatchTime.now().uptimeNanoseconds - t0) / 1_000_000)
+        }
         let norm = WinNormalizer.normalize(tree)
         var extra = StepExtra(stepId: spec.id, opResults: results, tree: tree)
+        extra.foregroundAtSnapshot = fg
+        extra.focusSettleMs = settle
 
         // Focused node: deepest node reporting keyboard focus.
         let focused = tree.flatten().last(where: { $0.hasFocus })
