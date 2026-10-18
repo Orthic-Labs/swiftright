@@ -988,14 +988,15 @@ def windows_ids(exes, renderers, traces):
             "windows_trace": sha_ref(sha256_text("\n".join(sorted(set(traces)))))}
 
 
-def smoke_plan(tag, timeout=False):
+def smoke_plan(tag, timeout=False, base=None):
     """One BridgeSmoke dispatch. timeout=True is timeout mode (schedule-smoke.ps1 -SkipShutdown: the app never calls
     swr_shutdown_complete and the pump ends by its 5 s bound)."""
-    script = f"{SMOKE_BASE}\\examples\\BridgeSmoke\\scripts\\schedule-smoke.ps1"
+    base = base or SMOKE_BASE
+    script = f"{base}\\examples\\BridgeSmoke\\scripts\\schedule-smoke.ps1"
     mode = "timeout" if timeout else "normal"
     flag = " -SkipShutdown" if timeout else ""
     return {"mode": mode,
-            "command": ["win", f"powershell -NoProfile -ExecutionPolicy Bypass -File {script} -Base {SMOKE_BASE} -Tag {tag}{flag}"],
+            "command": ["win", f"powershell -NoProfile -ExecutionPolicy Bypass -File {script} -Base {base} -Tag {tag}{flag}"],
             "transport": "win bridge (ssh) starting one interactive scheduled task",
             "desktop": "interactive Windows desktop session required",
             "pass_markers": ["AUTOMATIONID PASS", "run: ok", SMOKE_MODE_MARKERS[mode]],
@@ -1003,13 +1004,13 @@ def smoke_plan(tag, timeout=False):
             "evidence": "ARTIFACTS exe=<sha256> renderer=<sha256> trace=<sha256> line in the result text"}
 
 
-def smoke_stage(log, out_dir, dry_run, confirmed, runner=subprocess.run, which=shutil.which, tuple_pin=None):
+def smoke_stage(log, out_dir, dry_run, confirmed, runner=subprocess.run, which=shutil.which, tuple_pin=None, base=None):
     """Dispatches BridgeSmoke on Windows in normal mode, then timeout mode. Both must pass (marker lines, SMOKE PASS
     n/n with the tuple's count, ARTIFACTS line) on one exe and one renderer build; with a tuple both are pinned.
     Required: skip and missing evidence are failures outside --dry-run."""
     stage = "smoke"
     tag = "qual-" + stamp().replace(":", "").replace(".", "")
-    plans = [smoke_plan(f"{tag}-{mode}", timeout=mode == "timeout") for mode in SMOKE_MODES]
+    plans = [smoke_plan(f"{tag}-{mode}", timeout=mode == "timeout", base=base) for mode in SMOKE_MODES]
     log.emit(stage, "start", None, reason="BridgeSmoke ABI smoke on Windows: " + " + ".join(SMOKE_MODES) + " mode")
     if dry_run:
         print("PLAN " + json.dumps(plans, indent=2), file=sys.stderr)
@@ -1680,7 +1681,7 @@ def cmd_run(args):
                     native_stage(log, args.native_dir, args.native_tag, tuple_pin=tuple_pin,
                                  overrides=dict(o.split("=", 1) for o in args.native_override))
             elif stage == "smoke":
-                smoke_stage(log, out_dir, dry, args.confirm_windows_gui, tuple_pin=tuple_pin)
+                smoke_stage(log, out_dir, dry, args.confirm_windows_gui, tuple_pin=tuple_pin, base=args.smoke_base)
             elif stage == "package":
                 package_stage(log, args.package_receipts or [PACKAGE_RECEIPT_DIR], dry, tuple_pin=tuple_pin)
         if tuple_pin is None:
@@ -1958,6 +1959,7 @@ def build_parser():
                        help="Windows R10 analyzer receipt for the workload stage")
     run_p.add_argument("--workload-mac", type=Path, default=DEFAULT_WORKLOAD_MAC, help="Mac R10 receipt: the section 11 reference")
     run_p.add_argument("--native-dir", type=Path, default=NATIVE_RECEIPT_DIR, help="directory of the R9 native-interaction receipts")
+    run_p.add_argument("--smoke-base", default=SMOKE_BASE, help="Dell tree holding the tuple's BridgeSmoke and renderer (examples\\BridgeSmoke\\scripts\\schedule-smoke.ps1 under it)")
     run_p.add_argument("--native-tag", default=DEFAULT_NATIVE_TAG, help="receipt suffix, native-ime-f7-<tag>.txt")
     run_p.add_argument("--native-override", nargs="*", default=[], metavar="NAME=TAG",
                        help="take one receipt from another tag (a rerun), for example ime-f7=tuple10b")
