@@ -20,7 +20,7 @@ State (17 Oct 2026): renderer ADMITTED under the lock-parse rule (`docs/sr1-deci
 | 8 | Unproven recorder items | R8 settled, R5 closed, R6 accepted limitation per current decision record |
 | 9 | Selection highlight not painted | SR1-owned limitation; unchanged |
 | 10 | Renderer ready metrics | tuple12 source candidate includes applied fix; stage/requalification pending |
-| 11 | IME candidate list after layout move | SR1/RightKit-owned limitation; unchanged |
+| 11 | IME candidate list after layout move | Dropped for SR0 (19 Oct, #24): the held IMM32 patch reopens the renderer (tuple 13) at ~25% expected effect; the native gate keeps `candidate-window-follows-layout-move` as the one allowed FAIL. SR1 carries the TSF ITextStoreACP design (docs/held-patches/swiftright-03-ime-candidate-follow.md, outline b) |
 | 12 | SR1 factory | owned by Codex factory session; renderer/ABI edits remain held until SR0 closes |
 
 Four user decisions currently govern close-out: 20-per-side comparison is accepted; W08 must be fixed, not accepted (guard-vs-upstream is Adrian's open decision, issue #19); freeze remains held; Narrator listening happens later.
