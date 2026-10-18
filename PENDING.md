@@ -18,7 +18,7 @@ State (17 Oct 2026): renderer ADMITTED under the lock-parse rule (`docs/sr1-deci
 | 7a | Tuple 12 packages (MSIX/DMG) | UNSIGNED candidates built (CI run 38411495413, `498f9d94`; MSIX `5605d93c…`, DMG `cb4e63a5…`; Sandbox smoke PASS; `docs/sr0-status.md`). Remaining: Adrian provisions `release` env secrets + Azure federated credential `repo:Orthic-Labs/swiftright:environment:release`; signed-lane hand-off from the unsigned candidate; tuple 12b rebuild after the W08 guard lands; SR0-P package run + W08 proof |
 | 7 | Signing | new-package signing approved using short-lived Azure certificate reissue; no fixed expiry deadline |
 | 8 | Unproven recorder items | R8 settled, R5 closed, R6 accepted limitation per current decision record |
-| 9 | Selection highlight not painted | SR1-owned limitation; unchanged |
+| 9 | Selection highlight not painted | Confirmed 19 Oct on tuple 12 (`probes/sr0-s/fresh-on-bridge/out/tuple12-selection-shot-sbx1/`): no highlight and no caret after launch focus although UIA reports focus 0+5; both draw only when `row == focusedRow`. Accepted SR0 limit; SR1 fixes it (#25) |
 | 10 | Renderer ready metrics | tuple12 source candidate includes applied fix; stage/requalification pending |
 | 11 | IME candidate list after layout move | Dropped for SR0 (19 Oct, #24): the held IMM32 patch reopens the renderer (tuple 13) at ~25% expected effect; the native gate keeps `candidate-window-follows-layout-move` as the one allowed FAIL. SR1 carries the TSF ITextStoreACP design (docs/held-patches/swiftright-03-ime-candidate-follow.md, outline b) |
 | 12 | SR1 factory | owned by Codex factory session; renderer/ABI edits remain held until SR0 closes |

@@ -1,0 +1,14 @@
+<Configuration>
+  <vGPU>Disable</vGPU>
+  <Networking>Disable</Networking>
+  <MappedFolders>
+    <MappedFolder><HostFolder>D:\Claude\swiftright\.work\sr0-r12-typecheck\src\scratch\out\Products\Release-windows-x86_64</HostFolder><SandboxFolder>C:\sb\bin</SandboxFolder><ReadOnly>true</ReadOnly></MappedFolder>
+    <MappedFolder><HostFolder>C:\Users\adrds\AppData\Local\Programs\Swift\Runtimes\6.4.0\usr\bin</HostFolder><SandboxFolder>C:\sb\rt</SandboxFolder><ReadOnly>true</ReadOnly></MappedFolder>
+    <MappedFolder><HostFolder>D:\Claude\swiftright\.work\sr0o-f1</HostFolder><SandboxFolder>C:\sb\base</SandboxFolder><ReadOnly>true</ReadOnly></MappedFolder>
+    <MappedFolder><HostFolder>D:\Claude\swiftright\.work\sr0o-f1-fg\scratch\release</HostFolder><SandboxFolder>C:\sb\rec</SandboxFolder><ReadOnly>true</ReadOnly></MappedFolder>
+    <MappedFolder><HostFolder>D:\Claude\swiftright\.work\sr0o-sbx\vc</HostFolder><SandboxFolder>C:\sb\vc</SandboxFolder><ReadOnly>true</ReadOnly></MappedFolder>
+    <MappedFolder><HostFolder>D:\Claude\swiftright\.work\sr0o-sbx\ctl</HostFolder><SandboxFolder>C:\sb\ctl</SandboxFolder><ReadOnly>false</ReadOnly></MappedFolder>
+    <MappedFolder><HostFolder>D:\Claude\swiftright\.work\sr0o-sbx\out</HostFolder><SandboxFolder>C:\sb\out</SandboxFolder><ReadOnly>false</ReadOnly></MappedFolder>
+  </MappedFolders>
+  <LogonCommand><Command>powershell -NoProfile -ExecutionPolicy Bypass -File C:\sb\ctl\sel-shot.ps1</Command></LogonCommand>
+</Configuration>
