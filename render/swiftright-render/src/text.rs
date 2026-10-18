@@ -14,6 +14,14 @@ use crate::abi::*;
 
 pub const MAX_RUNS: usize = 65536;
 pub const CACHE_CAP: usize = 512;
+/// #34: the cache is also bounded in bytes. Each entry is sized by its whole text (the text, one cell per character, the shaped
+/// glyphs), so a field that grows by one character per edit adds an entry per edit sized by the whole field; a count cap alone
+/// then retains CACHE_CAP x the field. The cache clears when the next entry would pass CACHE_BYTES, and an entry larger than
+/// CACHE_ENTRY_MAX is returned uncached (measured again on its next use).
+pub const CACHE_BYTES: usize = 8 << 20;
+pub const CACHE_ENTRY_MAX: usize = CACHE_BYTES / 4;
+/// Estimated bytes one measurement retains per character: its CharCell, its shaped glyph (id, position, cluster) and line bookkeeping.
+pub const RETAINED_PER_CHAR: usize = 128;
 
 /// A shaped, wrapped run plus plain per-character geometry. Rev 0.6: the text may hold
 /// '\n'; each paragraph is one GPUI `WrappedLine` stacked below the previous one, and the
@@ -189,24 +197,64 @@ fn word_starts_of(chars: &[char]) -> Vec<bool> {
         .collect()
 }
 
-pub struct TextCache {
-    map: HashMap<u64, Arc<Measured>>,
+/// What a cache entry retains, in bytes (an estimate; see RETAINED_PER_CHAR).
+pub trait Retained {
+    fn retained_bytes(&self) -> usize;
+    fn cached_text(&self) -> &str;
 }
 
-impl TextCache {
-    pub fn new() -> TextCache {
-        TextCache { map: HashMap::new() }
+impl Retained for Measured {
+    fn retained_bytes(&self) -> usize {
+        self.text.len() + (self.char_count as usize + 1) * RETAINED_PER_CHAR
+    }
+    fn cached_text(&self) -> &str {
+        &self.text
+    }
+}
+
+pub struct TextCacheOf<T: Retained> {
+    map: HashMap<u64, Arc<T>>,
+    bytes: usize,
+}
+
+pub type TextCache = TextCacheOf<Measured>;
+
+impl<T: Retained> TextCacheOf<T> {
+    pub fn new() -> Self {
+        TextCacheOf { map: HashMap::new(), bytes: 0 }
     }
 
-    pub fn get(&self, key: u64, text: &str) -> Option<Arc<Measured>> {
-        self.map.get(&key).filter(|m| m.text == text).cloned()
+    pub fn get(&self, key: u64, text: &str) -> Option<Arc<T>> {
+        self.map.get(&key).filter(|m| m.cached_text() == text).cloned()
     }
 
-    pub fn put(&mut self, key: u64, m: Arc<Measured>) {
-        if self.map.len() >= CACHE_CAP {
-            self.map.clear();
+    /// Drops every cached shaping (a registered font changes what a family resolves to).
+    pub fn clear(&mut self) {
+        self.map.clear();
+        self.bytes = 0;
+    }
+
+    pub fn put(&mut self, key: u64, m: Arc<T>) {
+        let b = m.retained_bytes();
+        if b > CACHE_ENTRY_MAX {
+            return;
         }
-        self.map.insert(key, m);
+        if self.map.len() >= CACHE_CAP || self.bytes + b > CACHE_BYTES {
+            self.clear();
+        }
+        if let Some(old) = self.map.insert(key, m) {
+            self.bytes -= old.retained_bytes();
+        }
+        self.bytes += b;
+    }
+
+    /// Estimated retained bytes (never above CACHE_BYTES).
+    pub fn bytes(&self) -> usize {
+        self.bytes
+    }
+
+    pub fn len(&self) -> usize {
+        self.map.len()
     }
 }
 
@@ -399,4 +447,59 @@ pub fn shape(ts: &WindowTextSystem, r: &Request, key: u64) -> Result<Measured, S
         char_count: chars.len() as u32,
         key,
     })
+}
+
+#[cfg(test)]
+mod text_cache_budget_tests {
+    use super::*;
+
+    struct Fake(String);
+    impl Retained for Fake {
+        fn retained_bytes(&self) -> usize {
+            self.0.len() + (self.0.chars().count() + 1) * RETAINED_PER_CHAR
+        }
+        fn cached_text(&self) -> &str {
+            &self.0
+        }
+    }
+
+    #[test]
+    fn a_growing_field_stays_within_the_byte_budget() {
+        // One entry per keystroke, each holding the whole field (the R10 workload types 10 chars/s into one field).
+        let mut c: TextCacheOf<Fake> = TextCacheOf::new();
+        let mut field = String::new();
+        let mut peak = 0;
+        for i in 0..20_000u64 {
+            field.push('x');
+            c.put(i, Arc::new(Fake(field.clone())));
+            assert!(c.bytes() <= CACHE_BYTES, "bytes {} over budget at {}", c.bytes(), i);
+            peak = peak.max(c.bytes());
+        }
+        assert!(peak > CACHE_BYTES / 2, "the budget is used, not starved: peak {}", peak);
+    }
+
+    #[test]
+    fn an_oversize_entry_is_not_cached_and_keeps_the_rest() {
+        let mut c: TextCacheOf<Fake> = TextCacheOf::new();
+        c.put(1, Arc::new(Fake("small".into())));
+        let big = "y".repeat(CACHE_ENTRY_MAX / RETAINED_PER_CHAR + 1);
+        c.put(2, Arc::new(Fake(big.clone())));
+        assert!(c.get(2, &big).is_none());
+        assert!(c.get(1, "small").is_some());
+    }
+
+    #[test]
+    fn the_count_cap_still_applies_and_replacing_a_key_does_not_double_count() {
+        let mut c: TextCacheOf<Fake> = TextCacheOf::new();
+        for i in 0..(CACHE_CAP as u64 + 3) {
+            c.put(i, Arc::new(Fake("ab".into())));
+        }
+        assert!(c.len() <= CACHE_CAP);
+        let before = c.bytes();
+        c.put(0, Arc::new(Fake("ab".into())));
+        c.put(0, Arc::new(Fake("ab".into())));
+        assert!(c.bytes() <= before + Fake("ab".into()).retained_bytes());
+        c.clear();
+        assert_eq!((c.len(), c.bytes()), (0, 0));
+    }
 }
