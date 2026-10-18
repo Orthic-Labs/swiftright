@@ -1,0 +1,29 @@
+{
+  "schema": 1,
+  "platform": "macos",
+  "architecture": "arm64",
+  "sourceRevision": "31dda11fee1bff01eeec07e68cf0a2bd6bf727fe",
+  "unsignedCandidate": {
+    "file": "SliceApp_0.1.0_arm64.dmg",
+    "sha256": "38468420e472535e649b72571e06d102ae589f946a790e5b36ee2064c82edabb",
+    "executableSha256": "92875091d73c492e12f5aeeb5e262b4755e7faa2adfe9816081f3008448cee1d"
+  },
+  "signed": {
+    "file": "SliceApp_0.1.0_arm64.dmg",
+    "sha256": "14d5874dcfd8782ddecf88916bd298824a0344a204fd2c5a179916736993a066",
+    "sizeBytes": 86286
+  },
+  "checks": [
+    "codesign --verify --strict (dmg)",
+    "stapler validate (app, dmg)",
+    "codesign --verify --deep --strict (app in dmg)",
+    "spctl --assess --type execute (app in dmg)",
+    "notarization receipts validated by RightKit"
+  ],
+  "receipts": [
+    "app-notarize.receipt.json",
+    "app-sign.receipt.json",
+    "dmg-notarize.receipt.json",
+    "dmg-sign.receipt.json"
+  ]
+}

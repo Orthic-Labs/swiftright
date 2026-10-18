@@ -1,0 +1,43 @@
+{
+  "schema": 1,
+  "platform": "windows",
+  "architecture": "x86_64",
+  "sourceRevision": "31dda11fee1bff01eeec07e68cf0a2bd6bf727fe",
+  "unsignedCandidate": {
+    "file": "SliceApp_0.1.0.0_x64.msix",
+    "sha256": "c389cef9541a9efa90ce5757a38102f25ed862d09d26bb042c12edf5d52e9100"
+  },
+  "signed": {
+    "file": "SliceApp_0.1.0.0_x64.msix",
+    "sha256": "0b0922cb9030d479b579c12f1292e0bd6813e2ecf715f49e9e004fe54cc6cb77",
+    "sizeBytes": 29226264
+  },
+  "signedPeFiles": [
+    "BlocksRuntime.dll",
+    "Foundation.dll",
+    "FoundationEssentials.dll",
+    "FoundationInternationalization.dll",
+    "SliceApp.exe",
+    "_FoundationICU.dll",
+    "dispatch.dll",
+    "msvcp140.dll",
+    "swiftCRT.dll",
+    "swiftCore.dll",
+    "swiftDispatch.dll",
+    "swiftObservation.dll",
+    "swiftSynchronization.dll",
+    "swiftWinSDK.dll",
+    "swift_Concurrency.dll",
+    "swift_RegexParser.dll",
+    "swift_StringProcessing.dll",
+    "swiftright_render.dll",
+    "vcruntime140.dll",
+    "vcruntime140_1.dll"
+  ],
+  "authenticode": "verified by sign-windows.mjs (signtool verify /pa, subject Damned Ventures LLC, timestamped) for each signed PE and the MSIX",
+  "receipts": [
+    "msix-pe-sign.receipt.json",
+    "msix-seal.json",
+    "msix-sign.receipt.json"
+  ]
+}
