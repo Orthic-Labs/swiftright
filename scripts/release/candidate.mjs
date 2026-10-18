@@ -26,7 +26,15 @@ if (action === "admit") {
   const version = env.RIGHT_GIT_RELEASE_VERSION;
   const head = run("git", ["rev-parse", "HEAD"], { encoding: "utf8", stdio: ["ignore", "pipe", "inherit"] }).trim();
   if (!/^[a-f0-9]{40}$/.test(revision) || head !== revision) throw new Error("Exact checkout required");
-  run("git", ["merge-base", "--is-ancestor", revision, "origin/master"]);
+  // A normal candidate must be on master. A dry run (the managed lane's branch rehearsal: publication skipped, signing still through the protected
+  // environments, docs/rules/public-ci.md) may come from the dispatched branch instead; publication stays refused below either way.
+  const ref = env.RIGHT_GIT_WORKFLOW_REF || "";
+  if (env.RIGHT_GIT_DRY_RUN === "true" && ref.startsWith("refs/heads/") && ref !== "refs/heads/master") {
+    run("git", ["fetch", "--no-tags", "origin", `+${ref}:refs/remotes/origin/${ref.slice("refs/heads/".length)}`]);
+    run("git", ["merge-base", "--is-ancestor", revision, `origin/${ref.slice("refs/heads/".length)}`]);
+  } else {
+    run("git", ["merge-base", "--is-ancestor", revision, "origin/master"]);
+  }
   const appVersion = JSON.parse(readFileSync(path.join(repo, "examples/SliceApp/package.json"), "utf8")).version;
   if (version !== appVersion) throw new Error(`Version ${version} does not match examples/SliceApp/package.json ${appVersion}`);
   if (env.RIGHT_GIT_PUBLISH === "true") throw new Error("Publication is disabled for SliceApp candidates");
