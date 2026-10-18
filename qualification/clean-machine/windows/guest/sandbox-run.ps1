@@ -752,7 +752,7 @@ Invoke-Check -CheckId 'W07-corrupt-update-rejected' -CheckName 'Tampered MSIX re
         [System.IO.File]::WriteAllBytes($bad, $bytes)
         $rej = $false; $msg = ''; $hr = ''
         try { Add-AppxPackage -Path $bad } catch { $rej = $true; $msg = $_.Exception.Message; $hr = ('0x{0:X8}' -f $_.Exception.HResult) }
-        return @{ entry = $entry; offset = [string]$o.offset; block = [string]$o.block; changed_blocks = [string]$o.changed_blocks; byte_before = ('{0:x2}' -f $b0); byte_after = ('{0:x2}' -f $bytes[$o.offset]); rejected = $rej; error = $msg; hresult = $hr; version_after = (Get-VersionString); sha = (Get-Sha256Ref -Path $bad) }
+        return @{ entry = $entry; offset = [string]$o.offset; block = $(if ($o.ContainsKey('block')) { [string]$o['block'] } else { '' }); changed_blocks = $(if ($o.ContainsKey('changed_blocks')) { [string]$o['changed_blocks'] } else { '' }); byte_before = ('{0:x2}' -f $b0); byte_after = ('{0:x2}' -f $bytes[$o.offset]); rejected = $rej; error = $msg; hresult = $hr; version_after = (Get-VersionString); sha = (Get-Sha256Ref -Path $bad) }
     }
     $a = Try-Tampered -entry '_FoundationICU.dll' -tag 'unchanged-entry'
     $b = Try-Tampered -entry 'SliceApp.exe' -tag 'changed-entry' -ChangedBlock
