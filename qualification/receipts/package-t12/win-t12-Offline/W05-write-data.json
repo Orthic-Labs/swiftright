@@ -1,0 +1,36 @@
+{
+    "schema":  "sr0-a.package-receipt/v2",
+    "record":  "check",
+    "product":  "SliceApp",
+    "platform":  "windows-x64",
+    "run_id":  "t12-Offline-r3",
+    "check_id":  "W05-write-data",
+    "check_name":  "Write a row through UIA; data lands on disk",
+    "implemented":  true,
+    "status":  "pass",
+    "reason":  null,
+    "started_utc":  "2026-10-18T20:34:25Z",
+    "ended_utc":  "2026-10-18T20:34:27Z",
+    "exit_status":  null,
+    "observations":  {
+                         "physical-localappdata_sha":  "sha256:f8f62563885e0c3bfd49c2044f025a6ed31bba9f03a41437fd05f83fdb4bd547",
+                         "marker":  "rightkit-check-t12-Offline-r3",
+                         "msix-localcache_exists":  "False",
+                         "found_at":  "physical-localappdata",
+                         "row_fields":  "6",
+                         "verdict":  "PASS",
+                         "physical-localappdata_exists":  "True"
+                     },
+    "artifact_ids":  {
+                         "rows_json_fresh":  "sha256:f8f62563885e0c3bfd49c2044f025a6ed31bba9f03a41437fd05f83fdb4bd547"
+                     },
+    "environment":  {
+                        "host":  "00C461CD-26A5-4",
+                        "os_version":  "Windows 10.0.26100.0 build 26100.9711 24H2",
+                        "user":  "WDAGUtilityAccount"
+                    },
+    "harness":  {
+                    "name":  "sandbox-run.ps1",
+                    "sha256":  "sha256:b260c6e4c9f1b7a585c4f1421e7d2628a41352b9dd201cebcc2974e72eed7626"
+                }
+}

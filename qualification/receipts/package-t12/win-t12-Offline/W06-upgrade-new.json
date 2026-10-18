@@ -1,0 +1,36 @@
+{
+    "schema":  "sr0-a.package-receipt/v2",
+    "record":  "check",
+    "product":  "SliceApp",
+    "platform":  "windows-x64",
+    "run_id":  "t12-Offline-r3",
+    "check_id":  "W06-upgrade-new",
+    "check_name":  "Upgrade to new MSIX keeps data and UI",
+    "implemented":  true,
+    "status":  "pass",
+    "reason":  null,
+    "started_utc":  "2026-10-18T20:34:27Z",
+    "ended_utc":  "2026-10-18T20:34:34Z",
+    "exit_status":  0,
+    "observations":  {
+                         "version":  "0.1.1.0",
+                         "data_sha_after_install":  "sha256:f8f62563885e0c3bfd49c2044f025a6ed31bba9f03a41437fd05f83fdb4bd547",
+                         "verdict":  "PASS",
+                         "new_build_marker_written":  "True",
+                         "closed_before_install":  "True",
+                         "marker_shown":  "True",
+                         "data_sha_before":  "sha256:f8f62563885e0c3bfd49c2044f025a6ed31bba9f03a41437fd05f83fdb4bd547"
+                     },
+    "artifact_ids":  {
+                         "new_msix":  "sha256:178e55f509e2bf0e7bfac88bb0c9663323ea010aafaf202ea787e6bbfb8014eb"
+                     },
+    "environment":  {
+                        "host":  "00C461CD-26A5-4",
+                        "os_version":  "Windows 10.0.26100.0 build 26100.9711 24H2",
+                        "user":  "WDAGUtilityAccount"
+                    },
+    "harness":  {
+                    "name":  "sandbox-run.ps1",
+                    "sha256":  "sha256:b260c6e4c9f1b7a585c4f1421e7d2628a41352b9dd201cebcc2974e72eed7626"
+                }
+}
