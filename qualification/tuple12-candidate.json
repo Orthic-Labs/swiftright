@@ -2,26 +2,32 @@
   "schema": "sr0-a.tuple/v1",
   "name": "tuple12-candidate",
   "recorded": "2026-10-11",
-  "status": "PENDING_STAGE",
-  "note": "Candidate only. Tuple12 stage root was absent after parser failure. Fill every sha256 only from fresh tuple12 receipts; run.py must reject this file while any member is null.",
+  "status": "PARTIAL_RECEIPTS",
+  "note": "Candidate only; every populated hash is bound to verified artifact bytes or sealed binary/run receipt; tuple12 qualification remains pending stage, W08 proof, matrix, native, package, and 20-per-side receipts.",
   "source_commit": "0e201571e4320a3b6ccce14313fd2ad67e523904",
   "renderer_sha256": "7578cd5da8a6831900c66680c4b94f89e64b6b294623709817848b02219aeac2",
   "release": "0.2.151",
   "members": {
     "windows_renderer": {
       "what": "swiftright_render.dll, ABI 0.6, tuple12 candidate renderer",
-      "sha256": null,
-      "source": []
+      "sha256": "7578cd5da8a6831900c66680c4b94f89e64b6b294623709817848b02219aeac2",
+      "source": [
+        "/Volumes/D/claude/swiftright/probes/sr0-s/fresh-on-bridge/out/tuple12-renderer-recovery-v1/recovered-artifacts-r3/swiftright_render.dll sha256=7578cd5da8a6831900c66680c4b94f89e64b6b294623709817848b02219aeac2 artifact=/Volumes/D/claude/swiftright/probes/sr0-s/fresh-on-bridge/out/tuple12-renderer-recovery-v1/recovered-artifacts-r3/swiftright_render.dll artifact_sha256=7578cd5da8a6831900c66680c4b94f89e64b6b294623709817848b02219aeac2"
+      ]
     },
     "windows_fixture_exe": {
       "what": "FreshOnBridge.exe, tuple12 candidate",
-      "sha256": null,
-      "source": []
+      "sha256": "87b8cb27ce6730e56681fac3ea22ed3dfb859b3dddb697c339318f4ce60eb374",
+      "source": [
+        "/Volumes/D/claude/swiftright/probes/sr0-s/fresh-on-bridge/out/tuple12-startupguard-build-v1/actual-build-r4/FreshOnBridge.exe sha256=87b8cb27ce6730e56681fac3ea22ed3dfb859b3dddb697c339318f4ce60eb374 artifact=/Volumes/D/claude/swiftright/probes/sr0-s/fresh-on-bridge/out/tuple12-startupguard-build-v1/actual-build-r4/FreshOnBridge.exe artifact_sha256=87b8cb27ce6730e56681fac3ea22ed3dfb859b3dddb697c339318f4ce60eb374"
+      ]
     },
     "windows_smoke_exe": {
       "what": "BridgeSmoke.exe, tuple12 candidate",
-      "sha256": null,
-      "source": []
+      "sha256": "064e5d420ed5458f9069395284f4ce5e6af41c17c142ac7ba6346320d319b0ea",
+      "source": [
+        "/Volumes/D/claude/swiftright/probes/sr0-s/fresh-on-bridge/out/tuple12-stage-r12-retry2/BridgeSmoke.exe sha256=064e5d420ed5458f9069395284f4ce5e6af41c17c142ac7ba6346320d319b0ea artifact=/Volumes/D/claude/swiftright/probes/sr0-s/fresh-on-bridge/out/tuple12-stage-r12-retry2/BridgeSmoke.exe artifact_sha256=064e5d420ed5458f9069395284f4ce5e6af41c17c142ac7ba6346320d319b0ea"
+      ]
     },
     "old_msix": {
       "what": "SliceApp 0.1.0.0, tuple12 package",
