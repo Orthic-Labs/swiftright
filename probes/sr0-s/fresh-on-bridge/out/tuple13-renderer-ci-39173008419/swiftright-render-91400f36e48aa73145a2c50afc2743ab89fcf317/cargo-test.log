@@ -1,0 +1,96 @@
+    Updating crates.io index
+   Compiling swiftright-render v0.0.3 (D:\a\swiftright\swiftright\render\swiftright-render)
+warning: unnecessary braces around block return value
+   --> src\lib.rs:627:12
+    |
+627 |     guard!({ rt::selftest_reentry() })
+    |            ^^                      ^^
+    |
+    = note: `#[warn(unused_braces)]` (part of `#[warn(unused)]`) on by default
+help: remove these braces
+    |
+627 -     guard!({ rt::selftest_reentry() })
+627 +     guard!(rt::selftest_reentry())
+    |
+
+warning: constant `NODE_FOCUSABLE` is never used
+  --> src\abi.rs:30:11
+   |
+30 | pub const NODE_FOCUSABLE: u32 = 0x2;
+   |           ^^^^^^^^^^^^^^
+   |
+   = note: `#[warn(dead_code)]` (part of `#[warn(unused)]`) on by default
+
+warning: constant `ROLE_NONE` is never used
+  --> src\abi.rs:43:11
+   |
+43 | pub const ROLE_NONE: u32 = 0;
+   |           ^^^^^^^^^
+
+warning: constant `ROLE_WINDOW` is never used
+  --> src\abi.rs:44:11
+   |
+44 | pub const ROLE_WINDOW: u32 = 1;
+   |           ^^^^^^^^^^^
+
+warning: constant `TOGGLED_NONE` is never used
+  --> src\abi.rs:72:11
+   |
+72 | pub const TOGGLED_NONE: u32 = 0;
+   |           ^^^^^^^^^^^^
+
+warning: constant `EV_FOCUS` is never used
+  --> src\abi.rs:83:11
+   |
+83 | pub const EV_FOCUS: u32 = 3;
+   |           ^^^^^^^^
+
+warning: constant `KEY_UP` is never used
+  --> src\abi.rs:90:11
+   |
+90 | pub const KEY_UP: u32 = 2;
+   |           ^^^^^^
+
+warning: constant `PTR_MOVE` is never used
+  --> src\abi.rs:93:11
+   |
+93 | pub const PTR_MOVE: u32 = 3;
+   |           ^^^^^^^^
+
+warning: static `WAKE_HANDLE` is never used
+   --> src\rt.rs:149:12
+    |
+149 | pub static WAKE_HANDLE: AtomicUsize = AtomicUsize::new(0);
+    |            ^^^^^^^^^^^
+
+warning: field `scale` is never read
+  --> src\text.rs:41:9
+   |
+30 | pub struct Measured {
+   |            -------- field in this struct
+...
+41 |     pub scale: f32,
+   |         ^^^^^
+
+warning: `swiftright-render` (lib test) generated 10 warnings (run `cargo fix --lib -p swiftright-render --tests` to apply 1 suggestion)
+    Finished `release` profile [optimized] target(s) in 1m 07s
+warning: the following packages contain code that will be rejected by a future version of Rust: proc-macro-error2 v2.0.1
+note: to see what the problems were, use the option `--future-incompat-report`, or run `cargo report future-incompatibilities --id 1`
+     Running unittests src\lib.rs (target\x86_64-pc-windows-msvc\release\deps\swiftright_render-dc06ba93926669ca.exe)
+
+running 12 tests
+test text::text_cache_budget_tests::an_oversize_entry_is_not_cached_and_keeps_the_rest ... ok
+test text::text_cache_budget_tests::the_count_cap_still_applies_and_replacing_a_key_does_not_double_count ... ok
+test view::ax_throttle_tests::a_publish_during_the_wait_restarts_the_interval_and_the_loop_follows_it ... ok
+test view::ax_throttle_tests::early_timer_is_healed_by_the_retry_loop_but_not_by_a_single_check ... ok
+test view::ax_throttle_tests::no_rest_after_the_interval_before_the_first_publish_or_unthrottled ... ok
+test view::ax_throttle_tests::rest_counts_down_inside_the_interval ... ok
+test view::ax_throttle_tests::retry_wait_is_floored_at_one_millisecond ... ok
+test view::client_size_tests::client_size_is_right_minus_left_and_bottom_minus_top ... ok
+test view::client_size_tests::inverted_or_empty_rect_clamps_to_zero ... ok
+test text::text_cache_budget_tests::a_growing_field_stays_within_the_byte_budget ... ok
+test tree::tests::incremental_commit_matches_reference ... ok
+test tree::tests::scroll_commit_cost ... ok
+
+test result: ok. 12 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.95s
+

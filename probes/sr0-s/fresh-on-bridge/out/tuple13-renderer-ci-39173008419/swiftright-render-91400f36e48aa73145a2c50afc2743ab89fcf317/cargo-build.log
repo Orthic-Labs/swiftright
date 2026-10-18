@@ -1,0 +1,89 @@
+   Compiling swiftright-render v0.0.3 (D:\a\swiftright\swiftright\render\swiftright-render)
+warning: unnecessary braces around block return value
+   --> src\lib.rs:627:12
+    |
+627 |     guard!({ rt::selftest_reentry() })
+    |            ^^                      ^^
+    |
+    = note: `#[warn(unused_braces)]` (part of `#[warn(unused)]`) on by default
+help: remove these braces
+    |
+627 -     guard!({ rt::selftest_reentry() })
+627 +     guard!(rt::selftest_reentry())
+    |
+
+warning: constant `NODE_FOCUSABLE` is never used
+  --> src\abi.rs:30:11
+   |
+30 | pub const NODE_FOCUSABLE: u32 = 0x2;
+   |           ^^^^^^^^^^^^^^
+   |
+   = note: `#[warn(dead_code)]` (part of `#[warn(unused)]`) on by default
+
+warning: constant `ROLE_NONE` is never used
+  --> src\abi.rs:43:11
+   |
+43 | pub const ROLE_NONE: u32 = 0;
+   |           ^^^^^^^^^
+
+warning: constant `ROLE_WINDOW` is never used
+  --> src\abi.rs:44:11
+   |
+44 | pub const ROLE_WINDOW: u32 = 1;
+   |           ^^^^^^^^^^^
+
+warning: constant `TOGGLED_NONE` is never used
+  --> src\abi.rs:72:11
+   |
+72 | pub const TOGGLED_NONE: u32 = 0;
+   |           ^^^^^^^^^^^^
+
+warning: constant `EV_FOCUS` is never used
+  --> src\abi.rs:83:11
+   |
+83 | pub const EV_FOCUS: u32 = 3;
+   |           ^^^^^^^^
+
+warning: constant `KEY_UP` is never used
+  --> src\abi.rs:90:11
+   |
+90 | pub const KEY_UP: u32 = 2;
+   |           ^^^^^^
+
+warning: constant `PTR_MOVE` is never used
+  --> src\abi.rs:93:11
+   |
+93 | pub const PTR_MOVE: u32 = 3;
+   |           ^^^^^^^^
+
+warning: static `WAKE_HANDLE` is never used
+   --> src\rt.rs:149:12
+    |
+149 | pub static WAKE_HANDLE: AtomicUsize = AtomicUsize::new(0);
+    |            ^^^^^^^^^^^
+
+warning: field `scale` is never read
+  --> src\text.rs:41:9
+   |
+30 | pub struct Measured {
+   |            -------- field in this struct
+...
+41 |     pub scale: f32,
+   |         ^^^^^
+
+warning: methods `bytes` and `len` are never used
+   --> src\text.rs:252:12
+    |
+222 | impl<T: Retained> TextCacheOf<T> {
+    | -------------------------------- methods in this implementation
+...
+252 |     pub fn bytes(&self) -> usize {
+    |            ^^^^^
+...
+256 |     pub fn len(&self) -> usize {
+    |            ^^^
+
+warning: `swiftright-render` (lib) generated 11 warnings (run `cargo fix --lib -p swiftright-render` to apply 1 suggestion)
+    Finished `release` profile [optimized] target(s) in 8.32s
+warning: the following packages contain code that will be rejected by a future version of Rust: proc-macro-error2 v2.0.1
+note: to see what the problems were, use the option `--future-incompat-report`, or run `cargo report future-incompatibilities --id 1`

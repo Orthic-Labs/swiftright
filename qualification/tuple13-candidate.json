@@ -1,0 +1,64 @@
+{
+  "schema": "sr0-a.tuple/v1",
+  "name": "tuple13-candidate",
+  "recorded": "2026-10-19",
+  "status": "CANDIDATE",
+  "note": "Tuple 13 = tuple 12 with one member changed: windows_renderer (TextCache byte budget, #34). FreshOnBridge, BridgeSmoke and the four SliceApp packages are the tuple 12 members unchanged (the SliceApp MSIX ships its own pinned renderer E280F4A9 per examples/SliceApp/Windows/renderer-pin.json, never the fixture renderer).",
+  "source_commit": "0e201571e4320a3b6ccce14313fd2ad67e523904",
+  "renderer_sha256": "7578cd5da8a6831900c66680c4b94f89e64b6b294623709817848b02219aeac2",
+  "release": "0.2.151",
+  "members": {
+    "windows_renderer": {
+      "sha256": "1aa8ad22171c07a61e24786e074185e8378c67089ea457a9577e5104dd4c1f07",
+      "source": [
+        "/Volumes/D/claude/swiftright/probes/sr0-s/fresh-on-bridge/out/tuple13-renderer-ci-39173008419/swiftright-render-91400f36e48aa73145a2c50afc2743ab89fcf317/swiftright_render.dll sha256=1aa8ad22171c07a61e24786e074185e8378c67089ea457a9577e5104dd4c1f07 (CI render-windows run 39173008419, commit 91400f36e = stage a9556b77f + TextCache byte budget, #34)"
+      ]
+    },
+    "windows_fixture_exe": {
+      "what": "FreshOnBridge.exe, tuple12 candidate",
+      "sha256": "87b8cb27ce6730e56681fac3ea22ed3dfb859b3dddb697c339318f4ce60eb374",
+      "source": [
+        "/Volumes/D/claude/swiftright/probes/sr0-s/fresh-on-bridge/out/tuple12-startupguard-build-v1/actual-build-r4/FreshOnBridge.exe sha256=87b8cb27ce6730e56681fac3ea22ed3dfb859b3dddb697c339318f4ce60eb374 artifact=/Volumes/D/claude/swiftright/probes/sr0-s/fresh-on-bridge/out/tuple12-startupguard-build-v1/actual-build-r4/FreshOnBridge.exe artifact_sha256=87b8cb27ce6730e56681fac3ea22ed3dfb859b3dddb697c339318f4ce60eb374"
+      ]
+    },
+    "windows_smoke_exe": {
+      "what": "BridgeSmoke.exe, tuple12 candidate",
+      "sha256": "064e5d420ed5458f9069395284f4ce5e6af41c17c142ac7ba6346320d319b0ea",
+      "source": [
+        "/Volumes/D/claude/swiftright/probes/sr0-s/fresh-on-bridge/out/tuple12-stage-r12-retry2/BridgeSmoke.exe sha256=064e5d420ed5458f9069395284f4ce5e6af41c17c142ac7ba6346320d319b0ea artifact=/Volumes/D/claude/swiftright/probes/sr0-s/fresh-on-bridge/out/tuple12-stage-r12-retry2/BridgeSmoke.exe artifact_sha256=064e5d420ed5458f9069395284f4ce5e6af41c17c142ac7ba6346320d319b0ea"
+      ]
+    },
+    "old_msix": {
+      "what": "SliceApp 0.1.0.0, tuple12 package",
+      "sha256": "0b0922cb9030d479b579c12f1292e0bd6813e2ecf715f49e9e004fe54cc6cb77",
+      "source": [
+        "/Volumes/D/claude/swiftright/probes/sr0-s/fresh-on-bridge/out/tuple12-packages-r1/39116764100/swiftright-39116764100-1-signed-windows-x86_64-0.1.0-31dda11fee1bff01eeec07e68cf0a2bd6bf727fe0.1.0-31dda11fee1bff01eeec07e68cf0a2bd6bf727fe/SliceApp_0.1.0.0_x64.msix sha256=0b0922cb9030d479b579c12f1292e0bd6813e2ecf715f49e9e004fe54cc6cb77 artifact=/Volumes/D/claude/swiftright/probes/sr0-s/fresh-on-bridge/out/tuple12-packages-r1/39116764100/swiftright-39116764100-1-signed-windows-x86_64-0.1.0-31dda11fee1bff01eeec07e68cf0a2bd6bf727fe0.1.0-31dda11fee1bff01eeec07e68cf0a2bd6bf727fe/SliceApp_0.1.0.0_x64.msix artifact_sha256=0b0922cb9030d479b579c12f1292e0bd6813e2ecf715f49e9e004fe54cc6cb77"
+      ]
+    },
+    "new_msix": {
+      "what": "SliceApp 0.1.1.0, tuple12 package",
+      "sha256": "178e55f509e2bf0e7bfac88bb0c9663323ea010aafaf202ea787e6bbfb8014eb",
+      "source": [
+        "/Volumes/D/claude/swiftright/probes/sr0-s/fresh-on-bridge/out/tuple12-packages-r1/39117457090/swiftright-39117457090-1-signed-windows-x86_64-0.1.1-e8dd1b57cb1caa492424594c3b0ed35eda7e81c10.1.1-e8dd1b57cb1caa492424594c3b0ed35eda7e81c1/SliceApp_0.1.1.0_x64.msix sha256=178e55f509e2bf0e7bfac88bb0c9663323ea010aafaf202ea787e6bbfb8014eb artifact=/Volumes/D/claude/swiftright/probes/sr0-s/fresh-on-bridge/out/tuple12-packages-r1/39117457090/swiftright-39117457090-1-signed-windows-x86_64-0.1.1-e8dd1b57cb1caa492424594c3b0ed35eda7e81c10.1.1-e8dd1b57cb1caa492424594c3b0ed35eda7e81c1/SliceApp_0.1.1.0_x64.msix artifact_sha256=178e55f509e2bf0e7bfac88bb0c9663323ea010aafaf202ea787e6bbfb8014eb"
+      ]
+    },
+    "old_dmg": {
+      "what": "SliceApp 0.1.0 arm64 DMG, tuple12 package",
+      "sha256": "14d5874dcfd8782ddecf88916bd298824a0344a204fd2c5a179916736993a066",
+      "source": [
+        "/Volumes/D/claude/swiftright/probes/sr0-s/fresh-on-bridge/out/tuple12-packages-r1/39116764100/swiftright-39116764100-1-signed-macos-arm64-0.1.0-31dda11fee1bff01eeec07e68cf0a2bd6bf727fe0.1.0-31dda11fee1bff01eeec07e68cf0a2bd6bf727fe/SliceApp_0.1.0_arm64.dmg sha256=14d5874dcfd8782ddecf88916bd298824a0344a204fd2c5a179916736993a066 artifact=/Volumes/D/claude/swiftright/probes/sr0-s/fresh-on-bridge/out/tuple12-packages-r1/39116764100/swiftright-39116764100-1-signed-macos-arm64-0.1.0-31dda11fee1bff01eeec07e68cf0a2bd6bf727fe0.1.0-31dda11fee1bff01eeec07e68cf0a2bd6bf727fe/SliceApp_0.1.0_arm64.dmg artifact_sha256=14d5874dcfd8782ddecf88916bd298824a0344a204fd2c5a179916736993a066"
+      ]
+    },
+    "new_dmg": {
+      "what": "SliceApp 0.1.1 arm64 DMG, tuple12 package",
+      "sha256": "cc8bab86409a4ecf7ba52c6a5bb1ed3177683b39e235ed60019bf292badbc5fb",
+      "source": [
+        "/Volumes/D/claude/swiftright/probes/sr0-s/fresh-on-bridge/out/tuple12-packages-r1/39117457090/swiftright-39117457090-1-signed-macos-arm64-0.1.1-e8dd1b57cb1caa492424594c3b0ed35eda7e81c10.1.1-e8dd1b57cb1caa492424594c3b0ed35eda7e81c1/SliceApp_0.1.1_arm64.dmg sha256=cc8bab86409a4ecf7ba52c6a5bb1ed3177683b39e235ed60019bf292badbc5fb artifact=/Volumes/D/claude/swiftright/probes/sr0-s/fresh-on-bridge/out/tuple12-packages-r1/39117457090/swiftright-39117457090-1-signed-macos-arm64-0.1.1-e8dd1b57cb1caa492424594c3b0ed35eda7e81c10.1.1-e8dd1b57cb1caa492424594c3b0ed35eda7e81c1/SliceApp_0.1.1_arm64.dmg artifact_sha256=cc8bab86409a4ecf7ba52c6a5bb1ed3177683b39e235ed60019bf292badbc5fb"
+      ]
+    }
+  },
+  "smoke_checks": {
+    "normal": 40,
+    "timeout": 41
+  }
+}

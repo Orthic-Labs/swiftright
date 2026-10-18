@@ -1,0 +1,19 @@
+2026-10-19T03:47:49.7332142+05:30 run-workload tag=tuple12-nokeys600 instr=light runs=1 warmup=10 measure=600 rows=200 key_rate=0 resources=on paint_phase_ms=default
+2026-10-19T03:47:49.8543246+05:30 ARTIFACT base=D:\Claude\swiftright\.work\sr0-r12-retry2\workload bin=D:\Claude\swiftright\.work\sr0-r12-retry2\workload\scratch\out\Products\Release-windows-x86_64 exe_sha256=79721BC067D3CB96834CBA7A37E2AFB5A9BE6B5B3743931EF1B9840B15E17EBB dll_sha256=7578CD5DA8A6831900C66680C4B94F89E64B6B294623709817848B02219AEAC2 expect_exe= expect_dll=7578CD5DA8A6831900C66680C4B94F89E64B6B294623709817848B02219AEAC2
+2026-10-19T03:47:49.8543246+05:30 ARTIFACT_OK
+2026-10-19T03:47:54.8413490+05:30 host context (not a gate): build/test processes seen=none
+2026-10-19T03:47:58.0251346+05:30 presentmon started=True csv_bytes=3
+2026-10-19T03:48:03.1726714+05:30 registered SR0BWorkload
+2026-10-19T04:01:44.2773961+05:30 harness finished=False task_state=Running
+2026-10-19T04:01:49.4160478+05:30 stop presentmon (terminate_existing_session)
+THRESHOLD W7   set  PASS    Rust compiler invocations during UI-only incremental builds: 0 (limit == 0) edits=3
+THRESHOLD W7   set  PASS    renderer / engine artifact hashes identical: True (limit bool True)
+THRESHOLD W7   set  PASS    incremental builds succeeded: True (limit bool True)
+REFUSED: harness did not finish (no finished= line)
+REFUSED: r1: run absent from harness result file
+REFUSED: r1: instrumentation level light is a baseline run, not a PASS-eligible run
+REFUSED: r2: run directory missing
+REFUSED: r3: run directory missing
+OVERALL: INCOMPLETE
+report: D:\Claude\swiftright\.work\sr0-r12-retry2\workload\runs\tuple12-nokeys600\report/report.json, D:\Claude\swiftright\.work\sr0-r12-retry2\workload\runs\tuple12-nokeys600\report/report.md, raw samples: D:\Claude\swiftright\.work\sr0-r12-retry2\workload\runs\tuple12-nokeys600\report/raw/
+2026-10-19T04:01:49.9600606+05:30 analysis rc=2 report=D:\Claude\swiftright\.work\sr0-r12-retry2\workload\runs\tuple12-nokeys600\report
