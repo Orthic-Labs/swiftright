@@ -112,6 +112,16 @@ struct HostPlacement {
     var draggingSlider: String?
     /// The tap-gesture view under the last press (a tap needs the press and the release on the same view).
     var pressTapTarget: String?
+    /// Scroll bar thumb press, drag and release (issue #31): a primary press on a scroller's strip goes here before the controls.
+    let scrollBar = HostScrollBarPointer()
+    /// Scroll inputs that have landed (wheel notches and thumb drags); the WIN_SCROLL label is `in<scrollInputs>`.
+    var scrollInputs = 0
+    /// Set by a scroll input; the next commit prints WIN_SCROLL (the settled state of that input).
+    var scrollPrintPending = false
+    /// The first WIN_SCROLL (the state before any input) has printed.
+    var scrollStartPrinted = false
+    /// The last pointer position in root points (issue #31): the container a key pages when no List holds the keyboard.
+    var pointerPoint: (x: Double, y: Double)?
     init(_ bridge: Bridge) { self.bridge = bridge }
 
     func ready(_ window: BridgeWindow) {
@@ -145,7 +155,7 @@ struct HostPlacement {
             let images = try SystemImageRegistry(images: bridge, rasterizer: WindowsGlyphRasterizer())
             images.scale = Double(scale)
             systemImages = images
-            painter = ResolvedNodePainter(images: bridge, scale: scale, text: measurer, systemImages: images)
+            painter = ResolvedNodePainter(images: bridge, scale: scale, text: measurer, systemImages: images, publishesScrollBars: bridge.supportsScrollBar)
             let graph = Graph(ZStack(alignment: .center) { Witness_uia_a() }.frame(width: CGFloat(metrics.width) / CGFloat(scale), height: CGFloat(metrics.height) / CGFloat(scale), alignment: .center), measurer: measurer, scale: CGFloat(scale))
             images.install(on: graph)
             graph.rootProposal = ProposedViewSize(width: CGFloat(metrics.width) / CGFloat(scale), height: CGFloat(metrics.height) / CGFloat(scale))
@@ -181,8 +191,25 @@ struct HostPlacement {
             live = committed.live
             runtimeIDs.merge(committed.runtimeIDs) { _, new in new }
             print("HOST_COMMIT version=\(version) nodes=\(committed.nodeCount)")
+            printScrollStates(root)
             fflush(stdout)
         } catch { fail(error) }
+    }
+
+    /// WIN_SCROLL (issue #31): one line per node with a scroll state, after the first commit and after each scroll input settles (its commit).
+    /// `label=in<k>`: k scroll inputs had landed (wheel notches and thumb drags); in0 is the state before any input. offset / contentHeight /
+    /// viewportHeight in points, value = offset / max offset (0...1), the same fields as the Mac MAC_SCROLL line.
+    func printScrollStates(_ root: ResolvedNode) {
+        guard scrollPrintPending || !scrollStartPrinted else { return }
+        var found: [ScrollState] = []
+        func visit(_ n: ResolvedNode) { if let s = n.scroll { found.append(s) }; n.children.forEach(visit) }
+        visit(root)
+        guard !found.isEmpty else { return }
+        scrollStartPrinted = true; scrollPrintPending = false
+        for s in found {
+            print("WIN_SCROLL label=in\(scrollInputs) offset=\(s.offsetY) contentHeight=\(s.contentHeight) viewportHeight=\(s.viewportHeight) value=\(s.value)")
+        }
+        fflush(stdout)
     }
 
     func event(_ event: BridgeEvent) {
@@ -196,6 +223,24 @@ struct HostPlacement {
             if let id = runtimeIDs[event.node], !graph.tapButton(id) { if !graph.activateToggle(id) { _ = graph.invokeTapGesture(id) } }
             graph.flush()
         case .pointer:
+            // The last pointer position (root points) for a key that pages a container with no focused List; a leave keeps the last position.
+            if !(event.action == 3 && event.i0 & 2 != 0) { pointerPoint = (Double((event.x - placement.dx) / scale), Double((event.y - placement.dy) / scale)) }
+            // A wheel notch (issue #31, rev 0.11): the innermost scroll container under the point scrolls by the system's lines per notch.
+            if let w = event.wheel {
+                if HostScrollInput.wheel(w, graph: graph, scale: scale, wheelScrollLines: Bridge.wheelScrollLines) { scrollInputs += 1; scrollPrintPending = true; graph.flush() }
+                return
+            }
+            // The primary button on a scroller's strip drags its thumb (issue #31), before any control. Window pixels: the painter's strips are in them.
+            if event.action == 1, let painter, scrollBar.press(x: event.x, y: event.y, graph: graph, painter: painter) {
+                print("HOST_SCROLLBAR press x=\(event.x) y=\(event.y)"); fflush(stdout)
+                graph.flush(); return
+            }
+            if event.action == 3, scrollBar.dragging != nil, event.i0 & 1 != 0, let painter {
+                _ = scrollBar.move(y: event.y, graph: graph, painter: painter); graph.flush(); return
+            }
+            if event.action == 2, scrollBar.dragging != nil {
+                scrollBar.release(graph: graph); scrollInputs += 1; scrollPrintPending = true; graph.flush(); return
+            }
             let x = CGFloat((event.x - placement.dx) / scale), y = CGFloat((event.y - placement.dy) / scale)
             if event.action == 3 {
                 // a pointer move (ABI 0.9, requested at run): a slider drag follows the pointer while the button is down; every move updates the hover state (the pointer left the window: nil)
@@ -208,6 +253,7 @@ struct HostPlacement {
             if event.action == 1 {
                 pressedNode = event.node
                 pressTapTarget = graph.tapTarget(atX: x, y: y)
+                print("HOST_TAP press x=\(x) y=\(y) target=\(pressTapTarget ?? "nil")"); fflush(stdout)
                 if event.node != 0, let id = runtimeIDs[event.node], graph.sliderModel(id) != nil, graph.sliderPress(id, atX: x) { draggingSlider = id }
                 return
             }
@@ -222,7 +268,9 @@ struct HostPlacement {
                     if graph.tapButton(id) { graph.flush(); return }
                     if graph.selectRow(id, modifiers: mods) { setListActive(); graph.flush(); return }
                 }
-                if let target = armedTap, graph.tapTarget(atX: x, y: y) == target { _ = graph.invokeTapGesture(target) }
+                let releaseTarget = graph.tapTarget(atX: x, y: y)
+                print("HOST_TAP release x=\(x) y=\(y) target=\(releaseTarget ?? "nil") armed=\(armedTap ?? "nil")"); fflush(stdout)
+                if let target = armedTap, releaseTarget == target { let ran = graph.invokeTapGesture(target); print("HOST_TAP invoked=\(ran)"); fflush(stdout) }
                 graph.flush()
                 return
             }
@@ -260,6 +308,20 @@ struct HostPlacement {
             case "home": _ = graph.sliderSet(slider, toBound: false); graph.flush(); return
             case "end": _ = graph.sliderSet(slider, toBound: true); graph.flush(); return
             default: break
+            }
+        }
+        // Page / Home / End (issue #31): the List that holds the keyboard, else the scroll container under the last pointer position, pages or jumps.
+        // With a container present the key never reaches onMove; without one the keys below keep their behaviour.
+        if let scrollKey = HostScrollKey(bridgeName: name) {
+            let container = (painter?.listIsActive == true ? firstListID() : nil) ?? pointerPoint.flatMap { graph.scrollContainerID(atX: $0.x, y: $0.y) }
+            // Only a container that overflows (its scroller is painted) takes the key; a List that fits keeps the onMove route below.
+            if let c = container, painter?.scrollerLayouts[c] != nil {
+                if HostScrollInput.key(scrollKey, graph: graph, focusedOrHovered: c) {
+                    scrollInputs += 1; scrollPrintPending = true
+                    print("HOST_SCROLL_KEY key=\(name) container=\(c)"); fflush(stdout)
+                }
+                graph.flush()
+                return
             }
         }
         switch name {
@@ -359,7 +421,8 @@ let result: Int32 = MainActor.assumeIsolated {
         }
         defer { UnhookWindowsHookEx(activationHook) }
         print("HOST_BACKGROUND_GUARD thread-cbt-activation-veto")
-        try bridge.run(title: "Alchemist FactoryProbe", width: 320, height: 240, pointerMoves: true, renderScale: factoryRenderScale)
+        try bridge.run(title: "Alchemist FactoryProbe", width: 320, height: 240, pointerMoves: true, renderScale: factoryRenderScale,
+                       pointerWheel: bridge.supportsPointerWheel)
         host.errors.forEach { print("HOST_RENDER_ERROR \($0)") }
         return host.errors.isEmpty ? 0 : 1
     } catch { print("HOST_STARTUP_ERROR \(error)"); return 78 }

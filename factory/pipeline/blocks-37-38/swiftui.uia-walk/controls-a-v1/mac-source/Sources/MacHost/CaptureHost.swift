@@ -292,6 +292,325 @@ final class Driver {
         }
         if !window.performKeyEquivalent(with: ev) { (window.firstResponder ?? host).keyDown(with: ev) }
     }
+
+    // MARK: scroll stand-ins (issue #31 lane L1, measurement of the Mac's scrolling)
+    // The offscreen window never receives a real wheel, key or mouse event (see FactoryStandIn), so each scroll step drives the NSScrollView the way the event would and then
+    // READS THE RESULT BACK: a step that expects the document to move FAILS (recorded in `scrollFailures`, thrown after the final capture so every later step is still measured)
+    // when documentVisibleRect did not move. Every step prints one greppable `MAC_SCROLL` line (mac-run-NN.log). Op: {"op":"scroll","how":...,"label":...}; hows:
+    //   to        at: "begin" | "mid" | "end" | points from the top: NSClipView.scroll(to:) + reflectScrolledClipView (what the scroller's action does)
+    //   wheel     delta (default -1, negative = down), times (default 1): CGEvent(scrollWheelEvent2Source:units: .line, wheelCount 1, wheel1: delta) -> NSEvent -> NSScrollView.scrollWheel(with:)
+    //   action    selector (e.g. "scrollPageDown:"), target "scrollview" (default) | "documentview" | "outline": sent with perform(_:); FAILS when the target does not respond
+    //   key       key (PageDown | PageUp | End | Home | Down | Up), target "auto" (default: the outline for a List, else the document view): a real key-down NSEvent (function key,
+    //             keyCode 121/116/119/115/125/126) tried in order until the offset moves, the winning route printed as path=: keyDown (window.makeFirstResponder + responder.keyDown(with:)),
+    //             interpretKeyEvents, windowSendEvent (window.sendEvent), tryToPerform (the paging selectors up the responder chain from the target, the clip view and the scroll view),
+    //             and only as the LAST resort derived: clip scroll(to:) by the amount AppKit would use (viewport less verticalPageScroll; the range end / start for End / Home), printed
+    //             status=DERIVED derived=true. A DERIVED line is a recorded value, never evidence that the key was delivered. FAIL when nothing moved.
+    //   select    row: selects an outline row and gives the outline the keyboard (does not move)
+    //   moveDown  times: NSTableView.moveDown(_:) on the outline (the arrow key's action)
+    //   axvalue   value (default 0.5): the vertical NSScroller's accessibility value set in process (accessibilitySetValue:forAttribute: AXValue, then setAccessibilityValue:)
+    //   scroller  value (default 0.5): NSScroller.doubleValue = value, then its action sent to its target
+    // "expect": "move" (default for to/wheel/action/moveDown/axvalue/scroller, but a `to` whose target equals the current offset expects none) | "any".
+    var scrollFailures: [String] = []
+
+    struct ScrollReading {
+        var y = 0.0, top = 0.0, doc = 0.0, view = 0.0, scroller = -1.0, axValue = -1.0, knob = -1.0, pageScroll = 0.0, lineScroll = 0.0
+        var flipped = true, hasScroller = false
+        var insets = NSEdgeInsets()
+    }
+
+    func scrollViewFound() -> NSScrollView? {
+        func find(_ v: NSView) -> NSScrollView? {
+            if let s = v as? NSScrollView, s.documentView != nil { return s }
+            for c in v.subviews { if let f = find(c) { return f } }
+            return nil
+        }
+        return find(host)
+    }
+
+    func scrollReading(_ sv: NSScrollView) -> ScrollReading {
+        var r = ScrollReading()
+        let vis = sv.documentVisibleRect
+        r.doc = Double(sv.documentView?.frame.height ?? 0)
+        r.view = Double(vis.height)
+        r.flipped = sv.documentView?.isFlipped ?? true
+        r.y = Double(vis.origin.y)
+        r.top = r.flipped ? r.y : r.doc - r.y - r.view
+        r.insets = sv.contentInsets
+        r.pageScroll = Double(sv.verticalPageScroll); r.lineScroll = Double(sv.verticalLineScroll)
+        if let sc = sv.verticalScroller {
+            r.hasScroller = true
+            r.scroller = sc.doubleValue
+            r.knob = Double(sc.knobProportion)
+            r.axValue = (sc.accessibilityValue() as? NSNumber)?.doubleValue ?? -1
+        }
+        return r
+    }
+
+    /// The scroll range from the top in points: -inset.top ... doc - viewport + inset.bottom.
+    func scrollRange(_ sv: NSScrollView) -> (min: Double, max: Double) {
+        let r = scrollReading(sv)
+        let lo = -Double(sv.contentInsets.top)
+        return (lo, max(lo, r.doc - Double(sv.contentView.bounds.height) + Double(sv.contentInsets.bottom)))
+    }
+
+    func scrollReport(_ label: String, _ how: String, before: ScrollReading, after a: ScrollReading, expectMove: Bool, note: String, derived: Bool = false) {
+        let moved = abs(a.y - before.y) > 0.01
+        let ok = !expectMove || moved
+        func f(_ v: Double) -> String { String(format: "%.3f", v) }
+        let status = !ok ? "FAIL" : (derived && moved ? "DERIVED" : "OK")
+        // pageAmount: the documentVisibleRect delta from the top (positive = scrolled down) of this step; verticalPageScroll / verticalLineScroll: the scroll view's own values
+        print("MAC_SCROLL label=\(label) how=\(how) status=\(status) moved=\(moved) before=\(f(before.y)) offset=\(f(a.y)) pageAmount=\(f(a.top - before.top)) verticalPageScroll=\(f(a.pageScroll)) verticalLineScroll=\(f(a.lineScroll)) top=\(f(a.top)) contentHeight=\(f(a.doc)) viewportHeight=\(f(a.view)) scrollerValue=\(f(a.scroller)) axValue=\(f(a.axValue)) knobProportion=\(f(a.knob)) hasScroller=\(a.hasScroller) flipped=\(a.flipped) insets=\(a.insets.top),\(a.insets.bottom) selected=\(table()?.selectedRow ?? -1) \(note)")
+        if !ok { scrollFailures.append("\(label) (\(how)): documentVisibleRect.origin.y stayed \(f(before.y)) \(note)") }
+    }
+
+    /// M5: renders the vertical NSScroller view itself (the whole-window capture draws none) at the capture scale. cacheDisplay draws nothing for the layer-backed scroller (run 39068737526: all-transparent PNG), so three methods are tried in order and each one that yields non-transparent pixels writes scroller-NN-<label>-<method>.png and a MAC_SCROLLER line (method=) plus a MAC_SCROLLER_PX line; status=FAIL when every method is blank.
+    func scrollerPNG(_ label: String, png: String) throws {
+        guard let sv = scrollViewFound(), let sc = sv.verticalScroller else {
+            print("MAC_SCROLLER label=\(label) status=FAIL no vertical scroller"); scrollFailures.append("\(label) (scrollerpng): no vertical scroller"); return
+        }
+        pump(0.2); host.layoutSubtreeIfNeeded(); sc.needsDisplay = true; sc.displayIfNeeded()
+        let bw = sc.bounds.width, bh = sc.bounds.height
+        let w = Int((bw * captureScale).rounded()), h = Int((bh * captureScale).rounded())
+        guard w > 0, h > 0 else {
+            print("MAC_SCROLLER label=\(label) status=FAIL empty scroller bounds \(sc.bounds)"); scrollFailures.append("\(label) (scrollerpng): empty scroller bounds"); return
+        }
+        func r(_ x: NSRect) -> String { String(format: "%.3f,%.3f,%.3f,%.3f", x.origin.x, x.origin.y, x.width, x.height) }
+        func newRep() -> NSBitmapImageRep? {
+            let rep = NSBitmapImageRep(bitmapDataPlanes: nil, pixelsWide: w, pixelsHigh: h, bitsPerSample: 8, samplesPerPixel: 4,
+                                       hasAlpha: true, isPlanar: false, colorSpaceName: .deviceRGB, bytesPerRow: 0, bitsPerPixel: 0)
+            rep?.size = sc.bounds.size   // points, so the drawing is scaled to the capture scale
+            return rep
+        }
+        /// Draws into a fresh bitmap rep with `body` under a current NSGraphicsContext (flipped like the scroller when it is).
+        func drawLegacy(flipped: Bool, _ body: () -> Void) -> NSBitmapImageRep? {
+            guard let rep = newRep(), let gc = NSGraphicsContext(bitmapImageRep: rep) else { return nil }
+            NSGraphicsContext.saveGraphicsState()
+            NSGraphicsContext.current = gc
+            if flipped { gc.cgContext.translateBy(x: 0, y: bh); gc.cgContext.scaleBy(x: 1, y: -1) }
+            body()
+            gc.flushGraphics()
+            NSGraphicsContext.restoreGraphicsState()
+            return rep
+        }
+        func count(_ rep: NSBitmapImageRep) -> Int {
+            var n = 0
+            for y in 0..<rep.pixelsHigh { for x in 0..<rep.pixelsWide { if let c = rep.colorAt(x: x, y: y), c.alphaComponent > 0.001 { n += 1 } } }
+            return n
+        }
+        func rgba(_ rep: NSBitmapImageRep, _ x: Int, _ y: Int) -> String {
+            let px = min(max(x, 0), rep.pixelsWide - 1), py = min(max(y, 0), rep.pixelsHigh - 1)
+            guard let c = rep.colorAt(x: px, y: py)?.usingColorSpace(.deviceRGB) else { return "none" }
+            func b(_ v: CGFloat) -> Int { Int((v * 255).rounded()) }
+            return "\(b(c.redComponent)),\(b(c.greenComponent)),\(b(c.blueComponent)),\(b(c.alphaComponent))@\(px),\(py)"
+        }
+        // view-coordinate point -> pixel (top-origin rows, which is what colorAt uses)
+        func pix(_ p: NSPoint) -> (Int, Int) {
+            let vy = sc.isFlipped ? p.y : bh - p.y
+            return (Int((p.x * captureScale).rounded(.down)), Int((vy * captureScale).rounded(.down)))
+        }
+        let knob = sc.rect(for: .knob), slot = sc.rect(for: .knobSlot)
+        let knobC = pix(NSPoint(x: knob.midX, y: knob.midY))
+        // slot centre away from the knob: the middle of the larger slot remainder above or below it
+        let below = max(0, knob.minY - slot.minY), above = max(0, slot.maxY - knob.maxY)
+        let trackY = below >= above ? (slot.minY + knob.minY) / 2 : (knob.maxY + slot.maxY) / 2
+        let trackC = pix(NSPoint(x: slot.midX, y: trackY))
+        func border(_ rep: NSBitmapImageRep) -> String {
+            // most frequent opaque colour of the leading 1 px column (x = 0) over all rows
+            var tally: [String: Int] = [:]
+            for y in 0..<rep.pixelsHigh { if let c = rep.colorAt(x: 0, y: y)?.usingColorSpace(.deviceRGB), c.alphaComponent > 0.001 {
+                tally[rgba(rep, 0, y).split(separator: "@")[0].description, default: 0] += 1 } }
+            guard let best = tally.max(by: { $0.value < $1.value }) else { return "none" }
+            return "\(best.key)x\(best.value)"
+        }
+
+        var made: [(String, NSBitmapImageRep?)] = []
+        // (1) the layer rendered into a CGContext bitmap at the capture scale
+        var rep1: NSBitmapImageRep?
+        if let layer = sc.layer {
+            layer.layoutIfNeeded(); layer.displayIfNeeded()
+            if let cg = CGContext(data: nil, width: w, height: h, bitsPerComponent: 8, bytesPerRow: 0, space: CGColorSpace(name: CGColorSpace.sRGB)!,
+                                  bitmapInfo: CGImageAlphaInfo.premultipliedLast.rawValue) {
+                cg.scaleBy(x: captureScale, y: captureScale)
+                layer.render(in: cg)
+                if let img = cg.makeImage() { rep1 = NSBitmapImageRep(cgImage: img) }
+            }
+        }
+        made.append(("layer", rep1))
+        // (2) legacy drawing of the live scroller's slot and knob
+        made.append(("legacydraw", drawLegacy(flipped: sc.isFlipped) {
+            sc.drawKnobSlot(in: sc.rect(for: .knobSlot), highlight: false)
+            sc.drawKnob()
+        }))
+        // (3) a throwaway non-layer-backed legacy NSScroller of the same size drawn with draw(_:)
+        let tmp = NSScroller(frame: sc.frame)
+        tmp.scrollerStyle = .legacy
+        tmp.controlSize = sc.controlSize
+        tmp.knobProportion = sc.knobProportion
+        tmp.doubleValue = sc.doubleValue
+        tmp.wantsLayer = false
+        made.append(("throwaway", drawLegacy(flipped: tmp.isFlipped) { tmp.draw(tmp.bounds) }))
+
+        var wrote = 0
+        for (method, rep) in made {
+            let n = rep.map(count) ?? 0
+            let base = "label=\(label) method=\(method) scale=\(captureScale) pixels=\(w)x\(h) opaquePixels=\(n)"
+            guard let rep = rep, n > 0 else {
+                print("MAC_SCROLLER \(base) status=BLANK")
+                continue
+            }
+            let path = png.replacingOccurrences(of: "/run-", with: "/scroller-").replacingOccurrences(of: ".png", with: "-\(label)-\(method).png")
+            guard let data = rep.representation(using: .png, properties: [:]) else { throw NSError(domain: "MacHost", code: 36) }
+            try data.write(to: URL(fileURLWithPath: path))
+            wrote += 1
+            print("MAC_SCROLLER \(base) status=OK png=\(path) frame=\(r(sc.frame)) bounds=\(r(sc.bounds)) knobRect=\(r(knob)) knobSlotRect=\(r(slot)) doubleValue=\(String(format: "%.4f", sc.doubleValue)) knobProportion=\(String(format: "%.4f", Double(sc.knobProportion))) style=\(sc.scrollerStyle.rawValue) controlSize=\(sc.controlSize.rawValue) isHidden=\(sc.isHidden) alpha=\(sc.alphaValue) isFlipped=\(sc.isFlipped) wantsLayer=\(sc.wantsLayer) offset=\(String(format: "%.3f", Double(sv.documentVisibleRect.origin.y)))")
+            print("MAC_SCROLLER_PX method=\(method) track=\(rgba(rep, trackC.0, trackC.1)) knob=\(rgba(rep, knobC.0, knobC.1)) edge=\(rgba(rep, 0, h / 2)) border=\(border(rep))")
+        }
+        if wrote == 0 {
+            print("MAC_SCROLLER label=\(label) status=FAIL every method (layer, legacydraw, throwaway) rendered a fully transparent image")
+            scrollFailures.append("\(label) (scrollerpng): every render method came back fully transparent")
+        }
+    }
+
+    func scrollStep(_ s: [String: Any]) throws {
+        let label = s["label"] as? String ?? "step", how = s["how"] as? String ?? ""
+        guard let sv = scrollViewFound() else { throw NSError(domain: "MacHost", code: 30, userInfo: [NSLocalizedDescriptionKey: "no NSScrollView under the host"]) }
+        let before = scrollReading(sv)
+        let anyMove = (s["expect"] as? String) == "any"
+        var expectMove = !anyMove
+        var note = ""
+        var derived = false
+        func num(_ k: String, _ d: Double) -> Double { (s[k] as? NSNumber)?.doubleValue ?? d }
+        switch how {
+        case "to":
+            let range = scrollRange(sv)
+            var top: Double
+            switch s["at"] {
+            case let n as NSNumber: top = n.doubleValue
+            case let str as String where str == "end": top = range.max
+            case let str as String where str == "mid": top = (range.min + range.max) / 2
+            default: top = range.min
+            }
+            top = Swift.min(Swift.max(top, range.min), range.max)
+            let y = before.flipped ? top : before.doc - top - Double(sv.contentView.bounds.height)
+            if abs(top - before.top) < 0.5 { expectMove = false }
+            sv.contentView.scroll(to: NSPoint(x: sv.contentView.bounds.origin.x, y: CGFloat(y)))
+            sv.reflectScrolledClipView(sv.contentView)
+            note = "targetTop=\(top) range=\(range.min)...\(range.max)"
+        case "wheel":
+            let delta = Int32(num("delta", -1)), times = Int(num("times", 1))
+            for _ in 0..<times {
+                guard let cg = CGEvent(scrollWheelEvent2Source: nil, units: .line, wheelCount: 1, wheel1: delta, wheel2: 0, wheel3: 0), let ev = NSEvent(cgEvent: cg) else {
+                    throw NSError(domain: "MacHost", code: 31, userInfo: [NSLocalizedDescriptionKey: "cannot build the scroll wheel event"])
+                }
+                sv.scrollWheel(with: ev)
+                pump(0.05)
+            }
+            note = "delta=\(delta) times=\(times)"
+        case "action":
+            let name = s["selector"] as? String ?? ""
+            let target = s["target"] as? String ?? "scrollview"
+            let obj: NSObject = target == "documentview" ? (sv.documentView ?? sv) : target == "outline" ? (table() ?? sv) : sv
+            let sel = NSSelectorFromString(name)
+            let responds = obj.responds(to: sel)
+            if responds { _ = obj.perform(sel, with: nil) }
+            note = "selector=\(name) target=\(target) responds=\(responds)"
+            if !responds { scrollFailures.append("\(label) (action): \(target) does not respond to \(name)") }
+        case "key":
+            let name = s["key"] as? String ?? "PageDown"
+            let keyTable: [String: (UInt16, Int, [String])] = [
+                "PageDown": (121, NSPageDownFunctionKey, ["pageDown:", "scrollPageDown:"]), "PageUp": (116, NSPageUpFunctionKey, ["pageUp:", "scrollPageUp:"]),
+                "End": (119, NSEndFunctionKey, ["scrollToEndOfDocument:", "moveToEndOfDocument:"]), "Home": (115, NSHomeFunctionKey, ["scrollToBeginningOfDocument:", "moveToBeginningOfDocument:"]),
+                "Down": (125, NSDownArrowFunctionKey, ["moveDown:"]), "Up": (126, NSUpArrowFunctionKey, ["moveUp:"]),
+            ]
+            guard let (code, fkey, sels) = keyTable[name] else { throw NSError(domain: "MacHost", code: 37, userInfo: [NSLocalizedDescriptionKey: "unknown key '\(name)'"]) }
+            let chars = String(UnicodeScalar(fkey)!)
+            guard let ev = NSEvent.keyEvent(with: .keyDown, location: .zero, modifierFlags: [.function], timestamp: ProcessInfo.processInfo.systemUptime, windowNumber: window.windowNumber,
+                                            context: nil, characters: chars, charactersIgnoringModifiers: chars, isARepeat: false, keyCode: code) else {
+                throw NSError(domain: "MacHost", code: 38, userInfo: [NSLocalizedDescriptionKey: "cannot build the key event"])
+            }
+            let target = s["target"] as? String ?? "auto"
+            let primary: NSResponder = target == "scrollview" ? sv : target == "clipview" ? sv.contentView : (table() ?? sv.documentView ?? sv)
+            let moved = { abs(Double(sv.documentVisibleRect.origin.y) - before.y) > 0.01 }
+            func settleKey() { pump(0.45); sv.layoutSubtreeIfNeeded() }
+            var path = "none", tried: [String] = []
+            func attempt(_ p: String, _ body: () -> Void) {
+                if path != "none" { return }
+                tried.append(p); body(); settleKey()
+                if moved() { path = p }
+            }
+            let firstOK = window.makeFirstResponder(primary)
+            attempt("keyDown") { primary.keyDown(with: ev) }
+            attempt("interpretKeyEvents") { primary.interpretKeyEvents([ev]) }
+            attempt("windowSendEvent") { window.sendEvent(ev) }
+            for sel in sels {
+                let chain: [(String, NSResponder)] = [("target", primary), ("clipview", sv.contentView), ("scrollview", sv)]
+                for (rn, r) in chain {
+                    attempt("tryToPerform:\(sel):\(rn)") { _ = r.tryToPerform(NSSelectorFromString(sel), with: nil) }
+                }
+            }
+            if path == "none" {
+                // LAST RESORT, a derived value (NOT a delivered key): scroll the clip view by the amount AppKit pages with (viewport less verticalPageScroll), or to the range end / start
+                let rd = scrollReading(sv), range = scrollRange(sv)
+                var top = rd.top
+                switch name {
+                case "PageDown": top += Swift.max(rd.view - rd.pageScroll, rd.view / 2)
+                case "PageUp": top -= Swift.max(rd.view - rd.pageScroll, rd.view / 2)
+                case "End": top = range.max
+                case "Home": top = range.min
+                case "Down": top += rd.lineScroll
+                default: top -= rd.lineScroll
+                }
+                top = Swift.min(Swift.max(top, range.min), range.max)
+                let y = rd.flipped ? top : rd.doc - top - Double(sv.contentView.bounds.height)
+                sv.contentView.scroll(to: NSPoint(x: sv.contentView.bounds.origin.x, y: CGFloat(y)))
+                sv.reflectScrolledClipView(sv.contentView)
+                path = "derived"; derived = true
+            }
+            note = "key=\(name) keyCode=\(code) target=\(target) firstResponder=\(type(of: window.firstResponder as Any)) madeFirstResponder=\(firstOK) path=\(path) derived=\(derived) tried=\(tried.joined(separator: ">"))"
+        case "select":
+            guard let tv = table() else { throw NSError(domain: "MacHost", code: 32, userInfo: [NSLocalizedDescriptionKey: "no outline to select in"]) }
+            let row = Int(num("row", 0))
+            if window.firstResponder !== tv { _ = window.makeFirstResponder(tv) }
+            tv.selectRowIndexes([row], byExtendingSelection: false)
+            expectMove = false
+            note = "row=\(row) selectedNow=\(tv.selectedRow)"
+            if tv.selectedRow != row { scrollFailures.append("\(label) (select): row \(row) not selected (\(tv.selectedRow))") }
+        case "moveDown":
+            guard let tv = table() else { throw NSError(domain: "MacHost", code: 33, userInfo: [NSLocalizedDescriptionKey: "no outline to move in"]) }
+            if window.firstResponder !== tv { _ = window.makeFirstResponder(tv) }
+            let times = Int(num("times", 1))
+            for _ in 0..<times { tv.moveDown(nil); pump(0.05) }
+            note = "times=\(times) rows=\(tv.numberOfRows)"
+        case "axvalue", "scroller":
+            guard let sc = sv.verticalScroller else {
+                scrollFailures.append("\(label) (\(how)): the scroll view has no vertical scroller"); print("MAC_SCROLL label=\(label) how=\(how) status=FAIL no vertical scroller"); return
+            }
+            let v = num("value", 0.5)
+            if how == "scroller" {
+                sc.doubleValue = v
+                if let action = sc.action { _ = sc.sendAction(action, to: sc.target) }
+                note = "value=\(v) action=\(sc.action.map { NSStringFromSelector($0) } ?? "nil") target=\(sc.target.map { String(describing: type(of: $0)) } ?? "nil") hitPart=\(sc.hitPart.rawValue)"
+            } else {
+                var path = "none"
+                let first = Selector("accessibilitySetValue:forAttribute:"), second = Selector("setAccessibilityValue:")
+                if sc.responds(to: first) {
+                    _ = sc.perform(first, with: NSNumber(value: v), with: "AXValue" as NSString); path = "accessibilitySetValue:forAttribute:"
+                    pump(0.3); sv.layoutSubtreeIfNeeded()
+                    if abs(Double(sv.documentVisibleRect.origin.y) - before.y) < 0.01, sc.responds(to: second) {
+                        _ = sc.perform(second, with: NSNumber(value: v)); path += ">setAccessibilityValue:"
+                    }
+                } else if sc.responds(to: second) {
+                    _ = sc.perform(second, with: NSNumber(value: v)); path = "setAccessibilityValue:"
+                }
+                note = "value=\(v) path=\(path)"
+            }
+        default:
+            throw NSError(domain: "MacHost", code: 34, userInfo: [NSLocalizedDescriptionKey: "unknown scroll how '\(how)'"])
+        }
+        pump(0.35)
+        host.layoutSubtreeIfNeeded(); host.displayIfNeeded()
+        scrollReport(label, how, before: before, after: scrollReading(sv), expectMove: expectMove, note: note, derived: derived)
+    }
 }
 
 @MainActor
@@ -316,6 +635,14 @@ func runSteps(_ steps: [[String: Any]], driver: Driver, png: String, ax: String?
                 let name = s["name"] as? String ?? ""
                 try driver.pressButton(where: { driver.label($0) == name })
             case "wait": pump(((s["ms"] as? NSNumber)?.doubleValue ?? 0) / 1000)
+            case "scroll": try driver.scrollStep(s)
+            case "scrollerpng": try driver.scrollerPNG(s["label"] as? String ?? "step", png: png)
+            case "listdump":
+                // the outline's row frames after this step: list-NN-<label>.json beside the ax dumps (issue #31); a witness without an outline writes nothing
+                if let ax, let dump = driver.listDump() {
+                    let p = ax.replacingOccurrences(of: "/ax-", with: "/list-").replacingOccurrences(of: ".json", with: "-\(s["label"] as? String ?? "step").json")
+                    try JSONSerialization.data(withJSONObject: dump, options: [.prettyPrinted]).write(to: URL(fileURLWithPath: p))
+                }
             case "dump":
                 if let ax { try AXDump.write(main: driver.window, scale: Double(captureScale), to: ax.replacingOccurrences(of: ".json", with: "-\(s["label"] as? String ?? "step").json")) }
             case "shot":
@@ -375,6 +702,9 @@ func capture(_ witness: AnyView, width: CGFloat, height: CGFloat, to path: Strin
         try JSONSerialization.data(withJSONObject: dump, options: [.prettyPrinted]).write(to: URL(fileURLWithPath: listPath))
     }
     print("MAC_CAPTURE \(Int((width * captureScale).rounded()))x\(Int((height * captureScale).rounded())) scale=\(captureScale) appearance=\(window.effectiveAppearance.name.rawValue) png=\(path)")
+    if !driver.scrollFailures.isEmpty {
+        throw NSError(domain: "MacHost", code: 35, userInfo: [NSLocalizedDescriptionKey: "scroll stand-in failed (\(driver.scrollFailures.count)): " + driver.scrollFailures.joined(separator: "; ")])
+    }
 }
 
 @main
