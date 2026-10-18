@@ -359,6 +359,34 @@ function Get-ZipEntryMidOffset {
     return @{ offset = [int]($start + [Math]::Floor($csize / 2)); data_start = $start; compressed_size = $csize }
 }
 
+function Get-ZipEntryChangedBlockOffset {
+    # W07: offset of a byte inside a block of $EntryName whose AppxBlockMap hash differs between $Path (new) and $OldPath (installed).
+    # An update reuses every block whose hash matches the installed copy, so only a flip inside a changed block is ever read.
+    param([string]$Path, [string]$OldPath, [string]$EntryName)
+    Add-Type -AssemblyName System.IO.Compression, System.IO.Compression.FileSystem
+    function Read-Blocks([string]$msix) {
+        $za = [System.IO.Compression.ZipFile]::OpenRead($msix)
+        try { $sr = New-Object System.IO.StreamReader($za.GetEntry('AppxBlockMap.xml').Open()); [xml]$x = $sr.ReadToEnd(); $sr.Dispose() } finally { $za.Dispose() }
+        $f = @($x.BlockMap.File | Where-Object { $_.Name -eq $EntryName })[0]
+        if (-not $f) { throw "blockmap has no $EntryName in $msix" }
+        $n = @($f.Block).Count
+        $out = @()
+        for ($i = 0; $i -lt $n; $i++) {
+            $blk = @($f.Block)[$i]
+            $size = $(if ($blk.Size) { [long]$blk.Size } elseif ($i -lt $n - 1) { 65536 } else { [long]$f.Size - 65536 * ($n - 1) })
+            $out += @{ hash = [string]$blk.Hash; size = $size }
+        }
+        return $out
+    }
+    $new = Read-Blocks $Path; $old = Read-Blocks $OldPath
+    $changed = @(); for ($i = 0; $i -lt $new.Count; $i++) { if ($i -ge $old.Count -or $new[$i].hash -ne $old[$i].hash) { $changed += $i } }
+    if ($changed.Count -eq 0) { throw "no block of $EntryName differs between old and new" }
+    $pick = $changed[[int][Math]::Floor($changed.Count / 2)]
+    $mid = Get-ZipEntryMidOffset -Path $Path -EntryName $EntryName
+    $before = 0L; for ($i = 0; $i -lt $pick; $i++) { $before += $new[$i].size }
+    return @{ offset = [int]($mid.data_start + $before + [Math]::Floor($new[$pick].size / 2)); data_start = $mid.data_start; block = $pick; changed_blocks = ($changed -join ',') }
+}
+
 function Invoke-AppInstallerBounded {
     param([string]$Url, [int]$TimeoutSec)
     $outf = Join-Path $WorkDir ('ai-' + [guid]::NewGuid().ToString('N') + '.txt')
@@ -702,6 +730,8 @@ Invoke-Check -CheckId 'W06-upgrade-new' -CheckName 'Upgrade to new MSIX keeps da
 
 # W07: a corrupt update must be refused and the installed version must stay put.
 Invoke-Check -CheckId 'W07-corrupt-update-rejected' -CheckName 'Tampered MSIX refused; installed version unchanged; valid update still applies' -Body {
+    # PATCH-5 (19 Oct, tuple 12): the mid-file flip of PATCH-4 landed in SliceApp.exe block 30, identical in 0.1.0 and 0.1.1 (6 of 60 blocks differ), so the
+    # update reused the installed block and never read the flip. The changed-entry flip now sits inside a block whose blockmap hash differs.
     # PATCH-4. Original ran with the NEW build installed and running: the refusal was 0x80073D02 (in use), not corruption, and its flipped byte sat in
     # _FoundationICU.dll, a payload file identical in old and new. An update over the old build reuses unchanged blocks from the installed copy (differential
     # update), so a flip there is never read. Now: app closed, OLD installed; (a, informational) flip inside the unchanged ICU entry; (b, the check) flip inside
@@ -709,11 +739,11 @@ Invoke-Check -CheckId 'W07-corrupt-update-rejected' -CheckName 'Tampered MSIX re
     $m = $script:Manifest
     $old = Join-Path $PackagesDir $m.old.file
     $src = Join-Path $PackagesDir $m.new.file
-    function Try-Tampered([string]$entry, [string]$tag) {
+    function Try-Tampered([string]$entry, [string]$tag, [switch]$ChangedBlock) {
         [void](Stop-AppGracefully)
         [void](Remove-PkgKeepData)
         Add-AppxPackage -Path $old
-        $o = Get-ZipEntryMidOffset -Path $src -EntryName $entry
+        $o = $(if ($ChangedBlock) { Get-ZipEntryChangedBlockOffset -Path $src -OldPath $old -EntryName $entry } else { Get-ZipEntryMidOffset -Path $src -EntryName $entry })
         $bad = Join-Path $WorkDir ('tampered-' + $tag + '.msix')
         Copy-Item -LiteralPath $src -Destination $bad -Force
         $bytes = [System.IO.File]::ReadAllBytes($bad)
@@ -722,17 +752,17 @@ Invoke-Check -CheckId 'W07-corrupt-update-rejected' -CheckName 'Tampered MSIX re
         [System.IO.File]::WriteAllBytes($bad, $bytes)
         $rej = $false; $msg = ''; $hr = ''
         try { Add-AppxPackage -Path $bad } catch { $rej = $true; $msg = $_.Exception.Message; $hr = ('0x{0:X8}' -f $_.Exception.HResult) }
-        return @{ entry = $entry; offset = [string]$o.offset; byte_before = ('{0:x2}' -f $b0); byte_after = ('{0:x2}' -f $bytes[$o.offset]); rejected = $rej; error = $msg; hresult = $hr; version_after = (Get-VersionString); sha = (Get-Sha256Ref -Path $bad) }
+        return @{ entry = $entry; offset = [string]$o.offset; block = [string]$o.block; changed_blocks = [string]$o.changed_blocks; byte_before = ('{0:x2}' -f $b0); byte_after = ('{0:x2}' -f $bytes[$o.offset]); rejected = $rej; error = $msg; hresult = $hr; version_after = (Get-VersionString); sha = (Get-Sha256Ref -Path $bad) }
     }
     $a = Try-Tampered -entry '_FoundationICU.dll' -tag 'unchanged-entry'
-    $b = Try-Tampered -entry 'SliceApp.exe' -tag 'changed-entry'
+    $b = Try-Tampered -entry 'SliceApp.exe' -tag 'changed-entry' -ChangedBlock
     $verBefore = [string]$m.old.version
     $goodErr = ''
     try { Add-AppxPackage -Path $src } catch { $goodErr = $_.Exception.Message }
     $verFinal = Get-VersionString
     $inUse = ($b.error -match '0x80073D02')
     $observed = @{
-        changed_entry = $b.entry; flipped_offset = $b.offset; byte_before = $b.byte_before; byte_after = $b.byte_after
+        changed_entry = $b.entry; flipped_offset = $b.offset; flipped_block = $b.block; changed_blocks = $b.changed_blocks; byte_before = $b.byte_before; byte_after = $b.byte_after
         rejected = [string]$b.rejected; refusal_is_in_use = [string]$inUse; hresult = $b.hresult; error = $b.error
         version_before = $verBefore; version_after_tampered = $b.version_after
         genuine_update_error = $goodErr; version_after_genuine_update = $verFinal
