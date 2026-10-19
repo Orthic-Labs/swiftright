@@ -1,0 +1,7 @@
+ASSERT F5 wide-narrow-wide-transitions: PASS modes=narrow>narrow>narrow>narrow>narrow>narrow>narrow>narrow>narrow>narrow>narrow>narrow>narrow>narrow>wide>wide>wide>wide>narrow>wide>wide>narrow>narrow>narrow>narrow>narrow>narrow>narrow>narrow>narrow>narrow>narrow>narrow>narrow>narrow>narrow>narrow>narrow>narrow>narrow>narrow>narrow>narrow>narrow>narrow>narrow>narrow>wide>wide>wide>wide
+ASSERT F5 all-placements-contained: PASS placements=41 offender: 
+OBSERVE F5 zero-width-placement-passes: value=10 contained-flags=FFFFFFFFFF
+ASSERT F5 async-update-committed: PASS text=Row 1 updated 0
+ASSERT F5 async-insert-committed: PASS count=11
+ASSERT F5 final-layout-wide: PASS last=wide
+SELFTEST F5: PASS (5/5)

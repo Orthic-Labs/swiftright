@@ -1,0 +1,6 @@
+ASSERT F6 normal-policy-enabled: PASS enabled=true
+ASSERT F6 two-animations-started: PASS starts=2
+ASSERT F6 interruption-recorded: PASS second-start-before-first-complete=true completes=2
+ASSERT F6 both-animations-complete: PASS completes=2
+ASSERT F6 final-order: PASS count=12
+SELFTEST F6: PASS (5/5)

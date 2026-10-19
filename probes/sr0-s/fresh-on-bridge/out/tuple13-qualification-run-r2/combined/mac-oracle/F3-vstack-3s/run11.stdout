@@ -1,0 +1,8 @@
+ASSERT F3 teardown-disappear-before-cancel: PASS disappear=38 cancel=39
+ASSERT F3 reinserted-index-and-text: PASS index=3 text=Row 4
+ASSERT F3 task-restarted-for-reinsert: PASS task-starts=2
+ASSERT F3 old-result-rejected: PASS rejected=1 reason=task-cancelled
+ASSERT F3 only-new-instance-commits: PASS commits=1 gen=1
+OBSERVE F3 reinsert-local-state: value=fresh second-local=0 appears=2 gap-ms=3229
+OBSERVE F3 reinsert-focus: value=not-focused focus=none
+SELFTEST F3 variant=vstack-3s: PASS (5/5)
