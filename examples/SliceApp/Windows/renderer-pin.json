@@ -2,13 +2,13 @@
   "schema": 1,
   "file": "swiftright_render.dll",
   "abi": "0.7-baseline",
-  "sha256": "7578CD5DA8A6831900C66680C4B94F89E64B6B294623709817848B02219AEAC2",
-  "authenticodeSha256": "4686BF018C7BC5C1D4B9FDC09ABCEDBFE154DE63BFFC4E21FB44B9EC0D4735D2",
+  "sha256": "1AA8AD22171C07A61E24786E074185E8378C67089EA457A9577E5104DD4C1F07",
+  "authenticodeSha256": "6AD5A45CA3D1E0A8AF026A99C89B95AF12987E32CC0590547FDD6306D79EE540",
   "authenticodeNote": "PE hash excluding CheckSum + certificate table; stable across RightKit signing. Equals the digest signtool reports for the signed packaged DLL.",
-  "sizeBytes": 11887616,
-  "defaultSource": "probes/sr0-s/fresh-on-bridge/out/tuple12-renderer-recovery-v1/recovered-artifacts-r3/swiftright_render.dll",
+  "sizeBytes": 11603968,
+  "defaultSource": "probes/sr0-s/fresh-on-bridge/out/tuple13-renderer-ci-39173008419/swiftright-render-91400f36e48aa73145a2c50afc2743ab89fcf317/swiftright_render.dll",
   "sourceEnv": "SWIFTRIGHT_RENDERER_SRC",
-  "provenance": "SR0 tuple 12 renderer, source pin 0e201571 (docs/sr0-tuple12-takeover-ledger.md), recovered with Cargo --jobs 1 (closure receipt status-jobs1-r3). Tracked at the defaultSource path (repository-relative); unsigned. Replaces the tuple 08 pin E280F4A9. authenticodeSha256 computed with the PE-hash algorithm of scripts/verify-package-layout.ps1 (CheckSum and certificate table excluded); CI re-derives it at stage.",
+  "provenance": "SR0 tuple 13 renderer (#34): stage a9556b77f render/ + TextCache byte budget, commit 91400f36e, built by the render-windows CI lane run 39173008419 (12/12 unit tests); tracked at the defaultSource path; unsigned. Replaces the tuple 12 pin 7578CD5D. authenticodeSha256 = PE hash excluding CheckSum and certificate table (verify-package-layout.ps1 algorithm).",
   "closure": {
     "note": "Import set of the tuple 12 DLL read from its PE import table on 2026-10-13: identical to the tuple 08 set (every import is a Windows system DLL or api-set except VCRUNTIME140.dll, which ships in the payload; icuuc.dll is the OS ICU in System32, package minimum 10.0.19041.0).",
     "shipped": [

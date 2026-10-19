@@ -89,7 +89,7 @@ if ($Action -eq 'build') {
         $env:SWIFT_RUNTIME_BIN = $script:runtimeBin
         $env:RIGHT_RELEASE_CLI = Join-Path $repo 'node_modules\@rightkit\release\cli\right-release.mjs'
         if (-not (Test-Path $env:RIGHT_RELEASE_CLI)) { Fail "right-release not installed at $env:RIGHT_RELEASE_CLI (pnpm install at the repository root)" }
-        $env:SWIFTRIGHT_RENDERER_SRC = Join-Path $repo 'probes\sr0-s\fresh-on-bridge\out\tuple12-renderer-recovery-v1\recovered-artifacts-r3\swiftright_render.dll'
+        $env:SWIFTRIGHT_RENDERER_SRC = Join-Path $repo 'probes\sr0-s\fresh-on-bridge\out\tuple13-renderer-ci-39173008419\swiftright-render-91400f36e48aa73145a2c50afc2743ab89fcf317\swiftright_render.dll'
     }
 
     Step 'Build, verify and stage (prepackage-windows.ps1: pre/post renderer pin check, ComCtl6 manifest, import closure, stage layout)' {
