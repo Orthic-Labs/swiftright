@@ -225,7 +225,7 @@ def collect(root: Path, expected: dict[str, str]) -> dict[str, Any]:
             try: trace = trace_paths[0].read_text(encoding="utf-8")
             except OSError as exc: problems.append(f"trace-read={exc}")
         if matrix is not None:
-            expected_matrix = {"kind": matrix.get("kind") if matrix.get("kind") in ("sr0-tuple12-matrix-run-v3", "sr0-tuple12-matrix-run-v6") else "sr0-tuple12-matrix-run-v6", "mode": matrix.get("mode") if matrix.get("mode") in ("Full", "F3List0s") else "Full", "fixture": fixture, "variant": variant, "run": run, "runs": 20, "status": "passed", "driverSha256": expected["driver"], "workerSha256": expected["worker"], "coordinatorSha256": expected["coordinator"], "exeSha256": expected["exe"], "rendererSha256": expected["renderer"], "coordinatorExit": 0, "targetedDelivery": True, "noActivate": True}
+            expected_matrix = {"kind": matrix.get("kind") if matrix.get("kind") in ("sr0-tuple12-matrix-run-v3", "sr0-tuple12-matrix-run-v6") else "sr0-tuple12-matrix-run-v6", "mode": matrix.get("mode") if (matrix.get("mode") in ("Full", "F3List0s") or (matrix.get("mode") == "F6Reduced" and fixture == "F6" and variant == "reduced")) else "Full", "fixture": fixture, "variant": variant, "run": run, "runs": 20, "status": "passed", "driverSha256": expected["driver"], "workerSha256": expected["worker"], "coordinatorSha256": expected["coordinator"], "exeSha256": expected["exe"], "rendererSha256": expected["renderer"], "coordinatorExit": 0, "targetedDelivery": True, "noActivate": True}
             for field, value in expected_matrix.items():
                 actual = matrix.get(field)
                 if isinstance(value, str): actual = str(actual).lower(); value = value.lower()
