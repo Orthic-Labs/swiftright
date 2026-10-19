@@ -17,10 +17,17 @@ Start-Sleep -Seconds 3
 $ws = New-Object -ComObject WScript.Shell
 "activated=$($ws.AppActivate($p.Id))" | Out-File -Append $log
 Start-Sleep -Seconds 2
-$b = [System.Windows.Forms.SystemInformation]::VirtualScreen
-$bmp = New-Object System.Drawing.Bitmap $b.Width, $b.Height
-$g = [System.Drawing.Graphics]::FromImage($bmp); $g.CopyFromScreen($b.Left, $b.Top, 0, 0, $bmp.Size)
-$bmp.Save("$out\sel-shot-F1-active.png")
-"captured $($b.Width)x$($b.Height)" | Out-File -Append $log
+Add-Type @"
+using System; using System.Runtime.InteropServices;
+public class PW { [DllImport("user32.dll")] public static extern bool PrintWindow(IntPtr h, IntPtr dc, uint f);
+[DllImport("user32.dll")] public static extern bool GetWindowRect(IntPtr h, out R r); public struct R { public int L, T, Rt, B; } }
+"@
+$p.Refresh(); $h = $p.MainWindowHandle
+$r = New-Object PW+R; [void][PW]::GetWindowRect($h, [ref]$r)
+$bmp = New-Object System.Drawing.Bitmap ($r.Rt - $r.L), ($r.B - $r.T)
+$g = [System.Drawing.Graphics]::FromImage($bmp); $dc = $g.GetHdc(); $ok = [PW]::PrintWindow($h, $dc, 2); $g.ReleaseHdc($dc)
+$bmp.Save("$out\sel-shot-F1-printwindow.png")
+"printwindow ok=$ok hwnd=$h" | Out-File -Append $log
+"captured $($r.Rt - $r.L)x$($r.B - $r.T)" | Out-File -Append $log
 Set-Content -Path $flag -Value 'release'
 if (-not $p.WaitForExit(15000)) { $p.Kill(); "killed" | Out-File -Append $log } else { "exit=$($p.ExitCode)" | Out-File -Append $log }
