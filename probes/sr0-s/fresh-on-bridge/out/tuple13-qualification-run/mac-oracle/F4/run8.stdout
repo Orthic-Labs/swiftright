@@ -1,0 +1,7 @@
+ASSERT F4 cancel-delivered-before-late-result: PASS 
+ASSERT F4 stale-result-rejected: PASS rejected=1 reason=task-cancelled
+ASSERT F4 result-not-committed: PASS 
+ASSERT F4 cleanup-observed-after-rejection: PASS trail-last=effect/cleanup
+ASSERT F4 control-row-commits: PASS row1-note=7
+ASSERT F4 row-removed: PASS count=9
+SELFTEST F4: PASS (6/6)

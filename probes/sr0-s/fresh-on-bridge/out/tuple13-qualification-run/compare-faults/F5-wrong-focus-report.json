@@ -1,0 +1,42 @@
+{
+  "allowed" : [
+    {
+      "actual" : "MoveWindow client 720x560 DIP (window-targeted)",
+      "allowance" : "N1",
+      "expected" : "fixture stdin driver: resize",
+      "path" : "steps.nativeMapping",
+      "status" : "contract",
+      "step" : "initial"
+    },
+    {
+      "actual" : "MoveWindow client 360x560 DIP (window-targeted)",
+      "allowance" : "N1",
+      "expected" : "fixture stdin driver: resize; fixture stdin driver: release; fixture stdin driver: release",
+      "path" : "steps.nativeMapping",
+      "status" : "contract",
+      "step" : "resize_narrow_release"
+    },
+    {
+      "actual" : "MoveWindow client 720x560 DIP (window-targeted)",
+      "allowance" : "N1",
+      "expected" : "fixture stdin driver: resize",
+      "path" : "steps.nativeMapping",
+      "status" : "contract",
+      "step" : "resize_wide_again"
+    }
+  ],
+  "diffs" : [
+    {
+      "actual" : "row\/F0000005-0000-4000-8000-000000000002\/field",
+      "expected" : "row\/F0000005-0000-4000-8000-000000000001\/field",
+      "fixture" : "F5",
+      "path" : "focusedNodeId",
+      "step" : "resize_wide_again"
+    }
+  ],
+  "fixture" : "F5",
+  "notes" : [
+    "platform differs (not compared): accepted PlatformTuple(os: \"macos\", osBuild: \"27.0.1 (26A434)\", arch: \"arm64\", toolchain: \"Swift 6.4\") candidate PlatformTuple(os: \"windows\", osBuild: \"10.0.26100\", arch: \"x64\", toolchain: \"Swift 6.4.0 (swift-6.4-RELEASE)\")"
+  ],
+  "passed" : false
+}

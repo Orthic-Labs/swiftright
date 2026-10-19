@@ -1,0 +1,7 @@
+ASSERT F9 tasks-cancelled-at-close: PASS cancels=11 (10 rows + screen sync)
+ASSERT F9 no-commit-after-close: PASS commits=0
+ASSERT F9 late-results-rejected: PASS rejected=11
+ASSERT F9 cleanup-after-close: PASS cleanup=11
+OBSERVE F9 tree-released: value=retained tree-released-events=0
+OBSERVE F9 window-objects-after-close: titled=1 visible=0 released-flag=[false]
+SELFTEST F9: PASS (4/4)
