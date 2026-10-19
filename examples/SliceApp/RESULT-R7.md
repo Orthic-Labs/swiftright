@@ -2,7 +2,7 @@
 
 Verdict: **R7 NOT PASSED.** The quarantine/Gatekeeper checks are blocked by the VM base image; the update-mechanics checks ran and passed on the non-quarantined path.
 
-Environment: Tart clone of `sliceapp-base` (macOS 26.6.2 25G83, arm64), run `--no-graphics --vnc-experimental` (no host window; the display device was needed to look at the Gatekeeper dialog), driven over SSH plus the guest's own Screen Sharing from the host. Clone deleted at the end. DMGs from R3, hashes verified in the guest: 0.1.0 `81742a7c...64b661`, 0.1.1 `c75155b4...071a8a`. Logs/screenshots: `/Volumes/D/sr0-artifacts/mac/r7/`.
+Environment: Tart clone of `sliceapp-base` (macOS 26.6.2 25G83, arm64), run `--no-graphics --vnc-experimental` (no host window; the display device was needed to look at the Gatekeeper dialog), driven over SSH plus the guest's own Screen Sharing from the host. Clone deleted at the end. DMGs from R3, hashes verified in the guest: 0.1.0 `81742a7c...64b661`, 0.1.1 `c75155b4...071a8a`. Logs/screenshots: `/Volumes/D/scratch/swiftright/sr0-artifacts/mac/r7/`.
 
 ## Blocker: base image Gatekeeper is "App Store only"
 
@@ -36,7 +36,7 @@ Not decided. The only evidence is static: `syspolicy_check` calls the unstapled 
 
 ## Gatekeeper baseline (0.2.139)
 
-Re-run after Adrian set `sliceapp-base` to "App Store & Known Developers" (`spctl --status`: developer id enabled). Fresh clone, DMGs from @rightkit/release 0.2.139 (`.app` not stapled, DMG stapled). Quarantine set as `0083;...;Safari` on the DMG, app copied with `ditto --qtn` (what Finder does). Logs/screenshots: `/Volumes/D/sr0-artifacts/mac/r7/gb*`.
+Re-run after Adrian set `sliceapp-base` to "App Store & Known Developers" (`spctl --status`: developer id enabled). Fresh clone, DMGs from @rightkit/release 0.2.139 (`.app` not stapled, DMG stapled). Quarantine set as `0083;...;Safari` on the DMG, app copied with `ditto --qtn` (what Finder does). Logs/screenshots: `/Volumes/D/scratch/swiftright/sr0-artifacts/mac/r7/gb*`.
 
 | Check | Result |
 |---|---|
@@ -51,7 +51,7 @@ Staple-gap conclusion: with the stapled DMG as the carrier, Gatekeeper decides t
 
 ## Interrupted install on @rightkit/release 0.2.142 (atomic swap, --recover)
 
-Fresh clone of `sliceapp-base` (headless, no graphics), real unpatched 0.2.142 `install-app` (host node binary + the package copied in; VM has no Xcode tools, so the stapler-free `spctl-only` ticket path ran), 0.1.0 = the 0.2.142-built DMG (sha256 363c8768...0d5ea), 0.1.1 = `/Volumes/D/sr0-artifacts/mac/0.1.1`. Interruption injected by `scripts/interrupt-mac-install-hook.mjs` (rewritten for the 0.2.141+ flow: modes `copy`, `swap`, `swap-term`); each run: install 0.1.0, launch it once, interrupt the 0.1.1 upgrade, check, `install-app --recover`, check, uninterrupted 0.1.1 install. Logs: `/Volumes/D/sr0-artifacts/mac/0.1.0-rk0142/r7-interrupt-{copy,swap,swap-term}.log`. The VM clone was deleted afterwards.
+Fresh clone of `sliceapp-base` (headless, no graphics), real unpatched 0.2.142 `install-app` (host node binary + the package copied in; VM has no Xcode tools, so the stapler-free `spctl-only` ticket path ran), 0.1.0 = the 0.2.142-built DMG (sha256 363c8768...0d5ea), 0.1.1 = `/Volumes/D/scratch/swiftright/sr0-artifacts/mac/0.1.1`. Interruption injected by `scripts/interrupt-mac-install-hook.mjs` (rewritten for the 0.2.141+ flow: modes `copy`, `swap`, `swap-term`); each run: install 0.1.0, launch it once, interrupt the 0.1.1 upgrade, check, `install-app --recover`, check, uninterrupted 0.1.1 install. Logs: `/Volumes/D/scratch/swiftright/sr0-artifacts/mac/0.1.0-rk0142/r7-interrupt-{copy,swap,swap-term}.log`. The VM clone was deleted afterwards.
 
 | Phase (signal) | Right after the interrupt | `--recover` | After recovery |
 |---|---|---|---|
@@ -63,7 +63,7 @@ Finding: the old non-atomic outcome (old bundle stranded in `~/.Trash`) is gone;
 
 ## R7 final: quarantined first launch on the stapled-.app build (R3 final DMG b976ac70...)
 
-Date 2026-10-10 (guest clock UTC 01:43-01:49). Artifact `/Volumes/D/sr0-artifacts/mac/r3-final/SliceApp_0.1.0_arm64.dmg`, sha256 `b976ac70f268e1b0b2d998895685fd772736492f59e8cbbf641913541c39b4f4` (verified on the host and again in the guest after scp), built on commit 4496474 with @rightkit/release 0.2.144 (inner .app notarized and stapled before the DMG). Guest: macOS 26.6.2 (25G83) arm64, vanilla, `spctl --status`: assessments enabled / developer id enabled. Fresh clones of `sliceapp-base`, run `tart run --no-graphics --vnc-experimental` (no host window), driven over SSH as `admin`. Raw transcript: `examples/SliceApp/r7-final-transcript.txt`; full syspolicyd logs: `/Volumes/D/sr0-artifacts/mac/r7/final/`. All VM clones deleted at the end (`tart list` shows only `sliceapp-base` and `sliceapp-clean-pristine`).
+Date 2026-10-10 (guest clock UTC 01:43-01:49). Artifact `/Volumes/D/scratch/swiftright/sr0-artifacts/mac/r3-final/SliceApp_0.1.0_arm64.dmg`, sha256 `b976ac70f268e1b0b2d998895685fd772736492f59e8cbbf641913541c39b4f4` (verified on the host and again in the guest after scp), built on commit 4496474 with @rightkit/release 0.2.144 (inner .app notarized and stapled before the DMG). Guest: macOS 26.6.2 (25G83) arm64, vanilla, `spctl --status`: assessments enabled / developer id enabled. Fresh clones of `sliceapp-base`, run `tart run --no-graphics --vnc-experimental` (no host window), driven over SSH as `admin`. Raw transcript: `examples/SliceApp/r7-final-transcript.txt`; full syspolicyd logs: `/Volumes/D/scratch/swiftright/sr0-artifacts/mac/r7/final/`. All VM clones deleted at the end (`tart list` shows only `sliceapp-base` and `sliceapp-clean-pristine`).
 
 Procedure, same as the 0.2.139 baseline: quarantine xattr set on the DMG as a Safari download would (`xattr -w com.apple.quarantine "0083;<hex time>;Safari;<uuid>"`), `hdiutil attach -nobrowse`, `ditto --qtn` of the .app to `/Applications` (quarantine propagates), `spctl`, first launch with `open`. Offline = v4 and v6 default routes removed in the guest (www.apple.com, ocsp.apple.com, api.apple-cloudkit.com all unreachable before and after the launch; SSH stays up on the on-link subnet).
 

@@ -38,9 +38,9 @@ Every Mac build path is chosen by `factory/tools/cache_paths.py`; do not hard-co
 
 | Root | Path | Holds |
 | --- | --- | --- |
-| Build | `/Volumes/D/swiftright-cache/<lane>/` | SwiftPM `--scratch-path`, swiftc module caches, intermediates. Compile and link here; never launch from here (TCC prompt). |
+| Build | `/Volumes/D/scratch/swiftright/swiftright-cache/<lane>/` | SwiftPM `--scratch-path`, swiftc module caches, intermediates. Compile and link here; never launch from here (TCC prompt). |
 | Run | `~/Library/Caches/SwiftRightFactory/run/<lane>/` | Only the binaries or app bundles launched. 2 GB cap, LRU eviction. |
-| Moved | `/Volumes/D/swiftright-cache-moved/<date>/` | Where the sweep and lane cleanup move things. Move, never delete. |
+| Moved | `/Volumes/D/scratch/swiftright/swiftright-cache-moved/<date>/` | Where the sweep and lane cleanup move things. Move, never delete. |
 
 - Use `cache_paths.build_root(lane)`, `run_root(lane)`, `preflight()` and `finish_lane(lane, ok)` from Python, or `python3 factory/tools/cache_paths.py path build|run <lane>` / `preflight <lane>` / `finish <lane>` from shell.
 - `pair.py`, `mac-stage-test.py`, `appkit-probe`, `image-io`, `symbol-metrics` and `font-metrics` already use it; `consolidation/run_all.py` and `recompare_all.py` print the free-space warning.

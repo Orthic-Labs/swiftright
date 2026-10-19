@@ -45,7 +45,7 @@ scp $K qualification/clean-machine/mac-clean-run.sh qualification/clean-machine/
   examples/SliceApp/scripts/interrupt-mac-install.sh examples/SliceApp/scripts/interrupt-mac-install-hook.mjs admin@$IP:r8/
 scp $K "$(command -v node)" admin@$IP:r8/node               # the host node binary, as R7 did
 tar -C examples/SliceApp/node_modules/.pnpm/@rightkit+release@0.2.145/node_modules -chf - . | ssh $K admin@$IP 'tar -C ~/r8/node_modules -xf -'
-scp $K /Volumes/D/sr0-artifacts/mac/r3-final/SliceApp_0.1.0_arm64.dmg /Volumes/D/sr0-artifacts/mac/r3-final-011/SliceApp_0.1.1_arm64.dmg admin@$IP:r8/dmg/
+scp $K /Volumes/D/scratch/swiftright/sr0-artifacts/mac/r3-final/SliceApp_0.1.0_arm64.dmg /Volumes/D/scratch/swiftright/sr0-artifacts/mac/r3-final-011/SliceApp_0.1.1_arm64.dmg admin@$IP:r8/dmg/
 ssh $K admin@$IP 'chmod 644 ~/r8/dmg/*.dmg; bash ~/r8/mac-vm-offline.sh'
 ssh $K admin@$IP 'cd ~/r8; bash mac-clean-run.sh --allowlist ~/clean-machine-allow.txt \
   --old-dmg dmg/SliceApp_0.1.0_arm64.dmg --old-sha sha256:b976ac70f268e1b0b2d998895685fd772736492f59e8cbbf641913541c39b4f4 --old-version 0.1.0 \

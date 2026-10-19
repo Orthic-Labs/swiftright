@@ -1,6 +1,6 @@
 # R5-08: SliceApp MSIX pair on SR0 tuple 08 (renderer E280F4A9), build and Sandbox (2026-10-10)
 
-Dell stage root `D:\Claude\sr0-r5-08` (nothing deleted or recycled; every directory is left in place). @rightkit/release 0.2.146, non-elevated one-shot tasks (`elevated=False`), harness = `git archive` of HEAD 840f9ec (hold-open harness from a6d657b, unchanged since). Artifacts: `/Volumes/D/sr0-artifacts/win/r5-08/`.
+Dell stage root `D:\Claude\sr0-r5-08` (nothing deleted or recycled; every directory is left in place). @rightkit/release 0.2.146, non-elevated one-shot tasks (`elevated=False`), harness = `git archive` of HEAD 840f9ec (hold-open harness from a6d657b, unchanged since). Artifacts: `/Volumes/D/scratch/swiftright/sr0-artifacts/win/r5-08/`.
 
 ## Build (pin: sha256 `E280F4A9FD9ECA0A7B2657F72F8C322A537CEE7B4C85999F6CBF7EB1F39CCC93`, Authenticode digest `E713BF40…9B0E`)
 

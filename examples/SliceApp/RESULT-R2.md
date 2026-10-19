@@ -1,7 +1,7 @@
 # R2 Windows MSIX result (2026-10-09)
 
 Host: Dell (bogus-dell), @rightkit/release 0.2.139 (published), built through a one-shot Interactive/Limited hidden scheduled task (non-elevated, `elevated=False` in every log), no upload, no interactive auth, no window.
-Old: clone `D:\Claude\sr0-r2b\clean` at origin/master d70d36bd (0.1.0 / MSIX 0.1.0.0). New: `clean2` at clone-local commit 5251e9f1 on d70d36bd (0.1.1 / 0.1.1.0, patch `/Volumes/D/sr0-artifacts/win/r2-msix/sliceapp-0.1.1.patch`: version fields + one Swift diagnostic string in WindowsBootstrap.swift).
+Old: clone `D:\Claude\sr0-r2b\clean` at origin/master d70d36bd (0.1.0 / MSIX 0.1.0.0). New: `clean2` at clone-local commit 5251e9f1 on d70d36bd (0.1.1 / 0.1.1.0, patch `/Volumes/D/scratch/swiftright/sr0-artifacts/win/r2-msix/sliceapp-0.1.1.patch`: version fields + one Swift diagnostic string in WindowsBootstrap.swift).
 Clone-local setup: `.right-release/` added to `.git/info/exclude` (build writes `.right-release/locks/win.lock.json` into the repo root before ownership's clean-tree check; repo needs a `.gitignore` entry), `core.autocrlf=false`, `core.symlinks=false`.
 
 | Check | Result | Evidence |
@@ -16,4 +16,4 @@ Defects found:
 1. `swift-only-proof.mjs` and the `verify-package-layout.ps1 -Mode Installed` raw-sha-vs-pin check compare seal/payload raw sha256. RightKit Authenticode-signs every PE in the payload (new timestamp per build), so the seal hash of every DLL differs per build and never equals the pin. Both must compare the Authenticode digest (PE hash excluding checksum and certificate table) or the pre-sign stage hash. R5's installed check will fail on this until fixed.
 2. `.right-release/` needs a `.gitignore` entry (see above).
 3. `right-release release --tier patch ... --no-upload` fails with "build is tier-neutral"; use `right-release build --platform win --config ...` (sealed, no upload). PACKAGING.md's sealed-build command needs that change.
-Artifacts: /Volumes/D/sr0-artifacts/win/r2-msix (msix, seals, logs, patch); Dell copies in `D:\Claude\sr0-r2b\artifacts\0.1.0`, `clean*/dist/win`.
+Artifacts: /Volumes/D/scratch/swiftright/sr0-artifacts/win/r2-msix (msix, seals, logs, patch); Dell copies in `D:\Claude\sr0-r2b\artifacts\0.1.0`, `clean*/dist/win`.

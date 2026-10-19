@@ -11,7 +11,7 @@ Tuple 12 staging was stopped at 2026-10-11 11:04–11:05 local, after stop was r
 | Renderer source | `D:\Claude\swiftright\.work\sr0-stage-inputs\swiftright_render.dll` |
 | Renderer sha256 | `7578CD5DA8A6831900C66680C4B94F89E64B6B294623709817848B02219AEAC2` |
 | Staging root | `D:\Claude\swiftright\.work\sr0-r12` |
-| Stage capture | `/Volumes/D/sr0-artifacts/stage-r12.log` |
+| Stage capture | `/Volumes/D/scratch/swiftright/sr0-artifacts/stage-r12.log` |
 
 The source commit is canonical stage commit `a9556b77f` (base `0e201571` + startup-guard overlay r2, Sage 17 October); it contains product fixes from `4b1ca6d0`. ABI remains 0.6. Renderer was built from `4b1ca6d0` by RightKit build broker. No tuple member hash is accepted from transcript shorthand.
 

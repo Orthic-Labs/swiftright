@@ -65,7 +65,7 @@ App Installer feeds: `SliceApp.appinstaller` in each `dist\win` is the build's o
 
 ## Files
 
-Mac: `/Volumes/D/sr0-artifacts/win/r5-07/` — `inputs/` (both msix, seals, release manifests, QA/build logs), `qa-receipts/` (both source receipts), `log-host-verify.txt`, `log-swift-only-proof.txt`.
+Mac: `/Volumes/D/scratch/swiftright/sr0-artifacts/win/r5-07/` — `inputs/` (both msix, seals, release manifests, QA/build logs), `qa-receipts/` (both source receipts), `log-host-verify.txt`, `log-swift-only-proof.txt`.
 Dell (`D:\Claude\sr0-r5-07`, kept): `clean`, `clean2`, `unpack\0.1.0`, `unpack\0.1.1`, `log-r507-0.1.0.txt`, `log-r507-0.1.1.txt`, `step-r507.ps1`, `verify-r507.ps1`, `proof-r507.ps1`, `pedigest.ps1`, `deps.ps1`, `run-unelevated-step.ps1`.
 
 ## Sandbox results (2026-10-10, after "GO sandbox")
@@ -78,7 +78,7 @@ Host and guest as in RESULT-R5.md final2: Dell (Bogus-Dell, Windows 11 24H2 buil
 | `r5-07-network-2` | Network (W00: 1 default route) | non-elevated one-shot task | W00, W01, W12 | `89b1581a66261172da816830dd34cac22dbe8d830b3f37090e030883443171df` | 3 of 3 PASS |
 | `r5-07-offline` (iteration 1, kept as evidence, not in the qualification records) | Offline | **launch slip**: `-Cmd ''& script''` through `win` and `sh` lost its quotes (the gotcha in R5-RUNBOOK.md), so PowerShell 7 ran the launcher as a background job in the SSH admin session instead of the non-elevated task | W00 to W11, W13, W14 | `36d656ca039551c2142ba2bd7edd6690433517f9006d7644f9fafa8d970fa2d3` | 14 of 14 PASS, **W08 PASS** (5 genuine interruptions, all judged ok, none NeedsRemediation) |
 
-Iteration 1 was repeated through the non-elevated task (`r5-07-offline-2`) to match final2. Artifacts and logs: `/Volumes/D/sr0-artifacts/win/r5-07/` (`receipts-offline-1`, `receipts-offline-2`, `receipts-network-2`, `logs/`); Dell: `D:\Claude\sr0-r5-07\runs\<run id>`.
+Iteration 1 was repeated through the non-elevated task (`r5-07-offline-2`) to match final2. Artifacts and logs: `/Volumes/D/scratch/swiftright/sr0-artifacts/win/r5-07/` (`receipts-offline-1`, `receipts-offline-2`, `receipts-network-2`, `logs/`); Dell: `D:\Claude\sr0-r5-07\runs\<run id>`.
 
 ### Per-check results
 
@@ -127,5 +127,5 @@ Not obtained. The guest was gone by the time the request arrived: the harness en
 
 ### Dell stage root removed (2026-10-10, before tuple 08)
 
-On the lead's instruction `D:\Claude\sr0-r5-07` was cleared of read-only attributes and removed with `Microsoft.VisualBasic.FileIO.FileSystem.DeleteDirectory(..., SendToRecycleBin)` from the SSH session. The Recycle Bin on D: and C: holds no item for it (no `$R`/`$I` entry), so the tree was deleted permanently, not recycled (cause not established; deep `node_modules\.pnpm` paths or the non-interactive session are the suspects). Kept beforehand under `/Volumes/D/sr0-artifacts/win/r5-07/`: both msix, seals, release manifests, QA receipts, logs, the three run record sets, feeds, helper scripts, and the clone-local commit as `clone-local/clone-local-54480b6d.patch` (sha256 `9bde3279b387485580cae7c0387a39dc93ea3be0260e65bc76215fe7cbdc6ec0`) and `.bundle`. Not kept: the clones' RightKit signing receipts (`.right-release\state\...\windows-raw-exe.json`, `windows-installer.json`, `windows-embedding.json`; their sha256 values are in `release-manifest-0.1.x.json`), `hardening.json` (168 bytes), the unpacked payloads, the dry-run staging; the msix themselves are unchanged.
+On the lead's instruction `D:\Claude\sr0-r5-07` was cleared of read-only attributes and removed with `Microsoft.VisualBasic.FileIO.FileSystem.DeleteDirectory(..., SendToRecycleBin)` from the SSH session. The Recycle Bin on D: and C: holds no item for it (no `$R`/`$I` entry), so the tree was deleted permanently, not recycled (cause not established; deep `node_modules\.pnpm` paths or the non-interactive session are the suspects). Kept beforehand under `/Volumes/D/scratch/swiftright/sr0-artifacts/win/r5-07/`: both msix, seals, release manifests, QA receipts, logs, the three run record sets, feeds, helper scripts, and the clone-local commit as `clone-local/clone-local-54480b6d.patch` (sha256 `9bde3279b387485580cae7c0387a39dc93ea3be0260e65bc76215fe7cbdc6ec0`) and `.bundle`. Not kept: the clones' RightKit signing receipts (`.right-release\state\...\windows-raw-exe.json`, `windows-installer.json`, `windows-embedding.json`; their sha256 values are in `release-manifest-0.1.x.json`), `hardening.json` (168 bytes), the unpacked payloads, the dry-run staging; the msix themselves are unchanged.
 

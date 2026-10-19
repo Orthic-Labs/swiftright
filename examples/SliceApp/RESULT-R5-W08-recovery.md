@@ -1,6 +1,6 @@
 # R5 W08 follow-up: recovering from `Modified, NeedsRemediation` after a cancelled MSIX update
 
-Probe for RightKit. Not a harness check, not a product change. Evidence: `/Volumes/D/sr0-artifacts/win/r5-w08-recovery/<run>/` (`result.json`, `log.txt`, `serve-local-feed.log`, `slice-app.log`, `rows.json`, screenshots, `.wsb`), harness copies in `.../harness/`. Working files on the Dell: `D:\Claude\sr0-r5\w08rec\` (staging copies of the MSIX were recycled; receipts kept).
+Probe for RightKit. Not a harness check, not a product change. Evidence: `/Volumes/D/scratch/swiftright/sr0-artifacts/win/r5-w08-recovery/<run>/` (`result.json`, `log.txt`, `serve-local-feed.log`, `slice-app.log`, `rows.json`, screenshots, `.wsb`), harness copies in `.../harness/`. Working files on the Dell: `D:\Claude\sr0-r5\w08rec\` (staging copies of the MSIX were recycled; receipts kept).
 
 ## Setup
 

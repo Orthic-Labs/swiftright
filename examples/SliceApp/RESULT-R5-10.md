@@ -1,6 +1,6 @@
 # R5-10: SliceApp MSIX pair on SR0 tuple 10 (runtime change 8e47b89; renderer pin E280F4A9 unchanged), build and Sandbox (2026-10-11)
 
-Dell stage root `D:\Claude\sr0-r5-10` (nothing deleted). @rightkit/release 0.2.146, non-elevated one-shot tasks (`elevated=False`). Build and Sandbox ran under `D:\Claude\desktop.lock` (label `r5-10`, queued behind `matrix10` and `lanes10`). Sandbox windows kept in the background (`sandbox-background.ps1 -Watch`: offline run pushes=157, push_failures=0). Harness = `git archive 0a745ab`. Artifacts: `/Volumes/D/sr0-artifacts/win/r5-10/`. Signed before the Sandbox (cert 121FD7B5, expires 2026-10-12 05:16:54).
+Dell stage root `D:\Claude\sr0-r5-10` (nothing deleted). @rightkit/release 0.2.146, non-elevated one-shot tasks (`elevated=False`). Build and Sandbox ran under `D:\Claude\desktop.lock` (label `r5-10`, queued behind `matrix10` and `lanes10`). Sandbox windows kept in the background (`sandbox-background.ps1 -Watch`: offline run pushes=157, push_failures=0). Harness = `git archive 0a745ab`. Artifacts: `/Volumes/D/scratch/swiftright/sr0-artifacts/win/r5-10/`. Signed before the Sandbox (cert 121FD7B5, expires 2026-10-12 05:16:54).
 
 ## Build
 

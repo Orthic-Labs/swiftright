@@ -398,7 +398,7 @@ SliceApp prep (and the other sessions' work committed or removed); no bypass was
 
 ## R3 signed Mac build (2026-10-09): BLOCKED at preflight, nothing built, signed, or notarized
 
-Source: origin/master `c7c7eb6a2d520d4784e5204550e121fca6e97b5e`, independent clone `/Volumes/D/sr0-build/mac-c7c7eb6/swiftright`
+Source: origin/master `c7c7eb6a2d520d4784e5204550e121fca6e97b5e`, independent clone `/Volumes/D/scratch/swiftright/sr0-build/mac-c7c7eb6/swiftright`
 (branch `sr0-clean-c7c7eb6a2d52`, scratch outside the primary checkout; `<scratch>/rightkit` links the local RightKit tree).
 Tool identity (pre-publication): RightKit HEAD `61ace202d83d6b2afe4f1138c9540a8854bf8a1d`, version 0.2.137, with uncommitted
 `packages/release` changes (`git status --short packages/release`): M CHANGELOG.md, README.md, build-release.mjs, build-release.test.mjs,
@@ -440,7 +440,7 @@ Source: origin master c7c7eb6a2d520d4784e5204550e121fca6e97b5e, cloned on the De
 from Windows over SSH) into `D:\Claude\sr0-r2\swiftright`. Clone-local commit b94715a916b9e86cb2f0093ef2b7fe0b06209023 (not pushed): `package.json` pins
 `@rightkit/release` to `0.2.137` (the contract check rejects `link:`) and `pnpm-workspace.yaml` overrides it to the staged local package
 `D:\Claude\sr0-r2\rightkit\packages\release` (copy of the Mac RightKit tree HEAD 61ace202 plus uncommitted release changes; file hashes in
-`/Volumes/D/sr0-artifacts/win/0.1.0/rightkit-release-mac-source-sha256.txt` and `rightkit-release-staged-sha256.txt`). Pre-publication tooling.
+`/Volumes/D/scratch/swiftright/sr0-artifacts/win/0.1.0/rightkit-release-mac-source-sha256.txt` and `rightkit-release-staged-sha256.txt`). Pre-publication tooling.
 
 Reached: clone, tool staging, `right-release doctor` (swift, version, makeappx and signtool 10.0.26100.0, disk all ok), and `scripts/prepackage-windows.ps1`
 (Swift release build, manifest and closure check, renderer pin check, `windows-stage`, `verify-package-layout.ps1 -Mode Stage` OK, renderer sha256 C80B9517...FB30).
@@ -489,7 +489,7 @@ clean-tree preflight). 0.1.1 = version bump + Swift-only label edit ("Rows: N").
 | .app spctl -a -vv | accepted, Notarized Developer ID | accepted, Notarized Developer ID |
 | .app stapler validate | FAIL: no ticket stapled to the .app (only the DMG is stapled; config allows one `notarize.file`) | FAIL (same) |
 
-App executable sha256: 0.1.0 84f9b81a…0646cc, 0.1.1 05110857…a8e2. Evidence: `/Volumes/D/sr0-artifacts/mac/{0.1.0,0.1.1}/r3-verify-*.txt`,
+App executable sha256: 0.1.0 84f9b81a…0646cc, 0.1.1 05110857…a8e2. Evidence: `/Volumes/D/scratch/swiftright/sr0-artifacts/mac/{0.1.0,0.1.1}/r3-verify-*.txt`,
 build logs `r3-build-*.log`; sealed manifests 0.1.0 97a1ac67…a03d2, 0.1.1 40a9026c…d3048.
 Open: .app staple (gap 3b; offline first launch in R7 decides impact); `hdiutil detach` "Resource busy" flake (2–3 attempts
 per DMG); Swift-only rebuild proof and receipts not yet run.
@@ -500,7 +500,7 @@ Passed on @rightkit/release 0.2.139 via the non-elevated scheduled-task route. F
 
 ## R3 final (2026-10-10): Mac DMG on the final commit, @rightkit/release 0.2.144 — PASS
 
-Built from `4496474` (tree `62852a03`) in a branch-attached clone with `right-release` 0.2.144; QA source receipt first, then build, seal and notarize. Evidence copied from `/Volumes/D/sr0-artifacts/mac/r3-final/` into `examples/SliceApp/r3-final/`.
+Built from `4496474` (tree `62852a03`) in a branch-attached clone with `right-release` 0.2.144; QA source receipt first, then build, seal and notarize. Evidence copied from `/Volumes/D/scratch/swiftright/sr0-artifacts/mac/r3-final/` into `examples/SliceApp/r3-final/`.
 
 | Check | Result |
 |---|---|

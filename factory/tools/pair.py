@@ -144,7 +144,7 @@ def mac(case, name, runs, out, clock=None, strict=False):
     mac_provenance(out)
     print(f"mac capture {runs}/{runs} ok", flush=True)
     ok = scale_guard(out, runs, strict)
-    cache_paths.finish_lane(lane, ok=ok)                   # success: run root moved to /Volumes/D/swiftright-cache-moved; failure keeps it for diagnosis
+    cache_paths.finish_lane(lane, ok=ok)                   # success: run root moved to /Volumes/D/scratch/swiftright/swiftright-cache-moved; failure keeps it for diagnosis
     return ok
 
 

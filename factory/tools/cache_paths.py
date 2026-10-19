@@ -2,16 +2,16 @@
 """The ONE place the Mac tooling chooses where build output and launchable binaries live.
 
   python3 factory/tools/cache_paths.py status              sizes, free space, caps (read only)
-  python3 factory/tools/cache_paths.py sweep [--report]    move stale/over-cap internal entries to /Volumes/D/swiftright-cache-moved/<date>/ (--report: print the plan, move nothing)
+  python3 factory/tools/cache_paths.py sweep [--report]    move stale/over-cap internal entries to /Volumes/D/scratch/swiftright/swiftright-cache-moved/<date>/ (--report: print the plan, move nothing)
   python3 factory/tools/cache_paths.py path build|run LANE print (and create) a lane path, for shell tools
   python3 factory/tools/cache_paths.py preflight LANE      free-space gate for a new Mac build (warn < 40 GB, refuse < 15 GB)
   python3 factory/tools/cache_paths.py finish LANE [--keep-build]
 
 Two roots, because of two facts: running an executable from /Volumes/D raises a TCC removable-volume prompt on Adrian's screen, while compiling and linking
 there does not (the compiler and linker are system binaries; verified, see docs/sr1-decisions.md), and the internal disk is small.
-  BUILD root  /Volumes/D/swiftright-cache/<lane>/                       SwiftPM --scratch-path, swiftc module caches, intermediates. Never executed from.
+  BUILD root  /Volumes/D/scratch/swiftright/swiftright-cache/<lane>/                       SwiftPM --scratch-path, swiftc module caches, intermediates. Never executed from.
   RUN root    ~/Library/Caches/SwiftRightFactory/run/<lane>/            only the final executables / app bundles copied out to be launched. Capped at 2 GB (LRU eviction).
-  MOVED       /Volumes/D/swiftright-cache-moved/<YYYYMMDD>/             where the sweep moves things. Nothing here is ever deleted by this tool (workspace rule: move, never rm).
+  MOVED       /Volumes/D/scratch/swiftright/swiftright-cache-moved/<YYYYMMDD>/             where the sweep moves things. Nothing here is ever deleted by this tool (workspace rule: move, never rm).
 SWIFTRIGHT_CACHE_ROOT=<dir> (compatibility override) puts both roots under <dir> (<dir>/build/<lane>, <dir>/run/<lane>); the sweep, caps and gates still apply to it.
 Existing lanes (old internal paths such as .../SwiftRightFactory/pair/<case>) are left alone by new code; the sweep moves them once they are 24 h old and not touched in the last 4 h."""
 import os, shutil, subprocess, sys, time
@@ -27,12 +27,12 @@ DONE = ".lane-done"                         # marker a finished build lane carri
 
 HOME = Path.home()
 INTERNAL = HOME / "Library/Caches/SwiftRightFactory"
-MOVED = Path(os.environ.get("SWIFTRIGHT_CACHE_MOVED") or "/Volumes/D/swiftright-cache-moved")   # CI runners set SWIFTRIGHT_CACHE_MOVED (no /Volumes/D there)
+MOVED = Path(os.environ.get("SWIFTRIGHT_CACHE_MOVED") or "/Volumes/D/scratch/swiftright/swiftright-cache-moved")   # CI runners set SWIFTRIGHT_CACHE_MOVED (no /Volumes/D there)
 _override = os.environ.get("SWIFTRIGHT_CACHE_ROOT")
 if _override:
     BUILD_ROOT, RUN_ROOT = Path(_override) / "build", Path(_override) / "run"
 else:
-    BUILD_ROOT, RUN_ROOT = Path("/Volumes/D/swiftright-cache"), INTERNAL / "run"
+    BUILD_ROOT, RUN_ROOT = Path("/Volumes/D/scratch/swiftright/swiftright-cache"), INTERNAL / "run"
 
 
 def _lane(lane):

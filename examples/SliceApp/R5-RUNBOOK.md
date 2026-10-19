@@ -66,7 +66,7 @@ Expect `dist\win\SliceApp_0.1.0.0_x64.msix` in `clean` and `SliceApp_0.1.1.0_x64
 ## 4. Pull artifacts to the Mac (canonical copy) and verify
 
 ```sh
-A=/Volumes/D/sr0-artifacts/win/r5-msix; mkdir -p $A
+A=/Volumes/D/scratch/swiftright/sr0-artifacts/win/r5-msix; mkdir -p $A
 scp win:D:/Claude/sr0-r5/clean/examples/SliceApp/dist/win/SliceApp_0.1.0.0_x64.msix $A/
 scp win:D:/Claude/sr0-r5/clean2/examples/SliceApp/dist/win/SliceApp_0.1.1.0_x64.msix $A/
 scp win:D:/Claude/sr0-r5/log-doctor.txt win:D:/Claude/sr0-r5/log-build-0.1.0.txt win:D:/Claude/sr0-r5/log-build-0.1.1.txt $A/
@@ -87,7 +87,7 @@ If NEWSHA is not reachable from a Mac checkout, run the proof on the Dell (node 
 
 ```sh
 cd /Volumes/D/claude/swiftright/examples/SliceApp/scripts
-F=/Volumes/D/sr0-artifacts/win/r5-msix/feed; mkdir -p $F/0 $F/1
+F=/Volumes/D/scratch/swiftright/sr0-artifacts/win/r5-msix/feed; mkdir -p $F/0 $F/1
 node make-local-appinstaller.mjs --msix $A/SliceApp_0.1.0.0_x64.msix --version 0.1.0.0 --out $F/0
 node make-local-appinstaller.mjs --msix $A/SliceApp_0.1.1.0_x64.msix --version 0.1.1.0 --out $F/1
 cp $F/0/SliceApp.appinstaller $F/SliceApp.0.appinstaller; cp $F/1/SliceApp.appinstaller $F/SliceApp.1.appinstaller
@@ -134,7 +134,7 @@ R5 PASS requires `status: pass` in `run.json` (every check pass, implemented, ha
 
 ## 8. Cleanup
 
-Recycle (do not permanently delete) `D:\Claude\sr0-r5\clean`, `clean2` and `runs` after the artifacts and receipts are on the Mac. Keep `/Volumes/D/sr0-artifacts/win/r5-msix/`.
+Recycle (do not permanently delete) `D:\Claude\sr0-r5\clean`, `clean2` and `runs` after the artifacts and receipts are on the Mac. Keep `/Volumes/D/scratch/swiftright/sr0-artifacts/win/r5-msix/`.
 
 ## 9. Known risks for the first real run
 
