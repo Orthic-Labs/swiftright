@@ -1,0 +1,38 @@
+{
+    "schema":  "sr0-a.package-receipt/v2",
+    "record":  "check",
+    "product":  "SliceApp",
+    "platform":  "windows-x64",
+    "run_id":  "t13-Offline",
+    "check_id":  "W13-renderer-layout-installed",
+    "check_name":  "Installed renderer matches the pin (Authenticode digest) and loads from the package",
+    "implemented":  true,
+    "status":  "pass",
+    "reason":  null,
+    "started_utc":  "2026-10-19T08:28:05Z",
+    "ended_utc":  "2026-10-19T08:28:09Z",
+    "exit_status":  0,
+    "observations":  {
+                         "verify_exit":  "0",
+                         "pin_authenticode_sha256":  "6AD5A45CA3D1E0A8AF026A99C89B95AF12987E32CC0590547FDD6306D79EE540",
+                         "install_location":  "C:\\Program Files\\WindowsApps\\OrthicLabs.SliceApp_0.1.0.0_x64__j3cejpx244dcr",
+                         "exe_signature":  "Valid",
+                         "packaged_dll_raw_sha256":  "EE7057BBBA326F575B4718899657C35136CA6B4431654FFF118058F352BBF48D",
+                         "pin_sha256_unsigned":  "1AA8AD22171C07A61E24786E074185E8378C67089EA457A9577E5104DD4C1F07",
+                         "verdict":  "PASS",
+                         "verify_output":  "note: Loader.swift not present here; default-name check skipped\r\nOK (Stage): swiftright_render.dll beside SliceApp.exe in C:\\Program Files\\WindowsApps\\OrthicLabs.SliceApp_0.1.0.0_x64__j3cejpx244dcr, Authenticode digest matches pin (ABI 0.7-baseline)",
+                         "dll_signature":  "Valid"
+                     },
+    "artifact_ids":  {
+
+                     },
+    "environment":  {
+                        "host":  "00C461CD-26A5-4",
+                        "os_version":  "Windows 10.0.26100.0 build 26100.9711 24H2",
+                        "user":  "WDAGUtilityAccount"
+                    },
+    "harness":  {
+                    "name":  "sandbox-run.ps1",
+                    "sha256":  "sha256:b260c6e4c9f1b7a585c4f1421e7d2628a41352b9dd201cebcc2974e72eed7626"
+                }
+}

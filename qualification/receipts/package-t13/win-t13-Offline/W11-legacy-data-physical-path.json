@@ -1,0 +1,39 @@
+{
+    "schema":  "sr0-a.package-receipt/v2",
+    "record":  "check",
+    "product":  "SliceApp",
+    "platform":  "windows-x64",
+    "run_id":  "t13-Offline",
+    "check_id":  "W11-legacy-data-physical-path",
+    "check_name":  "Physical data path (fresh + legacy); virtualization disabled",
+    "implemented":  true,
+    "status":  "pass",
+    "reason":  null,
+    "started_utc":  "2026-10-19T08:34:01Z",
+    "ended_utc":  "2026-10-19T08:34:16Z",
+    "exit_status":  null,
+    "observations":  {
+                         "no_localcache_copy_after_legacy":  "True",
+                         "fresh_file_existed_at_physical_path":  "True",
+                         "verdict":  "PASS",
+                         "manifest_unvirtualized_resources":  "True",
+                         "legacy_marker_shown_by_app":  "True",
+                         "edit_landed_at_physical_path":  "True",
+                         "manifest_filesystem_write_virtualization_disabled":  "True",
+                         "no_localcache_copy_fresh":  "True",
+                         "legacy_file_sha":  "sha256:b6814f86704903c16b2d9025cbab35985593277a76035211883f54a1105f4223",
+                         "rows_sha_final":  "sha256:a81eeba50ef675a10568e2771be66ddee2d472ba17f1b76627fb3f8aa499960b"
+                     },
+    "artifact_ids":  {
+                         "rows_json_legacy":  "sha256:b6814f86704903c16b2d9025cbab35985593277a76035211883f54a1105f4223"
+                     },
+    "environment":  {
+                        "host":  "00C461CD-26A5-4",
+                        "os_version":  "Windows 10.0.26100.0 build 26100.9711 24H2",
+                        "user":  "WDAGUtilityAccount"
+                    },
+    "harness":  {
+                    "name":  "sandbox-run.ps1",
+                    "sha256":  "sha256:b260c6e4c9f1b7a585c4f1421e7d2628a41352b9dd201cebcc2974e72eed7626"
+                }
+}

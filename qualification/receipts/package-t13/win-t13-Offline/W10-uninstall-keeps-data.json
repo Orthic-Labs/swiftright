@@ -1,0 +1,37 @@
+{
+    "schema":  "sr0-a.package-receipt/v2",
+    "record":  "check",
+    "product":  "SliceApp",
+    "platform":  "windows-x64",
+    "run_id":  "t13-Offline",
+    "check_id":  "W10-uninstall-keeps-data",
+    "check_name":  "Uninstall keeps rows.json (preserve flag)",
+    "implemented":  true,
+    "status":  "pass",
+    "reason":  null,
+    "started_utc":  "2026-10-19T08:33:56Z",
+    "ended_utc":  "2026-10-19T08:34:01Z",
+    "exit_status":  0,
+    "observations":  {
+                         "physical-localappdata_sha":  "sha256:048840b2dc46734ecbee9b756eeb9063001b400a3dc71bf931e81dfced917342",
+                         "preserve_flag":  "plain Remove-AppxPackage (physical-path data is not package data)",
+                         "verdict":  "PASS",
+                         "sha_before":  "sha256:048840b2dc46734ecbee9b756eeb9063001b400a3dc71bf931e81dfced917342",
+                         "msix-localcache_exists":  "False",
+                         "sha_after":  "sha256:048840b2dc46734ecbee9b756eeb9063001b400a3dc71bf931e81dfced917342",
+                         "package_removed":  "True",
+                         "physical-localappdata_exists":  "True"
+                     },
+    "artifact_ids":  {
+                         "rows_json":  "sha256:048840b2dc46734ecbee9b756eeb9063001b400a3dc71bf931e81dfced917342"
+                     },
+    "environment":  {
+                        "host":  "00C461CD-26A5-4",
+                        "os_version":  "Windows 10.0.26100.0 build 26100.9711 24H2",
+                        "user":  "WDAGUtilityAccount"
+                    },
+    "harness":  {
+                    "name":  "sandbox-run.ps1",
+                    "sha256":  "sha256:b260c6e4c9f1b7a585c4f1421e7d2628a41352b9dd201cebcc2974e72eed7626"
+                }
+}

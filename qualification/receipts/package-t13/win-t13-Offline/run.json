@@ -1,0 +1,108 @@
+{
+    "schema":  "sr0-a.package-receipt/v2",
+    "record":  "run",
+    "product":  "SliceApp",
+    "platform":  "windows-x64",
+    "run_id":  "t13-Offline",
+    "status":  "pass",
+    "expected_checks":  [
+                            "W00-environment",
+                            "W01-artifacts-bound",
+                            "W02-signer-trust",
+                            "W03-install-old",
+                            "W04-launch-offline-old",
+                            "W05-write-data",
+                            "W06-upgrade-new",
+                            "W07-corrupt-update-rejected",
+                            "W08-interrupted-update",
+                            "W09-rollback-readable",
+                            "W10-uninstall-keeps-data",
+                            "W11-legacy-data-physical-path",
+                            "W13-renderer-layout-installed",
+                            "W14-deferred-update-in-use"
+                        ],
+    "checks":  [
+                   {
+                       "check_id":  "W00-environment",
+                       "status":  "pass",
+                       "implemented":  true
+                   },
+                   {
+                       "check_id":  "W01-artifacts-bound",
+                       "status":  "pass",
+                       "implemented":  true
+                   },
+                   {
+                       "check_id":  "W02-signer-trust",
+                       "status":  "pass",
+                       "implemented":  true
+                   },
+                   {
+                       "check_id":  "W03-install-old",
+                       "status":  "pass",
+                       "implemented":  true
+                   },
+                   {
+                       "check_id":  "W04-launch-offline-old",
+                       "status":  "pass",
+                       "implemented":  true
+                   },
+                   {
+                       "check_id":  "W05-write-data",
+                       "status":  "pass",
+                       "implemented":  true
+                   },
+                   {
+                       "check_id":  "W06-upgrade-new",
+                       "status":  "pass",
+                       "implemented":  true
+                   },
+                   {
+                       "check_id":  "W07-corrupt-update-rejected",
+                       "status":  "pass",
+                       "implemented":  true
+                   },
+                   {
+                       "check_id":  "W08-interrupted-update",
+                       "status":  "pass",
+                       "implemented":  true
+                   },
+                   {
+                       "check_id":  "W09-rollback-readable",
+                       "status":  "pass",
+                       "implemented":  true
+                   },
+                   {
+                       "check_id":  "W10-uninstall-keeps-data",
+                       "status":  "pass",
+                       "implemented":  true
+                   },
+                   {
+                       "check_id":  "W11-legacy-data-physical-path",
+                       "status":  "pass",
+                       "implemented":  true
+                   },
+                   {
+                       "check_id":  "W13-renderer-layout-installed",
+                       "status":  "pass",
+                       "implemented":  true
+                   },
+                   {
+                       "check_id":  "W14-deferred-update-in-use",
+                       "status":  "pass",
+                       "implemented":  true
+                   }
+               ],
+    "started_utc":  "2026-10-19T08:27:19Z",
+    "ended_utc":  "2026-10-19T08:34:41Z",
+    "reason":  null,
+    "artifact_ids":  {
+                         "old_msix":  "sha256:5f77ccbbc0761ca4d4a4c1a760d2e070e26421412f069baa968a234b7ab203c2",
+                         "new_msix":  "sha256:478b3bebf26da74b4817f7f19a12c288e8325c12019ba1c0b917651a907e6c22",
+                         "signer_cer":  "sha256:66ccfe175cea08eabeca758839e68e66969bd94d143704afaaa1f2c7c2959459"
+                     },
+    "harness":  {
+                    "name":  "run-sandbox.ps1",
+                    "sha256":  "sha256:435421057c016529589d6d193dc775f33c414ab3531fb125dbe08a3e28d526a8"
+                }
+}

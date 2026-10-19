@@ -1,0 +1,39 @@
+{
+    "schema":  "sr0-a.package-receipt/v2",
+    "record":  "check",
+    "product":  "SliceApp",
+    "platform":  "windows-x64",
+    "run_id":  "t13-Network",
+    "check_id":  "W12-appinstaller-update",
+    "check_name":  "App Installer feed install + OnLaunch update; mismatched feed rejected",
+    "implemented":  true,
+    "status":  "pass",
+    "reason":  null,
+    "started_utc":  "2026-10-19T17:50:50Z",
+    "ended_utc":  "2026-10-19T17:52:19Z",
+    "exit_status":  null,
+    "observations":  {
+                         "negative_publisher_mismatch_rejected":  "True",
+                         "version_after_update_feed":  "0.1.1.0",
+                         "version_after_feed_install":  "0.1.0.0",
+                         "negative_error":  "FAILED: Deployment failed with HRESULT: 0x8008020C, The .appinstaller file is invalid.\r\n\r\nThe .appinstaller file is invalid.\r\n\nThe package full name returned from the AppxManifest (OrthicLabs.SliceApp_0.1.0.0_x64__j3cejpx244dcr) does not match the name generated from the AppInstaller (OrthicLabs.SliceApp_0.1.0.0_x64__dfgcfrrndvjr2). Please ensure that the package attributes specified in the .appinstaller file match the package attributes referenced in https://localhost:8443/sliceapp/SliceApp_0.1.0.0_x64.msix.\n\nNOTE: For additional information, look for [ActivityId] f5a73423-5dcc-0001-039f-a7f5cc5ddd01 in the Event Log or use the command line Get-AppPackageLog -ActivityID f5a73423-5dcc-0001-039f-a7f5cc5ddd01",
+                         "rows_sha_before":  "sha256:c6824b02e016156144ea1d19be88e78038ed9ba72a7900a683c8e389a2de505a",
+                         "feed_url":  "https://localhost:8443/sliceapp/SliceApp.appinstaller",
+                         "negative_left_nothing_installed":  "True",
+                         "install_error":  "",
+                         "verdict":  "PASS",
+                         "rows_sha_after":  "sha256:c6824b02e016156144ea1d19be88e78038ed9ba72a7900a683c8e389a2de505a"
+                     },
+    "artifact_ids":  {
+
+                     },
+    "environment":  {
+                        "host":  "00C461CD-26A5-4",
+                        "os_version":  "Windows 10.0.26100.0 build 26100.9711 24H2",
+                        "user":  "WDAGUtilityAccount"
+                    },
+    "harness":  {
+                    "name":  "sandbox-run.ps1",
+                    "sha256":  "sha256:b260c6e4c9f1b7a585c4f1421e7d2628a41352b9dd201cebcc2974e72eed7626"
+                }
+}

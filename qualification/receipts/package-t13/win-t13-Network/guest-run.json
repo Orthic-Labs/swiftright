@@ -1,0 +1,40 @@
+{
+    "schema":  "sr0-a.package-receipt/v2",
+    "record":  "run",
+    "product":  "SliceApp",
+    "platform":  "windows-x64",
+    "run_id":  "t13-Network",
+    "status":  "pass",
+    "expected_checks":  [
+                            "W00-environment",
+                            "W01-artifacts-bound",
+                            "W12-appinstaller-update"
+                        ],
+    "checks":  [
+                   {
+                       "status":  "pass",
+                       "check_id":  "W00-environment",
+                       "implemented":  true
+                   },
+                   {
+                       "status":  "pass",
+                       "check_id":  "W01-artifacts-bound",
+                       "implemented":  true
+                   },
+                   {
+                       "status":  "pass",
+                       "check_id":  "W12-appinstaller-update",
+                       "implemented":  true
+                   }
+               ],
+    "started_utc":  "2026-10-19T17:50:45Z",
+    "ended_utc":  "2026-10-19T17:52:19Z",
+    "reason":  null,
+    "artifact_ids":  {
+
+                     },
+    "harness":  {
+                    "name":  "sandbox-run.ps1",
+                    "sha256":  "sha256:b260c6e4c9f1b7a585c4f1421e7d2628a41352b9dd201cebcc2974e72eed7626"
+                }
+}
