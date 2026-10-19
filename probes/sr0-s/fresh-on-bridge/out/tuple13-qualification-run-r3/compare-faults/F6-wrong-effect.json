@@ -1,0 +1,802 @@
+{
+  "conditions": {
+    "reduceMotion.effective": "false",
+    "reduceMotion.variant": "false"
+  },
+  "declaredOrder": [
+    {
+      "after": "animation-complete:animation/A",
+      "before": "animation-start:animation/A"
+    },
+    {
+      "after": "animation-complete:animation/B",
+      "before": "animation-start:animation/B"
+    }
+  ],
+  "fixtureId": "F6",
+  "observations": [
+    {
+      "axNodes": [
+        {
+          "actions": [],
+          "id": "window",
+          "order": 0,
+          "role": "window"
+        },
+        {
+          "actions": [
+            "activate"
+          ],
+          "id": "toolbar/insert",
+          "label": "Insert above",
+          "order": 0,
+          "parent": "window",
+          "role": "button"
+        },
+        {
+          "actions": [],
+          "id": "anon:window#1",
+          "order": 1,
+          "parent": "window",
+          "role": "list"
+        },
+        {
+          "actions": [],
+          "id": "anon:anon:window#1#0",
+          "order": 0,
+          "parent": "anon:window#1",
+          "role": "list-item"
+        },
+        {
+          "actions": [
+            "set-value"
+          ],
+          "id": "row/F0000006-0000-4000-8000-000000000201/field",
+          "order": 0,
+          "parent": "anon:anon:window#1#0",
+          "role": "text-field",
+          "value": "Anim B"
+        },
+        {
+          "actions": [],
+          "id": "row/F0000006-0000-4000-8000-000000000201/local",
+          "label": "local 0",
+          "order": 1,
+          "parent": "anon:anon:window#1#0",
+          "role": "static-text"
+        },
+        {
+          "actions": [],
+          "id": "anon:anon:window#1#1",
+          "order": 1,
+          "parent": "anon:window#1",
+          "role": "list-item"
+        },
+        {
+          "actions": [
+            "set-value"
+          ],
+          "id": "row/F0000006-0000-4000-8000-000000000200/field",
+          "order": 0,
+          "parent": "anon:anon:window#1#1",
+          "role": "text-field",
+          "value": "Anim A"
+        },
+        {
+          "actions": [],
+          "id": "row/F0000006-0000-4000-8000-000000000200/local",
+          "label": "local 0",
+          "order": 1,
+          "parent": "anon:anon:window#1#1",
+          "role": "static-text"
+        },
+        {
+          "actions": [],
+          "id": "anon:anon:window#1#2",
+          "order": 2,
+          "parent": "anon:window#1",
+          "role": "list-item"
+        },
+        {
+          "actions": [
+            "set-value"
+          ],
+          "id": "row/F0000006-0000-4000-8000-000000000001/field",
+          "order": 0,
+          "parent": "anon:anon:window#1#2",
+          "role": "text-field",
+          "value": "Row 1"
+        },
+        {
+          "actions": [],
+          "id": "row/F0000006-0000-4000-8000-000000000001/local",
+          "label": "local 0",
+          "order": 1,
+          "parent": "anon:anon:window#1#2",
+          "role": "static-text"
+        },
+        {
+          "actions": [],
+          "id": "anon:anon:window#1#3",
+          "order": 3,
+          "parent": "anon:window#1",
+          "role": "list-item"
+        },
+        {
+          "actions": [
+            "set-value"
+          ],
+          "id": "row/F0000006-0000-4000-8000-000000000002/field",
+          "order": 0,
+          "parent": "anon:anon:window#1#3",
+          "role": "text-field",
+          "value": "Row 2"
+        },
+        {
+          "actions": [],
+          "id": "row/F0000006-0000-4000-8000-000000000002/local",
+          "label": "local 0",
+          "order": 1,
+          "parent": "anon:anon:window#1#3",
+          "role": "static-text"
+        },
+        {
+          "actions": [],
+          "id": "anon:anon:window#1#4",
+          "order": 4,
+          "parent": "anon:window#1",
+          "role": "list-item"
+        },
+        {
+          "actions": [
+            "set-value"
+          ],
+          "id": "row/F0000006-0000-4000-8000-000000000003/field",
+          "order": 0,
+          "parent": "anon:anon:window#1#4",
+          "role": "text-field",
+          "value": "Row 3"
+        },
+        {
+          "actions": [],
+          "id": "row/F0000006-0000-4000-8000-000000000003/local",
+          "label": "local 0",
+          "order": 1,
+          "parent": "anon:anon:window#1#4",
+          "role": "static-text"
+        },
+        {
+          "actions": [],
+          "id": "anon:anon:window#1#5",
+          "order": 5,
+          "parent": "anon:window#1",
+          "role": "list-item"
+        },
+        {
+          "actions": [
+            "set-value"
+          ],
+          "id": "row/F0000006-0000-4000-8000-000000000004/field",
+          "order": 0,
+          "parent": "anon:anon:window#1#5",
+          "role": "text-field",
+          "value": "Row 4"
+        },
+        {
+          "actions": [],
+          "id": "row/F0000006-0000-4000-8000-000000000004/local",
+          "label": "local 0",
+          "order": 1,
+          "parent": "anon:anon:window#1#5",
+          "role": "static-text"
+        },
+        {
+          "actions": [],
+          "id": "anon:anon:window#1#6",
+          "order": 6,
+          "parent": "anon:window#1",
+          "role": "list-item"
+        },
+        {
+          "actions": [
+            "set-value"
+          ],
+          "id": "row/F0000006-0000-4000-8000-000000000005/field",
+          "order": 0,
+          "parent": "anon:anon:window#1#6",
+          "role": "text-field",
+          "value": "Row 5"
+        },
+        {
+          "actions": [],
+          "id": "row/F0000006-0000-4000-8000-000000000005/local",
+          "label": "local 0",
+          "order": 1,
+          "parent": "anon:anon:window#1#6",
+          "role": "static-text"
+        },
+        {
+          "actions": [],
+          "id": "anon:anon:window#1#7",
+          "order": 7,
+          "parent": "anon:window#1",
+          "role": "list-item"
+        },
+        {
+          "actions": [
+            "set-value"
+          ],
+          "id": "row/F0000006-0000-4000-8000-000000000006/field",
+          "order": 0,
+          "parent": "anon:anon:window#1#7",
+          "role": "text-field",
+          "value": "Row 6"
+        },
+        {
+          "actions": [],
+          "id": "row/F0000006-0000-4000-8000-000000000006/local",
+          "label": "local 0",
+          "order": 1,
+          "parent": "anon:anon:window#1#7",
+          "role": "static-text"
+        },
+        {
+          "actions": [],
+          "id": "anon:anon:window#1#8",
+          "order": 8,
+          "parent": "anon:window#1",
+          "role": "list-item"
+        },
+        {
+          "actions": [
+            "set-value"
+          ],
+          "id": "row/F0000006-0000-4000-8000-000000000007/field",
+          "order": 0,
+          "parent": "anon:anon:window#1#8",
+          "role": "text-field",
+          "value": "Row 7"
+        },
+        {
+          "actions": [],
+          "id": "row/F0000006-0000-4000-8000-000000000007/local",
+          "label": "local 0",
+          "order": 1,
+          "parent": "anon:anon:window#1#8",
+          "role": "static-text"
+        },
+        {
+          "actions": [],
+          "id": "anon:anon:window#1#9",
+          "order": 9,
+          "parent": "anon:window#1",
+          "role": "list-item"
+        },
+        {
+          "actions": [
+            "set-value"
+          ],
+          "id": "row/F0000006-0000-4000-8000-000000000008/field",
+          "order": 0,
+          "parent": "anon:anon:window#1#9",
+          "role": "text-field",
+          "value": "Row 8"
+        },
+        {
+          "actions": [],
+          "id": "row/F0000006-0000-4000-8000-000000000008/local",
+          "label": "local 0",
+          "order": 1,
+          "parent": "anon:anon:window#1#9",
+          "role": "static-text"
+        },
+        {
+          "actions": [],
+          "id": "anon:anon:window#1#10",
+          "order": 10,
+          "parent": "anon:window#1",
+          "role": "list-item"
+        },
+        {
+          "actions": [
+            "set-value"
+          ],
+          "id": "row/F0000006-0000-4000-8000-000000000009/field",
+          "order": 0,
+          "parent": "anon:anon:window#1#10",
+          "role": "text-field",
+          "value": "Row 9"
+        },
+        {
+          "actions": [],
+          "id": "row/F0000006-0000-4000-8000-000000000009/local",
+          "label": "local 0",
+          "order": 1,
+          "parent": "anon:anon:window#1#10",
+          "role": "static-text"
+        },
+        {
+          "actions": [],
+          "id": "anon:anon:window#1#11",
+          "order": 11,
+          "parent": "anon:window#1",
+          "role": "list-item"
+        },
+        {
+          "actions": [
+            "set-value"
+          ],
+          "id": "row/F0000006-0000-4000-8000-000000000010/field",
+          "order": 0,
+          "parent": "anon:anon:window#1#11",
+          "role": "text-field",
+          "value": "Row 10"
+        },
+        {
+          "actions": [],
+          "id": "row/F0000006-0000-4000-8000-000000000010/local",
+          "label": "local 0",
+          "order": 1,
+          "parent": "anon:anon:window#1#11",
+          "role": "static-text"
+        }
+      ],
+      "effects": [
+        "animation-policy enabled=true",
+        "insert-row index=0 row=F0000006-0000-4000-8000-000000000200",
+        "insert-row index=0 row=F0000006-0000-4000-8000-000000000201 ~fault"
+      ],
+      "lifecycle": [
+        {
+          "kind": "appear",
+          "node": "window"
+        },
+        {
+          "kind": "appear",
+          "node": "row/F0000006-0000-4000-8000-000000000001"
+        },
+        {
+          "kind": "appear",
+          "node": "row/F0000006-0000-4000-8000-000000000002"
+        },
+        {
+          "kind": "appear",
+          "node": "row/F0000006-0000-4000-8000-000000000003"
+        },
+        {
+          "kind": "appear",
+          "node": "row/F0000006-0000-4000-8000-000000000004"
+        },
+        {
+          "kind": "appear",
+          "node": "row/F0000006-0000-4000-8000-000000000005"
+        },
+        {
+          "kind": "appear",
+          "node": "row/F0000006-0000-4000-8000-000000000006"
+        },
+        {
+          "kind": "appear",
+          "node": "row/F0000006-0000-4000-8000-000000000007"
+        },
+        {
+          "kind": "appear",
+          "node": "row/F0000006-0000-4000-8000-000000000008"
+        },
+        {
+          "kind": "appear",
+          "node": "row/F0000006-0000-4000-8000-000000000009"
+        },
+        {
+          "kind": "appear",
+          "node": "row/F0000006-0000-4000-8000-000000000010"
+        },
+        {
+          "kind": "animation-start",
+          "node": "animation/A"
+        },
+        {
+          "kind": "animation-start",
+          "node": "animation/B"
+        },
+        {
+          "kind": "appear",
+          "node": "row/F0000006-0000-4000-8000-000000000201"
+        },
+        {
+          "kind": "appear",
+          "node": "row/F0000006-0000-4000-8000-000000000200"
+        },
+        {
+          "kind": "animation-complete",
+          "node": "animation/A"
+        },
+        {
+          "kind": "animation-complete",
+          "node": "animation/B"
+        }
+      ],
+      "model": {
+        "row/F0000006-0000-4000-8000-000000000001": "Row 1",
+        "row/F0000006-0000-4000-8000-000000000002": "Row 2",
+        "row/F0000006-0000-4000-8000-000000000003": "Row 3",
+        "row/F0000006-0000-4000-8000-000000000004": "Row 4",
+        "row/F0000006-0000-4000-8000-000000000005": "Row 5",
+        "row/F0000006-0000-4000-8000-000000000006": "Row 6",
+        "row/F0000006-0000-4000-8000-000000000007": "Row 7",
+        "row/F0000006-0000-4000-8000-000000000008": "Row 8",
+        "row/F0000006-0000-4000-8000-000000000009": "Row 9",
+        "row/F0000006-0000-4000-8000-000000000010": "Row 10",
+        "row/F0000006-0000-4000-8000-000000000200": "Anim A",
+        "row/F0000006-0000-4000-8000-000000000201": "Anim B"
+      },
+      "stepId": "initial"
+    },
+    {
+      "axNodes": [
+        {
+          "actions": [],
+          "id": "window",
+          "order": 0,
+          "role": "window"
+        },
+        {
+          "actions": [
+            "activate"
+          ],
+          "id": "toolbar/insert",
+          "label": "Insert above",
+          "order": 0,
+          "parent": "window",
+          "role": "button"
+        },
+        {
+          "actions": [],
+          "id": "anon:window#1",
+          "order": 1,
+          "parent": "window",
+          "role": "list"
+        },
+        {
+          "actions": [],
+          "id": "anon:anon:window#1#0",
+          "order": 0,
+          "parent": "anon:window#1",
+          "role": "list-item"
+        },
+        {
+          "actions": [
+            "set-value"
+          ],
+          "id": "row/F0000006-0000-4000-8000-000000000201/field",
+          "order": 0,
+          "parent": "anon:anon:window#1#0",
+          "role": "text-field",
+          "value": "Anim B"
+        },
+        {
+          "actions": [],
+          "id": "row/F0000006-0000-4000-8000-000000000201/local",
+          "label": "local 0",
+          "order": 1,
+          "parent": "anon:anon:window#1#0",
+          "role": "static-text"
+        },
+        {
+          "actions": [],
+          "id": "anon:anon:window#1#1",
+          "order": 1,
+          "parent": "anon:window#1",
+          "role": "list-item"
+        },
+        {
+          "actions": [
+            "set-value"
+          ],
+          "id": "row/F0000006-0000-4000-8000-000000000200/field",
+          "order": 0,
+          "parent": "anon:anon:window#1#1",
+          "role": "text-field",
+          "value": "Anim A"
+        },
+        {
+          "actions": [],
+          "id": "row/F0000006-0000-4000-8000-000000000200/local",
+          "label": "local 0",
+          "order": 1,
+          "parent": "anon:anon:window#1#1",
+          "role": "static-text"
+        },
+        {
+          "actions": [],
+          "id": "anon:anon:window#1#2",
+          "order": 2,
+          "parent": "anon:window#1",
+          "role": "list-item"
+        },
+        {
+          "actions": [
+            "set-value"
+          ],
+          "id": "row/F0000006-0000-4000-8000-000000000001/field",
+          "order": 0,
+          "parent": "anon:anon:window#1#2",
+          "role": "text-field",
+          "value": "Row 1"
+        },
+        {
+          "actions": [],
+          "id": "row/F0000006-0000-4000-8000-000000000001/local",
+          "label": "local 0",
+          "order": 1,
+          "parent": "anon:anon:window#1#2",
+          "role": "static-text"
+        },
+        {
+          "actions": [],
+          "id": "anon:anon:window#1#3",
+          "order": 3,
+          "parent": "anon:window#1",
+          "role": "list-item"
+        },
+        {
+          "actions": [
+            "set-value"
+          ],
+          "id": "row/F0000006-0000-4000-8000-000000000002/field",
+          "order": 0,
+          "parent": "anon:anon:window#1#3",
+          "role": "text-field",
+          "value": "Row 2"
+        },
+        {
+          "actions": [],
+          "id": "row/F0000006-0000-4000-8000-000000000002/local",
+          "label": "local 0",
+          "order": 1,
+          "parent": "anon:anon:window#1#3",
+          "role": "static-text"
+        },
+        {
+          "actions": [],
+          "id": "anon:anon:window#1#4",
+          "order": 4,
+          "parent": "anon:window#1",
+          "role": "list-item"
+        },
+        {
+          "actions": [
+            "set-value"
+          ],
+          "id": "row/F0000006-0000-4000-8000-000000000003/field",
+          "order": 0,
+          "parent": "anon:anon:window#1#4",
+          "role": "text-field",
+          "value": "Row 3"
+        },
+        {
+          "actions": [],
+          "id": "row/F0000006-0000-4000-8000-000000000003/local",
+          "label": "local 0",
+          "order": 1,
+          "parent": "anon:anon:window#1#4",
+          "role": "static-text"
+        },
+        {
+          "actions": [],
+          "id": "anon:anon:window#1#5",
+          "order": 5,
+          "parent": "anon:window#1",
+          "role": "list-item"
+        },
+        {
+          "actions": [
+            "set-value"
+          ],
+          "id": "row/F0000006-0000-4000-8000-000000000004/field",
+          "order": 0,
+          "parent": "anon:anon:window#1#5",
+          "role": "text-field",
+          "value": "Row 4"
+        },
+        {
+          "actions": [],
+          "id": "row/F0000006-0000-4000-8000-000000000004/local",
+          "label": "local 0",
+          "order": 1,
+          "parent": "anon:anon:window#1#5",
+          "role": "static-text"
+        },
+        {
+          "actions": [],
+          "id": "anon:anon:window#1#6",
+          "order": 6,
+          "parent": "anon:window#1",
+          "role": "list-item"
+        },
+        {
+          "actions": [
+            "set-value"
+          ],
+          "id": "row/F0000006-0000-4000-8000-000000000005/field",
+          "order": 0,
+          "parent": "anon:anon:window#1#6",
+          "role": "text-field",
+          "value": "Row 5"
+        },
+        {
+          "actions": [],
+          "id": "row/F0000006-0000-4000-8000-000000000005/local",
+          "label": "local 0",
+          "order": 1,
+          "parent": "anon:anon:window#1#6",
+          "role": "static-text"
+        },
+        {
+          "actions": [],
+          "id": "anon:anon:window#1#7",
+          "order": 7,
+          "parent": "anon:window#1",
+          "role": "list-item"
+        },
+        {
+          "actions": [
+            "set-value"
+          ],
+          "id": "row/F0000006-0000-4000-8000-000000000006/field",
+          "order": 0,
+          "parent": "anon:anon:window#1#7",
+          "role": "text-field",
+          "value": "Row 6"
+        },
+        {
+          "actions": [],
+          "id": "row/F0000006-0000-4000-8000-000000000006/local",
+          "label": "local 0",
+          "order": 1,
+          "parent": "anon:anon:window#1#7",
+          "role": "static-text"
+        },
+        {
+          "actions": [],
+          "id": "anon:anon:window#1#8",
+          "order": 8,
+          "parent": "anon:window#1",
+          "role": "list-item"
+        },
+        {
+          "actions": [
+            "set-value"
+          ],
+          "id": "row/F0000006-0000-4000-8000-000000000007/field",
+          "order": 0,
+          "parent": "anon:anon:window#1#8",
+          "role": "text-field",
+          "value": "Row 7"
+        },
+        {
+          "actions": [],
+          "id": "row/F0000006-0000-4000-8000-000000000007/local",
+          "label": "local 0",
+          "order": 1,
+          "parent": "anon:anon:window#1#8",
+          "role": "static-text"
+        },
+        {
+          "actions": [],
+          "id": "anon:anon:window#1#9",
+          "order": 9,
+          "parent": "anon:window#1",
+          "role": "list-item"
+        },
+        {
+          "actions": [
+            "set-value"
+          ],
+          "id": "row/F0000006-0000-4000-8000-000000000008/field",
+          "order": 0,
+          "parent": "anon:anon:window#1#9",
+          "role": "text-field",
+          "value": "Row 8"
+        },
+        {
+          "actions": [],
+          "id": "row/F0000006-0000-4000-8000-000000000008/local",
+          "label": "local 0",
+          "order": 1,
+          "parent": "anon:anon:window#1#9",
+          "role": "static-text"
+        },
+        {
+          "actions": [],
+          "id": "anon:anon:window#1#10",
+          "order": 10,
+          "parent": "anon:window#1",
+          "role": "list-item"
+        },
+        {
+          "actions": [
+            "set-value"
+          ],
+          "id": "row/F0000006-0000-4000-8000-000000000009/field",
+          "order": 0,
+          "parent": "anon:anon:window#1#10",
+          "role": "text-field",
+          "value": "Row 9"
+        },
+        {
+          "actions": [],
+          "id": "row/F0000006-0000-4000-8000-000000000009/local",
+          "label": "local 0",
+          "order": 1,
+          "parent": "anon:anon:window#1#10",
+          "role": "static-text"
+        },
+        {
+          "actions": [],
+          "id": "anon:anon:window#1#11",
+          "order": 11,
+          "parent": "anon:window#1",
+          "role": "list-item"
+        },
+        {
+          "actions": [
+            "set-value"
+          ],
+          "id": "row/F0000006-0000-4000-8000-000000000010/field",
+          "order": 0,
+          "parent": "anon:anon:window#1#11",
+          "role": "text-field",
+          "value": "Row 10"
+        },
+        {
+          "actions": [],
+          "id": "row/F0000006-0000-4000-8000-000000000010/local",
+          "label": "local 0",
+          "order": 1,
+          "parent": "anon:anon:window#1#11",
+          "role": "static-text"
+        }
+      ],
+      "effects": [],
+      "lifecycle": [],
+      "model": {
+        "row/F0000006-0000-4000-8000-000000000001": "Row 1",
+        "row/F0000006-0000-4000-8000-000000000002": "Row 2",
+        "row/F0000006-0000-4000-8000-000000000003": "Row 3",
+        "row/F0000006-0000-4000-8000-000000000004": "Row 4",
+        "row/F0000006-0000-4000-8000-000000000005": "Row 5",
+        "row/F0000006-0000-4000-8000-000000000006": "Row 6",
+        "row/F0000006-0000-4000-8000-000000000007": "Row 7",
+        "row/F0000006-0000-4000-8000-000000000008": "Row 8",
+        "row/F0000006-0000-4000-8000-000000000009": "Row 9",
+        "row/F0000006-0000-4000-8000-000000000010": "Row 10",
+        "row/F0000006-0000-4000-8000-000000000200": "Anim A",
+        "row/F0000006-0000-4000-8000-000000000201": "Anim B"
+      },
+      "stepId": "settled"
+    }
+  ],
+  "platform": {
+    "arch": "x64",
+    "os": "windows",
+    "osBuild": "10.0.26100",
+    "toolchain": "Swift 6.4.0 (swift-6.4-RELEASE)"
+  },
+  "schemaVersion": "sr0-o.trace/v0",
+  "sourceHash": "sha256:f47a0e505486fd6278567dbff4cfb7feefc3e471f284f79837fe1c5eeddc42af",
+  "steps": [
+    {
+      "id": "initial",
+      "logicalAction": "launch; model bursts two animated inserts; snapshot after the animation window",
+      "nativeMapping": "UIA tree walk (RawView) from window root",
+      "timestamp": "mono_ns 2448172218000"
+    },
+    {
+      "id": "settled",
+      "logicalAction": "idle snapshot",
+      "nativeMapping": "UIA tree walk (RawView) from window root",
+      "timestamp": "mono_ns 2451324614800"
+    }
+  ]
+}

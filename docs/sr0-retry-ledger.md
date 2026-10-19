@@ -119,3 +119,9 @@ Recorded from the rows above (sources: the "Ledger, ABI 0.6 tuple" and "Ledger, 
 | **S** fresh runtime parity (tuples 09 to 11) | 5 repair commits (`3ffcf950`, `829f70cf`, `be9a9220`, `8e47b89b`, `2cfb36ef`) plus the SliceApp host `bece2a82` | 1 | cap exceeded again (S was already EXCEEDED) | `3ffcf950`, `829f70cf`, `bece2a82`, `be9a9220`, `8e47b89b`, `2cfb36ef` | No |
 
 Consequences under the "Retry budget going forward (final tuple)" rule: any further failing attempt on tuple 11 is a stop until Adrian resumes or changes scope. Adrian's decision on these rows and on W08 (close plan R11) is still pending (`docs/sr0-status.md`, PENDING items 3 and 4; `docs/sr0-findings.md` U4). W5 is no longer a decision: Adrian dropped the zero-missed-vblank criterion on 2026-10-10 (`docs/sr0-findings.md` section 11).
+
+## 19 Oct 2026, tuple 13 reruns (disclosed)
+- Full16 x20: F6-reduced r3 (driver trace missing `WindowMetrics phase=startup`) and r5 (coordinator `quiescent=False`, stale lock) failed; F6-reduced x20 rerun 20/20 merged (`probes/sr0-s/fresh-on-bridge/out/tuple13-matrix-v1/`).
+- Windows package Network: first attempt died with no receipts (Dell `runs\t13-Network-r1-died`); rerun 3/3.
+- Combined run r2: mac-oracle F5 Mac-reference resize nondeterminism (1 of 20, extra transient layout states); F5 x20 rerun 22/22; combined run r3 clean (all stages, exit 0).
+- Tuple 12 R10: four 3-run sets (two skewed by concurrent Dell rustc) and diagnostics; the quiet-host set failed the leak flag and decided tuple 13 (no rerun-until-clean).

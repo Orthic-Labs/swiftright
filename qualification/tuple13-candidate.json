@@ -2,8 +2,8 @@
   "schema": "sr0-a.tuple/v1",
   "name": "tuple13-candidate",
   "recorded": "2026-10-19",
-  "status": "CANDIDATE_PACKAGES_PENDING",
-  "note": "Tuple 13 = tuple 12 with the Windows renderer changed to 1aa8ad22 (TextCache byte budget, #34). The tuple 12 SliceApp MSIX packages ship renderer 7578CD5D (renderer-pin.json at their packaging commits 31dda11f / e8dd1b57; W13 receipt pin_sha256_unsigned=7578CD5D), so they are NOT valid tuple 13 members: MSIX 0.1.0/0.1.1 are being rebuilt on packaging commits 938fd53b / 3fbc89cc (pin 1aa8ad22, CI runs 39219882167 / 39219885549) and the Windows package stage reruns. FreshOnBridge 87b8cb27, BridgeSmoke 064e5d42 and the DMGs (no Windows renderer) stay. Correction 19 Oct after Oracle review: an earlier note wrongly said the MSIX ships E280F4A9.",
+  "status": "QUALIFIED",
+  "note": "Tuple 13 = tuple 12 with the Windows renderer changed to 1aa8ad22 (TextCache byte budget, #34). The tuple 12 MSIX shipped 7578CD5D, so MSIX 0.1.0/0.1.1 were rebuilt on packaging commits c3e1aa3d / a38f2027 (tuple 12 packaging trees 31dda11f / e8dd1b57 + renderer pin 1aa8ad22, authenticodeSha256 6AD5A45C), release-candidate dry runs 39220477732 / 39220481624 (signed, installed-qualification passed). FreshOnBridge 87b8cb27, BridgeSmoke 064e5d42 and the DMGs (byte-identical to tuple 12, no Windows renderer) are unchanged.",
   "source_commit": "0e201571e4320a3b6ccce14313fd2ad67e523904",
   "renderer_sha256": "1aa8ad22171c07a61e24786e074185e8378c67089ea457a9577e5104dd4c1f07",
   "release": "0.2.151",
@@ -60,10 +60,10 @@
     "timeout": 41
   },
   "qualification": {
-    "run": "probes/sr0-s/fresh-on-bridge/out/tuple13-qualification-run/events.jsonl",
-    "stages": "mac-oracle 337, compare 85, workload, native, smoke, package 6: all pass, exit 0",
+    "run": "probes/sr0-s/fresh-on-bridge/out/tuple13-qualification-run-r3/events.jsonl (19 Oct): mac-oracle 337, compare 85, workload, native, smoke, package 6 all pass, exit 0",
     "windows_replay": "Full16 x20 320/320 (probes/sr0-s/fresh-on-bridge/out/tuple13-matrix-v1/full16-r1-report.json); cross x20 320/320 vs Mac (tuple13-cross20-sbx1)",
-    "date": "2026-10-19",
-    "status": "Oracle review 19 Oct: FAIL on the package members (old renderer); every renderer-bound stage binds 1aa8ad22"
+    "package": "Windows qualification/receipts/package-t13/ (Offline 14/14, Network 3/3; W13 installed pin 1AA8AD22 checked on the 0.1.0 install); Mac qualification/receipts/package-t12/mac-t12-* (DMG hashes 14d5874d / cc8bab86 = tuple 13 members)",
+    "history": "r1 (tuple13-qualification-run/) used the old-renderer MSIX: superseded. r2 (tuple13-qualification-run-r2/) failed once on mac-oracle F5 (Mac reference resize nondeterminism, 1 of 20); F5 x20 rerun 22/22. Oracle 19 Oct: FAIL (packages), then PASS-WITH-CAVEATS after the rebuild.",
+    "date": "2026-10-19"
   }
 }

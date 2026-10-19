@@ -1,0 +1,34 @@
+{
+  "allowed" : [
+    {
+      "actual" : "UIA tree walk (RawView) from window root",
+      "allowance" : "N1",
+      "expected" : "fixture stdin driver: remove-row; fixture stdin driver: release; fixture stdin driver: release",
+      "path" : "steps.nativeMapping",
+      "status" : "contract",
+      "step" : "initial"
+    },
+    {
+      "actual" : "UIA tree walk (RawView) from window root",
+      "allowance" : "N1",
+      "expected" : "AX tree walk from application root",
+      "path" : "steps.nativeMapping",
+      "status" : "contract",
+      "step" : "settled"
+    }
+  ],
+  "diffs" : [
+    {
+      "actual" : "launch; model removes row 2, engine releases loads; snapshot ~fault",
+      "expected" : "launch; model removes row 2, engine releases loads; snapshot",
+      "fixture" : "F4",
+      "path" : "steps.logicalAction",
+      "step" : "initial"
+    }
+  ],
+  "fixture" : "F4",
+  "notes" : [
+    "platform differs (not compared): accepted PlatformTuple(os: \"macos\", osBuild: \"27.0.1 (26A434)\", arch: \"arm64\", toolchain: \"Swift 6.4\") candidate PlatformTuple(os: \"windows\", osBuild: \"10.0.26100\", arch: \"x64\", toolchain: \"Swift 6.4.0 (swift-6.4-RELEASE)\")"
+  ],
+  "passed" : false
+}

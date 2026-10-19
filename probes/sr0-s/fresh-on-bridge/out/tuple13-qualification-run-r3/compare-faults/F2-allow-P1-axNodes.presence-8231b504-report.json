@@ -1,0 +1,83 @@
+{
+  "allowed" : [
+    {
+      "actual" : "UIA tree walk (RawView) from window root",
+      "allowance" : "N1",
+      "expected" : "AX tree walk from application root",
+      "path" : "steps.nativeMapping",
+      "status" : "contract",
+      "step" : "initial"
+    },
+    {
+      "actual" : "UIA SetFocus [id=row\/F0000002-0000-4000-8000-000000000003\/field]",
+      "allowance" : "N1",
+      "expected" : "AXFocused=true on row\/F0000002-0000-4000-8000-000000000003\/field; AXSelectedTextRange=end",
+      "path" : "steps.nativeMapping",
+      "status" : "contract",
+      "step" : "focus_row3"
+    },
+    {
+      "actual" : "type '-x' (SendInput VK keys, or WM_CHAR posted to the window when SR0O_KEY_DELIVERY=targeted)",
+      "allowance" : "N1",
+      "expected" : "CGEvent.postToPid(fixture) keyDown\/keyUp per UTF-16 unit '-x'; fixture stdin driver: move",
+      "path" : "steps.nativeMapping",
+      "status" : "contract",
+      "step" : "type_dash_x_then_move"
+    },
+    {
+      "actual" : "Row 2",
+      "allowance" : "P1",
+      "expected" : "<absent>",
+      "path" : "model[row\/F0000002-0000-4000-8000-000000000002]",
+      "status" : "oracle-quirk",
+      "step" : "type_dash_x_then_move"
+    },
+    {
+      "actual" : "0 duplicates",
+      "allowance" : "P1",
+      "expected" : "2 duplicates",
+      "path" : "axNodes.duplicateId",
+      "status" : "oracle-quirk",
+      "step" : "type_dash_x_then_move"
+    },
+    {
+      "actual" : "role=text-field",
+      "allowance" : "P1",
+      "expected" : "<absent>",
+      "path" : "axNodes.presence[row\/F0000002-0000-4000-8000-000000000002\/field]",
+      "status" : "oracle-quirk",
+      "step" : "type_dash_x_then_move"
+    },
+    {
+      "actual" : "anon:anon:window#1#7",
+      "allowance" : "P1",
+      "expected" : "anon:anon:window#1#1",
+      "path" : "axNodes.parent[row\/F0000002-0000-4000-8000-000000000003\/field]",
+      "status" : "oracle-quirk",
+      "step" : "type_dash_x_then_move"
+    },
+    {
+      "actual" : "anon:anon:window#1#7",
+      "allowance" : "P1",
+      "expected" : "anon:anon:window#1#1",
+      "path" : "axNodes.parent[row\/F0000002-0000-4000-8000-000000000003\/local]",
+      "status" : "oracle-quirk",
+      "step" : "type_dash_x_then_move"
+    }
+  ],
+  "diffs" : [
+    {
+      "actual" : "role=fault-role",
+      "expected" : "<absent>",
+      "fixture" : "F2",
+      "path" : "axNodes.presence[row\/F0000002-0000-4000-8000-000000000002\/local]",
+      "step" : "type_dash_x_then_move"
+    }
+  ],
+  "fixture" : "F2",
+  "notes" : [
+    "platform differs (not compared): accepted PlatformTuple(os: \"macos\", osBuild: \"27.0.1 (26A434)\", arch: \"arm64\", toolchain: \"Swift 6.4\") candidate PlatformTuple(os: \"windows\", osBuild: \"10.0.26100\", arch: \"x64\", toolchain: \"Swift 6.4.0 (swift-6.4-RELEASE)\")",
+    "allowance P1 (axNodes.presence) was not exercised"
+  ],
+  "passed" : false
+}
