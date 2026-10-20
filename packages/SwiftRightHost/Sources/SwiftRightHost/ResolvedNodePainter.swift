@@ -416,25 +416,32 @@ public final class ResolvedNodePainter {
             }
             if !Self.isShapeKind(node.kind), emission.primitives.contains(where: { if case .image = $0 { return true } else { return false } }) { brightnessImageLimitationCount += 1 }
         }
-        if !clipMasks.isEmpty {
+        if !clipMasks.isEmpty || scale != baseScale {
             var out: [Primitive] = []
             for (index, primitive) in emission.primitives.enumerated() {
-                guard case .rect(let r, let color, let radius, let borderColor, let borderWidth) = primitive, !clipMasks.allSatisfy({ $0.covers(r) }) else {
+                func offGrid(_ r: Rect) -> Bool { scale != baseScale && [r.x, r.y, r.w, r.h].contains { $0 != $0.rounded() } }
+                guard case .rect(let r, let color, let radius, let borderColor, let borderWidth) = primitive, !clipMasks.allSatisfy({ $0.covers(r) }) || offGrid(r) else {
                     if case .text = primitive { clipShapeLimitationCount += 1 }
                     if case .image = primitive, !Self.isShapeKind(node.kind) { clipShapeLimitationCount += 1 }
                     out.append(primitive)
                     continue
                 }
-                // A solid rect across the clip's edge: drawn by the path raster and masked (its border, inside the rect as the renderer draws it, as a centred stroke inset by half).
+                // A solid rect across a clip's edge, or off the pixel grid under a scale: drawn by the path raster (unsnapped when off-grid) and masked (its border, inside the rect as the renderer draws it, as a centred stroke inset by half).
                 let corner = RoundedCornerStyle.circular
                 let rounded = ShapeGeometry.roundedRectangle(cornerRadius: CGFloat(radius / scale), style: corner)
                 var images: [(ContinuousRGBAImage, Rect)] = []
-                if color & 255 != 0, let fill = try PathShapeRaster.render(PathShapeRequest(bounds: r, scale: scale, geometry: rounded, fillRGBA: color, strokeRGBA: nil)) {
+                var fillRequest = PathShapeRequest(bounds: r, scale: scale, geometry: rounded, fillRGBA: color, strokeRGBA: nil)
+                fillRequest.snapsToPixels = !offGrid(r)
+                if color & 255 != 0, let fill = try PathShapeRaster.render(fillRequest) {
                     images.append((fill.image, fill.placement))
                 }
                 if borderWidth > 0, borderColor & 255 != 0,
-                   let ring = try PathShapeRaster.render(PathShapeRequest(bounds: r, scale: scale, geometry: .inset(rounded, by: CGFloat(borderWidth / scale / 2)), fillRGBA: nil, strokeRGBA: borderColor,
-                                                                          strokeStyle: StrokeStyle(lineWidth: CGFloat(borderWidth / scale)))) {
+                   let ring = try PathShapeRaster.render({ () -> PathShapeRequest in
+                       var q = PathShapeRequest(bounds: r, scale: scale, geometry: .inset(rounded, by: CGFloat(borderWidth / scale / 2)), fillRGBA: nil, strokeRGBA: borderColor,
+                                                strokeStyle: StrokeStyle(lineWidth: CGFloat(borderWidth / scale)))
+                       q.snapsToPixels = !offGrid(r)
+                       return q
+                   }()) {
                     images.append((ring.image, ring.placement))
                 }
                 for (k, (image, placement)) in images.enumerated() {
@@ -503,7 +510,7 @@ public final class ResolvedNodePainter {
             return emission
 
         case "Rectangle", "RoundedRectangle", "Circle", "Capsule", "Path":
-            switch try ShapePainter.plan(node, bounds: bounds, scale: scale, rotations: rotations) {
+            switch try ShapePainter.plan(node, bounds: bounds, scale: scale, rotations: rotations, underScaleEffect: scale != baseScale) {
             case .primitive(let primitive):
                 return NodeEmission(primitives: [primitive], semantic: nil, flags: [], structural: false)
             case .path(var request):

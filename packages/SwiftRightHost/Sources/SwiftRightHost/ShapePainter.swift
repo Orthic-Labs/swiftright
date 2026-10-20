@@ -31,6 +31,8 @@ public struct PathShapeRequest: Equatable {
     public var strokeRGBA: UInt32?
     public var strokeStyle: StrokeStyle
     public var fillStyle: FillStyle
+    /// False under `.scaleEffect` (SR2 R4): SwiftUI scales the drawn shape after layout, so its edges land between device pixels and are anti-aliased there.
+    public var snapsToPixels = true
     public init(bounds: Rect, scale: Float, geometry: ShapeGeometry, fillRGBA: UInt32?, strokeRGBA: UInt32?,
                 strokeStyle: StrokeStyle = StrokeStyle(), fillStyle: FillStyle = FillStyle()) {
         self.bounds = bounds; self.scale = scale; self.geometry = geometry; self.fillRGBA = fillRGBA
@@ -82,7 +84,7 @@ public enum ShapePaintPlan {
 public enum ShapePainter {
     /// Resolves a Rectangle / RoundedRectangle / Circle node to its paint, from runtime geometry and paint only.
     /// `rotations` are the `.rotationEffect`s above the node (outermost first, anchors in the same window pixels as `bounds`): a rotated shape always takes the path route, with the rotation in its request.
-    public static func plan(_ node: ResolvedNode, bounds: Rect, scale: Float, rotations: [ShapeRotation] = []) throws -> ShapePaintPlan {
+    public static func plan(_ node: ResolvedNode, bounds: Rect, scale: Float, rotations: [ShapeRotation] = [], underScaleEffect: Bool = false) throws -> ShapePaintPlan {
         guard let shape = node.shape else { throw HostPaintError.shapeMetadataRequired }
         let paint = shape.paint ?? ShapePaint.implicitFill(foreground: node.style.foreground)
         let colour = try HostPaint.rgba(paint.color, opacity: node.opacity, scheme: node.style.colorScheme)
@@ -93,9 +95,9 @@ public enum ShapePainter {
             guard strokeWidth.isFinite else { throw HostPaintError.invalidScaledStrokeWidth }
         }
         let rotated = ShapeRotation.isRotated(rotations)
-        // A stroke on bounds off the device-pixel grid (a shape under `.scaleEffect`, SR2 R4) takes the path raster: the renderer's bordered rect loses up to a pixel per
-        // side at fractional bounds (CI 39409471434 scale-center-v1: a 115.5 px ring drawn 114 px wide), the path raster is exact.
-        let offGrid = paint.kind == .stroke && [bounds.x, bounds.y, bounds.w, bounds.h].contains { $0 != $0.rounded() }
+        // A shape on bounds off the device-pixel grid (under `.scaleEffect`, SR2 R4) takes the path raster unsnapped: SwiftUI scales after layout, so the edges fall between
+        // pixels and are anti-aliased there (CI 39411214255 scale-center-v1: Mac rows 80 % / 20 % covered); the renderer's rect snaps them and loses up to a pixel per side.
+        let offGrid = underScaleEffect && [bounds.x, bounds.y, bounds.w, bounds.h].contains { $0 != $0.rounded() }
         if rotated || offGrid || needsPathRoute(shape.geometry, paint) {
             let stroke = paint.kind == .stroke
             var request = PathShapeRequest(bounds: bounds, scale: scale, geometry: shape.geometry,
@@ -103,6 +105,7 @@ public enum ShapePainter {
                                           strokeStyle: paint.strokeStyle ?? StrokeStyle(lineWidth: paint.lineWidth ?? 0),
                                           fillStyle: paint.fillStyle ?? FillStyle())
             if rotated { request.rotation = ShapeRotation.combined(rotations) }
+            if offGrid { request.snapsToPixels = false }
             return .path(request)
         }
         var frame = bounds
@@ -184,8 +187,10 @@ public enum PathShapeRaster {
               request.scale.isFinite, request.scale > 0 else { throw HostPaintError.pathShapeRasterInput(1) }
         let strokeWidthPoints = Double(request.strokeStyle.lineWidth)
         guard request.strokeRGBA == nil || (strokeWidthPoints.isFinite && strokeWidthPoints >= 0) else { throw HostPaintError.pathShapeRasterInput(2) }
-        let snapX = DevicePixelSnap.edges(origin: Double(request.bounds.x), length: Double(request.bounds.w), scale: Double(request.scale))
-        let snapY = DevicePixelSnap.edges(origin: Double(request.bounds.y), length: Double(request.bounds.h), scale: Double(request.scale))
+        let snapX = request.snapsToPixels ? DevicePixelSnap.edges(origin: Double(request.bounds.x), length: Double(request.bounds.w), scale: Double(request.scale))
+            : (origin: Double(request.bounds.x), length: Double(request.bounds.w))
+        let snapY = request.snapsToPixels ? DevicePixelSnap.edges(origin: Double(request.bounds.y), length: Double(request.bounds.h), scale: Double(request.scale))
+            : (origin: Double(request.bounds.y), length: Double(request.bounds.h))
         guard snapX.length > 0, snapY.length > 0 else { return nil }
         let scale = Double(request.scale)
         let rect = CGRect(x: 0, y: 0, width: snapX.length / scale, height: snapY.length / scale)
