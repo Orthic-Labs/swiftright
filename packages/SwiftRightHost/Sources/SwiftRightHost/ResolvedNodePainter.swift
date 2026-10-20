@@ -318,14 +318,7 @@ public final class ResolvedNodePainter {
             }
             if hidden { emission.semantic = nil }
             // A List row is hit anywhere along its width, not only where its content is.
-            var nodeBounds = row?.rect ?? emission.bounds ?? bounds
-            // Under `.scaleEffect` macOS publishes accessibility frames on whole points (CI 39415248804 scale-text-v1: mac y 107 h 39 where the exact scaled frame is
-            // 106.8 / 38.8): each edge of a scaled node's bounds is rounded to a whole point.
-            if !transform.isIdentity {
-                func pt(_ v: Float) -> Float { (v / baseScale).rounded() * baseScale }
-                let x0 = pt(nodeBounds.x), y0 = pt(nodeBounds.y), x1 = pt(nodeBounds.x + nodeBounds.w), y1 = pt(nodeBounds.y + nodeBounds.h)
-                nodeBounds = Rect(x: x0, y: y0, w: x1 - x0, h: y1 - y0)
-            }
+            let nodeBounds = row?.rect ?? emission.bounds ?? bounds
             // The renderer resets its clip stack per node, so a scrolled-out part of a descendant is clipped by wrapping the node's own
             // primitives in the scroll frame (intersected for nested scroll views).
             var primitives = emission.primitives
