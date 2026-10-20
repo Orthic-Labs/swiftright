@@ -126,7 +126,9 @@
   "scope": "main",
   "phases": [
    ""
-  ]
+  ],
+  "boundsYTolerancePt": 0.2,
+  "boundsYToleranceReason": "R4b (#42): under scaleEffect(1.5) macOS publishes whole-point frames that fall on half device pixels (107 pt = 267.5 px at 2.5x); UIA bounds are whole pixels (106.8 pt), so half a device pixel (0.2 pt) is the closest possible match (CI 39416706249). Unscaled frames sit on whole pixels and keep 0.05."
  },
  "steps": [
   {
