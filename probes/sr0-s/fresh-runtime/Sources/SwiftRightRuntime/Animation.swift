@@ -29,6 +29,10 @@ public struct Animation: Sendable, Equatable {
         case easeInOut
         /// SwiftUI's default spring (`Animation.default`, `.smooth`, `.spring`: duration 0.5, bounce 0), tabulated from SwiftUI on macOS 27.
         case spring
+        /// A parameterised built-in spring, integrated as SwiftUI does (unit mass; `Springs.swift`).
+        case integratedSpring(stiffness: Double, damping: Double)
+        /// `interpolatingSpring`: the closed-form damped oscillator (unit mass).
+        case closedSpring(stiffness: Double, damping: Double)
     }
 
     /// Tag recorded in commit records.
@@ -36,6 +40,8 @@ public struct Animation: Sendable, Equatable {
     /// Seconds. For a spring the perceptual duration, at which `.logicallyComplete` fires.
     public let duration: Double
     public let curve: Curve
+    /// Seconds between the layer's start and the motion's start (`delay(_:)`).
+    public internal(set) var delay: Double = 0
 
     /// SwiftUI's `.default`: a spring of 0.5 s and no bounce (measured: `Animation.default`, `.smooth` and `.spring` evaluate identically).
     public init() {
@@ -175,9 +181,14 @@ enum SpringModel {
     }
 
     /// Seconds (at the perceptual duration) after which a spring across `displacement` (target minus start: x, y, width, height, opacity) is removed.
-    static func settle(displacement: [Double], scale: Double) -> Double {
+    /// SwiftUI's removal tolerance per component (x, y, width, height, opacity) at a display scale (C11).
+    static func tolerances(scale: Double) -> [Double] {
         let s = max(scale, 0.25)
-        let tolerance = [0.5 / s, 0.5 / s, 1.05 / s, 1.05 / s, 0.0006]
+        return [0.5 / s, 0.5 / s, 1.05 / s, 1.05 / s, 0.0006]
+    }
+
+    static func settle(displacement: [Double], scale: Double) -> Double {
+        let tolerance = tolerances(scale: scale)
         var settle = 0.0
         for i in 0..<min(displacement.count, tolerance.count) {
             let d = abs(displacement[i])
@@ -209,6 +220,7 @@ extension Animation.Curve {
         case .easeOut: return UnitBezier.easeOut.value(at: x)
         case .easeInOut: return UnitBezier.easeInOut.value(at: x)
         case .spring: return SpringModel.value(elapsed: x * 0.5, duration: 0.5)
+        case .integratedSpring, .closedSpring: return x
         }
     }
 }
@@ -332,29 +344,45 @@ final class MotionLayer {
         transaction.layerStarted()
     }
 
-    var isSpring: Bool { animation.curve == .spring }
+    var isSpring: Bool {
+        switch animation.curve {
+        case .spring, .integratedSpring, .closedSpring: return true
+        default: return false
+        }
+    }
+
+    /// The share of a from-rest unit displacement still to travel `t` seconds into a spring that continues from an interrupted one.
+    /// The default spring keeps its fitted critically damped form (C4); a parameterised spring uses its own stiffness and damping.
+    func freeRemainder(d0: Double, v0: Double, t: Double) -> Double {
+        switch animation.curve {
+        case .integratedSpring(let k, let c), .closedSpring(let k, let c):
+            return SpringMath.free(d0: d0, v0: v0, k: k, c: c, t: t)
+        default:
+            let w = SpringModel.omega * SpringModel.perceptual / animation.duration
+            return (d0 + (v0 + w * d0) * t) * exp(-w * t)
+        }
+    }
 
     /// The value this layer contributes at `elapsed` seconds, given the value below it.
-    func value(below: Presentation, elapsed: Double) -> Presentation {
+    func value(below: Presentation, elapsed rawElapsed: Double) -> Presentation {
         if finished { return to }
+        let elapsed = max(0, rawElapsed - animation.delay)
         if let continuation {
-            let w = SpringModel.omega * SpringModel.perceptual / animation.duration
-            let decay = exp(-w * elapsed)
             let target = to.components
             var out = target
             for i in 0..<5 {
-                let d0 = continuation.displacement[i], v0 = continuation.velocity[i]
-                out[i] = target[i] - (d0 + (v0 + w * d0) * elapsed) * decay
+                out[i] = target[i] - freeRemainder(d0: continuation.displacement[i], v0: continuation.velocity[i], t: elapsed)
             }
             var presented = Presentation(components: out)
-            presented.geometry = ShapeGeometry.interpolate(continuationFrom ?? to.geometry, to.geometry, 1 - (1 + w * elapsed) * decay)
+            presented.geometry = ShapeGeometry.interpolate(continuationFrom ?? to.geometry, to.geometry, 1 - freeRemainder(d0: 1, v0: 0, t: elapsed))
             return presented
         }
         let progress: Double
-        if animation.curve == .spring {
-            progress = SpringModel.value(elapsed: elapsed, duration: animation.duration)
-        } else {
-            progress = animation.curve.value(at: elapsed / animation.duration)
+        switch animation.curve {
+        case .spring: progress = SpringModel.value(elapsed: elapsed, duration: animation.duration)
+        case .integratedSpring(let k, let c): progress = SpringMath.integrated(k: k, c: c, elapsed: elapsed)
+        case .closedSpring(let k, let c): progress = SpringMath.closed(k: k, c: c, elapsed: elapsed)
+        default: progress = animation.curve.value(at: elapsed / animation.duration)
         }
         return Presentation.lerp(below, to, progress)
     }
@@ -369,26 +397,40 @@ final class MotionLayer {
         return value
     }
 
-    private func computeVisualDuration() -> Double {
+    private func computeVisualDuration() -> Double { animation.delay + motionDuration() }
+
+    private func motionDuration() -> Double {
         guard continuation != nil else {
-            if isSpring, let springSettle { return springSettle * animation.duration / SpringModel.perceptual }
+            if isSpring, let springSettle { return animation.curve == .spring ? springSettle * animation.duration / SpringModel.perceptual : springSettle }
             return animation.visualDuration
         }
         // a continued spring ends when every component is within 1 % of the largest starting displacement of the target
-        let w = SpringModel.omega * SpringModel.perceptual / animation.duration
         let c = continuation!
         let scale = max(c.displacement.map(abs).max() ?? 0, 1e-9)
         // A geometry that is still moving follows a critically damped spring from rest (see `value`): it must also be within the opacity-like
         // unit tolerance (0.0006) before the layer goes; otherwise a shape-only spring that interrupts a spring would end on its first tick.
         let geometryMoves = continuationFrom != to.geometry
         var t = 0.0
-        while t < 4 {
-            let decay = exp(-w * t)
-            let within = (0..<5).allSatisfy { i in abs((c.displacement[i] + (c.velocity[i] + w * c.displacement[i]) * t) * decay) <= 0.0105 * scale }
-            if within && (!geometryMoves || (1 + w * t) * decay <= 0.0006) { return t }
+        let horizon = animation.curve == .spring ? 4.0 : 10.0
+        while t < horizon {
+            let within = (0..<5).allSatisfy { i in abs(freeRemainder(d0: c.displacement[i], v0: c.velocity[i], t: t)) <= 0.0105 * scale }
+            if within && (!geometryMoves || abs(freeRemainder(d0: 1, v0: 0, t: t)) <= 0.0006) {
+                // an oscillating spring may pass inside the band at a zero crossing: it is done only when it stays inside
+                if animation.curve == .spring || stays(c, scale: scale, geometryMoves: geometryMoves, from: t) { return t }
+            }
             t += 0.005
         }
-        return 4
+        return horizon
+    }
+
+    private func stays(_ c: (displacement: [Double], velocity: [Double]), scale: Double, geometryMoves: Bool, from t0: Double) -> Bool {
+        var t = t0
+        while t < t0 + 1 {
+            t += 0.005
+            if !(0..<5).allSatisfy({ i in abs(freeRemainder(d0: c.displacement[i], v0: c.velocity[i], t: t)) <= 0.0105 * scale }) { return false }
+            if geometryMoves && abs(freeRemainder(d0: 1, v0: 0, t: t)) > 0.0006 { return false }
+        }
+        return true
     }
 }
 
@@ -644,7 +686,16 @@ extension Graph {
             // A geometry change settles like a unit change of an opacity-like value (R2: a 0 -> 1 Double is removed within 0.0006 of its target on macOS 27,
             // as opacity is; factory/pipeline/sr2-r3-spike/SPIKE-RESULT.md).
             if fromPresentation.geometry != target.geometry { displacement[4] = max(abs(displacement[4]), 1) }
-            layer.springSettle = SpringModel.settle(displacement: displacement, scale: Double(scale))
+            switch animation.curve {
+            case .integratedSpring(let k, let c):
+                layer.springSettle = SpringMath.integratedSettle(k: k, c: c, displacement: displacement, scale: Double(scale))
+            case .closedSpring(let k, let c):
+                let tol = SpringModel.tolerances(scale: Double(scale))
+                let worst = (0..<5).map { abs(displacement[$0]) / tol[$0] }.max() ?? 0
+                layer.springSettle = SpringMath.closedSettle(k: k, c: c, displacement: worst, tolerance: 1)
+            default:
+                layer.springSettle = SpringModel.settle(displacement: displacement, scale: Double(scale))
+            }
         }
         if layer.isSpring, let top = chain.layers.last, top.isSpring, let now = clock, top.start != nil {
             // A spring that interrupts a spring continues from the presented position and velocity (SwiftUI merges them).
@@ -749,7 +800,7 @@ extension Graph {
         for layer in chain.layers {
             guard let start = layer.start else { continue }
             let elapsed = now - start
-            if !layer.logicallyEnded, elapsed >= layer.animation.duration {
+            if !layer.logicallyEnded, elapsed >= layer.animation.delay + layer.animation.duration {
                 layer.logicallyEnded = true
                 layer.transaction.layerLogicallyEnded()
             }
