@@ -12,3 +12,8 @@ These cases contain no text, because scaled text is R4b. `tint` has no pixel cas
 - **Non-uniform scale is a limitation.** SwiftUI scales the shape's geometry (a capsule under `scaleEffect(x: 2, y: 0.5)` gets elliptical ends), while the host redraws the shape at the new size with radii scaled by the geometric mean. Every use in S1 is uniform, so scale-nested-v1 now uses uniform factors.
 - **Off-grid strokes.** A stroke whose bounds are not on whole device pixels now takes the path raster: the renderer's bordered rect lost about 2 px on a scaled ring.
 - **scale-animated-v1** is compared frame by frame as pixels: `scaleEffect` does not move the layout frame that the clock gate tracks.
+
+## Findings from CI 39411214255 and 39413123283
+
+- Shapes and solid rects under a scale are anti-aliased between pixels on the Mac. The host now draws them with the unsnapped path raster, and the rounded rect matches.
+- A **stroked** ring under `scaleEffect(1.4)` is still about 1 px smaller in diameter on Windows (right edge 456 vs 457 px, top 313 vs 312) with sharper edges. The cause is open (issue #44). scale-center-v1 now uses a filled circle.
