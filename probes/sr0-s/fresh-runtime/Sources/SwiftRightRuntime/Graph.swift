@@ -587,6 +587,8 @@ final class Node {
     var memo: [CGFloat?: LayoutSize] = [:]
     /// The first and last line baselines of the memoised text measurements, keyed like `memo` (round 5 block 33, baseline alignment).
     var memoBase: [CGFloat?: (first: CGFloat, last: CGFloat)] = [:]
+    /// R5: the shrunk font (`minimumScaleFactor`) that produced each measured size, by proposed width; absent when the text was not shrunk.
+    var memoScaledFont: [CGFloat?: Font] = [:]
     /// Cache owned by a custom `Layout` container.
     var layoutStorage: Any?
     /// Retired-row state, used only when this node retains removed row state (List).
@@ -1917,7 +1919,7 @@ public final class Graph {
                 node.envStamp = envStampCounter
             }
             node.enabled = node.environment.isEnabled
-            node.style = ResolvedStyle(font: node.environment.font, foreground: node.environment.foregroundStyle?.resolvingTint(node.environment), colorScheme: node.environment.colorScheme)
+            node.style = ResolvedStyle(font: node.environment.textFont, foreground: node.environment.foregroundStyle?.resolvingTint(node.environment), colorScheme: node.environment.colorScheme)
         } else {
             node.envStamp = node.parent?.envStamp ?? 0
             node.enabled = node.inheritedEnabled
@@ -2028,7 +2030,13 @@ public final class Graph {
         switch kind {
         case .text(let raw):
             let string = node.environment.textCase?.apply(raw) ?? raw
-            let font = node.environment.font
+            var font = node.environment.textFont
+            let factor = node.environment.minimumScaleFactor
+            if factor < 1 {
+                let base = font ?? .body
+                let id = "\(base.id)|minimumScaleFactor(\(factor))"
+                font = base.metadata.map { Font(id: id, metadata: $0) } ?? Font(id: id)
+            }
             let lineLimit = node.environment.lineLimit
             key = font?.metadata == nil && lineLimit == nil
                 ? .text(string, font?.id)
@@ -2382,6 +2390,13 @@ public final class Graph {
         if case .modifier(.rotation(let angle, let anchor)) = kind { rotation = ResolvedRotation(angle: angle, anchor: anchor) }
         var brightness: Double?
         if case .modifier(.brightness(let amount)) = kind { brightness = amount }
+        // R5: a Text shrunk by `minimumScaleFactor` draws with the font that produced its placed size.
+        var style = node.style
+        if case .text = kind, !node.memoScaledFont.isEmpty,
+           let width = node.memo.first(where: { abs($0.value.width - node.frame.width) < 0.001 && abs($0.value.height - node.frame.height) < 0.001 })?.key,
+           let shrunk = node.memoScaledFont[width] {
+            style = ResolvedStyle(font: shrunk, foreground: style.foreground, colorScheme: style.colorScheme)
+        }
         var scaleEffect: ResolvedScale?
         if case .modifier(.scale(let x, let y, let anchor)) = kind {
             let presented = node.presentedScale ?? CGSize(width: x, height: y)
@@ -2403,7 +2418,7 @@ public final class Graph {
             fieldStyle: fieldStyle,
             placeholder: placeholder,
             accessibility: accessibility(of: node, children: children, selected: selected),
-            style: node.style,
+            style: style,
             image: image,
             imageSizing: imageSizing,
             color: color,

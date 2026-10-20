@@ -480,7 +480,7 @@ public struct Font: Hashable, Sendable {
         metadataStorage = nil
     }
 
-    private init(id: String, metadata: Metadata) {
+    init(id: String, metadata: Metadata) {
         self.id = id
         metadataStorage = MetadataStorage(metadata)
     }

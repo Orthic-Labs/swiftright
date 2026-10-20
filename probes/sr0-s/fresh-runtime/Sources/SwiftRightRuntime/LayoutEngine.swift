@@ -876,7 +876,7 @@ extension Graph {
 
     private func measureText(_ node: Node, _ string: String, width: CGFloat?) -> LayoutSize {
         let wrapWidth = finiteLength(width)
-        let font = node.environment.font ?? Font(id: "body")
+        let font = node.environment.textFont ?? Font(id: "body")
         let lineLimit: Int?
         if case .text = node.kind { lineLimit = node.environment.lineLimit } else { lineLimit = nil }
         if node.memoText != string || node.memoFont != font || node.memoLineLimit != lineLimit {
@@ -885,13 +885,32 @@ extension Graph {
             node.memoLineLimit = lineLimit
             node.memo.removeAll()
             node.memoBase.removeAll()
+            node.memoScaledFont.removeAll()
         }
         if let cached = node.memo[wrapWidth] { return cached }
-        let request = TextMeasureRequest(
-            text: string, fontID: font.id, proposedWidth: wrapWidth, scale: scale,
-            fontMetadata: font.metadata, lineLimit: lineLimit
-        )
-        let measured = measurer.measure(request)
+        func request(_ f: Font, _ width: CGFloat?) -> TextMeasureRequest {
+            TextMeasureRequest(text: string, fontID: f.id, proposedWidth: width, scale: scale, fontMetadata: f.metadata, lineLimit: lineLimit)
+        }
+        var measured = measurer.measure(request(font, wrapWidth))
+        // R5 `minimumScaleFactor`: a one-line Text wider than its proposal shrinks a sized font in half points until it fits (or reaches the factor).
+        let factor = node.environment.minimumScaleFactor
+        if case .text = node.kind, factor < 1, lineLimit == 1, let bound = wrapWidth, bound > 0, let size = font.metadata?.pointSize, font.metadata?.textStyle == nil {
+            let natural = measurer.measure(request(font, nil)).size.width
+            if natural > bound + 0.01 {
+                let floorSize = size * factor
+                var candidate = max(floorSize, (size * bound / natural * 2).rounded(.down) / 2)
+                while true {
+                    guard let shrunk = font.sized(candidate) else { break }
+                    let m = measurer.measure(request(shrunk, nil))
+                    if m.size.width <= bound + 0.01 || candidate <= floorSize {
+                        measured = measurer.measure(request(shrunk, wrapWidth))
+                        node.memoScaledFont[wrapWidth] = shrunk
+                        break
+                    }
+                    candidate = max(floorSize, candidate - 0.5)
+                }
+            }
+        }
         // A Text never reports more width than it was offered (macOS 27 measured, decision L1): offered 0 it reports 0, so in a stack its flexibility range runs
         // from 0 to its one-line width and a lower layout priority gives way to a higher one. A measurer that reads a zero bound as no bound (the renderer) is corrected here.
         let size = wrapWidth.map { LayoutSize(width: min(measured.size.width, max(0, $0)), height: measured.size.height) } ?? measured.size
