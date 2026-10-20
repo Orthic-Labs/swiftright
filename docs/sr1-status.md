@@ -354,3 +354,11 @@ Each gate's measurements are in its pair.json. Oracle PASS-WITH-CAVEATS; the Gro
 `VectorArithmetic`, `Animatable`, `AnimatablePair` and `EmptyAnimatableData` are in. A shape's geometry is now a presented channel that motion layers interpolate: trim from/to, inset, corner radius, and a custom shape's `animatableData`. The presented shape is the new value with only its animatable data interpolated, as in SwiftUI. User `Shape`s get SwiftUI's default `body`, and the runtime re-exports Foundation.
 
 **CI run 39407457852 at 914ef0b1f: 4/4 at N=20** (manual clock; trim ring, custom AnimatablePair neck, corner radius, inset). The trim ring's per-case over-fraction limit is 6% (measured 5.11%; out-of-band 0 at every frame). Oracle failed the first version: a spring interrupting a spring on a shape jumped to its target. Fixed in 0e1378a39, then Oracle PASS. Not done: paint (colour, line width) interpolation.
+
+## 20 October: SR2 R5 text delivered (#40)
+- **View-level `.monospacedDigit()`:** CI run 39410362855 passed digits-view-modifier-v1 20/20 against the calibrated digits-v1 text regions.
+- **`minimumScaleFactor`:**
+  - A one-line Text shrinks a sized font in half points down to the factor, never below 9 pt. The resolved node carries the font of its placed size.
+  - Unit tests only: SwiftUI's size is continuous, ours is half-point, so a pixel gate would only measure that known difference.
+  - Text-style fonts and multi-line text are not shrunk.
+- **Review:** Oracle failed the first version (a changed factor did not re-measure). Fixed in 64ce0e20c, then Oracle PASS-WITH-CAVEATS.
