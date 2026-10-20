@@ -1188,6 +1188,7 @@ extern "system" {
     fn ImmGetDefaultIMEWnd(hwnd: *mut c_void) -> *mut c_void;
     fn ImmGetCompositionStringW(himc: *mut c_void, index: u32, buf: *mut c_void, len: u32) -> i32;
     fn ImmNotifyIME(himc: *mut c_void, action: u32, index: u32, value: u32) -> i32;
+    #[link_name = "ImmGetCandidateListW"] // imm32 exports only the A/W variants
     fn ImmGetCandidateList(himc: *mut c_void, index: u32, list: *mut c_void, len: u32) -> u32;
 }
 #[link(name = "user32")]
