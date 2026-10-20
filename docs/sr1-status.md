@@ -362,3 +362,8 @@ Each gate's measurements are in its pair.json. Oracle PASS-WITH-CAVEATS; the Gro
   - Unit tests only: SwiftUI's size is continuous, ours is half-point, so a pixel gate would only measure that known difference.
   - Text-style fonts and multi-line text are not shrunk.
 - **Review:** Oracle failed the first version (a changed factor did not re-measure). Fixed in 64ce0e20c, then Oracle PASS-WITH-CAVEATS.
+
+## 20 October: SR2 R3 springs delivered (#38)
+`spring(duration:bounce:)`, `spring(response:dampingFraction:)`, `.snappy`, `.bouncy`, `smooth/snappy/bouncy(extraBounce:)`, `interpolatingSpring` and `delay(_:)` are in, with SwiftUI's 300 Hz semi-implicit Euler integrator from the R3 spike (exact to 5e-8). A gap of more than 1 s between evaluations advances a spring one frame, as SwiftUI does.
+
+**CI run 39411164151 at 00f630809: 5/5 at N=20** (snappy, bouncy, response, duration with negative bounce, delay). Oracle failed the first version (interrupted-spring velocity); fixed in cbc553e36 and f46f67419, then PASS-WITH-CAVEATS. Not modelled: SwiftUI's exact removal rule for parameterised springs, so the cases sample before removal and after both sides settle.
