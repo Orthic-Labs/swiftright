@@ -705,9 +705,16 @@ extension Graph {
             let h = chain.layers.contains(where: { if case .integratedSpring = $0.animation.curve { return true } else { return false } }) ? SpringMath.step : 1e-4
             let before = chain.value(at: now - h)
             let c = current.components, b = before.components, t = target.components
+            var velocity = (0..<5).map { -(c[$0] - b[$0]) / h }
+            // One integrated layer from rest (the usual case): read the integrator's own velocity, exact even when a step ends on `now`.
+            if chain.layers.count == 1, top.continuation == nil, let start = top.start, case .integratedSpring(let k, let cc) = top.animation.curve {
+                let rate = SpringMath.integratedRate(k: k, c: cc, elapsed: now - start - top.animation.delay)
+                let from = chain.base.components, to = top.to.components
+                velocity = (0..<5).map { -(to[$0] - from[$0]) * rate }
+            }
             layer.continuation = (
                 displacement: (0..<5).map { t[$0] - c[$0] },
-                velocity: (0..<5).map { -(c[$0] - b[$0]) / h }
+                velocity: velocity
             )
             layer.continuationFrom = current.geometry
             finishChain(chain)

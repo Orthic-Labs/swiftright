@@ -100,7 +100,7 @@ final class SpringTests: XCTestCase {
 
     // Oracle R3: a parameterised spring interrupting one keeps its velocity (no restart from rest, no fling) at any tick alignment.
     func testABouncySpringInterruptedByABouncySpringKeepsItsVelocity() throws {
-        for offset in [0.0, 0.0333, 0.00005, 0.0016666] {
+        for offset in [0.0, 0.0333, 0.00005, 0.0016666, 1.0 / 300, 2.0 / 300, -1e-12, 1e-12] {
             let model = SpringBarModel()
             let g = Graph(SpringBarScreen(model: model), scale: 2.5)
             g.flush()

@@ -133,6 +133,20 @@ enum SpringMath {
         return lo == 0 ? 0 : tr.values[lo - 1]
     }
 
+    /// Rate of change of progress (1/s) of an integrated spring from rest `elapsed` seconds in: the velocity after the steps taken, which is the
+    /// last step's change over the step (semi-implicit Euler: x_n - x_(n-1) = v_n h). Exact at any tick alignment.
+    static func integratedRate(k: Double, c: Double, elapsed: Double) -> Double {
+        guard elapsed > 0 else { return 0 }
+        let tr = trajectory(k: k, c: c, through: elapsed)
+        var lo = 0, hi = tr.ends.count
+        while lo < hi {
+            let mid = (lo + hi) / 2
+            if tr.ends[mid] < elapsed { lo = mid + 1 } else { hi = mid }
+        }
+        guard lo > 0 else { return 0 }
+        return (tr.values[lo - 1] - (lo >= 2 ? tr.values[lo - 2] : 0)) / step
+    }
+
     /// Seconds after which an integrated spring from rest is removed: every component's remainder (|1 - progress| x its displacement) stays within
     /// its C11 tolerance from then on (x, y 0.5 / scale pt; width, height 1.05 / scale pt; opacity 0.0006). Capped at 10 s.
     static func integratedSettle(k: Double, c: Double, displacement: [Double], scale: Double) -> Double {
