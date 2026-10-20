@@ -1,0 +1,33 @@
+{
+ "clock": [
+  0.0,
+  0.105,
+  0.205,
+  0.315,
+  0.455,
+  1.5
+ ],
+ "clockGate": {
+  "tracks": [
+   {
+    "name": "bar",
+    "kind": "Color",
+    "index": 0,
+    "colour": [
+     0,
+     136,
+     255
+    ],
+    "axis": "x",
+    "line": 300,
+    "from": 100,
+    "to": 250,
+    "leaf": 2
+   }
+  ],
+  "extentTolerancePx": 1.0,
+  "progressTolerance": 0.005,
+  "stripPx": 1,
+  "note": "Parameterised springs follow SwiftUI's 300 Hz integrator exactly (R3 spike, 5e-8 at any cadence); clock times avoid the 1/300 s step boundaries; sampled before the earliest removal and after both sides settle, since SwiftUI's removal rule for these springs is not modelled (SPIKE-RESULT.md). 1 px: device-pixel snapping."
+ }
+}
