@@ -14,3 +14,18 @@ Accepted 20 October 2026 (Sage design, lead decision). Source: docs/pulse-notch-
 No ABI revision for S1. ABI 0.12 (path table) stays deferred; its triggers now also include a static frame that partially clips text, and rotated text. GPUI 0.2.2 carries a full transform only for monochrome sprites and clips by rectangle only (scene.rs, window.rs), so real affine/path-mask rendering would mean patching GPUI shaders. Order: R1, then the R3 integrator spike, R2, R3, R4/R5, R6. Outside SwiftRight and blocking S1 end to end: the Mac carve-out and Observation rewrite (demand map lines 805-809).
 
 **R3 integrator spike (20 October): done.** SwiftUI steps every built-in spring with semi-implicit Euler at 1/300 s (ω = 2π/duration, ζ = 1 − bounce, or 1/(1+bounce) below 0; response/dampingFraction map directly; `.snappy` 0.15, `.bouncy` 0.3), reproduced to 5e-8 at real cadences; `interpolatingSpring` is closed form. Removal timing is still open. Details, sampler and data: `factory/pipeline/sr2-r3-spike/SPIKE-RESULT.md`.
+
+## Status, 20 October: S1 blocks delivered
+
+- **Delivered.** R1 (#36), R2 (#37), R3 (#38), R4 (#39), R5 (#40), R6 (#41) and R4b scaled text (#42). Each passed its Mac-vs-Windows CI cases at N=20 and an Oracle review. Evidence is in docs/sr1-status.md (the 20 October entries).
+- **Follow-ups, outside the S1 plan:**
+  - #43: text and bitmaps under a non-rectangular clip are clipped to its bounds. A true mask needs a renderer alpha/path clip, which belongs with the deferred ABI 0.12.
+  - #44: half-pixel layout under `scaleEffect`. Widths and main-axis snapping are fixed; a sub-pixel offset remains on a later stack child, pending a study of stacked tie rules.
+- **Not modelled, documented:**
+  - SwiftUI's removal rule for parameterised springs;
+  - non-uniform scale;
+  - brightness on bitmaps;
+  - tinted controls;
+  - glass (adapted);
+  - `contentTransition` (adapted).
+- **Still blocking S1 end to end, outside SwiftRight** (demand map): the Mac carve-out and the Observation rewrite.
