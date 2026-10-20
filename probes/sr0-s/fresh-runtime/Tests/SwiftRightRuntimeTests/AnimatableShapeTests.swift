@@ -161,6 +161,30 @@ final class AnimatableShapeTests: XCTestCase {
         XCTAssertTrue(removed)
     }
 
+    // Oracle R2: a spring that interrupts a spring on a shape-only change continues smoothly instead of jumping to its target.
+    func testASpringInterruptingASpringOnAShapeContinues() throws {
+        let model = RingModel()
+        let g = Graph(RingScreen(model: model), scale: 2.5)
+        g.flush()
+        withAnimation(.default) { model.progress = 0.5 }
+        g.flush()
+        g.tick(now: 0)
+        g.tick(now: 0.1)
+        let mid = try trimEnd(g)
+        XCTAssertGreaterThan(mid, 0.2); XCTAssertLessThan(mid, 0.5)
+        withAnimation(.default) { model.progress = 0.9 }
+        g.flush()
+        g.tick(now: 0.1)
+        g.tick(now: 0.15)
+        let after = try trimEnd(g)
+        XCTAssertGreaterThan(after, mid, "keeps moving")
+        XCTAssertLessThan(after, 0.8, "no jump to the target")
+        g.tick(now: 0.4)
+        XCTAssertLessThan(try trimEnd(g), 0.9)
+        g.tick(now: 2)
+        XCTAssertEqual(try trimEnd(g), 0.9)
+    }
+
     func testAnUnchangedShapeStartsNoMotion() throws {
         let model = RingModel()
         let g = Graph(RingScreen(model: model))

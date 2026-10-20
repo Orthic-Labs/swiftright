@@ -378,11 +378,14 @@ final class MotionLayer {
         let w = SpringModel.omega * SpringModel.perceptual / animation.duration
         let c = continuation!
         let scale = max(c.displacement.map(abs).max() ?? 0, 1e-9)
+        // A geometry that is still moving follows a critically damped spring from rest (see `value`): it must also be within the opacity-like
+        // unit tolerance (0.0006) before the layer goes; otherwise a shape-only spring that interrupts a spring would end on its first tick.
+        let geometryMoves = continuationFrom != to.geometry
         var t = 0.0
         while t < 4 {
             let decay = exp(-w * t)
             let within = (0..<5).allSatisfy { i in abs((c.displacement[i] + (c.velocity[i] + w * c.displacement[i]) * t) * decay) <= 0.0105 * scale }
-            if within { return t }
+            if within && (!geometryMoves || (1 + w * t) * decay <= 0.0006) { return t }
             t += 0.005
         }
         return 4
