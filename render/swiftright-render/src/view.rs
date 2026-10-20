@@ -1546,7 +1546,9 @@ unsafe extern "system" fn ime_subclass_proc(hwnd: *mut c_void, msg: u32, w: usiz
     // TSF-based IMEs on an IMM32 window query the live caret with WM_IME_REQUEST / IMR_QUERYCHARPOSITION.
     // Answer from current geometry (ime_caret_bounds is evaluated now, so it reflects a layout move). Falls through to
     // the default when the struct is too small or the host text bridge is busy (with_ime returns None).
-    if msg == WM_IME_REQUEST && w == IMR_QUERYCHARPOSITION && l != 0 {
+    // #33 diagnostic: answered in mode a only. Answering it in every mode suppressed the Microsoft IME's candidate list on the Dell desktop
+    // (IMN_OPENCANDIDATE arrived, no list window; ~670 queries per run), so the other modes keep tuple 13's unanswered default.
+    if msg == WM_IME_REQUEST && w == IMR_QUERYCHARPOSITION && l != 0 && ime_follow_mode() == b'a' {
         let p = l as *mut ImeCharPosition;
         if unsafe { (*p).size as usize } >= std::mem::size_of::<ImeCharPosition>() {
             let off = unsafe { (*p).char_pos };
