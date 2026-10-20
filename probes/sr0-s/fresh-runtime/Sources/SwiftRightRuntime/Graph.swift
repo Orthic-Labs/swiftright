@@ -123,6 +123,8 @@ enum ViewTypes {
         /// Reads a primitive view's kind and content. Nil for a user view. Built once per type, so reading a view of that type
         /// needs a cast to the concrete type only, not a conformance lookup.
         let readPrimitive: (@MainActor (any View) -> (kind: NodeKind, content: (any View)?))?
+        /// True for a `GeometryReader`: the node builds its content from the size layout gives it (R1, #36).
+        var isGeometryReader = false
     }
 
     private static var cache: [ObjectIdentifier: Info] = [:]
@@ -143,7 +145,8 @@ enum ViewTypes {
             dynamic = Mirror(reflecting: view).children.contains { $0.value is DynamicPropertyStorage }
             if let primitive = view as? any (PrimitiveView & View) { reader = makeReader(primitive) }
         }
-        let info = Info(name: TypeName(type), shape: shape, hasDynamicProperties: dynamic, readPrimitive: reader)
+        var info = Info(name: TypeName(type), shape: shape, hasDynamicProperties: dynamic, readPrimitive: reader)
+        info.isGeometryReader = view is any GeometryReading
         cache[key] = info
         return info
     }
@@ -239,6 +242,10 @@ enum ModifierSpec {
     /// SR1 round 6 block 38: `.onHover(perform:)` and `.onTapGesture(count:perform:)`; the host routes pointer positions to `Graph.pointerMoved` and a release to `Graph.tapGesture`.
     case hover(HoverHook)
     case tap(TapHook)
+    /// SR2 R1 (#36): `.offset(x:y:)`. Layout is unchanged; the child is placed shifted by (x, y) (not mirrored under right-to-left, as in SwiftUI).
+    case offset(CGFloat, CGFloat)
+    /// SR2 R1 (#36): `.position(x:y:)`. Takes the whole proposed space; the child is centred at the point in this node's coordinate space.
+    case position(CGFloat, CGFloat)
 
     /// "modifier." plus `name`, as resolved records show it (static strings, no allocation per commit).
     var kindName: String {
@@ -278,6 +285,8 @@ enum ModifierSpec {
         case .rotation: return "modifier.rotationEffect"
         case .hover: return "modifier.onHover"
         case .tap: return "modifier.onTapGesture"
+        case .offset: return "modifier.offset"
+        case .position: return "modifier.position"
         }
     }
 
@@ -318,6 +327,8 @@ enum ModifierSpec {
         case .rotation: return "rotationEffect"
         case .hover: return "onHover"
         case .tap: return "onTapGesture"
+        case .offset: return "offset"
+        case .position: return "position"
         }
     }
 }
@@ -576,6 +587,9 @@ final class Node {
     var sliderDragging = false
     /// `.onHover` nodes: whether the pointer is inside (the last state the action was told).
     var hovered = false
+    /// GeometryReader (R1): the size layout last gave this node, and the size its content was last built for.
+    var geometrySize: LayoutSize?
+    var geometryBuilt: LayoutSize?
     var sliderGrab: CGFloat = 0
     /// Configured horizontal/vertical offsets; nil for legacy scroll nodes.
     var scrollOffsetX: CGFloat?
@@ -895,6 +909,8 @@ public struct ResolvedAccessibility: Equatable, Sendable {
     /// `accessibilityAddTraits` names (`isButton`, `isHeader`, `isSelected`, `isImage`, `isStaticText`, `isLink`, `updatesFrequently`, ...) and `accessibilityRemoveTraits`.
     public var addedTraits: [String] = []
     public var removedTraits: [String] = []
+    /// False under `.allowsHitTesting(false)` (R1, #36): the node and its subtree take no pointer hits. Accessibility actions are unaffected, as in SwiftUI.
+    public var allowsHitTesting: Bool = true
 }
 
 public struct ResolvedStyle: Equatable, Sendable {
@@ -981,6 +997,8 @@ public final class Graph {
     /// Observation change callbacks received (tests check that retired registrations stay silent).
     private(set) var observationCallbacks = 0
     private var dirty: [NodeID: Node] = [:]
+    /// Live GeometryReader nodes (R1): their content is built from the size layout gives them, so a layout that changes it re-evaluates them.
+    var geometryNodes: [NodeID: Node] = [:]
     /// True while the dirty nodes are being evaluated: a transaction boundary inside an evaluation is not a new transaction.
     private var evaluating = false
     /// A transaction-boundary settle evaluated changes outside a flush: they still need their commit (and the onChange actions they queued their
@@ -1105,7 +1123,11 @@ public final class Graph {
                 continue
             }
             if dirty.isEmpty {
-                if pendingAppear.isEmpty { break }
+                if pendingAppear.isEmpty {
+                    // A GeometryReader builds its content from the size layout gives it: lay out, and evaluate the readers whose size changed.
+                    if !geometryNodes.isEmpty, markStaleGeometry() { continue }
+                    break
+                }
                 // SwiftUI runs onAppear after the first render of the node, and what it changes is a second update (so `onAppear { withAnimation { ... } }`
                 // animates from the state the view first appeared in). Present that state first, then run the actions.
                 commit()
@@ -1123,6 +1145,21 @@ public final class Graph {
         }
         settledAwaitingFlush = false
         if !presentedBeforeAppear { commit() }
+    }
+
+    /// Lays the tree out and marks dirty every live GeometryReader whose laid-out size differs from the size its content was built for. True when any was marked.
+    func markStaleGeometry() -> Bool {
+        layoutRoot()
+        var marked = false
+        for (id, node) in geometryNodes {
+            guard node.alive, nodes[id] === node else { geometryNodes[id] = nil; continue }
+            guard let size = node.geometrySize, size != node.geometryBuilt else { continue }
+            node.fullDirty = true
+            dirty[id] = node
+            marked = true
+        }
+        if marked { layoutEpoch += 1 }
+        return marked
     }
 
     /// Evaluates the dirty nodes in rounds until none is left (or the round bound is hit): the coalesced evaluation `flush` runs.
@@ -1472,8 +1509,35 @@ public final class Graph {
             if let primitive = view as? PrimitiveView, case .modifier = primitive.nodeKind, let content = primitive.nodeContent, isErasedEmpty(content) {
                 return
             }
+            // A modifier chain over a `Group` applies to each member of the group (SwiftUI: a Group is transparent, so a modifier on it modifies every child).
+            if let chain = groupModifierChain(view, info) {
+                var members: [Entry] = []
+                expand(chain.group, prefix: [], into: &members, refreshable: &refreshable)
+                for member in members {
+                    var wrapped: any View = member.view
+                    for spec in chain.specs.reversed() { wrapped = ModifierWrapper(inner: wrapped, spec: spec) }
+                    let wrappedInfo = ViewTypes.info(for: wrapped)
+                    out.append(Entry(relative: prefix + Array(member.relative.dropLast()) + [Segment.type(wrappedInfo.name)], view: wrapped, info: wrappedInfo))
+                }
+                refreshable = false
+                return
+            }
             out.append(Entry(relative: prefix + [.type(info.name)], view: view, info: info))
         }
+    }
+
+    /// The modifiers (outermost first) of a chain of modifier views that ends in a `Group`, with the group; nil for any other view.
+    func groupModifierChain(_ view: any View, _ info: ViewTypes.Info) -> (specs: [ModifierSpec], group: any View)? {
+        guard let read = info.readPrimitive else { return nil }
+        var specs: [ModifierSpec] = []
+        var current = read(view)
+        while case .modifier(let spec) = current.kind, let content = current.content {
+            specs.append(spec)
+            if content is any GroupView { return (specs, content) }
+            guard let next = ViewTypes.info(for: content).readPrimitive else { return nil }
+            current = next(content)
+        }
+        return nil
     }
 
     /// `AnyView` (any depth) around `EmptyView`: a view with no content. Only a modifier directly around it is dropped (`expand`). Stacked modifiers
@@ -1615,6 +1679,7 @@ public final class Graph {
     private func teardown(_ id: NodeID, retainingIn target: (list: Node, top: NodeID)? = nil) {
         guard let node = nodes.removeValue(forKey: id) else { return }
         if !preferenceObserverNodes.isEmpty { preferenceObserverNodes.remove(id) }
+        if !geometryNodes.isEmpty { geometryNodes[id] = nil }
         if nodesByString[node.idString] === node { nodesByString[node.idString] = nil }
         node.alive = false
         node.generation += 1
@@ -1870,7 +1935,7 @@ public final class Graph {
             return
         }
         let producedInfo = ViewTypes.info(for: produced)
-        if producedInfo.shape == .leaf {
+        if producedInfo.shape == .leaf, groupModifierChain(produced, producedInfo) == nil {
             // One view that is a node itself (a modifier's content, a user view's body): update that child in place with no
             // entry list and no id built.
             if node.childNodes.count == 1, node.childNodes[0].relative.count == 1,
@@ -1962,7 +2027,17 @@ public final class Graph {
         default: break
         }
         if let selection = node.selection { _ = selection.current() }
-        if case .user = kind { return node.view.evaluateBody() }
+        if case .user = kind {
+            if node.info.isGeometryReader, let reader = node.view as? any GeometryReading {
+                geometryNodes[node.id] = node
+                // Until layout has given the reader a size it has no content (so nothing appears with a zero size); the layout pass then evaluates it again.
+                guard let size = node.geometrySize else { node.geometryBuilt = nil; return EmptyView() }
+                node.geometryBuilt = size
+                return reader.makeContent(GeometryProxy(size: CGSize(width: size.width, height: size.height),
+                                                        globalOrigin: CGPoint(x: node.frame.minX, y: node.frame.minY)))
+            }
+            return node.view.evaluateBody()
+        }
         return node.primitiveContent
     }
 
@@ -2085,6 +2160,15 @@ public final class Graph {
         if let clock { advanceMotions(now: clock, anchoring: false) }
         if profiling { lap(&profile!.transactionNS) }
         layoutRoot()
+        // Readers whose size changed in this layout (a commit outside a flush, such as a transaction boundary) are settled here: bounded, since a reader's size
+        // never depends on its own content.
+        var geometryPasses = 0
+        while !geometryNodes.isEmpty, geometryPasses < 4, markStaleGeometry() {
+            geometryPasses += 1
+            var rounds = 0
+            drainDirty(&rounds)
+            layoutRoot()
+        }
         assignOpacity(root, parent: 1)
         layoutEpoch += 1
         if profiling { lap(&profile!.layoutNS) }
@@ -2334,7 +2418,8 @@ public final class Graph {
             value: value,
             isEnabled: node.enabled,
             isSelected: selected,
-            hint: hint, isHidden: isHidden, childBehavior: childBehavior, addedTraits: addedTraits, removedTraits: removedTraits
+            hint: hint, isHidden: isHidden, childBehavior: childBehavior, addedTraits: addedTraits, removedTraits: removedTraits,
+            allowsHitTesting: node.environment.allowsHitTesting
         )
     }
 

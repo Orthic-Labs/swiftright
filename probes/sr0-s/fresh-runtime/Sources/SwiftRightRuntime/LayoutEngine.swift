@@ -54,6 +54,9 @@ struct StackSpec: Sendable, Equatable {
     /// The spacing was not given (`spacing: nil`): the distance next to a Spacer is then 0, not the default spacing (measured on macOS 27: `HStack { 40 pt; Spacer(minLength: 0); 40 pt }`
     /// in an 80 pt frame leaves no gap, while two rectangles are 8 pt apart; an explicit `spacing:` applies on both sides of a Spacer).
     var spacingIsDefault = false
+    /// Overlay axis only: the base view (the one that sets the size) is the last child, not the first. `background` lays the background layer before the view so that
+    /// it paints behind it; `overlay` lays the layer after. Both size the layer to the base and leave the base's size and place unchanged.
+    var baseIsLast = false
 
     init(name: String, axis: StackAxis, cross: CrossAlignment, alignment: Alignment = .center,
          spacing: CGFloat, fillsCross: Bool, retainsRemovedRowState: Bool = false) {
@@ -202,6 +205,15 @@ extension Graph {
             return measureSlider(proposal)
         case .button:
             return measureButton(node, proposal)
+        case .modifier(.position):
+            // Takes every finite proposed length (SwiftUI: `position` fills the space it is offered); an unspecified or infinite one gives the child's size.
+            let inside = childNodes(node).first.map { measure($0, proposal) } ?? .zero
+            return LayoutSize(width: finiteLength(proposal.width) ?? inside.width, height: finiteLength(proposal.height) ?? inside.height)
+        case .user where node.info.isGeometryReader:
+            // GeometryReader takes the whole proposal (an unspecified length is 10 pt, as `replacingUnspecifiedDimensions()`; an infinite one stays infinite, so a stack
+            // treats the reader as fully flexible).
+            func length(_ value: CGFloat?) -> CGFloat { value.map { $0.isNaN ? 0 : max(0, $0) } ?? 10 }
+            return LayoutSize(width: length(proposal.width), height: length(proposal.height))
         case .user, .modifier, .menu:
             return measureGroup(node, proposal)
         }
@@ -315,6 +327,22 @@ extension Graph {
             placeSlider(node, in: rect)
         case .button:
             placeButton(node, in: rect, proposal: proposal)
+        case .modifier(.offset(let dx, let dy)):
+            // Layout is unchanged (this node keeps `rect`); the content is placed shifted. The shift is not mirrored under right-to-left (SwiftUI: positive x is right).
+            placeGroup(node, in: LayoutRect(x: rect.minX + dx, y: rect.minY + dy, width: rect.width, height: rect.height), proposal: proposal, mirrored: false)
+        case .modifier(.position(let x, let y)):
+            guard let child = childNodes(node).first else { return }
+            let size = measure(child, proposal)
+            // (x, y) is in this node's own coordinate space (its top-leading corner is the origin); not mirrored under right-to-left.
+            place(child, in: LayoutRect(x: rect.minX + x - size.width / 2, y: rect.minY + y - size.height / 2, width: size.width, height: size.height), proposal: proposal)
+        case .user where node.info.isGeometryReader:
+            node.geometrySize = rect.size
+            let childProposal = ProposedViewSize(rect.size)
+            // The content sits at the top-leading corner at its own size (SwiftUI 2+); several views overlap there.
+            for child in childNodes(node) {
+                let size = measure(child, childProposal)
+                placeChild(child, in: LayoutRect(x: rect.minX, y: rect.minY, width: size.width, height: size.height), within: node, bounds: rect, proposal: childProposal)
+            }
         case .user, .modifier, .menu:
             placeGroup(node, in: rect, proposal: proposal)
         }
@@ -433,12 +461,13 @@ extension Graph {
         node.sliderTrack = snapToPixelGrid(LayoutRect(x: rect.minX, y: rect.minY + (rect.height - SliderSpec.height) / 2, width: rect.width, height: SliderSpec.height), scale: scale)
     }
 
-    private func placeGroup(_ node: Node, in rect: LayoutRect, proposal: ProposedViewSize) {
+    private func placeGroup(_ node: Node, in rect: LayoutRect, proposal: ProposedViewSize, mirrored: Bool? = nil) {
         let children = childNodes(node)
+        let mirrored = mirrored ?? mirrors(node)
         if children.count == 1 {
-            placeChild(children[0], in: rect, within: node, bounds: rect, proposal: proposal)
+            place(children[0], in: mirroredRect(rect, in: rect, if: mirrored), proposal: proposal)
         } else if children.count > 1 {
-            placeStack(children, groupStackSpec, in: rect, proposal: proposal, mirrored: mirrors(node))
+            placeStack(children, groupStackSpec, in: rect, proposal: proposal, mirrored: mirrored)
         }
     }
 
@@ -579,8 +608,10 @@ extension Graph {
             let children = childNodes(node)
             guard !children.isEmpty else { return nil }
             switch spec.axis {
-            case .overlap, .overlay:
+            case .overlap:
                 return baselines(of: children[0], proposal)
+            case .overlay:
+                return baselines(of: spec.baseIsLast ? children[children.count - 1] : children[0], proposal)
             case .vertical:
                 let plan = stackPlan(children, spec, proposal)
                 var y: CGFloat = 0
@@ -687,21 +718,23 @@ extension Graph {
     }
 
     private func overlayPlan(_ children: [Node], _ spec: StackSpec, _ proposal: ProposedViewSize) -> StackPlan {
-        guard let base = children.first else {
+        guard !children.isEmpty else {
             return StackPlan(children: [], sizes: [], proposals: [], size: .zero)
         }
-        let baseSize = measure(base, proposal)
+        let baseIndex = spec.baseIsLast ? children.count - 1 : 0
+        let baseSize = measure(children[baseIndex], proposal)
         let overlayProposal = ProposedViewSize(baseSize)
-        let sizes = [baseSize] + children.dropFirst().map { measure($0, overlayProposal) }
-        let proposals = [proposal] + Array(repeating: overlayProposal, count: children.count - 1)
+        let sizes = children.indices.map { $0 == baseIndex ? baseSize : measure(children[$0], overlayProposal) }
+        let proposals = children.indices.map { $0 == baseIndex ? proposal : overlayProposal }
         return StackPlan(children: children, sizes: sizes, proposals: proposals, size: baseSize)
     }
 
     private func placeOverlay(_ children: [Node], _ spec: StackSpec, in rect: LayoutRect, proposal: ProposedViewSize, mirrored: Bool) {
-        guard let base = children.first else { return }
+        guard !children.isEmpty else { return }
+        let baseIndex = spec.baseIsLast ? children.count - 1 : 0
         let plan = overlayPlan(children, spec, proposal)
-        place(base, in: mirroredRect(rect, in: rect, if: mirrored), proposal: plan.proposals[0])
-        for index in 1..<children.count {
+        place(children[baseIndex], in: mirroredRect(rect, in: rect, if: mirrored), proposal: plan.proposals[baseIndex])
+        for index in children.indices where index != baseIndex {
             let child = children[index]
             let size = plan.sizes[index]
             let xSlack = rect.width - size.width
@@ -775,7 +808,7 @@ extension Graph {
         while let parent = child.parent {
             if case .stack(let spec) = parent.kind {
                 // The base of an `.overlay` modifier belongs to the stack around the modified view; the overlaid view does not (it sits in a ZStack-like layer: a horizontal rule).
-                if spec.axis == .overlay, childNodes(parent).first === child { child = parent; continue }
+                if spec.axis == .overlay, (spec.baseIsLast ? childNodes(parent).last : childNodes(parent).first) === child { child = parent; continue }
                 return spec.axis == .horizontal
             }
             child = parent

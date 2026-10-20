@@ -318,7 +318,7 @@ public final class ResolvedNodePainter {
 
     public static func isStructuralContainer(_ kind: String) -> Bool {
         switch kind {
-        case "VStack", "HStack", "ZStack", "Overlay", "Layout", "Group", "EmptyView", "Spacer", "ScrollView", "LazyVStack", "LazyHStack": return true
+        case "VStack", "HStack", "ZStack", "Overlay", "Background", "Layout", "Group", "EmptyView", "Spacer", "ScrollView", "LazyVStack", "LazyHStack": return true
         default: return false
         }
     }
@@ -327,7 +327,9 @@ public final class ResolvedNodePainter {
     /// `textColor` is the colour a Text inherits from an ancestor (a Button's label colour), 0xRRGGBBAA; a Text's own foreground wins.
     /// `rotations` are the `.rotationEffect`s above the node, outermost first, anchors in window pixels: shapes are rotated through their path raster; any other painted content stays unrotated and is reported.
     public func emit(_ node: ResolvedNode, id: UInt64, bounds: Rect, textColor: UInt32? = nil, rotations: [ShapeRotation] = []) throws -> NodeEmission {
-        let emission = try emitContent(node, id: id, bounds: bounds, textColor: textColor, rotations: rotations)
+        var emission = try emitContent(node, id: id, bounds: bounds, textColor: textColor, rotations: rotations)
+        // `.allowsHitTesting(false)` (R1, #36): the node takes no pointer hits. Its painting and its accessibility actions are unchanged.
+        if !node.accessibility.allowsHitTesting, emission.flags.contains(.hitTarget) { emission.flags.remove(.hitTarget) }
         if ShapeRotation.isRotated(rotations), !emission.primitives.isEmpty, !Self.isShapeKind(node.kind) {
             rotationLimitationCount += 1
             if rotationLimitationKinds.insert(node.kind).inserted {
