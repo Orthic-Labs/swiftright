@@ -17,6 +17,6 @@ Frozen reference build = `qualification/tuple13-candidate.json` (status QUALIFIE
 Known SR0 limits carried into the freeze (recorded, not hidden):
 - Narrator spoken output not yet listened to by a person (#23); automated provider checks pass.
 - IME candidate list does not follow a layout move (SR1, #33).
-- Selection highlight and caret not drawn after launch focus (SR1, #25).
+- Selection highlight and caret after launch focus: UNVERIFIED (the frame captures used were stale; WGC re-check under SR1, #25).
 
 From here: ABI 0.6 and the tuple 13 members do not change; product work continues on master under SR1 and later stages. Git tag `sr0-freeze-abi-0.6` marks the commit holding this record.

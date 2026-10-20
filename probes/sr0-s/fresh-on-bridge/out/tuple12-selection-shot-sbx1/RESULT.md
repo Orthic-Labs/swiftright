@@ -8,3 +8,7 @@ Windows Sandbox on the Dell, tuple 12 FreshOnBridge `87b8cb27…` + renderer `75
 
 ## PrintWindow re-capture (19 Oct, tuple 13 build: FreshOnBridge 87b8cb27 + renderer 1aa8ad22)
 `sel-shot-F1-printwindow.png` via `PrintWindow(hwnd, PW_RENDERFULLCONTENT)` after `AppActivate` returned True (`sel-shot-printwindow.log`). Row 1 field (`row1-zoom.png`) holds only white, the text colour 0x1F1F1F and border greys: no selection tint and no caret colour 0x111111. Two capture methods agree. Verdict: **not painted** on this build after launch focus, although UIA reports focus 0+5 (cross recordings). Likely cause to check in SR1: the frame is not repainted after the launch focus commit, or `focusedRow` is unset when the frame is built. SR1 (#25).
+
+## Correction (20 Oct): every capture above is unusable
+- F1 has no launch focus (events show only an `ax` focus later), so F1 frames can never show a caret.
+- F3 on the Dell's real desktop (`sel-shot-f3-desktop.ps1`, `desktop-sel-F3-*.png`): PrintWindow frames at 1.3 s, 4.2 s and 8.2 s are byte-identical although the script typed into Row 4 in between, and the Sandbox F3 pair is identical too. GDI screen copy and PrintWindow return a stale first frame for this window. Verdict: INCONCLUSIVE; re-check with Windows Graphics Capture.
