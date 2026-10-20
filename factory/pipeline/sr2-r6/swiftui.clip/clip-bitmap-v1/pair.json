@@ -1,0 +1,8 @@
+{
+ "edgeAATolerance": {
+  "levels": 255,
+  "maxOverFraction": 1.0,
+  "maxMeanAbs": 255,
+  "reason": "Issue #43: the clip's edge across a bitmap is a one-pixel staircase on Windows (rect-clip bands) where the Mac anti-aliases it, so the 1 px edge band is reported, not gated. What this case gates is everything outside the band: exact (no bitmap outside the curve, none missing inside it)."
+ }
+}

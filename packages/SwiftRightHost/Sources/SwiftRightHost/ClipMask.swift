@@ -32,6 +32,45 @@ public struct ClipMask: Equatable, Sendable {
         return true
     }
 
+    /// How a renderer-drawn primitive (a text run, a bitmap) over `region` is clipped by `masks` (#43): the renderer clips by rectangles only, so the region is cut
+    /// into bands of rows whose inside spans are the same, each span a rect clip. A pixel is inside when every mask covers it at least half; the curved edge is then a
+    /// one-pixel staircase where SwiftUI anti-aliases it.
+    public enum RectCover: Equatable { case all, none, rects([Rect]) }
+
+    static func rectCover(_ masks: [ClipMask], region: Rect) -> RectCover {
+        let xa = Int(region.x.rounded(.down)), xb = Int((region.x + region.w).rounded(.up))
+        let ya = Int(region.y.rounded(.down)), yb = Int((region.y + region.h).rounded(.up))
+        guard xb > xa, yb > ya else { return .all }
+        func spans(_ y: Int) -> [Range<Int>] {
+            var out: [Range<Int>] = []
+            var start: Int?
+            for x in xa..<xb {
+                let inside = masks.allSatisfy { $0.coverage(x, y) >= 128 }
+                if inside, start == nil { start = x }
+                if !inside, let s = start { out.append(s..<x); start = nil }
+            }
+            if let s = start { out.append(s..<xb) }
+            return out
+        }
+        var rects: [Rect] = []
+        var full = true, empty = true
+        var bandStart = ya
+        var bandSpans = spans(ya)
+        func flush(_ end: Int) {
+            for s in bandSpans { rects.append(Rect(x: Float(s.lowerBound), y: Float(bandStart), w: Float(s.count), h: Float(end - bandStart))) }
+        }
+        for y in ya..<yb {
+            let s = y == ya ? bandSpans : spans(y)
+            if !(s.count == 1 && s[0] == xa..<xb) { full = false }
+            if !s.isEmpty { empty = false }
+            if y > ya && s != bandSpans { flush(y); bandStart = y; bandSpans = s }
+        }
+        flush(yb)
+        if full { return .all }
+        if empty { return .none }
+        return .rects(rects)
+    }
+
     /// `image` (straight alpha) placed with its top-left pixel at (`originX`, `originY`), its alpha multiplied by every mask's coverage.
     static func apply(_ masks: [ClipMask], to image: ContinuousRGBAImage, originX: Int, originY: Int) -> ContinuousRGBAImage {
         var rgba = image.rgba

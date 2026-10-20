@@ -49,3 +49,45 @@ final class ClipShapePainterTests: XCTestCase {
         XCTAssertTrue(prims.contains { if case .rect = $0 { return true } else { return false } }, "no mask for a rectangle: \(prims)")
     }
 }
+
+// #43: text under a non-rectangular clip is drawn once per band of the clip's inside, each band a rect clip.
+@MainActor
+final class ClipShapeTextTests: XCTestCase {
+    private func prims<V: View>(_ view: V) throws -> [Primitive] {
+        let painter = ResolvedNodePainter(images: FakeImages(), scale: 2.5, text: FakeRuns(), log: { _ in })
+        let graph = Graph(view, scale: 2.5)
+        graph.rootProposal = ProposedViewSize(width: 320, height: 240)
+        graph.flush()
+        var upserts: [NodeUpsert] = []
+        _ = try painter.commit(root: try XCTUnwrap(graph.snapshot()), version: 1, previousLive: [], submit: { upserts = $0.upserts })
+        return upserts.flatMap { $0.primitives }
+    }
+    private func textCount(_ p: [Primitive]) -> Int { p.filter { if case .text = $0 { return true } else { return false } }.count }
+
+    func testTextAcrossACurvedClipEdgeIsDrawnInBandsInsideTheClip() throws {
+        let p = try prims(Text("Hello").frame(width: 60, height: 40).clipShape(Circle()))
+        XCTAssertGreaterThan(textCount(p), 2, "one draw per band: \(p.count) primitives")
+        var bands: [Rect] = []
+        var depth = 0
+        for prim in p {
+            if case .clipPush(let r) = prim { depth += 1; if depth == 2 { bands.append(r) } }
+            if case .clipPop = prim { depth -= 1 }
+        }
+        XCTAssertFalse(bands.isEmpty)
+        // a 40 pt circle in a 60 x 40 pt frame: 100 px across, centred at x 75 px; every band lies inside its bounding square
+        for b in bands { XCTAssertGreaterThanOrEqual(b.x, 24); XCTAssertLessThanOrEqual(b.x + b.w, 126) }
+        let widest = bands.map(\.w).max() ?? 0
+        let narrowest = bands.map(\.w).min() ?? 0
+        XCTAssertGreaterThan(widest, narrowest, "the bands follow the curve")
+    }
+
+    func testTextWhollyInsideTheClipIsOneDraw() throws {
+        let p = try prims(Text("Hi").frame(width: 20, height: 10).frame(width: 100, height: 100).clipShape(Circle()))
+        XCTAssertEqual(textCount(p), 1)
+    }
+
+    func testTextWhollyOutsideTheClipIsNotDrawn() throws {
+        let p = try prims(Text("Hi").frame(width: 20, height: 10).offset(x: -45, y: -45).frame(width: 100, height: 100).clipShape(Circle()))
+        XCTAssertEqual(textCount(p), 0)
+    }
+}

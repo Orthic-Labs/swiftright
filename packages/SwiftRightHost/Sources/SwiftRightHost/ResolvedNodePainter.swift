@@ -55,11 +55,9 @@ public final class ResolvedNodePainter {
         return out
     }
 
-    /// `.clipShape` masks above the node being emitted (SR2 R6). Host-rasterised shapes and solid rects are masked; text and bitmaps are clipped to the clip's
-    /// bounding rect only (the renderer's clip stack is rectangular).
+    /// `.clipShape` masks above the node being emitted (SR2 R6). Host-rasterised shapes and solid rects are masked; text and bitmaps, which the renderer draws, are
+    /// drawn once per band of the clip's inside, each band a rect clip (#43).
     private var clipMasks: [ClipMask] = []
-    /// Text and bitmap nodes painted under a non-rectangular `.clipShape` since this painter was made (rect-clipped only).
-    public private(set) var clipShapeLimitationCount = 0
 
     private func registerRGBA(_ image: ContinuousRGBAImage) throws -> ImageHandle {
         try images.registerImage(width: UInt32(image.width), height: UInt32(image.height), rgba: image.rgba, stride: 0)
@@ -438,8 +436,18 @@ public final class ResolvedNodePainter {
             for (index, primitive) in emission.primitives.enumerated() {
                 func offGrid(_ r: Rect) -> Bool { scale != baseScale && [r.x, r.y, r.w, r.h].contains { $0 != $0.rounded() } }
                 guard case .rect(let r, let color, let radius, let borderColor, let borderWidth) = primitive, !clipMasks.allSatisfy({ $0.covers(r) }) || offGrid(r) else {
-                    if case .text = primitive { clipShapeLimitationCount += 1 }
-                    if case .image = primitive, !Self.isShapeKind(node.kind) { clipShapeLimitationCount += 1 }
+                    // A text run or a bitmap (drawn by the renderer, which clips by rectangles) is drawn once per band of the clip's inside (#43).
+                    var region: Rect?
+                    if case .text = primitive { region = bounds }
+                    if case .image(_, let r, _) = primitive, !Self.isShapeKind(node.kind) { region = r }
+                    if let region {
+                        switch ClipMask.rectCover(clipMasks, region: region) {
+                        case .all: out.append(primitive)
+                        case .none: break
+                        case .rects(let bands): for band in bands { out += [.clipPush(band), primitive, .clipPop] }
+                        }
+                        continue
+                    }
                     out.append(primitive)
                     continue
                 }
