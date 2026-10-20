@@ -231,11 +231,15 @@ public final class ResolvedNodePainter {
             let scaledText = !transform.isIdentity && n.kind == "Text"
             let bounds = transform.isIdentity ? laidOut : (scaledText ? transform.mapCentre(laidOut) : transform.map(laidOut))
             if scaledText { scaleTextLimitationCount += 1 }
-            scale = scaledText ? baseScale : baseScale * transform.uniform
+            let nodeScale = scaledText ? baseScale : baseScale * transform.uniform
+            scale = nodeScale
             self.brightness = brightness
             defer { scale = baseScale; self.brightness = [] }
+            // A factor of 0 (`.scaleEffect(shown ? 1 : 0)`, the first frame of a pop-in) paints nothing: no raster may be asked for at scale 0.
+            let collapsed = !transform.isIdentity && (transform.sx == 0 || transform.sy == 0)
             var emission: NodeEmission
-            if let row, let rowList { emission = try emitListRow(n, id: id, row: row, look: rowList.look, contentBounds: bounds, textColor: textColor) }
+            if collapsed { emission = NodeEmission(primitives: [], semantic: nil, flags: [], structural: false) }
+            else if let row, let rowList { emission = try emitListRow(n, id: id, row: row, look: rowList.look, contentBounds: bounds, textColor: textColor) }
             else { emission = try emit(n, id: id, bounds: bounds, textColor: textColor, rotations: rotations) }
             let childTransform = n.scaleEffect.map { transform.scaled(by: $0, about: laidOut) } ?? transform
             let childBrightness = n.brightness.map { brightness + [Float($0)] } ?? brightness
@@ -294,6 +298,9 @@ public final class ResolvedNodePainter {
             } else {
                 for (index, child) in n.children.enumerated() { try walk(child, parent: id, order: UInt32(index), clip: childClip, rotations: childRotations, textColor: childTextColor, inButton: childInButton || n.kind == "Button" || n.kind == "modifier.onTapGesture", a11y: childA11y, hidden: childHidden, transform: childTransform, brightness: childBrightness) }
             }
+            // The children's walks reset the painter to the display scale: this node's own scale and brightness apply again to what it paints after them.
+            scale = nodeScale
+            self.brightness = brightness
             // The legacy scroller of a List or ScrollView is painted above its content: a child node ordered after the last child, clipped to the container.
             if n.kind == "List" || n.kind == "ScrollView", let scroll = n.scroll, let layout = ScrollerPainter.layout(frame: bounds, scale: scale, scroll: scroll) {
                 let scrollerID = id | Self.scrollerNodeFlag

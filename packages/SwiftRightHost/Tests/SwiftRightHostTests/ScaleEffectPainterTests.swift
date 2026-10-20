@@ -54,6 +54,13 @@ final class ScaleEffectPainterTests: XCTestCase {
         XCTAssertEqual(twice[0].rect.x, once[0].rect.x, accuracy: 1e-3)
     }
 
+    // Oracle R4: a factor of 0 paints nothing and does not fail the commit (a trimmed ring takes the path raster, which refuses scale 0).
+    func testAZeroScalePaintsNothingAndCommits() throws {
+        XCTAssertEqual(try rects(Color.red.frame(width: 40, height: 20).scaleEffect(0)).count, 0)
+        XCTAssertNoThrow(try rects(Circle().trim(from: 0, to: 0.5).stroke(Color.red, lineWidth: 4).frame(width: 40, height: 40).scaleEffect(0)))
+        XCTAssertNoThrow(try rects(Circle().trim(from: 0, to: 0.5).stroke(Color.red, lineWidth: 4).frame(width: 40, height: 40).scaleEffect(x: 1, y: 0)))
+    }
+
     func testStrokeWidthScales() throws {
         let plain = try rects(RoundedRectangle(cornerRadius: 6, style: .circular).stroke(Color.red, lineWidth: 2).frame(width: 40, height: 20))
         let scaled = try rects(RoundedRectangle(cornerRadius: 6, style: .circular).stroke(Color.red, lineWidth: 2).frame(width: 40, height: 20).scaleEffect(2))
