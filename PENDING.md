@@ -14,7 +14,7 @@ State (19 Oct 2026): tuple 13 QUALIFIED (`docs/sr0-status.md` top, `qualificatio
 | 3 | Narrator speech content | Adrian will listen later |
 | 4 | W08 | must be fixed, not accepted as limitation |
 | 5 | Comparison repeat count | accepted: 20 Mac & 20 Windows per config on final 0.6 tuple |
-| 6 | Freeze | W08 closed 18 Oct; tuple 13 qualified 19 Oct: freeze decision is Adrian's (#22) |
+| 6 | Freeze | DONE 20 Oct: SR0 frozen on tuple 13 (Adrian: "why would we not freeze it if it's qualified?"), `docs/sr0-freeze.md`, tag `sr0-freeze-abi-0.6` |
 | 7a | Tuple 12 packages (MSIX/DMG) | Tuple 13 packages signed (CI runs 39220477732 / 39220481624: Windows Azure OIDC, macOS Developer ID + notarized), qualification only, no publication |
 | 7 | Signing | new-package signing approved using short-lived Azure certificate reissue; no fixed expiry deadline |
 | 8 | Unproven recorder items | R8 settled, R5 closed, R6 accepted limitation per current decision record |
