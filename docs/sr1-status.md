@@ -399,3 +399,15 @@ Each gate's measurements are in its pair.json. Oracle PASS-WITH-CAVEATS; the Gro
 - **Caveats:**
   - Glyph ink outside the node's bounds (italic overhang) is cut when banded, or unmasked when wholly inside.
   - Each commit scans the region (about 64k lookups for a 2× notch cell), and a crossing run draws about once per pixel row. Optional hardening: an early exit and a cache per mask and region.
+
+## 21 October: layout under scaleEffect matches SwiftUI to the sub-pixel (#44)
+- **Rule:** SwiftUI lays out a `.scaleEffect` subtree in the scaled view's own coordinates (origin 0), snaps it there, then places it at the scaled view's snapped origin and scales it. The runtime records each node's local snapped frame (`scaleLocalFrame`) with a local placement pass, and the host draws scaled content from those frames. The anchor is the centre of the exact frame.
+- **How it was found:**
+  - CI-Mac probes showed that unscaled snapping already matched (probes `half-pixel-centre-v1`, `stack-ties-v1`).
+  - Under ×1.4, the seven-row `stack-ties-scaled-v1` matched only the local rule. Snapping absolute positions was a pixel off on two rows.
+- **Evidence at the final code:**
+  - R4, run 39467077724: 6/6 cases including both half-pixel cases.
+  - `stack-ties-scaled-v1`, run 39469177999: 20/20, all 14 row edges within 0.02 px of the Mac.
+  - `scale-text-v1`, run 39470683102: 20/20.
+  - R6, run 39469210989: 4/4 including `clip-bitmap-v1`.
+- **Tests:** runtime 602/602, host 341/341.
