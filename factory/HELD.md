@@ -1,6 +1,6 @@
 # Running held-work list
 
-**Stopped by Adrian,13October:** both workers & heartbeat paused; no owned compiler/native process remains, Dell lockfree. [Full current status & evidence](../docs/sr1-status.md). Current pause is user-requested, not a Fable quota or blanket SR0 implementation gate.
+**Resumed 20 October 2026.** Adrian: "ther's no hold on SwiftRight work. that was relayed by agents by mistake and was about other projects". SR0 is frozen on tuple 13 (ABI 0.6, renderer `1aa8ad22…`; `docs/sr0-freeze.md`, tag `sr0-freeze-abi-0.6`), so every row below whose release condition is SR0 closure, tuple 12 qualification or the 0.6 freeze is released: frozen-contract binding rebinds to tuple 13, and ABI 0.7 renderer/bridge work may start (append-only proposals first). The 13 October pause line is superseded. [Full current status & evidence](../docs/sr1-status.md).
 
 ## Original-five execution — 13 October 2026, 03:44 UTC
 
