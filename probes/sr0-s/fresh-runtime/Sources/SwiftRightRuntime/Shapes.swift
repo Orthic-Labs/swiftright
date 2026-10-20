@@ -168,6 +168,11 @@ public struct ShapePaint: Equatable, Sendable {
         self.strokeStyle = strokeStyle
         self.fillStyle = fillStyle
     }
+
+    /// The paint SwiftUI gives a shape with no `.fill` / `.stroke`: a non-zero fill in the inherited foreground style (`.foregroundStyle`), else `.primary`.
+    public static func implicitFill(foreground: ResolvedColor?) -> ShapePaint {
+        ShapePaint(kind: .fill, color: foreground ?? .semantic("label"), lineWidth: nil)
+    }
 }
 
 /// Shape facts attached to a resolved node. Bounds are provided by `ResolvedNode.frame`.

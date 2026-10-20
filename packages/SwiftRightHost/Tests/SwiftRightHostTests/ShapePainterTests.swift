@@ -21,6 +21,18 @@ final class ShapePainterTests: XCTestCase {
         XCTAssertEqual(radius, 0)
     }
 
+    // SR2 R1 (#36): a shape with no .fill/.stroke fills with the inherited foreground style (here set on a Group), else .primary.
+    func testBareShapeFillsWithInheritedForegroundStyleElsePrimary() throws {
+        let styled = try shapeNode(Group { Rectangle().frame(width: 48, height: 32) }.foregroundStyle(Color.blue), w: 100, h: 100)
+        guard case .primitive(.rect(_, let color, _, _, _)) = try ShapePainter.plan(styled, bounds: bounds(styled), scale: 2.5) else { return XCTFail() }
+        XCTAssertEqual(color, 0x0088ffff)
+        let bare = try shapeNode(Rectangle().frame(width: 48, height: 32), w: 100, h: 100)
+        let primary = try shapeNode(Rectangle().fill(Color.primary).frame(width: 48, height: 32), w: 100, h: 100)
+        guard case .primitive(.rect(_, let c1, _, _, _)) = try ShapePainter.plan(bare, bounds: bounds(bare), scale: 2.5),
+              case .primitive(.rect(_, let c2, _, _, _)) = try ShapePainter.plan(primary, bounds: bounds(primary), scale: 2.5) else { return XCTFail() }
+        XCTAssertEqual(c1, c2)
+    }
+
     func testCircleIsTheCentredSquare() throws {
         let n = try shapeNode(Circle().fill(Color.red), w: 40, h: 20)
         let b = bounds(n)

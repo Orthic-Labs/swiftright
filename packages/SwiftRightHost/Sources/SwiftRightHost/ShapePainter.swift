@@ -83,7 +83,8 @@ public enum ShapePainter {
     /// Resolves a Rectangle / RoundedRectangle / Circle node to its paint, from runtime geometry and paint only.
     /// `rotations` are the `.rotationEffect`s above the node (outermost first, anchors in the same window pixels as `bounds`): a rotated shape always takes the path route, with the rotation in its request.
     public static func plan(_ node: ResolvedNode, bounds: Rect, scale: Float, rotations: [ShapeRotation] = []) throws -> ShapePaintPlan {
-        guard let shape = node.shape, let paint = shape.paint else { throw HostPaintError.shapeMetadataRequired }
+        guard let shape = node.shape else { throw HostPaintError.shapeMetadataRequired }
+        let paint = shape.paint ?? ShapePaint.implicitFill(foreground: node.style.foreground)
         let colour = try HostPaint.rgba(paint.color, opacity: node.opacity, scheme: node.style.colorScheme)
         var strokeWidth: Float = 0
         if paint.kind == .stroke {
