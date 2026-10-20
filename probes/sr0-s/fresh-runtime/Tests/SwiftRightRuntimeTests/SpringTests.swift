@@ -98,6 +98,39 @@ final class SpringTests: XCTestCase {
         XCTAssertTrue(removed)
     }
 
+    // Oracle R3: a parameterised spring interrupting one keeps its velocity (no restart from rest, no fling) at any tick alignment.
+    func testABouncySpringInterruptedByABouncySpringKeepsItsVelocity() throws {
+        for offset in [0.0, 0.0333, 0.00005, 0.0016666] {
+            let model = SpringBarModel()
+            let g = Graph(SpringBarScreen(model: model), scale: 2.5)
+            g.flush()
+            withAnimation(.bouncy) { model.wide = true }
+            g.flush()
+            g.tick(now: 0)
+            let t0 = 0.1 + offset
+            g.tick(now: t0 - 1.0 / 60)
+            let before = try width(g)
+            g.tick(now: t0)
+            let at = try width(g)
+            let rate = Double(at - before) * 60   // pt/s just before the interruption
+            withAnimation(.bouncy) { model.wide = false }   // back to 100: the bar is still moving towards 300
+            g.flush()
+            g.tick(now: t0)
+            g.tick(now: t0 + 1.0 / 60)
+            let next = try width(g)
+            let rateAfter = Double(next - at) * 60
+            XCTAssertGreaterThan(rateAfter, 0.3 * rate, "offset \(offset): keeps moving the same way at first (\(rateAfter) vs \(rate))")
+            XCTAssertLessThan(rateAfter, 1.5 * rate, "offset \(offset): no fling (\(rateAfter) vs \(rate))")
+            g.tick(now: t0 + 3)
+            XCTAssertEqual(try width(g), 100)
+        }
+    }
+
+    func testSpringCallWithoutArgumentsIsTheDefaultSpring() {
+        XCTAssertEqual(Animation.spring().curve, .spring)
+        XCTAssertEqual(Animation.spring(response: 0.5, dampingFraction: 1).curve, .spring)
+    }
+
     func testIntegratedSettleKeepsTheSpringUntilItStaysWithinTolerance() {
         guard case .integratedSpring(let k, let c) = Animation.bouncy.curve else { return XCTFail() }
         let t = SpringMath.integratedSettle(k: k, c: c, displacement: [0, 0, 200, 0, 0], scale: 2.5)

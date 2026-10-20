@@ -20,7 +20,11 @@ extension Animation {
     }
 
     /// Apple: https://developer.apple.com/documentation/swiftui/animation/spring(response:dampingfraction:blendduration:)
+    /// Disfavoured so `.spring()` is the duration/bounce form, as in SwiftUI (macOS 27: `.spring() == .spring(duration: 0.5, bounce: 0)`).
+    @_disfavoredOverload
     public static func spring(response: Double = 0.5, dampingFraction: Double = 0.825, blendDuration: Double = 0) -> Animation {
+        // SwiftUI: the default spring is `response 0.5, dampingFraction 1` (it prints as FluidSpringAnimation(response: 0.5, dampingFraction: 1.0)).
+        if response == 0.5 && dampingFraction == 1 { return Animation(name: "spring", duration: 0.5, curve: .spring) }
         let omega = 2 * Double.pi / max(response, 1e-6)
         return Animation(name: "spring", duration: response, curve: .integratedSpring(stiffness: omega * omega, damping: 2 * dampingFraction * omega))
     }
@@ -92,6 +96,11 @@ enum SpringMath {
 
     private static func trajectory(k: Double, c: Double, through t: Double) -> (ends: [Double], values: [Double]) {
         let key = Key(k: k, c: c)
+        // Springs whose parameters vary continuously (driven by a slider, say) would grow the cache without bound: start over past 64 springs.
+        if trajectories[key] == nil && trajectories.count >= 64 {
+            trajectories.removeAll()
+            velocities.removeAll()
+        }
         var tr = trajectories[key] ?? (ends: [], values: [])
         if (tr.ends.last ?? 0) < t {
             var x = tr.values.last ?? 0

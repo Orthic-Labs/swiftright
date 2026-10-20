@@ -700,7 +700,9 @@ extension Graph {
         if layer.isSpring, let top = chain.layers.last, top.isSpring, let now = clock, top.start != nil {
             // A spring that interrupts a spring continues from the presented position and velocity (SwiftUI merges them).
             let current = chain.value(at: now)
-            let h = 1e-4
+            // An integrated spring holds its value between 1/300 s steps: a difference over exactly one step is the integrator's own velocity
+            // (semi-implicit Euler: x_n - x_(n-1) = v_n h), where a shorter window reads 0 or a whole step's change.
+            let h = chain.layers.contains(where: { if case .integratedSpring = $0.animation.curve { return true } else { return false } }) ? SpringMath.step : 1e-4
             let before = chain.value(at: now - h)
             let c = current.components, b = before.components, t = target.components
             layer.continuation = (
