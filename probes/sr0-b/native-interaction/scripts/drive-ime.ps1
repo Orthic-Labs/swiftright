@@ -18,6 +18,22 @@ param(
 )
 . "$PSScriptRoot\native-common.ps1"
 
+# user32 calls for the post-move candidate track (IME_CANDIDATE_TRACK); not exposed by SRN.N, same Add-Type style as NativeHelpers.cs.
+if (-not ('SRN.WinTrack' -as [type])) {
+  Add-Type -TypeDefinition @'
+using System;
+using System.Runtime.InteropServices;
+namespace SRN {
+  [StructLayout(LayoutKind.Sequential)] public struct WtRect { public int Left; public int Top; public int Right; public int Bottom; }
+  public static class WinTrack {
+    [DllImport("user32.dll", SetLastError = true)] public static extern bool IsWindow(IntPtr hWnd);
+    [DllImport("user32.dll", SetLastError = true)] public static extern bool IsWindowVisible(IntPtr hWnd);
+    [DllImport("user32.dll", SetLastError = true)] public static extern bool GetWindowRect(IntPtr hWnd, out WtRect rect);
+  }
+}
+'@
+}
+
 $NI = U 0x306B; $HO = U 0x307B; $NN = U 0x3093
 $NIPPON = (U 0x65E5) + (U 0x672C)          # the two CJK ideographs for "Japan"
 $TIP_GUID = '{03B5835F-F03C-411B-9CE2-AA23E1171E36}'
@@ -290,6 +306,55 @@ function Cand-Hits-Near([int[]]$car, [string]$tag) {
   } catch { Log "$tag exception=$($_.Exception.Message)" }
   return ,$out
 }
+# Candidate track after a layout move (diagnostic only; no pass/fail effect). The candidate HWND and its raw rect are the ones the open-time
+# hit test found at the PRE-move caret (same selection as the follows-layout check). Samples: 11 (t=0..1000 ms, every 100 ms) of IsWindow,
+# IsWindowVisible and GetWindowRect on that HWND, then one summary line classifying the candidate against the caret delta.
+function Open-Cand-Hit([int[]]$oldS, [double]$s) {
+  $bh = $null
+  foreach ($h in @($script:CandHits | Where-Object { [math]::Abs($_.Caret[0] - $oldS[0]) -le 2 -and [math]::Abs($_.Caret[1] - $oldS[1]) -le 2 })) {
+    if ($bh -eq $null -or ((Anchored-To $oldS $h.W $s).Ok -and -not (Anchored-To $oldS $bh.W $s).Ok)) { $bh = $h }
+  }
+  return $bh
+}
+function Track-After-Move([int]$idx, [int[]]$oldS, [int[]]$newS, [double]$s, $clock) {
+  $cdx = $newS[0] - $oldS[0]; $cdy = $newS[1] - $oldS[1]
+  $bh = Open-Cand-Hit $oldS $s
+  if ($bh -eq $null) { Log "IME_CANDIDATE_AFTER_MOVE state=untracked reason=no_candidate_at_open line=$idx dx=0 dy=0 caretDx=$cdx caretDy=$cdy"; return }
+  $h = [IntPtr]$bh.W.Hwnd
+  $base = [int[]]@([int]$bh.W.RawL, [int]$bh.W.RawT, [int]$bh.W.RawR, [int]$bh.W.RawB)
+  Log ('IME_CANDIDATE_OPEN hwnd=0x{0:X} rect={1},{2},{3},{4} line={5} caret_old={6},{7}' -f [int64]$bh.W.Hwnd, $base[0], $base[1], $base[2], $base[3], $idx, $oldS[0], $oldS[1])
+  $samples = @()
+  for ($i = 0; $i -le 10; $i++) {
+    $target = $i * 100
+    while ($clock.ElapsedMilliseconds -lt $target) { Start-Sleep -Milliseconds 10 }
+    $t = [int]$clock.ElapsedMilliseconds
+    $exists = [SRN.WinTrack]::IsWindow($h)
+    $vis = $exists -and [SRN.WinTrack]::IsWindowVisible($h)
+    $rc = New-Object SRN.WtRect
+    $rect = $null
+    if ($exists -and [SRN.WinTrack]::GetWindowRect($h, [ref]$rc)) { $rect = [int[]]@($rc.Left, $rc.Top, $rc.Right, $rc.Bottom) }
+    $visBit = 0; if ($vis) { $visBit = 1 }
+    $rectTxt = 'na'; if ($rect -ne $null) { $rectTxt = $rect -join ',' }
+    Log ('IME_CANDIDATE_TRACK t_ms={0} hwnd=0x{1:X} visible={2} rect={3}' -f $t, [int64]$bh.W.Hwnd, $visBit, $rectTxt)
+    $samples += [pscustomobject]@{ T = $t; Exists = $exists; Vis = $vis; Rect = $rect }
+  }
+  # summary from the last sample: gone = no window; hidden = window exists, not visible; stayed = rect within 2 px on every edge;
+  # followed = rect moved by the caret delta within 12*scale per axis; otherwise other
+  $last = $samples[$samples.Count - 1]
+  $dx = 0; $dy = 0
+  if ($last.Rect -ne $null) { $dx = $last.Rect[0] - $base[0]; $dy = $last.Rect[1] - $base[1] }
+  $tol = 12 * $s
+  if (-not $last.Exists) { $state = 'gone' }
+  elseif (-not $last.Vis) { $state = 'hidden' }
+  elseif ($last.Rect -eq $null) { $state = 'other' }
+  else {
+    $maxEdge = [math]::Max([math]::Max([math]::Abs($last.Rect[0] - $base[0]), [math]::Abs($last.Rect[1] - $base[1])), [math]::Max([math]::Abs($last.Rect[2] - $base[2]), [math]::Abs($last.Rect[3] - $base[3])))
+    $followed = ([math]::Abs($dx - $cdx) -le $tol) -and ([math]::Abs($dy - $cdy) -le $tol)
+    if ($maxEdge -le 2) { $state = 'stayed' } elseif ($followed) { $state = 'followed' } else { $state = 'other' }
+  }
+  Log ('IME_CANDIDATE_AFTER_MOVE state={0} dx={1} dy={2} caretDx={3} caretDy={4}' -f $state, $dx, $dy, $cdx, $cdy)
+}
+
 # R9 layout move: the renderer re-places the IME windows when layout moves the composing field (`ime_replace reason=layout
 # old=l,t,w,h new=l,t,w,h`, CLIENT px of the caret). For each new line: convert both rects to screen (same origin logic as
 # Eval-PositionSet: ClientOrigin + client px), wait 400 ms for the IME to follow, then hit-test below/above the NEW caret.
@@ -307,11 +372,13 @@ function Layout-Trigger {
     $oldS = [int[]]@(($o[0] + $oc[0]), ($o[1] + $oc[1]), $oc[2], $oc[3])
     $newS = [int[]]@(($o[0] + $nc[0]), ($o[1] + $nc[1]), $nc[2], $nc[3])
     $scale = [SRN.N]::GetDpiForWindow($script:Hwnd) / 96.0
+    $mv = [Diagnostics.Stopwatch]::StartNew()   # IME_CANDIDATE_TRACK clock: started at detection of the move line (before the 400 ms wait)
     Log "candidate_after_layout line=$i caret_old_screen=$($oldS -join ',') caret_new_screen=$($newS -join ',') scale=$scale wait_ms=400"
     Start-Sleep -Milliseconds 400
     $hits = @(Cand-Hits-Near $newS 'candidate_after_layout')
     Log "candidate_after_layout line=$i hits=$($hits.Count)"
     $script:LayoutRes += [pscustomobject]@{ Idx = $i; Old = $oldS; New = $newS; Scale = $scale; Hits = $hits }
+    Track-After-Move $i $oldS $newS $scale $mv
   }
 }
 

@@ -9,7 +9,7 @@
 use std::cell::RefCell;
 use std::ffi::c_void;
 use std::ops::Range;
-use std::sync::atomic::{AtomicI32, AtomicI64, AtomicU32, AtomicU64, Ordering::SeqCst};
+use std::sync::atomic::{AtomicBool, AtomicI32, AtomicI64, AtomicU32, AtomicU64, Ordering::SeqCst};
 use std::sync::{Arc, Mutex};
 
 use accesskit_windows::{SubclassingAdapter, HWND as AkHWND};
@@ -1187,6 +1187,8 @@ extern "system" {
     fn ImmGetCandidateWindow(himc: *mut c_void, index: u32, f: *mut CandidateForm) -> i32;
     fn ImmGetDefaultIMEWnd(hwnd: *mut c_void) -> *mut c_void;
     fn ImmGetCompositionStringW(himc: *mut c_void, index: u32, buf: *mut c_void, len: u32) -> i32;
+    fn ImmNotifyIME(himc: *mut c_void, action: u32, index: u32, value: u32) -> i32;
+    fn ImmGetCandidateList(himc: *mut c_void, index: u32, list: *mut c_void, len: u32) -> u32;
 }
 #[link(name = "user32")]
 extern "system" {
@@ -1217,9 +1219,166 @@ const WM_IME_NOTIFY: u32 = 0x0282;
 const WM_IME_STARTCOMPOSITION: u32 = 0x010D;
 const WM_IME_ENDCOMPOSITION: u32 = 0x010E;
 const WM_IME_COMPOSITION: u32 = 0x010F;
+const WM_IME_REQUEST: u32 = 0x0288;
+const IMR_QUERYCHARPOSITION: usize = 0x0006;
+/// IMECHARPOSITION (imm.h): dwCharPos is an input (offset in UTF-16 units from the composition start);
+/// pt = screen px top-left of that character, cLineHeight, rcDocument = screen px document area.
+#[repr(C)]
+struct ImeCharPosition { size: u32, char_pos: u32, pt: [i32; 2], line_height: u32, rc_document: [i32; 4] }
 static IME_MSG_LOGS: AtomicU32 = AtomicU32::new(0);
+static IME_QUERY_COUNT: AtomicU32 = AtomicU32::new(0);
+/// Between IMN_OPENCANDIDATE and IMN_CLOSECANDIDATE (and cleared at WM_IME_ENDCOMPOSITION).
+static IME_CAND_OPEN: AtomicBool = AtomicBool::new(false);
+static IME_T0: AtomicI64 = AtomicI64::new(0);
 
-fn ime_caret_rect(_hwnd: *mut c_void) -> Option<Rect> {
+/// Milliseconds since the first IME log call / subclass install (QPC).
+fn ime_ts_ms() -> f64 {
+    let now = qpc_now();
+    let _ = IME_T0.compare_exchange(0, now, SeqCst, SeqCst);
+    (now - IME_T0.load(SeqCst)) as f64 * 1000.0 / qpc_freq() as f64
+}
+
+/// Every `ime_*` stderr line goes through this: the line text is unchanged, with ` t_ms=<ms since start>` appended.
+macro_rules! ime_log {
+    ($($arg:tt)*) => {{
+        let s = format!($($arg)*);
+        eprintln!("[swiftright-render] {} t_ms={:.1}", s, ime_ts_ms());
+    }};
+}
+
+// ---- DIAGNOSTIC ONLY (issue #33 Stage 1): MUST NOT SHIP. The follow mode below is read from the environment
+// variable SWIFTRIGHT_IME_FOLLOW_MODE (a|b|c|d, default d). The winning mode will be hard-coded and the env var removed.
+const IME_FOLLOW_ENV: &str = "SWIFTRIGHT_IME_FOLLOW_MODE";
+static IME_FOLLOW_MODE: AtomicU32 = AtomicU32::new(0); // 0 = unread, else the lowercase ASCII letter
+
+fn ime_follow_mode() -> u8 {
+    let m = IME_FOLLOW_MODE.load(SeqCst);
+    if m != 0 {
+        return m as u8;
+    }
+    let v = std::env::var(IME_FOLLOW_ENV).ok().and_then(|s| s.trim().chars().next()).map(|c| c.to_ascii_lowercase());
+    let m = match v {
+        Some(c @ ('a' | 'b' | 'c' | 'd')) => c as u8,
+        _ => b'd',
+    };
+    IME_FOLLOW_MODE.store(m as u32, SeqCst);
+    ime_log!("ime_follow_mode mode={} (env {IME_FOLLOW_ENV}, DIAGNOSTIC: must not ship)", m as char);
+    m
+}
+
+/// Mode b: nudge the TSF bridge: ThreadMgr -> focus DocumentMgr -> top Context -> ITfContextOwnerServices::OnLayoutChange.
+fn ime_follow_tsf() -> String {
+    use windows::core::Interface;
+    use windows::Win32::System::Com::{CoCreateInstance, CoInitializeEx, CoUninitialize, CLSCTX_INPROC_SERVER, COINIT_APARTMENTTHREADED};
+    use windows::Win32::UI::TextServices::{CLSID_TF_ThreadMgr, ITfContextOwnerServices, ITfThreadMgr};
+    let mut steps = String::new();
+    unsafe {
+        // S_OK / S_FALSE both add a COM reference on this thread and need a CoUninitialize; RPC_E_CHANGED_MODE adds none.
+        let hr = CoInitializeEx(None, COINIT_APARTMENTTHREADED);
+        let balance = hr.0 == 0 || hr.0 == 1;
+        steps.push_str(&format!("coinit=0x{:08X}{}", hr.0 as u32, if hr.0 == 0 { "(we-initialised)" } else { "" }));
+        'run: {
+            let tm: ITfThreadMgr = match CoCreateInstance(&CLSID_TF_ThreadMgr, None, CLSCTX_INPROC_SERVER) {
+                Ok(t) => t,
+                Err(e) => {
+                    steps.push_str(&format!(" threadmgr=0x{:08X}", e.code().0 as u32));
+                    break 'run;
+                }
+            };
+            steps.push_str(" threadmgr=0x00000000");
+            let dm = match tm.GetFocus() {
+                Ok(d) => d,
+                Err(e) => {
+                    steps.push_str(&format!(" getfocus=0x{:08X}", e.code().0 as u32));
+                    break 'run;
+                }
+            };
+            steps.push_str(" getfocus=0x00000000");
+            let cx = match dm.GetTop() {
+                Ok(c) => c,
+                Err(e) => {
+                    steps.push_str(&format!(" gettop=0x{:08X}", e.code().0 as u32));
+                    break 'run;
+                }
+            };
+            steps.push_str(" gettop=0x00000000");
+            let svc: ITfContextOwnerServices = match cx.cast() {
+                Ok(s) => s,
+                Err(e) => {
+                    steps.push_str(&format!(" qi_ownerservices=0x{:08X}", e.code().0 as u32));
+                    break 'run;
+                }
+            };
+            steps.push_str(" qi_ownerservices=0x00000000");
+            let hr = match svc.OnLayoutChange() {
+                Ok(()) => 0u32,
+                Err(e) => e.code().0 as u32,
+            };
+            steps.push_str(&format!(" onlayoutchange=0x{hr:08X}"));
+        }
+        // All interface values above are dropped (Released) before this point.
+        if balance {
+            CoUninitialize();
+        }
+    }
+    steps
+}
+
+/// Mode c: close then reopen the candidate list, restoring the selected candidate.
+fn ime_follow_reopen(hwnd: *mut c_void) -> String {
+    const NI_OPENCANDIDATE: u32 = 0x0010;
+    const NI_CLOSECANDIDATE: u32 = 0x0011;
+    const NI_SELECTCANDIDATESTR: u32 = 0x0012;
+    unsafe {
+        let himc = ImmGetContext(hwnd);
+        if himc.is_null() {
+            return "no_himc".to_string();
+        }
+        let size = ImmGetCandidateList(himc, 0, std::ptr::null_mut(), 0);
+        let mut sel = None;
+        if size >= 16 {
+            let mut buf = vec![0u32; (size as usize + 3) / 4];
+            let got = ImmGetCandidateList(himc, 0, buf.as_mut_ptr() as *mut c_void, (buf.len() * 4) as u32);
+            if got >= 16 {
+                sel = Some(buf[3]); // CANDIDATELIST.dwSelection
+            }
+        }
+        let c = ImmNotifyIME(himc, NI_CLOSECANDIDATE, 0, 0);
+        let o = ImmNotifyIME(himc, NI_OPENCANDIDATE, 0, 0);
+        let r = match sel {
+            Some(i) => ImmNotifyIME(himc, NI_SELECTCANDIDATESTR, 0, i),
+            None => -1,
+        };
+        ImmReleaseContext(hwnd, himc);
+        format!("list_size={size} sel={sel:?} close={c} open={o} select={r}")
+    }
+}
+
+/// Applied by ime_replace_on_layout right after place_ime_windows (DIAGNOSTIC, see IME_FOLLOW_ENV).
+fn ime_follow_apply(hwnd: *mut c_void) {
+    let mode = ime_follow_mode();
+    if mode == b'd' {
+        ime_log!("ime_follow mode=d result=control");
+        return;
+    }
+    if !IME_CAND_OPEN.load(SeqCst) {
+        ime_log!("ime_follow mode={} result=skipped_no_open_candidate", mode as char);
+        return;
+    }
+    let result = match mode {
+        b'a' => "none_extra".to_string(),
+        b'b' => ime_follow_tsf(),
+        _ => ime_follow_reopen(hwnd),
+    };
+    ime_log!("ime_follow mode={} result={result}", mode as char);
+}
+
+fn ime_caret_rect(hwnd: *mut c_void) -> Option<Rect> {
+    ime_caret_rect_at(hwnd, 0)
+}
+
+/// Caret rect (client physical px) of the character `off` UTF-16 units after the composition start (or selection start).
+fn ime_caret_rect_at(_hwnd: *mut c_void, off: u32) -> Option<Rect> {
     with_ime(|h, win, node| {
         let mut sel = Utf16Selection::default();
         let mut mr = Utf16Range::default();
@@ -1231,7 +1390,7 @@ fn ime_caret_rect(_hwnd: *mut c_void) -> Option<Rect> {
         };
         let f = h.ime_caret_bounds?;
         let mut out = Rect::default();
-        if f(h.ctx_ptr(), win, node, Utf16Range { start: range.start, end: range.start }, &mut out) != SWR_OK {
+        if f(h.ctx_ptr(), win, node, Utf16Range { start: range.start + off, end: range.start + off }, &mut out) != SWR_OK {
             return None;
         }
         Some(out)
@@ -1279,8 +1438,8 @@ fn log_candidate_ui(hwnd: *mut c_void, event: &str) {
             Some(r) => format!("{},{},{},{}", o[0] + r.x as i32, o[1] + r.y as i32, r.w as i32, r.h as i32),
             None => "none".to_string(),
         };
-        eprintln!(
-            "[swiftright-render] ime_cand event={event} got={got} form_style={} form_pt={},{} form_rc={},{},{},{} cand_windows=[{}] caret={caret}",
+        ime_log!(
+            "ime_cand event={event} got={got} form_style={} form_pt={},{} form_rc={},{},{},{} cand_windows=[{}] caret={caret}",
             form.style, form.pt[0], form.pt[1], form.rc[0], form.rc[1], form.rc[2], form.rc[3], sc.out.join(";")
         );
     }
@@ -1327,8 +1486,9 @@ fn ime_replace_on_layout(hwnd: *mut c_void) {
         return;
     }
     if old.0 != i32::MIN {
-        eprintln!("[swiftright-render] ime_replace reason=layout old={},{},{},{} new={},{},{},{}", old.0, old.1, old.2, old.3, new.0, new.1, new.2, new.3);
+        ime_log!("ime_replace reason=layout old={},{},{},{} new={},{},{},{}", old.0, old.1, old.2, old.3, new.0, new.1, new.2, new.3);
         place_ime_windows(hwnd);
+        ime_follow_apply(hwnd); // DIAGNOSTIC (#33 Stage 1): must not ship
     } else {
         ime_remember(new.0, new.1, new.2, new.3);
     }
@@ -1348,6 +1508,11 @@ fn place_ime_windows(hwnd: *mut c_void) {
         let cand = CandidateForm { index: 0, style: 0x0080, pt: [x, y + h], rc: [x, y, x + w, y + h] }; // CFS_EXCLUDE
         ImmSetCompositionWindow(himc, &cf);
         ImmSetCandidateWindow(himc, &cand);
+        for index in 1..4u32 {
+            // The candidate form is per list index (0-3); an IME that opened a list on another index reads that one.
+            let c = CandidateForm { index, style: cand.style, pt: cand.pt, rc: cand.rc };
+            ImmSetCandidateWindow(himc, &c);
+        }
         ImmReleaseContext(hwnd, himc);
     }
 }
@@ -1377,6 +1542,29 @@ unsafe extern "system" fn ime_subclass_proc(hwnd: *mut c_void, msg: u32, w: usiz
     if (msg == WM_MOUSEWHEEL || msg == WM_MOUSEHWHEEL) && POINTER_WHEEL.load(SeqCst) && on_wheel(hwnd, msg, w, l) {
         return 0;
     }
+    // TSF-based IMEs on an IMM32 window query the live caret with WM_IME_REQUEST / IMR_QUERYCHARPOSITION.
+    // Answer from current geometry (ime_caret_bounds is evaluated now, so it reflects a layout move). Falls through to
+    // the default when the struct is too small or the host text bridge is busy (with_ime returns None).
+    if msg == WM_IME_REQUEST && w == IMR_QUERYCHARPOSITION && l != 0 {
+        let p = l as *mut ImeCharPosition;
+        if unsafe { (*p).size as usize } >= std::mem::size_of::<ImeCharPosition>() {
+            let off = unsafe { (*p).char_pos };
+            if let Some(r) = ime_caret_rect_at(hwnd, off) {
+                let mut o = [0i32, 0];
+                let mut rc = [0i32; 4];
+                unsafe {
+                    ClientToScreen(hwnd, &mut o);
+                    GetClientRect(hwnd, &mut rc);
+                    (*p).pt = [o[0] + r.x as i32, o[1] + r.y as i32];
+                    (*p).line_height = (r.h as i32).max(1) as u32;
+                    (*p).rc_document = [o[0] + rc[0], o[1] + rc[1], o[0] + rc[2], o[1] + rc[3]];
+                }
+                let n = IME_QUERY_COUNT.fetch_add(1, SeqCst) + 1;
+                ime_log!("ime_query_charpos n={n} off={off} pt={},{} h={}", unsafe { (*p).pt[0] }, unsafe { (*p).pt[1] }, unsafe { (*p).line_height });
+                return 1;
+            }
+        }
+    }
     let out = DefSubclassProc(hwnd, msg, w, l);
     // Rev 0.9 (decision H3): the pointer left the window (WM_MOUSELEAVE: GPUI's own tracking, or one posted by a driver) ends every hover. GPUI's element hover state does not
     // always follow a leave that arrives without a move, so the host is told directly (only when it asked for pointer moves).
@@ -1387,10 +1575,17 @@ unsafe extern "system" fn ime_subclass_proc(hwnd: *mut c_void, msg: u32, w: usiz
         WM_IME_SETCONTEXT | WM_IME_NOTIFY | WM_IME_STARTCOMPOSITION | WM_IME_ENDCOMPOSITION | WM_IME_COMPOSITION => {
             // Evidence for the next desktop run: which IME messages arrive, and what they carry.
             if IME_MSG_LOGS.fetch_add(1, SeqCst) < 400 {
-                eprintln!("[swiftright-render] ime_msg msg=0x{msg:04X} wparam=0x{w:X} lparam=0x{:X}", l as usize);
+                ime_log!("ime_msg msg=0x{msg:04X} wparam=0x{w:X} lparam=0x{:X}", l as usize);
             }
             if msg == WM_IME_ENDCOMPOSITION {
                 ime_remember(i32::MIN, 0, 0, 0);
+                IME_CAND_OPEN.store(false, SeqCst);
+            }
+            if msg == WM_IME_NOTIFY && w == 5 {
+                IME_CAND_OPEN.store(true, SeqCst); // IMN_OPENCANDIDATE
+            }
+            if msg == WM_IME_NOTIFY && w == 4 {
+                IME_CAND_OPEN.store(false, SeqCst); // IMN_CLOSECANDIDATE
             }
             if msg == WM_IME_COMPOSITION || msg == WM_IME_STARTCOMPOSITION || (msg == WM_IME_NOTIFY && matches!(w, 3 | 4 | 5 | 6 | 7)) {
                 place_ime_windows(hwnd);
@@ -1405,8 +1600,9 @@ unsafe extern "system" fn ime_subclass_proc(hwnd: *mut c_void, msg: u32, w: usiz
 }
 
 fn install_ime_subclass(hwnd: *mut c_void) {
+    let _ = ime_ts_ms(); // start the ime_* log clock
     let ok = unsafe { SetWindowSubclass(hwnd, ime_subclass_proc, 0x5352_494D, 0) };
-    eprintln!("[swiftright-render] ime_subclass installed={ok}");
+    ime_log!("ime_subclass installed={ok}");
 }
 
 // ------------------------------------------------------------- launch / loop
