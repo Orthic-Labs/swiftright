@@ -72,6 +72,9 @@ function Start-Fixture([string]$Base, [string]$Fixture, [string]$ReadyFile, [str
   # The Swift runtime: the Dell user's install, or C:\swiftrt in the Windows Sandbox worker (mapped read-only, factory/tools/sandbox).
   $swiftRt = if (Test-Path 'C:\swiftrt') { 'C:\swiftrt;' } else { '' }
   $psi.EnvironmentVariables['Path'] = "$swiftRt" + "C:\Users\adrds\AppData\Local\Programs\Swift\Runtimes\6.4.0\usr\bin;$bin;" + [Environment]::GetEnvironmentVariable('Path', 'Machine')
+  # #33 diagnostic: a follow mode for the diagnostic renderer, from <Base>\ime-follow-mode.txt (the scheduled task does not inherit an SSH environment).
+  $modeFile = Join-Path $Base 'ime-follow-mode.txt'
+  if (Test-Path -LiteralPath $modeFile) { $psi.EnvironmentVariables['SWIFTRIGHT_IME_FOLLOW_MODE'] = (Get-Content -LiteralPath $modeFile -Raw).Trim(); Log "ime_follow_mode_file=$($psi.EnvironmentVariables['SWIFTRIGHT_IME_FOLLOW_MODE'])" }
   $p = New-Object System.Diagnostics.Process
   $p.StartInfo = $psi
   $script:StdTap = New-Object SRN.LineTap($p, $false)
