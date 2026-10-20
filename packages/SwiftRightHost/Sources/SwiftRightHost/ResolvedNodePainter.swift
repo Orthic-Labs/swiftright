@@ -256,7 +256,7 @@ public final class ResolvedNodePainter {
         beginCommit()
         var committed = false
         defer { endCommit(committed: committed) }
-        func walk(_ n: ResolvedNode, parent: UInt64, order: UInt32, clip: Rect?, rotations: [ShapeRotation] = [], textColor: UInt32? = nil, row: ListPainter.Row? = nil, rowList: (bounds: Rect, look: ListLook)? = nil, inButton: Bool = false, a11y: A11yPatch = A11yPatch(), hidden: Bool = false, transform: PaintScale = .identity, brightness: [Float] = [], clipMasks: [ClipMask] = []) throws {
+        func walk(_ n: ResolvedNode, parent: UInt64, order: UInt32, clip: Rect?, rotations: [ShapeRotation] = [], textColor: UInt32? = nil, row: ListPainter.Row? = nil, rowList: (bounds: Rect, look: ListLook)? = nil, inButton: Bool = false, a11y: A11yPatch = A11yPatch(), hidden: Bool = false, transform: PaintScale = .identity, brightness: [Float] = [], clipMasks: [ClipMask] = [], parentKind: String = "", exactShift: (x: Float, y: Float) = (0, 0)) throws {
             let id = UInt64(n.instance + 1)
             current.insert(id)
             runtimeIDs[id] = n.id
@@ -264,11 +264,19 @@ public final class ResolvedNodePainter {
             let laidOut = place(Rect(x: Float(p.x), y: Float(p.y), w: Float(p.width), h: Float(p.height)))
             // Under a scale, and for a scale's own anchor frame, the frame before device-pixel snapping (#44): SwiftUI scales the laid-out geometry, so a 30 pt circle
             // whose edges snap to 74 px unscaled is 105 px at x1.4 (CI 39414348568), not 74 x 1.4.
+            // A stack places its children on whole pixels along its axis and exactly across it (#44: under scaleEffect(1.4) a VStack's child sits 0.7 px lower on the Mac
+            // than its exact frame gives, an HStack's 0.7 px further right; CI 39424896147, 39426891335): the snapped main-axis offset moves the child and its subtree.
+            var ownShift: (x: Float, y: Float) = (0, 0)
+            if !transform.isIdentity || n.scaleEffect != nil, let f = n.exactFrame {
+                if parentKind == "VStack" { ownShift.y = Float(p.y) - Float(f.minY) * baseScale }
+                if parentKind == "HStack" { ownShift.x = Float(p.x) - Float(f.minX) * baseScale }
+            }
+            let childShift = (x: exactShift.x + ownShift.x, y: exactShift.y + ownShift.y)
             let exact: Rect = {
                 guard !transform.isIdentity || n.scaleEffect != nil, let f = n.exactFrame else { return laidOut }
                 let unplaced = Rect(x: Float(p.x), y: Float(p.y), w: Float(p.width), h: Float(p.height))
                 let moved = place(unplaced)
-                return Rect(x: Float(f.minX) * baseScale + (moved.x - unplaced.x), y: Float(f.minY) * baseScale + (moved.y - unplaced.y),
+                return Rect(x: Float(f.minX) * baseScale + (moved.x - unplaced.x) + childShift.x, y: Float(f.minY) * baseScale + (moved.y - unplaced.y) + childShift.y,
                             w: Float(f.width) * baseScale, h: Float(f.height) * baseScale)
             }()
             // `.scaleEffect` above (SR2 R4): bounds are mapped through the accumulated scale and the node is painted at display scale x the factor, so
@@ -343,10 +351,10 @@ public final class ResolvedNodePainter {
                 for (index, child) in n.children.enumerated() where index < rows.count {
                     // Text inside an active selection is white.
                     let colour = rows[index].isSelected && ListPainter.selectionColor(active: listIsActive, isEnabled: rows[index].isEnabled) == ListPainter.selectionActive ? ListPainter.selectedTextColor : childTextColor
-                    try walk(child, parent: id, order: UInt32(index), clip: childClip, rotations: childRotations, textColor: colour, row: rows[index], rowList: (bounds, look), a11y: childA11y, hidden: childHidden, transform: childTransform, brightness: childBrightness, clipMasks: childMasks)
+                    try walk(child, parent: id, order: UInt32(index), clip: childClip, rotations: childRotations, textColor: colour, row: rows[index], rowList: (bounds, look), a11y: childA11y, hidden: childHidden, transform: childTransform, brightness: childBrightness, clipMasks: childMasks, parentKind: n.kind, exactShift: childShift)
                 }
             } else {
-                for (index, child) in n.children.enumerated() { try walk(child, parent: id, order: UInt32(index), clip: childClip, rotations: childRotations, textColor: childTextColor, inButton: childInButton || n.kind == "Button" || n.kind == "modifier.onTapGesture", a11y: childA11y, hidden: childHidden, transform: childTransform, brightness: childBrightness, clipMasks: childMasks) }
+                for (index, child) in n.children.enumerated() { try walk(child, parent: id, order: UInt32(index), clip: childClip, rotations: childRotations, textColor: childTextColor, inButton: childInButton || n.kind == "Button" || n.kind == "modifier.onTapGesture", a11y: childA11y, hidden: childHidden, transform: childTransform, brightness: childBrightness, clipMasks: childMasks, parentKind: n.kind, exactShift: childShift) }
             }
             // The children's walks reset the painter to the display scale: this node's own scale and brightness apply again to what it paints after them.
             scale = nodeScale
