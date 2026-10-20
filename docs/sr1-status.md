@@ -385,3 +385,9 @@ Each gate's measurements are in its pair.json. Oracle PASS-WITH-CAVEATS; the Gro
   - the brightness pixel case is off CI, because the Mac capture path skips the filter (unit-tested instead);
   - a half-pixel-centred frame is 1 px narrower in runtime layout (#44);
   - scaled text is #42.
+
+## 20 October: R4b scaled text delivered (#42)
+- **Implementation:** a one-line Text under `.scaleEffect` is shaped at its point size × the factor and placed at its scaled origin. The size is floored to half points within the 9–40 pt table, and text styles use their macOS size. The baseline lands at factor × the unscaled baseline.
+- **Evidence:** CI run 39420788106 at 3105dfaf4 passed scale-text-v1 20/20. That case is digits-v1's four rows at ×1.5. Its text regions, exclusions and position tolerances are scaled about the anchor, and its accessibility bounds tolerance is 0.25 pt, because UIA reports whole pixels while macOS frames fall on half pixels.
+- **Fallback:** wrapped text, custom fonts and sizes outside the table keep their measured size, centred, and are counted.
+- **Known difference:** at 33 pt the Windows font switches to its Display optical size.
