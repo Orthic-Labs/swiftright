@@ -244,6 +244,9 @@ enum ModifierSpec {
     case scale(CGFloat, CGFloat, UnitPoint)
     /// SR2 R4 (#39): `.brightness(_:)`. Layout is unchanged; the host adds the amount to each sRGB channel of the subtree's colours (clamped).
     case brightness(Double)
+    /// SR2 R6 (#41): `.clipShape(_:style:)`. Layout is unchanged; the host clips the subtree's painting to the shape in this node's frame. The geometry is
+    /// animated like a shape's (`Node.presentedGeometry`), so an animatable clip follows its shape.
+    case clipShape(ShapeGeometry, FillStyle)
     /// SR1 round 6 block 38: `.onHover(perform:)` and `.onTapGesture(count:perform:)`; the host routes pointer positions to `Graph.pointerMoved` and a release to `Graph.tapGesture`.
     case hover(HoverHook)
     case tap(TapHook)
@@ -290,6 +293,7 @@ enum ModifierSpec {
         case .rotation: return "modifier.rotationEffect"
         case .scale: return "modifier.scaleEffect"
         case .brightness: return "modifier.brightness"
+        case .clipShape: return "modifier.clipShape"
         case .hover: return "modifier.onHover"
         case .tap: return "modifier.onTapGesture"
         case .offset: return "modifier.offset"
@@ -334,6 +338,7 @@ enum ModifierSpec {
         case .rotation: return "rotationEffect"
         case .scale: return "scaleEffect"
         case .brightness: return "brightness"
+        case .clipShape: return "clipShape"
         case .hover: return "onHover"
         case .tap: return "onTapGesture"
         case .offset: return "offset"
@@ -633,6 +638,7 @@ final class Node {
     /// A shape node's evaluated geometry (its animation target).
     var targetGeometry: ShapeGeometry? {
         if case .shape(let resolved) = kind { return resolved.geometry }
+        if case .modifier(.clipShape(let geometry, _)) = kind { return geometry }
         return nil
     }
     /// False until the first commit presents this node.
@@ -872,6 +878,15 @@ public struct ResolvedNode: Equatable, Sendable {
     public var scaleEffect: ResolvedScale? = nil
     /// Modifier nodes of `.brightness` only (SR2 R4, #39): the amount added to each sRGB channel of the subtree's colours.
     public var brightness: Double? = nil
+    /// Modifier nodes of `.clipShape` only (SR2 R6, #41): the presented clip geometry (in this node's frame) and its fill rule.
+    public var clipShape: ResolvedClipShape? = nil
+}
+
+/// What `.clipShape(_:style:)` asks of its subtree: paint only inside `geometry` laid out in the modifier node's frame.
+public struct ResolvedClipShape: Equatable, Sendable {
+    public let geometry: ShapeGeometry
+    public let fillStyle: FillStyle
+    public init(geometry: ShapeGeometry, fillStyle: FillStyle) { self.geometry = geometry; self.fillStyle = fillStyle }
 }
 
 /// What `.scaleEffect(x:y:anchor:)` asks of its subtree: painting scaled by (`x`, `y`) about `anchor` (a unit point of the modifier node's frame).
@@ -2392,6 +2407,8 @@ public final class Graph {
         if case .modifier(.rotation(let angle, let anchor)) = kind { rotation = ResolvedRotation(angle: angle, anchor: anchor) }
         var brightness: Double?
         if case .modifier(.brightness(let amount)) = kind { brightness = amount }
+        var clipShape: ResolvedClipShape?
+        if case .modifier(.clipShape(let geometry, let fillStyle)) = kind { clipShape = ResolvedClipShape(geometry: node.presentedGeometry ?? geometry, fillStyle: fillStyle) }
         // R5: a Text shrunk by `minimumScaleFactor` draws with the font that produced its placed size.
         var style = node.style
         if case .text = kind, !node.memoScaledFont.isEmpty,
@@ -2437,7 +2454,8 @@ public final class Graph {
             scroll: node.scrollState,
             rotation: rotation,
             scaleEffect: scaleEffect,
-            brightness: brightness
+            brightness: brightness,
+            clipShape: clipShape
         )
     }
 

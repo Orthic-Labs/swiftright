@@ -132,6 +132,12 @@ extension View {
         environment(\.tint, tint?.resolvedColor)
     }
 
+    /// Clips this view's rendering to `shape` laid out in its frame. Layout is unchanged. An animatable shape animates the clip.
+    /// Apple: https://developer.apple.com/documentation/swiftui/view/clipshape(_:style:)
+    public func clipShape<S: Shape>(_ shape: S, style: FillStyle = FillStyle()) -> some View {
+        Modified(content: self, spec: .clipShape(shape.shapeGeometry, style))
+    }
+
     /// Brightens (or, below 0, darkens) this view's rendering: `amount` is added to each sRGB channel, clamped to 0...1; alpha is unchanged
     /// (measured on macOS 27 with ImageRenderer: (0.2, 0.4, 0.6) + 0.2 = (102, 153, 204); black + 0.5 = 128). Not animated: a change snaps.
     /// Apple: https://developer.apple.com/documentation/swiftui/view/brightness(_:)

@@ -196,3 +196,38 @@ final class AnimatableShapeTests: XCTestCase {
         XCTAssertTrue(g.animating.isEmpty, "an unchanged shape starts no motion")
     }
 }
+
+// SR2 R6 (#41): `.clipShape` with an animatable shape animates the clip like a shape (the Pulse notch clips its content to its animating silhouette).
+@MainActor
+final class ClipShapeTests: XCTestCase {
+    struct ClippedScreen: View {
+        @Bindable var model: RingModel
+        var body: some View {
+            Color.red.frame(width: 100, height: 20).clipShape(GrowBar(amount: model.amount, tag: "clip"))
+        }
+    }
+
+    private func clipWidth(_ g: Graph) throws -> CGFloat {
+        func walk(_ n: ResolvedNode) -> [ResolvedNode] { [n] + n.children.flatMap(walk) }
+        let clip = try XCTUnwrap(walk(try XCTUnwrap(g.snapshot())).compactMap(\.clipShape).first)
+        guard case .custom(let custom) = clip.geometry else { XCTFail("custom clip"); return -1 }
+        return custom.path(in: CGRect(x: 0, y: 0, width: 100, height: 20)).boundingRect.width
+    }
+
+    func testAnAnimatableClipShapeAnimatesAndLayoutIsUnchanged() throws {
+        let model = RingModel()
+        let g = Graph(ClippedScreen(model: model))
+        g.flush()
+        XCTAssertEqual(try clipWidth(g), 0)
+        withAnimation(.linear(duration: 1)) { model.amount = 1 }
+        g.flush()
+        g.tick(now: 0)
+        g.tick(now: 0.5)
+        XCTAssertEqual(try clipWidth(g), 50, accuracy: 1e-9)
+        g.tick(now: 1)
+        XCTAssertEqual(try clipWidth(g), 100)
+        func walk(_ n: ResolvedNode) -> [ResolvedNode] { [n] + n.children.flatMap(walk) }
+        let all = walk(try XCTUnwrap(g.snapshot()))
+        XCTAssertEqual(all.first { $0.kind == "modifier.clipShape" }?.frame.size, all.first { $0.kind == "Color" }?.frame.size, "layout unchanged")
+    }
+}

@@ -35,6 +35,22 @@ public final class ResolvedNodePainter {
     /// Image content (not shapes) painted under `.brightness` since this painter was made: bitmaps are drawn unadjusted.
     public private(set) var brightnessImageLimitationCount = 0
 
+    /// `.clipShape` masks above the node being emitted (SR2 R6). Host-rasterised shapes and solid rects are masked; text and bitmaps are clipped to the clip's
+    /// bounding rect only (the renderer's clip stack is rectangular).
+    private var clipMasks: [ClipMask] = []
+    /// Text and bitmap nodes painted under a non-rectangular `.clipShape` since this painter was made (rect-clipped only).
+    public private(set) var clipShapeLimitationCount = 0
+
+    private func registerRGBA(_ image: ContinuousRGBAImage) throws -> ImageHandle {
+        try images.registerImage(width: UInt32(image.width), height: UInt32(image.height), rgba: image.rgba, stride: 0)
+    }
+
+    /// `result` with every active clip mask multiplied into its alpha.
+    private func masked(_ image: ContinuousRGBAImage, placement: Rect) -> ContinuousRGBAImage {
+        guard !clipMasks.isEmpty else { return image }
+        return ClipMask.apply(clipMasks, to: image, originX: Int((placement.x - imageGuardBand).rounded()), originY: Int((placement.y - imageGuardBand).rounded()))
+    }
+
     /// A colour (0xRRGGBBAA) through the `.brightness` amounts above the node being emitted.
     func adjusted(_ rgba: UInt32) -> UInt32 {
         guard !brightness.isEmpty else { return rgba }
@@ -220,7 +236,7 @@ public final class ResolvedNodePainter {
         beginCommit()
         var committed = false
         defer { endCommit(committed: committed) }
-        func walk(_ n: ResolvedNode, parent: UInt64, order: UInt32, clip: Rect?, rotations: [ShapeRotation] = [], textColor: UInt32? = nil, row: ListPainter.Row? = nil, rowList: (bounds: Rect, look: ListLook)? = nil, inButton: Bool = false, a11y: A11yPatch = A11yPatch(), hidden: Bool = false, transform: PaintScale = .identity, brightness: [Float] = []) throws {
+        func walk(_ n: ResolvedNode, parent: UInt64, order: UInt32, clip: Rect?, rotations: [ShapeRotation] = [], textColor: UInt32? = nil, row: ListPainter.Row? = nil, rowList: (bounds: Rect, look: ListLook)? = nil, inButton: Bool = false, a11y: A11yPatch = A11yPatch(), hidden: Bool = false, transform: PaintScale = .identity, brightness: [Float] = [], clipMasks: [ClipMask] = []) throws {
             let id = UInt64(n.instance + 1)
             current.insert(id)
             runtimeIDs[id] = n.id
@@ -234,7 +250,8 @@ public final class ResolvedNodePainter {
             let nodeScale = scaledText ? baseScale : baseScale * transform.uniform
             scale = nodeScale
             self.brightness = brightness
-            defer { scale = baseScale; self.brightness = [] }
+            self.clipMasks = clipMasks
+            defer { scale = baseScale; self.brightness = []; self.clipMasks = [] }
             // A factor of 0 (`.scaleEffect(shown ? 1 : 0)`, the first frame of a pop-in) paints nothing: no raster may be asked for at scale 0.
             let collapsed = !transform.isIdentity && (transform.sx == 0 || transform.sy == 0)
             var emission: NodeEmission
@@ -243,6 +260,10 @@ public final class ResolvedNodePainter {
             else { emission = try emit(n, id: id, bounds: bounds, textColor: textColor, rotations: rotations) }
             let childTransform = n.scaleEffect.map { transform.scaled(by: $0, about: laidOut) } ?? transform
             let childBrightness = n.brightness.map { brightness + [Float($0)] } ?? brightness
+            var childMasks = clipMasks
+            if let clip = n.clipShape, clip.geometry != .rectangle {
+                childMasks.append(try ClipMask.render(geometry: clip.geometry, fillStyle: clip.fillStyle, bounds: bounds, scale: nodeScale))
+            }
             // `.rotationEffect` (anchor in this node's pixel frame, which is its child's frame) rotates every shape leaf beneath it.
             let childRotations = n.rotation.map { rotations + [ShapeRotation($0, bounds: bounds)] } ?? rotations
             // A Button's label is the button's accessible name: its Text publishes no node of its own (as on macOS).
@@ -284,7 +305,7 @@ public final class ResolvedNodePainter {
             let paintClip: Rect? = emission.clipTo.map { Self.intersection(clip, $0) } ?? clip
             if let paintClip, !primitives.isEmpty { primitives = [.clipPush(paintClip)] + primitives + [.clipPop] }
             nodes.append(NodeUpsert(id: id, parent: parent, order: order, flags: emission.flags, bounds: nodeBounds, primitives: primitives, semantic: emission.semantic))
-            let childClip = Self.clipsContent(n.kind) ? Self.intersection(clip, bounds) : clip
+            let childClip = Self.clipsContent(n.kind) || n.clipShape != nil ? Self.intersection(clip, bounds) : clip
             // A Button's label takes the button's label colour (grey when the button is disabled) unless the label sets its own.
             let childTextColor = n.kind == "Button" ? try ButtonPainter.labelColor(of: n) : textColor
             if n.kind == "List" {
@@ -293,14 +314,15 @@ public final class ResolvedNodePainter {
                 for (index, child) in n.children.enumerated() where index < rows.count {
                     // Text inside an active selection is white.
                     let colour = rows[index].isSelected && ListPainter.selectionColor(active: listIsActive, isEnabled: rows[index].isEnabled) == ListPainter.selectionActive ? ListPainter.selectedTextColor : childTextColor
-                    try walk(child, parent: id, order: UInt32(index), clip: childClip, rotations: childRotations, textColor: colour, row: rows[index], rowList: (bounds, look), a11y: childA11y, hidden: childHidden, transform: childTransform, brightness: childBrightness)
+                    try walk(child, parent: id, order: UInt32(index), clip: childClip, rotations: childRotations, textColor: colour, row: rows[index], rowList: (bounds, look), a11y: childA11y, hidden: childHidden, transform: childTransform, brightness: childBrightness, clipMasks: childMasks)
                 }
             } else {
-                for (index, child) in n.children.enumerated() { try walk(child, parent: id, order: UInt32(index), clip: childClip, rotations: childRotations, textColor: childTextColor, inButton: childInButton || n.kind == "Button" || n.kind == "modifier.onTapGesture", a11y: childA11y, hidden: childHidden, transform: childTransform, brightness: childBrightness) }
+                for (index, child) in n.children.enumerated() { try walk(child, parent: id, order: UInt32(index), clip: childClip, rotations: childRotations, textColor: childTextColor, inButton: childInButton || n.kind == "Button" || n.kind == "modifier.onTapGesture", a11y: childA11y, hidden: childHidden, transform: childTransform, brightness: childBrightness, clipMasks: childMasks) }
             }
             // The children's walks reset the painter to the display scale: this node's own scale and brightness apply again to what it paints after them.
             scale = nodeScale
             self.brightness = brightness
+            self.clipMasks = clipMasks
             // The legacy scroller of a List or ScrollView is painted above its content: a child node ordered after the last child, clipped to the container.
             if n.kind == "List" || n.kind == "ScrollView", let scroll = n.scroll, let layout = ScrollerPainter.layout(frame: bounds, scale: scale, scroll: scroll) {
                 let scrollerID = id | Self.scrollerNodeFlag
@@ -374,6 +396,38 @@ public final class ResolvedNodePainter {
             }
             if !Self.isShapeKind(node.kind), emission.primitives.contains(where: { if case .image = $0 { return true } else { return false } }) { brightnessImageLimitationCount += 1 }
         }
+        if !clipMasks.isEmpty {
+            var out: [Primitive] = []
+            for (index, primitive) in emission.primitives.enumerated() {
+                guard case .rect(let r, let color, let radius, let borderColor, let borderWidth) = primitive, !clipMasks.allSatisfy({ $0.covers(r) }) else {
+                    if case .text = primitive { clipShapeLimitationCount += 1 }
+                    if case .image = primitive, !Self.isShapeKind(node.kind) { clipShapeLimitationCount += 1 }
+                    out.append(primitive)
+                    continue
+                }
+                // A solid rect across the clip's edge: drawn by the path raster and masked (its border, inside the rect as the renderer draws it, as a centred stroke inset by half).
+                let corner = RoundedCornerStyle.circular
+                let rounded = ShapeGeometry.roundedRectangle(cornerRadius: CGFloat(radius / scale), style: corner)
+                var images: [(ContinuousRGBAImage, Rect)] = []
+                if color & 255 != 0, let fill = try PathShapeRaster.render(PathShapeRequest(bounds: r, scale: scale, geometry: rounded, fillRGBA: color, strokeRGBA: nil)) {
+                    images.append((fill.image, fill.placement))
+                }
+                if borderWidth > 0, borderColor & 255 != 0,
+                   let ring = try PathShapeRaster.render(PathShapeRequest(bounds: r, scale: scale, geometry: .inset(rounded, by: CGFloat(borderWidth / scale / 2)), fillRGBA: nil, strokeRGBA: borderColor,
+                                                                          strokeStyle: StrokeStyle(lineWidth: CGFloat(borderWidth / scale)))) {
+                    images.append((ring.image, ring.placement))
+                }
+                for (k, (image, placement)) in images.enumerated() {
+                    let maskedImage = masked(image, placement: placement)
+                    let handle = try registerRGBA(maskedImage)
+                    let key = id | (UInt64(0x200 + index * 2 + k) << 48)
+                    if let stale = pendingShapeImages[key] { _ = self.images.release(stale) }
+                    pendingShapeImages[key] = handle
+                    out.append(.image(handle, placement))
+                }
+            }
+            emission.primitives = out
+        }
         // `.allowsHitTesting(false)` (R1, #36): the node takes no pointer hits. Its painting and its accessibility actions are unchanged.
         if !node.accessibility.allowsHitTesting, emission.flags.contains(.hitTarget) { emission.flags.remove(.hitTarget) }
         if ShapeRotation.isRotated(rotations), !emission.primitives.isEmpty, !Self.isShapeKind(node.kind) {
@@ -415,7 +469,8 @@ public final class ResolvedNodePainter {
                 // A vector path (trimmed, inset, dashed, custom, or a style the ABI rect cannot draw): rasterised on the host and registered as one image, kept under the
                 // node id like the continuous route, so the commit releases the previous frame's handle when the node repaints or goes away. Nothing to draw -> no primitive.
                 guard let result = try PathShapeRaster.render(request) else { return NodeEmission(primitives: [], semantic: nil, flags: [], structural: false) }
-                let handle = try images.registerImage(width: UInt32(result.image.width), height: UInt32(result.image.height), rgba: result.image.rgba, stride: 0)
+                let image = masked(result.image, placement: result.placement)
+                let handle = try images.registerImage(width: UInt32(image.width), height: UInt32(image.height), rgba: image.rgba, stride: 0)
                 if let stale = pendingShapeImages[id] { _ = images.release(stale) }
                 pendingShapeImages[id] = handle
                 return NodeEmission(primitives: [.image(handle, result.placement)], semantic: nil, flags: [], structural: false)
@@ -430,7 +485,8 @@ public final class ResolvedNodePainter {
                 do { rendered = try ContinuousShapeRaster.renderBands(request) }
                 catch HostPaintError.continuousShapeRasterInput(2) { return NodeEmission(primitives: [], semantic: nil, flags: [], structural: false) }
                 for (band, result) in rendered.enumerated() {
-                    let handle = try images.registerImage(width: UInt32(result.image.width), height: UInt32(result.image.height), rgba: result.image.rgba, stride: 0)
+                    let image = masked(result.image, placement: result.placement)
+                    let handle = try images.registerImage(width: UInt32(image.width), height: UInt32(image.height), rgba: image.rgba, stride: 0)
                     let key = band == 0 ? id : id | (UInt64(band) << 48)
                     if let stale = pendingShapeImages[key] { _ = images.release(stale) }
                     pendingShapeImages[key] = handle
