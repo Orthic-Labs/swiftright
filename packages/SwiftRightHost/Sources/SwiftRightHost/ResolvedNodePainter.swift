@@ -24,7 +24,12 @@ public struct NodeEmission {
 ///     painter.endCommit(committed: true)       // (false when the commit failed: the new handles are released instead)
 @MainActor
 public final class ResolvedNodePainter {
-    public let scale: Float
+    /// Points to pixels for what is being painted: the display scale, times the factor of any `.scaleEffect` above the node being emitted (SR2 R4).
+    public private(set) var scale: Float
+    /// The display scale the painter was made with.
+    public let baseScale: Float
+    /// Text nodes painted under a `.scaleEffect` since this painter was made: text keeps its size (runs are measured at the display scale) and is centred on its scaled place.
+    public private(set) var scaleTextLimitationCount = 0
     let images: ImageRegistering
     let text: TextRunSource?
     private let systemImages: SystemImageRegistry?
@@ -64,7 +69,7 @@ public final class ResolvedNodePainter {
 
     public init(images: ImageRegistering, scale: Float, text: TextRunSource? = nil, systemImages: SystemImageRegistry? = nil,
                 publishesScrollBars: Bool = false, log: @escaping (String) -> Void = { print($0) }) {
-        self.images = images; self.scale = scale; self.text = text; self.systemImages = systemImages; self.log = log
+        self.images = images; self.scale = scale; self.baseScale = scale; self.text = text; self.systemImages = systemImages; self.log = log
         self.publishesScrollBars = publishesScrollBars
     }
 
@@ -200,15 +205,23 @@ public final class ResolvedNodePainter {
         beginCommit()
         var committed = false
         defer { endCommit(committed: committed) }
-        func walk(_ n: ResolvedNode, parent: UInt64, order: UInt32, clip: Rect?, rotations: [ShapeRotation] = [], textColor: UInt32? = nil, row: ListPainter.Row? = nil, rowList: (bounds: Rect, look: ListLook)? = nil, inButton: Bool = false, a11y: A11yPatch = A11yPatch(), hidden: Bool = false) throws {
+        func walk(_ n: ResolvedNode, parent: UInt64, order: UInt32, clip: Rect?, rotations: [ShapeRotation] = [], textColor: UInt32? = nil, row: ListPainter.Row? = nil, rowList: (bounds: Rect, look: ListLook)? = nil, inButton: Bool = false, a11y: A11yPatch = A11yPatch(), hidden: Bool = false, transform: PaintScale = .identity) throws {
             let id = UInt64(n.instance + 1)
             current.insert(id)
             runtimeIDs[id] = n.id
             let p = n.pixelFrame
-            let bounds = place(Rect(x: Float(p.x), y: Float(p.y), w: Float(p.width), h: Float(p.height)))
+            let laidOut = place(Rect(x: Float(p.x), y: Float(p.y), w: Float(p.width), h: Float(p.height)))
+            // `.scaleEffect` above (SR2 R4): bounds are mapped through the accumulated scale and the node is painted at display scale x the factor, so
+            // radii, stroke widths and rasters scale with it. Text keeps its measured size, centred on its scaled place (a counted limitation).
+            let scaledText = !transform.isIdentity && n.kind == "Text"
+            let bounds = transform.isIdentity ? laidOut : (scaledText ? transform.mapCentre(laidOut) : transform.map(laidOut))
+            if scaledText { scaleTextLimitationCount += 1 }
+            scale = scaledText ? baseScale : baseScale * transform.uniform
+            defer { scale = baseScale }
             var emission: NodeEmission
             if let row, let rowList { emission = try emitListRow(n, id: id, row: row, look: rowList.look, contentBounds: bounds, textColor: textColor) }
             else { emission = try emit(n, id: id, bounds: bounds, textColor: textColor, rotations: rotations) }
+            let childTransform = n.scaleEffect.map { transform.scaled(by: $0, about: laidOut) } ?? transform
             // `.rotationEffect` (anchor in this node's pixel frame, which is its child's frame) rotates every shape leaf beneath it.
             let childRotations = n.rotation.map { rotations + [ShapeRotation($0, bounds: bounds)] } ?? rotations
             // A Button's label is the button's accessible name: its Text publishes no node of its own (as on macOS).
@@ -259,10 +272,10 @@ public final class ResolvedNodePainter {
                 for (index, child) in n.children.enumerated() where index < rows.count {
                     // Text inside an active selection is white.
                     let colour = rows[index].isSelected && ListPainter.selectionColor(active: listIsActive, isEnabled: rows[index].isEnabled) == ListPainter.selectionActive ? ListPainter.selectedTextColor : childTextColor
-                    try walk(child, parent: id, order: UInt32(index), clip: childClip, rotations: childRotations, textColor: colour, row: rows[index], rowList: (bounds, look), a11y: childA11y, hidden: childHidden)
+                    try walk(child, parent: id, order: UInt32(index), clip: childClip, rotations: childRotations, textColor: colour, row: rows[index], rowList: (bounds, look), a11y: childA11y, hidden: childHidden, transform: childTransform)
                 }
             } else {
-                for (index, child) in n.children.enumerated() { try walk(child, parent: id, order: UInt32(index), clip: childClip, rotations: childRotations, textColor: childTextColor, inButton: childInButton || n.kind == "Button" || n.kind == "modifier.onTapGesture", a11y: childA11y, hidden: childHidden) }
+                for (index, child) in n.children.enumerated() { try walk(child, parent: id, order: UInt32(index), clip: childClip, rotations: childRotations, textColor: childTextColor, inButton: childInButton || n.kind == "Button" || n.kind == "modifier.onTapGesture", a11y: childA11y, hidden: childHidden, transform: childTransform) }
             }
             // The legacy scroller of a List or ScrollView is painted above its content: a child node ordered after the last child, clipped to the container.
             if n.kind == "List" || n.kind == "ScrollView", let scroll = n.scroll, let layout = ScrollerPainter.layout(frame: bounds, scale: scale, scroll: scroll) {

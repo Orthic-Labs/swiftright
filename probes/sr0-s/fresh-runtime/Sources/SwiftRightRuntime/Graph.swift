@@ -239,6 +239,9 @@ enum ModifierSpec {
     case clipped
     /// F-path (#35): `.rotationEffect(_:anchor:)`. Geometry passes through (layout is unchanged); the host rotates the shape leaves of the subtree about the anchor of this node's frame.
     case rotation(Angle, UnitPoint)
+    /// SR2 R4 (#39): `.scaleEffect(x:y:anchor:)`. Layout is unchanged; the host scales the subtree's painting about the anchor of this node's frame.
+    /// The factors are animated like a frame (`Node.presentedScale`).
+    case scale(CGFloat, CGFloat, UnitPoint)
     /// SR1 round 6 block 38: `.onHover(perform:)` and `.onTapGesture(count:perform:)`; the host routes pointer positions to `Graph.pointerMoved` and a release to `Graph.tapGesture`.
     case hover(HoverHook)
     case tap(TapHook)
@@ -283,6 +286,7 @@ enum ModifierSpec {
         case .listRowBackground: return "modifier.listRowBackground"
         case .clipped: return "modifier.clipped"
         case .rotation: return "modifier.rotationEffect"
+        case .scale: return "modifier.scaleEffect"
         case .hover: return "modifier.onHover"
         case .tap: return "modifier.onTapGesture"
         case .offset: return "modifier.offset"
@@ -325,6 +329,7 @@ enum ModifierSpec {
         case .listRowBackground: return "listRowBackground"
         case .clipped: return "clipped"
         case .rotation: return "rotationEffect"
+        case .scale: return "scaleEffect"
         case .hover: return "onHover"
         case .tap: return "onTapGesture"
         case .offset: return "offset"
@@ -609,6 +614,14 @@ final class Node {
     var presentedOpacity: Double = 1
     /// A shape node's presented (animated) geometry; nil for other nodes. The commit record draws this, not the evaluated geometry.
     var presentedGeometry: ShapeGeometry?
+    /// A `.scaleEffect` node's presented (animated) factors; nil for other nodes.
+    var presentedScale: CGSize?
+    var snapScale: CGSize?
+    /// A `.scaleEffect` node's evaluated factors (its animation target).
+    var targetScale: CGSize? {
+        if case .modifier(.scale(let x, let y, _)) = kind { return CGSize(width: x, height: y) }
+        return nil
+    }
     /// A shape node's evaluated geometry (its animation target).
     var targetGeometry: ShapeGeometry? {
         if case .shape(let resolved) = kind { return resolved.geometry }
@@ -847,6 +860,16 @@ public struct ResolvedNode: Equatable, Sendable {
     public var scroll: ScrollState? = nil
     /// Modifier nodes of `.rotationEffect` only (F-path, #35): the angle and anchor. The node's frame is the child's frame (layout is unchanged); the host applies the rotation.
     public var rotation: ResolvedRotation? = nil
+    /// Modifier nodes of `.scaleEffect` only (SR2 R4, #39): the presented (animated) factors and the anchor. Layout is unchanged; the host scales the subtree.
+    public var scaleEffect: ResolvedScale? = nil
+}
+
+/// What `.scaleEffect(x:y:anchor:)` asks of its subtree: painting scaled by (`x`, `y`) about `anchor` (a unit point of the modifier node's frame).
+public struct ResolvedScale: Equatable, Sendable {
+    public let x: CGFloat
+    public let y: CGFloat
+    public let anchor: UnitPoint
+    public init(x: CGFloat, y: CGFloat, anchor: UnitPoint) { self.x = x; self.y = y; self.anchor = anchor }
 }
 
 /// What `.rotationEffect(_:anchor:)` asks of its subtree: a rotation by `angle` about `anchor` (a unit point of the modifier node's frame). Positive angles turn clockwise on screen (y down), as in SwiftUI.
@@ -2222,11 +2245,13 @@ public final class Graph {
     /// new targets as the baseline for the next.
     private func collectChanged(_ node: Node, into out: inout [Node]) {
         let geometry = node.targetGeometry
-        if node.frame != node.snapFrame || node.targetOpacity != node.snapOpacity || geometry != node.snapGeometry {
+        let scale = node.targetScale
+        if node.frame != node.snapFrame || node.targetOpacity != node.snapOpacity || geometry != node.snapGeometry || scale != node.snapScale {
             out.append(node)
             node.snapFrame = node.frame
             node.snapOpacity = node.targetOpacity
             node.snapGeometry = geometry
+            node.snapScale = scale
         }
         for child in node.childNodes { collectChanged(child, into: &out) }
     }
@@ -2346,6 +2371,11 @@ public final class Graph {
         if case .slider(let spec) = kind { slider = resolveSlider(node, spec: spec) }
         var rotation: ResolvedRotation?
         if case .modifier(.rotation(let angle, let anchor)) = kind { rotation = ResolvedRotation(angle: angle, anchor: anchor) }
+        var scaleEffect: ResolvedScale?
+        if case .modifier(.scale(let x, let y, let anchor)) = kind {
+            let presented = node.presentedScale ?? CGSize(width: x, height: y)
+            scaleEffect = ResolvedScale(x: presented.width, y: presented.height, anchor: anchor)
+        }
         return ResolvedNode(
             id: node.idString,
             instance: node.instance,
@@ -2376,7 +2406,8 @@ public final class Graph {
             rowStyle: rowStyle,
             slider: slider,
             scroll: node.scrollState,
-            rotation: rotation
+            rotation: rotation,
+            scaleEffect: scaleEffect
         )
     }
 

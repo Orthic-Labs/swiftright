@@ -126,6 +126,22 @@ extension View {
         Modified(content: self, spec: .rotation(angle, anchor))
     }
 
+    /// Scales this view's rendering by `scale` about `anchor` of its frame. Layout is unchanged. Animated like a frame.
+    /// Apple: https://developer.apple.com/documentation/swiftui/view/scaleeffect(_:anchor:)-pmi7
+    public func scaleEffect(_ scale: CGFloat, anchor: UnitPoint = .center) -> some View {
+        Modified(content: self, spec: .scale(scale, scale, anchor))
+    }
+
+    /// Apple: https://developer.apple.com/documentation/swiftui/view/scaleeffect(x:y:anchor:)
+    public func scaleEffect(x: CGFloat = 1, y: CGFloat = 1, anchor: UnitPoint = .center) -> some View {
+        Modified(content: self, spec: .scale(x, y, anchor))
+    }
+
+    /// Apple: https://developer.apple.com/documentation/swiftui/view/scaleeffect(_:anchor:)-7q7as
+    public func scaleEffect(_ scale: CGSize, anchor: UnitPoint = .center) -> some View {
+        Modified(content: self, spec: .scale(scale.width, scale.height, anchor))
+    }
+
     /// Gives this view priority over its siblings when a stack divides the space it has: higher priorities are offered space first.
     /// Apple: https://developer.apple.com/documentation/swiftui/view/layoutpriority(_:)
     public func layoutPriority(_ value: Double) -> some View {
