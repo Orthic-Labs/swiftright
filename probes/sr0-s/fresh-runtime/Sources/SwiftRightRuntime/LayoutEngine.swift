@@ -879,10 +879,12 @@ extension Graph {
         let font = node.environment.textFont ?? Font(id: "body")
         let lineLimit: Int?
         if case .text = node.kind { lineLimit = node.environment.lineLimit } else { lineLimit = nil }
-        if node.memoText != string || node.memoFont != font || node.memoLineLimit != lineLimit {
+        let factor = node.environment.minimumScaleFactor
+        if node.memoText != string || node.memoFont != font || node.memoLineLimit != lineLimit || node.memoScaleFactor != factor {
             node.memoText = string
             node.memoFont = font
             node.memoLineLimit = lineLimit
+            node.memoScaleFactor = factor
             node.memo.removeAll()
             node.memoBase.removeAll()
             node.memoScaledFont.removeAll()
@@ -893,16 +895,16 @@ extension Graph {
         }
         var measured = measurer.measure(request(font, wrapWidth))
         // R5 `minimumScaleFactor`: a one-line Text wider than its proposal shrinks a sized font in half points until it fits (or reaches the factor).
-        let factor = node.environment.minimumScaleFactor
+        // Never below 9 pt: the measurer's system-font table starts there (a size it has no row for measures as zero, which must not read as a fit).
         if case .text = node.kind, factor < 1, lineLimit == 1, let bound = wrapWidth, bound > 0, let size = font.metadata?.pointSize, font.metadata?.textStyle == nil {
             let natural = measurer.measure(request(font, nil)).size.width
             if natural > bound + 0.01 {
-                let floorSize = size * factor
+                let floorSize = max(size * factor, min(size, 9))
                 var candidate = max(floorSize, (size * bound / natural * 2).rounded(.down) / 2)
                 while true {
                     guard let shrunk = font.sized(candidate) else { break }
                     let m = measurer.measure(request(shrunk, nil))
-                    if m.size.width <= bound + 0.01 || candidate <= floorSize {
+                    if (m.size.height > 0 && m.size.width <= bound + 0.01) || candidate <= floorSize {
                         measured = measurer.measure(request(shrunk, wrapWidth))
                         node.memoScaledFont[wrapWidth] = shrunk
                         break

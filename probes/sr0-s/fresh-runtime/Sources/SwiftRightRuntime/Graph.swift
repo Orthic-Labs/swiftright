@@ -589,6 +589,8 @@ final class Node {
     var memoBase: [CGFloat?: (first: CGFloat, last: CGFloat)] = [:]
     /// R5: the shrunk font (`minimumScaleFactor`) that produced each measured size, by proposed width; absent when the text was not shrunk.
     var memoScaledFont: [CGFloat?: Font] = [:]
+    /// The `minimumScaleFactor` the memo was measured with.
+    var memoScaleFactor: CGFloat = 1
     /// Cache owned by a custom `Layout` container.
     var layoutStorage: Any?
     /// Retired-row state, used only when this node retains removed row state (List).
@@ -2042,7 +2044,7 @@ public final class Graph {
                 ? .text(string, font?.id)
                 : .styledText(string, font, lineLimit)
         case .textField, .textEditor:
-            let font = node.environment.font
+            let font = node.environment.textFont
             let string = node.textInput?.display ?? ""
             key = font?.metadata == nil ? .text(string, font?.id) : .styledText(string, font, nil)
         case .stack(let spec) where spec.name == "List": key = .list(node.environment.listStyleMetadata)
@@ -2393,7 +2395,8 @@ public final class Graph {
         // R5: a Text shrunk by `minimumScaleFactor` draws with the font that produced its placed size.
         var style = node.style
         if case .text = kind, !node.memoScaledFont.isEmpty,
-           let width = node.memo.first(where: { abs($0.value.width - node.frame.width) < 0.001 && abs($0.value.height - node.frame.height) < 0.001 })?.key,
+           let width = node.memoScaledFont.keys.sorted(by: { ($0 ?? .infinity) < ($1 ?? .infinity) }).first(where: { key in
+               node.memo[key].map { abs($0.width - node.frame.width) < 0.001 && abs($0.height - node.frame.height) < 0.001 } ?? false }),
            let shrunk = node.memoScaledFont[width] {
             style = ResolvedStyle(font: shrunk, foreground: style.foreground, colorScheme: style.colorScheme)
         }

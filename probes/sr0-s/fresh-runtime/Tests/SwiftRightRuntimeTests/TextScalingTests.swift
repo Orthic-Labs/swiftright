@@ -43,6 +43,30 @@ final class TextScalingTests: XCTestCase {
         XCTAssertEqual(try text(Text("123456").font(.system(size: 20)).lineLimit(1).frame(width: 40), width: 200).style.font?.metadata?.pointSize, 20)
     }
 
+    // Oracle R5: a changed factor re-measures (Pulse TooltipCard toggles 0.85 / 1).
+    func testChangingTheFactorRemeasures() throws {
+        let g = Graph(Text("123456").font(.system(size: 20)).lineLimit(1).frame(width: 40), measurer: ProportionalMeasurer())
+        g.rootProposal = ProposedViewSize(width: 200, height: 100)
+        g.setRootEnvironment { $0.minimumScaleFactor = 0.5 }
+        g.flush()
+        func font() throws -> CGFloat? {
+            func walk(_ n: ResolvedNode) -> [ResolvedNode] { [n] + n.children.flatMap(walk) }
+            return try XCTUnwrap(walk(try XCTUnwrap(g.snapshot())).first { $0.kind == "Text" }).style.font?.metadata?.pointSize
+        }
+        XCTAssertEqual(try font(), 13)
+        g.setRootEnvironment { $0.minimumScaleFactor = 1 }
+        g.flush()
+        XCTAssertEqual(try font(), 20, "factor 1: no shrinking")
+        g.setRootEnvironment { $0.minimumScaleFactor = 0.5 }
+        g.flush()
+        XCTAssertEqual(try font(), 13, "and back")
+    }
+
+    func testNeverBelowNinePoints() throws {
+        let t = try text(Text("123456").font(.system(size: 20)).lineLimit(1).minimumScaleFactor(0.1).frame(width: 10), width: 200)
+        XCTAssertEqual(t.style.font?.metadata?.pointSize, 9)
+    }
+
     func testViewMonospacedDigitGivesTabularFigures() throws {
         let t = try text(Text("12:30").font(.system(size: 14, weight: .semibold)).monospacedDigit(), width: 200)
         XCTAssertEqual(t.style.font?.metadata?.monospacedDigit, true)
