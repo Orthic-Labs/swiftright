@@ -1,1 +1,8 @@
-{}
+{
+ "edgeAATolerance": {
+  "levels": 160,
+  "maxOverFraction": 0.05,
+  "maxMeanAbs": 5,
+  "reason": "Curved shape edge (Capsule / Circle) through the host rasteriser, so the F-path gate applies unchanged (sr1-decisions, 20 Oct F-path pixel gate). Measured on CI 39400159562 (two Circles, implicit fill from Group foregroundStyle): over 0.35%, mean 1.60, max 121; out-of-band 0 (placement and colour exact); all 20 runs identical."
+ }
+}
