@@ -373,3 +373,15 @@ Each gate's measurements are in its pair.json. Oracle PASS-WITH-CAVEATS; the Gro
 - **Adapted APIs:** `glassEffect`/`Glass` draw no material on Windows, and `contentTransition` swaps at once. Both compile identically against SwiftUI.
 - **Review:** Oracle PASS-WITH-CAVEATS.
 - **Open:** text and bitmaps under a non-rect clip are rect-clipped only (#43).
+
+## 20 October: SR2 R4 scale and colour effects delivered (#39)
+- **`scaleEffect`** (uniform, x/y, `CGSize`, with an anchor): animated through a presented channel. The host folds the scale into bounds and paints the subtree at display scale × factor. Shapes and solid rects off the pixel grid take the unsnapped path raster, and a zero factor paints nothing.
+- **`brightness`:** a colour filter, measured with ImageRenderer.
+- **`tint`:** the environment value plus the `.tint` style.
+- **CI 4/4 at N=20:** scale-anchor, scale-animated and scale-nested in run 39413123283; scale-center in run 39415781696.
+- **Review:** Oracle PASS-WITH-CAVEATS; the zero-scale and scroller caveats are fixed.
+- **Limitations:**
+  - non-uniform scale (shape redrawn rather than stretched);
+  - the brightness pixel case is off CI, because the Mac capture path skips the filter (unit-tested instead);
+  - a half-pixel-centred frame is 1 px narrower in runtime layout (#44);
+  - scaled text is #42.
