@@ -367,3 +367,9 @@ Each gate's measurements are in its pair.json. Oracle PASS-WITH-CAVEATS; the Gro
 `spring(duration:bounce:)`, `spring(response:dampingFraction:)`, `.snappy`, `.bouncy`, `smooth/snappy/bouncy(extraBounce:)`, `interpolatingSpring` and `delay(_:)` are in, with SwiftUI's 300 Hz semi-implicit Euler integrator from the R3 spike (exact to 5e-8). A gap of more than 1 s between evaluations advances a spring one frame, as SwiftUI does.
 
 **CI run 39411164151 at 00f630809: 5/5 at N=20** (snappy, bouncy, response, duration with negative bounce, delay). Oracle failed the first version (interrupted-spring velocity); fixed in cbc553e36 and f46f67419, then PASS-WITH-CAVEATS. Not modelled: SwiftUI's exact removal rule for parameterised springs, so the cases sample before removal and after both sides settle.
+
+## 20 October: SR2 R6 clip and adapted APIs delivered (#41)
+- **`clipShape`:** the clip geometry rides the animated shape channel, so an animatable clip animates. The host clips the subtree to the clip's bounds and multiplies a path-raster coverage mask into host-rasterised shapes and into solid rects that cross the edge. **CI 3/3 at N=20:** clip-rounded and clip-animated in run 39412281689; clip-circle, with its ring straddling the edge, in run 39414348568.
+- **Adapted APIs:** `glassEffect`/`Glass` draw no material on Windows, and `contentTransition` swaps at once. Both compile identically against SwiftUI.
+- **Review:** Oracle PASS-WITH-CAVEATS.
+- **Open:** text and bitmaps under a non-rect clip are rect-clipped only (#43).
