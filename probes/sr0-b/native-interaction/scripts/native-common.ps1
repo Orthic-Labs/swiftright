@@ -69,7 +69,9 @@ function Start-Fixture([string]$Base, [string]$Fixture, [string]$ReadyFile, [str
   $psi.RedirectStandardError = $true
   $psi.StandardOutputEncoding = [Text.Encoding]::UTF8
   $psi.StandardErrorEncoding = [Text.Encoding]::UTF8
-  $psi.EnvironmentVariables['Path'] = "C:\Users\adrds\AppData\Local\Programs\Swift\Runtimes\6.4.0\usr\bin;$bin;" + [Environment]::GetEnvironmentVariable('Path', 'Machine')
+  # The Swift runtime: the Dell user's install, or C:\swiftrt in the Windows Sandbox worker (mapped read-only, factory/tools/sandbox).
+  $swiftRt = if (Test-Path 'C:\swiftrt') { 'C:\swiftrt;' } else { '' }
+  $psi.EnvironmentVariables['Path'] = "$swiftRt" + "C:\Users\adrds\AppData\Local\Programs\Swift\Runtimes\6.4.0\usr\bin;$bin;" + [Environment]::GetEnvironmentVariable('Path', 'Machine')
   $p = New-Object System.Diagnostics.Process
   $p.StartInfo = $psi
   $script:StdTap = New-Object SRN.LineTap($p, $false)
