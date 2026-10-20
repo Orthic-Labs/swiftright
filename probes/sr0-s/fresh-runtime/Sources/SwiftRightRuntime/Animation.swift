@@ -274,16 +274,19 @@ final class AnimationTransaction {
 struct Presentation {
     var frame: LayoutRect
     var opacity: Double
+    /// A shape node's geometry (R2); nil for other nodes. Not part of `components`: a layer interpolates it with the layer's progress.
+    var geometry: ShapeGeometry? = nil
 
     static func lerp(_ a: Presentation, _ b: Presentation, _ t: Double) -> Presentation {
-        if t <= 0 { return a }
-        if t >= 1 { return b }
+        if t == 0 { return a }
+        if t == 1 { return b }
         let k = CGFloat(t)
         func mix(_ x: CGFloat, _ y: CGFloat) -> CGFloat { x + (y - x) * k }
         return Presentation(
             frame: LayoutRect(x: mix(a.frame.minX, b.frame.minX), y: mix(a.frame.minY, b.frame.minY),
                               width: mix(a.frame.width, b.frame.width), height: mix(a.frame.height, b.frame.height)),
-            opacity: a.opacity + (b.opacity - a.opacity) * t
+            opacity: a.opacity + (b.opacity - a.opacity) * t,
+            geometry: ShapeGeometry.interpolate(a.geometry, b.geometry, t)
         )
     }
 
@@ -291,9 +294,10 @@ struct Presentation {
         [Double(frame.minX), Double(frame.minY), Double(frame.width), Double(frame.height), opacity]
     }
 
-    init(frame: LayoutRect, opacity: Double) {
+    init(frame: LayoutRect, opacity: Double, geometry: ShapeGeometry? = nil) {
         self.frame = frame
         self.opacity = opacity
+        self.geometry = geometry
     }
 
     init(components c: [Double]) {
@@ -316,6 +320,8 @@ final class MotionLayer {
     var inclusiveEnd = true
     /// A spring that continued from an interrupted spring: displacement from `to` (target - value) and its rate of change per component.
     var continuation: (displacement: [Double], velocity: [Double])?
+    /// The geometry presented when this spring took over (R2). The geometry follows a critically damped spring from rest from there: its velocity is not carried.
+    var continuationFrom: ShapeGeometry?
     /// Seconds after which a spring that starts at rest is removed (its distance and the display scale decide: `SpringModel.settle`); nil until `startLayer` sets it.
     var springSettle: Double?
 
@@ -340,7 +346,9 @@ final class MotionLayer {
                 let d0 = continuation.displacement[i], v0 = continuation.velocity[i]
                 out[i] = target[i] - (d0 + (v0 + w * d0) * elapsed) * decay
             }
-            return Presentation(components: out)
+            var presented = Presentation(components: out)
+            presented.geometry = ShapeGeometry.interpolate(continuationFrom ?? to.geometry, to.geometry, 1 - (1 + w * elapsed) * decay)
+            return presented
         }
         let progress: Double
         if animation.curve == .spring {
@@ -584,6 +592,7 @@ extension Graph {
                 node.presentedFrame = initial.frame
                 node.presentedOpacity = initial.opacity
             }
+            node.presentedGeometry = node.targetGeometry
         }
         if firstPresentation || transactions.isEmpty {
             for node in changed { snap(node) }
@@ -623,12 +632,16 @@ extension Graph {
             snap(node)
             return
         }
-        let target = Presentation(frame: node.frame, opacity: node.targetOpacity)
-        let chain = node.motion ?? MotionChain(base: Presentation(frame: node.presentedFrame, opacity: node.presentedOpacity))
+        let target = Presentation(frame: node.frame, opacity: node.targetOpacity, geometry: node.targetGeometry)
+        let chain = node.motion ?? MotionChain(base: Presentation(frame: node.presentedFrame, opacity: node.presentedOpacity, geometry: node.presentedGeometry))
         let layer = MotionLayer(to: target, animation: animation, transaction: transaction)
         if layer.isSpring {
-            let from = (chain.layers.isEmpty ? chain.base : (clock.map { chain.value(at: $0) } ?? chain.layers.last!.to)).components
-            layer.springSettle = SpringModel.settle(displacement: zip(target.components, from).map { $0 - $1 }, scale: Double(scale))
+            let fromPresentation = chain.layers.isEmpty ? chain.base : (clock.map { chain.value(at: $0) } ?? chain.layers.last!.to)
+            var displacement = zip(target.components, fromPresentation.components).map { $0 - $1 }
+            // A geometry change settles like a unit change of an opacity-like value (R2: a 0 -> 1 Double is removed within 0.0006 of its target on macOS 27,
+            // as opacity is; factory/pipeline/sr2-r3-spike/SPIKE-RESULT.md).
+            if fromPresentation.geometry != target.geometry { displacement[4] = max(abs(displacement[4]), 1) }
+            layer.springSettle = SpringModel.settle(displacement: displacement, scale: Double(scale))
         }
         if layer.isSpring, let top = chain.layers.last, top.isSpring, let now = clock, top.start != nil {
             // A spring that interrupts a spring continues from the presented position and velocity (SwiftUI merges them).
@@ -640,6 +653,7 @@ extension Graph {
                 displacement: (0..<5).map { t[$0] - c[$0] },
                 velocity: (0..<5).map { -(c[$0] - b[$0]) / h }
             )
+            layer.continuationFrom = current.geometry
             finishChain(chain)
             chain.base = current
         }
@@ -678,6 +692,7 @@ extension Graph {
         }
         node.presentedFrame = node.frame
         node.presentedOpacity = node.targetOpacity
+        node.presentedGeometry = node.targetGeometry
     }
 
     /// Ends a node's motion when the node goes away.
@@ -712,9 +727,11 @@ extension Graph {
                 node.motion = nil
                 node.presentedFrame = chain.base.frame
                 node.presentedOpacity = chain.base.opacity
+                node.presentedGeometry = chain.base.geometry
             } else {
                 node.presentedFrame = value.frame
                 node.presentedOpacity = value.opacity
+                node.presentedGeometry = value.geometry
             }
         }
     }

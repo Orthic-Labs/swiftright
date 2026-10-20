@@ -518,6 +518,8 @@ final class Node {
     /// Target frame and opacity as of the last change detection (the "before" side of the next commit's diff).
     var snapFrame: LayoutRect = .zero
     var snapOpacity: Double = 1
+    /// A shape node's geometry as of the last change detection (R2: geometry is animated like the frame).
+    var snapGeometry: ShapeGeometry?
     /// Flush round in which this node was last evaluated.
     var evaluatedRound = -1
     /// Environment facts the commit record carries, read once per evaluation.
@@ -605,6 +607,13 @@ final class Node {
     /// Presented (animated) values: what the last commit showed.
     var presentedFrame: LayoutRect = .zero
     var presentedOpacity: Double = 1
+    /// A shape node's presented (animated) geometry; nil for other nodes. The commit record draws this, not the evaluated geometry.
+    var presentedGeometry: ShapeGeometry?
+    /// A shape node's evaluated geometry (its animation target).
+    var targetGeometry: ShapeGeometry? {
+        if case .shape(let resolved) = kind { return resolved.geometry }
+        return nil
+    }
     /// False until the first commit presents this node.
     var committed = false
     /// Running interpolation of `presentedFrame` and `presentedOpacity`.
@@ -2212,10 +2221,12 @@ public final class Graph {
     /// Collects the nodes whose layout target (frame or target opacity) differs from the previous commit's, and records the
     /// new targets as the baseline for the next.
     private func collectChanged(_ node: Node, into out: inout [Node]) {
-        if node.frame != node.snapFrame || node.targetOpacity != node.snapOpacity {
+        let geometry = node.targetGeometry
+        if node.frame != node.snapFrame || node.targetOpacity != node.snapOpacity || geometry != node.snapGeometry {
             out.append(node)
             node.snapFrame = node.frame
             node.snapOpacity = node.targetOpacity
+            node.snapGeometry = geometry
         }
         for child in node.childNodes { collectChanged(child, into: &out) }
     }
@@ -2290,7 +2301,9 @@ public final class Graph {
         var color: ResolvedColor?
         if case .color(let resolved) = kind { color = resolved }
         var shape: ResolvedShape?
-        if case .shape(let resolvedShape) = kind { shape = resolvedShape }
+        if case .shape(let resolvedShape) = kind {
+            shape = node.presentedGeometry.map { ResolvedShape(geometry: $0, paint: resolvedShape.paint) } ?? resolvedShape
+        }
         let labelsHidden: Bool?
         switch kind {
         case .toggle, .textField:

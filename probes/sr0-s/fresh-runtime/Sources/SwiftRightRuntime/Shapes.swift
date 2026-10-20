@@ -91,15 +91,32 @@ public indirect enum ShapeGeometry: Equatable, Sendable {
 public struct CustomShapeGeometry: Equatable, @unchecked Sendable {
     let identity: String
     private let make: (CGRect) -> Path
+    /// The shape value, for `interpolated(from:amount:)`.
+    private let value: Any
+    /// This shape (the target) with its `animatableData` taken `t` of the way from another value of the same type; nil when the type differs or has no animatable data.
+    private let interpolateFrom: (Any, Double) -> CustomShapeGeometry?
 
     public init<S: Shape>(_ shape: S) {
         identity = "\(type(of: shape))|\(String(describing: shape))"
         // The shape value is only read on the thread that resolves the view tree (same contract as @unchecked Sendable above).
         nonisolated(unsafe) let captured = shape
         make = { captured.path(in: $0) }
+        value = captured
+        interpolateFrom = { other, t in
+            guard S.AnimatableData.self != EmptyAnimatableData.self, let typed = other as? S else { return nil }
+            nonisolated(unsafe) let from = typed
+            // Called by the graph's motion layers, on the main actor.
+            return MainActor.assumeIsolated {
+                var presented = captured
+                presented.animatableData = from.animatableData.interpolated(towards: captured.animatableData, amount: t)
+                return CustomShapeGeometry(presented)
+            }
+        }
     }
 
     public func path(in rect: CGRect) -> Path { make(rect) }
+    /// This geometry presented `t` of the way from `from` (SwiftUI: the new shape value with its animatable data interpolated).
+    func interpolated(from: CustomShapeGeometry, amount t: Double) -> CustomShapeGeometry? { interpolateFrom(from.value, t) }
     public static func == (lhs: CustomShapeGeometry, rhs: CustomShapeGeometry) -> Bool { lhs.identity == rhs.identity }
 }
 
@@ -182,7 +199,7 @@ public struct ResolvedShape: Equatable, Sendable {
 }
 
 /// Shared shape API for rectangle, rounded rectangle, circle, capsule, paths and custom shapes.
-public protocol Shape: View {
+public protocol Shape: View, Animatable {
     var shapeGeometry: ShapeGeometry { get }
     /// The outline in `rect`. The default derives it from `shapeGeometry`; a custom shape overrides this (and then needs no `shapeGeometry`).
     /// A conformer must provide at least one of the two: the defaults call each other.
@@ -216,6 +233,21 @@ extension Shape {
     public func trim(from startFraction: CGFloat = 0, to endFraction: CGFloat = 1) -> TrimmedShape<Self> {
         TrimmedShape(base: self, from: startFraction, to: endFraction)
     }
+}
+
+extension Shape {
+    /// A user shape used as a view: SwiftUI fills it with the foreground style (the host's implicit fill, `ShapePaint.implicitFill`).
+    /// Built-in shapes are primitives and declare their own `body`.
+    @MainActor public var body: _ShapeView<Self> { _ShapeView(shape: self) }
+}
+
+/// The view a user shape is drawn as when no `.fill` / `.stroke` is applied. Apple: https://developer.apple.com/documentation/swiftui/_shapeview
+public struct _ShapeView<Content: Shape>: View, PrimitiveView {
+    let shape: Content
+
+    @MainActor public var body: Never { return fatalError("primitive shape view has no body") }
+    var nodeKind: NodeKind { .shape(ResolvedShape(geometry: shape.shapeGeometry, paint: nil)) }
+    var nodeContent: (any View)? { nil }
 }
 
 private struct ShapePaintView<Content: Shape>: View, PrimitiveView {
