@@ -17,5 +17,5 @@ struct Witness_r5_digits_view_v1_inner: View {
 }
 
 struct Witness_r5_digits_view_v1: View {
-    var body: some View { Witness_f2_digits_v1_inner().frame(width: 240, height: 200, alignment: .topLeading) }
+    var body: some View { Witness_r5_digits_view_v1_inner().frame(width: 240, height: 200, alignment: .topLeading) }
 }
