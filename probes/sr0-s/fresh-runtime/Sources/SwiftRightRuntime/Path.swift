@@ -228,8 +228,10 @@ public struct Path: Equatable, Sendable {
 
     public func applying(_ transform: CGAffineTransform) -> Path {
         func map(_ p: CGPoint) -> CGPoint {
-            CGPoint(x: transform.a * p.x + transform.c * p.y + transform.tx,
-                    y: transform.b * p.x + transform.d * p.y + transform.ty)
+            // Split so the Windows type checker stays within its time limit.
+            let x: CGFloat = transform.a * p.x + transform.c * p.y + transform.tx
+            let y: CGFloat = transform.b * p.x + transform.d * p.y + transform.ty
+            return CGPoint(x: x, y: y)
         }
         var result = Path()
         for element in elements {
