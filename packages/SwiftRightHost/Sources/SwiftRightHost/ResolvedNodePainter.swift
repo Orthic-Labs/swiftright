@@ -30,6 +30,21 @@ public final class ResolvedNodePainter {
     public let baseScale: Float
     /// Text nodes painted under a `.scaleEffect` since this painter was made: text keeps its size (runs are measured at the display scale) and is centred on its scaled place.
     public private(set) var scaleTextLimitationCount = 0
+    /// `.brightness` amounts above the node being emitted, outermost first (SR2 R4): applied to its colours innermost first, each clamped.
+    private var brightness: [Float] = []
+    /// Image content (not shapes) painted under `.brightness` since this painter was made: bitmaps are drawn unadjusted.
+    public private(set) var brightnessImageLimitationCount = 0
+
+    /// A colour (0xRRGGBBAA) through the `.brightness` amounts above the node being emitted.
+    func adjusted(_ rgba: UInt32) -> UInt32 {
+        guard !brightness.isEmpty else { return rgba }
+        func channel(_ shift: UInt32) -> UInt32 {
+            var v = Float((rgba >> shift) & 255) / 255
+            for b in brightness.reversed() { v = min(max(v + b, 0), 1) }
+            return UInt32((v * 255).rounded()) << shift
+        }
+        return channel(24) | channel(16) | channel(8) | (rgba & 255)
+    }
     let images: ImageRegistering
     let text: TextRunSource?
     private let systemImages: SystemImageRegistry?
@@ -205,7 +220,7 @@ public final class ResolvedNodePainter {
         beginCommit()
         var committed = false
         defer { endCommit(committed: committed) }
-        func walk(_ n: ResolvedNode, parent: UInt64, order: UInt32, clip: Rect?, rotations: [ShapeRotation] = [], textColor: UInt32? = nil, row: ListPainter.Row? = nil, rowList: (bounds: Rect, look: ListLook)? = nil, inButton: Bool = false, a11y: A11yPatch = A11yPatch(), hidden: Bool = false, transform: PaintScale = .identity) throws {
+        func walk(_ n: ResolvedNode, parent: UInt64, order: UInt32, clip: Rect?, rotations: [ShapeRotation] = [], textColor: UInt32? = nil, row: ListPainter.Row? = nil, rowList: (bounds: Rect, look: ListLook)? = nil, inButton: Bool = false, a11y: A11yPatch = A11yPatch(), hidden: Bool = false, transform: PaintScale = .identity, brightness: [Float] = []) throws {
             let id = UInt64(n.instance + 1)
             current.insert(id)
             runtimeIDs[id] = n.id
@@ -217,11 +232,13 @@ public final class ResolvedNodePainter {
             let bounds = transform.isIdentity ? laidOut : (scaledText ? transform.mapCentre(laidOut) : transform.map(laidOut))
             if scaledText { scaleTextLimitationCount += 1 }
             scale = scaledText ? baseScale : baseScale * transform.uniform
-            defer { scale = baseScale }
+            self.brightness = brightness
+            defer { scale = baseScale; self.brightness = [] }
             var emission: NodeEmission
             if let row, let rowList { emission = try emitListRow(n, id: id, row: row, look: rowList.look, contentBounds: bounds, textColor: textColor) }
             else { emission = try emit(n, id: id, bounds: bounds, textColor: textColor, rotations: rotations) }
             let childTransform = n.scaleEffect.map { transform.scaled(by: $0, about: laidOut) } ?? transform
+            let childBrightness = n.brightness.map { brightness + [Float($0)] } ?? brightness
             // `.rotationEffect` (anchor in this node's pixel frame, which is its child's frame) rotates every shape leaf beneath it.
             let childRotations = n.rotation.map { rotations + [ShapeRotation($0, bounds: bounds)] } ?? rotations
             // A Button's label is the button's accessible name: its Text publishes no node of its own (as on macOS).
@@ -272,10 +289,10 @@ public final class ResolvedNodePainter {
                 for (index, child) in n.children.enumerated() where index < rows.count {
                     // Text inside an active selection is white.
                     let colour = rows[index].isSelected && ListPainter.selectionColor(active: listIsActive, isEnabled: rows[index].isEnabled) == ListPainter.selectionActive ? ListPainter.selectedTextColor : childTextColor
-                    try walk(child, parent: id, order: UInt32(index), clip: childClip, rotations: childRotations, textColor: colour, row: rows[index], rowList: (bounds, look), a11y: childA11y, hidden: childHidden, transform: childTransform)
+                    try walk(child, parent: id, order: UInt32(index), clip: childClip, rotations: childRotations, textColor: colour, row: rows[index], rowList: (bounds, look), a11y: childA11y, hidden: childHidden, transform: childTransform, brightness: childBrightness)
                 }
             } else {
-                for (index, child) in n.children.enumerated() { try walk(child, parent: id, order: UInt32(index), clip: childClip, rotations: childRotations, textColor: childTextColor, inButton: childInButton || n.kind == "Button" || n.kind == "modifier.onTapGesture", a11y: childA11y, hidden: childHidden, transform: childTransform) }
+                for (index, child) in n.children.enumerated() { try walk(child, parent: id, order: UInt32(index), clip: childClip, rotations: childRotations, textColor: childTextColor, inButton: childInButton || n.kind == "Button" || n.kind == "modifier.onTapGesture", a11y: childA11y, hidden: childHidden, transform: childTransform, brightness: childBrightness) }
             }
             // The legacy scroller of a List or ScrollView is painted above its content: a child node ordered after the last child, clipped to the container.
             if n.kind == "List" || n.kind == "ScrollView", let scroll = n.scroll, let layout = ScrollerPainter.layout(frame: bounds, scale: scale, scroll: scroll) {
@@ -341,6 +358,15 @@ public final class ResolvedNodePainter {
     /// `rotations` are the `.rotationEffect`s above the node, outermost first, anchors in window pixels: shapes are rotated through their path raster; any other painted content stays unrotated and is reported.
     public func emit(_ node: ResolvedNode, id: UInt64, bounds: Rect, textColor: UInt32? = nil, rotations: [ShapeRotation] = []) throws -> NodeEmission {
         var emission = try emitContent(node, id: id, bounds: bounds, textColor: textColor, rotations: rotations)
+        if !brightness.isEmpty {
+            emission.primitives = emission.primitives.map {
+                if case .rect(let r, let color, let radius, let borderColor, let borderWidth) = $0 {
+                    return .rect(r, color: adjusted(color), radius: radius, borderColor: adjusted(borderColor), borderWidth: borderWidth)
+                }
+                return $0
+            }
+            if !Self.isShapeKind(node.kind), emission.primitives.contains(where: { if case .image = $0 { return true } else { return false } }) { brightnessImageLimitationCount += 1 }
+        }
         // `.allowsHitTesting(false)` (R1, #36): the node takes no pointer hits. Its painting and its accessibility actions are unchanged.
         if !node.accessibility.allowsHitTesting, emission.flags.contains(.hitTarget) { emission.flags.remove(.hitTarget) }
         if ShapeRotation.isRotated(rotations), !emission.primitives.isEmpty, !Self.isShapeKind(node.kind) {
@@ -362,8 +388,9 @@ public final class ResolvedNodePainter {
             // Opacity is baked into the text run's colour alpha (the run is created per presented opacity, so an animated fade re-measures each frame).
             // A text without its own colour fades the primary label colour.
             let inherited = textColor.map { ($0 & 0xffffff00) | UInt32((Double($0 & 255) * node.opacity).rounded()) }
-            let color = try node.style.foreground.map { try HostPaint.rgba($0, opacity: node.opacity, scheme: node.style.colorScheme) } ?? inherited
-                ?? (node.style.colorScheme == .dark || node.opacity != 1 ? try HostPaint.rgba(.semantic("label"), opacity: node.opacity, scheme: node.style.colorScheme) : nil)
+            var color = try node.style.foreground.map { try HostPaint.rgba($0, opacity: node.opacity, scheme: node.style.colorScheme) } ?? inherited
+                ?? (node.style.colorScheme == .dark || node.opacity != 1 || !brightness.isEmpty ? try HostPaint.rgba(.semantic("label"), opacity: node.opacity, scheme: node.style.colorScheme) : nil)
+            color = color.map(adjusted)
             let run = try color.map { try text.run(text: string, font: node.style.font, bounds: bounds, color: $0) }
                 ?? text.run(text: string, font: node.style.font, bounds: bounds)
             var emission = NodeEmission(primitives: [.text(run, x: bounds.x, y: bounds.y)],
@@ -376,7 +403,8 @@ public final class ResolvedNodePainter {
             switch try ShapePainter.plan(node, bounds: bounds, scale: scale, rotations: rotations) {
             case .primitive(let primitive):
                 return NodeEmission(primitives: [primitive], semantic: nil, flags: [], structural: false)
-            case .path(let request):
+            case .path(var request):
+                request.fillRGBA = request.fillRGBA.map(adjusted); request.strokeRGBA = request.strokeRGBA.map(adjusted)
                 // A vector path (trimmed, inset, dashed, custom, or a style the ABI rect cannot draw): rasterised on the host and registered as one image, kept under the
                 // node id like the continuous route, so the commit releases the previous frame's handle when the node repaints or goes away. Nothing to draw -> no primitive.
                 guard let result = try PathShapeRaster.render(request) else { return NodeEmission(primitives: [], semantic: nil, flags: [], structural: false) }
@@ -384,7 +412,8 @@ public final class ResolvedNodePainter {
                 if let stale = pendingShapeImages[id] { _ = images.release(stale) }
                 pendingShapeImages[id] = handle
                 return NodeEmission(primitives: [.image(handle, result.placement)], semantic: nil, flags: [], structural: false)
-            case .continuous(let request):
+            case .continuous(var request):
+                request.fillRGBA = request.fillRGBA.map(adjusted); request.strokeRGBA = request.strokeRGBA.map(adjusted)
                 // One image, or horizontal bands of one when the shape is over the rasteriser's work limit (round 5 block 30). Band k's handle is kept under a key
                 // derived from the node id so a commit releases every band of a node that went away or changed.
                 // A shape with no area (a zero-width bar, a frame under half a device pixel) draws nothing, as in SwiftUI (hub gap R8).

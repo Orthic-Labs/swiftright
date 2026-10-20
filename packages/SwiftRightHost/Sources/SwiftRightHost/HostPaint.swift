@@ -98,6 +98,7 @@ public enum HostPaint {
         "label": 0xffffffd8,
         "secondaryLabel": 0xffffff8c,
         "accentColor": 0x007affff,
+        "tint": 0x007affff,   // `.tint` with no tint set: the accent colour (SR2 R4)
         "background": 0x1e1e1eff,
         "separator": 0xffffff19,   // Divider, dark appearance (round 5 block 31): white at alpha 25/255 (52 over the dark window ground (30), (25,156,255) over (0,145,255))
         "clear": 0x00000000,
@@ -120,6 +121,7 @@ public enum HostPaint {
             "label": 0x000000d8,
             "secondaryLabel": 0x0000007f,
             "accentColor": 0x007affff,
+            "tint": 0x007affff,
             "background": 0xffffffff,
             "separator": 0x00000019,   // Divider (block swiftui.spacer-divider): black at 25/255, light appearance only
         ]

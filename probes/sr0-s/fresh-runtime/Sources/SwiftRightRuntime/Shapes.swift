@@ -186,6 +186,11 @@ public struct ShapePaint: Equatable, Sendable {
         self.fillStyle = fillStyle
     }
 
+    /// This paint in another colour.
+    func withColor(_ color: ResolvedColor) -> ShapePaint {
+        ShapePaint(kind: kind, color: color, lineWidth: lineWidth, strokeStyle: strokeStyle, fillStyle: fillStyle)
+    }
+
     /// The paint SwiftUI gives a shape with no `.fill` / `.stroke`: a non-zero fill in the inherited foreground style (`.foregroundStyle`), else `.primary`.
     public static func implicitFill(foreground: ResolvedColor?) -> ShapePaint {
         ShapePaint(kind: .fill, color: foreground ?? .semantic("label"), lineWidth: nil)

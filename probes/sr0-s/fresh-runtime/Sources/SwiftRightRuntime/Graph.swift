@@ -242,6 +242,8 @@ enum ModifierSpec {
     /// SR2 R4 (#39): `.scaleEffect(x:y:anchor:)`. Layout is unchanged; the host scales the subtree's painting about the anchor of this node's frame.
     /// The factors are animated like a frame (`Node.presentedScale`).
     case scale(CGFloat, CGFloat, UnitPoint)
+    /// SR2 R4 (#39): `.brightness(_:)`. Layout is unchanged; the host adds the amount to each sRGB channel of the subtree's colours (clamped).
+    case brightness(Double)
     /// SR1 round 6 block 38: `.onHover(perform:)` and `.onTapGesture(count:perform:)`; the host routes pointer positions to `Graph.pointerMoved` and a release to `Graph.tapGesture`.
     case hover(HoverHook)
     case tap(TapHook)
@@ -287,6 +289,7 @@ enum ModifierSpec {
         case .clipped: return "modifier.clipped"
         case .rotation: return "modifier.rotationEffect"
         case .scale: return "modifier.scaleEffect"
+        case .brightness: return "modifier.brightness"
         case .hover: return "modifier.onHover"
         case .tap: return "modifier.onTapGesture"
         case .offset: return "modifier.offset"
@@ -330,6 +333,7 @@ enum ModifierSpec {
         case .clipped: return "clipped"
         case .rotation: return "rotationEffect"
         case .scale: return "scaleEffect"
+        case .brightness: return "brightness"
         case .hover: return "onHover"
         case .tap: return "onTapGesture"
         case .offset: return "offset"
@@ -862,6 +866,8 @@ public struct ResolvedNode: Equatable, Sendable {
     public var rotation: ResolvedRotation? = nil
     /// Modifier nodes of `.scaleEffect` only (SR2 R4, #39): the presented (animated) factors and the anchor. Layout is unchanged; the host scales the subtree.
     public var scaleEffect: ResolvedScale? = nil
+    /// Modifier nodes of `.brightness` only (SR2 R4, #39): the amount added to each sRGB channel of the subtree's colours.
+    public var brightness: Double? = nil
 }
 
 /// What `.scaleEffect(x:y:anchor:)` asks of its subtree: painting scaled by (`x`, `y`) about `anchor` (a unit point of the modifier node's frame).
@@ -1911,7 +1917,7 @@ public final class Graph {
                 node.envStamp = envStampCounter
             }
             node.enabled = node.environment.isEnabled
-            node.style = ResolvedStyle(font: node.environment.font, foreground: node.environment.foregroundStyle, colorScheme: node.environment.colorScheme)
+            node.style = ResolvedStyle(font: node.environment.font, foreground: node.environment.foregroundStyle?.resolvingTint(node.environment), colorScheme: node.environment.colorScheme)
         } else {
             node.envStamp = node.parent?.envStamp ?? 0
             node.enabled = node.inheritedEnabled
@@ -2327,7 +2333,10 @@ public final class Graph {
         if case .color(let resolved) = kind { color = resolved }
         var shape: ResolvedShape?
         if case .shape(let resolvedShape) = kind {
-            shape = node.presentedGeometry.map { ResolvedShape(geometry: $0, paint: resolvedShape.paint) } ?? resolvedShape
+            var paint = resolvedShape.paint
+            if let p = paint, case .semantic(let name) = p.color, name == "tint" { paint = p.withColor(p.color.resolvingTint(node.environment)) }
+            if let p = paint, case .semanticAlpha(let name, _) = p.color, name == "tint" { paint = p.withColor(p.color.resolvingTint(node.environment)) }
+            shape = ResolvedShape(geometry: node.presentedGeometry ?? resolvedShape.geometry, paint: paint)
         }
         let labelsHidden: Bool?
         switch kind {
@@ -2371,6 +2380,8 @@ public final class Graph {
         if case .slider(let spec) = kind { slider = resolveSlider(node, spec: spec) }
         var rotation: ResolvedRotation?
         if case .modifier(.rotation(let angle, let anchor)) = kind { rotation = ResolvedRotation(angle: angle, anchor: anchor) }
+        var brightness: Double?
+        if case .modifier(.brightness(let amount)) = kind { brightness = amount }
         var scaleEffect: ResolvedScale?
         if case .modifier(.scale(let x, let y, let anchor)) = kind {
             let presented = node.presentedScale ?? CGSize(width: x, height: y)
@@ -2407,7 +2418,8 @@ public final class Graph {
             slider: slider,
             scroll: node.scrollState,
             rotation: rotation,
-            scaleEffect: scaleEffect
+            scaleEffect: scaleEffect,
+            brightness: brightness
         )
     }
 

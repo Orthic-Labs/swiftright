@@ -83,3 +83,31 @@ final class ScaleEffectTests: XCTestCase {
         XCTAssertTrue(removed)
     }
 }
+
+// SR2 R4 (#39): `.tint` resolves through the environment's tint, else the accent colour.
+@MainActor
+final class TintTests: XCTestCase {
+    private func nodes<V: View>(_ view: V) throws -> [ResolvedNode] {
+        let g = Graph(view)
+        g.rootProposal = ProposedViewSize(width: 200, height: 200)
+        g.flush()
+        func walk(_ n: ResolvedNode) -> [ResolvedNode] { [n] + n.children.flatMap(walk) }
+        return walk(try XCTUnwrap(g.snapshot()))
+    }
+
+    func testTintStyleResolvesToTheEnvironmentTintElseAccent() throws {
+        let tinted = try nodes(VStack {
+            Circle().fill(.tint).frame(width: 10, height: 10)
+            Text("A").foregroundStyle(.tint)
+        }.tint(.red))
+        XCTAssertEqual(tinted.compactMap(\.shape).first?.paint?.color, Color.red.resolvedColor)
+        XCTAssertEqual(tinted.first { $0.kind == "Text" }?.style.foreground, Color.red.resolvedColor)
+        let plain = try nodes(Circle().fill(.tint).frame(width: 10, height: 10))
+        XCTAssertEqual(plain.compactMap(\.shape).first?.paint?.color, .semantic("accentColor"))
+    }
+
+    func testBrightnessIsPublishedOnItsModifierNode() throws {
+        let all = try nodes(Color.red.frame(width: 10, height: 10).brightness(0.3))
+        XCTAssertEqual(all.first { $0.kind == "modifier.brightness" }?.brightness, 0.3)
+    }
+}

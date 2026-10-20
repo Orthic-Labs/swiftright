@@ -88,6 +88,42 @@ extension Animatable where AnimatableData == EmptyAnimatableData {
     }
 }
 
+// MARK: - Tint (SR2 R4)
+
+private enum TintKey: EnvironmentKey {
+    static var defaultValue: ResolvedColor? { nil }
+}
+
+extension EnvironmentValues {
+    /// `.tint(_:)`; nil when no tint is set (the accent colour then applies).
+    public var tint: ResolvedColor? {
+        get { self[TintKey.self] }
+        set { self[TintKey.self] = newValue }
+    }
+}
+
+/// The `.tint` shape style: the environment's tint, else the accent colour. Resolved where a node reads it (foreground style, shape paint).
+/// Apple: https://developer.apple.com/documentation/swiftui/tintshapestyle
+public struct TintShapeStyle: ShapeStyle {
+    public init() {}
+    public var resolvedColor: ResolvedColor { .semantic("tint") }
+}
+
+extension ShapeStyle where Self == TintShapeStyle {
+    public static var tint: TintShapeStyle { TintShapeStyle() }
+}
+
+extension ResolvedColor {
+    /// `.tint` resolved against `environment`'s tint, else the accent colour; any other colour as it is.
+    func resolvingTint(_ environment: EnvironmentValues) -> ResolvedColor {
+        switch self {
+        case .semantic("tint"): return environment.tint ?? .semantic("accentColor")
+        case .semanticAlpha("tint", let a): return (environment.tint ?? .semantic("accentColor")).multiplied(by: a)
+        default: return self
+        }
+    }
+}
+
 // MARK: - Built-in shapes' animatable data (as SwiftUI declares them)
 
 extension TrimmedShape {
