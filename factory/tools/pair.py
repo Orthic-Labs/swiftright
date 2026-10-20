@@ -5,7 +5,7 @@
 commit); the package's @@PRODUCT_STAGE@@ token is replaced with it at zip time. --renderer is the DLL the host loads (default: the 0.7 baseline),
 passed to the host per run through SWIFTRIGHT_RENDER_DLL, so the pinned renderer under inputs\renderer is never overwritten or required.
 Output: <case-dir>/runs/<ts>/{windows,mac}/*.png, report.json, build.json (stage + renderer identity), diff-NN.png, *.log"""
-import argparse, json, re, shutil, subprocess, sys, time, zipfile, io
+import argparse, json, math, re, shutil, subprocess, sys, time, zipfile, io
 from pathlib import Path
 from PIL import Image, ImageChops
 sys.path.insert(0, str(Path(__file__).resolve().parent)); import cache_paths   # the one place Mac build/run paths are chosen
@@ -255,6 +255,11 @@ def edge_band(im):
 
 EDGE_AA = 32   # <case>/pair.json "edgeAATolerance": {"levels": N, "reason": "..."}: the most a pixel inside the 1 px edge band may differ (decision 5: 32). A larger value is measured and carries its reason; it never loosens the out-of-band exact gate.
 HAZE = 0   # <case>/pair.json "hazeTolerance": out-of-band differences up to this many levels (a faint soft shadow, 8-bit rounding) do not fail the edge gate; reported as hazeMax
+EDGE_OVER = 32   # the level above which a band pixel counts as "over" for the statistical limits (F-path gate, sr1-decisions 20 Oct)
+EDGE_STATS = None   # <case>/pair.json "edgeAATolerance": {"maxOverPixels": n, "maxOverFraction": f, "maxMeanAbs": m} on top of `levels`; None = the gate is unchanged
+DASH_GEOM = None   # <case>/pair.json "dashGeometry": {"center": [x, y], "radius": px, "maxAngleDeg": deg}; None = no dash check
+EXPECT_FAIL = False   # <case>/pair.json "expectFail": a negative control; the run passes only when the pixel gate fails
+STAT_KEYS = ("maxOverPixels", "maxOverFraction", "maxMeanAbs")
 
 
 def edge_gate(im, iw, exclusions=()):
@@ -268,15 +273,89 @@ def edge_gate(im, iw, exclusions=()):
     inb, outb = Image.composite(d, black, band), Image.composite(black, d, band)
     cnt = lambda x: x.size[0] * x.size[1] - x.histogram()[0]
     ti, to = cnt(inb), cnt(outb); mi, mo = inb.getextrema()[1], outb.getextrema()[1]
-    verdict = "exact" if ti + to == 0 else ("edge-aa<=32" if (to == 0 or mo <= HAZE) and mi <= EDGE_AA else "fail")
+    if EDGE_STATS is None:
+        verdict = "exact" if ti + to == 0 else ("edge-aa<=32" if (to == 0 or mo <= HAZE) and mi <= EDGE_AA else "fail")
+        return dict(verdict=verdict, totalDiff=ti + to, inBandDiff=ti, outOfBandDiff=to, maxInBand=mi, maxOutOfBand=mo,
+                    bandPixels=cnt(band))
+    # Statistical band limits (only when pair.json names them): a band pixel above EDGE_OVER is "over"; `levels` stays the per-pixel ceiling.
+    nb = cnt(band)
+    over = cnt(inb.point(lambda v: 255 if v > EDGE_OVER else 0))
+    total = sum(i * c for i, c in enumerate(inb.histogram()))
+    overFraction = over / nb if nb else 0.0
+    meanAbs = total / nb if nb else 0.0
+    stats_ok = all([
+        "maxOverPixels" not in EDGE_STATS or over <= EDGE_STATS["maxOverPixels"],
+        "maxOverFraction" not in EDGE_STATS or overFraction <= EDGE_STATS["maxOverFraction"],
+        "maxMeanAbs" not in EDGE_STATS or meanAbs <= EDGE_STATS["maxMeanAbs"],
+    ])
+    verdict = "exact" if ti + to == 0 else ("edge-aa-stats" if (to == 0 or mo <= HAZE) and mi <= EDGE_AA and stats_ok else "fail")
     return dict(verdict=verdict, totalDiff=ti + to, inBandDiff=ti, outOfBandDiff=to, maxInBand=mi, maxOutOfBand=mo,
-                bandPixels=cnt(band))
+                bandPixels=nb, overPixels=over, overFraction=round(overFraction, 6), meanAbs=round(meanAbs, 4))
+
+
+def dash_edges(img, center, radius, step_deg=0.1):
+    """Dash edges along the circle (center px, radius px): ink = 255 - min(R,G,B) sampled at the nearest pixel every step_deg, thresholded at 128 (cyclic from 0 deg).
+    Returns [(angle_deg, "rise"|"fall")] in angle order; a sample off the capture raises ValueError."""
+    cx, cy = center
+    n = round(360 / step_deg)
+    on = []
+    for k in range(n):
+        t = math.radians(k * step_deg)
+        x, y = int(round(cx + radius * math.cos(t))), int(round(cy + radius * math.sin(t)))
+        if not (0 <= x < img.size[0] and 0 <= y < img.size[1]):
+            raise ValueError(f"dashGeometry circle leaves the capture at {(x, y)}")
+        on.append(255 - min(img.getpixel((x, y))) >= 128)
+    edges = []
+    for k in range(n):
+        if on[k - 1] != on[k]:
+            edges.append((round(k * step_deg, 3), "rise" if on[k] else "fall"))
+    return edges
+
+
+def dash_check(im, iw, cfg):
+    """dashGeometry gate: both images have the same number of dash edges (and at least one dash), kinds match pairwise, and each matched edge angle differs by at most maxAngleDeg."""
+    center, radius, tol = cfg["center"], float(cfg["radius"]), float(cfg["maxAngleDeg"])
+    a, b = dash_edges(im, center, radius), dash_edges(iw, center, radius)
+    res = dict(macEdges=len(a), winEdges=len(b), maxAngleDeg=tol, ok=False)
+    if not a or len(a) != len(b):
+        return dict(res, reason="dash edge count differs" if a or b else "no dash found")
+    # The circle is cyclic: an edge that crosses 0 deg rotates one list against the other, so pair the edges at the cyclic
+    # offset (with matching kinds) that gives the smallest worst angle.
+    best = None
+    for s in range(len(b)):
+        bb = b[s:] + b[:s]
+        if any(x[1] != y[1] for x, y in zip(a, bb)):
+            continue
+        worst = max(abs((x[0] - y[0] + 180) % 360 - 180) for x, y in zip(a, bb))
+        best = worst if best is None else min(best, worst)
+    if best is None:
+        return dict(res, reason="dash edge kinds differ")
+    return dict(res, worstAngleDeg=round(best, 3), ok=best <= tol)
 
 
 def load_phases(case):
     """E1: <case>/pair.json {"phaseShots":["a","b"]} - labelled `shot` steps whose PNGs (mac/run-NN-<label>.png, windows/native-NN-<label>.png) are pixel-compared like the final capture, with the same exclusions."""
     pj = case / "pair.json"
     return [str(x) for x in json.loads(pj.read_text()).get("phaseShots", [])] if pj.is_file() else []
+
+
+def apply_gate_config(case):
+    """Sets the per-case gate globals from <case>/pair.json (main() and ci_pair.set_globals call this; compare() reads the globals)."""
+    global HAZE, EDGE_AA, EDGE_STATS, DASH_GEOM, EXPECT_FAIL
+    pj = json.loads((case / "pair.json").read_text()) if (case / "pair.json").is_file() else {}
+    HAZE = int(pj.get("hazeTolerance", 0))
+    et = pj.get("edgeAATolerance")
+    EDGE_AA = int(et["levels"]) if et and "levels" in et else 32
+    if et:
+        assert et.get("reason"), "edgeAATolerance needs a reason (decision 5: a tolerance is measured and named)"
+    stats = {k: et[k] for k in STAT_KEYS if et and k in et}
+    for k, v in stats.items():
+        assert isinstance(v, (int, float)) and v >= 0, f"edgeAATolerance.{k} must be a non-negative number"
+    EDGE_STATS = stats or None
+    DASH_GEOM = pj.get("dashGeometry")
+    if DASH_GEOM is not None:
+        assert set(DASH_GEOM) == {"center", "radius", "maxAngleDeg"} and len(DASH_GEOM["center"]) == 2, "dashGeometry needs center [x,y], radius and maxAngleDeg"
+    EXPECT_FAIL = bool(pj.get("expectFail", False))
 
 
 def compare(out, runs, exclusions=(), frames=0, phases=()):
@@ -304,9 +383,14 @@ def compare(out, runs, exclusions=(), frames=0, phases=()):
         # "exact" means pixel-identical over the whole frame. Identical outside named excluded regions while the regions differ is
         # reported as exact-with-exclusions (never as exact); the regions are named in every report line and in report.json.
         verdict = g["verdict"]
+        dg = dash_check(im, iw, DASH_GEOM) if DASH_GEOM else None
+        if dg is not None and not dg["ok"]:
+            verdict = "fail"
         if exclusions and verdict == "exact" and full_px > 0:
             verdict = "exact-with-exclusions"
         row = dict(run=i, **fr, verdict=verdict, gate=g, exact=full_px == 0, differentPixels=npx(gated), maxdiff=max(max(e) for e in gated.getextrema()), diffbbox=bbox)
+        if dg is not None:
+            row["dashGeometry"] = dg
         if exclusions:
             row["fullFrameDifferentPixels"] = full_px
             row["excluded"] = []
@@ -316,7 +400,7 @@ def compare(out, runs, exclusions=(), frames=0, phases=()):
         rows.append(row)
         if bbox and first is None:
             first = i; ImageChops.invert(gated).save(out / f"diff-{i:02d}{sfx}.png")
-    passing = ("exact", "exact-with-exclusions", "edge-aa<=32")
+    passing = ("exact", "exact-with-exclusions", "edge-aa<=32", "edge-aa-stats")
     ok = [r for r in rows if r.get("verdict") in passing]
     bad = [r for r in rows if r.get("verdict") not in passing]
     nex = sum(1 for r in rows if r.get("verdict") == "exact")
@@ -374,6 +458,13 @@ def recorded_scale_guard(out, strict):
     return ok
 
 
+def _exit(code):
+    """expectFail (negative control): the run passes exactly when the gate fails. A crash is never a pass."""
+    if EXPECT_FAIL:
+        code = 1 if code == 0 else 0
+    sys.exit(code)
+
+
 def main():
     ap = argparse.ArgumentParser()
     ap.add_argument("case"); ap.add_argument("--runs", type=int, default=1)
@@ -388,18 +479,14 @@ def main():
     ap.add_argument("--scale-guard", choices=["strict", "default"], default="default", help="decision C12: a Mac host that reports a scale other than the capture scale always fails the run; strict also fails a host that reports none (not yet pinned)")
     a = ap.parse_args()
     case = Path(a.case).resolve(); name = case.name
-    global HAZE, EDGE_AA
-    _pj = json.loads((case / "pair.json").read_text()) if (case / "pair.json").is_file() else {}
-    HAZE = int(_pj.get("hazeTolerance", 0))
-    EDGE_AA = int(_pj["edgeAATolerance"]["levels"]) if "edgeAATolerance" in _pj else 32
-    if "edgeAATolerance" in _pj: assert _pj["edgeAATolerance"].get("reason"), "edgeAATolerance needs a reason (decision 5: a tolerance is measured and named)"
+    apply_gate_config(case)
     if a.recompare:
         out = Path(a.recompare).resolve(); clock = load_clock(case, a.frames)
         n = len({q.name[:6] for q in (out / "mac").glob("run-*.png")})
         ok = compare(out, n, load_exclusions(case, a.exclude_text_bbox), len(clock or []), load_phases(case))
         sem = semantic_gate(case, out)
         sg = recorded_scale_guard(out, a.scale_guard == "strict")
-        sys.exit(0 if (sg and (ok if sem is None else sem and (ok or semantic_decides(case)))) else 1)
+        _exit(0 if (sg and (ok if sem is None else sem and (ok or semantic_decides(case)))) else 1)
     clock = load_clock(case, a.frames)
     out = Path(a.out) if a.out else case / "runs" / time.strftime("%Y%m%d-%H%M%S")
     out.mkdir(parents=True, exist_ok=True)
@@ -415,10 +502,10 @@ def main():
     ok = compare(out, a.runs, load_exclusions(case, a.exclude_text_bbox), len(clock or []), load_phases(case)) and guard   # a failed scale guard fails the run whatever the pixels say
     sem = semantic_gate(case, out)
     if sem is None:
-        sys.exit(0 if ok else 1)
+        _exit(0 if ok else 1)
     # An Image(systemName:) case differs from the Mac inside the glyph region by design (substitute provider): its semantic gate decides.
     image = semantic_decides(case)
-    sys.exit(0 if guard and sem and (ok or image) else 1)
+    _exit(0 if guard and sem and (ok or image) else 1)
 
 
 if __name__ == "__main__":

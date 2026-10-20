@@ -22,6 +22,8 @@ public struct ContinuousShapeRequest: Equatable {
 /// A vector path to rasterise on the host: the shape's geometry resolved against the snapped pixel bounds, with its paint and styles.
 /// `strokeStyle.lineWidth` is in points (scaled by `scale` in the rasteriser, like the path itself).
 public struct PathShapeRequest: Equatable {
+    /// A rotation (or a composition of them) in window pixels, applied after the shape is placed at its snapped origin (`.rotationEffect`, #35). Identity when the shape is not rotated.
+    public var rotation: CGAffineTransform = .identity
     public var bounds: Rect
     public var scale: Float
     public var geometry: ShapeGeometry
@@ -36,6 +38,40 @@ public struct PathShapeRequest: Equatable {
     }
 }
 
+/// One `.rotationEffect(_:anchor:)` above a shape, resolved to window pixels: the angle in radians (positive turns clockwise on screen, y down, as SwiftUI) and the anchor point
+/// (the unit anchor placed in the modifier node's pixel frame). The renderer ABI transform is translation only, so a shape's rotation is folded into its path raster.
+public struct ShapeRotation: Equatable {
+    public var radians: Double
+    public var anchorX: Double
+    public var anchorY: Double
+    public init(radians: Double, anchorX: Double, anchorY: Double) { self.radians = radians; self.anchorX = anchorX; self.anchorY = anchorY }
+    public init(_ resolved: ResolvedRotation, bounds: Rect) {
+        self.init(radians: resolved.angle.radians, anchorX: Double(bounds.x) + Double(resolved.anchor.x) * Double(bounds.w),
+                  anchorY: Double(bounds.y) + Double(resolved.anchor.y) * Double(bounds.h))
+    }
+    /// True when the rotation moves nothing (a whole number of turns).
+    public var isIdentity: Bool { !radians.isFinite ? false : radians.truncatingRemainder(dividingBy: 2 * Double.pi) == 0 }
+    /// x' = cos (x - ax) - sin (y - ay) + ax, y' = sin (x - ax) + cos (y - ay) + ay (the y-down screen rotation about the anchor).
+    public var transform: CGAffineTransform {
+        let c = cos(radians), s = sin(radians)
+        return CGAffineTransform(a: CGFloat(c), b: CGFloat(s), c: CGFloat(-s), d: CGFloat(c),
+                                 tx: CGFloat(anchorX - c * anchorX + s * anchorY), ty: CGFloat(anchorY - s * anchorX - c * anchorY))
+    }
+    /// The combined transform of nested rotations, listed outermost first: the innermost applies first, then each one outside it.
+    public static func combined(_ rotations: [ShapeRotation]) -> CGAffineTransform {
+        var t = CGAffineTransform.identity
+        for r in rotations.reversed() where !r.isIdentity { t = concatenate(t, r.transform) }
+        return t
+    }
+    /// `first` then `second` (the same product as `CGAffineTransform.concatenating`, written out so no platform shim is relied on).
+    static func concatenate(_ first: CGAffineTransform, _ second: CGAffineTransform) -> CGAffineTransform {
+        CGAffineTransform(a: first.a * second.a + first.b * second.c, b: first.a * second.b + first.b * second.d,
+                          c: first.c * second.a + first.d * second.c, d: first.c * second.b + first.d * second.d,
+                          tx: first.tx * second.a + first.ty * second.c + second.tx, ty: first.tx * second.b + first.ty * second.d + second.ty)
+    }
+    public static func isRotated(_ rotations: [ShapeRotation]) -> Bool { rotations.contains { !$0.isIdentity } }
+}
+
 public enum ShapePaintPlan {
     case primitive(Primitive)
     case continuous(ContinuousShapeRequest)
@@ -45,7 +81,8 @@ public enum ShapePaintPlan {
 
 public enum ShapePainter {
     /// Resolves a Rectangle / RoundedRectangle / Circle node to its paint, from runtime geometry and paint only.
-    public static func plan(_ node: ResolvedNode, bounds: Rect, scale: Float) throws -> ShapePaintPlan {
+    /// `rotations` are the `.rotationEffect`s above the node (outermost first, anchors in the same window pixels as `bounds`): a rotated shape always takes the path route, with the rotation in its request.
+    public static func plan(_ node: ResolvedNode, bounds: Rect, scale: Float, rotations: [ShapeRotation] = []) throws -> ShapePaintPlan {
         guard let shape = node.shape, let paint = shape.paint else { throw HostPaintError.shapeMetadataRequired }
         let colour = try HostPaint.rgba(paint.color, opacity: node.opacity, scheme: node.style.colorScheme)
         var strokeWidth: Float = 0
@@ -54,12 +91,15 @@ public enum ShapePainter {
             strokeWidth = Float(logical) * scale
             guard strokeWidth.isFinite else { throw HostPaintError.invalidScaledStrokeWidth }
         }
-        if needsPathRoute(shape.geometry, paint) {
+        let rotated = ShapeRotation.isRotated(rotations)
+        if rotated || needsPathRoute(shape.geometry, paint) {
             let stroke = paint.kind == .stroke
-            return .path(PathShapeRequest(bounds: bounds, scale: scale, geometry: shape.geometry,
+            var request = PathShapeRequest(bounds: bounds, scale: scale, geometry: shape.geometry,
                                           fillRGBA: stroke ? nil : colour, strokeRGBA: stroke ? colour : nil,
                                           strokeStyle: paint.strokeStyle ?? StrokeStyle(lineWidth: paint.lineWidth ?? 0),
-                                          fillStyle: paint.fillStyle ?? FillStyle()))
+                                          fillStyle: paint.fillStyle ?? FillStyle())
+            if rotated { request.rotation = ShapeRotation.combined(rotations) }
+            return .path(request)
         }
         var frame = bounds
         var radius: Float = 0
@@ -146,8 +186,10 @@ public enum PathShapeRaster {
         let scale = Double(request.scale)
         let rect = CGRect(x: 0, y: 0, width: snapX.length / scale, height: snapY.length / scale)
         let path = request.geometry.makePath(in: rect)
+        // Placed at the snapped origin, then rotated in window pixels (identity unless under `.rotationEffect`). The raster's bounds come from the transformed outline, so a rotated shape is never clipped.
+        let placed = ShapeRotation.concatenate(CGAffineTransform(translationX: CGFloat(snapX.origin), y: CGFloat(snapY.origin)), request.rotation)
         guard let raster = try PathRasterizer.rasterize(
-            path: path, transform: CGAffineTransform(translationX: CGFloat(snapX.origin), y: CGFloat(snapY.origin)), scale: CGFloat(scale),
+            path: path, transform: placed, scale: CGFloat(scale),
             fillRGBA: request.fillRGBA, fillStyle: request.fillStyle,
             strokeRGBA: request.strokeRGBA, strokeStyle: request.strokeStyle) else { return nil }
         let placement = Rect(x: Float(raster.originX) + imageGuardBand, y: Float(raster.originY) + imageGuardBand,

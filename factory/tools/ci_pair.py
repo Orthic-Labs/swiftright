@@ -93,9 +93,7 @@ def case_path(case_rel):
 
 def set_globals(case):
     """pair.py sets these in main(); compare() reads them."""
-    pj = json.loads((case / "pair.json").read_text()) if (case / "pair.json").is_file() else {}
-    pair.HAZE = int(pj.get("hazeTolerance", 0))
-    pair.EDGE_AA = int(pj["edgeAATolerance"]["levels"]) if "edgeAATolerance" in pj else 32
+    pair.apply_gate_config(case)   # haze, edge levels, edge statistics, dash geometry, expectFail (one loader for pair.py and CI)
 
 
 def run_dir(root, case_rel, ts):
@@ -301,6 +299,11 @@ def cmd_compare(a):
             ok = ok and guard
             sem = pair.semantic_gate(case, out)
             passed = ok if sem is None else (guard and sem and (ok or pair.semantic_decides(case)))
+            if pair.EXPECT_FAIL:
+                # Negative control: the gate must reject the planted difference, on a valid capture (scale guard passes).
+                rec["expectFail"] = True
+                rec["gatePassed"] = bool(passed)
+                passed = guard and not passed
         text = buf.getvalue()
         print(text, end="")
         rec["exit"] = 0 if passed else 1

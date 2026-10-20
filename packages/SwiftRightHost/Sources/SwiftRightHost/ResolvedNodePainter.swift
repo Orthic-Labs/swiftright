@@ -52,6 +52,10 @@ public final class ResolvedNodePainter {
     public private(set) var fieldLayouts: [String: TextFieldLayout] = [:]
     /// The legacy scroller of each List and ScrollView in the last committed tree, by runtime id (window pixels; see `scrollerRect(for:)`).
     public private(set) var scrollerLayouts: [String: ScrollerLayout] = [:]
+    /// Painted non-shape nodes found under a `.rotationEffect` since this painter was made. The host rotates shapes only (the ABI transform is translation only), so such content is painted
+    /// unrotated and counted here, with one log line per node kind (reported limitation, #35); it is never faked.
+    public private(set) var rotationLimitationCount = 0
+    private var rotationLimitationKinds: Set<String> = []
     /// Bridge id bit of a scroller node: a List or ScrollView's scroller is a child node of its own, `id | scrollerNodeFlag`.
     static let scrollerNodeFlag: UInt64 = 1 << 62
     /// Whether the renderer takes a `.scrollBar` node (`Bridge.supportsScrollBar`, rev 0.11). When true, a scroller publishes a scroll bar
@@ -196,7 +200,7 @@ public final class ResolvedNodePainter {
         beginCommit()
         var committed = false
         defer { endCommit(committed: committed) }
-        func walk(_ n: ResolvedNode, parent: UInt64, order: UInt32, clip: Rect?, textColor: UInt32? = nil, row: ListPainter.Row? = nil, rowList: (bounds: Rect, look: ListLook)? = nil, inButton: Bool = false, a11y: A11yPatch = A11yPatch(), hidden: Bool = false) throws {
+        func walk(_ n: ResolvedNode, parent: UInt64, order: UInt32, clip: Rect?, rotations: [ShapeRotation] = [], textColor: UInt32? = nil, row: ListPainter.Row? = nil, rowList: (bounds: Rect, look: ListLook)? = nil, inButton: Bool = false, a11y: A11yPatch = A11yPatch(), hidden: Bool = false) throws {
             let id = UInt64(n.instance + 1)
             current.insert(id)
             runtimeIDs[id] = n.id
@@ -204,7 +208,9 @@ public final class ResolvedNodePainter {
             let bounds = place(Rect(x: Float(p.x), y: Float(p.y), w: Float(p.width), h: Float(p.height)))
             var emission: NodeEmission
             if let row, let rowList { emission = try emitListRow(n, id: id, row: row, look: rowList.look, contentBounds: bounds, textColor: textColor) }
-            else { emission = try emit(n, id: id, bounds: bounds, textColor: textColor) }
+            else { emission = try emit(n, id: id, bounds: bounds, textColor: textColor, rotations: rotations) }
+            // `.rotationEffect` (anchor in this node's pixel frame, which is its child's frame) rotates every shape leaf beneath it.
+            let childRotations = n.rotation.map { rotations + [ShapeRotation($0, bounds: bounds)] } ?? rotations
             // A Button's label is the button's accessible name: its Text publishes no node of its own (as on macOS).
             if inButton, n.kind == "Text" { emission.semantic = nil }
             // Accessibility modifiers (round 5 block 32): the patch above this node applies to the first element beneath it; hidden removes a whole subtree; an
@@ -253,10 +259,10 @@ public final class ResolvedNodePainter {
                 for (index, child) in n.children.enumerated() where index < rows.count {
                     // Text inside an active selection is white.
                     let colour = rows[index].isSelected && ListPainter.selectionColor(active: listIsActive, isEnabled: rows[index].isEnabled) == ListPainter.selectionActive ? ListPainter.selectedTextColor : childTextColor
-                    try walk(child, parent: id, order: UInt32(index), clip: childClip, textColor: colour, row: rows[index], rowList: (bounds, look), a11y: childA11y, hidden: childHidden)
+                    try walk(child, parent: id, order: UInt32(index), clip: childClip, rotations: childRotations, textColor: colour, row: rows[index], rowList: (bounds, look), a11y: childA11y, hidden: childHidden)
                 }
             } else {
-                for (index, child) in n.children.enumerated() { try walk(child, parent: id, order: UInt32(index), clip: childClip, textColor: childTextColor, inButton: childInButton || n.kind == "Button" || n.kind == "modifier.onTapGesture", a11y: childA11y, hidden: childHidden) }
+                for (index, child) in n.children.enumerated() { try walk(child, parent: id, order: UInt32(index), clip: childClip, rotations: childRotations, textColor: childTextColor, inButton: childInButton || n.kind == "Button" || n.kind == "modifier.onTapGesture", a11y: childA11y, hidden: childHidden) }
             }
             // The legacy scroller of a List or ScrollView is painted above its content: a child node ordered after the last child, clipped to the container.
             if n.kind == "List" || n.kind == "ScrollView", let scroll = n.scroll, let layout = ScrollerPainter.layout(frame: bounds, scale: scale, scroll: scroll) {
@@ -319,7 +325,21 @@ public final class ResolvedNodePainter {
 
     /// `id` is the bridge node id the caller upserts this node under (image handles are keyed by it).
     /// `textColor` is the colour a Text inherits from an ancestor (a Button's label colour), 0xRRGGBBAA; a Text's own foreground wins.
-    public func emit(_ node: ResolvedNode, id: UInt64, bounds: Rect, textColor: UInt32? = nil) throws -> NodeEmission {
+    /// `rotations` are the `.rotationEffect`s above the node, outermost first, anchors in window pixels: shapes are rotated through their path raster; any other painted content stays unrotated and is reported.
+    public func emit(_ node: ResolvedNode, id: UInt64, bounds: Rect, textColor: UInt32? = nil, rotations: [ShapeRotation] = []) throws -> NodeEmission {
+        let emission = try emitContent(node, id: id, bounds: bounds, textColor: textColor, rotations: rotations)
+        if ShapeRotation.isRotated(rotations), !emission.primitives.isEmpty, !Self.isShapeKind(node.kind) {
+            rotationLimitationCount += 1
+            if rotationLimitationKinds.insert(node.kind).inserted {
+                log("rotationEffect limitation: \(node.kind) is painted unrotated (the host rotates shapes only; the renderer transform is translation only)")
+            }
+        }
+        return emission
+    }
+
+    static func isShapeKind(_ kind: String) -> Bool { kind == "Rectangle" || kind == "RoundedRectangle" || kind == "Circle" || kind == "Capsule" || kind == "Path" }
+
+    private func emitContent(_ node: ResolvedNode, id: UInt64, bounds: Rect, textColor: UInt32?, rotations: [ShapeRotation]) throws -> NodeEmission {
         switch node.kind {
         case "Text":
             guard let string = node.text, !string.isEmpty else { return NodeEmission(primitives: [], semantic: nil, flags: [], structural: false) }
@@ -338,7 +358,7 @@ public final class ResolvedNodePainter {
             return emission
 
         case "Rectangle", "RoundedRectangle", "Circle", "Capsule", "Path":
-            switch try ShapePainter.plan(node, bounds: bounds, scale: scale) {
+            switch try ShapePainter.plan(node, bounds: bounds, scale: scale, rotations: rotations) {
             case .primitive(let primitive):
                 return NodeEmission(primitives: [primitive], semantic: nil, flags: [], structural: false)
             case .path(let request):

@@ -234,6 +234,8 @@ enum ModifierSpec {
     case listRowBackground(ListRowBackground)
     /// SR1 wave 1 block I2: `.clipped()`. Geometry passes through; the host clips the subtree's painting to this node's frame.
     case clipped
+    /// F-path (#35): `.rotationEffect(_:anchor:)`. Geometry passes through (layout is unchanged); the host rotates the shape leaves of the subtree about the anchor of this node's frame.
+    case rotation(Angle, UnitPoint)
     /// SR1 round 6 block 38: `.onHover(perform:)` and `.onTapGesture(count:perform:)`; the host routes pointer positions to `Graph.pointerMoved` and a release to `Graph.tapGesture`.
     case hover(HoverHook)
     case tap(TapHook)
@@ -273,6 +275,7 @@ enum ModifierSpec {
         case .listRowSeparator: return "modifier.listRowSeparator"
         case .listRowBackground: return "modifier.listRowBackground"
         case .clipped: return "modifier.clipped"
+        case .rotation: return "modifier.rotationEffect"
         case .hover: return "modifier.onHover"
         case .tap: return "modifier.onTapGesture"
         }
@@ -312,6 +315,7 @@ enum ModifierSpec {
         case .listRowSeparator: return "listRowSeparator"
         case .listRowBackground: return "listRowBackground"
         case .clipped: return "clipped"
+        case .rotation: return "rotationEffect"
         case .hover: return "onHover"
         case .tap: return "onTapGesture"
         }
@@ -818,6 +822,15 @@ public struct ResolvedNode: Equatable, Sendable {
     /// List and vertical ScrollView nodes only (#31): the offset, content and viewport heights and whether a scroller shows. Nil for other nodes.
     /// A `var` with a nil default, like `slider` and `rowStyle`, so the memberwise initializer stays source compatible.
     public var scroll: ScrollState? = nil
+    /// Modifier nodes of `.rotationEffect` only (F-path, #35): the angle and anchor. The node's frame is the child's frame (layout is unchanged); the host applies the rotation.
+    public var rotation: ResolvedRotation? = nil
+}
+
+/// What `.rotationEffect(_:anchor:)` asks of its subtree: a rotation by `angle` about `anchor` (a unit point of the modifier node's frame). Positive angles turn clockwise on screen (y down), as in SwiftUI.
+public struct ResolvedRotation: Equatable, Sendable {
+    public let angle: Angle
+    public let anchor: UnitPoint
+    public init(angle: Angle, anchor: UnitPoint) { self.angle = angle; self.anchor = anchor }
 }
 
 /// What `.listRowSeparator(_:)` and `.listRowBackground(_:)` ask of a List row.
@@ -847,7 +860,7 @@ extension ResolvedNode {
                      selection: selection, marked: marked, children: children, labelsHidden: labelsHidden, toggleStyle: toggleStyle,
                      fieldStyle: fieldStyle, placeholder: placeholder, accessibility: accessibility, style: style, image: image,
                      imageSizing: imageSizing, color: color, shapeStorage: shapeStorage, menu: menu, presentation: presentation, shortcut: shortcut,
-                     buttonStyle: buttonStyle, isDefaultButton: isDefaultButton, listStyle: listStyle, rowStyle: rowStyle, slider: slider, scroll: scroll)
+                     buttonStyle: buttonStyle, isDefaultButton: isDefaultButton, listStyle: listStyle, rowStyle: rowStyle, slider: slider, scroll: scroll, rotation: rotation)
     }
 }
 
@@ -2212,6 +2225,8 @@ public final class Graph {
         }
         var slider: ResolvedSlider?
         if case .slider(let spec) = kind { slider = resolveSlider(node, spec: spec) }
+        var rotation: ResolvedRotation?
+        if case .modifier(.rotation(let angle, let anchor)) = kind { rotation = ResolvedRotation(angle: angle, anchor: anchor) }
         return ResolvedNode(
             id: node.idString,
             instance: node.instance,
@@ -2241,7 +2256,8 @@ public final class Graph {
             listStyle: listStyle,
             rowStyle: rowStyle,
             slider: slider,
-            scroll: node.scrollState
+            scroll: node.scrollState,
+            rotation: rotation
         )
     }
 

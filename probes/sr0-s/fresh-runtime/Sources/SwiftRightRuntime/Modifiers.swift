@@ -119,6 +119,13 @@ extension View {
         Modified(content: self, spec: .clipped)
     }
 
+    /// Rotates this view's rendering by `angle` about `anchor` of its frame. Layout is unchanged (the view keeps its frame and the size its parent sees). Positive angles turn clockwise on screen.
+    /// Hosts rotate shape leaves; other content stays unrotated and is reported as a limitation (F-path, #35).
+    /// Apple: https://developer.apple.com/documentation/swiftui/view/rotationeffect(_:anchor:)
+    public func rotationEffect(_ angle: Angle, anchor: UnitPoint = .center) -> some View {
+        Modified(content: self, spec: .rotation(angle, anchor))
+    }
+
     /// Gives this view priority over its siblings when a stack divides the space it has: higher priorities are offered space first.
     /// Apple: https://developer.apple.com/documentation/swiftui/view/layoutpriority(_:)
     public func layoutPriority(_ value: Double) -> some View {
