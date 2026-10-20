@@ -227,6 +227,18 @@ extension Graph {
     func place(_ node: Node, in rect: LayoutRect, proposal: ProposedViewSize) {
         node.frame = snapToPixelGrid(rect, scale: scale)
         node.exactFrame = rect
+        // #44: SwiftUI lays a `.scaleEffect` subtree out in the scaled view's own coordinates (origin 0) and snaps there; its pixels are the scaled view's
+        // snapped origin plus those local frames, then scaled. Measured: a seven-row VStack under scaleEffect(1.4) (CI stack-ties-scaled-v1) matches only
+        // this; snapping the absolute positions differs by a pixel on two rows. The subtree is placed once at origin 0 to record its local frames.
+        if case .modifier(.scale) = node.kind {
+            for child in childNodes(node) { place(child, in: LayoutRect(x: 0, y: 0, width: rect.width, height: rect.height), proposal: proposal) }
+            func capture(_ n: Node) {
+                n.scaleLocalFrame = n.frame
+                if case .modifier(.scale) = n.kind { return }   // a nested scale recorded its own subtree
+                for c in childNodes(n) { capture(c) }
+            }
+            for child in childNodes(node) { capture(child) }
+        }
         switch node.kind {
         case .text, .textField, .textEditor, .spacer, .image, .color, .divider, .shape:
             break

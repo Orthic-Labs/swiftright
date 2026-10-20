@@ -589,6 +589,8 @@ final class Node {
     var frame: LayoutRect = .zero
     /// The frame layout computed before snapping to device pixels (#44): what SwiftUI scales under `.scaleEffect`.
     var exactFrame: LayoutRect = .zero
+    /// The snapped frame in the coordinates of the nearest `.scaleEffect` ancestor (origin 0 at its frame), set by that ancestor's local placement (#44).
+    var scaleLocalFrame: LayoutRect?
     /// Text memo: measured sizes for the current text, keyed by wrap width (nil = no wrap).
     var memoText: String?
     var memo: [CGFloat?: LayoutSize] = [:]
@@ -885,6 +887,8 @@ public struct ResolvedNode: Equatable, Sendable {
     /// The frame before device-pixel snapping (#44), when it differs from `frame` and the node is not moving; nil otherwise. A host scales this under
     /// `.scaleEffect`: SwiftUI scales the laid-out geometry, not its snapped pixels.
     public var exactFrame: LayoutRect? = nil
+    /// The snapped frame in the coordinates of the nearest `.scaleEffect` ancestor (#44); nil outside one. A host draws a scaled subtree from these.
+    public var scaleLocalFrame: LayoutRect? = nil
 }
 
 /// What `.clipShape(_:style:)` asks of its subtree: paint only inside `geometry` laid out in the modifier node's frame.
@@ -2461,7 +2465,8 @@ public final class Graph {
             scaleEffect: scaleEffect,
             brightness: brightness,
             clipShape: clipShape,
-            exactFrame: node.motion == nil && node.exactFrame != node.frame && node.exactFrame != .zero ? node.exactFrame : nil
+            exactFrame: node.motion == nil && node.exactFrame != node.frame && node.exactFrame != .zero ? node.exactFrame : nil,
+            scaleLocalFrame: node.motion == nil ? node.scaleLocalFrame : nil
         )
     }
 
