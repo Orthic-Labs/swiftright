@@ -391,3 +391,11 @@ Each gate's measurements are in its pair.json. Oracle PASS-WITH-CAVEATS; the Gro
 - **Evidence:** CI run 39420788106 at 3105dfaf4 passed scale-text-v1 20/20. That case is digits-v1's four rows at ×1.5. Its text regions, exclusions and position tolerances are scaled about the anchor, and its accessibility bounds tolerance is 0.25 pt, because UIA reports whole pixels while macOS frames fall on half pixels.
 - **Fallback:** wrapped text, custom fonts and sizes outside the table keep their measured size, centred, and are counted.
 - **Known difference:** at 33 pt the Windows font switches to its Display optical size.
+
+## 21 October: text and bitmaps under a curved clip (#43)
+- **Change:** a text run or bitmap under a non-rectangular `clipShape` is drawn once per band of the clip's inside. Rows with the same inside spans are merged, and each span is a renderer rect clip. This is exact clipping with a one-pixel staircase where SwiftUI anti-aliases, and needs no ABI change (ABI 0.12 is still deferred).
+- **Evidence:** CI run 39463019762 passed clip-bitmap-v1 20/20. Bitmaps are drawn on both sides, outside the edge band is exact, and in the band the maximum difference is 106 with 8% over 32. Host tests: 3 cases (crossing, inside, outside).
+- **Review:** Oracle PASS-WITH-CAVEATS.
+- **Caveats:**
+  - Glyph ink outside the node's bounds (italic overhang) is cut when banded, or unmasked when wholly inside.
+  - Each commit scans the region (about 64k lookups for a 2× notch cell), and a crossing run draws about once per pixel row. Optional hardening: an early exit and a cache per mask and region.
