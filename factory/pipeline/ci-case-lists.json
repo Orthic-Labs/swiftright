@@ -1,0 +1,62 @@
+{
+ "schema": "sr1-round6-ci-case-lists/v1",
+ "runner": "factory-pairs.yml (CI lane, not the Dell; Adrian's local-build grant covers quick iterative work only)",
+ "stageRule": "every list runs against ONE stage built from the commit under test (the stage tool's name for that commit); runs N as stated",
+ "regressionN3": {
+  "count": 40,
+  "note": "40 unique: blocks 37-41 (30 directories, incl. state-nested-update-v1) plus the 10 animation and transition cases not in 37-41. Must pass, except expectFailN3.",
+  "cases": [
+   "blocks-37-38/swiftui.compat/any-view-v1",
+   "blocks-37-38/swiftui.compat/environment-key-v1",
+   "blocks-37-38/swiftui.compat/id-modifier-order-v1",
+   "blocks-37-38/swiftui.compat/state-nested-update-v1",
+   "blocks-37-38/swiftui.compat/task-id-v1",
+   "blocks-37-38/swiftui.on-hover/adjacent-v1",
+   "blocks-37-38/swiftui.on-hover/body-ends-in-modifier-v1",
+   "blocks-37-38/swiftui.on-hover/rows-v1",
+   "blocks-37-38/swiftui.on-hover/tap-container-v1",
+   "blocks-37-38/swiftui.slider/click-track-v1",
+   "blocks-37-38/swiftui.slider/disabled-dark-v1",
+   "blocks-37-38/swiftui.slider/disabled-input-v1",
+   "blocks-37-38/swiftui.slider/disabled-light-v1",
+   "blocks-37-38/swiftui.slider/drag-v1",
+   "blocks-37-38/swiftui.slider/keys-v1",
+   "blocks-37-38/swiftui.slider/labels-v1",
+   "blocks-37-38/swiftui.slider/negative-fill-colour-v1",
+   "blocks-37-38/swiftui.slider/negative-thumb-offset-v1",
+   "blocks-37-38/swiftui.slider/over-colour-v1",
+   "blocks-37-38/swiftui.slider/range-v1",
+   "blocks-37-38/swiftui.slider/value-labels-v1",
+   "blocks-37-38/swiftui.slider/values-dark-v1",
+   "blocks-37-38/swiftui.slider/values-light-v1",
+   "blocks-37-38/swiftui.slider/widths-v1",
+   "blocks-37-38/swiftui.uia-walk/controls-a-v1",
+   "blocks-37-38/swiftui.uia-walk/controls-b-v1",
+   "blocks-6-10/swiftui.animation/completion-v1",
+   "blocks-6-10/swiftui.animation/default-spring-v1",
+   "blocks-6-10/swiftui.animation/easeinout-samples-v1",
+   "blocks-6-10/swiftui.animation/interrupt-40-v1",
+   "blocks-6-10/swiftui.animation/linear-width-v1",
+   "blocks-6-10/swiftui.ime-traps/imet-badregion-v1",
+   "blocks-6-10/swiftui.ime-traps/imet-focuschange-v1",
+   "blocks-6-10/swiftui.ime-traps/imet-hangul-v1",
+   "blocks-6-10/swiftui.ime-traps/imet-reconvert-v1",
+   "blocks-6-10/swiftui.opacity-transition/insertion-fade-v1",
+   "blocks-6-10/swiftui.opacity-transition/move-leading-v1",
+   "blocks-6-10/swiftui.opacity-transition/opacity-animated-v1",
+   "blocks-6-10/swiftui.opacity-transition/removal-fade-v1",
+   "blocks-6-10/swiftui.opacity-transition/removal-move-v1"
+  ]
+ },
+ "expectFailN3": {
+  "cases": [
+   "blocks-37-38/swiftui.slider/negative-fill-colour-v1",
+   "blocks-37-38/swiftui.slider/negative-thumb-offset-v1"
+  ],
+  "note": "Negative controls (block 37): the pixel gate must FAIL on the Mac-side mutation (tint red; offset 0.4 pt = 1 device px). A pass here is a gate defect."
+ },
+ "confirmN20": {
+  "cases": [],
+  "note": "Filled from the local N=3 verdicts before dispatch: every case that passes N=3 on the final stage goes to N=20."
+ }
+}

@@ -256,6 +256,7 @@ def edge_band(im):
 EDGE_AA = 32   # <case>/pair.json "edgeAATolerance": {"levels": N, "reason": "..."}: the most a pixel inside the 1 px edge band may differ (decision 5: 32). A larger value is measured and carries its reason; it never loosens the out-of-band exact gate.
 HAZE = 0   # <case>/pair.json "hazeTolerance": out-of-band differences up to this many levels (a faint soft shadow, 8-bit rounding) do not fail the edge gate; reported as hazeMax
 EDGE_OVER = 32   # the level above which a band pixel counts as "over" for the statistical limits (F-path gate, sr1-decisions 20 Oct)
+LAST_REPORT = None
 EDGE_STATS = None   # <case>/pair.json "edgeAATolerance": {"maxOverPixels": n, "maxOverFraction": f, "maxMeanAbs": m} on top of `levels`; None = the gate is unchanged
 DASH_GEOM = None   # <case>/pair.json "dashGeometry": {"center": [x, y], "radius": px, "maxAngleDeg": deg}; None = no dash check
 EXPECT_FAIL = False   # <case>/pair.json "expectFail": a negative control; the run passes only when the pixel gate fails
@@ -414,6 +415,8 @@ def compare(out, runs, exclusions=(), frames=0, phases=()):
         rep["gate"] = "exact outside excluded regions"
         rep["excludedRegions"] = [dict(name=e["name"], rect=list(e["rect"])) for e in exclusions]
     (out / "report.json").write_text(json.dumps(rep, indent=1))
+    global LAST_REPORT
+    LAST_REPORT = rep   # read by ci_pair for negative controls (every row must be a valid capture that fails the gate)
     for r in rows:
         if "gate" in r:
             g = r["gate"]; print(f"  run {r['run']:02d}{'' if 'frame' not in r else ' f%02d' % r['frame']}{'' if 'phase' not in r else ' ' + r['phase']} {r['verdict']} total={g['totalDiff']} in-band={g['inBandDiff']} out-of-band={g['outOfBandDiff']} max-in-band={g['maxInBand']} max-out-of-band={g['maxOutOfBand']}")

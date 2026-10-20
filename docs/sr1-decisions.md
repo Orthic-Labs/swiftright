@@ -509,3 +509,6 @@ Exact outside the 1 px edge band (unchanged). Fills: band max 32 with at most 4 
 
 ## 20 October: F-path stroke statistics set from CI (supersedes the 1% / 6 figures)
 The first full CI run (39386884574, N=20, byte-identical runs) passed 9 of 13 incl. both negative controls; the four stroke-heavy cases failed only the 1% over-share, which contradicted the spike's own measurement. Measured: ring 3.48% / mean 3.30, curves 2.54% / 3.17, dashed rings 6.84% / 5.61 and 6.65% / 6.14, everything outside the 1 px band exact, dash geometry 36/36 and 56/56 edges within 1.1 deg. Limits now: strokes over-share 5%, mean 5; dashed rings over-share 8%, mean 7 (dash geometry still decides dash ends); per-pixel ceilings and negative controls unchanged.
+
+## 20 October: F-path gate after Oracle review (PASS-WITH-CAVEATS)
+Actual per-case limits: fills ceiling 96 with at most 4 band pixels over 32; strokes ceiling 160, at most 5% of band pixels over 32, band mean <= 5; dashed rings ceiling 255 (dash ends decided by dash geometry), at most 8% over, mean <= 7. Negative controls now pass only when every run is a valid capture (no missing file, no size mismatch) whose gate verdict is fail (ci_pair.py). Added neg-width-04 (Windows stroke 6.4 pt vs 6 pt, a 0.5 px edge shift inside the band) so a control exercises the band statistics, not only the exact out-of-band check.

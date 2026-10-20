@@ -300,10 +300,15 @@ def cmd_compare(a):
             sem = pair.semantic_gate(case, out)
             passed = ok if sem is None else (guard and sem and (ok or pair.semantic_decides(case)))
             if pair.EXPECT_FAIL:
-                # Negative control: the gate must reject the planted difference, on a valid capture (scale guard passes).
+                # Negative control: every run must be a valid capture (no missing file, no size mismatch, scale guard passes)
+                # whose gate verdict is "fail"; a crashed capture or a partial set never counts as a control pass.
+                rows = (pair.LAST_REPORT or {}).get("rows", [])
+                valid = len(rows) > 0 and len(rows) == (pair.LAST_REPORT or {}).get("pairs") and all("verdict" in r for r in rows)
+                all_fail = valid and all(r["verdict"] == "fail" for r in rows)
                 rec["expectFail"] = True
                 rec["gatePassed"] = bool(passed)
-                passed = guard and not passed
+                rec["controlRows"] = dict(rows=len(rows), valid=valid, allFail=all_fail)
+                passed = guard and valid and all_fail
         text = buf.getvalue()
         print(text, end="")
         rec["exit"] = 0 if passed else 1

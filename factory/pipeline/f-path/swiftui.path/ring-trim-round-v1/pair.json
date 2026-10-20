@@ -3,6 +3,6 @@
   "levels": 160,
   "maxOverFraction": 0.05,
   "maxMeanAbs": 5,
-  "reason": "Mac CoreGraphics stroker differs from the host rasteriser (unquantised edge alphas, zero-mean noise sd 10-20, band max 65-140 in the P0 spike: factory/pipeline/f-path/SPIKE-RESULT.md); band max 160, at most 1% of band pixels over 32, band mean <= 6 (sr1-decisions, 20 Oct F-path pixel gate) Statistics set from the first full CI measurement (CI 39386884574: over 3.48%, mean 3.30, max 55); all 20 runs byte-identical, so the difference is fixed rasterisation, not noise."
+  "reason": "Mac CoreGraphics stroker differs from the host rasteriser (unquantised edge alphas, zero-mean noise sd 10-20, band max 65-140 in the P0 spike: factory/pipeline/f-path/SPIKE-RESULT.md); per-pixel ceiling 160, at most 5% of band pixels over 32, band mean <= 5 (sr1-decisions, 20 Oct F-path pixel gate) Statistics set from the first full CI measurement (CI 39386884574: over 3.48%, mean 3.30, max 55); all 20 runs byte-identical, so the difference is fixed rasterisation, not noise."
  }
 }

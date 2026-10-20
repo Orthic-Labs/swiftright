@@ -1,0 +1,1 @@
+{"id": "20261015-010828-command-8132", "kind": "command", "timeoutSec": 300, "args": {"script": "Get-ChildItem C:\\sbq\\state | Select Name,LastWriteTime; Get-Content C:\\sbq\\state\\longrun-active.json; Get-ChildItem C:\\sbq\\queue -ErrorAction SilentlyContinue | Select Name"}}
