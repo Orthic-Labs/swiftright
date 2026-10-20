@@ -47,10 +47,10 @@
     "align": "leading",
     "position": {
      "firstInkYTolerancePx": 1.5,
-     "baselineTolerancePx": 0.0,
+     "baselineTolerancePx": 1,
      "inkCentreYTolerancePx": 0.75,
      "firstInkXTolerancePx": 3.0,
-     "reason": "R4b (#42): digits-v1's per-row pixel tolerances (fitted unscaled, G71) times the 1.5 scale, since a pixel offset of the unscaled glyphs scales with them; regions scaled about the anchor."
+     "reason": "R4b (#42): digits-v1's per-row pixel tolerances (fitted unscaled, G71) times the 1.5 scale, since a pixel offset of the unscaled glyphs scales with them; regions scaled about the anchor. Baseline at least 1 px: x1.5 puts a whole-pixel unscaled baseline on a half pixel, which each side rounds (CI 39413971390: row 2 -1 px, all else in tolerance)."
     }
    },
    {
@@ -64,10 +64,10 @@
     "align": "leading",
     "position": {
      "firstInkYTolerancePx": 0.0,
-     "baselineTolerancePx": 0.0,
+     "baselineTolerancePx": 1,
      "inkCentreYTolerancePx": 0.0,
      "firstInkXTolerancePx": 4.5,
-     "reason": "R4b (#42): digits-v1's per-row pixel tolerances (fitted unscaled, G71) times the 1.5 scale, since a pixel offset of the unscaled glyphs scales with them; regions scaled about the anchor."
+     "reason": "R4b (#42): digits-v1's per-row pixel tolerances (fitted unscaled, G71) times the 1.5 scale, since a pixel offset of the unscaled glyphs scales with them; regions scaled about the anchor. Baseline at least 1 px: x1.5 puts a whole-pixel unscaled baseline on a half pixel, which each side rounds (CI 39413971390: row 2 -1 px, all else in tolerance)."
     }
    }
   ],
