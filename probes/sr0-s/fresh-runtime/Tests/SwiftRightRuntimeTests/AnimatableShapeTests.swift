@@ -181,7 +181,7 @@ final class AnimatableShapeTests: XCTestCase {
         XCTAssertLessThan(after, 0.8, "no jump to the target")
         g.tick(now: 0.4)
         XCTAssertLessThan(try trimEnd(g), 0.9)
-        g.tick(now: 2)
+        g.tickSteps(from: 0.4, to: 2)
         XCTAssertEqual(try trimEnd(g), 0.9)
     }
 

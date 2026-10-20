@@ -93,7 +93,7 @@ final class SpringTests: XCTestCase {
         XCTAssertGreaterThan(try width(g), 300, "overshoots the target")
         g.tick(now: 0.5)
         XCTAssertFalse(removed)
-        g.tick(now: 3)
+        g.tickSteps(from: 0.5, to: 3)
         XCTAssertEqual(try width(g), 300)
         XCTAssertTrue(removed)
     }
@@ -121,9 +121,20 @@ final class SpringTests: XCTestCase {
             let rateAfter = Double(next - at) * 60
             XCTAssertGreaterThan(rateAfter, 0.3 * rate, "offset \(offset): keeps moving the same way at first (\(rateAfter) vs \(rate))")
             XCTAssertLessThan(rateAfter, 1.5 * rate, "offset \(offset): no fling (\(rateAfter) vs \(rate))")
-            g.tick(now: t0 + 3)
+            g.tickSteps(from: t0 + 1.0 / 60, to: t0 + 3)
             XCTAssertEqual(try width(g), 100)
         }
+    }
+
+    // SwiftUI advances a built-in spring by one frame (1/60 s) when more than 1 s passed since its previous evaluation. Measured on the Mac clock host
+    // (CI 39406940815, bouncy-v1): sampled at 0.455 s then 1.5 s, SwiftUI presented 152.82985 of 150 pt (progress 1.0189), the value at 0.4717 s.
+    func testAGapOverOneSecondAdvancesASpringOneFrame() throws {
+        let p = try progress(.bouncy, at: [0.455, 1.5])
+        XCTAssertEqual(p[1], 1.01886568887299, accuracy: 1e-6)
+        // A slow spring (still running): measured with Animation.animate, a gap of 1.0 s advances fully (0.6051178 at 1.3 s), 1.01 s one frame.
+        let slow = Animation.spring(duration: 3, bounce: -0.3)
+        XCTAssertEqual(try progress(slow, at: [0.3, 1.3])[1], 0.6051177992675181, accuracy: 2e-3, "a gap of exactly 1 s advances fully (pixel-snapped frame)")
+        XCTAssertLessThan(try progress(slow, at: [0.3, 1.31])[1], 0.13, "a gap over 1 s advances one frame (SwiftUI: 0.12372)")
     }
 
     func testSpringCallWithoutArgumentsIsTheDefaultSpring() {

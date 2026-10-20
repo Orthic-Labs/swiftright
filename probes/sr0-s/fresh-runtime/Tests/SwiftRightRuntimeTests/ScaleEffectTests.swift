@@ -78,7 +78,7 @@ final class ScaleEffectTests: XCTestCase {
         g.tick(now: 0)
         g.tick(now: 0.315)
         XCTAssertGreaterThan(try scale(g).x, 1.5)
-        g.tick(now: 3)
+        g.tickSteps(from: 0.315, to: 3)
         XCTAssertEqual(try scale(g).x, 1.5)
         XCTAssertTrue(removed)
     }

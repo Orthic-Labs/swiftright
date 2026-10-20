@@ -335,6 +335,17 @@ final class MotionLayer {
     let transaction: AnimationTransaction
     /// Host time of progress 0. Nil until the first tick after the layer was created.
     var start: Double?
+    /// Host time this layer was last advanced (the gap clamp below).
+    var lastAdvanced: Double?
+
+    /// SwiftUI integrates a built-in spring per evaluation; when more than 1 s passed since the previous evaluation it advances one frame (1/60 s)
+    /// instead of the gap (measured on macOS 27.0.1 with `Animation.animate`: a gap of 1.0 s advances fully, 1.01 s advances 1/60 s; SR2 R3 CI 39406940815).
+    var clampsLongGaps: Bool {
+        switch animation.curve {
+        case .spring, .integratedSpring: return true
+        default: return false
+        }
+    }
     var logicallyEnded = false
     var finished = false
     /// False for a removal transition: the removed view is still presented at exactly the end time and goes with the first tick after it (measured).
@@ -830,8 +841,10 @@ extension Graph {
             for layer in chain.layers where layer.start == nil { layer.start = now }
         }
         for layer in chain.layers {
-            guard let start = layer.start else { continue }
-            let elapsed = now - start
+            guard layer.start != nil else { continue }
+            if layer.clampsLongGaps, let last = layer.lastAdvanced, now - last > 1.0 { layer.start! += (now - last) - 1.0 / 60 }
+            layer.lastAdvanced = now
+            let elapsed = now - layer.start!
             if !layer.logicallyEnded, elapsed >= layer.animation.delay + layer.animation.duration {
                 layer.logicallyEnded = true
                 layer.transaction.layerLogicallyEnded()

@@ -33,3 +33,7 @@ The remaining distance at removal ranges from 2.8e-4 (critically damped) to 5.9e
 1. Measure removal across amplitude, display scale and spring parameters with this sampler. It has no screen dependence, and the screen-capture path is only needed for C11's pixel tolerance.
 2. Until removal is modelled, keep `SpringModel.settle` (C11) for the default spring.
 3. Have the R3 clock cases sample before the earliest removal and again after both sides have settled, as `default-spring-v1` already does. Name this in the R3 decision.
+
+## Found in R3 CI: long gaps advance one frame
+
+CI 39406940815 failed bouncy, duration-bounce and delay at their settled frame. The clock jumped from 0.455 s to 1.5 s, and SwiftUI's own `animate` returned the value at 0.4717 s, that is 0.455 s plus one frame. The sampler (`Animation.animate`, a slow spring) confirmed the rule: when more than 1.0 s has passed since the previous evaluation, a built-in spring advances 1/60 s; a gap of exactly 1.0 s advances fully. The runtime does the same: on a tick where the gap is over 1 s, the layer's start moves forward by the gap minus 1/60.
