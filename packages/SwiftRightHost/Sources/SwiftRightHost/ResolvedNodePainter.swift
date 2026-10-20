@@ -262,10 +262,19 @@ public final class ResolvedNodePainter {
             runtimeIDs[id] = n.id
             let p = n.pixelFrame
             let laidOut = place(Rect(x: Float(p.x), y: Float(p.y), w: Float(p.width), h: Float(p.height)))
+            // Under a scale, and for a scale's own anchor frame, the frame before device-pixel snapping (#44): SwiftUI scales the laid-out geometry, so a 30 pt circle
+            // whose edges snap to 74 px unscaled is 105 px at x1.4 (CI 39414348568), not 74 x 1.4.
+            let exact: Rect = {
+                guard !transform.isIdentity || n.scaleEffect != nil, let f = n.exactFrame else { return laidOut }
+                let unplaced = Rect(x: Float(p.x), y: Float(p.y), w: Float(p.width), h: Float(p.height))
+                let moved = place(unplaced)
+                return Rect(x: Float(f.minX) * baseScale + (moved.x - unplaced.x), y: Float(f.minY) * baseScale + (moved.y - unplaced.y),
+                            w: Float(f.width) * baseScale, h: Float(f.height) * baseScale)
+            }()
             // `.scaleEffect` above (SR2 R4): bounds are mapped through the accumulated scale and the node is painted at display scale x the factor, so
             // radii, stroke widths and rasters scale with it. Text keeps its measured size, centred on its scaled place (a counted limitation).
             let scaledText = !transform.isIdentity && n.kind == "Text"
-            let bounds = transform.isIdentity ? laidOut : transform.map(laidOut)
+            let bounds = transform.isIdentity ? laidOut : transform.map(exact)
             textScaleFactor = scaledText ? transform.uniform : 1
             let nodeScale = scaledText ? baseScale : baseScale * transform.uniform
             scale = nodeScale
@@ -278,7 +287,7 @@ public final class ResolvedNodePainter {
             if collapsed { emission = NodeEmission(primitives: [], semantic: nil, flags: [], structural: false) }
             else if let row, let rowList { emission = try emitListRow(n, id: id, row: row, look: rowList.look, contentBounds: bounds, textColor: textColor) }
             else { emission = try emit(n, id: id, bounds: bounds, textColor: textColor, rotations: rotations) }
-            let childTransform = n.scaleEffect.map { transform.scaled(by: $0, about: laidOut) } ?? transform
+            let childTransform = n.scaleEffect.map { transform.scaled(by: $0, about: exact) } ?? transform
             let childBrightness = n.brightness.map { brightness + [Float($0)] } ?? brightness
             var childMasks = clipMasks
             if let clip = n.clipShape, clip.geometry != .rectangle {

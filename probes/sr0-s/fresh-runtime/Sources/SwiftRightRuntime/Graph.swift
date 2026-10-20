@@ -587,6 +587,8 @@ final class Node {
     var instance = 0
     /// Layout target in logical points, set by the layout pass (snapped to the pixel grid).
     var frame: LayoutRect = .zero
+    /// The frame layout computed before snapping to device pixels (#44): what SwiftUI scales under `.scaleEffect`.
+    var exactFrame: LayoutRect = .zero
     /// Text memo: measured sizes for the current text, keyed by wrap width (nil = no wrap).
     var memoText: String?
     var memo: [CGFloat?: LayoutSize] = [:]
@@ -880,6 +882,9 @@ public struct ResolvedNode: Equatable, Sendable {
     public var brightness: Double? = nil
     /// Modifier nodes of `.clipShape` only (SR2 R6, #41): the presented clip geometry (in this node's frame) and its fill rule.
     public var clipShape: ResolvedClipShape? = nil
+    /// The frame before device-pixel snapping (#44), when it differs from `frame` and the node is not moving; nil otherwise. A host scales this under
+    /// `.scaleEffect`: SwiftUI scales the laid-out geometry, not its snapped pixels.
+    public var exactFrame: LayoutRect? = nil
 }
 
 /// What `.clipShape(_:style:)` asks of its subtree: paint only inside `geometry` laid out in the modifier node's frame.
@@ -2455,7 +2460,8 @@ public final class Graph {
             rotation: rotation,
             scaleEffect: scaleEffect,
             brightness: brightness,
-            clipShape: clipShape
+            clipShape: clipShape,
+            exactFrame: node.motion == nil && node.exactFrame != node.frame && node.exactFrame != .zero ? node.exactFrame : nil
         )
     }
 
