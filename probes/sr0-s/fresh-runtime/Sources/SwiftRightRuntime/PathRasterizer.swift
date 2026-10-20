@@ -50,6 +50,22 @@ public enum PathRasterizer {
     public static func rasterize(path: Path, transform: CGAffineTransform = .identity, scale: CGFloat = 1,
                                  fillRGBA: UInt32? = nil, fillStyle: FillStyle = FillStyle(),
                                  strokeRGBA: UInt32? = nil, strokeStyle: StrokeStyle = StrokeStyle()) throws -> PathRasterImage? {
+        try rasterizeImpl(path: path, transform: transform, scale: scale, fillRGBA: fillRGBA, fillStyle: fillStyle,
+                          strokeRGBA: strokeRGBA, strokeStyle: strokeStyle, referenceStroke: false)
+    }
+
+    /// The straightforward evaluation kept verbatim as the byte-identity oracle for the optimised stroke coverage and compositing
+    /// (used only by tests, through `referenceStroke: true`).
+    static func rasterizeReference(path: Path, transform: CGAffineTransform = .identity, scale: CGFloat = 1,
+                                   fillRGBA: UInt32? = nil, fillStyle: FillStyle = FillStyle(),
+                                   strokeRGBA: UInt32? = nil, strokeStyle: StrokeStyle = StrokeStyle()) throws -> PathRasterImage? {
+        try rasterizeImpl(path: path, transform: transform, scale: scale, fillRGBA: fillRGBA, fillStyle: fillStyle,
+                          strokeRGBA: strokeRGBA, strokeStyle: strokeStyle, referenceStroke: true)
+    }
+
+    private static func rasterizeImpl(path: Path, transform: CGAffineTransform, scale: CGFloat,
+                                      fillRGBA: UInt32?, fillStyle: FillStyle,
+                                      strokeRGBA: UInt32?, strokeStyle: StrokeStyle, referenceStroke: Bool) throws -> PathRasterImage? {
         let s = Double(scale)
         guard s.isFinite, s > 0 else { throw PathRasterError.invalidInput }
         let matrix = Matrix(transform: transform, scale: s)
@@ -70,7 +86,8 @@ public enum PathRasterizer {
             let polys = subpaths.map { flatten($0, matrix, tolerance: strokeTolerance) }
             // Dashes are laid out by TRUE arc length (CoreGraphics measures the curve, not its flattening): each subpath's
             // pattern is rescaled by flattened length / true length, so dash ends land where they would on the exact curve.
-            let trueLengths = subpaths.map { $0.segments.reduce(0.0) { $0 + $1.length() } * lengthScale }
+            // (Only dashing reads them, so a solid stroke skips the arc-length integration.)
+            let trueLengths: [Double]? = strokeStyle.dash.isEmpty ? nil : subpaths.map { $0.segments.reduce(0.0) { $0 + $1.length() } * lengthScale }
             pieces = try strokePieces(polys, style: strokeStyle, lengthScale: lengthScale, trueLengths: trueLengths)
         }
 
@@ -92,9 +109,31 @@ public enum PathRasterizer {
         var fillCoverage = [Float](repeating: 0, count: hasFill ? width * height : 0)
         if hasFill { fillCoverage = fillCoverageMap(fillPolys, width: width, height: height, evenOdd: fillStyle.isEOFilled, antialiased: fillStyle.isAntialiased) }
         var strokeCoverage = [Float](repeating: 0, count: hasStroke ? width * height : 0)
-        if hasStroke { strokeCoverage = strokeCoverageMap(pieces, width: width, height: height) }
+        if hasStroke {
+            strokeCoverage = referenceStroke ? strokeCoverageMapReference(pieces, width: width, height: height)
+                                             : strokeCoverageMap(pieces, width: width, height: height)
+        }
 
         var output = [UInt8](repeating: 0, count: width * height * 4)
+        if !referenceStroke, !hasFill, let strokeColor = strokeRGBA {
+            // Stroke only: nothing underneath, so `over` returns the source unchanged; the colour bytes are the same for every pixel
+            // and only alpha (colour alpha x coverage) varies. Same expressions as `unpack` and `byte`.
+            let rb = byte(Double(UInt8(strokeColor >> 24)) / 255), gb = byte(Double(UInt8((strokeColor >> 16) & 0xff)) / 255)
+            let bb = byte(Double(UInt8((strokeColor >> 8) & 0xff)) / 255)
+            let a1 = Double(UInt8(strokeColor & 0xff)) / 255
+            strokeCoverage.withUnsafeBufferPointer { cov in
+                output.withUnsafeMutableBufferPointer { o in
+                    for i in 0..<(width * height) {
+                        let coverage = Double(cov[i])
+                        guard coverage > 0 else { continue }
+                        let alpha = a1 * coverage
+                        guard alpha > 0 else { continue }
+                        o[i * 4] = rb; o[i * 4 + 1] = gb; o[i * 4 + 2] = bb; o[i * 4 + 3] = byte(alpha)
+                    }
+                }
+            }
+            return PathRasterImage(image: ContinuousRGBAImage(width: width, height: height, rgba: output), originX: ox, originY: oy)
+        }
         for i in 0..<(width * height) {
             let f = hasFill ? unpack(fillRGBA!, coverage: Double(fillCoverage[i])) : nil
             let k = hasStroke ? unpack(strokeRGBA!, coverage: Double(strokeCoverage[i])) : nil
@@ -443,7 +482,7 @@ public enum PathRasterizer {
 
     // MARK: Coverage
 
-    private static func strokeCoverageMap(_ pieces: [Piece], width: Int, height: Int) -> [Float] {
+    private static func strokeCoverageMapReference(_ pieces: [Piece], width: Int, height: Int) -> [Float] {
         var out = [Float](repeating: 0, count: width * height)
         guard !pieces.isEmpty else { return out }
         let cellsX = (width + cellSize - 1) / cellSize, cellsY = (height + cellSize - 1) / cellSize
@@ -480,6 +519,220 @@ public enum PathRasterizer {
                     }
                 }
                 out[y * width + x] = Float(ContinuousRoundedRasterizer.strokeEdgeCoverage(Double(hits) / Double(grid * grid)))
+            }
+        }
+        return out
+    }
+
+    // MARK: Optimised stroke coverage (bit-identical to `strokeCoverageMapReference`)
+    //
+    // Same coverage definition: a pixel is 1 when some piece contains all four of its corners, otherwise the share of its 16x16
+    // sample points that lie in any piece, through the smoothstep. Only the evaluation differs, and every shortcut below is exact:
+    // - Every predicate is the reference's own floating-point expression (edge cross product, disc distance), so boundary samples agree.
+    // - For one polygon edge the cross product is monotone in x and in y (rounding is monotone), so its minimum and maximum over a
+    //   pixel are at the pixel's corners: four corners inside means all 256 samples are inside that edge, four outside means the
+    //   piece covers no sample, and only edges that straddle need sampling (all of them inside = the reference's "full" test).
+    // - Within one sample row a straddling edge is a prefix or suffix of the 16 samples, found by a binary search of the same predicate.
+    // - A disc is full when its four corners are inside (distance is monotone in |dx| and |dy|); it is skipped only when the
+    //   nearest point of the pixel is farther than r with a margin far above rounding error.
+    // - Pieces are visited piece-major per pixel row and their sample masks OR-ed, which is the union the reference takes.
+
+    private struct FastPiece {
+        var isDisc: Bool
+        var edgeStart: Int
+        var edgeCount: Int
+        var cx: Double, cy: Double, r2: Double
+        var x0: Int, x1: Int, y0: Int, y1: Int
+        /// Index into `pieces`; `needsFilter` marks a polygon that is not convex (a quad cut square to curve tangents can be a bow-tie),
+        /// whose half-plane region is not the polygon, so the reference's centre/boundary-distance filter can drop it and must be replayed.
+        var index: Int
+        var needsFilter: Bool
+    }
+
+    /// First and last pixel index (clamped to 0..<limit) whose box [p, p + 1] touches [lo, hi]: the reference's bounding-box test.
+    private static func pixelSpan(_ lo: Double, _ hi: Double, limit: Int) -> (first: Int, last: Int)? {
+        guard lo.isFinite, hi.isFinite, lo <= Double(limit) + 1, hi >= -1 else { return nil }
+        var first = Int(max(-3.0, (lo - 1).rounded(.down)))
+        while first > -3 && Double(first - 1) + 1 >= lo { first -= 1 }
+        while Double(first) + 1 < lo { first += 1 }
+        var last = Int(min(Double(limit) + 3, hi.rounded(.down)))
+        while last < limit + 3 && Double(last + 1) <= hi { last += 1 }
+        while Double(last) > hi { last -= 1 }
+        first = max(first, 0); last = min(last, limit - 1)
+        return first <= last ? (first, last) : nil
+    }
+
+    /// Cross product of one (orientation-folded) edge at sample column `i`, exactly the reference expression with `c = ex * (y - vy)`.
+    @inline(__always)
+    private static func edgeValue(_ c: Double, _ ey: Double, _ bx: Double, _ fx: Double, _ i: Int) -> Double {
+        c - ey * ((fx + (Double(i) + 0.5) * (1.0 / 16.0)) - bx)
+    }
+
+    /// Bit i set when sample column i of the row is inside the edge (value >= 0).
+    @inline(__always)
+    private static func edgeRowMask(_ c: Double, _ ey: Double, _ bx: Double, _ fx: Double) -> UInt16 {
+        let inL = edgeValue(c, ey, bx, fx, 0) >= 0, inR = edgeValue(c, ey, bx, fx, 15) >= 0
+        if inL && inR { return 0xFFFF }
+        if !inL && !inR { return 0 }
+        if inL {
+            var lo = 0, hi = 15          // lo inside, hi outside (ey > 0: inside is a prefix)
+            while hi - lo > 1 { let mid = (lo + hi) >> 1; if edgeValue(c, ey, bx, fx, mid) >= 0 { lo = mid } else { hi = mid } }
+            return UInt16(truncatingIfNeeded: (1 << hi) - 1)
+        }
+        var lo = 0, hi = 15              // lo outside, hi inside (ey < 0: inside is a suffix)
+        while hi - lo > 1 { let mid = (lo + hi) >> 1; if edgeValue(c, ey, bx, fx, mid) >= 0 { hi = mid } else { lo = mid } }
+        return UInt16(truncatingIfNeeded: 0xFFFF << hi)
+    }
+
+    private static func strokeCoverageMap(_ pieces: [Piece], width: Int, height: Int) -> [Float] {
+        var out = [Float](repeating: 0, count: width * height)
+        guard !pieces.isEmpty, width > 0, height > 0 else { return out }
+        let step = 1.0 / Double(grid)
+
+        var edgeTotal = 0
+        for piece in pieces where !piece.isDisc { edgeTotal += piece.vx.count }
+        let exs = UnsafeMutablePointer<Double>.allocate(capacity: max(1, edgeTotal))
+        let eys = UnsafeMutablePointer<Double>.allocate(capacity: max(1, edgeTotal))
+        let bxs = UnsafeMutablePointer<Double>.allocate(capacity: max(1, edgeTotal))
+        let bys = UnsafeMutablePointer<Double>.allocate(capacity: max(1, edgeTotal))
+        let pcs = UnsafeMutablePointer<FastPiece>.allocate(capacity: pieces.count)
+        let rowStart = UnsafeMutablePointer<Int>.allocate(capacity: height + 2)
+        let state = UnsafeMutablePointer<UInt8>.allocate(capacity: width)
+        let masks = UnsafeMutablePointer<UInt16>.allocate(capacity: width * 16)
+        defer {
+            exs.deallocate(); eys.deallocate(); bxs.deallocate(); bys.deallocate(); pcs.deallocate()
+            rowStart.deallocate(); state.deallocate(); masks.deallocate()
+        }
+        rowStart.initialize(repeating: 0, count: height + 2)
+        state.initialize(repeating: 0, count: width)
+        masks.initialize(repeating: 0, count: width * 16)
+
+        // Per-piece data. A polygon edge i -> j is stored as (ex, ey) = (vx[j]-vx[i], vy[j]-vy[i]) negated for a negative orientation
+        // (negation is exact and flips the sign of the whole cross product, which the reference multiplies by `orient`), so
+        // "inside" is uniformly "value >= 0".
+        var count = 0, edgeFill = 0, maxEdges = 1
+        for (pieceIndex, piece) in pieces.enumerated() {
+            guard let sx = pixelSpan(piece.minX, piece.maxX, limit: width), let sy = pixelSpan(piece.minY, piece.maxY, limit: height) else { continue }
+            var fp = FastPiece(isDisc: piece.isDisc, edgeStart: edgeFill, edgeCount: 0, cx: piece.cx, cy: piece.cy, r2: piece.r * piece.r,
+                               x0: sx.first, x1: sx.last, y0: sy.first, y1: sy.last, index: pieceIndex, needsFilter: false)
+            if !piece.isDisc {
+                let n = piece.vx.count
+                fp.edgeCount = n
+                for i in 0..<n {
+                    let j = i + 1 == n ? 0 : i + 1, k = j + 1 == n ? 0 : j + 1
+                    let cross = (piece.vx[j] - piece.vx[i]) * (piece.vy[k] - piece.vy[j]) - (piece.vy[j] - piece.vy[i]) * (piece.vx[k] - piece.vx[j])
+                    if cross * piece.orient < 0 { fp.needsFilter = true }
+                }
+                maxEdges = max(maxEdges, n)
+                for i in 0..<n {
+                    let j = i + 1 == n ? 0 : i + 1
+                    var ex = piece.vx[j] - piece.vx[i], ey = piece.vy[j] - piece.vy[i]
+                    if piece.orient < 0 { ex = -ex; ey = -ey }
+                    exs[edgeFill] = ex; eys[edgeFill] = ey; bxs[edgeFill] = piece.vx[i]; bys[edgeFill] = piece.vy[i]
+                    edgeFill += 1
+                }
+            }
+            (pcs + count).initialize(to: fp)
+            count += 1
+            for y in sy.first...sy.last { rowStart[y + 1] += 1 }
+        }
+        guard count > 0 else { return out }
+        for y in 0..<height { rowStart[y + 1] += rowStart[y] }
+        let rowItems = UnsafeMutablePointer<Int32>.allocate(capacity: max(1, rowStart[height]))
+        let cursor = UnsafeMutablePointer<Int>.allocate(capacity: height + 1)
+        let straddle = UnsafeMutablePointer<Int>.allocate(capacity: maxEdges)
+        defer { rowItems.deallocate(); cursor.deallocate(); straddle.deallocate() }
+        for y in 0..<height { cursor[y] = rowStart[y] }
+        for k in 0..<count {
+            let pc = pcs[k]
+            for y in pc.y0...pc.y1 { rowItems[cursor[y]] = Int32(k); cursor[y] += 1 }
+        }
+
+        var lut = [Float](repeating: 0, count: grid * grid + 1)
+        for h in 0...(grid * grid) { lut[h] = Float(ContinuousRoundedRasterizer.strokeEdgeCoverage(Double(h) / Double(grid * grid))) }
+
+        for y in 0..<height {
+            let q0 = rowStart[y], q1 = rowStart[y + 1]
+            if q0 == q1 { continue }
+            state.update(repeating: 0, count: width)
+            let fy = Double(y), fy1 = fy + 1
+            for q in q0..<q1 {
+                let pc = pcs[Int(rowItems[q])]
+                if pc.isDisc {
+                    let r2 = pc.r2
+                    for x in pc.x0...pc.x1 {
+                        if state[x] == 2 { continue }
+                        let fx = Double(x)
+                        let exA = fx - pc.cx, exB = (fx + 1) - pc.cx, eyA = fy - pc.cy, eyB = fy1 - pc.cy
+                        if exA * exA + eyA * eyA <= r2 && exB * exB + eyA * eyA <= r2 && exA * exA + eyB * eyB <= r2 && exB * exB + eyB * eyB <= r2 {
+                            state[x] = 2; continue
+                        }
+                        let nx = exA > 0 ? exA : (exB < 0 ? exB : 0.0), ny = eyA > 0 ? eyA : (eyB < 0 ? eyB : 0.0)
+                        if nx * nx + ny * ny > r2 * 1.000000001 + 1e-9 { continue }
+                        let mp = masks + x * 16
+                        if state[x] == 0 { mp.update(repeating: 0, count: 16); state[x] = 1 }
+                        for j in 0..<16 {
+                            let ey = (fy + (Double(j) + 0.5) * step) - pc.cy
+                            let ey2 = ey * ey
+                            if ey2 > r2 { continue }
+                            var m: UInt16 = 0
+                            for i in 0..<16 {
+                                let ex = (fx + (Double(i) + 0.5) * step) - pc.cx
+                                if ex * ex + ey2 <= r2 { m |= UInt16(1) << UInt16(i) }
+                            }
+                            mp[j] |= m
+                        }
+                    }
+                } else {
+                    let eStart = pc.edgeStart, eCount = pc.edgeCount
+                    for x in pc.x0...pc.x1 {
+                        if state[x] == 2 { continue }
+                        let fx = Double(x), fx1 = fx + 1
+                        var sc = 0
+                        var dead = false
+                        for e in 0..<eCount {
+                            let idx = eStart + e
+                            let ex = exs[idx], ey = eys[idx], bx = bxs[idx], by = bys[idx]
+                            let c0 = ex * (fy - by), c1 = ex * (fy1 - by)
+                            let r0 = ey * (fx - bx), r1 = ey * (fx1 - bx)
+                            let in00 = c0 - r0 >= 0, in10 = c0 - r1 >= 0, in01 = c1 - r0 >= 0, in11 = c1 - r1 >= 0
+                            if in00 && in10 && in01 && in11 { continue }
+                            if !in00 && !in10 && !in01 && !in11 { dead = true; break }
+                            straddle[sc] = idx; sc += 1
+                        }
+                        if dead { continue }
+                        if sc == 0 { state[x] = 2; continue }
+                        if pc.needsFilter {
+                            // The reference only samples a piece whose centre is inside it or within 0.7072 of its boundary.
+                            let centerX = fx + 0.5, centerY = fy + 0.5
+                            let piece = pieces[pc.index]
+                            if !piece.contains(centerX, centerY) && piece.boundaryDistance(centerX, centerY) >= 0.7072 { continue }
+                        }
+                        let mp = masks + x * 16
+                        if state[x] == 0 { mp.update(repeating: 0, count: 16); state[x] = 1 }
+                        for j in 0..<16 {
+                            if mp[j] == 0xFFFF { continue }
+                            let y = fy + (Double(j) + 0.5) * step
+                            var m: UInt16 = 0xFFFF
+                            for s in 0..<sc {
+                                let idx = straddle[s]
+                                m &= edgeRowMask(exs[idx] * (y - bys[idx]), eys[idx], bxs[idx], fx)
+                                if m == 0 { break }
+                            }
+                            mp[j] |= m
+                        }
+                    }
+                }
+            }
+            let base = y * width
+            for x in 0..<width {
+                let s = state[x]
+                if s == 2 { out[base + x] = 1; continue }
+                if s == 0 { continue }
+                let mp = masks + x * 16
+                var hits = 0
+                for j in 0..<16 { hits += mp[j].nonzeroBitCount }
+                out[base + x] = lut[hits]
             }
         }
         return out
