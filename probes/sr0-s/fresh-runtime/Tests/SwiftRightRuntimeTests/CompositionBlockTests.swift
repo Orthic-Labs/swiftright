@@ -137,6 +137,21 @@ final class CompositionBlockTests: XCTestCase {
         XCTAssertEqual(background.children[1].kind, "modifier.frame", "the view itself is the last child, painted above")
     }
 
+    // Oracle R1 caveat: a background on a Group is a background on each member (SwiftUI distributes Group modifiers), each sized to its member.
+    func testBackgroundOnAGroupIsAppliedToEachMember() throws {
+        let all = try nodes(VStack(spacing: 10) {
+            Group {
+                Color.blue.frame(width: 50, height: 20)
+                Color.blue.frame(width: 70, height: 30)
+            }.background(Color.red)
+        }, w: nil, h: nil)
+        let backgrounds = all.filter { $0.kind == "Background" }
+        XCTAssertEqual(backgrounds.count, 2)
+        XCTAssertEqual(backgrounds.map { [$0.frame.width, $0.frame.height] }, [[50, 20], [70, 30]])
+        XCTAssertEqual(backgrounds[1].frame.minY - backgrounds[0].frame.maxY, 10, "still two VStack rows with its spacing")
+        for b in backgrounds { XCTAssertEqual(b.children[0].frame, b.children[1].frame, "each layer is sized to its own member") }
+    }
+
     func testBackgroundDoesNotChangeLayout() throws {
         let plain = try nodes(HStack(spacing: 5) { Color.blue.frame(width: 50, height: 20); Color.green.frame(width: 10, height: 10) }).filter { $0.kind == "Color" }
         let backed = try nodes(HStack(spacing: 5) { Color.blue.frame(width: 50, height: 20).background(Color.red.frame(width: 200, height: 100)); Color.green.frame(width: 10, height: 10) })
@@ -294,6 +309,19 @@ final class CompositionBlockTests: XCTestCase {
         XCTAssertEqual(taps.hover, [])
         XCTAssertTrue(g.tapGesture(atX: 10, y: 30), "the second row is unaffected")
         XCTAssertEqual(taps.count, 10)
+    }
+
+    // Oracle R1 caveat: `.offset(...).onTapGesture {}` is hit where the content is drawn, not at its unshifted layout frame.
+    func testATapGestureOutsideAnOffsetIsHitAtTheShiftedContent() throws {
+        let taps = Taps()
+        let g = graph(Color.red.frame(width: 50, height: 20).offset(x: 100, y: 40).onTapGesture { taps.count += 1 }.onHover { taps.hover.append($0) }, w: nil, h: nil)
+        let tap = try XCTUnwrap(flatten(try XCTUnwrap(g.snapshot())).first { $0.kind == "modifier.onTapGesture" })
+        let x = tap.frame.minX, y = tap.frame.minY
+        XCTAssertFalse(g.tapGesture(atX: x + 10, y: y + 10), "the unshifted layout frame is empty space")
+        XCTAssertTrue(g.tapGesture(atX: x + 110, y: y + 50))
+        XCTAssertEqual(taps.count, 1)
+        g.pointerMoved(toX: x + 110, y: y + 50)
+        XCTAssertEqual(taps.hover, [true])
     }
 
     func testAllowsHitTestingTrueChangesNothingAndAnAncestorCannotBeOverridden() throws {

@@ -21,7 +21,7 @@ protocol GroupView {}
 /// A Group is transparent: its members are laid out by the parent as if they were direct children (a `VStack` spaces them, an `HStack` runs them along), and a modifier applied
 /// to the Group is applied to each member. What is implemented: every modifier (padding, frame, opacity, offset, onAppear, environment values, ...) is distributed over the
 /// members, each member getting its own copy, which is SwiftUI's behaviour for layout-neutral and for layout-changing modifiers alike. A modifier chain over a Group returned
-/// directly as a `body` is distributed too. Not distributed: `overlay`/`background` on a Group (they wrap the Group as one view).
+/// directly as a `body` is distributed too, and so is `background` (each member gets its own background, sized to that member). Not distributed: `overlay` (it wraps the Group as one view).
 public struct Group<Content: View>: View, ViewContainer, GroupView {
     let content: Content
     public init(@ViewBuilder content: () -> Content) {
@@ -99,10 +99,20 @@ public struct GeometryReader<Content: View>: View, GeometryReading {
 
 // MARK: - Background
 
-struct BackgroundStack<Base: View, Background: View>: View, PrimitiveView {
+/// A wrapper the graph distributes over the members of a Group base (`Graph.expand`), as SwiftUI applies a modifier on a Group to each member.
+@MainActor protocol GroupBaseDistributable {
+    var groupBase: any View { get }
+    func rewrapped(over member: any View) -> any View
+}
+
+struct BackgroundStack<Base: View, Background: View>: View, PrimitiveView, GroupBaseDistributable {
     let base: Base
     let background: Background
     let alignment: Alignment
+
+    var groupBase: any View { base }
+    func rewrapped(over member: any View) -> any View { make(member) }
+    private func make<M: View>(_ member: M) -> any View { BackgroundStack<M, Background>(base: member, background: background, alignment: alignment) }
 
     @MainActor public var body: Never { return fatalError("background has no body") }
     var nodeKind: NodeKind {
@@ -142,7 +152,7 @@ extension View {
 // MARK: - Offset, position, hit testing
 
 extension View {
-    /// Paints this view shifted by (`x`, `y`) points; its layout frame, and the space it takes in its parent, are unchanged. Hit targets move with the painting.
+    /// Paints this view shifted by (`x`, `y`) points; its layout frame, and the space it takes in its parent, are unchanged. Runtime tap and hover hit testing (`Graph.tapGesture`, `pointerMoved`) follows the painting.
     /// Apple: https://developer.apple.com/documentation/swiftui/view/offset(x:y:)
     public func offset(x: CGFloat = 0, y: CGFloat = 0) -> some View {
         Modified(content: self, spec: .offset(x, y))

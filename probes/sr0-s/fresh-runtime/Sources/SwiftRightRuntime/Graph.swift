@@ -1522,8 +1522,30 @@ public final class Graph {
                 refreshable = false
                 return
             }
+            // `Group { A; B }.background(X)` (or over a modifier chain on a Group) is `A.background(X)` and `B.background(X)`.
+            if hasGroupBase(view), let wrapper = view as? GroupBaseDistributable {
+                let base = wrapper.groupBase
+                do {
+                    var members: [Entry] = []
+                    expand(base, prefix: [], into: &members, refreshable: &refreshable)
+                    for member in members {
+                        let wrapped = wrapper.rewrapped(over: member.view)
+                        let wrappedInfo = ViewTypes.info(for: wrapped)
+                        out.append(Entry(relative: prefix + Array(member.relative.dropLast()) + [Segment.type(wrappedInfo.name)], view: wrapped, info: wrappedInfo))
+                    }
+                    refreshable = false
+                    return
+                }
+            }
             out.append(Entry(relative: prefix + [.type(info.name)], view: view, info: info))
         }
+    }
+
+    /// A wrapper (`background`) over a Group, or over a modifier chain on a Group: distributed over the members by `expand`.
+    func hasGroupBase(_ view: any View) -> Bool {
+        guard let wrapper = view as? GroupBaseDistributable else { return false }
+        let base = wrapper.groupBase
+        return base is any GroupView || groupModifierChain(base, ViewTypes.info(for: base)) != nil
     }
 
     /// The modifiers (outermost first) of a chain of modifier views that ends in a `Group`, with the group; nil for any other view.
@@ -1935,7 +1957,7 @@ public final class Graph {
             return
         }
         let producedInfo = ViewTypes.info(for: produced)
-        if producedInfo.shape == .leaf, groupModifierChain(produced, producedInfo) == nil {
+        if producedInfo.shape == .leaf, groupModifierChain(produced, producedInfo) == nil, !hasGroupBase(produced) {
             // One view that is a node itself (a modifier's content, a user view's body): update that child in place with no
             // entry list and no id built.
             if node.childNodes.count == 1, node.childNodes[0].relative.count == 1,

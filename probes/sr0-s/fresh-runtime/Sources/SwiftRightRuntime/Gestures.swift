@@ -52,11 +52,27 @@ extension Graph {
         x >= frame.minX && x < frame.maxX && y >= frame.minY && y < frame.maxY
     }
 
+    /// Where a gesture node is hit: its frame, shifted by any `.offset` directly inside it (`.offset(x: 20).onTapGesture {}` is hit where the content is drawn, as in SwiftUI;
+    /// an `.offset` outside the gesture already moves the gesture node's own frame).
+    private func hitFrame(_ n: Node) -> LayoutRect {
+        var f = n.frame
+        var c = n
+        while childNodes(c).count == 1, let child = childNodes(c).first {
+            switch child.kind {
+            case .modifier(.offset(let dx, let dy)): f = LayoutRect(x: f.minX + dx, y: f.minY + dy, width: f.width, height: f.height)
+            case .modifier(.tap), .modifier(.hover): break   // other gesture wrappers take the same frame
+            default: return f
+            }
+            c = child
+        }
+        return f
+    }
+
     /// The pointer is at (x, y) logical points, or has left the window (nil). Every `.onHover` view whose state changed is told: exits first, then entries, each in tree order.
     public func pointerMoved(toX x: CGFloat?, y: CGFloat?) {
         let hooks = gestureNodes(hover: true)
         var inside: [Bool] = []
-        for (n, _) in hooks { if let x, let y { inside.append(n.environment.allowsHitTesting && contains(n.frame, x, y)) } else { inside.append(false) } }
+        for (n, _) in hooks { if let x, let y { inside.append(n.environment.allowsHitTesting && contains(hitFrame(n), x, y)) } else { inside.append(false) } }
         for (i, (n, _)) in hooks.enumerated() where n.hovered && !inside[i] {
             n.hovered = false
             if case .modifier(.hover(let hook)) = n.kind { hook.action(false) }
@@ -71,7 +87,7 @@ extension Graph {
     /// The runtime id of the deepest view with a tap gesture whose frame holds the point, nil when there is none.
     public func tapTarget(atX x: CGFloat, y: CGFloat) -> String? {
         var best: (Node, Int)?
-        for (n, depth) in gestureNodes(hover: false) where contains(n.frame, x, y) && n.environment.isEnabled && n.environment.allowsHitTesting {
+        for (n, depth) in gestureNodes(hover: false) where contains(hitFrame(n), x, y) && n.environment.isEnabled && n.environment.allowsHitTesting {
             if best == nil || depth >= best!.1 { best = (n, depth) }
         }
         return best?.0.idString
@@ -81,7 +97,7 @@ extension Graph {
     @discardableResult
     public func tapGesture(atX x: CGFloat, y: CGFloat) -> Bool {
         var best: (Node, Int)?
-        for (n, depth) in gestureNodes(hover: false) where contains(n.frame, x, y) && n.environment.isEnabled && n.environment.allowsHitTesting {
+        for (n, depth) in gestureNodes(hover: false) where contains(hitFrame(n), x, y) && n.environment.isEnabled && n.environment.allowsHitTesting {
             if best == nil || depth >= best!.1 { best = (n, depth) }
         }
         guard let (node, _) = best, case .modifier(.tap(let hook)) = node.kind, hook.count == 1 else { return false }
