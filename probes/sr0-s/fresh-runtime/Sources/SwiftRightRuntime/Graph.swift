@@ -2368,11 +2368,7 @@ public final class Graph {
         case .image: return "Image"
         case .color: return "Color"
         case .shape(let shape):
-            switch shape.geometry {
-            case .rectangle: return "Rectangle"
-            case .roundedRectangle: return "RoundedRectangle"
-            case .circle: return "Circle"
-            }
+            return shape.geometry.kindName
         case .textEditor: return "TextEditor"
         case .divider: return "Divider"
         case .menu: return "Menu"

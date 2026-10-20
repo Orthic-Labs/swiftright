@@ -19,9 +19,28 @@ public struct ContinuousShapeRequest: Equatable {
 
 /// How one shape node is painted: a plain ABI rect (rectangle, circle, circular rounded rectangle) or a continuous
 /// corner shape rasterised on the host side and registered as an image (the ABI has no continuous-corner primitive).
+/// A vector path to rasterise on the host: the shape's geometry resolved against the snapped pixel bounds, with its paint and styles.
+/// `strokeStyle.lineWidth` is in points (scaled by `scale` in the rasteriser, like the path itself).
+public struct PathShapeRequest: Equatable {
+    public var bounds: Rect
+    public var scale: Float
+    public var geometry: ShapeGeometry
+    public var fillRGBA: UInt32?
+    public var strokeRGBA: UInt32?
+    public var strokeStyle: StrokeStyle
+    public var fillStyle: FillStyle
+    public init(bounds: Rect, scale: Float, geometry: ShapeGeometry, fillRGBA: UInt32?, strokeRGBA: UInt32?,
+                strokeStyle: StrokeStyle = StrokeStyle(), fillStyle: FillStyle = FillStyle()) {
+        self.bounds = bounds; self.scale = scale; self.geometry = geometry; self.fillRGBA = fillRGBA
+        self.strokeRGBA = strokeRGBA; self.strokeStyle = strokeStyle; self.fillStyle = fillStyle
+    }
+}
+
 public enum ShapePaintPlan {
     case primitive(Primitive)
     case continuous(ContinuousShapeRequest)
+    /// A trimmed, inset, dashed, custom or path shape, or a stroke style the ABI rect cannot draw: rasterised by `PathRasterizer`.
+    case path(PathShapeRequest)
 }
 
 public enum ShapePainter {
@@ -35,9 +54,30 @@ public enum ShapePainter {
             strokeWidth = Float(logical) * scale
             guard strokeWidth.isFinite else { throw HostPaintError.invalidScaledStrokeWidth }
         }
+        if needsPathRoute(shape.geometry, paint) {
+            let stroke = paint.kind == .stroke
+            return .path(PathShapeRequest(bounds: bounds, scale: scale, geometry: shape.geometry,
+                                          fillRGBA: stroke ? nil : colour, strokeRGBA: stroke ? colour : nil,
+                                          strokeStyle: paint.strokeStyle ?? StrokeStyle(lineWidth: paint.lineWidth ?? 0),
+                                          fillStyle: paint.fillStyle ?? FillStyle()))
+        }
         var frame = bounds
         var radius: Float = 0
         switch shape.geometry {
+        case .capsule(let style):
+            // A pill: the corner radius is half the short side (a circular pill is a plain ABI rect).
+            switch style {
+            case .circular:
+                radius = min(bounds.w, bounds.h) / 2
+            case .continuous:
+                return .continuous(ContinuousShapeRequest(
+                    bounds: bounds, cornerRadiusPX: min(bounds.w, bounds.h) / 2,
+                    fillRGBA: paint.kind == .fill ? colour : nil,
+                    strokeRGBA: paint.kind == .stroke ? colour : nil,
+                    strokeWidthPX: strokeWidth, scale: scale))
+            }
+        case .path, .trimmed, .inset, .custom:
+            preconditionFailure("path geometries take the path route above")
         case .rectangle:
             break
         case .circle:
@@ -68,6 +108,58 @@ public enum ShapePainter {
             let strokedRadius = radius == 0 ? 0 : min(radius + half, min(stroked.w, stroked.h) / 2)
             return .primitive(.rect(stroked, color: 0, radius: strokedRadius, borderColor: colour, borderWidth: strokeWidth))
         }
+    }
+
+    /// True when a shape cannot go through the ABI rect or the continuous-corner raster: a path, custom, trimmed or inset geometry, a dashed stroke,
+    /// or a rectangle stroke whose join is not the default miter (a plain rectangle's 90 degree corner needs a miter ratio of 1.414).
+    /// Plain Circle, Rectangle, RoundedRectangle and Capsule fills and strokes stay on today's route (caps and joins are invisible on a closed smooth outline).
+    static func needsPathRoute(_ geometry: ShapeGeometry, _ paint: ShapePaint) -> Bool {
+        switch geometry {
+        case .path, .custom, .trimmed, .inset: return true
+        case .rectangle, .roundedRectangle, .circle, .capsule: break
+        }
+        guard paint.kind == .stroke, let style = paint.strokeStyle else { return false }
+        if style.dash.contains(where: { $0 > 0 }), !style.dash.contains(where: { $0 < 0 || !$0.isFinite }) { return true }
+        if case .rectangle = geometry, style.lineJoin != .miter || style.miterLimit < 2.0.squareRoot() { return true }
+        return false
+    }
+}
+
+/// Rasterises a `PathShapeRequest`: resolves the geometry against the same device-pixel-snapped bounds as the continuous route (SwiftUI draws a frame on whole
+/// device pixels), builds the path in points, and rasterises it in pixels with the snapped origin as the transform. The bitmap sits on an integer origin, so no
+/// fractional offset has to be baked in (the path itself carries it).
+public enum PathShapeRaster {
+    public struct Result: Equatable {
+        public var image: ContinuousRGBAImage
+        public var placement: Rect
+    }
+
+    /// Nil when there is nothing to draw (an empty path, a zero-length trim, no area).
+    public static func render(_ request: PathShapeRequest) throws -> Result? {
+        guard request.bounds.w.isFinite, request.bounds.h.isFinite, request.bounds.x.isFinite, request.bounds.y.isFinite,
+              request.scale.isFinite, request.scale > 0 else { throw HostPaintError.pathShapeRasterInput(1) }
+        let strokeWidthPoints = Double(request.strokeStyle.lineWidth)
+        guard request.strokeRGBA == nil || (strokeWidthPoints.isFinite && strokeWidthPoints >= 0) else { throw HostPaintError.pathShapeRasterInput(2) }
+        let snapX = DevicePixelSnap.edges(origin: Double(request.bounds.x), length: Double(request.bounds.w), scale: Double(request.scale))
+        let snapY = DevicePixelSnap.edges(origin: Double(request.bounds.y), length: Double(request.bounds.h), scale: Double(request.scale))
+        guard snapX.length > 0, snapY.length > 0 else { return nil }
+        let scale = Double(request.scale)
+        let rect = CGRect(x: 0, y: 0, width: snapX.length / scale, height: snapY.length / scale)
+        let path = request.geometry.makePath(in: rect)
+        guard let raster = try PathRasterizer.rasterize(
+            path: path, transform: CGAffineTransform(translationX: CGFloat(snapX.origin), y: CGFloat(snapY.origin)), scale: CGFloat(scale),
+            fillRGBA: request.fillRGBA, fillStyle: request.fillStyle,
+            strokeRGBA: request.strokeRGBA, strokeStyle: request.strokeStyle) else { return nil }
+        let placement = Rect(x: Float(raster.originX) + imageGuardBand, y: Float(raster.originY) + imageGuardBand,
+                             w: Float(raster.image.width) - 2 * imageGuardBand, h: Float(raster.image.height) - 2 * imageGuardBand)
+        return Result(image: raster.image, placement: placement)
+    }
+
+    /// Rasterises and registers: the returned handle is owned by the caller until the node is removed. Nil when there is nothing to draw.
+    public static func primitive(_ registry: ImageRegistering, _ request: PathShapeRequest) throws -> (primitive: Primitive, image: ImageHandle)? {
+        guard let result = try render(request) else { return nil }
+        let handle = try registry.registerImage(width: UInt32(result.image.width), height: UInt32(result.image.height), rgba: result.image.rgba, stride: 0)
+        return (.image(handle, result.placement), handle)
     }
 }
 

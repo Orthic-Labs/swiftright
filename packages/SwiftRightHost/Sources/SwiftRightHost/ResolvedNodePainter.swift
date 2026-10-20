@@ -337,10 +337,18 @@ public final class ResolvedNodePainter {
             if text.runOverflows(text: string, font: node.style.font, bounds: bounds) { emission.clipTo = bounds }
             return emission
 
-        case "Rectangle", "RoundedRectangle", "Circle":
+        case "Rectangle", "RoundedRectangle", "Circle", "Capsule", "Path":
             switch try ShapePainter.plan(node, bounds: bounds, scale: scale) {
             case .primitive(let primitive):
                 return NodeEmission(primitives: [primitive], semantic: nil, flags: [], structural: false)
+            case .path(let request):
+                // A vector path (trimmed, inset, dashed, custom, or a style the ABI rect cannot draw): rasterised on the host and registered as one image, kept under the
+                // node id like the continuous route, so the commit releases the previous frame's handle when the node repaints or goes away. Nothing to draw -> no primitive.
+                guard let result = try PathShapeRaster.render(request) else { return NodeEmission(primitives: [], semantic: nil, flags: [], structural: false) }
+                let handle = try images.registerImage(width: UInt32(result.image.width), height: UInt32(result.image.height), rgba: result.image.rgba, stride: 0)
+                if let stale = pendingShapeImages[id] { _ = images.release(stale) }
+                pendingShapeImages[id] = handle
+                return NodeEmission(primitives: [.image(handle, result.placement)], semantic: nil, flags: [], structural: false)
             case .continuous(let request):
                 // One image, or horizontal bands of one when the shape is over the rasteriser's work limit (round 5 block 30). Band k's handle is kept under a key
                 // derived from the node id so a commit releases every band of a node that went away or changed.
@@ -464,7 +472,7 @@ public final class ResolvedNodePainter {
                             flags: [.hitTarget], structural: false)
     }
 
-    static func isStructuralKind(_ kind: String) -> Bool { !(kind == "Text" || kind == "Color" || kind == "Image" || kind == "Rectangle" || kind == "RoundedRectangle" || kind == "Circle") }
+    static func isStructuralKind(_ kind: String) -> Bool { !(kind == "Text" || kind == "Color" || kind == "Image" || kind == "Rectangle" || kind == "RoundedRectangle" || kind == "Circle" || kind == "Capsule" || kind == "Path") }
 
     private func systemImagePrimitive(_ node: ResolvedNode, bounds: Rect, registry: SystemImageRegistry) throws -> Primitive {
         guard let reference = node.image else { throw HostPaintError.systemImageContractMismatch("no image reference") }

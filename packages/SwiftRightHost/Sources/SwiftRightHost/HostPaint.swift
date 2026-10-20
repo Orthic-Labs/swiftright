@@ -17,6 +17,7 @@ public enum HostPaintError: Error, Equatable, CustomStringConvertible {
     case unsupportedNode(String)
     case systemImageContractMismatch(String)
     case continuousShapeRasterInput(Int)
+    case pathShapeRasterInput(Int)
     case unsupportedToggleStyle(String)
     case unsupportedTogglePaintStyle
     case unsupportedButtonPaintStyle
@@ -39,6 +40,7 @@ public enum HostPaintError: Error, Equatable, CustomStringConvertible {
         case .unsupportedNode(let kind): return "HostPaint: unsupported node kind '\(kind)'"
         case .systemImageContractMismatch(let why): return "HostPaint: Image(systemName:) contract mismatch (\(why))"
         case .continuousShapeRasterInput(let code): return "HostPaint: continuous shape raster input invalid (\(code))"
+        case .pathShapeRasterInput(let code): return "HostPaint: path shape raster input invalid (\(code))"
         case .unsupportedToggleStyle(let style): return "HostPaint: Toggle style '\(style)' has no artwork yet (only the switch and checkbox styles are painted)"
         case .unsupportedTogglePaintStyle: return "HostPaint: Toggle with a foreground style or opacity is not painted yet"
         case .unsupportedListStyle(let style): return "HostPaint: List style '\(style)' has no artwork yet (only the automatic, inset and plain styles are painted)"
