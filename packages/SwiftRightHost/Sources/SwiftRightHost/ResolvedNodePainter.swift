@@ -487,10 +487,15 @@ public final class ResolvedNodePainter {
                 let shade = try color ?? HostPaint.rgba(.semantic("label"), opacity: node.opacity, scheme: node.style.colorScheme)
                 if !string.contains("\n"), let scaledFont = Self.scaledFont(node.style.font, by: textScaleFactor), let measurer = text as? TextMeasurer {
                     _ = measurer.measure(TextMeasureRequest(text: string, fontID: scaledFont.id, proposedWidth: nil, scale: CGFloat(baseScale), fontMetadata: scaledFont.metadata))
+                    // The unscaled line, unwrapped: SwiftUI scales the laid-out line, so the scaled baseline lands at factor x the unscaled one (CI 39412755144: placing the
+                    // scaled run's own line box at the top put it 2 px high).
+                    let font = node.style.font
+                    _ = measurer.measure(TextMeasureRequest(text: string, fontID: font?.id ?? "body", proposedWidth: nil, scale: CGFloat(baseScale), fontMetadata: font?.metadata))
+                    let original = try text.naturalRun(text: string, font: font, color: shade)
                     if let natural = try text.naturalRun(text: string, font: scaledFont, color: shade),
-                       let one = try text.naturalRun(text: string, font: node.style.font, color: shade).map({ $0.height }) ?? Optional(natural.height / textScaleFactor),
-                       unscaled.h < one * 1.5 {
-                        return NodeEmission(primitives: [.text(natural.run, x: bounds.x, y: bounds.y)],
+                       unscaled.h < (original?.height ?? natural.height / textScaleFactor) * 1.5 {
+                        let y = original.map { bounds.y + $0.baseline * textScaleFactor - natural.baseline } ?? bounds.y
+                        return NodeEmission(primitives: [.text(natural.run, x: bounds.x, y: y)],
                                             semantic: SemanticNode(role: .staticText, label: string, identifier: node.id, disabled: !node.accessibility.isEnabled),
                                             flags: [], structural: false)
                     }
