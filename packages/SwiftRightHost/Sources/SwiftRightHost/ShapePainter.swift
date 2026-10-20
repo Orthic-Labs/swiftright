@@ -93,7 +93,10 @@ public enum ShapePainter {
             guard strokeWidth.isFinite else { throw HostPaintError.invalidScaledStrokeWidth }
         }
         let rotated = ShapeRotation.isRotated(rotations)
-        if rotated || needsPathRoute(shape.geometry, paint) {
+        // A stroke on bounds off the device-pixel grid (a shape under `.scaleEffect`, SR2 R4) takes the path raster: the renderer's bordered rect loses up to a pixel per
+        // side at fractional bounds (CI 39409471434 scale-center-v1: a 115.5 px ring drawn 114 px wide), the path raster is exact.
+        let offGrid = paint.kind == .stroke && [bounds.x, bounds.y, bounds.w, bounds.h].contains { $0 != $0.rounded() }
+        if rotated || offGrid || needsPathRoute(shape.geometry, paint) {
             let stroke = paint.kind == .stroke
             var request = PathShapeRequest(bounds: bounds, scale: scale, geometry: shape.geometry,
                                           fillRGBA: stroke ? nil : colour, strokeRGBA: stroke ? colour : nil,

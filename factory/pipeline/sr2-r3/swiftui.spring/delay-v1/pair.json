@@ -5,6 +5,7 @@
   0.305,
   0.405,
   0.515,
+  1.0,
   1.7
  ],
  "clockGate": {
@@ -28,6 +29,6 @@
   "extentTolerancePx": 1.0,
   "progressTolerance": 0.005,
   "stripPx": 1,
-  "note": "Parameterised springs follow SwiftUI's 300 Hz integrator exactly (R3 spike, 5e-8 at any cadence); clock times avoid the 1/300 s step boundaries; sampled before the earliest removal and after both sides settle, since SwiftUI's removal rule for these springs is not modelled (SPIKE-RESULT.md). 1 px: device-pixel snapping."
+  "note": "Parameterised springs follow SwiftUI's 300 Hz integrator exactly (R3 spike, 5e-8 at any cadence); clock times avoid the 1/300 s step boundaries; sampled before the earliest removal and after both sides settle, since SwiftUI's removal rule for these springs is not modelled (SPIKE-RESULT.md). 1 px: device-pixel snapping. Every gap between samples is at most 0.6 s: after a gap over 1 s SwiftUI advances a spring one frame and its removal rule is not modelled (CI 39409383686 snappy-v1)."
  }
 }
