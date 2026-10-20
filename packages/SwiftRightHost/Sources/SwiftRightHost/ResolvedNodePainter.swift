@@ -35,6 +35,26 @@ public final class ResolvedNodePainter {
     /// Image content (not shapes) painted under `.brightness` since this painter was made: bitmaps are drawn unadjusted.
     public private(set) var brightnessImageLimitationCount = 0
 
+    /// The `.scaleEffect` factor on the Text being emitted (R4b, #42); 1 when unscaled.
+    private var textScaleFactor: Float = 1
+
+    /// `font` at `factor` x its point size (a text style takes its macOS size and weight), in half points within the measurer's 9...40 pt table; nil when it has no size.
+    static func scaledFont(_ font: Font?, by factor: Float) -> Font? {
+        let base = font ?? .body
+        let m = base.metadata
+        var size: Float? = m?.pointSize.map(Float.init)
+        var weight = m?.weight ?? .regular
+        if size == nil, let style = m?.textStyle ?? (font == nil || base.id == "textStyle.body" ? "body" : nil), let entry = MacTextStyles.all[style] {
+            size = entry.size
+            weight = m?.weight ?? (m?.isEmphasized == true ? entry.emphasized : entry.weight)
+        }
+        guard let pt = size, m?.isCustom != true else { return nil }
+        let scaled = min(max((pt * factor * 2).rounded(.down) / 2, 9), 40)
+        var out = m?.design.map { Font.system(size: CGFloat(scaled), weight: weight, design: $0) } ?? Font.system(size: CGFloat(scaled), weight: weight)
+        if m?.monospacedDigit == true { out = out.monospacedDigit() }
+        return out
+    }
+
     /// `.clipShape` masks above the node being emitted (SR2 R6). Host-rasterised shapes and solid rects are masked; text and bitmaps are clipped to the clip's
     /// bounding rect only (the renderer's clip stack is rectangular).
     private var clipMasks: [ClipMask] = []
@@ -245,13 +265,13 @@ public final class ResolvedNodePainter {
             // `.scaleEffect` above (SR2 R4): bounds are mapped through the accumulated scale and the node is painted at display scale x the factor, so
             // radii, stroke widths and rasters scale with it. Text keeps its measured size, centred on its scaled place (a counted limitation).
             let scaledText = !transform.isIdentity && n.kind == "Text"
-            let bounds = transform.isIdentity ? laidOut : (scaledText ? transform.mapCentre(laidOut) : transform.map(laidOut))
-            if scaledText { scaleTextLimitationCount += 1 }
+            let bounds = transform.isIdentity ? laidOut : transform.map(laidOut)
+            textScaleFactor = scaledText ? transform.uniform : 1
             let nodeScale = scaledText ? baseScale : baseScale * transform.uniform
             scale = nodeScale
             self.brightness = brightness
             self.clipMasks = clipMasks
-            defer { scale = baseScale; self.brightness = []; self.clipMasks = [] }
+            defer { scale = baseScale; self.brightness = []; self.clipMasks = []; textScaleFactor = 1 }
             // A factor of 0 (`.scaleEffect(shown ? 1 : 0)`, the first frame of a pop-in) paints nothing: no raster may be asked for at scale 0.
             let collapsed = !transform.isIdentity && (transform.sx == 0 || transform.sy == 0)
             var emission: NodeEmission
@@ -452,6 +472,28 @@ public final class ResolvedNodePainter {
             var color = try node.style.foreground.map { try HostPaint.rgba($0, opacity: node.opacity, scheme: node.style.colorScheme) } ?? inherited
                 ?? (node.style.colorScheme == .dark || node.opacity != 1 || !brightness.isEmpty ? try HostPaint.rgba(.semantic("label"), opacity: node.opacity, scheme: node.style.colorScheme) : nil)
             color = color.map(adjusted)
+            // R4b (#42): a one-line Text under `.scaleEffect` is shaped at the scaled point size and placed at its scaled origin. Otherwise (wrapped text, a font with
+            // no size, a size outside the measurer's table) it keeps its measured size, centred on its scaled place (counted).
+            if textScaleFactor != 1 {
+                let unscaled = Rect(x: bounds.x + bounds.w / 2 - bounds.w / textScaleFactor / 2, y: bounds.y + bounds.h / 2 - bounds.h / textScaleFactor / 2,
+                                    w: bounds.w / textScaleFactor, h: bounds.h / textScaleFactor)
+                let shade = try color ?? HostPaint.rgba(.semantic("label"), opacity: node.opacity, scheme: node.style.colorScheme)
+                if !string.contains("\n"), let scaledFont = Self.scaledFont(node.style.font, by: textScaleFactor), let measurer = text as? TextMeasurer {
+                    _ = measurer.measure(TextMeasureRequest(text: string, fontID: scaledFont.id, proposedWidth: nil, scale: CGFloat(baseScale), fontMetadata: scaledFont.metadata))
+                    if let natural = try text.naturalRun(text: string, font: scaledFont, color: shade),
+                       let one = try text.naturalRun(text: string, font: node.style.font, color: shade).map({ $0.height }) ?? Optional(natural.height / textScaleFactor),
+                       unscaled.h < one * 1.5 {
+                        return NodeEmission(primitives: [.text(natural.run, x: bounds.x, y: bounds.y)],
+                                            semantic: SemanticNode(role: .staticText, label: string, identifier: node.id, disabled: !node.accessibility.isEnabled),
+                                            flags: [], structural: false)
+                    }
+                }
+                scaleTextLimitationCount += 1
+                let run = try color.map { try text.run(text: string, font: node.style.font, bounds: unscaled, color: $0) } ?? text.run(text: string, font: node.style.font, bounds: unscaled)
+                return NodeEmission(primitives: [.text(run, x: unscaled.x, y: unscaled.y)],
+                                    semantic: SemanticNode(role: .staticText, label: string, identifier: node.id, disabled: !node.accessibility.isEnabled),
+                                    flags: [], structural: false)
+            }
             let run = try color.map { try text.run(text: string, font: node.style.font, bounds: bounds, color: $0) }
                 ?? text.run(text: string, font: node.style.font, bounds: bounds)
             var emission = NodeEmission(primitives: [.text(run, x: bounds.x, y: bounds.y)],
