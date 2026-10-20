@@ -348,8 +348,28 @@ public protocol ShapeStyle: Sendable {
 public struct Color: ShapeStyle, Hashable, Sendable {
     public let resolvedColor: ResolvedColor
 
-    public init(red: Double, green: Double, blue: Double, opacity: Double = 1) {
-        resolvedColor = .rgba(red, green, blue, opacity)
+    /// The colour space of the component initialiser. Apple: https://developer.apple.com/documentation/swiftui/color/rgbcolorspace
+    public enum RGBColorSpace: Hashable, Sendable { case sRGB, sRGBLinear, displayP3 }
+
+    /// Components in `colorSpace`, stored as gamma-encoded sRGB (the renderer's space). sRGBLinear is gamma-encoded exactly;
+    /// displayP3 goes through linear P3 -> linear sRGB (D65, IEC 61966-2-1 / SMPTE EG 432-1 matrix) and is not clamped beyond 0...1.
+    /// Apple: https://developer.apple.com/documentation/swiftui/color/init(_:red:green:blue:opacity:)
+    public init(_ colorSpace: RGBColorSpace = .sRGB, red: Double, green: Double, blue: Double, opacity: Double = 1) {
+        func encode(_ v: Double) -> Double { v <= 0.0031308 ? 12.92 * v : 1.055 * pow(v, 1 / 2.4) - 0.055 }
+        func decode(_ v: Double) -> Double { v <= 0.04045 ? v / 12.92 : pow((v + 0.055) / 1.055, 2.4) }
+        func clamp(_ v: Double) -> Double { min(1, max(0, v)) }
+        switch colorSpace {
+        case .sRGB:
+            resolvedColor = .rgba(red, green, blue, opacity)
+        case .sRGBLinear:
+            resolvedColor = .rgba(encode(clamp(red)), encode(clamp(green)), encode(clamp(blue)), opacity)
+        case .displayP3:
+            let r = decode(clamp(red)), g = decode(clamp(green)), b = decode(clamp(blue))
+            let sr = 1.2249401 * r - 0.2249404 * g + 0.0000003 * b
+            let sg = -0.0420569 * r + 1.0420571 * g - 0.0000002 * b
+            let sb = -0.0196376 * r - 0.0786361 * g + 1.0982735 * b
+            resolvedColor = .rgba(encode(clamp(sr)), encode(clamp(sg)), encode(clamp(sb)), opacity)
+        }
     }
 
     /// A grey (`red == green == blue == white`), sRGB. Apple: https://developer.apple.com/documentation/swiftui/color/init(white:opacity:)
