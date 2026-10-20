@@ -17,3 +17,7 @@ These cases contain no text, because scaled text is R4b. `tint` has no pixel cas
 
 - Shapes and solid rects under a scale are anti-aliased between pixels on the Mac. The host now draws them with the unsnapped path raster, and the rounded rect matches.
 - A **stroked** ring under `scaleEffect(1.4)` is still about 1 px smaller in diameter on Windows (right edge 456 vs 457 px, top 313 vs 312) with sharper edges. The cause is open (issue #44). scale-center-v1 now uses a filled circle.
+
+## scale-halfpixel-v1 (issue #44), off the CI list
+
+Filled and stroked 30 pt circles whose frames are centred on half pixels, under `scaleEffect(1.4)`. Since cdb723bd0 the host scales the pre-snap frame, so horizontal edges and widths match SwiftUI. A 0.7 px vertical offset remains: the hypothesis is that a stack snaps its main-axis positions, and it is unconfirmed (#44).
