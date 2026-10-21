@@ -424,7 +424,7 @@ pub(crate) fn cluster_ordinal(starts: &[usize], b: usize) -> usize {
 }
 
 /// The id of a gpui `GlyphId` (its field is crate private; Debug prints `GlyphId(n)`).
-fn glyph_id_of(g: &gpui::ShapedGlyph) -> u32 {
+pub(crate) fn glyph_id_of(g: &gpui::ShapedGlyph) -> u32 {
     format!("{:?}", g.id).trim_start_matches("GlyphId(").trim_end_matches(')').parse().unwrap_or(0)
 }
 

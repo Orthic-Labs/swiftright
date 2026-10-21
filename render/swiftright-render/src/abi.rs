@@ -22,6 +22,9 @@ pub const ABI_MINOR_V11: u32 = 11;
 pub const ABI_MINOR_V12: u32 = 12;
 /// Rev 0.13 (additive): minor reported ONLY by the `_v13` discovery exports (the 0.8 function table is unchanged: 22 functions).
 pub const ABI_MINOR_V13: u32 = 13;
+/// Rev 0.14 (additive): minor reported ONLY by the `_v14` discovery exports (the 0.8 table + one function: 23 functions, 192 bytes).
+pub const ABI_MINOR_V14: u32 = 14;
+pub const API_V14_FN_COUNT: u32 = 23;
 /// Rev 0.9: AccessKit Role::Slider (UIA Slider; RangeValuePattern when a range entry is sent).
 pub const ROLE_SLIDER: u32 = 15;
 /// Rev 0.11: AccessKit Role::ScrollBar (UIA ScrollBar; RangeValuePattern from a range entry, value 0..1).
@@ -930,6 +933,27 @@ pub struct BootstrapInfoV13 {
     pub transaction_v13_size: u32,
 }
 
+/// Rev 0.14 `swr_bootstrap_info_v14` (168 bytes): the 0.13 view at identical offsets (abi_minor 14, api_table_size 192, fn_count 23)
+/// + the capability word (`CAP_*`).
+#[repr(C)]
+#[derive(Clone, Copy)]
+pub struct BootstrapInfoV14 {
+    pub v13: BootstrapInfoV13,
+    pub caps: u32,
+    pub reserved: u32,
+}
+
+/// Rev 0.14 `swr_bootstrap_info_v14.caps`: `swr_text_run_outline` is exported and returns glyph outlines (supportsTextOutlines).
+pub const CAP_TEXT_OUTLINE: u32 = 0x1;
+
+/// Rev 0.14 `swr_api_v14` (192 bytes): the 184 bytes of `ApiV08` at unchanged offsets + `text_run_outline`.
+#[repr(C)]
+#[derive(Clone, Copy)]
+pub struct ApiV14 {
+    pub v08: ApiV08,
+    pub text_run_outline: extern "C" fn(u64, *mut u8, u32, *mut f32, u32, *mut u32, *mut u32) -> Status,
+}
+
 /// Rev 0.13 limits of the accessibility extras table (per transaction / per string, in bytes). Larger -> E_TOO_LARGE.
 pub const MAX_AX_EXTRAS: u32 = 4096;
 pub const AX_EXTRA_STR_MAX: u32 = 4096;
@@ -1106,6 +1130,10 @@ const _: () = assert!(std::mem::size_of::<TransactionV13>() == 144);
 const _: () = assert!(std::mem::offset_of!(TransactionV13, extras) == 128);
 const _: () = assert!(std::mem::size_of::<BootstrapInfoV13>() == 160);
 const _: () = assert!(std::mem::offset_of!(BootstrapInfoV13, ax_extra_entry_size) == 152);
+const _: () = assert!(std::mem::size_of::<BootstrapInfoV14>() == 168);
+const _: () = assert!(std::mem::offset_of!(BootstrapInfoV14, caps) == 160);
+const _: () = assert!(std::mem::size_of::<ApiV14>() == 192);
+const _: () = assert!(std::mem::offset_of!(ApiV14, text_run_outline) == 184);
 const _: () = assert!(std::mem::size_of::<TransactionV12>() == 128);
 const _: () = assert!(std::mem::offset_of!(TransactionV12, paths) == 88);
 const _: () = assert!(std::mem::offset_of!(TransactionV12, path_count) == 112);

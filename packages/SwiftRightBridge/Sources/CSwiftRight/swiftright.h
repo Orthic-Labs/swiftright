@@ -1522,6 +1522,61 @@ SWR_API swr_status swr_bootstrap_query_v13(swr_bootstrap_info_v13 *out, uint32_t
 /* The 0.8 table (SWR_E_ABI when caller_size < sizeof(swr_api_v08)). */
 SWR_API swr_status swr_get_api_v13(swr_api_v08 *out, uint32_t caller_size);
 
+/* ===========================================================================================
+ * REVISION 0.14 (additive): glyph outlines of a retained text run (issue #69), so a host can rotate and rasterise text itself.
+ *
+ * Everything above is unchanged. `swr_bootstrap_query`, `_v07` to `_v13` still describe 0.6 to 0.13 (and `swr_get_api_v13` the
+ * 184-byte table). A 0.14 renderer adds two NEW exports, swr_bootstrap_query_v14 and swr_get_api_v14, and the entry point
+ * swr_text_run_outline; a 0.13 renderer lacks all three, and a 0.14 host then falls back to the 0.13 view and has no outlines
+ * (check `supportsTextOutlines`, i.e. SWR_CAP_TEXT_OUTLINE in swr_bootstrap_info_v14.caps).
+ *
+ * TABLE. swr_api_v14 is the 184 bytes of swr_api_v08 at unchanged offsets + `text_run_outline` at offset 184 (192 bytes, 23
+ * functions). swr_get_api_v14 fills the whole table when caller_size >= sizeof(swr_api_v14), only the 0.8 table when it is
+ * >= sizeof(swr_api_v08), and returns SWR_E_ABI below that. The 0.14 bootstrap view reports api_table_size 192 and fn_count 23.
+ *
+ * swr_text_run_outline: the vector outlines of the glyphs of a run returned by swr_measure_text (or _v08), UI thread only.
+ *   - Two-call convention like swr_text_run_cells: *cmd_count and *pt_count ALWAYS receive the full totals; at most cmd_cap
+ *     commands and pt_cap POINTS are copied (`pts` holds 2 * pt_cap floats; pt_count counts points, not floats). `cmds` / `pts`
+ *     may be NULL with a zero cap. SWR_E_BAD_ARG: a NULL count, or a NULL buffer with a non-zero cap. SWR_E_WRONG_THREAD: not the
+ *     UI thread. SWR_E_STALE_HANDLE: unknown or released run.
+ *   - Commands are the SWR_PATH_* command bytes of the path table (0.12): MOVE and LINE take 1 point, QUAD 2, CUBIC 3, CLOSE none.
+ *     Every contour is MOVE ... CLOSE. Fill rule: NONZERO. Contours of different glyphs may overlap.
+ *   - Coordinates: the SAME unit and origin as swr_char_cell / swr_line_info: physical px of the run's measurement scale (DIP x the
+ *     scale of the request), origin at the run's top-left, y down. Glyph k of a visual line is at its shaped x (the first glyph
+ *     of a line at x = 0), plus the tracking / kerning the run carries per glyph cluster, and sits on that line's baseline
+ *     (line top + baseline), exactly where the renderer paints it. Every visual line of a multi-line run is included.
+ *   - The outline is the one of the face actually drawn: a bundled font from its registered bytes, an installed font from its
+ *     file with the variation axis values of the DirectWrite instance applied (Segoe UI Variable: wght, opsz), a fallback face
+ *     matched by glyph id like swr_text_run_faces.
+ *   - NOT included: colour (emoji) glyphs are skipped; a glyph of a face that cannot be resolved or whose file cannot be read
+ *     (non-local font loader) is skipped; glyphs without an outline (spaces) add nothing. Simulated bold and oblique (SWR_RUNFACE_SIM_BOLD /
+ *     SWR_RUNFACE_SIM_OBLIQUE) are NOT applied: the base face's outline is returned. Hinting and optical-size auto-adjustment that
+ *     DirectWrite would apply at a given size are not applied (outlines are unhinted, at the face's own instance).
+ * ===========================================================================================*/
+#define SWR_ABI_MINOR_V14 14
+
+#define SWR_CAP_TEXT_OUTLINE 0x1u   /* swr_text_run_outline is exported and returns glyph outlines */
+#define SWR_API_V14_FN_COUNT 23
+
+typedef struct swr_api_v14 {
+    swr_api_v08 v08;             /* 184 bytes, identical offsets; v08.struct_size = sizeof(swr_api_v14) when the caller asked for it */
+    swr_status (*text_run_outline)(swr_text_run, uint8_t *, uint32_t, float *, uint32_t, uint32_t *, uint32_t *);
+} swr_api_v14;                   /* 192 bytes */
+
+/* 0.14 view of swr_bootstrap_info: the 160 bytes of the 0.13 view at identical offsets (abi_minor 14, api_table_size
+ * sizeof(swr_api_v14) = 192, fn_count 23), plus the capability word (168 bytes). */
+typedef struct swr_bootstrap_info_v14 {
+    swr_bootstrap_info_v13 v13;
+    uint32_t caps;               /* SWR_CAP_* */
+    uint32_t reserved;
+} swr_bootstrap_info_v14;
+
+SWR_API swr_status swr_bootstrap_query_v14(swr_bootstrap_info_v14 *out, uint32_t caller_size);
+SWR_API swr_status swr_get_api_v14(swr_api_v14 *out, uint32_t caller_size);
+
+SWR_API swr_status swr_text_run_outline(swr_text_run run, uint8_t *cmds, uint32_t cmd_cap, float *pts, uint32_t pt_cap,
+                                        uint32_t *cmd_count, uint32_t *pt_count);
+
 #ifdef __cplusplus
 }
 #endif

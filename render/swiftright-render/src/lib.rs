@@ -13,6 +13,7 @@ mod ax;
 mod dwr;
 mod faces;
 mod font;
+mod outline;
 mod pace;
 mod paths;
 mod rt;
@@ -662,6 +663,40 @@ pub extern "C" fn swr_text_run_cells(run: u64, cells: *mut CharCell, cap: u32, c
     })
 }
 
+/// Rev 0.14. Glyph outlines of a retained run, in the same unit and origin as `swr_text_run_cells` (physical px of the run's
+/// measurement scale, origin at the run's top-left, y down). Two-call convention: `*cmd_count` and `*pt_count` always receive the full
+/// totals (`pt_count` counts POINTS, x/y float pairs); only up to `cmd_cap` commands and `pt_cap` points are copied.
+#[no_mangle]
+pub extern "C" fn swr_text_run_outline(run: u64, cmds: *mut u8, cmd_cap: u32, pts: *mut f32, pt_cap: u32, cmd_count: *mut u32, pt_count: *mut u32) -> Status {
+    guard!({
+        if cmd_count.is_null() || pt_count.is_null() || (cmds.is_null() && cmd_cap > 0) || (pts.is_null() && pt_cap > 0) {
+            return E_BAD_ARG;
+        }
+        if !on_ui_thread() {
+            return E_WRONG_THREAD;
+        }
+        let m = match view::with_ui(|ui| ui.runs.get(run)) {
+            Ok(Some(m)) => m,
+            Ok(None) => return E_STALE_HANDLE,
+            Err(e) => return e,
+        };
+        let o = outline::run_outline_cached(&m, &FALLBACK_CANDIDATES);
+        unsafe {
+            *cmd_count = o.cmds.len() as u32;
+            *pt_count = o.point_count() as u32;
+            let nc = o.cmds.len().min(cmd_cap as usize);
+            if nc > 0 {
+                std::ptr::copy_nonoverlapping(o.cmds.as_ptr(), cmds, nc);
+            }
+            let np = o.point_count().min(pt_cap as usize);
+            if np > 0 {
+                std::ptr::copy_nonoverlapping(o.pts.as_ptr(), pts, np * 2);
+            }
+        }
+        SWR_OK
+    })
+}
+
 #[no_mangle]
 pub extern "C" fn swr_text_run_release(run: u64) -> Status {
     guard!({
@@ -1103,6 +1138,58 @@ pub extern "C" fn swr_bootstrap_query_v13(out: *mut BootstrapInfoV13, caller_siz
                 ax_extra_entry_size: std::mem::size_of::<AxExtraEntry>() as u32,
                 transaction_v13_size: std::mem::size_of::<TransactionV13>() as u32,
             };
+        }
+        SWR_OK
+    })
+}
+
+/// Rev 0.14 discovery (additive): the 0.13 view at identical offsets (abi_minor 14; api_table_size 192 and fn_count 23: the 0.8 table +
+/// `text_run_outline`) + the capability word.
+#[no_mangle]
+pub extern "C" fn swr_bootstrap_query_v14(out: *mut BootstrapInfoV14, caller_size: u32) -> Status {
+    guard!({
+        let need = std::mem::size_of::<BootstrapInfoV14>() as u32;
+        if out.is_null() || caller_size < need {
+            return E_BAD_ARG;
+        }
+        let mut v13 = std::mem::MaybeUninit::<BootstrapInfoV13>::uninit();
+        let rc = swr_bootstrap_query_v13(v13.as_mut_ptr(), std::mem::size_of::<BootstrapInfoV13>() as u32);
+        if rc != SWR_OK {
+            return rc;
+        }
+        let mut v13 = unsafe { v13.assume_init() };
+        {
+            let base = &mut v13.v12.v11.v10.v09.v08.v07.base;
+            base.abi_minor = ABI_MINOR_V14;
+            base.struct_size = need;
+            base.api_table_size = std::mem::size_of::<ApiV14>() as u32;
+            base.fn_count = API_V14_FN_COUNT;
+        }
+        unsafe {
+            *out = BootstrapInfoV14 { v13, caps: CAP_TEXT_OUTLINE, reserved: 0 };
+        }
+        SWR_OK
+    })
+}
+
+/// Rev 0.14 function table: the 0.8 table at identical offsets + `text_run_outline` (192 bytes). A caller that passes only
+/// `sizeof(swr_api_v08)` (184) still gets the 0.8 table, so a host can ask for either; below 184 is SWR_E_ABI.
+#[no_mangle]
+pub extern "C" fn swr_get_api_v14(out: *mut ApiV14, caller_size: u32) -> Status {
+    guard!({
+        if out.is_null() || (caller_size as usize) < std::mem::size_of::<ApiV08>() {
+            return E_ABI;
+        }
+        let full = (caller_size as usize) >= std::mem::size_of::<ApiV14>();
+        let rc = swr_get_api_v08(out as *mut ApiV08, std::mem::size_of::<ApiV08>() as u32);
+        if rc != SWR_OK {
+            return rc;
+        }
+        if full {
+            unsafe {
+                (*out).v08.struct_size = std::mem::size_of::<ApiV14>() as u32;
+                std::ptr::addr_of_mut!((*out).text_run_outline).write(swr_text_run_outline);
+            }
         }
         SWR_OK
     })
@@ -1799,6 +1886,59 @@ mod v08_tests {
         assert_eq!(swr_bootstrap_query_v13(std::ptr::null_mut(), 160), E_BAD_ARG);
         let mut small = std::mem::MaybeUninit::<BootstrapInfoV13>::uninit();
         assert_eq!(swr_bootstrap_query_v13(small.as_mut_ptr(), 152), E_BAD_ARG);
+    }
+
+    #[test]
+    fn bootstrap_v14_extends_v13_reports_minor_14_and_the_outline_capability() {
+        let mut b = std::mem::MaybeUninit::<BootstrapInfoV14>::uninit();
+        assert_eq!(swr_bootstrap_query_v14(b.as_mut_ptr(), std::mem::size_of::<BootstrapInfoV14>() as u32), SWR_OK);
+        let b = unsafe { b.assume_init() };
+        let base = &b.v13.v12.v11.v10.v09.v08.v07.base;
+        assert_eq!(base.abi_minor, 14);
+        assert_eq!(base.struct_size, 168);
+        assert_eq!(base.api_table_size, 192);
+        assert_eq!(base.fn_count, 23);
+        assert_eq!(b.caps & CAP_TEXT_OUTLINE, CAP_TEXT_OUTLINE);
+        assert_eq!(b.v13.ax_extra_entry_size, 64);
+        assert_eq!(b.v13.transaction_v13_size, 144);
+        // The 0.13 view still reports 13 and the 184-byte table.
+        let mut v13 = std::mem::MaybeUninit::<BootstrapInfoV13>::uninit();
+        assert_eq!(swr_bootstrap_query_v13(v13.as_mut_ptr(), std::mem::size_of::<BootstrapInfoV13>() as u32), SWR_OK);
+        let v13 = unsafe { v13.assume_init() };
+        assert_eq!(v13.v12.v11.v10.v09.v08.v07.base.abi_minor, 13);
+        assert_eq!(v13.v12.v11.v10.v09.v08.v07.base.api_table_size, 184);
+        assert_eq!(swr_bootstrap_query_v14(std::ptr::null_mut(), 168), E_BAD_ARG);
+        let mut small = std::mem::MaybeUninit::<BootstrapInfoV14>::uninit();
+        assert_eq!(swr_bootstrap_query_v14(small.as_mut_ptr(), 160), E_BAD_ARG);
+    }
+
+    #[test]
+    fn api_v14_table_adds_the_outline_entry_and_keeps_the_08_prefix() {
+        let mut t = std::mem::MaybeUninit::<ApiV14>::zeroed();
+        assert_eq!(swr_get_api_v14(t.as_mut_ptr(), std::mem::size_of::<ApiV14>() as u32), SWR_OK);
+        let t = unsafe { t.assume_init() };
+        assert_eq!(t.v08.struct_size, 192);
+        assert!(t.text_run_outline as usize == swr_text_run_outline as usize);
+        assert!(t.v08.text_run_cells as usize == swr_text_run_cells as usize);
+        // A 184-byte caller gets the 0.8 table only; smaller is E_ABI.
+        let mut small = std::mem::MaybeUninit::<ApiV08>::zeroed();
+        assert_eq!(swr_get_api_v14(small.as_mut_ptr() as *mut ApiV14, 184), SWR_OK);
+        assert_eq!(unsafe { small.assume_init() }.struct_size, 184);
+        assert_eq!(swr_get_api_v14(std::ptr::null_mut(), 192), E_ABI);
+        assert_eq!(swr_get_api_v14(small.as_mut_ptr() as *mut ApiV14, 176), E_ABI);
+    }
+
+    #[test]
+    fn outline_entry_validates_arguments_before_anything_else() {
+        let mut n = 0u32;
+        let mut p = 0u32;
+        let mut c = [0u8; 4];
+        assert_eq!(swr_text_run_outline(1, std::ptr::null_mut(), 0, std::ptr::null_mut(), 0, std::ptr::null_mut(), &mut p), E_BAD_ARG);
+        assert_eq!(swr_text_run_outline(1, std::ptr::null_mut(), 0, std::ptr::null_mut(), 0, &mut n, std::ptr::null_mut()), E_BAD_ARG);
+        assert_eq!(swr_text_run_outline(1, std::ptr::null_mut(), 4, std::ptr::null_mut(), 0, &mut n, &mut p), E_BAD_ARG);
+        assert_eq!(swr_text_run_outline(1, c.as_mut_ptr(), 4, std::ptr::null_mut(), 2, &mut n, &mut p), E_BAD_ARG);
+        // No UI thread in a unit test.
+        assert_eq!(swr_text_run_outline(1, c.as_mut_ptr(), 4, std::ptr::null_mut(), 0, &mut n, &mut p), E_WRONG_THREAD);
     }
 
     #[test]

@@ -126,34 +126,65 @@ unsafe fn read_table(face: &IDWriteFontFace3, tag: &[u8; 4]) -> Option<Vec<u8>> 
     out
 }
 
-unsafe fn file_name(face: &IDWriteFontFace3) -> String {
-    let f: IDWriteFontFace = match face.cast() {
-        Ok(f) => f,
-        Err(_) => return String::new(),
-    };
+/// Full path of the local file behind a face (None for a non-local loader, e.g. an in-memory font).
+unsafe fn file_path(face: &IDWriteFontFace3) -> Option<String> {
+    let f: IDWriteFontFace = face.cast().ok()?;
     let mut n = 0u32;
     if f.GetFiles(&mut n, None).is_err() || n == 0 {
-        return String::new();
+        return None;
     }
     let mut files: Vec<Option<IDWriteFontFile>> = vec![None; n as usize];
     if f.GetFiles(&mut n, Some(files.as_mut_ptr())).is_err() {
-        return String::new();
+        return None;
     }
-    let Some(Some(file)) = files.first() else { return String::new() };
+    let file = files.first()?.as_ref()?;
     let mut key: *mut core::ffi::c_void = std::ptr::null_mut();
     let mut ksz = 0u32;
     if file.GetReferenceKey(&mut key, &mut ksz).is_err() {
-        return String::new();
+        return None;
     }
-    let Ok(loader) = file.GetLoader() else { return String::new() };
-    let Ok(local) = loader.cast::<IDWriteLocalFontFileLoader>() else { return String::new() };
-    let Ok(len) = local.GetFilePathLengthFromKey(key, ksz) else { return String::new() };
+    let loader = file.GetLoader().ok()?;
+    let local = loader.cast::<IDWriteLocalFontFileLoader>().ok()?;
+    let len = local.GetFilePathLengthFromKey(key, ksz).ok()?;
     let mut buf = vec![0u16; len as usize + 1];
     if local.GetFilePathFromKey(key, ksz, &mut buf).is_err() {
-        return String::new();
+        return None;
     }
-    let path = String::from_utf16_lossy(&buf[..len as usize]);
-    path.rsplit(['\\', '/']).next().unwrap_or("").to_string()
+    Some(String::from_utf16_lossy(&buf[..len as usize]))
+}
+
+unsafe fn file_name(face: &IDWriteFontFace3) -> String {
+    match file_path(face) {
+        Some(path) => path.rsplit(['\\', '/']).next().unwrap_or("").to_string(),
+        None => String::new(),
+    }
+}
+
+/// Where the outlines of a face live: its font file, the face index inside it (a collection) and the variation axis values of
+/// the instance (axis tag characters in order, value). Rev 0.14 glyph outlines read the file with ttf-parser.
+#[derive(Clone, Debug, PartialEq)]
+pub struct FaceSource {
+    pub path: String,
+    pub index: u32,
+    pub axes: Vec<([u8; 4], f32)>,
+}
+
+unsafe fn face_source(face: &IDWriteFontFace3) -> Option<FaceSource> {
+    let path = file_path(face)?;
+    let base: IDWriteFontFace = face.cast().ok()?;
+    let index = base.GetIndex();
+    let mut axes: Vec<([u8; 4], f32)> = Vec::new();
+    if let Ok(f5) = face.cast::<IDWriteFontFace5>() {
+        if f5.HasVariations().as_bool() {
+            let n = f5.GetFontAxisValueCount() as usize;
+            let mut vals = vec![DWRITE_FONT_AXIS_VALUE::default(); n];
+            if f5.GetFontAxisValues(&mut vals).is_ok() {
+                // DirectWrite packs the tag little-endian: its bytes are the tag characters in order.
+                axes = vals.iter().map(|v| (v.axisTag.0.to_le_bytes(), v.value)).collect();
+            }
+        }
+    }
+    Some(FaceSource { path, index, axes })
 }
 
 unsafe fn axes_of(face: &IDWriteFontFace3) -> (bool, Vec<AxisRange>) {
@@ -275,6 +306,44 @@ pub fn identify(candidates: &[String], ch: u32, gid: u32) -> Option<FaceDesc> {
                 let mut g = 0u16;
                 if unsafe { base.GetGlyphIndices(&ch, 1, &mut g) }.is_ok() && g as u32 == gid {
                     return Some(unsafe { describe_face(fam, f) });
+                }
+            }
+        }
+        None
+    })
+    .flatten()
+}
+
+/// Outline source of the real face `(weight, italic)` of an installed family: the nearest real instance, as `faces::pick_face`
+/// chooses it (no simulation), so a simulated bold or oblique is drawn from its upright or regular base face.
+pub fn source_of(family: &str, weight: u32, italic: bool) -> Option<FaceSource> {
+    with_dw(|d| {
+        let list = d.family(family);
+        let entries: Vec<FaceEntry> = list.iter().map(|f| f.entry).collect();
+        if entries.is_empty() {
+            return None;
+        }
+        let p = faces::pick_face(&entries, weight, italic, true, true);
+        let hit = list.iter().find(|f| f.entry.weight == p.weight && f.entry.italic == p.italic).or_else(|| list.first())?;
+        unsafe { face_source(&hit.face) }
+    })
+    .flatten()
+}
+
+/// `identify`, answering with the outline source of the face that drew `gid` for `ch`.
+pub fn identify_source(candidates: &[String], ch: u32, gid: u32) -> Option<FaceSource> {
+    if gid == 0 {
+        return None;
+    }
+    with_dw(|d| {
+        for fam in candidates {
+            let list = d.family(fam);
+            let order = list.iter().filter(|f| f.entry.weight == 400 && !f.entry.italic).chain(list.iter().take(1));
+            for f in order {
+                let Ok(base) = f.face.cast::<IDWriteFontFace>() else { continue };
+                let mut g = 0u16;
+                if unsafe { base.GetGlyphIndices(&ch, 1, &mut g) }.is_ok() && g as u32 == gid {
+                    return unsafe { face_source(&f.face) };
                 }
             }
         }

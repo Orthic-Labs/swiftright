@@ -35,4 +35,8 @@ windows = { version = "=0.61.3", features = ["Win32_Graphics_DirectWrite", "Win3
 # the writer is constructed at the point of use, so nothing is initialised for the host.
 rightkit-logs = { version = "=0.3.0", default-features = false }
 
+# Same version already in Cargo.lock (fontdb). Glyph outlines of the face a run was drawn with, variation axes applied (src/outline.rs,
+# ABI 0.14). Default features (std, variable-fonts, ...) are the ones fontdb already unifies.
+ttf-parser = "=0.25.1"
+
 [workspace]
