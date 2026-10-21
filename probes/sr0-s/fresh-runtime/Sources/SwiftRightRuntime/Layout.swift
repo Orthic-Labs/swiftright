@@ -66,11 +66,18 @@ public struct Subview {
         self.mirrorBounds = mirrorBounds
     }
 
+    /// The runtime's portable size; ask for it by type (`let s: LayoutSize = ...`).
+    @_disfavoredOverload
     public func sizeThatFits(_ proposal: ProposedViewSize) -> LayoutSize {
         graph.measure(node, proposal)
     }
 
-    @_disfavoredOverload
+    /// The subview's `.layoutPriority(_:)` (0 when none is set).
+    /// Apple: https://developer.apple.com/documentation/swiftui/layoutsubview/priority
+    public var priority: Double { graph.layoutPriority(of: node) }
+
+    /// SwiftUI's `LayoutSubview.sizeThatFits(_:)` returns `CGSize`, so an untyped `var size = subview.sizeThatFits(...)` is a CGSize as in SwiftUI.
+    /// Apple: https://developer.apple.com/documentation/swiftui/layoutsubview/sizethatfits(_:)
     public func sizeThatFits(_ proposal: ProposedViewSize) -> CGSize {
         graph.measure(node, proposal).cgSize
     }

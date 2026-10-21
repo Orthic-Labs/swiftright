@@ -179,3 +179,25 @@ extension Text {
     /// Apple: https://developer.apple.com/documentation/swiftui/text/+(_:_:)
     public static func + (lhs: Text, rhs: Text) -> Text { Text(lhs.string + rhs.string) }
 }
+
+// MARK: - Line spacing (#68)
+
+private enum LineSpacingKey: EnvironmentKey {
+    static var defaultValue: CGFloat { 0 }
+}
+
+extension EnvironmentValues {
+    /// Apple: https://developer.apple.com/documentation/swiftui/environmentvalues/linespacing
+    public var lineSpacing: CGFloat {
+        get { self[LineSpacingKey.self] }
+        set { self[LineSpacingKey.self] = newValue }
+    }
+}
+
+extension View {
+    /// Extra space between lines of text. Carried in the environment; Text layout does not apply it yet (#68).
+    /// Apple: https://developer.apple.com/documentation/swiftui/view/linespacing(_:)
+    public func lineSpacing(_ lineSpacing: CGFloat) -> some View {
+        environment(\.lineSpacing, lineSpacing)
+    }
+}

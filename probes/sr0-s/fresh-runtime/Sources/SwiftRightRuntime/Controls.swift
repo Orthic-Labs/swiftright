@@ -309,7 +309,7 @@ extension Label where Title == Text, Icon == Image {
 /// Apple: https://developer.apple.com/documentation/swiftui/divider
 @MainActor
 public struct Divider: View, PrimitiveView {
-    public init() {}
+    nonisolated public init() {}
 
     @MainActor public var body: Never { return fatalError("primitive view has no body") }
     var nodeKind: NodeKind { .divider }

@@ -1,0 +1,16 @@
+diff --git a/Sources/MarkdownUI/Utility/Color+RGBA.swift b/Sources/MarkdownUI/Utility/Color+RGBA.swift
+index 583e9a4..be56dff 100644
+--- a/Sources/MarkdownUI/Utility/Color+RGBA.swift
++++ b/Sources/MarkdownUI/Utility/Color+RGBA.swift
+@@ -17,7 +17,10 @@ extension Color {
+   ///   - light: The light appearance color value.
+   ///   - dark: The dark appearance color value.
+   public init(light: @escaping @autoclosure () -> Color, dark: @escaping @autoclosure () -> Color) {
+-    #if os(watchOS)
++    #if SWIFTRIGHT
++      // SwiftRight: no UIKit/AppKit dynamic colour; the light value (the Windows host draws the light appearance).
++      self = light()
++    #elseif os(watchOS)
+       self = dark()
+     #elseif canImport(UIKit)
+       self.init(

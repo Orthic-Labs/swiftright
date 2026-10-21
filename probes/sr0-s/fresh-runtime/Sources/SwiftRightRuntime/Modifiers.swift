@@ -356,6 +356,12 @@ extension View {
         }))
     }
 
+    /// Primary and secondary styles (hierarchical symbols and text). This runtime draws symbols in one colour, so the primary style applies.
+    /// Apple: https://developer.apple.com/documentation/swiftui/view/foregroundstyle(_:_:)
+    public func foregroundStyle<S1: ShapeStyle, S2: ShapeStyle>(_ primary: S1, _ secondary: S2) -> some View {
+        foregroundStyle(primary)
+    }
+
     /// Foreground colour of the content. Apple: https://developer.apple.com/documentation/swiftui/view/foregroundstyle(_:)
     public func foregroundStyle<S: ShapeStyle>(_ style: S) -> some View {
         let color = style.resolvedColor

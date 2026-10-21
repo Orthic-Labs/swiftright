@@ -133,7 +133,7 @@ struct CGSizeLayoutProbe: Layout {
     func sizeThatFits(proposal: ProposedViewSize, subviews: Subviews, cache: inout Int) -> CGSize {
         cache += 1
         let sizes = subviews.map { $0.sizeThatFits(.unspecified) }
-        let _: [LayoutSize] = sizes
+        let _: [CGSize] = sizes  // untyped subview sizes are CGSize, as SwiftUI (#68)
         return CGSize(width: sizes.reduce(0) { $0 + $1.width } + 20, height: sizes.map(\.height).max()! + 10)
     }
 

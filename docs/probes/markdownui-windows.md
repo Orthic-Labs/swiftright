@@ -83,3 +83,18 @@ Roughly: a public `AnyView`, `ViewModifier`, `GeometryReader`/`Anchor`/`anchorPr
 ## Reproduce
 
 Sources of the probe (shim, stub, two manifests) are small: `Package.swift` for `probe` has targets `SwiftUI` (shim), `NetworkImage` (stub or real), `MarkdownUI`, with the pinned swift-cmark as a path package and the runtime at the stage path; variant A is the same without the shim. The shim is two lines: `@_exported import SwiftRightRuntime` and `@_exported import Foundation`. Build with `swift build --package-path <dir> --scratch-path <dir> --jobs 2` using the toolchain at `C:\Users\adrds\AppData\Local\Programs\Swift\Toolchains\6.4.0+Asserts\usr\bin`.
+
+## 21 October: compiles on the Mac against SwiftRight (#68)
+MarkdownUI 2.4.1 now type-checks with zero errors against the SwiftRight runtime: `probes/markdownui-compat/check.sh` prints "unique errors: 0, BUILD COMPLETE".
+- **How the probe works:**
+  - Sources are pinned (MarkdownUI 5f613358, swift-cmark 3ccff77b).
+  - A `SwiftUI` shim module re-exports the runtime, plus Foundation and, on Apple platforms, CoreGraphics.
+  - A NetworkImage stub returns `RGBAImage`.
+- **Vendor patches** (`probes/markdownui-compat/patches/`), active under `SWIFTRIGHT`:
+  - The asset image provider resolves images by name, because there is no UIKit or AppKit image type.
+  - `Color(light:dark:)` uses the light value.
+- **Runtime APIs added** (three passes): the SwiftUI AttributedString scope, Text.LineStyle, Font variants, custom alignment guides, Grid, anchor preferences, LabelStyle, AnyShapeStyle, transformEnvironment/transformPreference, OpenURLAction, @ScaledMetric, lineSpacing and multilineTextAlignment (both carried), `LayoutSubview.priority`, and the CGSize-first `sizeThatFits`.
+- **Not done yet:**
+  - A Windows compile and a rendered sample.
+  - Styled Text runs: inline bold, italic, code and links render as plain characters, and inline images are not drawn.
+  - `multilineTextAlignment` and `lineSpacing` are carried but not applied by Text layout.
