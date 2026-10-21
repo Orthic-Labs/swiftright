@@ -294,9 +294,9 @@ finally {
   # Required names: only those tied to steps that ran. A name counts when any recognised text contains it (digits normalised: 'three' = '3').
   $minPeak = 200; $navRan = ($nav -ne $null -and $nav.Count -gt 0)
   # Offline System.Speech cannot resolve Narrator's fast TTS word for word (Dell narrator23-b: roles such as 'button' and 'Row 3' were not
-  # recognised), but it does hear the provider-supplied names. Required, from any grammar's text: a word of the window title (UIA name
-  # from our provider, 'SwiftRight FreshOnBridge': 'fresh' was heard in every Dell run, 'swift right' only in some) once Narrator ran,
-  # and 'Delete' (the button name Narrator reached).
+  # recognised), but it does hear names. Required, from any grammar's text: a word of the window title ('SwiftRight FreshOnBridge', likely
+  # from the HWND default provider: shows Narrator spoke in our window; 'fresh' was heard in every Dell run, 'swift right' only in some)
+  # once Narrator ran, and 'Delete' (the UIA name our provider gives the button Narrator reached: the provider-content proof).
   $req = New-Object System.Collections.Generic.List[string]
   if ($narStarted) { $req.Add('fresh') }
   if ($reached) { $req.Add('Delete') }
