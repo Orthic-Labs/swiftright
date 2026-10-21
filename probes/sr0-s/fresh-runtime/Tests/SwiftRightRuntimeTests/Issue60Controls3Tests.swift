@@ -50,7 +50,7 @@ private struct NestedModelHost: View {
 final class Issue60Controls3Tests: XCTestCase {
     // MARK: sidebar
 
-    func testSidebarRowsAreThirtyTwoPointsAndStartTwentyPointsIn() throws {
+    func testSidebarRowsAreThirtyTwoPointsAndStartSixteenPointsIn() throws {
         let graph = i60Graph(SidebarRows())
         let list = try XCTUnwrap(i60Nodes(graph, kind: "List").first)
         XCTAssertEqual(list.listStyle, "SidebarListStyle")
@@ -59,7 +59,7 @@ final class Issue60Controls3Tests: XCTestCase {
         for (i, row) in rows.enumerated() {
             // 10 pt top inset + 32 pt per row, the 16 pt line centred: 10 + 16 + 32 i
             XCTAssertEqual(Double(row.frame.minY - list.frame.minY), 18 + 32 * Double(i), accuracy: 0.5)
-            XCTAssertEqual(Double(row.frame.minX - list.frame.minX), 20, accuracy: 1e-9)
+            XCTAssertEqual(Double(row.frame.minX - list.frame.minX), 16, accuracy: 1e-9)   // measured on macOS 27
         }
     }
 
@@ -68,7 +68,7 @@ final class Issue60Controls3Tests: XCTestCase {
         XCTAssertEqual(ListMetrics.rowHeight(forContent: 16, look: .inset), 24)
         XCTAssertEqual(ListMetrics.rowHeight(forContent: 16, look: .plain), 24)
         XCTAssertEqual(ListMetrics.rowHeight(forContent: 16), 24, "the style-less call is unchanged")
-        XCTAssertEqual(ListMetrics.contentInset(.sidebar), 20)
+        XCTAssertEqual(ListMetrics.contentInset(.sidebar), 16)
         XCTAssertEqual(ListMetrics.contentInset(.inset), 16)
         XCTAssertEqual(ListMetrics.topInset(.sidebar), 10)
         XCTAssertEqual(ListMetrics.documentHeight(.sidebar, rowHeights: [32, 32, 32]), 116)

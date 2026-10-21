@@ -49,8 +49,9 @@ public enum ListMetrics {
     public static let rowContentPadding: CGFloat = 8
     /// The sidebar style's rows (E13: SwiftUI draws 32 pt rows; captured on the Mac, the padding around taller content is not measured and is kept at 8 pt).
     public static let sidebarRowMinHeight: CGFloat = 32
-    /// Where a sidebar row's content starts: the 10 pt selection inset plus 10 pt inside the selection (estimate, not measured).
-    public static let sidebarContentInset: CGFloat = 20
+    /// Where a sidebar row's content starts: 16 pt, measured on macOS 27 (offscreen List(.sidebar), Text frames at minX 16 for every row, 21 Oct 2026;
+    /// was an unmeasured 20, which put Windows labels 11 px right of the Mac at 2.5x in CI 39612991105).
+    public static let sidebarContentInset: CGFloat = 16
     /// The legacy vertical scroller's reserved width at the inset List's trailing edge (measured, controls-b).
     public static let insetScrollerGutter: CGFloat = 16.8
     /// The sidebar's row width is 17 pt (42.5 px) short of the list when its rows overflow (Mac rows [150,125,457.5,80] in a 500 px list, CI 39608902542), though no scroller is drawn.

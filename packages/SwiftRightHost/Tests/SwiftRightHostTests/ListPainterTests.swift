@@ -241,7 +241,7 @@ final class ListPainterTests: XCTestCase {
         XCTAssertEqual(ListMetrics.rowHeight(forContent: 16, look: .sidebar), 32)
         XCTAssertEqual(ListMetrics.rowHeight(forContent: 16, look: .inset), 24)
         XCTAssertEqual(ListMetrics.rowHeight(forContent: 30, look: .sidebar), 38)
-        XCTAssertEqual(ListMetrics.contentInset(.sidebar), 20)
+        XCTAssertEqual(ListMetrics.contentInset(.sidebar), 16)
     }
 
     func testSeparatorColumnMatchesTheMacPixels() {
