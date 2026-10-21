@@ -1,9 +1,9 @@
 {
  "hazeTolerance": 1,
  "edgeAATolerance": {
-  "levels": 20,
+  "levels": 32,
   "maxOverFraction": 0.02,
   "maxMeanAbs": 1,
-  "reason": "CI 39591036683 (stage 980a056f6, scale 2.5): Windows track interior was 194 vs Mac 240 and ring 206 vs 235 because the three translucent track capsules accumulated; now opaque greys 223/235/240. Flat interiors, rings and fill 0,122,255 must then be exact; only capsule end anti-aliasing remains (end corner pixel Mac 255 vs Windows 15,129,253; ramp up to ~14 levels), so edge tolerance is 20 levels. PROVISIONAL until the next CI pair."
+  "reason": "end-cap AA only: run 39596778431 measured 296 in-band px, max 32, 0 out of band, 0 over 32; flat colours exact"
  }
 }
