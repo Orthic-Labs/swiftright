@@ -1,8 +1,19 @@
 {
  "edgeAATolerance": {
-  "levels": 160,
-  "maxOverFraction": 0.05,
-  "maxMeanAbs": 5,
-  "reason": "PROVISIONAL (issue #69): not yet measured on a CI pair. The rotated edges and interiors are bilinear resamples on both sides (Core Animation layer vs host RotatedRaster); the star is a Segoe Fluent substitute glyph. Fit from the first run."
- }
+  "levels": 24,
+  "maxOverFraction": 0.02,
+  "maxMeanAbs": 3,
+  "reason": "Rotated gradient bitmap edges (issue #69). CI 39617668587 (bilinear fade to transparent): interior exact to 1 level, edges up to 55. Refit offline on that capture: area coverage of the source rectangle inset by 0.2 texels gives max 10, mean 0.47 over 5386 edge pixels (inset 0.17: max 17, 0.23: max 13). Tolerance = fit max plus margin; PROVISIONAL until the refit runs on CI."
+ },
+ "excludeRects": [
+  {
+   "name": "star.fill under 30 degrees: Windows draws the Segoe Fluent substitute glyph (sharp points) for the SF Symbol (rounded points), providerPolicy substitute-provider-unverified; the rotation of the symbol bitmap goes through the same RotatedRaster as the gated gradient bitmap. Diff bbox on CI 39617668587: x 455..577, y 246..366.",
+   "rect": [
+    448,
+    239,
+    585,
+    374
+   ]
+  }
+ ]
 }

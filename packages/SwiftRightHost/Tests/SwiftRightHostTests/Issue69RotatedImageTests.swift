@@ -28,7 +28,8 @@ final class Issue69RotatedImageTests: XCTestCase {
         let turn = ShapeRotation(radians: .pi / 6, anchorX: 10, anchorY: 5).transform
         let out = try XCTUnwrap(RotatedRaster.rotate(rgba: rgba, width: 20, height: 10, placement: Rect(x: 0, y: 0, w: 20, h: 10), transform: turn))
         let alphas = stride(from: 3, to: out.image.rgba.count, by: 4).map { Double(out.image.rgba[$0]) / 255 }
-        XCTAssertEqual(alphas.reduce(0, +), 200, accuracy: 4)
+        // area coverage of the rectangle inset by 0.2 texels on each side: 19.6 x 9.6
+        XCTAssertEqual(alphas.reduce(0, +), 19.6 * 9.6, accuracy: 2)
         XCTAssertGreaterThan(alphas.filter { $0 > 0.05 && $0 < 0.95 }.count, 20, "edges are partial coverage")
     }
 
