@@ -1,8 +1,8 @@
 {
  "edgeAATolerance": {
-  "levels": 48,
-  "maxOverFraction": 0.02,
-  "maxMeanAbs": 2,
-  "reason": "PROVISIONAL, unmeasured (issue #60 pass 2): a smooth gradient has no uniform 3x3 neighbourhood, so every gradient pixel is inside the gate's edge band and the statistics bound the interpolation difference (8-bit rounding, colour-space and dither choices): mean absolute difference at most 2 levels. The per-pixel ceiling and the over-32 fraction bound the anti-aliased edge of the rounded rectangles. Fit from the first CI pair, then tighten (ideally to hazeTolerance 1)."
+  "levels": 34,
+  "maxOverFraction": 0.01,
+  "maxMeanAbs": 8,
+  "reason": "Measured on CI 39583112762 (issue #60 pass 3; 3 identical runs, gamma-sRGB interpolation: max 48, mean 21.4, 28% over 32). macOS 27 interpolates gradients perceptually (Oklab); GradientRaster now does too. Simulated residual of the Oklab raster against the Mac capture over all 8 cells (rows, 45 degree diagonals, 2- and 3-stop, rounded-corner coverage from the Windows capture): max 29 levels, mean 7.1, 0 pixels over 32, 0 outside the band. Tolerance = measured plus margin. The residual is a colour-model difference not explained by Oklab, CIELAB, IPT, ICtCp, wide-gamut or power-law variants (Mac is slightly darker mid-gradient and bends near saturated orange/blue), plus +-1 dither on the Mac; tighten if the model is identified. Geometry (stop mapping, 45 degree corner-to-corner lines) matches exactly."
  }
 }

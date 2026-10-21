@@ -17,13 +17,20 @@ final class Issue60ProgressViewTests: XCTestCase {
         XCTAssertEqual(P.fractionOf(value: Double.nan, total: 1), 0)
     }
 
-    func testDeterminateBarIsSixPointsTallAndFillsTheFraction() throws {
+    func testDeterminateBarIsEightPointsTallAndFillsTheFractionLessTwoPixels() throws {
         let graph = i60Graph(ProgressView(value: 0.25).frame(width: 100), width: 300, height: 200)
         let capsules = i60Nodes(graph, kind: "Capsule")
-        XCTAssertEqual(capsules.count, 2, "track, fill")
-        let track = capsules[0], fill = capsules[1]
-        XCTAssertEqual(track.frame.width, 100); XCTAssertEqual(track.frame.height, 6)
-        XCTAssertEqual(fill.frame.width, 25); XCTAssertEqual(fill.frame.height, 6)
+        XCTAssertEqual(capsules.count, 4, "track edge, track ring, track body, fill")
+        let track = capsules[0], fill = capsules[3]
+        XCTAssertEqual(track.frame.width, 100); XCTAssertEqual(track.frame.height, 8)
+        XCTAssertEqual(Double(fill.frame.width), 25 - 0.8, accuracy: 0.5, "0.8 pt (2 px at scale 2.5) shorter than the fraction")
+        XCTAssertEqual(fill.frame.height, 8)
+        let rings = capsules[0..<3].compactMap { node -> Double? in
+            if case .semanticAlpha("label", let a)? = node.shape?.paint?.color { return a }
+            return nil
+        }
+        XCTAssertEqual(rings.count, 3)
+        XCTAssertEqual(rings[0], 32.0 / 216.0, accuracy: 1e-9); XCTAssertEqual(rings[2], 15.0 / 216.0, accuracy: 1e-9)
         XCTAssertEqual(fill.frame.minX, track.frame.minX, "the fill starts at the leading edge")
         XCTAssertEqual(fill.frame.minY, track.frame.minY)
         XCTAssertEqual(fill.shape?.paint?.color, .semantic("accentColor"), "the tint, which is the accent colour unless .tint(_:) set one")
@@ -31,9 +38,9 @@ final class Issue60ProgressViewTests: XCTestCase {
 
     func testValueBeyondTotalFillsTheTrackAndTotalScalesTheFraction() {
         let full = i60Graph(ProgressView(value: 5.0, total: 4.0).frame(width: 80))
-        XCTAssertEqual(i60Nodes(full, kind: "Capsule")[1].frame.width, 80)
+        XCTAssertEqual(Double(i60Nodes(full, kind: "Capsule")[3].frame.width), 80 - 0.8, accuracy: 0.5)
         let half = i60Graph(ProgressView(value: 5.0, total: 10.0).frame(width: 80))
-        XCTAssertEqual(i60Nodes(half, kind: "Capsule")[1].frame.width, 40)
+        XCTAssertEqual(Double(i60Nodes(half, kind: "Capsule")[3].frame.width), 40 - 0.8, accuracy: 0.5)
     }
 
     func testLabelSitsAboveTheBarLeadingAligned() throws {
@@ -41,7 +48,8 @@ final class Issue60ProgressViewTests: XCTestCase {
         let label = try XCTUnwrap(i60Text(graph, "Loading"))
         let track = try XCTUnwrap(i60Nodes(graph, kind: "Capsule").first)
         XCTAssertEqual(label.frame.minX, track.frame.minX)
-        XCTAssertEqual(Double(track.frame.minY), Double(label.frame.minY) + Double(label.frame.height) + 4, accuracy: 0.5)
+        // the 8 pt bar is centred in its 19.6 pt view, 4 pt under the label
+        XCTAssertEqual(Double(track.frame.minY), Double(label.frame.minY) + Double(label.frame.height) + 4 + (19.6 - 8) / 2, accuracy: 0.6)
     }
 
     /// The spinner's own rotation node: the outermost `.rotationEffect`-kind node (the tick rotations sit inside it).
@@ -124,7 +132,7 @@ final class Issue60ProgressViewTests: XCTestCase {
     func testViewBuilderLabelForms() {
         let determinate = i60Graph(ProgressView(value: 0.5) { Text("Upload") }.frame(width: 100))
         XCTAssertNotNil(i60Text(determinate, "Upload"))
-        XCTAssertEqual(i60Nodes(determinate, kind: "Capsule").count, 2)
+        XCTAssertEqual(i60Nodes(determinate, kind: "Capsule").count, 4)
         let spinner = i60Graph(ProgressView { Text("Working") })
         XCTAssertNotNil(i60Text(spinner, "Working"))
         XCTAssertEqual(i60Nodes(spinner, kind: "Capsule").count, 12)

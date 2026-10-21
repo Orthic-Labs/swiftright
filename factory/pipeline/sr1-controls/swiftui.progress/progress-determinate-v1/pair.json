@@ -1,8 +1,9 @@
 {
+ "hazeTolerance": 1,
  "edgeAATolerance": {
-  "levels": 64,
-  "maxOverFraction": 0.1,
-  "maxMeanAbs": 10,
-  "reason": "PROVISIONAL, unmeasured (issue #60 pass 2): the capsule ends of the track and fill are anti-aliased and the bar's height, track colour and fill colour are guesses; the gate is wide until the first CI pair measures them, then it is fitted and tightened."
+  "levels": 48,
+  "maxOverFraction": 0.08,
+  "maxMeanAbs": 6,
+  "reason": "Metrics measured on CI 39583112762 (issue #60 pass 3, macOS 27, scale 2.5): bar 8 pt (20 px) centred in a 19.6 pt view, track 240 grey with 1 px rings of 223 and 235, accent fill 0,122,255 full height and 2 px shorter than fraction x width, width exact. ProgressViewControl now reproduces them; PROVISIONAL gate until the next CI pair: only capsule end anti-aliasing (Mac end profile 162/82/27 vs ours from the same ramp) and 1-level opacity rounding of the track greys (hazeTolerance 1) remain."
  }
 }

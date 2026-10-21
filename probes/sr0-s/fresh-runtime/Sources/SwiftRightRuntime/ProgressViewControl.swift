@@ -2,8 +2,10 @@ import Foundation
 
 // Issue #60 (SR1 backlog), passes 1 and 2: ProgressView, composed from existing primitives (shapes, GeometryReader, stacks, `.rotationEffect`). No host painting is needed.
 //
-// Metrics are GUESSED from AppKit's NSProgressIndicator, not measured on macOS 27 (the SR0 oracle has no ProgressView capture yet; pass 2 re-checked and kept them):
-//   - linear bar: 6 pt tall, a capsule track (10% black, `Color.secondary` at 0.2), a capsule fill in the tint (accent) colour, as wide as the proposal;
+// Linear-bar metrics are MEASURED from the macOS 27 capture of progress-determinate-v1 (CI 39583112762, scale 2.5, 200 pt wide bars at 0.3 and 0.7); the circular spinner is still a guess:
+//   - linear bar: 8 pt tall (20 px), centred in a 19.6 pt tall view (49 px: two views 18 pt apart are 94 px between bar tops); the track is a capsule of 240 grey with a 1 px
+//     (0.4 pt) edge of 223 and a second 1 px ring of 235 (layered capsules, drawn as primary at 0.148, 0.0926 and 0.0694 over white); the fill is a capsule in the tint (accent
+//     0,122,255), full height, drawn over the track edge, 0.8 pt (2 px) shorter than fraction x width; track and fill span the proposed width exactly;
 //   - circular (indeterminate): a 16 x 16 spinner of 12 rounded ticks (1.5 x 4 pt, from radius 4 to 8, `Color.primary`), fading from full opacity at the head to 15% at
 //     the tail (the tail trails the head counter-clockwise: the head moves clockwise);
 //   - a label sits above a bar, leading aligned, 4 pt apart; above or below a spinner it is 8 pt apart.
@@ -95,21 +97,31 @@ struct ProgressViewBody<Label: View>: View {
     }
 }
 
-/// Track and fill of a determinate bar: 6 pt tall, as wide as it is offered.
+/// Track and fill of a determinate bar: 8 pt tall inside a 19.6 pt view, as wide as it is offered.
 struct LinearProgressBar: View {
-    static let height: CGFloat = 6
+    static let height: CGFloat = 8
+    /// The view's own height (the bar is centred in it), measured as 49 px at scale 2.5.
+    static let viewHeight: CGFloat = 19.6
+    /// The fill is this much shorter than fraction x width.
+    static let fillInset: CGFloat = 0.8
+    /// The track's 1 px rings at scale 2.5, as `Color.primary` opacities over a white background: 223, 235 and 240 grey.
+    static let ringOpacity = 32.0 / 216.0, innerRingOpacity = 20.0 / 216.0, bodyOpacity = 15.0 / 216.0
+    static let ringWidth: CGFloat = 0.4
     let fraction: Double
 
     @MainActor var body: some View {
         ZStack(alignment: .leading) {
-            Capsule().fill(Color.secondary.opacity(0.2))
+            Capsule().fill(Color.primary.opacity(LinearProgressBar.ringOpacity))
+            Capsule().fill(Color.primary.opacity(LinearProgressBar.innerRingOpacity)).padding(LinearProgressBar.ringWidth)
+            Capsule().fill(Color.primary.opacity(LinearProgressBar.bodyOpacity)).padding(2 * LinearProgressBar.ringWidth)
             GeometryReader { proxy in
                 Capsule()
                     .fill(TintShapeStyle())
-                    .frame(width: proxy.size.width * CGFloat(fraction))
+                    .frame(width: max(proxy.size.width * CGFloat(fraction) - LinearProgressBar.fillInset, 0))
             }
         }
         .frame(height: LinearProgressBar.height)
+        .frame(height: LinearProgressBar.viewHeight)
     }
 }
 

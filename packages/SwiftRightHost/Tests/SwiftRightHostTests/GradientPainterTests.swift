@@ -2,7 +2,7 @@ import XCTest
 @testable import SwiftRightHost
 import SwiftRightBridge
 
-// Issue #60 pass 2: gradients are rasterised by the host (GradientRaster), in gamma-encoded sRGB with straight alpha, and masked by `.clipShape` when filling a shape.
+// Issue #60 pass 2: gradients are rasterised by the host (GradientRaster), interpolated in Oklab (measured against a macOS 27 capture) with straight alpha, and masked by `.clipShape` when filling a shape.
 
 @MainActor
 final class GradientRasterTests: XCTestCase {
@@ -17,39 +17,44 @@ final class GradientRasterTests: XCTestCase {
         try XCTUnwrap(GradientRaster.render(geometry: .linear(start: start, end: end), stops: stops, widthPX: w, heightPX: h, scale: 1))
     }
 
-    func testTwoStopEndpointsAreExactBeyondTheStopsAndTheMidpointIsTheMean() throws {
+    private func assertPixel(_ got: [UInt8], _ want: [Int], accuracy: Int = 1, _ message: String = "", file: StaticString = #filePath, line: UInt = #line) {
+        XCTAssertEqual(got.count, want.count, file: file, line: line)
+        for (g, w) in zip(got, want) { XCTAssertLessThanOrEqual(abs(Int(g) - w), accuracy, "\(got) vs \(want) \(message)", file: file, line: line) }
+    }
+
+    func testTwoStopEndpointsAreExactBeyondTheStopsAndTheMidpointIsThePerceptualMean() throws {
         // stops at 0.25 and 0.75 over 100 px: pixels left of x = 25 and right of x = 75 are the stop colours exactly (the gradient is clamped)
         let image = try linear(.leading, .trailing, [.init(location: 0.25, rgba: black), .init(location: 0.75, rgba: white)], w: 100, h: 2)
         XCTAssertEqual(px(image, 0, 0), [0, 0, 0, 255])
         XCTAssertEqual(px(image, 24, 1), [0, 0, 0, 255])
         XCTAssertEqual(px(image, 75, 0), [255, 255, 255, 255])
         XCTAssertEqual(px(image, 99, 1), [255, 255, 255, 255])
-        // pixel 50 has centre 50.5: t = (50.5 - 25) / 50 = 0.51 -> 130.05
-        XCTAssertEqual(px(image, 50, 0), [130, 130, 130, 255])
-        // an odd width puts a pixel centre on the exact midpoint: 127.5 rounds to 128
+        // pixel 50 has centre 50.5: t = (50.5 - 25) / 50 = 0.51; Oklab L = 0.51, so the linear-light value is 0.51^3 = 0.1327 -> sRGB 102 (not the gamma-space 130)
+        assertPixel(px(image, 50, 0), [102, 102, 102, 255])
+        // an odd width puts a pixel centre on the exact midpoint: L = 0.5 -> linear 0.125 -> sRGB 99
         let odd = try linear(.leading, .trailing, [.init(location: 0, rgba: black), .init(location: 1, rgba: white)], w: 101, h: 1)
-        XCTAssertEqual(px(odd, 50, 0), [128, 128, 128, 255])
-        XCTAssertEqual(px(odd, 0, 0)[0], 1, "the first pixel centre is 0.5 px in: 1.27 of 255")
-        XCTAssertEqual(px(odd, 100, 0)[0], 254)
+        assertPixel(px(odd, 50, 0), [99, 99, 99, 255])
+        assertPixel(px(odd, 0, 0), [0, 0, 0, 255], "the first pixel centre is 0.5 px in: L = 0.005, linear 1e-7")
+        assertPixel(px(odd, 100, 0), [253, 253, 253, 255])
     }
 
-    func testChannelsInterpolateInGammaEncodedSRGB() throws {
-        // red 0xff0000 to blue 0x0000ff at the exact midpoint: both channels 127.5 -> 128 (a linear-light mix would give 188)
+    func testChannelsInterpolateInOklab() throws {
+        // red 0xff0000 to blue 0x0000ff at the exact midpoint: the Oklab mean is a purple (neither the gamma-space 128, 0, 128 nor the linear-light 188, 0, 188)
         let image = try linear(.leading, .trailing, [.init(location: 0, rgba: 0xff0000ff), .init(location: 1, rgba: 0x0000ffff)], w: 101, h: 1)
-        XCTAssertEqual(px(image, 50, 0), [128, 0, 128, 255])
+        assertPixel(px(image, 50, 0), [140, 83, 162, 255])
     }
 
     func testThreeStopsPassThroughTheMiddleColour() throws {
         let image = try linear(.leading, .trailing, [.init(location: 0, rgba: 0xff0000ff), .init(location: 0.5, rgba: 0x00ff00ff), .init(location: 1, rgba: 0x0000ffff)], w: 101, h: 1)
-        XCTAssertEqual(px(image, 50, 0), [0, 255, 0, 255])
-        XCTAssertEqual(px(image, 25, 0), [126, 129, 0, 255], "t = 0.2525: just over half way from red to green")
+        assertPixel(px(image, 50, 0), [0, 255, 0, 255], accuracy: 2)
+        assertPixel(px(image, 25, 0), [207, 169, 0, 255], accuracy: 2, "t = 0.2525: just over half way from red to green, in Oklab")
     }
 
     func testAlphaInterpolatesStraightAndAClearStopKeepsTheOtherHue() throws {
         let image = try linear(.leading, .trailing, [.init(location: 0, rgba: 0x0000ffff), .init(location: 1, rgba: 0x00000000)], w: 101, h: 1)
-        XCTAssertEqual(px(image, 50, 0), [0, 0, 255, 128], "blue to clear fades alpha only; the hue stays blue")
+        assertPixel(px(image, 50, 0), [0, 0, 255, 128], "blue to clear fades alpha only; the hue stays blue")
         let reversed = try linear(.leading, .trailing, [.init(location: 0, rgba: 0x00000000), .init(location: 1, rgba: 0x0000ffff)], w: 101, h: 1)
-        XCTAssertEqual(px(reversed, 50, 0), [0, 0, 255, 128])
+        assertPixel(px(reversed, 50, 0), [0, 0, 255, 128])
     }
 
     func testDiagonalGradientHasConstantColourAlongTheAntiDiagonal() throws {
@@ -59,8 +64,8 @@ final class GradientRasterTests: XCTestCase {
         XCTAssertEqual(px(image, 25, 25), px(image, 50, 0))
         XCTAssertEqual(px(image, 10, 60), px(image, 60, 10))
         XCTAssertNotEqual(px(image, 51, 0), px(image, 50, 0))
-        XCTAssertEqual(px(image, 0, 0)[0], 1)
-        XCTAssertEqual(px(image, 99, 99)[0], 254)
+        assertPixel(px(image, 0, 0), [0, 0, 0, 255])
+        assertPixel(px(image, 99, 99), [253, 253, 253, 255])
         // and it is not the dominant-axis approximation: a pure vertical gradient would give equal colours along a row
         XCTAssertNotEqual(px(image, 0, 50), px(image, 99, 50))
     }
@@ -68,14 +73,16 @@ final class GradientRasterTests: XCTestCase {
     func testAGradientAtOtherAnglesRunsAlongItsOwnLine() throws {
         // bottom -> top: reversed vertical
         let up = try linear(.bottom, .top, [.init(location: 0, rgba: black), .init(location: 1, rgba: white)], w: 4, h: 100)
-        XCTAssertEqual(px(up, 0, 99)[0], 1)
-        XCTAssertEqual(px(up, 3, 0)[0], 254)
+        assertPixel(px(up, 0, 99), [0, 0, 0, 255])
+        assertPixel(px(up, 3, 0), [253, 253, 253, 255])
         XCTAssertEqual(px(up, 0, 40), px(up, 3, 40), "constant along a row")
         // 2:1 frame, corner to corner: the isolines are perpendicular to the (200, 100) vector in pixels, so (x, y) and (x + 100, y - 200 * 100 / ... ) are not equal along the rows
         let wide = try linear(.topLeading, .bottomTrailing, [.init(location: 0, rgba: black), .init(location: 1, rgba: white)], w: 200, h: 100)
         // t = ((x + .5) * 200 + (y + .5) * 100) / 50000: (100, 0) and (0, 200) would match, but along the row t grows 0.004 per px and down a column 0.002
         let a = Double(px(wide, 100, 0)[0]), b = Double(px(wide, 100, 50)[0])
-        XCTAssertEqual(b - a, 255 * 50 * 100 / 50000, accuracy: 1.5)
+        // 50 px down is t + 0.1 (Oklab L 0.5 -> 0.6 over the first half): sRGB 72 -> 100 on the perceptual curve
+        XCTAssertEqual(a, 72, accuracy: 1.5)
+        XCTAssertEqual(b - a, 28, accuracy: 1.5)
     }
 
     func testRadialRingsAreSymmetricAndClampOutsideTheRadii() throws {
@@ -88,7 +95,8 @@ final class GradientRasterTests: XCTestCase {
         XCTAssertEqual(px(image, 49, 70), px(image, 49, 29))
         // r = 25 at (74.5 - 50): t = (24.5 - 10) / 30 for pixel (74, 49.5)...: centre distance along x of pixel 74 from 50 is 24.5 and 0.5 in y
         let r = (24.5 * 24.5 + 0.5 * 0.5).squareRoot()
-        XCTAssertEqual(Double(px(image, 74, 49)[0]), 255 * (r - 10) / 30, accuracy: 0.51)
+        // t = (r - 10) / 30 = 0.4833: Oklab L = t, linear light t^3, sRGB 94
+        XCTAssertEqual(Double(px(image, 74, 49)[0]), 94, accuracy: 1)
         // radii are in points: the same gradient at scale 2 reaches twice as far
         let double = try XCTUnwrap(GradientRaster.render(geometry: .radial(center: .center, startRadius: 10, endRadius: 40), stops: stops, widthPX: 200, heightPX: 200, scale: 2))
         XCTAssertEqual(px(double, 99, 99), [0, 0, 0, 255])
@@ -139,9 +147,9 @@ final class GradientPainterTests: XCTestCase {
         XCTAssertEqual(images.registered.count, 1)
         let entry = try XCTUnwrap(images.registered.values.first)
         XCTAssertEqual(entry.width, 100); XCTAssertEqual(entry.height, 100)
-        XCTAssertEqual(pixel(entry, 0, 0), [1, 1, 1, 255], "row 0 centre is 0.5 px in: 1.27 of 255")
-        XCTAssertEqual(pixel(entry, 60, 49), [126, 126, 126, 255])
-        XCTAssertEqual(pixel(entry, 3, 50), [129, 129, 129, 255])
+        XCTAssertEqual(pixel(entry, 0, 0), [0, 0, 0, 255], "row 0 centre is 0.5 px in: Oklab L = 0.005, linear 1e-7")
+        XCTAssertEqual(Double(pixel(entry, 60, 49)[0]), 98, accuracy: 1)
+        XCTAssertEqual(Double(pixel(entry, 3, 50)[0]), 101, accuracy: 1)
         let placements = upserts.flatMap(\.primitives).compactMap { p -> Rect? in if case .image(_, let r, _) = p { return r } else { return nil } }
         XCTAssertEqual(placements.count, 1)
         XCTAssertEqual(Int(placements[0].w.rounded()), 100)
@@ -154,7 +162,7 @@ final class GradientPainterTests: XCTestCase {
         XCTAssertEqual(pixel(entry, 0, 0)[3], 0, "the corner is outside the rounded rectangle")
         XCTAssertEqual(pixel(entry, w / 2, h / 2)[3], 255)
         // the colour is the gradient's, not the mask's: a pixel on the vertical centre line at x = 25 is 25.5 / 100 of the way
-        XCTAssertEqual(pixel(entry, 25, h / 2)[0], 65)
+        XCTAssertEqual(Double(pixel(entry, 25, h / 2)[0]), 35, accuracy: 1)
         // the edge is anti-aliased: some pixel along the arc is neither 0 nor 255
         var partial = 0
         for y in 0..<h { for x in 0..<w { let a = pixel(entry, x, y)[3]; if a != 0, a != 255 { partial += 1 } } }
