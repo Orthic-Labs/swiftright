@@ -467,18 +467,25 @@ public final class ResolvedNodePainter {
             for (index, primitive) in emission.primitives.enumerated() {
                 func offGrid(_ r: Rect) -> Bool { paintScaled && [r.x, r.y, r.w, r.h].contains { $0 != $0.rounded() } }
                 guard case .rect(let r, let color, let radius, let borderColor, let borderWidth) = primitive, !clipMasks.allSatisfy({ $0.covers(r) }) || offGrid(r) else {
-                    // A text run or a bitmap (drawn by the renderer, which clips by rectangles) is drawn once per band of the clip's inside (#43).
+                    // A text run or a bitmap (drawn by the renderer, which clips by rectangles) is drawn once per band of the clip's inside (#43). A text run's region is its frame grown
+                    // by the ink allowance (`ClipMask.inkExpansionEm`), so overhang past the frame is cut by the mask and not by the frame (#53).
                     var region: Rect?
-                    if case .text = primitive { region = bounds }
+                    if case .text = primitive {
+                        var fontPoints = Self.pointSize(of: node.style.font)
+                        if let runs = node.styledText?.runs { fontPoints = max(fontPoints, runs.map { Self.pointSize(of: $0.font) }.max() ?? 0) }
+                        region = ClipMask.inkRegion(bounds, fontPx: fontPoints * scale)
+                    }
                     if case .image(_, let r, _) = primitive, !Self.isShapeKind(node.kind) { region = r }
                     if let region {
-                        switch ClipMask.rectCover(clipMasks, region: region) {
+                        // Rev 0.12 (#53): the renderer's nested path clips cut the same row bands from the masks' paths over text and bitmaps alike (view.rs `Prim::ClipPath` bounds every
+                        // primitive up to its `clipPop`), so the host builds no bands there and only classifies the region (all / none / partial). Host bands are the fallback for an older renderer.
+                        let specs = clipMasks.compactMap(\.path)
+                        let renderer = usesRendererPaths && specs.count == clipMasks.count
+                        switch ClipMask.rectCover(clipMasks, region: region, needBands: !renderer) {
                         case .all: out.append(primitive)
                         case .none: break
                         case .rects(let bands):
-                            // Rev 0.12: one nested path clip per mask, the renderer cuts the row bands itself. Otherwise the host's bands.
-                            let specs = clipMasks.compactMap(\.path)
-                            if usesRendererPaths, specs.count == clipMasks.count {
+                            if renderer {
                                 out += specs.map { .clipPath(region, $0) } + [primitive] + specs.map { _ in .clipPop }
                             } else {
                                 for band in bands { out += [.clipPush(band), primitive, .clipPop] }

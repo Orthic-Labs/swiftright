@@ -87,7 +87,9 @@ final class ClipShapeTextTests: XCTestCase {
     }
 
     func testTextWhollyOutsideTheClipIsNotDrawn() throws {
-        let p = try prims(Text("Hi").frame(width: 20, height: 10).offset(x: -45, y: -45).frame(width: 100, height: 100).clipShape(Circle()))
+        let p = try prims(Text("Hi").frame(width: 20, height: 10).offset(x: -48, y: -48).frame(width: 100, height: 100).clipShape(Circle()))
+        // The frame's nearest corner is 57 pt from the circle's centre (radius 50); its 0.25 em ink margin (3.25 pt) still leaves it outside (about 53 pt). At -45 the
+        // frame was 53 pt out and the margin reached the circle (#53): ink could genuinely overhang that far, so that placement draws.
         XCTAssertEqual(textCount(p), 0)
     }
 }
