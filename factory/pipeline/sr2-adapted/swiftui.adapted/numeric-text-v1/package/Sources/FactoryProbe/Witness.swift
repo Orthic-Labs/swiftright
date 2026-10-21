@@ -6,10 +6,10 @@ import SwiftUI
 import CoreGraphics
 #endif
 
-// Issue #55, case numeric-text-v1: two counters under .contentTransition(.numericText()) change inside withAnimation(.linear(duration: 1)): 9 -> 10 (a digit is added: the 9
-// leaves as the 0 arrives and the 1 comes in) and 41 -> 42 (the 4 stays, the 1 rolls to the 2). Frames 0, 0.25, 0.5, 0.75, 1 of the manual clock: frames 1-3 are the roll,
-// frame 4 is the settled text. Glyph shapes differ (Segoe UI Variable vs SF), so the glyph bands are excluded and the semantic frames (final text) are gated; what the
-// mid frames decide (travel distance, fade curve, clipping to the line box) is read from the first CI pair.
+// Issue #55, case numeric-text-v1: two counters under .contentTransition(.numericText()) change WITHOUT an animation transaction (9 -> 10, 41 -> 42): the text swaps at once,
+// layout is that of the new text. Static case: SwiftUI's numericText roll cannot be sampled on the factory clock (CI 39585953303: the Mac host showed the settled text
+// already at frame 0 and identical frames after, the roll runs in SwiftUI's render server, not on the manual clock), so the roll is covered by the runtime and painter
+// unit tests only (Issue55NumericTextTests, Issue55NumericTextPainterTests). Glyph shapes differ (Segoe UI Variable vs SF): the glyph bands are excluded.
 struct Witness_e55_numeric_text_v1: View {
     @State private var a = 9
     @State private var b = 41
@@ -19,6 +19,6 @@ struct Witness_e55_numeric_text_v1: View {
             Text("\(b)").font(.system(size: 28)).monospacedDigit().contentTransition(.numericText())
         }
         .frame(width: 240, height: 160)
-        .onAppear { withAnimation(FactoryAnim.wrap(.linear(duration: 1))) { a = 10; b = 42 } }
+        .onAppear { a = 10; b = 42 }
     }
 }

@@ -6,7 +6,10 @@ import WinSDK
 // path (SwiftRightHost: shapes incl. continuous, Image(systemName:), body/custom fonts, line limit). Nothing here paints:
 // the host only places the resolved tree (optionally centred in the viewport), draws the white/dark background, commits it
 // and owns the capture lifecycle (activation veto, owned-window metrics, 10 s lease).
-// Stamped per case by stamp-case.py; the witness file is the case's own and is never touched.
+// Stamped per case by blocks-11-16/new-case.py (lane A: Button and List). Input is routed to the runtime as a user's would be: a pointer press/release on a hit-target
+// node taps its Button or selects its List row, keys run the default-action shortcut, move focus (Tab) and move a List selection (Up/Down) or delete (Delete),
+// accessibility invoke runs a Button. Every bridge event is logged as HOST_EVENT (diagnostics). --factory-capture-lease-seconds=N sets the capture lease (default 10).
+// The witness file is the case's own and is never touched.
 
 // Thread-local hook vetoes activation before the renderer creates its window (nothing ever takes the foreground).
 let hostActivationVeto: HOOKPROC = { code, wParam, lParam in
@@ -96,12 +99,13 @@ struct HostPlacement {
     var errors: [String] = []
     // The bridge drains late main-queue work after onWindowClosed; no window ownership lookup is valid then.
     var windowClosed = false
+    var lastRecord: CommitRecord?
+    var clockDone = false
     static let leaseNS: UInt64 = {
         for a in CommandLine.arguments where a.hasPrefix("--factory-capture-lease-seconds=") { if let n = UInt64(a.dropFirst("--factory-capture-lease-seconds=".count)), n > 0 { return n * 1_000_000_000 } }
         return 10_000_000_000
     }()
-    var lastRecord: CommitRecord?
-    var clockDone = false
+    var pressedNode: UInt64 = 0
     init(_ bridge: Bridge) { self.bridge = bridge }
 
     func ready(_ window: BridgeWindow) {
@@ -178,11 +182,64 @@ struct HostPlacement {
 
     func event(_ event: BridgeEvent) {
         guard !windowClosed else { return }
-        if event.kind == .axAction, event.action == 1, let id = runtimeIDs[event.node] {
+        print("HOST_EVENT kind=\(event.kindRaw) action=\(event.action) node=\(event.node) x=\(event.x) y=\(event.y) mods=\(event.modifiers) text=\(event.text) typed=\(event.typed)")
+        fflush(stdout)
+        guard let graph else { return }
+        switch event.kind {
+        case .axAction where event.action == 1:
             // the default (invoke) action of a Button runs it, of a Toggle flips it
-            if !(graph?.tapButton(id) ?? false) { _ = graph?.activateToggle(id) }
-            graph?.flush()
+            if let id = runtimeIDs[event.node], !graph.tapButton(id) { _ = graph.activateToggle(id) }
+            graph.flush()
+        case .pointer:
+            // A press arms the node under the pointer; the release on the same node is the click (as AppKit and UIA buttons do).
+            if event.action == 1 { pressedNode = event.node; return }
+            guard event.action == 2, event.node != 0, pressedNode == event.node, let id = runtimeIDs[event.node] else { pressedNode = 0; return }
+            pressedNode = 0
+            var mods: EventModifiers = []
+            if event.modifiers & 0x4 != 0 { mods.insert(.shift) }; if event.modifiers & 0x1 != 0 { mods.insert(.command) }
+            if !graph.tapButton(id) { if graph.selectRow(id, modifiers: mods) { setListActive() } }
+            graph.flush()
+        case .key where event.action == 1:
+            handleKey(event)
+        default: break
         }
+    }
+
+    /// The selection of a List paints in the accent colour once the keyboard is in the list (a click on a row, an arrow key), grey before.
+    func setListActive() {
+        guard let painter, !painter.listIsActive else { return }
+        painter.listIsActive = true
+        if let record = lastRecord { commit(record) }
+    }
+
+    /// The List that holds the keyboard: the first one in tree order (cases have one).
+    func firstListID() -> String? {
+        func find(_ n: ResolvedNode) -> String? { if n.kind == "List" { return n.id }; for c in n.children { if let f = find(c) { return f } }; return nil }
+        return lastRecord?.root.flatMap(find)
+    }
+
+    func handleKey(_ event: BridgeEvent) {
+        guard let graph else { return }
+        let name = event.text.lowercased(), shift = event.modifiers & 0x4 != 0, ctrl = event.modifiers & 0x1 != 0
+        var mods: EventModifiers = []
+        if ctrl { mods.insert(.command) }; if shift { mods.insert(.shift) }
+        switch name {
+        case "tab": _ = graph.moveFocus(forward: !shift)
+        case "pageup", "pagedown":
+            // PageUp/PageDown: the model route to onMove (a drag is not driven): move the selected row one place up/down
+            if let list = firstListID() { _ = graph.moveSelection(in: list, by: name == "pageup" ? -1 : 1) }
+        case "up", "arrowup", "down", "arrowdown":
+            if let list = firstListID() {
+                if graph.navigateList(list, name.hasSuffix("up") ? .up : .down, extending: shift) { setListActive() }
+            }
+        case "delete", "backspace":
+            if let list = firstListID() { setListActive(); _ = graph.deleteSelection(in: list) }
+        case "enter", "return": _ = graph.performKeyboardShortcut(.return, modifiers: mods)
+        case "escape": _ = graph.performKeyboardShortcut(.escape, modifiers: mods)
+        default:
+            if event.typed.count == 1, let c = event.typed.lowercased().first { _ = graph.performKeyboardShortcut(KeyEquivalent(c), modifiers: mods) }
+        }
+        graph.flush()
     }
 
     func tick(_ time: UInt64) {

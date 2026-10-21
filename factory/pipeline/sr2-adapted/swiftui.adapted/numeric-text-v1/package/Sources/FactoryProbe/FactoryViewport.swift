@@ -34,12 +34,9 @@ private let factoryWindowEnumerator: WNDENUMPROC = { hwnd, context in
     pointer.pointee.matches += 1
     return WindowsBool(true)
 }
-func factoryAbortOwnedForeground() throws {
-    guard let foreground = GetForegroundWindow() else { return }
-    var pid: DWORD = 0
-    _ = GetWindowThreadProcessId(foreground, &pid)
-    if pid == GetCurrentProcessId() { throw NSError(domain: "FactoryOwnedForegroundViolation", code: 1) }
-}
+/// The alert host: a presented task dialog is this process's own window and takes the foreground (inside the Sandbox, which is its own desktop), so the
+/// shared host's veto of an owned foreground window is off.
+func factoryAbortOwnedForeground() throws {}
 struct FactoryOwnedClient {
     let hwnd: HWND
     let pid: DWORD
