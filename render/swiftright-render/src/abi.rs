@@ -30,6 +30,11 @@ pub const VERSION_MAX: usize = 32;
 pub const SYSFONT_ENTRIES: usize = 8;
 pub const SYSFONT_NAME_MAX: usize = 48;
 pub const M08_BASELINE_OFFSET: u32 = 0x1;
+/// Rev 0.12 (additive, same struct size): `swr_measure_request_v08.flags` bit 1; `reserved` then holds the maximum visual line
+/// count (>= 1). Text past it ends in an ellipsis. A host that never sets the bit sees exactly the earlier behaviour.
+pub const M08_MAX_LINES: u32 = 0x2;
+pub const M08_APPLIED_MAX_LINES: u32 = 0x40;
+pub const MAX_LINES_LIMIT: u32 = 1000;
 pub const SIM_FORBID_BOLD: u32 = 0x1;
 pub const SIM_FORBID_OBLIQUE: u32 = 0x2;
 pub const M08_APPLIED_FEATURES: u32 = 0x01;

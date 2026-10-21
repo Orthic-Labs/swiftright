@@ -1173,8 +1173,18 @@ fn prepare(r: &MeasureRequestV08, family: &str) -> Result<Prepared, Status> {
     if baseline.is_some() {
         applied |= M08_APPLIED_BASELINE;
     }
+    let max_lines = if r.flags & M08_MAX_LINES != 0 {
+        if r.reserved == 0 || r.reserved > MAX_LINES_LIMIT {
+            return Err(E_BAD_ARG);
+        }
+        applied |= M08_APPLIED_MAX_LINES;
+        r.reserved
+    } else {
+        0
+    };
     Ok(Prepared {
         ext: text::Ext {
+            max_lines,
             weight: pick.weight_for_gpui,
             italic: pick.italic,
             sim: pick.sim,
@@ -1787,6 +1797,7 @@ mod v08_tests {
             gpui_ratio: 1.0,
             char_count: 3,
             key: 1,
+            src: None,
             ext: text::MeasuredExt {
                 runs,
                 face: text::FaceReq { family: family.into(), weight: 400.0, italic: false, sim: 0, fallbacks: vec![] },

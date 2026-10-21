@@ -967,6 +967,8 @@ typedef struct swr_str {
 
 /* swr_measure_request_v08.flags */
 #define SWR_M08_BASELINE_OFFSET 0x1u  /* baseline_offset_dip is valid (0 is a legal offset) */
+#define SWR_M08_MAX_LINES       0x2u  /* additive (#51): `reserved` is the maximum visual line count (1..1000, else SWR_E_BAD_ARG);
+                                       * text past it ends in an ellipsis (U+2026) that still fits; reported in applied */
 
 /* swr_measure_request_v08.simulations: FORBID bits, so a zeroed field keeps the 0.6 behaviour
  * (DirectWrite may simulate). A forbidden simulation draws the nearest REAL face instead (the
@@ -980,6 +982,7 @@ typedef struct swr_str {
 #define SWR_M08_APPLIED_BASELINE   0x04u
 #define SWR_M08_APPLIED_FALLBACKS  0x08u  /* at least one system fallback family was passed to the shaper */
 #define SWR_M08_APPLIED_WEIGHT     0x10u  /* weight_f (or font_weight) mapped to a named instance */
+#define SWR_M08_APPLIED_MAX_LINES  0x40u  /* SWR_M08_MAX_LINES honoured */
 #define SWR_M08_APPLIED_ITALIC     0x20u
 
 /* swr_measure_result_v08.ignored: requested but NOT done. Never silent. */
@@ -1014,7 +1017,7 @@ typedef struct swr_measure_request_v08 {
     const swr_feature *features;
     const swr_str *fallbacks;           /* system families, first = highest priority */
     uint32_t fallback_count;            /* <= SWR_FALLBACKS_MAX else SWR_E_TOO_LARGE */
-    uint32_t reserved;
+    uint32_t reserved;                  /* 0, or the line count with SWR_M08_MAX_LINES */
 } swr_measure_request_v08;
 
 typedef struct swr_measure_result_v08 {

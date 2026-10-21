@@ -44,6 +44,8 @@ pub struct Measured {
     pub gpui_ratio: f32,
     pub char_count: u32,
     pub key: u64,
+    /// Rev 0.12: the request text when `text` is its max-lines truncation (cache lookups compare against the request).
+    pub src: Option<String>,
     /// Rev 0.8: what the face resolver decided and what the shaper produced, for painting and `swr_text_run_faces`.
     pub ext: MeasuredExt,
 }
@@ -220,6 +222,8 @@ pub struct Ext {
     pub track_dip: f32,
     /// The face's baseline this far below the line top, DIP.
     pub baseline_dip: Option<f32>,
+    /// Rev 0.12: at most this many visual lines; longer text ends in an ellipsis. 0 = unlimited.
+    pub max_lines: u32,
 }
 
 pub struct Request<'a> {
@@ -265,6 +269,9 @@ pub fn cache_key(r: &Request) -> u64 {
         e.fallbacks.hash(&mut h);
         e.track_dip.to_bits().hash(&mut h);
         e.baseline_dip.map(f32::to_bits).hash(&mut h);
+        if e.max_lines > 0 {
+            e.max_lines.hash(&mut h);
+        }
     }
     h.finish()
 }
@@ -300,7 +307,7 @@ impl Retained for Measured {
         self.text.len() + (self.char_count as usize + 1) * RETAINED_PER_CHAR
     }
     fn cached_text(&self) -> &str {
-        &self.text
+        self.src.as_deref().unwrap_or(&self.text)
     }
 }
 
@@ -421,8 +428,65 @@ fn glyph_id_of(g: &gpui::ShapedGlyph) -> u32 {
     format!("{:?}", g.id).trim_start_matches("GlyphId(").trim_end_matches(')').parse().unwrap_or(0)
 }
 
-/// Shapes `r.text` with GPUI's text system. Rev 0.6: '\n' splits paragraphs.
+/// Ellipsis appended by max-lines truncation.
+pub const ELLIPSIS: char = '\u{2026}';
+
+/// Text kept before the ellipsis when `text` runs past `n` visual lines: everything up to the end of line `n`, trailing whitespace
+/// dropped. `line_ends` are the byte ends of the visual lines (a paragraph's newline belongs to the line it ends). None when the
+/// text already fits.
+pub(crate) fn limit_prefix(text: &str, line_ends: &[usize], n: usize) -> Option<String> {
+    if n == 0 || line_ends.len() <= n {
+        return None;
+    }
+    let end = line_ends[n - 1].min(text.len());
+    Some(text[..end].trim_end().to_string())
+}
+
+/// `kept` minus its last character and any whitespace before it.
+pub(crate) fn shrink_prefix(kept: &str) -> String {
+    let mut s = kept.to_string();
+    s.pop();
+    s.truncate(s.trim_end().len());
+    s
+}
+
+/// Rev 0.12: `shape_once`, then, under `ext.max_lines`, the longest prefix + ELLIPSIS that fits in that many lines.
 pub fn shape(ts: &WindowTextSystem, r: &Request, key: u64) -> Result<Measured, Status> {
+    let n = r.ext.map_or(0, |e| e.max_lines) as usize;
+    let full = shape_once(ts, r, key)?;
+    if n == 0 || full.lines.len() <= n {
+        return Ok(full);
+    }
+    let ends: Vec<usize> = full.lines.iter().map(|l| (l.utf8_start + l.utf8_len) as usize).collect();
+    let mut kept = limit_prefix(r.text, &ends, n).unwrap_or_default();
+    for _ in 0..512 {
+        let cand = format!("{kept}{ELLIPSIS}");
+        let q = Request {
+            ext: r.ext,
+            text: &cand,
+            family: r.family,
+            locale: r.locale,
+            weight: r.weight,
+            direction: r.direction,
+            color: r.color,
+            font_size: r.font_size,
+            line_height: r.line_height,
+            scale: r.scale,
+            max_width: r.max_width,
+            gpui_ratio: r.gpui_ratio,
+        };
+        let mut m = shape_once(ts, &q, key)?;
+        if m.lines.len() <= n || kept.is_empty() {
+            m.src = Some(r.text.to_string());
+            return Ok(m);
+        }
+        kept = shrink_prefix(&kept);
+    }
+    Err(E_PLATFORM)
+}
+
+/// Shapes `r.text` with GPUI's text system. Rev 0.6: '\n' splits paragraphs.
+fn shape_once(ts: &WindowTextSystem, r: &Request, key: u64) -> Result<Measured, Status> {
     let scale = r.scale;
     // Rev 0.10: `k` = S / G (1.0 without an explicit render scale). GPUI shapes at `font_size * k` logical px and turns logical into
     // device px with G = S / k, so every layout value it returns converts to physical px with `g`, and every host-facing DIP value
@@ -457,6 +521,7 @@ pub fn shape(ts: &WindowTextSystem, r: &Request, key: u64) -> Result<Measured, S
             gpui_ratio: k,
             char_count: 0,
             key,
+            src: None,
             ext: MeasuredExt { track_dip: r.ext.map_or(0.0, |e| e.track_dip), color: r.color, font_size: r.font_size, face: face_req(r), ..Default::default() },
         });
     }
@@ -674,6 +739,7 @@ pub fn shape(ts: &WindowTextSystem, r: &Request, key: u64) -> Result<Measured, S
         gpui_ratio: k,
         char_count: chars.len() as u32,
         key,
+        src: None,
         ext: MeasuredExt {
             runs: run_recs,
             face: face_req(r),
@@ -827,5 +893,33 @@ mod text_cache_budget_tests {
         assert!(c.bytes() <= before + Fake("ab".into()).retained_bytes());
         c.clear();
         assert_eq!((c.len(), c.bytes()), (0, 0));
+    }
+}
+
+#[cfg(test)]
+mod max_lines_tests {
+    use super::*;
+
+    #[test]
+    fn fits_means_no_truncation() {
+        assert_eq!(limit_prefix("abc def", &[4, 7], 2), None);
+        assert_eq!(limit_prefix("abc def", &[7], 3), None);
+        assert_eq!(limit_prefix("abc def", &[4, 7], 0), None);
+    }
+
+    #[test]
+    fn keeps_whole_lines_and_drops_trailing_space_and_newline() {
+        assert_eq!(limit_prefix("abc def ghi", &[4, 8, 11], 1).as_deref(), Some("abc"));
+        assert_eq!(limit_prefix("abc def ghi", &[4, 8, 11], 2).as_deref(), Some("abc def"));
+        assert_eq!(limit_prefix("ab\ncd\nef", &[3, 6, 8], 2).as_deref(), Some("ab\ncd"));
+    }
+
+    #[test]
+    fn shrinking_removes_one_char_and_the_space_before_it() {
+        assert_eq!(shrink_prefix("abc def"), "abc de");
+        assert_eq!(shrink_prefix("abc d"), "abc");
+        assert_eq!(shrink_prefix("a"), "");
+        assert_eq!(shrink_prefix("\u{e9}\u{e9}"), "\u{e9}");
+        assert_eq!(shrink_prefix(""), "");
     }
 }
