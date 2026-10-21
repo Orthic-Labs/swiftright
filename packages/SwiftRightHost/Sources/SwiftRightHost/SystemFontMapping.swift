@@ -186,10 +186,10 @@ public struct SystemFontMapper: Sendable {
     public static let serifFallback = "Georgia"
     public static let staticSegoe = "Segoe UI"
 
-    /// The two scales the F1 table was measured at (G21). Any other scale fails visibly until measured.
+    /// The scales the F1 table was measured at (G21; 1.25 and 1.5 added for #70). Any other scale fails visibly until measured.
+    public static let measuredScales: [Double] = [1, 1.25, 1.5, 2.5]
     public static func metricScale(_ scale: Float) throws -> Double {
-        if abs(scale - 1) < 1e-4 { return 1 }
-        if abs(scale - 2.5) < 1e-4 { return 2.5 }
+        if let s = measuredScales.first(where: { abs(Float($0) - scale) < 1e-4 }) { return s }
         throw TextMeasureError.unsupportedScale(scale)
     }
 

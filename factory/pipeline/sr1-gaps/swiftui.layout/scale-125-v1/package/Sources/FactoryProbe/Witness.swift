@@ -13,7 +13,7 @@ private let red = Color(.sRGB, red: 1.0, green: 0.2, blue: 0.2, opacity: 1)
 struct Witness_g63_mixed_layout_v1: View {
     var body: some View {
         VStack(alignment: .leading, spacing: 10) {
-            // No Text at this scale: the Mac font-metric tables exist for scales 1 and 2.5 only (SystemFontMapping.metricScale; issue #70).
+            Text("Mixed layout")   // issue #70: Mac font-metric tables measured at 1.25 and 1.5
             Rectangle().fill(blue).frame(width: 90, height: 24)
             RoundedRectangle(cornerRadius: 8, style: .circular).stroke(red, lineWidth: 2).frame(width: 90, height: 34)
             Circle().fill(red).frame(width: 30, height: 30)

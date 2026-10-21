@@ -282,7 +282,10 @@ final class SystemFontMappingTests: XCTestCase {
 
     func testOtherScalesAndUnmeasuredSizesFailVisibly() {
         XCTAssertThrowsError(try plan(Font.body, scale: 2)) { XCTAssertEqual($0 as? TextMeasureError, .unsupportedScale(2)) }
-        XCTAssertThrowsError(try plan(Font.body, scale: 1.5)) { XCTAssertEqual($0 as? TextMeasureError, .unsupportedScale(1.5)) }
+        XCTAssertThrowsError(try plan(Font.body, scale: 1.75)) { XCTAssertEqual($0 as? TextMeasureError, .unsupportedScale(1.75)) }
+        // #70: measured at 1.25 and 1.5 too
+        XCTAssertNoThrow(try plan(Font.body, scale: 1.25))
+        XCTAssertNoThrow(try plan(Font.body, scale: 1.5))
         XCTAssertThrowsError(try plan(Font.system(size: 8.5))) { XCTAssertTrue(String(describing: $0).contains("systemFontMetricsUnavailable")) }
         XCTAssertThrowsError(try plan(Font.system(size: 41)))
         XCTAssertThrowsError(try plan(Font.system(size: 13.25)))      // not a half point

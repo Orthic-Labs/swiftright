@@ -15,5 +15,42 @@
  "macArgs": [
   "--steps",
   "[{\"op\":\"wait\",\"ms\":600}]"
+ ],
+ "textColourGate": {
+  "tolerance": 2,
+  "regions": [
+   {
+    "name": "row 1 text",
+    "rect": [
+     50,
+     25,
+     200,
+     48
+    ],
+    "align": "leading",
+    "position": {
+     "firstInkYTolerancePx": 3,
+     "baselineTolerancePx": 3,
+     "inkCentreYTolerancePx": 2,
+     "firstInkXTolerancePx": 2,
+     "reason": "PROVISIONAL (issue #70): mixed-layout-v1 tolerances (scale 2.5) kept in device pixels at this scale; fit from the first CI pair"
+    }
+   }
+  ],
+  "position": {
+   "align": "leading",
+   "reason": "per-region tolerances"
+  }
+ },
+ "excludeRects": [
+  {
+   "name": "text glyph region (Segoe UI vs SF, decision 2), mixed-layout-v1 rect scaled to this capture scale; gated by the text-colour position gate",
+   "rect": [
+    50,
+    25,
+    200,
+    48
+   ]
+  }
  ]
 }

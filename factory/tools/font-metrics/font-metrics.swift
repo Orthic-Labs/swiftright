@@ -1,6 +1,6 @@
 // font-metrics: the Mac font metric table for SwiftRight (docs/foundations-images-fonts.md block F1).
 // Measures SwiftUI (one-line Text frame height, first and last baseline, width) in an NSHostingView inside an offscreen window that never reaches a screen
-// and whose backing scale is pinned (decision C12; scale 1 and 2.5), and CoreText (ascent, descent, leading, capHeight, xHeight) for the same fonts.
+// and whose backing scale is pinned (decision C12; scales 1, 1.25, 1.5 and 2.5; 1.25 and 1.5 added for #70), and CoreText (ascent, descent, leading, capHeight, xHeight) for the same fonts.
 // Output: one JSON document on stdout, deterministic (no clock, no paths, sorted keys, doubles rounded to 1e-4). usage: font-metrics --fonts <dir> --variants <dir> [--quick]
 // <dir> of --fonts holds Tinos-Regular.ttf (factory/resources/fonts); --variants is the scratch dir written by make-variants.py.
 import AppKit
@@ -99,7 +99,7 @@ let nsDesigns: [NSFontDescriptor.SystemDesign?] = [nil, .monospaced, .serif, .ro
 let styleNames = ["largeTitle", "title", "title2", "title3", "headline", "subheadline", "body", "callout", "footnote", "caption", "caption2"]
 let swiftStyles: [Font] = [.largeTitle, .title, .title2, .title3, .headline, .subheadline, .body, .callout, .footnote, .caption, .caption2]
 let nsStyles: [NSFont.TextStyle] = [.largeTitle, .title1, .title2, .title3, .headline, .subheadline, .body, .callout, .footnote, .caption1, .caption2]
-let scales: [Double] = [1, 2.5]
+let scales: [Double] = [1, 1.25, 1.5, 2.5]
 let sample = "Hamburgefonstiv"
 nonisolated(unsafe) var faceNames: [String] = []
 func faceIndex(_ n: String) -> Int { if let i = faceNames.firstIndex(of: n) { return i }; faceNames.append(n); return faceNames.count - 1 }
