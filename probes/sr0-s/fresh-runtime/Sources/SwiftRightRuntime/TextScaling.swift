@@ -53,6 +53,6 @@ extension Font {
         guard let m = metadata, let size = m.pointSize, m.textStyle == nil, size != pointSize else { return metadata?.pointSize == pointSize ? self : nil }
         return Font(id: "\(id)|size(\(pointSize))",
                     metadata: Metadata(familyName: m.familyName, pointSize: pointSize, weight: m.weight, design: m.design, isCustom: m.isCustom,
-                                       textStyle: nil, width: m.width, isEmphasized: m.isEmphasized, monospacedDigit: m.monospacedDigit))
+                                       textStyle: nil, width: m.width, isEmphasized: m.isEmphasized, monospacedDigit: m.monospacedDigit, isItalic: m.isItalic))
     }
 }

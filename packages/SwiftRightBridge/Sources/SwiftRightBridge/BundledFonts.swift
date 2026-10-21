@@ -100,6 +100,8 @@ public struct FontFileMetrics: Equatable {
     public let ascentUnits: Int16
     public let descentUnits: Int16
     public let lineGapUnits: Int16
+    /// The face is an italic or oblique one: `head.macStyle` bit 1 or `OS/2.fsSelection` bit 0 (#78).
+    public var isItalic = false
 
     public func ascent(pointSize: Float) -> Float { pointSize * Float(ascentUnits) / Float(unitsPerEm) }
     public func descent(pointSize: Float) -> Float { pointSize * abs(Float(descentUnits)) / Float(unitsPerEm) }
@@ -133,7 +135,9 @@ public struct FontFileMetrics: Equatable {
               units > 0 else { return nil }
         let a = Int16(truncatingIfNeeded: ascent), d = Int16(truncatingIfNeeded: descent)
         guard a > 0, d != 0 else { return nil }
-        return FontFileMetrics(unitsPerEm: UInt16(units), ascentUnits: a, descentUnits: d, lineGapUnits: Int16(truncatingIfNeeded: gap))
+        var italic = (u16(head + 44).map { $0 & 0x2 != 0 }) ?? false
+        if let os2 = table("OS/2"), let selection = u16(os2 + 62), selection & 0x1 != 0 { italic = true }
+        return FontFileMetrics(unitsPerEm: UInt16(units), ascentUnits: a, descentUnits: d, lineGapUnits: Int16(truncatingIfNeeded: gap), isItalic: italic)
     }
 }
 
@@ -225,6 +229,16 @@ public final class BundledFontLibrary {
         if let own = faceWeights[key] { return own }
         guard providerFamily(forCustomName: name) != nil else { return nil }
         return Self.weightClass(inFaceName: name)
+    }
+
+    /// True when a `Font.custom` name selects an italic face by itself (#78): a bundled file's stem whose face is italic (`Tinos-Italic`), or a `Family-Suffix` name whose suffix says
+    /// italic or oblique, when the family is bundled. False for a family name or a regular face.
+    public func isItalic(forCustomName name: String) -> Bool {
+        let key = name.lowercased()
+        if let own = faceMetrics[key] { return own.isItalic }
+        guard providerFamily(forCustomName: name) != nil, let dash = key.lastIndex(of: "-") else { return false }
+        let suffix = key[key.index(after: dash)...]
+        return suffix.contains("italic") || suffix.contains("oblique")
     }
 
     /// The weight class a `Family-Suffix` face name's suffix names (`Tinos-SemiBold` -> 600), nil when there is no dash or the suffix is not a weight word.

@@ -92,12 +92,12 @@ extension AttributeDynamicLookup {
 
 extension Font {
     /// The same font with `tag` appended to its identity and its metadata kept. Used for variants the renderer does not yet draw differently.
-    private func tagged(_ tag: String, design: Design? = nil) -> Font {
+    private func tagged(_ tag: String, design: Design? = nil, italic: Bool? = nil) -> Font {
         guard let base = metadata else { return Font(id: "\(id)|\(tag)") }
         return Font(id: "\(id)|\(tag)",
                     metadata: Metadata(familyName: base.familyName, pointSize: base.pointSize, weight: base.weight, design: design ?? base.design,
                                        isCustom: base.isCustom, textStyle: base.textStyle, width: base.width, isEmphasized: base.isEmphasized,
-                                       monospacedDigit: base.monospacedDigit))
+                                       monospacedDigit: base.monospacedDigit, isItalic: italic ?? base.isItalic))
     }
 
     /// A custom font that does not scale with Dynamic Type (this runtime has no Dynamic Type, so it equals `custom(_:size:)`).
@@ -107,9 +107,9 @@ extension Font {
     /// Apple: https://developer.apple.com/documentation/swiftui/font/monospaced()
     public func monospaced() -> Font { tagged("monospaced", design: .monospaced) }
 
-    /// Carried with the font; the Windows renderer does not yet draw an italic face for it (#68).
+    /// Carried with the font as `Metadata.isItalic`: a bundled custom font draws its real italic face (#78); a system font's italic is carried and not yet drawn.
     /// Apple: https://developer.apple.com/documentation/swiftui/font/italic()
-    public func italic() -> Font { tagged("italic") }
+    public func italic() -> Font { tagged("italic", italic: true) }
 
     /// Carried with the font; not yet drawn as small capitals (#68).
     /// Apple: https://developer.apple.com/documentation/swiftui/font/smallcaps()

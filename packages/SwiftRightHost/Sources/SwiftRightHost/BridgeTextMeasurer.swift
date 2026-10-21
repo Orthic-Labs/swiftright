@@ -42,10 +42,13 @@ public protocol CustomFontResolving: AnyObject {
     func metrics(forCustomName name: String) -> FontFileMetrics?
     /// The weight class a custom name selects by itself (`Tinos-Bold` is 700); nil for a family name. Defaults to nil for a resolver that does not know faces.
     func weight(forCustomName name: String) -> UInt32?
+    /// True when a custom name selects an italic face by itself (`Tinos-Italic`). Defaults to false for a resolver that does not know faces.
+    func isItalic(forCustomName name: String) -> Bool
 }
 
 extension CustomFontResolving {
     public func weight(forCustomName name: String) -> UInt32? { nil }
+    public func isItalic(forCustomName name: String) -> Bool { false }
 }
 
 extension BundledFontLibrary: CustomFontResolving {}
@@ -363,6 +366,14 @@ public final class BridgeTextMeasurer: TextMeasurer, TextRunSource {
         if rendererHasExtendedRequest {
             if let plan { record(plan.adaptations) }
             r.extension = plan?.textExtension ?? TextRequestAdapter.customExtension
+            // A bundled font's italic (#78): `Font.custom("Tinos-Italic")` names an italic file, `.italic()` on a custom font asks for the family's italic face. The renderer picks the real
+            // italic face of the family (synthesis stays forbidden, so a family without one is drawn upright, not slanted).
+            if plan == nil, let metadata = request.fontMetadata, metadata.isCustom, let name = metadata.familyName,
+               metadata.isItalic || fonts?.isItalic(forCustomName: name) == true {
+                var e = r.extension ?? TextExtension()
+                e.italic = true
+                r.extension = e
+            }
         } else {
             if let plan { record(plan.adaptations + SystemFontMapper.abi07Limits(of: plan)) }
             else { record(SystemFontMapper.abi07CustomLimits) }

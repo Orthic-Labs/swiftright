@@ -53,4 +53,15 @@ final class FontFileMetricsTests: XCTestCase {
         XCTAssertEqual(m.unitsPerEm, 2048)
         XCTAssertEqual(m.lineHeight(pointSize: 18), 20)
     }
+
+    // Issue #78: the italic bit of the bundled Tinos faces (head.macStyle bit 1 / OS/2.fsSelection bit 0), read from the real files.
+    func testItalicBitOfTheBundledTinosFaces() throws {
+        let dir = URL(fileURLWithPath: #filePath).deletingLastPathComponent().appendingPathComponent("../../../../factory/resources/fonts").standardized
+        func metrics(_ name: String) throws -> FontFileMetrics {
+            try XCTUnwrap(FontFileMetrics.parse([UInt8](try Data(contentsOf: dir.appendingPathComponent(name)))), name)
+        }
+        XCTAssertFalse(try metrics("Tinos-Regular.ttf").isItalic)
+        XCTAssertFalse(try metrics("Tinos-Bold.ttf").isItalic)
+        XCTAssertTrue(try metrics("Tinos-Italic.ttf").isItalic)
+    }
 }

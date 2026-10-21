@@ -428,4 +428,15 @@ private struct PointKey: PreferenceKey {
         XCTAssertEqual(images, [true], "the icon is decorative")
         XCTAssertEqual(titles, [false])
     }
+
+    // Issue #78: Font.italic() sets Metadata.isItalic and later modifiers keep it.
+    func testFontItalicFlagSurvivesLaterModifiers() {
+        let plain = Font.custom("Tinos-Regular", size: 22)
+        XCTAssertFalse(plain.metadata?.isItalic ?? true)
+        let italic = plain.italic()
+        XCTAssertEqual(italic.metadata?.isItalic, true)
+        XCTAssertEqual(italic.weight(.bold).metadata?.isItalic, true)
+        XCTAssertEqual(italic.monospacedDigit().metadata?.isItalic, true)
+        XCTAssertEqual(plain.weight(.bold).metadata?.isItalic, false)
+    }
 }
