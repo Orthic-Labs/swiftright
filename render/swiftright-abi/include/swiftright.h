@@ -1475,8 +1475,9 @@ SWR_API swr_status swr_get_api_v12(swr_api_v08 *out, uint32_t caller_size);
  * SWR_AXE_HEADER or above 6, are SWR_E_BAD_ARG.
  *
  * Mapping (AccessKit 0.25.1 / accesskit_windows 0.35.1):
- *  - help (SwiftUI accessibilityHint): UIA HelpText (AccessKit placeholder); also UIA FullDescription (description) when the entry
- *    has no description.
+ *  - help (SwiftUI accessibilityHint): UIA FullDescription (AccessKit description) when the entry has no description. It is also
+ *    set as AccessKit placeholder (UIA HelpText), but accesskit_consumer returns a placeholder only for an EMPTY text input, so
+ *    HelpText is empty on every other role: read FullDescription (property 30159), not HelpText (30013).
  *  - description: UIA FullDescription.
  *  - value (SwiftUI accessibilityValue): UIA Value pattern on every role but a text field (whose value is its text). A static
  *    text (Role::Label) cannot hold a value apart from its name (accesskit_consumer label_comes_from_value), so its value is

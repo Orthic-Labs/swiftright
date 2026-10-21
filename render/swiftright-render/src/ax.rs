@@ -183,9 +183,10 @@ pub fn build_tree_from(s: &AxShared) -> TreeUpdate {
             node.set_value(n.value.to_string());
         }
         if let Some(x) = x {
-            // Rev 0.13. accesskit_windows 0.35.1 node.rs: UIA HelpText = `placeholder`, UIA FullDescription = `description`,
-            // UIA Level = `level` + 1 (accesskit's level is zero-based). The hint goes to HelpText and, when no description is
-            // given, FullDescription too. A Role::Label cannot hold a value apart from its name, so a value given to a static
+            // Rev 0.13. accesskit_windows 0.35.1 node.rs: UIA HelpText = `placeholder`, UIA FullDescription (30159) = `description`,
+            // UIA Level (30154) = `level` + 1 (accesskit's level is zero-based). accesskit_consumer `placeholder()` is filtered to an
+            // empty text input, so HelpText is empty on any other node: the hint reaches UIA as FullDescription (and as HelpText
+            // only on an empty text field). A Role::Label cannot hold a value apart from its name, so a value given to a static
             // text is appended to the description instead of renaming the element.
             if !x.help.is_empty() {
                 node.set_placeholder(x.help.to_string());
