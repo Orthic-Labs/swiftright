@@ -295,6 +295,33 @@ final class MarkdownCompatLayoutTests: XCTestCase {
         XCTAssertEqual([green.frame.minX, green.frame.minY, green.frame.width, green.frame.height], [10, 0, 30, 20])
     }
 
+    // Issue #74: MarkdownUI's table decoration reads the anchors of cells built by ForEach inside Grid/GridRow; the inside divider sits in the gap between the columns.
+    func testAnchorsOfGridCellsResolveForAnOverlayLayer() throws {
+        let all = try nodes(
+            Grid(horizontalSpacing: 1, verticalSpacing: 1) {
+                ForEach(0..<2, id: \.self) { row in
+                    GridRow {
+                        ForEach(0..<2, id: \.self) { column in
+                            Color.red.frame(width: column == 0 ? 30 : 40, height: 20)
+                                .anchorPreference(key: CellBoundsKey.self, value: .bounds) { [row * 2 + column: $0] }
+                        }
+                    }
+                }
+            }
+            .padding(1)
+            .overlayPreferenceValue(CellBoundsKey.self) { anchors in
+                GeometryReader { proxy in
+                    let left = anchors[0].map { proxy[$0] } ?? .zero
+                    Color.green.frame(width: 1, height: 41).padding(.leading, left.maxX).padding(.top, 1)
+                }
+            },
+            w: 200, h: 100
+        )
+        // cell (0,0) spans x 1...31 inside the 1 pt padding, so the divider sits at x 31
+        let green = try XCTUnwrap(colors(all).first { $0.frame.width == 1 && $0.frame.height == 41 })
+        XCTAssertEqual(green.frame.minX, 31)
+    }
+
     func testAnchorSourceCanNameAPointOfTheBounds() throws {
         let all = try nodes(
             Color.red.frame(width: 30, height: 20)

@@ -132,4 +132,10 @@ final class StyledTextPainterTests: XCTestCase {
             XCTAssertTrue(String(describing: $0).contains("Text runs"), "\($0)")
         }
     }
+
+    // Issue #74: the colour of a linked run in Text(AttributedString): NSColor.linkColor, (0,104,218) in the Mac capture (markdown-basic-v1).
+    func testTheLinkColourIsTheMacLinkBlue() throws {
+        XCTAssertEqual(try HostPaint.rgba(.semantic("link"), opacity: 1), 0x0068daff)
+        XCTAssertNotEqual(try HostPaint.rgba(.semantic("link"), opacity: 1, scheme: .dark), 0x0068daff)
+    }
 }

@@ -28,6 +28,17 @@ final class PathShapePainterTests: XCTestCase {
 
     // MARK: Routing
 
+    // Issue #74: a one-point column divider (Rectangle().strokeBorder, 2 or 3 device pixels wide at 2.5) must paint, not collapse to nothing.
+    func testAOnePointInsetRectangleStrokeStillPaintsItsLine() throws {
+        for widthPX: Float in [2, 3] {
+            let node = try shapeNode(Rectangle().strokeBorder(Color.red, lineWidth: 1).frame(width: 1, height: 40))
+            guard case .path(let request) = try ShapePainter.plan(node, bounds: Rect(x: 100, y: 100, w: widthPX, h: 100), scale: 2.5) else { return XCTFail("path route expected") }
+            let result = try XCTUnwrap(try PathShapeRaster.render(request), "width \(widthPX) px")
+            let painted = stride(from: 3, to: result.image.rgba.count, by: 4).filter { result.image.rgba[$0] > 0 }.count
+            XCTAssertGreaterThan(painted, 100, "width \(widthPX) px painted \(painted) pixels")
+        }
+    }
+
     func testATrimmedStrokeTakesThePathRouteWithItsGeometryAndStyle() throws {
         let style = StrokeStyle(lineWidth: 6, lineCap: .round)
         let r = try request(Circle().inset(by: 3).trim(from: 0, to: 0.62).stroke(Color.blue, style: style).frame(width: 60, height: 60))

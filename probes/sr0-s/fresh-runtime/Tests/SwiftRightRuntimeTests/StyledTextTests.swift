@@ -105,6 +105,23 @@ final class StyledTextTests: XCTestCase {
         XCTAssertEqual(runs[1].baselineOffset, 3)
     }
 
+    // Issue #74: SwiftUI draws a linked run in the system link colour unless the run has its own foreground colour.
+    func testALinkedRunWithoutAColourTakesTheLinkColour() throws {
+        var text = AttributedString("see ")
+        var link = AttributedString("docs")
+        link.link = URL(string: "https://example.test/docs")
+        var coloured = AttributedString(" more")
+        coloured.link = URL(string: "https://example.test/more")
+        coloured.foregroundColor = Color.red
+        text += link
+        text += coloured
+        let runs = try XCTUnwrap(try firstText(Text(text)).styledText).runs
+        XCTAssertEqual(runs.map(\.text), ["see ", "docs", " more"])
+        XCTAssertNil(runs[0].foreground, "unlinked text keeps the environment's colour")
+        XCTAssertEqual(runs[1].foreground, .semantic("link"))
+        XCTAssertEqual(runs[2].foreground, Color.red.resolvedColor, "a run's own colour wins")
+    }
+
     func testAdjacentRunsWithEqualAttributesMerge() {
         let text = Text("a").bold() + Text("b").bold() + Text("c")
         XCTAssertEqual(text.plainRuns.map(\.text), ["ab", "c"])

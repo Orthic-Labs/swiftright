@@ -1,0 +1,14 @@
+diff --git a/Sources/MarkdownUI/Theme/TextStyle/Styles/FontProperties.swift b/Sources/MarkdownUI/Theme/TextStyle/Styles/FontProperties.swift
+index 10090cd..5c6f338 100644
+--- a/Sources/MarkdownUI/Theme/TextStyle/Styles/FontProperties.swift
++++ b/Sources/MarkdownUI/Theme/TextStyle/Styles/FontProperties.swift
+@@ -55,7 +55,8 @@ public struct FontProperties: Hashable {
+ 
+   /// A platform-dependent default font size.
+   public static var defaultSize: CGFloat {
+-    #if os(macOS)
++    // SwiftRight (#74): Windows hosts the macOS look, so it takes the macOS size (13), not the `#else` 16.
++    #if os(macOS) || SWIFTRIGHT
+       return 13
+     #elseif os(iOS)
+       return 17

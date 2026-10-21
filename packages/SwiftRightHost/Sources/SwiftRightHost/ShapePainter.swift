@@ -211,7 +211,7 @@ public enum PathShapeRaster {
         guard snapX.length > 0, snapY.length > 0 else { return nil }
         let scale = Double(request.scale)
         let rect = CGRect(x: 0, y: 0, width: snapX.length / scale, height: snapY.length / scale)
-        let path = request.geometry.makePath(in: rect)
+        let path = request.strokeRGBA != nil && request.fillRGBA == nil ? request.geometry.strokePath(in: rect) : request.geometry.makePath(in: rect)
         // Placed at the snapped origin, then rotated in window pixels (identity unless under `.rotationEffect`). The raster's bounds come from the transformed outline, so a rotated shape is never clipped.
         let placed = ShapeRotation.concatenate(CGAffineTransform(translationX: CGFloat(snapX.origin), y: CGFloat(snapY.origin)), request.rotation)
         guard let raster = try PathRasterizer.rasterize(
@@ -239,7 +239,7 @@ public enum PathShapeRaster {
         guard snapX.length > 0, snapY.length > 0 else { return nil }
         let scale = Double(request.scale)
         let rect = CGRect(x: 0, y: 0, width: snapX.length / scale, height: snapY.length / scale)
-        let path = request.geometry.makePath(in: rect)
+        let path = request.strokeRGBA != nil && request.fillRGBA == nil ? request.geometry.strokePath(in: rect) : request.geometry.makePath(in: rect)
         let t = ShapeRotation.concatenate(CGAffineTransform(translationX: CGFloat(snapX.origin), y: CGFloat(snapY.origin)), request.rotation)
         let a = Double(t.a), b = Double(t.b), c = Double(t.c), d = Double(t.d), tx = Double(t.tx), ty = Double(t.ty)
         func px(_ p: CGPoint) -> (Float, Float) {

@@ -1,5 +1,5 @@
 diff --git a/Sources/MarkdownUI/Theme/BlockStyle/ListBullet.swift b/Sources/MarkdownUI/Theme/BlockStyle/ListBullet.swift
-index a4f7c21..7d464fa 100644
+index a4f7c21..f787034 100644
 --- a/Sources/MarkdownUI/Theme/BlockStyle/ListBullet.swift
 +++ b/Sources/MarkdownUI/Theme/BlockStyle/ListBullet.swift
 @@ -1,6 +1,33 @@
@@ -8,15 +8,15 @@ index a4f7c21..7d464fa 100644
  struct ListBullet: View {
 +  #if SWIFTRIGHT
 +    // SwiftRight: the host paints only measured SF Symbols and "circle.fill" at this size is not in its table (the host refuses the whole frame),
-+    // so the bullet is a shape. Measured on the Mac capture (markdown-basic-v1, scale 2.5): a disc is 0.75 of the symbol font size across and
-+    // its right edge sits 0.3 em (of the 16 pt body font) inside the 1.5 em marker box.
++    // so the bullet is a shape. Measured on the Mac capture (markdown-basic-v1, scale 2.5, 13 pt body): a disc is 4 pt across (the symbol font size,
++    // round(13 / 3)) and its right edge sits 4.8 pt inside the marker box (#74: an earlier fit assumed a 16 pt body, the size Windows resolved before it took the macOS 13).
 +    private enum Kind { case disc, circle, square }
 +    private let kind: Kind
 +
 +    var body: some View {
 +      TextStyleAttributesReader { attributes in
 +        let fontSize = attributes.fontProperties?.scaledSize ?? FontProperties.defaultSize
-+        let side = round(fontSize / 3) * 0.75
++        let side = round(fontSize / 3)
 +        Group {
 +          switch self.kind {
 +          case .disc: Circle().fill(Color.primary)
@@ -25,7 +25,7 @@ index a4f7c21..7d464fa 100644
 +          }
 +        }
 +        .frame(width: side, height: side)
-+        .padding(.trailing, fontSize * 0.3)
++        .padding(.trailing, 4.8)
 +      }
 +    }
 +

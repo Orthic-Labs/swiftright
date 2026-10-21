@@ -66,6 +66,24 @@ public indirect enum ShapeGeometry: Equatable, Sendable {
         }
     }
 
+    /// The path a stroke of this geometry follows in `rect`. As `makePath(in:)`, except that a rectangle inset past its own width (`Rectangle().strokeBorder` of a
+    /// one-point-wide rect, an inset of half the line width) collapses to the vertical line down its middle instead of nothing: the Mac draws MarkdownUI's inside
+    /// column dividers that way (#74, markdown-basic-v1 capture, a one-point column rect). A rectangle collapsed in height still draws nothing, as in that capture, where
+    /// the inside row line is absent.
+    public func strokePath(in rect: CGRect) -> Path {
+        if case .inset(.rectangle, let amount) = self {
+            // Computed by hand: `CGRect.insetBy` returns the null rect (size 0 in both axes) once either side goes negative, which hid the height.
+            let innerWidth = rect.width - 2 * amount, innerHeight = rect.height - 2 * amount
+            if innerWidth <= 0, innerHeight > 0, rect.width > 0 {
+                var line = Path()
+                line.move(to: CGPoint(x: rect.midX, y: rect.minY + amount))
+                line.addLine(to: CGPoint(x: rect.midX, y: rect.maxY - amount))
+                return line
+            }
+        }
+        return makePath(in: rect)
+    }
+
     private static func roundedPath(_ rect: CGRect, radius: CGFloat, style: RoundedCornerStyle) -> Path {
         guard rect.width > 0, rect.height > 0 else { return Path() }
         switch style {

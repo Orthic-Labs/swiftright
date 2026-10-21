@@ -239,6 +239,20 @@ final class PathTests: XCTestCase {
         XCTAssertEqual(Capsule(style: .circular).inset(by: 3).path(in: CGRect(x: 0, y: 0, width: 50, height: 20)).boundingRect.height, 14, accuracy: 1e-9)
     }
 
+    // Issue #74: MarkdownUI's inside column dividers are `Rectangle().strokeBorder` of a one-point-wide rect; the stroke collapses to the line down its middle.
+    func testAStrokeOfARectangleInsetPastItsWidthIsTheMiddleLine() {
+        let geometry = ShapeGeometry.inset(.rectangle, by: 0.5)
+        let line = geometry.strokePath(in: CGRect(x: 0, y: 0, width: 0.8, height: 40))
+        XCTAssertEqual(line.elements.count, 2)
+        XCTAssertEqual(Double(line.boundingRect.midX), 0.4, accuracy: 1e-9)
+        XCTAssertEqual(Double(line.boundingRect.minY), 0.5, accuracy: 1e-9)
+        XCTAssertEqual(Double(line.boundingRect.height), 39, accuracy: 1e-9)
+        XCTAssertTrue(geometry.makePath(in: CGRect(x: 0, y: 0, width: 0.8, height: 40)).isEmpty, "the fill outline stays empty")
+        XCTAssertFalse(geometry.strokePath(in: CGRect(x: 0, y: 0, width: 1.2, height: 40)).isEmpty)
+        XCTAssertEqual(geometry.strokePath(in: CGRect(x: 0, y: 0, width: 1.2, height: 40)), geometry.makePath(in: CGRect(x: 0, y: 0, width: 1.2, height: 40)))
+        XCTAssertTrue(geometry.strokePath(in: CGRect(x: 0, y: 0, width: 40, height: 0.8)).isEmpty, "collapsed in height: nothing, as on the Mac")
+    }
+
     func testTrimGeometryComposesWithInset() {
         let g = Circle().inset(by: 3).trim(from: 0, to: 0.5).shapeGeometry
         XCTAssertEqual(g, .trimmed(.inset(.circle, by: 3), from: 0, to: 0.5))

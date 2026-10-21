@@ -201,6 +201,8 @@ extension Text {
             item.tracking = attributes[AttributeScopes.SwiftUIAttributes.TrackingAttribute.self]
             item.baselineOffset = attributes[AttributeScopes.SwiftUIAttributes.BaselineOffsetAttribute.self]
             item.link = attributes[AttributeScopes.FoundationAttributes.LinkAttribute.self]
+            // SwiftUI draws a linked run in the system link colour unless the run sets its own foreground colour (#74).
+            if item.link != nil, item.foreground == nil { item.foreground = ResolvedColor.semantic("link") }
             converted.append(item)
         }
         self = Text.normalized(converted)
