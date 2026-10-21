@@ -150,7 +150,7 @@ index 10a3ccac3..e49388525 100644
      }
    } catch { $speechStatus = 'FAIL-not-automatable'; $speechDetail = "loopback transcript could not be produced or read: $($_.Exception.Message); $listenStartErr; wav=$listenWav json=$listenJson" }
 diff --git a/probes/sr0-b/native-interaction/scripts/listen-loopback.ps1 b/probes/sr0-b/native-interaction/scripts/listen-loopback.ps1
-index 37349d116..1e3907ac1 100644
+index 37349d116..844fc0965 100644
 --- a/probes/sr0-b/native-interaction/scripts/listen-loopback.ps1
 +++ b/probes/sr0-b/native-interaction/scripts/listen-loopback.ps1
 @@ -5,7 +5,10 @@
@@ -165,24 +165,30 @@ index 37349d116..1e3907ac1 100644
  param(
    [Parameter(Mandatory)][string]$Wav,
    [Parameter(Mandatory)][string]$Json,
-@@ -45,6 +48,9 @@ public static class Loopback {
+@@ -45,7 +48,14 @@ public static class Loopback {
  
      // Returns the number of 16-bit mono samples written; the WAV is 16 kHz-free (device rate), mono, 16-bit.
      public static int LastRate; public static long NonZero; public static int Peak;
 +    public static long StartQpc; public static long QpcFreq; public static string StartUtc = ""; public static long PadSamples; public static int PadGaps;
 +    static void Pad(BinaryWriter bw, long n) { byte[] z = new byte[2 * 4096]; while (n > 0) { int k = (int)Math.Min(n, 4096); bw.Write(z, 0, 2 * k); n -= k; } }
 +    static long To100ns(long ticks, long freq) { return (ticks / freq) * 10000000L + (ticks % freq) * 10000000L / freq; }
++    public static string Stage = "";
      public static long Record(string path, int seconds, string stopFile, string readyFile) {
++        try { return RecordImpl(path, seconds, stopFile, readyFile); } catch (Exception e) { throw new Exception("stage=" + Stage + ": " + e.GetType().Name + ": " + e.Message + " | " + e.StackTrace); }
++    }
++    static long RecordImpl(string path, int seconds, string stopFile, string readyFile) {
          var en = (IMMDeviceEnumerator)new MMDeviceEnumerator();
          IMMDevice dev; Check(en.GetDefaultAudioEndpoint(0 /*eRender*/, 1 /*eMultimedia*/, out dev));
-@@ -62,9 +68,13 @@ public static class Loopback {
+         var iidClient = new Guid("1CB9AD4C-DBFA-4c32-B178-C2F568A703B2"); object o;
+@@ -62,17 +72,27 @@ public static class Loopback {
          Check(client.GetService(ref iidCap, out co)); var cap = (IAudioCaptureClient)co;
          var ms = new MemoryStream(); var bw = new BinaryWriter(ms);
          int bytesPer = bits / 8; long samples = 0;
+-        Check(client.Start());
 +        long freq = System.Diagnostics.Stopwatch.Frequency; QpcFreq = freq; PadSamples = 0; PadGaps = 0;
 +        long startQpc = System.Diagnostics.Stopwatch.GetTimestamp(); StartQpc = startQpc;   // taken just before Start: sample 0 == this instant
 +        long start100 = To100ns(startQpc, freq);
-         Check(client.Start());
++        Stage = "start"; Check(client.Start());
          LastRate = rate; NonZero = 0; Peak = 0;
 -        if (!string.IsNullOrEmpty(readyFile)) File.WriteAllText(readyFile, DateTime.Now.ToString("o"));
 +        StartUtc = DateTime.UtcNow.ToString("o");
@@ -190,10 +196,13 @@ index 37349d116..1e3907ac1 100644
          bool useStop = !string.IsNullOrEmpty(stopFile);
          var end = DateTime.UtcNow.AddSeconds(seconds);
          while (DateTime.UtcNow < end && !(useStop && File.Exists(stopFile))) {
-@@ -73,6 +83,12 @@ public static class Loopback {
+             Thread.Sleep(10);
+-            uint packet; Check(cap.GetNextPacketSize(out packet));
++            uint packet; Stage = "nextpacket"; Check(cap.GetNextPacketSize(out packet));
              while (packet > 0) {
                  IntPtr data; uint frames, flags; ulong dp, qp;
-                 Check(cap.GetBuffer(out data, out frames, out flags, out dp, out qp));
+-                Check(cap.GetBuffer(out data, out frames, out flags, out dp, out qp));
++                Stage = "getbuffer"; Check(cap.GetBuffer(out data, out frames, out flags, out dp, out qp));
 +                if ((flags & 0x4) == 0 && qp != 0) {   // AUDCLNT_BUFFERFLAGS_TIMESTAMP_ERROR not set: place this packet on the wall-clock timeline
 +                    long rel = (long)qp - start100; if (rel < 0) rel = 0;
 +                    long target = (long)((double)rel / 1e7 * rate);
@@ -203,16 +212,24 @@ index 37349d116..1e3907ac1 100644
                  for (uint f = 0; f < frames; f++) {
                      double sum = 0;
                      if ((flags & AUDCLNT_BUFFERFLAGS_SILENT) == 0) {
-@@ -92,6 +108,8 @@ public static class Loopback {
+@@ -88,11 +108,13 @@ public static class Loopback {
+                     if (sv != 0) { NonZero++; int a = Math.Abs((int)sv); if (a > Peak) Peak = a; }
+                 }
+                 Check(cap.ReleaseBuffer(frames));
+-                Check(cap.GetNextPacketSize(out packet));
++                Stage = "nextpacket"; Check(cap.GetNextPacketSize(out packet));
              }
          }
-         client.Stop();
+-        client.Stop();
+-        using (var fs = File.Create(path)) {
++        Stage = "stop"; client.Stop();
 +        { long endTarget = (long)((double)(System.Diagnostics.Stopwatch.GetTimestamp() - startQpc) / freq * rate); long gap = endTarget - samples; if (gap > rate / 100) { Pad(bw, gap); samples += gap; PadSamples += gap; PadGaps++; } }
 +        bw.Flush();
-         using (var fs = File.Create(path)) {
++        Stage = "write-wav"; using (var fs = File.Create(path)) {
              var w = new BinaryWriter(fs); int dataLen = (int)ms.Length;
              w.Write(new[] { 'R', 'I', 'F', 'F' }); w.Write(36 + dataLen); w.Write(new[] { 'W', 'A', 'V', 'E' });
-@@ -110,7 +128,34 @@ $limit = if ($StopFile) { $dur } else { $Seconds }   # end-of-file test below: t
+             w.Write(new[] { 'f', 'm', 't', ' ' }); w.Write(16); w.Write((short)1); w.Write((short)1); w.Write(rate); w.Write(rate * 2); w.Write((short)2); w.Write((short)16);
+@@ -110,7 +132,34 @@ $limit = if ($StopFile) { $dur } else { $Seconds }   # end-of-file test below: t
  $plist = @(); foreach ($p in $Phrases) { foreach ($q in ([string]$p -split '\|')) { if ($q.Trim()) { $plist += $q.Trim() } } }
  $usePhrases = $plist.Count -gt 0
  Add-Type -AssemblyName System.Speech
@@ -247,7 +264,7 @@ index 37349d116..1e3907ac1 100644
  if ($n -ge ($rate / 2)) {   # a WAV with no (or almost no) samples cannot be recognized; the stats still go to the JSON
      $culture = [System.Globalization.CultureInfo]::GetCultureInfo('en-US')
      $rec = New-Object System.Speech.Recognition.SpeechRecognitionEngine($culture)
-@@ -126,37 +171,22 @@ if ($n -ge ($rate / 2)) {   # a WAV with no (or almost no) samples cannot be rec
+@@ -126,37 +175,22 @@ if ($n -ge ($rate / 2)) {   # a WAV with no (or almost no) samples cannot be rec
          $rec.MaxAlternates = 4
      }
      $rec.LoadGrammar($dict)
