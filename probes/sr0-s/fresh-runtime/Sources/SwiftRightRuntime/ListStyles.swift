@@ -10,7 +10,8 @@ public struct DefaultListStyle: ListStyle { public init() {} }
 public struct InsetListStyle: ListStyle { public init() {} }
 /// `.plain`: rows run edge to edge, flat selection.
 public struct PlainListStyle: ListStyle { public init() {} }
-/// `.sidebar`: not drawn by the host yet.
+/// `.sidebar`: the source-list look: a grey ground, 32 pt rows, rounded selection and no row separators (issue #60 pass 3; the numbers are first estimates until the
+/// `sidebar-list` factory case measures them against the Mac).
 public struct SidebarListStyle: ListStyle { public init() {} }
 
 public extension ListStyle where Self == DefaultListStyle { static var automatic: DefaultListStyle { DefaultListStyle() } }
@@ -46,6 +47,10 @@ public enum ListLook: Equatable, Sendable {
 public enum ListMetrics {
     public static let rowMinHeight: CGFloat = 24
     public static let rowContentPadding: CGFloat = 8
+    /// The sidebar style's rows (E13: SwiftUI draws 32 pt rows; captured on the Mac, the padding around taller content is not measured and is kept at 8 pt).
+    public static let sidebarRowMinHeight: CGFloat = 32
+    /// Where a sidebar row's content starts: the 10 pt selection inset plus 10 pt inside the selection (estimate, not measured).
+    public static let sidebarContentInset: CGFloat = 20
     /// The legacy vertical scroller's reserved width at the inset List's trailing edge (measured, controls-b).
     public static let insetScrollerGutter: CGFloat = 16.8
     /// The inset List's bottom inset in its scrollable document (measured, controls-b: 10 + 72 + 10 = 92 pt).
@@ -54,9 +59,20 @@ public enum ListMetrics {
     /// The row's height for content of `contentHeight`.
     public static func rowHeight(forContent contentHeight: CGFloat) -> CGFloat { max(rowMinHeight, contentHeight + rowContentPadding) }
 
-    public static func contentInset(_ look: ListLook) -> CGFloat { look == .plain ? 8 : 16 }
+    /// The row's height for content of `contentHeight` in the style `look` (the sidebar's rows are at least 32 pt tall).
+    public static func rowHeight(forContent contentHeight: CGFloat, look: ListLook) -> CGFloat {
+        max(look == .sidebar ? sidebarRowMinHeight : rowMinHeight, contentHeight + rowContentPadding)
+    }
+
+    public static func contentInset(_ look: ListLook) -> CGFloat {
+        switch look {
+        case .plain: return 8
+        case .sidebar: return sidebarContentInset
+        case .inset: return 16
+        }
+    }
     public static func topInset(_ look: ListLook) -> CGFloat { look == .plain ? 0 : 10 }
-    public static func bottomInset(_ look: ListLook) -> CGFloat { look == .inset ? insetBottomInset : 0 }
+    public static func bottomInset(_ look: ListLook) -> CGFloat { look == .plain ? 0 : insetBottomInset }
 
     /// The height of the List's scrollable document: its top inset, every row and its bottom inset.
     public static func documentHeight(_ look: ListLook, rowHeights: [CGFloat]) -> CGFloat {
@@ -68,13 +84,13 @@ public enum ListMetrics {
         documentHeight(look, rowHeights: rowHeights) > viewportHeight
     }
 
-    /// The width a List reserves at its trailing edge for a legacy vertical scroller: the inset style's, and only when the rows overflow. Zero otherwise.
-    public static func trailingGutter(_ look: ListLook, overflows: Bool) -> CGFloat { look == .inset && overflows ? insetScrollerGutter : 0 }
+    /// The width a List reserves at its trailing edge for a legacy vertical scroller: the inset style's (and the sidebar's, by estimate), and only when the rows overflow. Zero otherwise.
+    public static func trailingGutter(_ look: ListLook, overflows: Bool) -> CGFloat { look != .plain && overflows ? insetScrollerGutter : 0 }
 
     /// The rectangle of a row (`content` is the row content's frame in the List's coordinates, `listFrame` the List's), derived from the layout rules
     /// above: the row is `rowHeight` tall around its content, whose centre is the row's centre, and it spans the list's width less `trailingGutter`.
-    public static func rowFrame(content: LayoutRect, listFrame: LayoutRect, trailingGutter: CGFloat = 0) -> LayoutRect {
-        let height = rowHeight(forContent: content.height)
+    public static func rowFrame(content: LayoutRect, listFrame: LayoutRect, trailingGutter: CGFloat = 0, look: ListLook = .inset) -> LayoutRect {
+        let height = rowHeight(forContent: content.height, look: look)
         let top = content.minY - (height - content.height) / 2
         return LayoutRect(x: listFrame.minX, y: top, width: listFrame.width - trailingGutter, height: height)
     }

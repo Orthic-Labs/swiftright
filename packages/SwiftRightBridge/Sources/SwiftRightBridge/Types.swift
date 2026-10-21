@@ -27,6 +27,9 @@ public enum NodeRole: UInt32 {
     /// ABI rev 0.11 (issue #31). AccessKit Role::ScrollBar, vertical / UIA ScrollBar; a `SemanticNode.range` of value 0...1 (min 0, max 1)
     /// adds the UIA RangeValue pattern. The node's bounds are the scroll bar rect. Needs `Bridge.supportsScrollBar`.
     case scrollBar = 16
+    /// #74. AccessKit Role::Link / UIA Hyperlink (child of a styled Text, named by the run text; invoke opens the URL). Needs renderer constant ROLE_LINK = 17; a renderer
+    /// without it publishes the node as a generic container (unknown roles are never rejected).
+    case link = 17
 }
 
 /// ABI rev 0.6: checked / pressed / on state (AccessKit Toggled, UIA TogglePattern).

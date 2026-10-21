@@ -463,11 +463,29 @@ public enum TextRunFlow {
 extension TextMeasurer {
     /// The flow of `runs`, each word and space measured in its run's font by this measurer.
     public func flow(runs: [ResolvedTextRun], maxWidth: CGFloat?, lineLimit: Int?, scale: CGFloat) -> TextFlowLayout {
-        TextRunFlow.layout(runs: runs, maxWidth: maxWidth, lineLimit: lineLimit) { text, index in
+        // #74: a monospaced run no larger than the proportional text around it takes no more room above or below the baseline than that text does. The Mac's code span in a
+        // 13 pt paragraph leaves the line 16 pt (the body's own height); Cascadia Mono's deeper descent made it 16.4.
+        let proportional = runs.indices.filter { !Self.isMonospaced(runs[$0]) }
+        let reference: (size: CGFloat, ascent: CGFloat, descent: CGFloat)? = proportional.first.map { index in
+            var ascent: CGFloat = 0, descent: CGFloat = 0
+            for i in proportional {
+                let m = self.measure(runs[i].measureRequest(text: " ", proposedWidth: nil, scale: scale, lineLimit: nil))
+                ascent = max(ascent, m.baseline); descent = max(descent, m.size.height - m.baseline)
+            }
+            return (proportional.map { Self.pointSize(runs[$0]) }.max() ?? Self.pointSize(runs[index]), ascent, descent)
+        }
+        return TextRunFlow.layout(runs: runs, maxWidth: maxWidth, lineLimit: lineLimit) { text, index in
             let m = self.measure(runs[index].measureRequest(text: text, proposedWidth: nil, scale: scale, lineLimit: nil))
-            return TextFlowMetrics(width: m.size.width, height: m.size.height, baseline: m.baseline)
+            var baseline = m.baseline, descent = m.size.height - m.baseline
+            if let reference, Self.isMonospaced(runs[index]), Self.pointSize(runs[index]) <= reference.size {
+                baseline = min(baseline, reference.ascent); descent = min(descent, reference.descent)
+            }
+            return TextFlowMetrics(width: m.size.width, height: baseline + descent, baseline: baseline)
         }
     }
+
+    private static func isMonospaced(_ run: ResolvedTextRun) -> Bool { run.font?.metadata?.design == .monospaced }
+    private static func pointSize(_ run: ResolvedTextRun) -> CGFloat { run.font?.metadata?.pointSize ?? 13 }
 
     /// The flow a node of `frameWidth` points shows: the frame is the widest line, so a pixel of snapping slack keeps the layout's own breaks.
     public func flow(_ styled: ResolvedStyledText, frameWidth: CGFloat, scale: CGFloat) -> TextFlowLayout {
@@ -555,6 +573,21 @@ extension Graph {
             }
         }
         return nil
+    }
+
+    /// The runtime id a host maps a link run's accessibility node to (#74): the Text's node id and the run's index.
+    public static func linkElementID(_ textID: String, run: Int) -> String { "\(textID)\u{1}link\(run)" }
+
+    /// The accessibility invoke of a link run's element: opens the run's URL through the Text node's `openURL` action. False when `id` is not a link element id of a live,
+    /// enabled Text with that link run.
+    @discardableResult
+    public func activateLink(_ id: String) -> Bool {
+        let parts = id.components(separatedBy: "\u{1}link")
+        guard parts.count == 2, let run = Int(parts[1]), let target = node(parts[0]), let styled = styledText(of: target), styled.runs.indices.contains(run),
+              target.environment.isEnabled, let url = styled.runs[run].link else { return false }
+        target.environment.openURL.perform(url)
+        flush()
+        return true
     }
 
     /// A press released at (x, y) on a link run opens its URL through the node's `openURL` environment action. Returns whether a link was there.

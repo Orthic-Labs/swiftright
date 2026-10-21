@@ -942,6 +942,11 @@ public struct ResolvedNode: Equatable, Sendable {
     public var styledText: ResolvedStyledText? = nil
     /// Button, Toggle and Slider nodes only (#54): the environment's `.tint(_:)`, nil when none is set (the accent colour then applies). A host paints the control's accent in it.
     public var tint: ResolvedColor? = nil
+    /// Button nodes only (issue #60 pass 3): the pointer is held down on the button (it draws darkened), and the button has keyboard focus (it draws a focus ring).
+    public var buttonIsPressed: Bool = false
+    public var buttonIsFocused: Bool = false
+    /// TextField nodes made with `axis: .vertical` only (issue #60 pass 3): the wrap width and the measured extent of the wrapped text. Nil for every other node.
+    public var verticalField: ResolvedVerticalField? = nil
     /// Gradient nodes only (#60): the stops and geometry the host rasterises into a bitmap of the node's frame.
     public var gradient: ResolvedGradient? = nil
     /// Text nodes under `.contentTransition(.numericText…)` only, while an animated text change is rolling (#55): each glyph of the old and new text with its offset
@@ -1124,6 +1129,9 @@ public final class Graph {
     /// Observation change callbacks received (tests check that retired registrations stay silent).
     private(set) var observationCallbacks = 0
     private var dirty: [NodeID: Node] = [:]
+    /// The Button the pointer is held down on, and the Button that has keyboard focus (ButtonStates.swift): the host reports them, a snapshot carries them.
+    var pressedButtonID: String?
+    var focusedButtonID: String?
     /// Live GeometryReader nodes (R1): their content is built from the size layout gives them, so a layout that changes it re-evaluates them.
     var geometryNodes: [NodeID: Node] = [:]
     /// True while the dirty nodes are being evaluated: a transaction boundary inside an evaluation is not a new transaction.
@@ -2619,6 +2627,8 @@ public final class Graph {
         case .button, .toggle, .slider: resolvedNode.tint = node.environment.tint
         default: break
         }
+        if case .textField = kind { resolvedNode.verticalField = verticalFieldInfo(node) }
+        if case .button = kind { resolvedNode.buttonIsPressed = buttonIsPressed(node); resolvedNode.buttonIsFocused = buttonIsFocused(node) }
         return resolvedNode
     }
 

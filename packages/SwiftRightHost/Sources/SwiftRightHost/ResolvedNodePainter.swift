@@ -12,6 +12,15 @@ public struct NodeEmission {
     public var bounds: Rect? = nil
     /// The node's own painting is clipped to this rectangle (a Text whose run is wider than the frame it was given: the Mac clips to the frame, decision L1).
     public var clipTo: Rect? = nil
+    /// A styled Text's link runs (#74): each is published as a child accessibility node (role link, named by the run's text) after the Text's own node, as the Mac exposes
+    /// the link inside a paragraph. `url` is the run's destination (invoke opens it through `Graph.activateLink`).
+    public var links: [LinkElement] = []
+
+    public struct LinkElement {
+        public var run: Int
+        public var text: String
+        public var bounds: Rect
+    }
 }
 
 /// Resolved tree -> ABI paint. One painter per window: it owns the renderer image handles of continuous shapes
@@ -142,6 +151,8 @@ public final class ResolvedNodePainter {
     private var rotationLimitationKinds: Set<String> = []
     /// Bridge id bit of a scroller node: a List or ScrollView's scroller is a child node of its own, `id | scrollerNodeFlag`.
     static let scrollerNodeFlag: UInt64 = 1 << 62
+    /// Bridge id of a link run's node (#74): `textID | linkNodeFlag | (run + 1) << 40`; its runtimeIDs entry is `Graph.linkElementID(textID, run:)`.
+    static let linkNodeFlag: UInt64 = 1 << 61
     /// Whether the renderer takes a `.scrollBar` node (`Bridge.supportsScrollBar`, rev 0.11). When true, a scroller publishes a scroll bar
     /// semantic with its range (value 0...1); when false it stays a plain painted node, since an older renderer refuses the role.
     public let publishesScrollBars: Bool
@@ -165,11 +176,12 @@ public final class ResolvedNodePainter {
         return SemanticNode(role: .scrollBar, label: "", range: SliderRange(value: scroll.value, min: 0, max: 1, step: step, jump: jump))
     }
 
-    public func beginCommit() { pendingShapeImages = [:]; pendingPixelImages = [:]; pendingFieldLayouts = [:] }
+    public func beginCommit() { pendingShapeImages = [:]; pendingPixelImages = [:]; pendingFieldLayouts = [:]; pendingAccessibilityExtras = [:] }
 
     /// `committed == false` releases the images created for the failed commit and keeps the previous ones.
     public func endCommit(committed: Bool) {
         if committed {
+            accessibilityExtras = pendingAccessibilityExtras
             fieldLayouts = pendingFieldLayouts
             for (id, handle) in shapeImages where pendingShapeImages[id] != handle { _ = images.release(handle) }
             shapeImages = pendingShapeImages
@@ -222,11 +234,38 @@ public final class ResolvedNodePainter {
         var label: String?
         var value: String?
         var traits: Set<String> = []
-        var isEmpty: Bool { label == nil && value == nil && traits.isEmpty }
+        var hint: String?
+        var isEmpty: Bool { label == nil && value == nil && traits.isEmpty && hint == nil }
         /// This patch (outer) over `inner`.
         func overriding(_ inner: A11yPatch) -> A11yPatch {
-            A11yPatch(label: label ?? inner.label, value: value ?? inner.value, traits: traits.union(inner.traits))
+            A11yPatch(label: label ?? inner.label, value: value ?? inner.value, traits: traits.union(inner.traits), hint: hint ?? inner.hint)
         }
+    }
+
+    /// What an element's accessibility modifiers ask for that the renderer ABI cannot carry yet (issue #60 pass 3, F10): the help text (`accessibilityHint`), the heading
+    /// and link traits, and a value given to a static text (UIA names a static text from its value, so publishing it would rename the element). Recorded per bridge node id
+    /// in `accessibilityExtras` for the commit that painted it; a host maps it to UIA HelpText, a heading and a Hyperlink control type once the ABI has fields for them
+    /// (proposal: ABI 0.13, `swr_semantic` tail `help` / `help_len`, roles HEADING = 17 and LINK = 18, a `value` on a static text published as RangeValue-free Value).
+    public struct AccessibilityExtras: Equatable {
+        public var hint: String?
+        public var isHeader = false
+        public var isLink = false
+        /// The `accessibilityValue` given to a static text element (Windows would take it as the name).
+        public var staticTextValue: String?
+        public var isEmpty: Bool { hint == nil && !isHeader && !isLink && staticTextValue == nil }
+    }
+
+    /// Per bridge node id, what the accessibility modifiers of the last committed tree asked for beyond the ABI (see `AccessibilityExtras`).
+    public private(set) var accessibilityExtras: [UInt64: AccessibilityExtras] = [:]
+    private var pendingAccessibilityExtras: [UInt64: AccessibilityExtras] = [:]
+
+    static func extras(of patch: A11yPatch, on semantic: SemanticNode) -> AccessibilityExtras {
+        var out = AccessibilityExtras()
+        out.hint = patch.hint
+        out.isHeader = patch.traits.contains("isHeader")
+        out.isLink = patch.traits.contains("isLink")
+        if semantic.role == .staticText, let value = patch.value { out.staticTextValue = value }
+        return out
     }
 
     /// Applies a patch to the semantic an element emitted (nil: the node publishes none).
@@ -343,6 +382,7 @@ public final class ResolvedNodePainter {
                 var own = A11yPatch()
                 if n.kind == "modifier.accessibilityLabel" { own.label = acc.label }
                 if n.kind == "modifier.accessibilityValue" { own.value = acc.value }
+                if n.kind == "modifier.accessibilityHint" { own.hint = acc.hint }
                 if n.kind == "modifier.accessibilityTraits", !acc.addedTraits.isEmpty { own.traits = Set(acc.addedTraits) }
                 childA11y = a11y.overriding(own)
                 if n.kind == "modifier.accessibilityHidden", acc.isHidden { childHidden = true }
@@ -355,6 +395,10 @@ public final class ResolvedNodePainter {
                 }
             } else if !a11y.isEmpty {
                 if emission.semantic != nil || a11y.traits.contains("isImage") {
+                    if let before = emission.semantic {
+                        let extras = Self.extras(of: a11y, on: before)
+                        if !extras.isEmpty { pendingAccessibilityExtras[id] = extras }
+                    }
                     emission.semantic = Self.apply(a11y, to: emission.semantic, bounds: bounds)
                     childA11y = A11yPatch()
                 } else if n.children.count != 1 {
@@ -384,6 +428,17 @@ public final class ResolvedNodePainter {
             } else {
                 for (index, child) in n.children.enumerated() { try walk(child, parent: id, order: UInt32(index), clip: childClip, rotations: childRotations, textColor: childTextColor, inButton: childInButton || n.kind == "Button" || n.kind == "modifier.onTapGesture", a11y: childA11y, hidden: childHidden, transform: childTransform, brightness: childBrightness, clipMasks: childMasks, scaleOrigin: childOrigin) }
             }
+            // A styled Text's link runs: child elements of the Text (role link), in run order, ahead of the Text's later siblings (as the Mac orders them).
+            if emission.semantic != nil, !emission.links.isEmpty {
+                for (k, link) in emission.links.enumerated() {
+                    let linkID = id | Self.linkNodeFlag | (UInt64(link.run + 1) << 40)
+                    current.insert(linkID)
+                    runtimeIDs[linkID] = Graph.linkElementID(n.id, run: link.run)
+                    nodes.append(NodeUpsert(id: linkID, parent: id, order: UInt32(1000 + k), flags: [], bounds: link.bounds, primitives: [],
+                                            semantic: SemanticNode(role: .link, label: link.text, actions: n.accessibility.isEnabled ? [.invoke] : [], identifier: n.id + "/link\(link.run)",
+                                                                   disabled: !n.accessibility.isEnabled)))
+                }
+            }
             // The children's walks reset the painter to the display scale: this node's own scale and brightness apply again to what it paints after them.
             scale = nodeScale
             self.brightness = brightness
@@ -400,7 +455,7 @@ public final class ResolvedNodePainter {
                 scrollerPrimitives += ScrollerPainter.primitives(for: layout, scale: scale)
                 scrollerPrimitives.append(.clipPop)
                 // One wheel line is one row of a List (the runtime's `scrollWheel` line), 10 pt for a ScrollView.
-                let line = n.kind == "List" ? n.children.map { ListMetrics.rowHeight(forContent: CGFloat($0.frame.height)) }.min() ?? ScrollerMetrics.pointsPerLine : ScrollerMetrics.pointsPerLine
+                let line = n.kind == "List" ? n.children.map { ListMetrics.rowHeight(forContent: CGFloat($0.frame.height), look: ListPainter.look(of: n)) }.min() ?? ScrollerMetrics.pointsPerLine : ScrollerMetrics.pointsPerLine
                 nodes.append(NodeUpsert(id: scrollerID, parent: id, order: UInt32(n.children.count), bounds: layout.strip, primitives: scrollerPrimitives,
                                         semantic: scrollBarSemantic(for: scroll, lineHeight: line)))
             }
@@ -575,6 +630,7 @@ public final class ResolvedNodePainter {
             let handle = try text.run(text: run.text, font: run.font, style: run.style, bounds: area, color: try colour(of: run))
             var emission = NodeEmission(primitives: [.text(handle, x: area.x, y: area.y)], semantic: semantic, flags: [], structural: false)
             if text.runOverflows(text: run.text, font: run.font, style: run.style, bounds: area) { emission.clipTo = area }
+            if run.link != nil { emission.links = [NodeEmission.LinkElement(run: 0, text: run.text, bounds: area)] }
             return emission
         }
         guard let measurer = text as? TextMeasurer else { throw HostPaintError.unsupportedNode("Text runs (no text measurer)") }
@@ -582,9 +638,17 @@ public final class ResolvedNodePainter {
         let layout = measurer.flow(styled, frameWidth: CGFloat(area.w) / pixelsPerPoint, scale: pixelsPerPoint)
         let label = try adjusted(HostPaint.rgba(.semantic("label"), opacity: node.opacity, scheme: scheme))
         var primitives: [Primitive] = []
+        var linkBounds: [Int: Rect] = [:]
         for line in layout.lines {
             for fragment in layout.fragments[line.fragments] {
                 let run = styled.runs[fragment.run]
+                if run.link != nil {
+                    let frag = Rect(x: area.x + Float(fragment.x) * pixel, y: area.y + Float(line.top) * pixel, w: Float(fragment.width) * pixel, h: Float(line.height) * pixel)
+                    if let have = linkBounds[fragment.run] {
+                        let x0 = min(have.x, frag.x), y0 = min(have.y, frag.y)
+                        linkBounds[fragment.run] = Rect(x: x0, y: y0, w: max(have.x + have.w, frag.x + frag.w) - x0, h: max(have.y + have.h, frag.y + frag.h) - y0)
+                    } else { linkBounds[fragment.run] = frag }
+                }
                 let x = (area.x + Float(fragment.x) * pixel).rounded()
                 let y = (area.y + Float(fragment.y) * pixel).rounded()
                 let width = (Float(fragment.width) * pixel).rounded()
@@ -620,7 +684,9 @@ public final class ResolvedNodePainter {
                 }
             }
         }
-        return NodeEmission(primitives: primitives, semantic: semantic, flags: [], structural: false)
+        var emission = NodeEmission(primitives: primitives, semantic: semantic, flags: [], structural: false)
+        emission.links = linkBounds.keys.sorted().map { NodeEmission.LinkElement(run: $0, text: styled.runs[$0].text, bounds: linkBounds[$0]!) }
+        return emission
     }
 
     /// #55: a Text mid `.contentTransition(.numericText())` roll. Each glyph is its own natural-size run at its resolved offset, its alpha scaled by the glyph's opacity,

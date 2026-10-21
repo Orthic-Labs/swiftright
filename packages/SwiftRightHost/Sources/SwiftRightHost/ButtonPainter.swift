@@ -13,6 +13,10 @@ public struct ButtonPaintPlan {
     public var look: ButtonLook
     /// The colour the label's Text takes (0xRRGGBBAA), nil when it keeps its own default (`.plain`, enabled). A label's own foreground wins.
     public var labelColor: UInt32?
+    /// The pointer is held down on the button (the body is drawn darkened) / the button has keyboard focus (the body is drawn with its focus ring, so `image` is larger than
+    /// the frame by `ButtonArtwork.focusRingPixels` on every side and `placement` says so). Neither applies to a disabled button.
+    public var isPressed = false
+    public var isFocused = false
 }
 
 public enum ButtonPainter {
@@ -22,6 +26,18 @@ public enum ButtonPainter {
     /// button colours the label (measured: `.plain` dims to half opacity when disabled, `.borderless` does not); on a `.prominent` button it is
     /// ignored (measured: the fill stays accent and the label white); on a `.bordered` button it tints the fill too, which is not modelled.
     public static func labelColor(of node: ResolvedNode) throws -> UInt32? {
+        let look = look(of: node)
+        let base = try baseLabelColor(of: node)
+        // Pressed, a button without a body dims its label (not measured: 0.6 of its colour).
+        guard node.buttonIsPressed, node.accessibility.isEnabled, look == .plain || look == .borderless else { return base }
+        let colour = try base ?? HostPaint.rgba(.semantic("label"), opacity: node.opacity, scheme: node.style.colorScheme)
+        return (colour & 0xffffff00) | UInt32((Double(colour & 255) * pressedBodilessLabelAlpha).rounded())
+    }
+
+    /// How much of its colour a pressed `.plain` or `.borderless` label keeps (an estimate, not measured).
+    public static let pressedBodilessLabelAlpha: Double = 0.6
+
+    private static func baseLabelColor(of node: ResolvedNode) throws -> UInt32? {
         let look = look(of: node)
         let enabled = node.accessibility.isEnabled
         if let foreground = node.style.foreground, look == .borderless || look == .plain {
@@ -50,10 +66,13 @@ public enum ButtonPainter {
         }
         // An empty frame (a Button laid out at zero size) has nothing to draw; SwiftUI draws nothing for it.
         guard width > 0, height > 0 else { return ButtonPaintPlan(image: nil, placement: bounds, isEnabled: isEnabled, look: look, labelColor: try labelColor(of: node)) }
+        let pressed = node.buttonIsPressed && isEnabled, focused = node.buttonIsFocused && isEnabled
         let image = ButtonArtwork.render(widthPX: Int(width), heightPX: Int(height), scale: scale, isEnabled: isEnabled, prominent: look == .prominent, dark: node.style.colorScheme == .dark,
-                                         tint: AccentTint.rgb(of: node))
+                                         tint: AccentTint.rgb(of: node), pressed: pressed, focused: focused)
+        let margin = focused ? Float(ButtonArtwork.focusRingPixels(scale: scale)) : 0
         return ButtonPaintPlan(image: image,
-                               placement: Rect(x: bounds.x + imageGuardBand, y: bounds.y + imageGuardBand, w: width - 2 * imageGuardBand, h: height - 2 * imageGuardBand),
-                               isEnabled: isEnabled, look: look, labelColor: try labelColor(of: node))
+                               placement: Rect(x: bounds.x - margin + imageGuardBand, y: bounds.y - margin + imageGuardBand,
+                                               w: width + 2 * margin - 2 * imageGuardBand, h: height + 2 * margin - 2 * imageGuardBand),
+                               isEnabled: isEnabled, look: look, labelColor: try labelColor(of: node), isPressed: pressed, isFocused: focused)
     }
 }

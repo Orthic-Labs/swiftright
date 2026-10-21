@@ -188,7 +188,7 @@ struct HostPlacement {
         switch event.kind {
         case .axAction where event.action == 1:
             // the default (invoke) action of a Button runs it, of a Toggle flips it
-            if let id = runtimeIDs[event.node], !graph.tapButton(id) { _ = graph.activateToggle(id) }
+            if let id = runtimeIDs[event.node], !graph.tapButton(id), !graph.activateToggle(id) { _ = graph.activateLink(id) }
             graph.flush()
         case .pointer:
             // A press arms the node under the pointer; the release on the same node is the click (as AppKit and UIA buttons do).

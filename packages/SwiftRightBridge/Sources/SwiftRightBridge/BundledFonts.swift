@@ -148,6 +148,10 @@ public final class BundledFontLibrary {
     private var providerFamilies: [String: String] = [:]
     /// provider family (lower-cased) -> vertical metrics read from the registered bytes.
     private var metricsByFamily: [String: FontFileMetrics] = [:]
+    /// lower-cased file stem -> the weight class of the face that file registered (`Tinos-Bold` -> 700): a `Font.custom` name that is a face's own name selects it.
+    private var faceWeights: [String: UInt32] = [:]
+    /// lower-cased file stem -> that face's own vertical metrics (a bold face can differ from the regular one of its family).
+    private var faceMetrics: [String: FontFileMetrics] = [:]
     /// Standardized file path -> its registration: a file is handed to the renderer once per library, however often it is registered.
     private var registeredFiles: [String: FontRegistration] = [:]
     private let bridge: Bridge
@@ -183,9 +187,15 @@ public final class BundledFontLibrary {
         let data = try Data(contentsOf: file, options: [.mappedIfSafe])
         let reg = try bridge.registerFont([UInt8](data))
         registrations.append(reg)
-        if let metrics = FontFileMetrics.parse([UInt8](data)) { metricsByFamily[reg.family.lowercased()] = metrics }
+        let stem = file.deletingPathExtension().lastPathComponent.lowercased()
+        if let metrics = FontFileMetrics.parse([UInt8](data)) {
+            // the family's metrics stay the first (regular-most) face's: a later face of the same family does not replace them
+            if metricsByFamily[reg.family.lowercased()] == nil || reg.weight == 400 { metricsByFamily[reg.family.lowercased()] = metrics }
+            faceMetrics[stem] = metrics
+        }
         providerFamilies[reg.family.lowercased()] = reg.family
-        providerFamilies[file.deletingPathExtension().lastPathComponent.lowercased()] = reg.family
+        providerFamilies[stem] = reg.family
+        faceWeights[stem] = reg.weight
         registeredFiles[path] = reg
         return reg
     }
@@ -200,8 +210,32 @@ public final class BundledFontLibrary {
     }
 
     /// The vertical metrics (hhea) of the bundled face a `Font.custom` name selects, nil when none answers to it or the
-    /// bytes carried no usable tables.
+    /// bytes carried no usable tables. A name that is a face's own (`Tinos-Bold`) answers with that face's metrics.
     public func metrics(forCustomName name: String) -> FontFileMetrics? {
-        providerFamily(forCustomName: name).flatMap { metricsByFamily[$0.lowercased()] }
+        if let own = faceMetrics[name.lowercased()] { return own }
+        return providerFamily(forCustomName: name).flatMap { metricsByFamily[$0.lowercased()] }
     }
+
+    /// The weight class (100...900) a `Font.custom` name asks for by itself, nil when the name is a family (or no bundled font answers to it) and the face is left to
+    /// `.weight(_:)`. SwiftUI selects a face by its PostScript name: `Font.custom("Tinos-Bold", size: 17)` is the bold face with no `.weight` at all. A face named by its file
+    /// stem answers with the weight class its file registered; a `Family-Suffix` name whose suffix is a weight word (`Bold`, `SemiBold`, `Light`...) answers with that weight when the
+    /// family is bundled. An explicit `.weight(_:)` on the Font still wins (the caller applies this only when none was given).
+    public func weight(forCustomName name: String) -> UInt32? {
+        let key = name.lowercased()
+        if let own = faceWeights[key] { return own }
+        guard providerFamily(forCustomName: name) != nil else { return nil }
+        return Self.weightClass(inFaceName: name)
+    }
+
+    /// The weight class a `Family-Suffix` face name's suffix names (`Tinos-SemiBold` -> 600), nil when there is no dash or the suffix is not a weight word.
+    public static func weightClass(inFaceName name: String) -> UInt32? {
+        let key = name.lowercased()
+        guard let dash = key.lastIndex(of: "-") else { return nil }
+        return weightWords[String(key[key.index(after: dash)...]).replacingOccurrences(of: "_", with: "")]
+    }
+
+    static let weightWords: [String: UInt32] = [
+        "thin": 100, "hairline": 100, "ultralight": 200, "extralight": 200, "light": 300, "regular": 400, "book": 400, "roman": 400, "medium": 500,
+        "semibold": 600, "demibold": 600, "bold": 700, "extrabold": 800, "ultrabold": 800, "heavy": 800, "black": 900,
+    ]
 }

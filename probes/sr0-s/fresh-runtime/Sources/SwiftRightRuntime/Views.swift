@@ -216,10 +216,18 @@ public struct TextField<Label: View>: View, PrimitiveView {
     let label: Label
     /// The placeholder text when it differs from the title (`prompt:`).
     let prompt: Text?
+    /// `.vertical` for a field made with `axis: .vertical`: its text wraps and the field grows with it up to `lineLimit` (TextFieldAxis.swift).
+    var fieldAxis: Axis = .horizontal
     public init(text: Binding<String>, prompt: Text? = nil, @ViewBuilder label: () -> Label) {
         self.text = text
         self.prompt = prompt
         self.label = label()
+    }
+
+    /// Apple: https://developer.apple.com/documentation/swiftui/textfield/init(text:prompt:axis:label:)
+    public init(text: Binding<String>, prompt: Text? = nil, axis: Axis, @ViewBuilder label: () -> Label) {
+        self.init(text: text, prompt: prompt, label: label)
+        self.fieldAxis = axis
     }
     @MainActor public var body: Never { return fatalError("primitive view has no body") }
     var nodeKind: NodeKind { .textField(text) }
@@ -232,18 +240,20 @@ extension TextField where Label == Text {
         self.init(text: text, label: label)
     }
 
-    /// A field whose text may wrap over several lines (`axis: .vertical`). Round 5 (hub gap G17): the field is accepted and draws, edits and sizes as the single-line field; the growth
-    /// to several lines (up to `lineLimit`) and the wrapping of long text are not delivered (docs/sr1-decisions.md F7). An empty or short field is the same on macOS (measured).
+    /// A field whose text may wrap over several lines (`axis: .vertical`): the field wraps its text at its width and grows one line at a time up to `lineLimit` (unbounded
+    /// without one); past the limit it scrolls to keep the caret in view (issue #60 pass 3, TextFieldAxis.swift). A short or empty field is the single-line field (24 pt bezel).
     /// Apple: https://developer.apple.com/documentation/swiftui/textfield/init(_:text:axis:)
     public init(_ titleKey: String, text: Binding<String>, axis: Axis) {
         let label: () -> Text = { Text(titleKey) }
         self.init(text: text, label: label)
+        self.fieldAxis = axis
     }
 
     /// Apple: https://developer.apple.com/documentation/swiftui/textfield/init(_:text:prompt:axis:)
     public init(_ titleKey: String, text: Binding<String>, prompt: Text?, axis: Axis) {
         let label: () -> Text = { Text(titleKey) }
         self.init(text: text, prompt: prompt, label: label)
+        self.fieldAxis = axis
     }
 
     /// The placeholder is `prompt` when given, else the title (macOS: both draw the grey placeholder).

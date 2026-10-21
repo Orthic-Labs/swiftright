@@ -40,6 +40,12 @@ public struct BodyFontProfile: Equatable, Sendable {
 public protocol CustomFontResolving: AnyObject {
     func providerFamily(forCustomName name: String) -> String?
     func metrics(forCustomName name: String) -> FontFileMetrics?
+    /// The weight class a custom name selects by itself (`Tinos-Bold` is 700); nil for a family name. Defaults to nil for a resolver that does not know faces.
+    func weight(forCustomName name: String) -> UInt32?
+}
+
+extension CustomFontResolving {
+    public func weight(forCustomName name: String) -> UInt32? { nil }
 }
 
 extension BundledFontLibrary: CustomFontResolving {}
@@ -147,7 +153,7 @@ public enum TextRequestAdapter {
         guard let metrics = fonts.metrics(forCustomName: name) else { throw TextMeasureError.customFontMetricsUnavailable(name) }
         let lineHeight = metrics.lineHeight(pointSize: pointSize)
         guard lineHeight.isFinite, lineHeight > 0 else { throw TextMeasureError.customFontMetricsUnavailable(name) }
-        return MeasureRequest(text: request.text, fontFamily: family, weight: (metadata.weight ?? .regular).classValue, color: textColor,
+        return MeasureRequest(text: request.text, fontFamily: family, weight: metadata.weight?.classValue ?? fonts.weight(forCustomName: name) ?? Font.Weight.regular.classValue, color: textColor,
                               fontSize: pointSize, lineHeight: lineHeight, scale: scale, maxWidth: maxWidth)
     }
 

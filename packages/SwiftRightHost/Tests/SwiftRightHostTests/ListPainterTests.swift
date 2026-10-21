@@ -25,7 +25,10 @@ private struct Witness_ListBareRows: View {
 }
 
 private struct Witness_ListSidebar: View {
-    var body: some View { List { Text("A") }.listStyle(.sidebar).frame(width: 200, height: 160) }
+    @State var selection: Int? = 1
+    var body: some View {
+        List(selection: $selection) { ForEach(0..<3, id: \.self) { i in Text("Row \(i)").tag(i) } }.listStyle(.sidebar).frame(width: 200, height: 160)
+    }
 }
 
 /// Seven rows in 160 pt: a 188 pt document (10 + 168 + 10) overflows, so a legacy scroller reserves the gutter.
@@ -199,8 +202,41 @@ final class ListPainterTests: XCTestCase {
         XCTAssertEqual(seps[0].0.x, 150 + 20); XCTAssertEqual(seps[0].0.w, 500 - 20, "plain separators run from 8 pt inside the leading edge to the trailing edge")
     }
 
-    func testSidebarStyleIsNotPaintedAndSaysSo() {
-        XCTAssertThrowsError(try commit(Witness_ListSidebar())) { XCTAssertEqual($0 as? HostPaintError, .unsupportedListStyle("sidebar")) }
+    func testSidebarStylePaintsGreyGroundWithThirtyTwoPointRowsAndNoSeparators() throws {
+        // issue #60 pass 3 (E13): grey 229 ground, 32 pt (80 px) rows from the 10 pt top inset, no separator between rows
+        let r = try commit(Witness_ListSidebar(), active: true)
+        let list = try upsert(r, kind: "List")
+        let rs = rects(list.primitives)
+        XCTAssertEqual(rs.count, 1, "the ground only: a sidebar has no row separators")
+        XCTAssertEqual(rs[0].1, 0xe5e5e5ff)
+        let node = flatten(r.root).first { $0.kind == "List" }!
+        let rows = ListPainter.rows(of: node, bounds: list.bounds, scale: 2.5)
+        XCTAssertEqual(rows.map { $0.rect.y }, [125, 205, 285])
+        XCTAssertEqual(rows.map { $0.rect.h }, [80, 80, 80])
+        XCTAssertEqual(ListPainter.look(of: node), .sidebar)
+    }
+
+    private func sidebarSelectionFill(active: Bool) throws -> UInt32 {
+        let r = try commit(Witness_ListSidebar(), active: active)
+        let rowNode = flatten(r.root).first { $0.kind == "List" }!.children[1]
+        let up = try XCTUnwrap(r.transaction.upserts.first { $0.id == UInt64(rowNode.instance + 1) })
+        guard case .image(let handle, _, _) = try XCTUnwrap(up.primitives.first(where: { if case .image = $0 { return true } else { return false } })) else { XCTFail("sidebar selection is a rasterised rounded rectangle"); return 0 }
+        let image = try XCTUnwrap(r.images.registered[handle.raw])
+        let w = Int(image.width), h = Int(image.height)
+        let o = ((h / 2) * w + w / 2) * 4   // the centre pixel is the flat fill
+        return UInt32(image.rgba[o]) << 16 | UInt32(image.rgba[o + 1]) << 8 | UInt32(image.rgba[o + 2])
+    }
+
+    func testSidebarSelectionIsARoundedRectangleInAccentOrGrey() throws {
+        XCTAssertEqual(try sidebarSelectionFill(active: true), ListPainter.selectionActive)
+        XCTAssertEqual(try sidebarSelectionFill(active: false), ListPainter.sidebarSelectionInactive)
+    }
+
+    func testSidebarRowMetricsAreThirtyTwoPointsAtLeast() {
+        XCTAssertEqual(ListMetrics.rowHeight(forContent: 16, look: .sidebar), 32)
+        XCTAssertEqual(ListMetrics.rowHeight(forContent: 16, look: .inset), 24)
+        XCTAssertEqual(ListMetrics.rowHeight(forContent: 30, look: .sidebar), 38)
+        XCTAssertEqual(ListMetrics.contentInset(.sidebar), 20)
     }
 
     func testSeparatorColumnMatchesTheMacPixels() {

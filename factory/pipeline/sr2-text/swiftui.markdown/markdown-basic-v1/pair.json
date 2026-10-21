@@ -1,17 +1,133 @@
 {
- "excludeRects": [],
+ "textColourGate": {
+  "tolerance": 24,
+  "regions": [
+   {
+    "name": "heading (h2)",
+    "rect": [
+     0,
+     20,
+     800,
+     108
+    ],
+    "align": "leading",
+    "position": {
+     "firstInkYTolerancePx": 3,
+     "baselineTolerancePx": 3,
+     "inkCentreYTolerancePx": 2,
+     "firstInkXTolerancePx": 2,
+     "reason": "PROVISIONAL, unmeasured (#74 pass 2): fit from the first CI pair after the margin and line-height fixes (Segoe UI Variable vs SF ink sits 0-2 px apart inside the same line box), then tighten"
+    }
+   },
+   {
+    "name": "paragraph: plain, bold, italic, code, link runs",
+    "rect": [
+     0,
+     112,
+     800,
+     180
+    ],
+    "align": "leading",
+    "position": {
+     "firstInkYTolerancePx": 3,
+     "baselineTolerancePx": 3,
+     "inkCentreYTolerancePx": 2,
+     "firstInkXTolerancePx": 2,
+     "reason": "PROVISIONAL, unmeasured (#74 pass 2): fit from the first CI pair after the margin and line-height fixes (Segoe UI Variable vs SF ink sits 0-2 px apart inside the same line box), then tighten"
+    }
+   },
+   {
+    "name": "bulleted list: one, two, three",
+    "rect": [
+     0,
+     190,
+     800,
+     325
+    ],
+    "align": "leading",
+    "position": {
+     "firstInkYTolerancePx": 3,
+     "baselineTolerancePx": 3,
+     "inkCentreYTolerancePx": 2,
+     "firstInkXTolerancePx": 2,
+     "reason": "PROVISIONAL, unmeasured (#74 pass 2): fit from the first CI pair after the margin and line-height fixes (Segoe UI Variable vs SF ink sits 0-2 px apart inside the same line box), then tighten"
+    }
+   },
+   {
+    "name": "table: header row and one body row",
+    "rect": [
+     0,
+     330,
+     800,
+     520
+    ],
+    "align": "leading",
+    "position": {
+     "firstInkYTolerancePx": 4,
+     "baselineTolerancePx": 4,
+     "inkCentreYTolerancePx": 3,
+     "firstInkXTolerancePx": 2,
+     "reason": "PROVISIONAL, unmeasured (#74 pass 2): fit from the first CI pair after the margin and line-height fixes (Segoe UI Variable vs SF ink sits 0-2 px apart inside the same line box), then tighten"
+    }
+   }
+  ],
+  "position": {
+   "align": "leading",
+   "reason": "per-block tolerances in each region (provisional, see the regions)"
+  }
+ },
+ "excludeRects": [
+  {
+   "name": "heading (h2) glyph region (Segoe UI vs SF, decision 2; run and column widths differ so per-glyph boxes are not comparable); block y placement is gated by the text-colour position gate and the semantic boundsY gate; every pixel outside the block bands is exact",
+   "rect": [
+    0,
+    20,
+    800,
+    108
+   ]
+  },
+  {
+   "name": "paragraph: plain, bold, italic, code, link runs glyph region (Segoe UI vs SF, decision 2; run and column widths differ so per-glyph boxes are not comparable); block y placement is gated by the text-colour position gate and the semantic boundsY gate; every pixel outside the block bands is exact",
+   "rect": [
+    0,
+    112,
+    800,
+    180
+   ]
+  },
+  {
+   "name": "bulleted list: one, two, three glyph region (Segoe UI vs SF, decision 2; run and column widths differ so per-glyph boxes are not comparable); block y placement is gated by the text-colour position gate and the semantic boundsY gate; every pixel outside the block bands is exact",
+   "rect": [
+    0,
+    190,
+    800,
+    325
+   ]
+  },
+  {
+   "name": "table: header row and one body row glyph region (Segoe UI vs SF, decision 2; run and column widths differ so per-glyph boxes are not comparable); block y placement is gated by the text-colour position gate and the semantic boundsY gate; every pixel outside the block bands is exact",
+   "rect": [
+    0,
+    330,
+    800,
+    520
+   ]
+  }
+ ],
  "semanticGate": {
   "fields": [
    "role",
    "name",
    "count",
-   "order"
+   "order",
+   "boundsY"
   ],
+  "boundsYTolerancePt": 0.5,
   "scope": "main",
   "phases": [
    ""
   ],
-  "pixels": "report-only"
+  "reason": "boundsY tolerance 0.5 pt (one device pixel at 2.5x is 0.4 pt) PROVISIONAL: block tops follow MarkdownUI margins (em of 13 pt) and the 16 pt body line"
  },
  "steps": [
   {

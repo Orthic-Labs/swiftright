@@ -333,15 +333,18 @@ final class EnvironmentCell {
 
 @propertyWrapper
 public struct Environment<Value>: DynamicPropertyStorage {
-    let keyPath: KeyPath<EnvironmentValues, Value>
+    /// Reads the value out of the environment: a key path, or (the `Environment(Model.self)` form) the object an ancestor's `.environment(_:)` put there.
+    let read: (EnvironmentValues) -> Value
     let cell = EnvironmentCell()
 
-    public init(_ keyPath: KeyPath<EnvironmentValues, Value>) { self.keyPath = keyPath }
+    public init(_ keyPath: KeyPath<EnvironmentValues, Value>) { self.read = { $0[keyPath: keyPath] } }
+
+    init(reading read: @escaping (EnvironmentValues) -> Value) { self.read = read }
 
     @MainActor
     public var wrappedValue: Value {
         let environment = cell.node?.environment ?? EnvironmentValues()
-        return environment[keyPath: keyPath]
+        return read(environment)
     }
 
     @MainActor

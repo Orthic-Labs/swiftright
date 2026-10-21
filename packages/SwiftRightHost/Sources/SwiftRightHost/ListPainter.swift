@@ -19,6 +19,10 @@ public enum ListPainter {
     public static let selectionInsetPoints: Float = 10
         public static let separatorInsetPoints: Float = 16
     public static let selectedTextColor: UInt32 = 0xffffffff
+    /// The sidebar style (issue #60 pass 3): the list's ground is grey 229 (E13, measured on the Mac); the selection of a list that is not the key view is a grey
+    /// darker than the ground (an estimate, 0xd1d1d1: not measured). The active selection is the accent, as in the inset style.
+    public static let sidebarBackground: UInt32 = 0xe5e5e5
+    public static let sidebarSelectionInactive: UInt32 = 0xd1d1d1
 
     public static func look(of node: ResolvedNode) -> ListLook { ListLook(style: node.listStyle) }
 
@@ -55,7 +59,7 @@ public enum ListPainter {
     /// by the offset in points; the rows that leave the list are clipped by `primitives(for:)` and by the list's content clip.
     public static func rows(of list: ResolvedNode, bounds: Rect, scale: Float) -> [Row] {
         let look = look(of: list)
-        let rowHeights = list.children.map { ListMetrics.rowHeight(forContent: CGFloat($0.frame.height)) }
+        let rowHeights = list.children.map { ListMetrics.rowHeight(forContent: CGFloat($0.frame.height), look: look) }
         let overflows = ListMetrics.overflows(look, rowHeights: rowHeights, viewportHeight: CGFloat(bounds.h / scale))
         let gutter = (Float(ListMetrics.trailingGutter(look, overflows: overflows)) * scale).rounded(.toNearestOrAwayFromZero)
         let rowWidth = max(0, bounds.w - gutter)
@@ -80,8 +84,7 @@ public enum ListPainter {
     /// The list's own primitives: its background and the separators, clipped to its bounds (rows below the bottom edge are laid out and clipped).
     public static func primitives(for list: ResolvedNode, bounds: Rect, scale: Float) throws -> [Primitive] {
         let look = look(of: list)
-        guard look != .sidebar else { throw HostPaintError.unsupportedListStyle("sidebar") }
-        var out: [Primitive] = [.clipPush(bounds), .rect(bounds, color: background << 8 | 0xff)]
+        var out: [Primitive] = [.clipPush(bounds), .rect(bounds, color: (look == .sidebar ? sidebarBackground : background) << 8 | 0xff)]
         let rows = rows(of: list, bounds: bounds, scale: scale)
         let inset = (look == .plain ? 8 : separatorInsetPoints) * scale
         let right = look == .plain ? 0 : separatorInsetPoints * scale
@@ -93,7 +96,8 @@ public enum ListPainter {
             if row.backgroundUnsupported { throw HostPaintError.unsupportedNode("listRowBackground (only a Color or a Rectangle filled with a Color is drawn)") }
             if let fill = row.background { out.append(.rect(row.rect, color: try HostPaint.rgba(fill, opacity: 1))) }
         }
-        for (i, row) in rows.enumerated() where i < rows.count - 1 && !row.isSelected && !rows[i + 1].isSelected && !row.separatorHidden {
+        // A sidebar has no row separators (a source list draws none).
+        for (i, row) in rows.enumerated() where look != .sidebar && i < rows.count - 1 && !row.isSelected && !rows[i + 1].isSelected && !row.separatorHidden {
             // the separator spans its row (inset from the row's edges, not the list's)
             let x = row.rect.x + inset, w = max(0, row.rect.w - inset - right)
             let bottom = row.rect.y + row.rect.h
@@ -122,7 +126,7 @@ public enum ListPainter {
 
     public static func highlight(for row: Row, look: ListLook, scale: Float, active: Bool) -> Highlight? {
         guard row.isSelected, row.background == nil else { return nil }   // a row background replaces the selection highlight (measured: the highlight is not drawn over it)
-        let rgb = selectionColor(active: active, isEnabled: row.isEnabled)
+        let rgb = look == .sidebar && !(active && row.isEnabled) ? sidebarSelectionInactive : selectionColor(active: active, isEnabled: row.isEnabled)
         if look == .plain { return .flat(row.rect, rgb << 8 | 0xff) }
         let inset = selectionInsetPoints * scale
         return .rounded(Rect(x: row.rect.x + inset, y: row.rect.y, w: max(0, row.rect.w - 2 * inset), h: row.rect.h), rgb: rgb)

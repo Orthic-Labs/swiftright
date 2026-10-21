@@ -1,0 +1,5 @@
+# Issue #60 pass 3: sidebar List and the multi-line TextField. Cases are PROVISIONAL until their first CI pair: the gates carry the reasons. Stamped by
+# factory/pipeline/sr1-controls/make_pass3_cases.py. Button pressed and focused are not here: a static SwiftUI witness cannot hold a press or a focus ring, and the capture harness
+# has no pointer-down/up hold (ops are wait, click, key, drag, move, invoke, wheel); they are unit-tested (Issue60Controls3HostTests) until a `down`/`up` op exists.
+factory/pipeline/sr1-controls/swiftui.list-sidebar/sidebar-list-v1
+factory/pipeline/sr1-controls/swiftui.textfield/textfield-multiline-v1

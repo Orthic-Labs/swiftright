@@ -399,13 +399,13 @@ extension Graph {
         // Overflow decides the gutter, so it is read from the rows at the full width first. A row that wraps at the narrower width could change height;
         // this pass does not re-decide, so a wrap that crosses the viewport edge is the one case not measured.
         let fullProposal = ProposedViewSize(width: max(0, rect.width - 2 * inset), height: nil)
-        let heights = children.map { ListMetrics.rowHeight(forContent: measure($0, fullProposal).height) }
+        let heights = children.map { ListMetrics.rowHeight(forContent: measure($0, fullProposal).height, look: look) }
         let gutter = ListMetrics.trailingGutter(look, overflows: ListMetrics.overflows(look, rowHeights: heights, viewportHeight: rect.height))
         // A row spans the list less the trailing scroller gutter, so the content's proposal is the row's width less the two insets.
         let proposal = ProposedViewSize(width: max(0, rect.width - gutter - 2 * inset), height: nil)
         // The document is the rows as placed at this width, so the offset's clamp uses their real heights (a wrapped row is taller here than at full width).
         let sizes = children.map { measure($0, proposal) }
-        let rowHeights = sizes.map { ListMetrics.rowHeight(forContent: $0.height) }
+        let rowHeights = sizes.map { ListMetrics.rowHeight(forContent: $0.height, look: look) }
         let viewport = rect.height
         let document = ListMetrics.documentHeight(look, rowHeights: rowHeights)
         let maxOffset = max(0, document - viewport)
@@ -937,8 +937,45 @@ extension Graph {
         let text = shown.isEmpty ? (placeholderOf(node) ?? "") : shown
         let measured = measureText(node, text, width: nil)
         let inset = TextFieldMetrics.textInset(artwork)
+        if isVerticalField(node) {
+            // F9: the text wraps at the frame width less the text origin on each side, and the field is as tall as the lines it shows.
+            let width = finiteLength(proposal.width) ?? measured.width + 2 * inset
+            let origin = TextFieldMetrics.textOrigin(artwork)
+            let wrapped = measureText(node, text, width: max(0, width - 2 * origin))
+            let lineHeight = fieldLineHeight(node)
+            let lines = max(1, Int((wrapped.height / lineHeight).rounded()))
+            let shownLines = min(lines, max(1, node.environment.lineLimit ?? lines))
+            return LayoutSize(width: width, height: TextFieldAxisMetrics.height(artwork: artwork, lines: shownLines, lineHeight: lineHeight))
+        }
         let height = artwork == .bezel ? TextFieldMetrics.bezelHeight : max(measured.height, TextFieldMetrics.plainHeight)
         return LayoutSize(width: finiteLength(proposal.width) ?? measured.width + 2 * inset, height: height)
+    }
+
+    private func isVerticalField(_ node: Node) -> Bool {
+        guard case .textField = node.kind else { return false }
+        return (node.view as? FieldAxisProviding)?.fieldAxis == .vertical
+    }
+
+    /// One line of the field's font: a two-letter string measured unwrapped (the plain 16 pt for a measurer that gives none).
+    private func fieldLineHeight(_ node: Node) -> CGFloat {
+        let font = node.environment.textFont ?? Font(id: "body")
+        let request = TextMeasureRequest(text: "Mg", fontID: font.id, proposedWidth: nil, scale: scale, fontMetadata: font.metadata, lineLimit: nil)
+        let height = measurer.measure(request).size.height
+        return height > 0 ? height : TextFieldMetrics.plainHeight
+    }
+
+    /// What a host paints a vertical-axis TextField with, from the frame the node was placed at: nil for any other node (and for a horizontal field).
+    func verticalFieldInfo(_ node: Node) -> ResolvedVerticalField? {
+        guard isVerticalField(node) else { return nil }
+        let artwork = TextFieldMetrics.artwork(forStyle: node.environment.textFieldStyleMetadata)
+        let shown = node.textInput?.display ?? ""
+        let text = shown.isEmpty ? (placeholderOf(node) ?? "") : shown
+        let wrap = max(0, node.frame.width - 2 * TextFieldMetrics.textOrigin(artwork))
+        let size = measureText(node, text, width: wrap)
+        let lineHeight = fieldLineHeight(node)
+        let lines = max(1, Int((size.height / lineHeight).rounded()))
+        return ResolvedVerticalField(wrapWidth: Double(wrap), textWidth: Double(size.width), textHeight: Double(size.height), lineHeight: Double(lineHeight), lines: lines,
+                                     lineLimit: node.environment.lineLimit)
     }
 
     private func measureText(_ node: Node, _ string: String, width: CGFloat?) -> LayoutSize {

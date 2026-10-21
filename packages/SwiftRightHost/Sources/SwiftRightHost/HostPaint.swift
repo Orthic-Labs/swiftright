@@ -43,7 +43,7 @@ public enum HostPaintError: Error, Equatable, CustomStringConvertible {
         case .pathShapeRasterInput(let code): return "HostPaint: path shape raster input invalid (\(code))"
         case .unsupportedToggleStyle(let style): return "HostPaint: Toggle style '\(style)' has no artwork yet (only the switch and checkbox styles are painted)"
         case .unsupportedTogglePaintStyle: return "HostPaint: Toggle with a foreground style or opacity is not painted yet"
-        case .unsupportedListStyle(let style): return "HostPaint: List style '\(style)' has no artwork yet (only the automatic, inset and plain styles are painted)"
+        case .unsupportedListStyle(let style): return "HostPaint: List style '\(style)' has no artwork yet (only the automatic, inset, plain and sidebar styles are painted)"
         case .sliderMetadataRequired: return "HostPaint: Slider node without resolved value, bounds or an empty control"
         case .unsupportedSliderPaintStyle: return "HostPaint: Slider with a foreground style or opacity is not painted yet"
         case .unsupportedButtonPaintStyle: return "HostPaint: Button with a foreground style, opacity or an empty frame is not painted yet"
