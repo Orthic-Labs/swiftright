@@ -13,5 +13,9 @@ get() { # name url commit
 get swift-markdown-ui https://github.com/gonzalezreal/swift-markdown-ui.git 5f613358148239d0292c0cef674a3c2314737f9e
 get swift-cmark https://github.com/swiftlang/swift-cmark.git 3ccff77b2dc5b96b77db3da0d68d28068593fa53
 # SwiftRight patches (Windows has neither UIKit nor AppKit), applied once.
-for p in patches/*.patch; do git -C vendor/swift-markdown-ui apply --check "../../$p" 2>/dev/null && git -C vendor/swift-markdown-ui apply "../../$p"; done
+# Already applied (the reverse applies cleanly): skip. Otherwise apply, and fail loudly (CI must not build unpatched sources).
+for p in patches/*.patch; do
+  if git -C vendor/swift-markdown-ui apply --reverse --check --ignore-whitespace "../../$p" 2>/dev/null; then echo "patch already applied: $p"; continue; fi
+  git -C vendor/swift-markdown-ui apply --ignore-whitespace --verbose "../../$p" || { echo "patch failed: $p" >&2; exit 3; }
+done
 echo fetched
