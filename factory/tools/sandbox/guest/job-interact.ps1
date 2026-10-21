@@ -7,6 +7,7 @@
 #        window the foreground, because posted messages do not move GetKeyState (the Sandbox is its own desktop; nothing reaches the Dell).
 #   {"op":"char","text":"héllo"}                         WM_CHAR per UTF-16 unit
 #   {"op":"click","x":10,"y":20,"button":"left|right","count":1}   WM_MOUSEMOVE + button down/up
+#   {"op":"down","x":10,"y":20} / {"op":"up","x":10,"y":20}   WM_LBUTTONDOWN held (no up) / WM_LBUTTONUP: a "shot" between them captures the pressed state (#77)
 #   {"op":"move","x":10,"y":20,"down":false}                   WM_MOUSEMOVE posted at the client point (wParam MK_LBUTTON when "down"): a pointer move, with no button (hover) or with the primary button held (a drag in steps)
 #   {"op":"drag","x0":10,"y0":20,"x1":90,"y1":20,"steps":6}    WM_MOUSEMOVE, left button down at (x0, y0), `steps` WM_MOUSEMOVE with MK_LBUTTON along the line, button up at (x1, y1)
 #   {"op":"wheel","x":160,"y":120,"delta":-120,"times":3}      WM_MOUSEWHEEL posted to the target window (window-targeted like the other ops: no SendInput, no focus change). x, y are POINTS
@@ -400,6 +401,18 @@ function Do-Step($proc, $mainH, $step, [string]$out, [string]$n) {
                 [void][IxNative]::PostMessageW($h, $dn, [IntPtr]$mk, [IxNative]::Lp($x, $y)); Start-Sleep -Milliseconds 40
                 [void][IxNative]::PostMessageW($h, $up, [IntPtr]0, [IxNative]::Lp($x, $y)); Start-Sleep -Milliseconds 40
             }
+            return 'ok'
+        }
+        'down' {
+            # #77: the primary button pressed and HELD at the client point (no up), so a following "shot" captures the pressed state; "up" releases it.
+            $x = [int]$step.x; $y = [int]$step.y
+            [void][IxNative]::PostMessageW($h, $WM.MOUSEMOVE, [IntPtr]0, [IxNative]::Lp($x, $y)); Start-Sleep -Milliseconds 40
+            [void][IxNative]::PostMessageW($h, $WM.LBUTTONDOWN, [IntPtr]1, [IxNative]::Lp($x, $y)); Start-Sleep -Milliseconds 40
+            return 'ok'
+        }
+        'up' {
+            $x = [int]$step.x; $y = [int]$step.y
+            [void][IxNative]::PostMessageW($h, $WM.LBUTTONUP, [IntPtr]0, [IxNative]::Lp($x, $y)); Start-Sleep -Milliseconds 40
             return 'ok'
         }
         'move' {
