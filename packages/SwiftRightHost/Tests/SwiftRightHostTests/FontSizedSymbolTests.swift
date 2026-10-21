@@ -234,6 +234,8 @@ final class FillSymbolMappingTests: XCTestCase {
         let expected = ["checkmark.square.fill": "E73D", "checkmark.circle.fill": "EC61", "info.circle.fill": "F167", "xmark.circle.fill": "EB90",
                         "exclamationmark.triangle.fill": "F736", "xmark.octagon.fill": "EB90", "minus.square.fill": "F16D", "xmark.circle": "EA39"]
         for (name, glyph) in expected { XCTAssertEqual(t.symbols[name]?.glyph, glyph, name) }
-        for (name, s) in t.symbols { XCTAssertFalse(["E73B", "E73C"].contains(s.glyph), name) }
+        // E73B is right only for square.fill, which is a bare filled square with no mark (#73).
+        for (name, s) in t.symbols where name != "square.fill" { XCTAssertFalse(["E73B", "E73C"].contains(s.glyph), name) }
+        XCTAssertEqual(t.symbols["square.fill"]?.glyph, "E73B")
     }
 }

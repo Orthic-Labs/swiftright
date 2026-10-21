@@ -25,8 +25,9 @@ def font_sizes(name):
             classes = []
             for cls, ref in REF.items():
                 m = per[f"{label}@{ref}"]
+                if "viewFramePx" not in m: continue   # a measurement error ("no ink": a tiny thin glyph under half coverage at that scale): that class has no row; the layout falls back to the neighbouring sizes
                 classes.append({"scaleClass": cls, "refScale": ref, "framePx": m["viewFramePx"][2:4], "inkPx": m["inkBoxPx"]})
-            rows.append({"size": size, "weight": weight, "classes": classes})
+            if classes: rows.append({"size": size, "weight": weight, "classes": classes})
     rows.sort(key=lambda r: (r["weight"] != "regular", r["weight"], r["size"]))
     return rows
 

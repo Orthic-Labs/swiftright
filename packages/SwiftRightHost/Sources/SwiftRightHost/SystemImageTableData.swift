@@ -31161,6 +31161,2338 @@ enum SystemImageTableData {
           }
         ]
       }
+    },
+    "checkmark.square": {
+      "provider": "Segoe Fluent Icons",
+      "providerVersion": "SegoeFluentIcons",
+      "glyph": "E73A",
+      "foregroundSemantic": "label",
+      "width": 16,
+      "height": 14,
+      "status": "provider-live-declared",
+      "rasterization": {
+        "kind": "gdi-glyph-outline",
+        "textureType": "GGO_GRAY8_BITMAP",
+        "fontEmSize": null,
+        "source": "live-gdi-getglyphoutlinew"
+      },
+      "mapping": {
+        "segoeName": "CheckboxComposite",
+        "fit": "nearest",
+        "note": "outlined square with a check; codepoint from the MDL2/Fluent table, not yet run on the Dell",
+        "source": "https://learn.microsoft.com/en-us/windows/apps/design/iconography/segoe-fluent-icons-font"
+      },
+      "layout": {
+        "source": "factory/tools/symbol-metrics/symbol-sizes.sh --capture-path (NSHostingView in an offscreen pinned-scale window drawn into a bitmap as the capture host does; non-resizable Image(systemName:).font(.system(size:)); half-coverage ink)",
+        "macOS": "Version 27.0.1 (Build 26A434)",
+        "referencePointSize": 13,
+        "aspect": 1.1428571428571428,
+        "inkRect": [0.125, 0.07142857142857142, 0.875, 0.9285714285714286],
+        "intrinsicSize": [16, 14],
+        "sourceOversample": 8,
+        "fontSizes": [
+          {
+            "size": 4.0,
+            "weight": "regular",
+            "classes": [
+              {"scaleClass": "2x", "refScale": 2.5, "framePx": [11, 11], "inkPx": [1, 1, 10, 10]}
+            ]
+          },
+          {
+            "size": 5.0,
+            "weight": "regular",
+            "classes": [
+              {"scaleClass": "1x", "refScale": 1.0, "framePx": [7, 5], "inkPx": [1, 4, 2, 5]},
+              {"scaleClass": "2x", "refScale": 2.5, "framePx": [16, 14], "inkPx": [2, 2, 13, 14]}
+            ]
+          },
+          {
+            "size": 6.0,
+            "weight": "regular",
+            "classes": [
+              {"scaleClass": "1x", "refScale": 1.0, "framePx": [8, 8], "inkPx": [1, 2, 6, 7]},
+              {"scaleClass": "2x", "refScale": 2.5, "framePx": [18, 16], "inkPx": [2, 2, 15, 15]}
+            ]
+          },
+          {
+            "size": 9.0,
+            "weight": "regular",
+            "classes": [
+              {"scaleClass": "1x", "refScale": 1.0, "framePx": [11, 11], "inkPx": [1, 2, 9, 10]},
+              {"scaleClass": "2x", "refScale": 2.5, "framePx": [27, 25], "inkPx": [3, 3, 23, 23]}
+            ]
+          },
+          {
+            "size": 10.0,
+            "weight": "regular",
+            "classes": [
+              {"scaleClass": "1x", "refScale": 1.0, "framePx": [11, 11], "inkPx": [1, 1, 10, 10]},
+              {"scaleClass": "2x", "refScale": 2.5, "framePx": [29, 27], "inkPx": [3, 3, 25, 25]}
+            ]
+          },
+          {
+            "size": 11.0,
+            "weight": "regular",
+            "classes": [
+              {"scaleClass": "1x", "refScale": 1.0, "framePx": [12, 12], "inkPx": [1, 1, 11, 11]},
+              {"scaleClass": "2x", "refScale": 2.5, "framePx": [33, 30], "inkPx": [4, 3, 28, 27]}
+            ]
+          },
+          {
+            "size": 11.5,
+            "weight": "regular",
+            "classes": [
+              {"scaleClass": "1x", "refScale": 1.0, "framePx": [13, 13], "inkPx": [1, 2, 11, 12]},
+              {"scaleClass": "2x", "refScale": 2.5, "framePx": [34, 32], "inkPx": [4, 3, 30, 29]}
+            ]
+          },
+          {
+            "size": 12.0,
+            "weight": "regular",
+            "classes": [
+              {"scaleClass": "1x", "refScale": 1.0, "framePx": [13, 13], "inkPx": [1, 1, 12, 12]},
+              {"scaleClass": "2x", "refScale": 2.5, "framePx": [35, 33], "inkPx": [4, 3, 31, 31]}
+            ]
+          },
+          {
+            "size": 12.5,
+            "weight": "regular",
+            "classes": [
+              {"scaleClass": "1x", "refScale": 1.0, "framePx": [16, 14], "inkPx": [2, 2, 13, 13]},
+              {"scaleClass": "2x", "refScale": 2.5, "framePx": [37, 35], "inkPx": [4, 4, 32, 32]}
+            ]
+          },
+          {
+            "size": 13.0,
+            "weight": "regular",
+            "classes": [
+              {"scaleClass": "1x", "refScale": 1.0, "framePx": [16, 14], "inkPx": [2, 1, 14, 13]},
+              {"scaleClass": "2x", "refScale": 2.5, "framePx": [38, 35], "inkPx": [4, 4, 33, 32]}
+            ]
+          },
+          {
+            "size": 13.5,
+            "weight": "regular",
+            "classes": [
+              {"scaleClass": "1x", "refScale": 1.0, "framePx": [17, 15], "inkPx": [2, 2, 14, 14]},
+              {"scaleClass": "2x", "refScale": 2.5, "framePx": [39, 37], "inkPx": [4, 4, 34, 34]}
+            ]
+          },
+          {
+            "size": 14.0,
+            "weight": "regular",
+            "classes": [
+              {"scaleClass": "1x", "refScale": 1.0, "framePx": [17, 15], "inkPx": [2, 1, 15, 14]},
+              {"scaleClass": "2x", "refScale": 2.5, "framePx": [40, 38], "inkPx": [4, 4, 35, 36]}
+            ]
+          },
+          {
+            "size": 15.0,
+            "weight": "regular",
+            "classes": [
+              {"scaleClass": "1x", "refScale": 1.0, "framePx": [18, 16], "inkPx": [2, 2, 15, 15]},
+              {"scaleClass": "2x", "refScale": 2.5, "framePx": [44, 40], "inkPx": [5, 3, 39, 37]}
+            ]
+          },
+          {
+            "size": 16.0,
+            "weight": "regular",
+            "classes": [
+              {"scaleClass": "1x", "refScale": 1.0, "framePx": [19, 17], "inkPx": [2, 2, 16, 16]},
+              {"scaleClass": "2x", "refScale": 2.5, "framePx": [46, 42], "inkPx": [5, 3, 41, 39]}
+            ]
+          },
+          {
+            "size": 17.0,
+            "weight": "regular",
+            "classes": [
+              {"scaleClass": "1x", "refScale": 1.0, "framePx": [20, 18], "inkPx": [2, 2, 17, 17]},
+              {"scaleClass": "2x", "refScale": 2.5, "framePx": [49, 46], "inkPx": [5, 4, 43, 42]}
+            ]
+          },
+          {
+            "size": 18.0,
+            "weight": "regular",
+            "classes": [
+              {"scaleClass": "1x", "refScale": 1.0, "framePx": [21, 21], "inkPx": [2, 3, 18, 19]},
+              {"scaleClass": "2x", "refScale": 2.5, "framePx": [53, 49], "inkPx": [6, 5, 46, 45]}
+            ]
+          },
+          {
+            "size": 20.0,
+            "weight": "regular",
+            "classes": [
+              {"scaleClass": "1x", "refScale": 1.0, "framePx": [22, 22], "inkPx": [2, 2, 20, 20]},
+              {"scaleClass": "2x", "refScale": 2.5, "framePx": [57, 53], "inkPx": [6, 4, 51, 49]}
+            ]
+          },
+          {
+            "size": 22.0,
+            "weight": "regular",
+            "classes": [
+              {"scaleClass": "1x", "refScale": 1.0, "framePx": [26, 24], "inkPx": [3, 2, 23, 22]},
+              {"scaleClass": "2x", "refScale": 2.5, "framePx": [64, 60], "inkPx": [7, 6, 56, 55]}
+            ]
+          },
+          {
+            "size": 24.0,
+            "weight": "regular",
+            "classes": [
+              {"scaleClass": "1x", "refScale": 1.0, "framePx": [28, 26], "inkPx": [3, 2, 25, 24]},
+              {"scaleClass": "2x", "refScale": 2.5, "framePx": [68, 64], "inkPx": [7, 5, 61, 59]}
+            ]
+          },
+          {
+            "size": 26.0,
+            "weight": "regular",
+            "classes": [
+              {"scaleClass": "1x", "refScale": 1.0, "framePx": [30, 28], "inkPx": [3, 3, 26, 26]},
+              {"scaleClass": "2x", "refScale": 2.5, "framePx": [75, 71], "inkPx": [8, 7, 66, 65]}
+            ]
+          },
+          {
+            "size": 28.0,
+            "weight": "regular",
+            "classes": [
+              {"scaleClass": "1x", "refScale": 1.0, "framePx": [32, 30], "inkPx": [3, 3, 28, 28]},
+              {"scaleClass": "2x", "refScale": 2.5, "framePx": [81, 75], "inkPx": [9, 6, 72, 69]}
+            ]
+          },
+          {
+            "size": 30.0,
+            "weight": "regular",
+            "classes": [
+              {"scaleClass": "1x", "refScale": 1.0, "framePx": [35, 33], "inkPx": [4, 3, 31, 30]},
+              {"scaleClass": "2x", "refScale": 2.5, "framePx": [86, 82], "inkPx": [9, 8, 76, 75]}
+            ]
+          },
+          {
+            "size": 32.0,
+            "weight": "regular",
+            "classes": [
+              {"scaleClass": "1x", "refScale": 1.0, "framePx": [37, 35], "inkPx": [4, 3, 33, 32]},
+              {"scaleClass": "2x", "refScale": 2.5, "framePx": [92, 86], "inkPx": [10, 7, 82, 80]}
+            ]
+          },
+          {
+            "size": 4.0,
+            "weight": "bold",
+            "classes": [
+              {"scaleClass": "1x", "refScale": 1.0, "framePx": [4, 4], "inkPx": [0, 0, 4, 4]},
+              {"scaleClass": "2x", "refScale": 2.5, "framePx": [12, 12], "inkPx": [1, 2, 10, 11]}
+            ]
+          },
+          {
+            "size": 5.0,
+            "weight": "bold",
+            "classes": [
+              {"scaleClass": "1x", "refScale": 1.0, "framePx": [7, 5], "inkPx": [1, 0, 6, 5]},
+              {"scaleClass": "2x", "refScale": 2.5, "framePx": [16, 14], "inkPx": [2, 1, 14, 14]}
+            ]
+          },
+          {
+            "size": 6.0,
+            "weight": "bold",
+            "classes": [
+              {"scaleClass": "1x", "refScale": 1.0, "framePx": [8, 8], "inkPx": [1, 1, 7, 7]},
+              {"scaleClass": "2x", "refScale": 2.5, "framePx": [18, 17], "inkPx": [2, 2, 16, 16]}
+            ]
+          },
+          {
+            "size": 9.0,
+            "weight": "bold",
+            "classes": [
+              {"scaleClass": "1x", "refScale": 1.0, "framePx": [11, 11], "inkPx": [1, 2, 9, 10]},
+              {"scaleClass": "2x", "refScale": 2.5, "framePx": [27, 26], "inkPx": [3, 3, 24, 25]}
+            ]
+          },
+          {
+            "size": 10.0,
+            "weight": "bold",
+            "classes": [
+              {"scaleClass": "1x", "refScale": 1.0, "framePx": [12, 12], "inkPx": [1, 2, 10, 11]},
+              {"scaleClass": "2x", "refScale": 2.5, "framePx": [30, 28], "inkPx": [3, 3, 26, 26]}
+            ]
+          },
+          {
+            "size": 11.0,
+            "weight": "bold",
+            "classes": [
+              {"scaleClass": "1x", "refScale": 1.0, "framePx": [13, 13], "inkPx": [1, 2, 11, 12]},
+              {"scaleClass": "2x", "refScale": 2.5, "framePx": [32, 30], "inkPx": [3, 2, 29, 28]}
+            ]
+          },
+          {
+            "size": 11.5,
+            "weight": "bold",
+            "classes": [
+              {"scaleClass": "1x", "refScale": 1.0, "framePx": [13, 13], "inkPx": [1, 1, 12, 12]},
+              {"scaleClass": "2x", "refScale": 2.5, "framePx": [35, 33], "inkPx": [4, 3, 31, 31]}
+            ]
+          },
+          {
+            "size": 12.0,
+            "weight": "bold",
+            "classes": [
+              {"scaleClass": "1x", "refScale": 1.0, "framePx": [14, 14], "inkPx": [1, 2, 12, 13]},
+              {"scaleClass": "2x", "refScale": 2.5, "framePx": [36, 35], "inkPx": [4, 4, 32, 32]}
+            ]
+          },
+          {
+            "size": 12.5,
+            "weight": "bold",
+            "classes": [
+              {"scaleClass": "1x", "refScale": 1.0, "framePx": [16, 14], "inkPx": [2, 1, 14, 13]},
+              {"scaleClass": "2x", "refScale": 2.5, "framePx": [38, 36], "inkPx": [4, 4, 33, 33]}
+            ]
+          },
+          {
+            "size": 13.0,
+            "weight": "bold",
+            "classes": [
+              {"scaleClass": "1x", "refScale": 1.0, "framePx": [17, 15], "inkPx": [2, 2, 14, 14]},
+              {"scaleClass": "2x", "refScale": 2.5, "framePx": [39, 37], "inkPx": [4, 4, 34, 34]}
+            ]
+          },
+          {
+            "size": 13.5,
+            "weight": "bold",
+            "classes": [
+              {"scaleClass": "1x", "refScale": 1.0, "framePx": [17, 15], "inkPx": [2, 1, 15, 14]},
+              {"scaleClass": "2x", "refScale": 2.5, "framePx": [40, 38], "inkPx": [4, 3, 35, 36]}
+            ]
+          },
+          {
+            "size": 14.0,
+            "weight": "bold",
+            "classes": [
+              {"scaleClass": "1x", "refScale": 1.0, "framePx": [18, 16], "inkPx": [2, 2, 15, 15]},
+              {"scaleClass": "2x", "refScale": 2.5, "framePx": [41, 39], "inkPx": [4, 3, 37, 36]}
+            ]
+          },
+          {
+            "size": 15.0,
+            "weight": "bold",
+            "classes": [
+              {"scaleClass": "1x", "refScale": 1.0, "framePx": [18, 17], "inkPx": [2, 2, 16, 16]},
+              {"scaleClass": "2x", "refScale": 2.5, "framePx": [45, 42], "inkPx": [5, 4, 40, 39]}
+            ]
+          },
+          {
+            "size": 16.0,
+            "weight": "bold",
+            "classes": [
+              {"scaleClass": "1x", "refScale": 1.0, "framePx": [19, 17], "inkPx": [2, 1, 17, 16]},
+              {"scaleClass": "2x", "refScale": 2.5, "framePx": [48, 44], "inkPx": [5, 4, 42, 41]}
+            ]
+          },
+          {
+            "size": 17.0,
+            "weight": "bold",
+            "classes": [
+              {"scaleClass": "1x", "refScale": 1.0, "framePx": [20, 18], "inkPx": [2, 1, 18, 17]},
+              {"scaleClass": "2x", "refScale": 2.5, "framePx": [50, 48], "inkPx": [5, 4, 45, 44]}
+            ]
+          },
+          {
+            "size": 18.0,
+            "weight": "bold",
+            "classes": [
+              {"scaleClass": "1x", "refScale": 1.0, "framePx": [21, 21], "inkPx": [2, 2, 19, 19]},
+              {"scaleClass": "2x", "refScale": 2.5, "framePx": [54, 51], "inkPx": [6, 5, 48, 47]}
+            ]
+          },
+          {
+            "size": 20.0,
+            "weight": "bold",
+            "classes": [
+              {"scaleClass": "1x", "refScale": 1.0, "framePx": [23, 23], "inkPx": [2, 2, 21, 21]},
+              {"scaleClass": "2x", "refScale": 2.5, "framePx": [59, 55], "inkPx": [6, 4, 53, 52]}
+            ]
+          },
+          {
+            "size": 22.0,
+            "weight": "bold",
+            "classes": [
+              {"scaleClass": "1x", "refScale": 1.0, "framePx": [27, 25], "inkPx": [3, 2, 24, 23]},
+              {"scaleClass": "2x", "refScale": 2.5, "framePx": [66, 62], "inkPx": [7, 6, 58, 58]}
+            ]
+          },
+          {
+            "size": 24.0,
+            "weight": "bold",
+            "classes": [
+              {"scaleClass": "1x", "refScale": 1.0, "framePx": [29, 27], "inkPx": [3, 3, 25, 25]},
+              {"scaleClass": "2x", "refScale": 2.5, "framePx": [70, 67], "inkPx": [7, 6, 63, 63]}
+            ]
+          },
+          {
+            "size": 26.0,
+            "weight": "bold",
+            "classes": [
+              {"scaleClass": "1x", "refScale": 1.0, "framePx": [31, 29], "inkPx": [3, 3, 27, 27]},
+              {"scaleClass": "2x", "refScale": 2.5, "framePx": [77, 73], "inkPx": [8, 6, 69, 67]}
+            ]
+          },
+          {
+            "size": 28.0,
+            "weight": "bold",
+            "classes": [
+              {"scaleClass": "1x", "refScale": 1.0, "framePx": [33, 31], "inkPx": [3, 3, 29, 29]},
+              {"scaleClass": "2x", "refScale": 2.5, "framePx": [84, 78], "inkPx": [9, 7, 74, 72]}
+            ]
+          },
+          {
+            "size": 30.0,
+            "weight": "bold",
+            "classes": [
+              {"scaleClass": "1x", "refScale": 1.0, "framePx": [36, 35], "inkPx": [4, 4, 32, 32]},
+              {"scaleClass": "2x", "refScale": 2.5, "framePx": [88, 85], "inkPx": [9, 8, 79, 78]}
+            ]
+          },
+          {
+            "size": 32.0,
+            "weight": "bold",
+            "classes": [
+              {"scaleClass": "1x", "refScale": 1.0, "framePx": [38, 36], "inkPx": [4, 3, 34, 33]},
+              {"scaleClass": "2x", "refScale": 2.5, "framePx": [95, 89], "inkPx": [10, 7, 85, 82]}
+            ]
+          },
+          {
+            "size": 4.0,
+            "weight": "semibold",
+            "classes": [
+              {"scaleClass": "1x", "refScale": 1.0, "framePx": [4, 4], "inkPx": [0, 2, 2, 4]},
+              {"scaleClass": "2x", "refScale": 2.5, "framePx": [12, 12], "inkPx": [1, 2, 10, 11]}
+            ]
+          },
+          {
+            "size": 5.0,
+            "weight": "semibold",
+            "classes": [
+              {"scaleClass": "1x", "refScale": 1.0, "framePx": [7, 5], "inkPx": [1, 0, 6, 5]},
+              {"scaleClass": "2x", "refScale": 2.5, "framePx": [16, 14], "inkPx": [2, 1, 14, 14]}
+            ]
+          },
+          {
+            "size": 6.0,
+            "weight": "semibold",
+            "classes": [
+              {"scaleClass": "1x", "refScale": 1.0, "framePx": [8, 8], "inkPx": [1, 1, 7, 7]},
+              {"scaleClass": "2x", "refScale": 2.5, "framePx": [18, 16], "inkPx": [2, 1, 16, 15]}
+            ]
+          },
+          {
+            "size": 9.0,
+            "weight": "semibold",
+            "classes": [
+              {"scaleClass": "1x", "refScale": 1.0, "framePx": [11, 11], "inkPx": [1, 2, 9, 10]},
+              {"scaleClass": "2x", "refScale": 2.5, "framePx": [27, 25], "inkPx": [3, 2, 24, 23]}
+            ]
+          },
+          {
+            "size": 10.0,
+            "weight": "semibold",
+            "classes": [
+              {"scaleClass": "1x", "refScale": 1.0, "framePx": [12, 12], "inkPx": [1, 2, 10, 11]},
+              {"scaleClass": "2x", "refScale": 2.5, "framePx": [30, 28], "inkPx": [3, 3, 26, 26]}
+            ]
+          },
+          {
+            "size": 11.0,
+            "weight": "semibold",
+            "classes": [
+              {"scaleClass": "1x", "refScale": 1.0, "framePx": [13, 13], "inkPx": [1, 2, 11, 12]},
+              {"scaleClass": "2x", "refScale": 2.5, "framePx": [32, 30], "inkPx": [3, 3, 28, 28]}
+            ]
+          },
+          {
+            "size": 11.5,
+            "weight": "semibold",
+            "classes": [
+              {"scaleClass": "1x", "refScale": 1.0, "framePx": [13, 13], "inkPx": [1, 1, 12, 12]},
+              {"scaleClass": "2x", "refScale": 2.5, "framePx": [35, 33], "inkPx": [4, 4, 30, 31]}
+            ]
+          },
+          {
+            "size": 12.0,
+            "weight": "semibold",
+            "classes": [
+              {"scaleClass": "1x", "refScale": 1.0, "framePx": [14, 14], "inkPx": [1, 2, 12, 13]},
+              {"scaleClass": "2x", "refScale": 2.5, "framePx": [36, 34], "inkPx": [4, 3, 32, 31]}
+            ]
+          },
+          {
+            "size": 12.5,
+            "weight": "semibold",
+            "classes": [
+              {"scaleClass": "1x", "refScale": 1.0, "framePx": [16, 14], "inkPx": [2, 1, 14, 13]},
+              {"scaleClass": "2x", "refScale": 2.5, "framePx": [37, 35], "inkPx": [4, 3, 33, 32]}
+            ]
+          },
+          {
+            "size": 13.0,
+            "weight": "semibold",
+            "classes": [
+              {"scaleClass": "1x", "refScale": 1.0, "framePx": [16, 14], "inkPx": [2, 1, 14, 13]},
+              {"scaleClass": "2x", "refScale": 2.5, "framePx": [38, 36], "inkPx": [4, 3, 34, 33]}
+            ]
+          },
+          {
+            "size": 13.5,
+            "weight": "semibold",
+            "classes": [
+              {"scaleClass": "1x", "refScale": 1.0, "framePx": [17, 15], "inkPx": [2, 2, 14, 14]},
+              {"scaleClass": "2x", "refScale": 2.5, "framePx": [40, 38], "inkPx": [4, 4, 35, 36]}
+            ]
+          },
+          {
+            "size": 14.0,
+            "weight": "semibold",
+            "classes": [
+              {"scaleClass": "1x", "refScale": 1.0, "framePx": [17, 15], "inkPx": [2, 1, 15, 14]},
+              {"scaleClass": "2x", "refScale": 2.5, "framePx": [41, 39], "inkPx": [4, 4, 36, 36]}
+            ]
+          },
+          {
+            "size": 15.0,
+            "weight": "semibold",
+            "classes": [
+              {"scaleClass": "1x", "refScale": 1.0, "framePx": [18, 16], "inkPx": [2, 1, 16, 15]},
+              {"scaleClass": "2x", "refScale": 2.5, "framePx": [45, 41], "inkPx": [5, 3, 40, 38]}
+            ]
+          },
+          {
+            "size": 16.0,
+            "weight": "semibold",
+            "classes": [
+              {"scaleClass": "1x", "refScale": 1.0, "framePx": [19, 17], "inkPx": [2, 1, 17, 16]},
+              {"scaleClass": "2x", "refScale": 2.5, "framePx": [47, 43], "inkPx": [5, 3, 42, 41]}
+            ]
+          },
+          {
+            "size": 17.0,
+            "weight": "semibold",
+            "classes": [
+              {"scaleClass": "1x", "refScale": 1.0, "framePx": [20, 18], "inkPx": [2, 1, 18, 17]},
+              {"scaleClass": "2x", "refScale": 2.5, "framePx": [50, 48], "inkPx": [5, 5, 44, 44]}
+            ]
+          },
+          {
+            "size": 18.0,
+            "weight": "semibold",
+            "classes": [
+              {"scaleClass": "1x", "refScale": 1.0, "framePx": [21, 21], "inkPx": [2, 2, 19, 19]},
+              {"scaleClass": "2x", "refScale": 2.5, "framePx": [54, 50], "inkPx": [6, 5, 47, 47]}
+            ]
+          },
+          {
+            "size": 20.0,
+            "weight": "semibold",
+            "classes": [
+              {"scaleClass": "1x", "refScale": 1.0, "framePx": [23, 23], "inkPx": [2, 3, 20, 21]},
+              {"scaleClass": "2x", "refScale": 2.5, "framePx": [59, 55], "inkPx": [6, 5, 52, 52]}
+            ]
+          },
+          {
+            "size": 22.0,
+            "weight": "semibold",
+            "classes": [
+              {"scaleClass": "1x", "refScale": 1.0, "framePx": [27, 25], "inkPx": [3, 3, 23, 23]},
+              {"scaleClass": "2x", "refScale": 2.5, "framePx": [65, 61], "inkPx": [7, 5, 58, 56]}
+            ]
+          },
+          {
+            "size": 24.0,
+            "weight": "semibold",
+            "classes": [
+              {"scaleClass": "1x", "refScale": 1.0, "framePx": [29, 27], "inkPx": [3, 3, 25, 25]},
+              {"scaleClass": "2x", "refScale": 2.5, "framePx": [70, 66], "inkPx": [7, 6, 62, 61]}
+            ]
+          },
+          {
+            "size": 26.0,
+            "weight": "semibold",
+            "classes": [
+              {"scaleClass": "1x", "refScale": 1.0, "framePx": [30, 28], "inkPx": [3, 2, 27, 26]},
+              {"scaleClass": "2x", "refScale": 2.5, "framePx": [76, 72], "inkPx": [8, 6, 68, 66]}
+            ]
+          },
+          {
+            "size": 28.0,
+            "weight": "semibold",
+            "classes": [
+              {"scaleClass": "1x", "refScale": 1.0, "framePx": [32, 30], "inkPx": [3, 2, 29, 28]},
+              {"scaleClass": "2x", "refScale": 2.5, "framePx": [83, 77], "inkPx": [9, 7, 73, 71]}
+            ]
+          },
+          {
+            "size": 30.0,
+            "weight": "semibold",
+            "classes": [
+              {"scaleClass": "1x", "refScale": 1.0, "framePx": [36, 34], "inkPx": [4, 3, 32, 31]},
+              {"scaleClass": "2x", "refScale": 2.5, "framePx": [88, 84], "inkPx": [9, 8, 78, 77]}
+            ]
+          },
+          {
+            "size": 32.0,
+            "weight": "semibold",
+            "classes": [
+              {"scaleClass": "1x", "refScale": 1.0, "framePx": [38, 36], "inkPx": [4, 4, 33, 33]},
+              {"scaleClass": "2x", "refScale": 2.5, "framePx": [94, 88], "inkPx": [10, 7, 84, 81]}
+            ]
+          }
+        ]
+      }
+    },
+    "circle": {
+      "provider": "Segoe Fluent Icons",
+      "providerVersion": "SegoeFluentIcons",
+      "glyph": "E91F",
+      "foregroundSemantic": "label",
+      "width": 15,
+      "height": 15,
+      "status": "provider-live-declared",
+      "rasterization": {
+        "kind": "gdi-glyph-outline",
+        "textureType": "GGO_GRAY8_BITMAP",
+        "fontEmSize": null,
+        "source": "live-gdi-getglyphoutlinew"
+      },
+      "mapping": {
+        "segoeName": "CircleRing",
+        "fit": "nearest",
+        "note": "MarkdownUI hollow bullet (ListBullet.circle); the glyph is area-resampled onto the Mac-measured ink box, so only its shape (a ring) matters; codepoint from the MDL2/Fluent table, not yet run on the Dell",
+        "source": "https://learn.microsoft.com/en-us/windows/apps/design/iconography/segoe-fluent-icons-font"
+      },
+      "layout": {
+        "source": "factory/tools/symbol-metrics/symbol-sizes.sh --capture-path (NSHostingView in an offscreen pinned-scale window drawn into a bitmap as the capture host does; non-resizable Image(systemName:).font(.system(size:)); half-coverage ink)",
+        "macOS": "Version 27.0.1 (Build 26A434)",
+        "referencePointSize": 13,
+        "aspect": 1.0,
+        "inkRect": [0.06666666666666667, 0.06666666666666667, 0.9333333333333333, 0.9333333333333333],
+        "intrinsicSize": [15, 15],
+        "sourceOversample": 8,
+        "fontSizes": [
+          {
+            "size": 4.0,
+            "weight": "regular",
+            "classes": [
+              {"scaleClass": "2x", "refScale": 2.5, "framePx": [12, 12], "inkPx": [1, 1, 11, 11]}
+            ]
+          },
+          {
+            "size": 5.0,
+            "weight": "regular",
+            "classes": [
+              {"scaleClass": "2x", "refScale": 2.5, "framePx": [15, 15], "inkPx": [1, 2, 13, 14]}
+            ]
+          },
+          {
+            "size": 6.0,
+            "weight": "regular",
+            "classes": [
+              {"scaleClass": "1x", "refScale": 1.0, "framePx": [8, 8], "inkPx": [1, 1, 7, 7]},
+              {"scaleClass": "2x", "refScale": 2.5, "framePx": [17, 17], "inkPx": [1, 1, 16, 16]}
+            ]
+          },
+          {
+            "size": 9.0,
+            "weight": "regular",
+            "classes": [
+              {"scaleClass": "1x", "refScale": 1.0, "framePx": [11, 11], "inkPx": [1, 1, 10, 10]},
+              {"scaleClass": "2x", "refScale": 2.5, "framePx": [27, 27], "inkPx": [2, 3, 24, 25]}
+            ]
+          },
+          {
+            "size": 10.0,
+            "weight": "regular",
+            "classes": [
+              {"scaleClass": "1x", "refScale": 1.0, "framePx": [12, 12], "inkPx": [1, 1, 11, 11]},
+              {"scaleClass": "2x", "refScale": 2.5, "framePx": [29, 29], "inkPx": [2, 2, 27, 27]}
+            ]
+          },
+          {
+            "size": 11.0,
+            "weight": "regular",
+            "classes": [
+              {"scaleClass": "1x", "refScale": 1.0, "framePx": [13, 13], "inkPx": [1, 1, 12, 12]},
+              {"scaleClass": "2x", "refScale": 2.5, "framePx": [33, 33], "inkPx": [3, 3, 30, 30]}
+            ]
+          },
+          {
+            "size": 11.5,
+            "weight": "regular",
+            "classes": [
+              {"scaleClass": "1x", "refScale": 1.0, "framePx": [14, 14], "inkPx": [1, 2, 12, 13]},
+              {"scaleClass": "2x", "refScale": 2.5, "framePx": [35, 35], "inkPx": [3, 3, 32, 32]}
+            ]
+          },
+          {
+            "size": 12.0,
+            "weight": "regular",
+            "classes": [
+              {"scaleClass": "1x", "refScale": 1.0, "framePx": [14, 14], "inkPx": [1, 1, 13, 13]},
+              {"scaleClass": "2x", "refScale": 2.5, "framePx": [36, 36], "inkPx": [3, 3, 33, 33]}
+            ]
+          },
+          {
+            "size": 12.5,
+            "weight": "regular",
+            "classes": [
+              {"scaleClass": "1x", "refScale": 1.0, "framePx": [15, 15], "inkPx": [1, 2, 13, 14]},
+              {"scaleClass": "2x", "refScale": 2.5, "framePx": [38, 38], "inkPx": [3, 4, 34, 35]}
+            ]
+          },
+          {
+            "size": 13.0,
+            "weight": "regular",
+            "classes": [
+              {"scaleClass": "1x", "refScale": 1.0, "framePx": [15, 15], "inkPx": [1, 1, 14, 14]},
+              {"scaleClass": "2x", "refScale": 2.5, "framePx": [38, 38], "inkPx": [3, 3, 35, 35]}
+            ]
+          },
+          {
+            "size": 13.5,
+            "weight": "regular",
+            "classes": [
+              {"scaleClass": "1x", "refScale": 1.0, "framePx": [16, 16], "inkPx": [1, 2, 14, 15]},
+              {"scaleClass": "2x", "refScale": 2.5, "framePx": [40, 40], "inkPx": [3, 3, 37, 37]}
+            ]
+          },
+          {
+            "size": 14.0,
+            "weight": "regular",
+            "classes": [
+              {"scaleClass": "1x", "refScale": 1.0, "framePx": [16, 16], "inkPx": [1, 1, 15, 15]},
+              {"scaleClass": "2x", "refScale": 2.5, "framePx": [41, 41], "inkPx": [3, 3, 38, 38]}
+            ]
+          },
+          {
+            "size": 15.0,
+            "weight": "regular",
+            "classes": [
+              {"scaleClass": "1x", "refScale": 1.0, "framePx": [17, 17], "inkPx": [1, 1, 16, 16]},
+              {"scaleClass": "2x", "refScale": 2.5, "framePx": [44, 44], "inkPx": [3, 4, 40, 41]}
+            ]
+          },
+          {
+            "size": 16.0,
+            "weight": "regular",
+            "classes": [
+              {"scaleClass": "1x", "refScale": 1.0, "framePx": [18, 18], "inkPx": [1, 1, 17, 17]},
+              {"scaleClass": "2x", "refScale": 2.5, "framePx": [46, 46], "inkPx": [3, 3, 43, 43]}
+            ]
+          },
+          {
+            "size": 17.0,
+            "weight": "regular",
+            "classes": [
+              {"scaleClass": "1x", "refScale": 1.0, "framePx": [19, 19], "inkPx": [1, 1, 18, 18]},
+              {"scaleClass": "2x", "refScale": 2.5, "framePx": [50, 50], "inkPx": [4, 4, 46, 46]}
+            ]
+          },
+          {
+            "size": 18.0,
+            "weight": "regular",
+            "classes": [
+              {"scaleClass": "1x", "refScale": 1.0, "framePx": [22, 22], "inkPx": [2, 2, 20, 20]},
+              {"scaleClass": "2x", "refScale": 2.5, "framePx": [53, 53], "inkPx": [4, 4, 49, 49]}
+            ]
+          },
+          {
+            "size": 20.0,
+            "weight": "regular",
+            "classes": [
+              {"scaleClass": "1x", "refScale": 1.0, "framePx": [24, 24], "inkPx": [2, 2, 22, 22]},
+              {"scaleClass": "2x", "refScale": 2.5, "framePx": [58, 58], "inkPx": [4, 4, 54, 54]}
+            ]
+          },
+          {
+            "size": 22.0,
+            "weight": "regular",
+            "classes": [
+              {"scaleClass": "1x", "refScale": 1.0, "framePx": [26, 26], "inkPx": [2, 2, 24, 24]},
+              {"scaleClass": "2x", "refScale": 2.5, "framePx": [65, 65], "inkPx": [5, 5, 60, 60]}
+            ]
+          },
+          {
+            "size": 24.0,
+            "weight": "regular",
+            "classes": [
+              {"scaleClass": "1x", "refScale": 1.0, "framePx": [28, 28], "inkPx": [2, 2, 26, 26]},
+              {"scaleClass": "2x", "refScale": 2.5, "framePx": [70, 70], "inkPx": [5, 5, 65, 65]}
+            ]
+          },
+          {
+            "size": 26.0,
+            "weight": "regular",
+            "classes": [
+              {"scaleClass": "1x", "refScale": 1.0, "framePx": [30, 30], "inkPx": [2, 2, 28, 28]},
+              {"scaleClass": "2x", "refScale": 2.5, "framePx": [77, 77], "inkPx": [6, 6, 71, 71]}
+            ]
+          },
+          {
+            "size": 28.0,
+            "weight": "regular",
+            "classes": [
+              {"scaleClass": "1x", "refScale": 1.0, "framePx": [32, 32], "inkPx": [2, 2, 30, 30]},
+              {"scaleClass": "2x", "refScale": 2.5, "framePx": [82, 82], "inkPx": [6, 6, 76, 76]}
+            ]
+          },
+          {
+            "size": 30.0,
+            "weight": "regular",
+            "classes": [
+              {"scaleClass": "1x", "refScale": 1.0, "framePx": [36, 36], "inkPx": [3, 3, 33, 33]},
+              {"scaleClass": "2x", "refScale": 2.5, "framePx": [89, 89], "inkPx": [7, 7, 82, 82]}
+            ]
+          },
+          {
+            "size": 32.0,
+            "weight": "regular",
+            "classes": [
+              {"scaleClass": "1x", "refScale": 1.0, "framePx": [38, 38], "inkPx": [3, 3, 35, 35]},
+              {"scaleClass": "2x", "refScale": 2.5, "framePx": [94, 94], "inkPx": [7, 7, 87, 87]}
+            ]
+          },
+          {
+            "size": 4.0,
+            "weight": "bold",
+            "classes": [
+              {"scaleClass": "1x", "refScale": 1.0, "framePx": [5, 5], "inkPx": [0, 1, 4, 5]},
+              {"scaleClass": "2x", "refScale": 2.5, "framePx": [13, 13], "inkPx": [1, 2, 11, 12]}
+            ]
+          },
+          {
+            "size": 5.0,
+            "weight": "bold",
+            "classes": [
+              {"scaleClass": "1x", "refScale": 1.0, "framePx": [6, 6], "inkPx": [0, 1, 5, 6]},
+              {"scaleClass": "2x", "refScale": 2.5, "framePx": [15, 15], "inkPx": [1, 1, 14, 14]}
+            ]
+          },
+          {
+            "size": 6.0,
+            "weight": "bold",
+            "classes": [
+              {"scaleClass": "1x", "refScale": 1.0, "framePx": [9, 9], "inkPx": [1, 2, 7, 8]},
+              {"scaleClass": "2x", "refScale": 2.5, "framePx": [18, 18], "inkPx": [1, 2, 16, 17]}
+            ]
+          },
+          {
+            "size": 9.0,
+            "weight": "bold",
+            "classes": [
+              {"scaleClass": "1x", "refScale": 1.0, "framePx": [12, 12], "inkPx": [1, 2, 10, 11]},
+              {"scaleClass": "2x", "refScale": 2.5, "framePx": [28, 28], "inkPx": [2, 3, 25, 26]}
+            ]
+          },
+          {
+            "size": 10.0,
+            "weight": "bold",
+            "classes": [
+              {"scaleClass": "1x", "refScale": 1.0, "framePx": [13, 13], "inkPx": [1, 2, 11, 12]},
+              {"scaleClass": "2x", "refScale": 2.5, "framePx": [30, 30], "inkPx": [2, 2, 28, 28]}
+            ]
+          },
+          {
+            "size": 11.0,
+            "weight": "bold",
+            "classes": [
+              {"scaleClass": "1x", "refScale": 1.0, "framePx": [14, 14], "inkPx": [1, 2, 12, 13]},
+              {"scaleClass": "2x", "refScale": 2.5, "framePx": [33, 33], "inkPx": [2, 3, 30, 31]}
+            ]
+          },
+          {
+            "size": 11.5,
+            "weight": "bold",
+            "classes": [
+              {"scaleClass": "1x", "refScale": 1.0, "framePx": [14, 14], "inkPx": [1, 1, 13, 13]},
+              {"scaleClass": "2x", "refScale": 2.5, "framePx": [36, 36], "inkPx": [3, 3, 33, 33]}
+            ]
+          },
+          {
+            "size": 12.0,
+            "weight": "bold",
+            "classes": [
+              {"scaleClass": "1x", "refScale": 1.0, "framePx": [15, 15], "inkPx": [1, 2, 13, 14]},
+              {"scaleClass": "2x", "refScale": 2.5, "framePx": [37, 37], "inkPx": [3, 3, 34, 34]}
+            ]
+          },
+          {
+            "size": 12.5,
+            "weight": "bold",
+            "classes": [
+              {"scaleClass": "1x", "refScale": 1.0, "framePx": [15, 15], "inkPx": [1, 1, 14, 14]},
+              {"scaleClass": "2x", "refScale": 2.5, "framePx": [39, 39], "inkPx": [3, 4, 35, 36]}
+            ]
+          },
+          {
+            "size": 13.0,
+            "weight": "bold",
+            "classes": [
+              {"scaleClass": "1x", "refScale": 1.0, "framePx": [16, 16], "inkPx": [1, 2, 14, 15]},
+              {"scaleClass": "2x", "refScale": 2.5, "framePx": [40, 40], "inkPx": [3, 4, 36, 37]}
+            ]
+          },
+          {
+            "size": 13.5,
+            "weight": "bold",
+            "classes": [
+              {"scaleClass": "1x", "refScale": 1.0, "framePx": [16, 16], "inkPx": [1, 1, 15, 15]},
+              {"scaleClass": "2x", "refScale": 2.5, "framePx": [41, 41], "inkPx": [3, 3, 38, 38]}
+            ]
+          },
+          {
+            "size": 14.0,
+            "weight": "bold",
+            "classes": [
+              {"scaleClass": "1x", "refScale": 1.0, "framePx": [17, 17], "inkPx": [1, 2, 15, 16]},
+              {"scaleClass": "2x", "refScale": 2.5, "framePx": [43, 43], "inkPx": [3, 4, 39, 40]}
+            ]
+          },
+          {
+            "size": 15.0,
+            "weight": "bold",
+            "classes": [
+              {"scaleClass": "1x", "refScale": 1.0, "framePx": [18, 18], "inkPx": [1, 2, 16, 17]},
+              {"scaleClass": "2x", "refScale": 2.5, "framePx": [45, 45], "inkPx": [3, 3, 42, 42]}
+            ]
+          },
+          {
+            "size": 16.0,
+            "weight": "bold",
+            "classes": [
+              {"scaleClass": "1x", "refScale": 1.0, "framePx": [19, 19], "inkPx": [1, 2, 17, 18]},
+              {"scaleClass": "2x", "refScale": 2.5, "framePx": [48, 48], "inkPx": [3, 4, 44, 45]}
+            ]
+          },
+          {
+            "size": 17.0,
+            "weight": "bold",
+            "classes": [
+              {"scaleClass": "1x", "refScale": 1.0, "framePx": [20, 20], "inkPx": [1, 2, 18, 19]},
+              {"scaleClass": "2x", "refScale": 2.5, "framePx": [52, 52], "inkPx": [4, 4, 48, 48]}
+            ]
+          },
+          {
+            "size": 18.0,
+            "weight": "bold",
+            "classes": [
+              {"scaleClass": "1x", "refScale": 1.0, "framePx": [23, 23], "inkPx": [2, 2, 21, 21]},
+              {"scaleClass": "2x", "refScale": 2.5, "framePx": [55, 55], "inkPx": [4, 5, 50, 51]}
+            ]
+          },
+          {
+            "size": 20.0,
+            "weight": "bold",
+            "classes": [
+              {"scaleClass": "1x", "refScale": 1.0, "framePx": [25, 25], "inkPx": [2, 2, 23, 23]},
+              {"scaleClass": "2x", "refScale": 2.5, "framePx": [60, 60], "inkPx": [4, 4, 56, 56]}
+            ]
+          },
+          {
+            "size": 22.0,
+            "weight": "bold",
+            "classes": [
+              {"scaleClass": "1x", "refScale": 1.0, "framePx": [27, 27], "inkPx": [2, 2, 25, 25]},
+              {"scaleClass": "2x", "refScale": 2.5, "framePx": [67, 67], "inkPx": [5, 5, 62, 62]}
+            ]
+          },
+          {
+            "size": 24.0,
+            "weight": "bold",
+            "classes": [
+              {"scaleClass": "1x", "refScale": 1.0, "framePx": [29, 29], "inkPx": [2, 2, 27, 27]},
+              {"scaleClass": "2x", "refScale": 2.5, "framePx": [72, 72], "inkPx": [5, 5, 67, 67]}
+            ]
+          },
+          {
+            "size": 26.0,
+            "weight": "bold",
+            "classes": [
+              {"scaleClass": "1x", "refScale": 1.0, "framePx": [31, 31], "inkPx": [2, 2, 29, 29]},
+              {"scaleClass": "2x", "refScale": 2.5, "framePx": [80, 80], "inkPx": [6, 7, 73, 74]}
+            ]
+          },
+          {
+            "size": 28.0,
+            "weight": "bold",
+            "classes": [
+              {"scaleClass": "1x", "refScale": 1.0, "framePx": [33, 33], "inkPx": [2, 2, 31, 31]},
+              {"scaleClass": "2x", "refScale": 2.5, "framePx": [85, 85], "inkPx": [6, 7, 78, 79]}
+            ]
+          },
+          {
+            "size": 30.0,
+            "weight": "bold",
+            "classes": [
+              {"scaleClass": "1x", "refScale": 1.0, "framePx": [37, 37], "inkPx": [3, 3, 34, 34]},
+              {"scaleClass": "2x", "refScale": 2.5, "framePx": [92, 92], "inkPx": [7, 8, 84, 85]}
+            ]
+          },
+          {
+            "size": 32.0,
+            "weight": "bold",
+            "classes": [
+              {"scaleClass": "1x", "refScale": 1.0, "framePx": [39, 39], "inkPx": [3, 3, 36, 36]},
+              {"scaleClass": "2x", "refScale": 2.5, "framePx": [97, 97], "inkPx": [7, 8, 89, 90]}
+            ]
+          },
+          {
+            "size": 4.0,
+            "weight": "semibold",
+            "classes": [
+              {"scaleClass": "2x", "refScale": 2.5, "framePx": [13, 13], "inkPx": [1, 2, 11, 12]}
+            ]
+          },
+          {
+            "size": 5.0,
+            "weight": "semibold",
+            "classes": [
+              {"scaleClass": "1x", "refScale": 1.0, "framePx": [6, 6], "inkPx": [0, 1, 5, 6]},
+              {"scaleClass": "2x", "refScale": 2.5, "framePx": [15, 15], "inkPx": [1, 1, 14, 14]}
+            ]
+          },
+          {
+            "size": 6.0,
+            "weight": "semibold",
+            "classes": [
+              {"scaleClass": "1x", "refScale": 1.0, "framePx": [9, 9], "inkPx": [1, 2, 7, 8]},
+              {"scaleClass": "2x", "refScale": 2.5, "framePx": [18, 18], "inkPx": [1, 2, 16, 17]}
+            ]
+          },
+          {
+            "size": 9.0,
+            "weight": "semibold",
+            "classes": [
+              {"scaleClass": "1x", "refScale": 1.0, "framePx": [12, 12], "inkPx": [1, 2, 10, 11]},
+              {"scaleClass": "2x", "refScale": 2.5, "framePx": [27, 27], "inkPx": [2, 2, 25, 25]}
+            ]
+          },
+          {
+            "size": 10.0,
+            "weight": "semibold",
+            "classes": [
+              {"scaleClass": "1x", "refScale": 1.0, "framePx": [13, 13], "inkPx": [1, 2, 11, 12]},
+              {"scaleClass": "2x", "refScale": 2.5, "framePx": [30, 30], "inkPx": [2, 3, 27, 28]}
+            ]
+          },
+          {
+            "size": 11.0,
+            "weight": "semibold",
+            "classes": [
+              {"scaleClass": "1x", "refScale": 1.0, "framePx": [14, 14], "inkPx": [1, 2, 12, 13]},
+              {"scaleClass": "2x", "refScale": 2.5, "framePx": [33, 32], "inkPx": [2, 2, 30, 30]}
+            ]
+          },
+          {
+            "size": 11.5,
+            "weight": "semibold",
+            "classes": [
+              {"scaleClass": "1x", "refScale": 1.0, "framePx": [14, 14], "inkPx": [1, 1, 13, 13]},
+              {"scaleClass": "2x", "refScale": 2.5, "framePx": [36, 36], "inkPx": [3, 4, 32, 33]}
+            ]
+          },
+          {
+            "size": 12.0,
+            "weight": "semibold",
+            "classes": [
+              {"scaleClass": "1x", "refScale": 1.0, "framePx": [15, 15], "inkPx": [1, 2, 13, 14]},
+              {"scaleClass": "2x", "refScale": 2.5, "framePx": [37, 37], "inkPx": [3, 3, 34, 34]}
+            ]
+          },
+          {
+            "size": 12.5,
+            "weight": "semibold",
+            "classes": [
+              {"scaleClass": "1x", "refScale": 1.0, "framePx": [15, 15], "inkPx": [1, 1, 14, 14]},
+              {"scaleClass": "2x", "refScale": 2.5, "framePx": [38, 38], "inkPx": [3, 3, 35, 35]}
+            ]
+          },
+          {
+            "size": 13.0,
+            "weight": "semibold",
+            "classes": [
+              {"scaleClass": "1x", "refScale": 1.0, "framePx": [16, 16], "inkPx": [1, 2, 14, 15]},
+              {"scaleClass": "2x", "refScale": 2.5, "framePx": [40, 40], "inkPx": [3, 4, 36, 37]}
+            ]
+          },
+          {
+            "size": 13.5,
+            "weight": "semibold",
+            "classes": [
+              {"scaleClass": "1x", "refScale": 1.0, "framePx": [16, 16], "inkPx": [1, 1, 15, 15]},
+              {"scaleClass": "2x", "refScale": 2.5, "framePx": [41, 41], "inkPx": [3, 4, 37, 38]}
+            ]
+          },
+          {
+            "size": 14.0,
+            "weight": "semibold",
+            "classes": [
+              {"scaleClass": "1x", "refScale": 1.0, "framePx": [17, 17], "inkPx": [1, 2, 15, 16]},
+              {"scaleClass": "2x", "refScale": 2.5, "framePx": [42, 42], "inkPx": [3, 3, 39, 39]}
+            ]
+          },
+          {
+            "size": 15.0,
+            "weight": "semibold",
+            "classes": [
+              {"scaleClass": "1x", "refScale": 1.0, "framePx": [18, 18], "inkPx": [1, 2, 16, 17]},
+              {"scaleClass": "2x", "refScale": 2.5, "framePx": [45, 45], "inkPx": [3, 4, 41, 42]}
+            ]
+          },
+          {
+            "size": 16.0,
+            "weight": "semibold",
+            "classes": [
+              {"scaleClass": "1x", "refScale": 1.0, "framePx": [19, 19], "inkPx": [1, 2, 17, 18]},
+              {"scaleClass": "2x", "refScale": 2.5, "framePx": [47, 47], "inkPx": [3, 3, 44, 44]}
+            ]
+          },
+          {
+            "size": 17.0,
+            "weight": "semibold",
+            "classes": [
+              {"scaleClass": "1x", "refScale": 1.0, "framePx": [20, 20], "inkPx": [1, 2, 18, 19]},
+              {"scaleClass": "2x", "refScale": 2.5, "framePx": [52, 52], "inkPx": [4, 5, 47, 48]}
+            ]
+          },
+          {
+            "size": 18.0,
+            "weight": "semibold",
+            "classes": [
+              {"scaleClass": "1x", "refScale": 1.0, "framePx": [23, 23], "inkPx": [2, 3, 20, 21]},
+              {"scaleClass": "2x", "refScale": 2.5, "framePx": [54, 54], "inkPx": [4, 4, 50, 50]}
+            ]
+          },
+          {
+            "size": 20.0,
+            "weight": "semibold",
+            "classes": [
+              {"scaleClass": "1x", "refScale": 1.0, "framePx": [25, 25], "inkPx": [2, 3, 22, 23]},
+              {"scaleClass": "2x", "refScale": 2.5, "framePx": [59, 59], "inkPx": [4, 4, 55, 55]}
+            ]
+          },
+          {
+            "size": 22.0,
+            "weight": "semibold",
+            "classes": [
+              {"scaleClass": "1x", "refScale": 1.0, "framePx": [27, 27], "inkPx": [2, 3, 24, 25]},
+              {"scaleClass": "2x", "refScale": 2.5, "framePx": [67, 66], "inkPx": [5, 5, 61, 61]}
+            ]
+          },
+          {
+            "size": 24.0,
+            "weight": "semibold",
+            "classes": [
+              {"scaleClass": "1x", "refScale": 1.0, "framePx": [29, 29], "inkPx": [2, 3, 26, 27]},
+              {"scaleClass": "2x", "refScale": 2.5, "framePx": [72, 72], "inkPx": [5, 6, 66, 67]}
+            ]
+          },
+          {
+            "size": 26.0,
+            "weight": "semibold",
+            "classes": [
+              {"scaleClass": "1x", "refScale": 1.0, "framePx": [31, 31], "inkPx": [2, 3, 28, 29]},
+              {"scaleClass": "2x", "refScale": 2.5, "framePx": [79, 79], "inkPx": [6, 7, 72, 73]}
+            ]
+          },
+          {
+            "size": 28.0,
+            "weight": "semibold",
+            "classes": [
+              {"scaleClass": "1x", "refScale": 1.0, "framePx": [33, 33], "inkPx": [2, 3, 30, 31]},
+              {"scaleClass": "2x", "refScale": 2.5, "framePx": [84, 84], "inkPx": [6, 7, 77, 78]}
+            ]
+          },
+          {
+            "size": 30.0,
+            "weight": "semibold",
+            "classes": [
+              {"scaleClass": "1x", "refScale": 1.0, "framePx": [37, 37], "inkPx": [3, 3, 34, 34]},
+              {"scaleClass": "2x", "refScale": 2.5, "framePx": [91, 91], "inkPx": [7, 8, 83, 84]}
+            ]
+          },
+          {
+            "size": 32.0,
+            "weight": "semibold",
+            "classes": [
+              {"scaleClass": "1x", "refScale": 1.0, "framePx": [39, 39], "inkPx": [3, 3, 36, 36]},
+              {"scaleClass": "2x", "refScale": 2.5, "framePx": [96, 96], "inkPx": [7, 8, 88, 89]}
+            ]
+          }
+        ]
+      }
+    },
+    "circle.fill": {
+      "provider": "Segoe Fluent Icons",
+      "providerVersion": "SegoeFluentIcons",
+      "glyph": "EA3B",
+      "foregroundSemantic": "label",
+      "width": 15,
+      "height": 15,
+      "status": "provider-live-declared",
+      "rasterization": {
+        "kind": "gdi-glyph-outline",
+        "textureType": "GGO_GRAY8_BITMAP",
+        "fontEmSize": null,
+        "source": "live-gdi-getglyphoutlinew"
+      },
+      "mapping": {
+        "segoeName": "CircleFill",
+        "fit": "nearest",
+        "note": "MarkdownUI disc bullet (ListBullet.disc, 4 pt font) and task-list markers; codepoint from the MDL2/Fluent table, not yet run on the Dell",
+        "source": "https://learn.microsoft.com/en-us/windows/apps/design/iconography/segoe-fluent-icons-font"
+      },
+      "layout": {
+        "source": "factory/tools/symbol-metrics/symbol-sizes.sh --capture-path (NSHostingView in an offscreen pinned-scale window drawn into a bitmap as the capture host does; non-resizable Image(systemName:).font(.system(size:)); half-coverage ink)",
+        "macOS": "Version 27.0.1 (Build 26A434)",
+        "referencePointSize": 13,
+        "aspect": 1.0,
+        "inkRect": [0.06666666666666667, 0.06666666666666667, 0.9333333333333333, 0.9333333333333333],
+        "intrinsicSize": [15, 15],
+        "sourceOversample": 8,
+        "fontSizes": [
+          {
+            "size": 4.0,
+            "weight": "regular",
+            "classes": [
+              {"scaleClass": "1x", "refScale": 1.0, "framePx": [4, 4], "inkPx": [0, 0, 4, 4]},
+              {"scaleClass": "2x", "refScale": 2.5, "framePx": [12, 12], "inkPx": [1, 1, 11, 11]}
+            ]
+          },
+          {
+            "size": 5.0,
+            "weight": "regular",
+            "classes": [
+              {"scaleClass": "1x", "refScale": 1.0, "framePx": [5, 5], "inkPx": [0, 0, 5, 5]},
+              {"scaleClass": "2x", "refScale": 2.5, "framePx": [15, 15], "inkPx": [1, 2, 13, 14]}
+            ]
+          },
+          {
+            "size": 6.0,
+            "weight": "regular",
+            "classes": [
+              {"scaleClass": "1x", "refScale": 1.0, "framePx": [8, 8], "inkPx": [1, 1, 7, 7]},
+              {"scaleClass": "2x", "refScale": 2.5, "framePx": [17, 17], "inkPx": [1, 1, 16, 16]}
+            ]
+          },
+          {
+            "size": 9.0,
+            "weight": "regular",
+            "classes": [
+              {"scaleClass": "1x", "refScale": 1.0, "framePx": [11, 11], "inkPx": [1, 1, 10, 10]},
+              {"scaleClass": "2x", "refScale": 2.5, "framePx": [27, 27], "inkPx": [2, 3, 24, 25]}
+            ]
+          },
+          {
+            "size": 10.0,
+            "weight": "regular",
+            "classes": [
+              {"scaleClass": "1x", "refScale": 1.0, "framePx": [12, 12], "inkPx": [1, 1, 11, 11]},
+              {"scaleClass": "2x", "refScale": 2.5, "framePx": [29, 29], "inkPx": [2, 2, 27, 27]}
+            ]
+          },
+          {
+            "size": 11.0,
+            "weight": "regular",
+            "classes": [
+              {"scaleClass": "1x", "refScale": 1.0, "framePx": [13, 13], "inkPx": [1, 1, 12, 12]},
+              {"scaleClass": "2x", "refScale": 2.5, "framePx": [33, 33], "inkPx": [3, 3, 30, 30]}
+            ]
+          },
+          {
+            "size": 11.5,
+            "weight": "regular",
+            "classes": [
+              {"scaleClass": "1x", "refScale": 1.0, "framePx": [14, 14], "inkPx": [1, 2, 12, 13]},
+              {"scaleClass": "2x", "refScale": 2.5, "framePx": [35, 35], "inkPx": [3, 3, 32, 32]}
+            ]
+          },
+          {
+            "size": 12.0,
+            "weight": "regular",
+            "classes": [
+              {"scaleClass": "1x", "refScale": 1.0, "framePx": [14, 14], "inkPx": [1, 1, 13, 13]},
+              {"scaleClass": "2x", "refScale": 2.5, "framePx": [36, 36], "inkPx": [3, 3, 33, 33]}
+            ]
+          },
+          {
+            "size": 12.5,
+            "weight": "regular",
+            "classes": [
+              {"scaleClass": "1x", "refScale": 1.0, "framePx": [15, 15], "inkPx": [1, 2, 13, 14]},
+              {"scaleClass": "2x", "refScale": 2.5, "framePx": [38, 38], "inkPx": [3, 4, 34, 35]}
+            ]
+          },
+          {
+            "size": 13.0,
+            "weight": "regular",
+            "classes": [
+              {"scaleClass": "1x", "refScale": 1.0, "framePx": [15, 15], "inkPx": [1, 1, 14, 14]},
+              {"scaleClass": "2x", "refScale": 2.5, "framePx": [38, 38], "inkPx": [3, 3, 35, 35]}
+            ]
+          },
+          {
+            "size": 13.5,
+            "weight": "regular",
+            "classes": [
+              {"scaleClass": "1x", "refScale": 1.0, "framePx": [16, 16], "inkPx": [1, 2, 14, 15]},
+              {"scaleClass": "2x", "refScale": 2.5, "framePx": [40, 40], "inkPx": [3, 3, 37, 37]}
+            ]
+          },
+          {
+            "size": 14.0,
+            "weight": "regular",
+            "classes": [
+              {"scaleClass": "1x", "refScale": 1.0, "framePx": [16, 16], "inkPx": [1, 1, 15, 15]},
+              {"scaleClass": "2x", "refScale": 2.5, "framePx": [41, 41], "inkPx": [3, 3, 38, 38]}
+            ]
+          },
+          {
+            "size": 15.0,
+            "weight": "regular",
+            "classes": [
+              {"scaleClass": "1x", "refScale": 1.0, "framePx": [17, 17], "inkPx": [1, 1, 16, 16]},
+              {"scaleClass": "2x", "refScale": 2.5, "framePx": [44, 44], "inkPx": [3, 4, 40, 41]}
+            ]
+          },
+          {
+            "size": 16.0,
+            "weight": "regular",
+            "classes": [
+              {"scaleClass": "1x", "refScale": 1.0, "framePx": [18, 18], "inkPx": [1, 1, 17, 17]},
+              {"scaleClass": "2x", "refScale": 2.5, "framePx": [46, 46], "inkPx": [3, 3, 43, 43]}
+            ]
+          },
+          {
+            "size": 17.0,
+            "weight": "regular",
+            "classes": [
+              {"scaleClass": "1x", "refScale": 1.0, "framePx": [19, 19], "inkPx": [1, 1, 18, 18]},
+              {"scaleClass": "2x", "refScale": 2.5, "framePx": [50, 50], "inkPx": [4, 4, 46, 46]}
+            ]
+          },
+          {
+            "size": 18.0,
+            "weight": "regular",
+            "classes": [
+              {"scaleClass": "1x", "refScale": 1.0, "framePx": [22, 22], "inkPx": [2, 2, 20, 20]},
+              {"scaleClass": "2x", "refScale": 2.5, "framePx": [53, 53], "inkPx": [4, 4, 49, 49]}
+            ]
+          },
+          {
+            "size": 20.0,
+            "weight": "regular",
+            "classes": [
+              {"scaleClass": "1x", "refScale": 1.0, "framePx": [24, 24], "inkPx": [2, 2, 22, 22]},
+              {"scaleClass": "2x", "refScale": 2.5, "framePx": [58, 58], "inkPx": [4, 4, 54, 54]}
+            ]
+          },
+          {
+            "size": 22.0,
+            "weight": "regular",
+            "classes": [
+              {"scaleClass": "1x", "refScale": 1.0, "framePx": [26, 26], "inkPx": [2, 2, 24, 24]},
+              {"scaleClass": "2x", "refScale": 2.5, "framePx": [65, 65], "inkPx": [5, 5, 60, 60]}
+            ]
+          },
+          {
+            "size": 24.0,
+            "weight": "regular",
+            "classes": [
+              {"scaleClass": "1x", "refScale": 1.0, "framePx": [28, 28], "inkPx": [2, 2, 26, 26]},
+              {"scaleClass": "2x", "refScale": 2.5, "framePx": [70, 70], "inkPx": [5, 5, 65, 65]}
+            ]
+          },
+          {
+            "size": 26.0,
+            "weight": "regular",
+            "classes": [
+              {"scaleClass": "1x", "refScale": 1.0, "framePx": [30, 30], "inkPx": [2, 2, 28, 28]},
+              {"scaleClass": "2x", "refScale": 2.5, "framePx": [77, 77], "inkPx": [6, 6, 71, 71]}
+            ]
+          },
+          {
+            "size": 28.0,
+            "weight": "regular",
+            "classes": [
+              {"scaleClass": "1x", "refScale": 1.0, "framePx": [32, 32], "inkPx": [2, 2, 30, 30]},
+              {"scaleClass": "2x", "refScale": 2.5, "framePx": [82, 82], "inkPx": [6, 6, 76, 76]}
+            ]
+          },
+          {
+            "size": 30.0,
+            "weight": "regular",
+            "classes": [
+              {"scaleClass": "1x", "refScale": 1.0, "framePx": [36, 36], "inkPx": [3, 3, 33, 33]},
+              {"scaleClass": "2x", "refScale": 2.5, "framePx": [89, 89], "inkPx": [7, 7, 82, 82]}
+            ]
+          },
+          {
+            "size": 32.0,
+            "weight": "regular",
+            "classes": [
+              {"scaleClass": "1x", "refScale": 1.0, "framePx": [38, 38], "inkPx": [3, 3, 35, 35]},
+              {"scaleClass": "2x", "refScale": 2.5, "framePx": [94, 94], "inkPx": [7, 7, 87, 87]}
+            ]
+          },
+          {
+            "size": 4.0,
+            "weight": "bold",
+            "classes": [
+              {"scaleClass": "1x", "refScale": 1.0, "framePx": [5, 5], "inkPx": [0, 1, 4, 5]},
+              {"scaleClass": "2x", "refScale": 2.5, "framePx": [13, 13], "inkPx": [1, 2, 11, 12]}
+            ]
+          },
+          {
+            "size": 5.0,
+            "weight": "bold",
+            "classes": [
+              {"scaleClass": "1x", "refScale": 1.0, "framePx": [6, 6], "inkPx": [0, 1, 5, 6]},
+              {"scaleClass": "2x", "refScale": 2.5, "framePx": [15, 15], "inkPx": [1, 1, 14, 14]}
+            ]
+          },
+          {
+            "size": 6.0,
+            "weight": "bold",
+            "classes": [
+              {"scaleClass": "1x", "refScale": 1.0, "framePx": [9, 9], "inkPx": [1, 2, 7, 8]},
+              {"scaleClass": "2x", "refScale": 2.5, "framePx": [18, 18], "inkPx": [1, 2, 16, 17]}
+            ]
+          },
+          {
+            "size": 9.0,
+            "weight": "bold",
+            "classes": [
+              {"scaleClass": "1x", "refScale": 1.0, "framePx": [12, 12], "inkPx": [1, 2, 10, 11]},
+              {"scaleClass": "2x", "refScale": 2.5, "framePx": [28, 28], "inkPx": [2, 3, 25, 26]}
+            ]
+          },
+          {
+            "size": 10.0,
+            "weight": "bold",
+            "classes": [
+              {"scaleClass": "1x", "refScale": 1.0, "framePx": [13, 13], "inkPx": [1, 2, 11, 12]},
+              {"scaleClass": "2x", "refScale": 2.5, "framePx": [30, 30], "inkPx": [2, 2, 28, 28]}
+            ]
+          },
+          {
+            "size": 11.0,
+            "weight": "bold",
+            "classes": [
+              {"scaleClass": "1x", "refScale": 1.0, "framePx": [14, 14], "inkPx": [1, 2, 12, 13]},
+              {"scaleClass": "2x", "refScale": 2.5, "framePx": [33, 33], "inkPx": [2, 3, 30, 31]}
+            ]
+          },
+          {
+            "size": 11.5,
+            "weight": "bold",
+            "classes": [
+              {"scaleClass": "1x", "refScale": 1.0, "framePx": [14, 14], "inkPx": [1, 1, 13, 13]},
+              {"scaleClass": "2x", "refScale": 2.5, "framePx": [36, 36], "inkPx": [3, 3, 33, 33]}
+            ]
+          },
+          {
+            "size": 12.0,
+            "weight": "bold",
+            "classes": [
+              {"scaleClass": "1x", "refScale": 1.0, "framePx": [15, 15], "inkPx": [1, 2, 13, 14]},
+              {"scaleClass": "2x", "refScale": 2.5, "framePx": [37, 37], "inkPx": [3, 3, 34, 34]}
+            ]
+          },
+          {
+            "size": 12.5,
+            "weight": "bold",
+            "classes": [
+              {"scaleClass": "1x", "refScale": 1.0, "framePx": [15, 15], "inkPx": [1, 1, 14, 14]},
+              {"scaleClass": "2x", "refScale": 2.5, "framePx": [39, 39], "inkPx": [3, 4, 35, 36]}
+            ]
+          },
+          {
+            "size": 13.0,
+            "weight": "bold",
+            "classes": [
+              {"scaleClass": "1x", "refScale": 1.0, "framePx": [16, 16], "inkPx": [1, 2, 14, 15]},
+              {"scaleClass": "2x", "refScale": 2.5, "framePx": [40, 40], "inkPx": [3, 4, 36, 37]}
+            ]
+          },
+          {
+            "size": 13.5,
+            "weight": "bold",
+            "classes": [
+              {"scaleClass": "1x", "refScale": 1.0, "framePx": [16, 16], "inkPx": [1, 1, 15, 15]},
+              {"scaleClass": "2x", "refScale": 2.5, "framePx": [41, 41], "inkPx": [3, 3, 38, 38]}
+            ]
+          },
+          {
+            "size": 14.0,
+            "weight": "bold",
+            "classes": [
+              {"scaleClass": "1x", "refScale": 1.0, "framePx": [17, 17], "inkPx": [1, 2, 15, 16]},
+              {"scaleClass": "2x", "refScale": 2.5, "framePx": [43, 43], "inkPx": [3, 4, 39, 40]}
+            ]
+          },
+          {
+            "size": 15.0,
+            "weight": "bold",
+            "classes": [
+              {"scaleClass": "1x", "refScale": 1.0, "framePx": [18, 18], "inkPx": [1, 2, 16, 17]},
+              {"scaleClass": "2x", "refScale": 2.5, "framePx": [45, 45], "inkPx": [3, 3, 42, 42]}
+            ]
+          },
+          {
+            "size": 16.0,
+            "weight": "bold",
+            "classes": [
+              {"scaleClass": "1x", "refScale": 1.0, "framePx": [19, 19], "inkPx": [1, 2, 17, 18]},
+              {"scaleClass": "2x", "refScale": 2.5, "framePx": [48, 48], "inkPx": [3, 4, 44, 45]}
+            ]
+          },
+          {
+            "size": 17.0,
+            "weight": "bold",
+            "classes": [
+              {"scaleClass": "1x", "refScale": 1.0, "framePx": [20, 20], "inkPx": [1, 2, 18, 19]},
+              {"scaleClass": "2x", "refScale": 2.5, "framePx": [52, 52], "inkPx": [4, 4, 48, 48]}
+            ]
+          },
+          {
+            "size": 18.0,
+            "weight": "bold",
+            "classes": [
+              {"scaleClass": "1x", "refScale": 1.0, "framePx": [23, 23], "inkPx": [2, 2, 21, 21]},
+              {"scaleClass": "2x", "refScale": 2.5, "framePx": [55, 55], "inkPx": [4, 5, 50, 51]}
+            ]
+          },
+          {
+            "size": 20.0,
+            "weight": "bold",
+            "classes": [
+              {"scaleClass": "1x", "refScale": 1.0, "framePx": [25, 25], "inkPx": [2, 2, 23, 23]},
+              {"scaleClass": "2x", "refScale": 2.5, "framePx": [60, 60], "inkPx": [4, 4, 56, 56]}
+            ]
+          },
+          {
+            "size": 22.0,
+            "weight": "bold",
+            "classes": [
+              {"scaleClass": "1x", "refScale": 1.0, "framePx": [27, 27], "inkPx": [2, 2, 25, 25]},
+              {"scaleClass": "2x", "refScale": 2.5, "framePx": [67, 67], "inkPx": [5, 5, 62, 62]}
+            ]
+          },
+          {
+            "size": 24.0,
+            "weight": "bold",
+            "classes": [
+              {"scaleClass": "1x", "refScale": 1.0, "framePx": [29, 29], "inkPx": [2, 2, 27, 27]},
+              {"scaleClass": "2x", "refScale": 2.5, "framePx": [72, 72], "inkPx": [5, 5, 67, 67]}
+            ]
+          },
+          {
+            "size": 26.0,
+            "weight": "bold",
+            "classes": [
+              {"scaleClass": "1x", "refScale": 1.0, "framePx": [31, 31], "inkPx": [2, 2, 29, 29]},
+              {"scaleClass": "2x", "refScale": 2.5, "framePx": [80, 80], "inkPx": [6, 7, 73, 74]}
+            ]
+          },
+          {
+            "size": 28.0,
+            "weight": "bold",
+            "classes": [
+              {"scaleClass": "1x", "refScale": 1.0, "framePx": [33, 33], "inkPx": [2, 2, 31, 31]},
+              {"scaleClass": "2x", "refScale": 2.5, "framePx": [85, 85], "inkPx": [6, 7, 78, 79]}
+            ]
+          },
+          {
+            "size": 30.0,
+            "weight": "bold",
+            "classes": [
+              {"scaleClass": "1x", "refScale": 1.0, "framePx": [37, 37], "inkPx": [3, 3, 34, 34]},
+              {"scaleClass": "2x", "refScale": 2.5, "framePx": [92, 92], "inkPx": [7, 8, 84, 85]}
+            ]
+          },
+          {
+            "size": 32.0,
+            "weight": "bold",
+            "classes": [
+              {"scaleClass": "1x", "refScale": 1.0, "framePx": [39, 39], "inkPx": [3, 3, 36, 36]},
+              {"scaleClass": "2x", "refScale": 2.5, "framePx": [97, 97], "inkPx": [7, 8, 89, 90]}
+            ]
+          },
+          {
+            "size": 4.0,
+            "weight": "semibold",
+            "classes": [
+              {"scaleClass": "1x", "refScale": 1.0, "framePx": [5, 5], "inkPx": [0, 1, 4, 5]},
+              {"scaleClass": "2x", "refScale": 2.5, "framePx": [13, 13], "inkPx": [1, 2, 11, 12]}
+            ]
+          },
+          {
+            "size": 5.0,
+            "weight": "semibold",
+            "classes": [
+              {"scaleClass": "1x", "refScale": 1.0, "framePx": [6, 6], "inkPx": [0, 1, 5, 6]},
+              {"scaleClass": "2x", "refScale": 2.5, "framePx": [15, 15], "inkPx": [1, 1, 14, 14]}
+            ]
+          },
+          {
+            "size": 6.0,
+            "weight": "semibold",
+            "classes": [
+              {"scaleClass": "1x", "refScale": 1.0, "framePx": [9, 9], "inkPx": [1, 2, 7, 8]},
+              {"scaleClass": "2x", "refScale": 2.5, "framePx": [18, 18], "inkPx": [1, 2, 16, 17]}
+            ]
+          },
+          {
+            "size": 9.0,
+            "weight": "semibold",
+            "classes": [
+              {"scaleClass": "1x", "refScale": 1.0, "framePx": [12, 12], "inkPx": [1, 2, 10, 11]},
+              {"scaleClass": "2x", "refScale": 2.5, "framePx": [27, 27], "inkPx": [2, 2, 25, 25]}
+            ]
+          },
+          {
+            "size": 10.0,
+            "weight": "semibold",
+            "classes": [
+              {"scaleClass": "1x", "refScale": 1.0, "framePx": [13, 13], "inkPx": [1, 2, 11, 12]},
+              {"scaleClass": "2x", "refScale": 2.5, "framePx": [30, 30], "inkPx": [2, 3, 27, 28]}
+            ]
+          },
+          {
+            "size": 11.0,
+            "weight": "semibold",
+            "classes": [
+              {"scaleClass": "1x", "refScale": 1.0, "framePx": [14, 14], "inkPx": [1, 2, 12, 13]},
+              {"scaleClass": "2x", "refScale": 2.5, "framePx": [33, 32], "inkPx": [2, 2, 30, 30]}
+            ]
+          },
+          {
+            "size": 11.5,
+            "weight": "semibold",
+            "classes": [
+              {"scaleClass": "1x", "refScale": 1.0, "framePx": [14, 14], "inkPx": [1, 1, 13, 13]},
+              {"scaleClass": "2x", "refScale": 2.5, "framePx": [36, 36], "inkPx": [3, 4, 32, 33]}
+            ]
+          },
+          {
+            "size": 12.0,
+            "weight": "semibold",
+            "classes": [
+              {"scaleClass": "1x", "refScale": 1.0, "framePx": [15, 15], "inkPx": [1, 2, 13, 14]},
+              {"scaleClass": "2x", "refScale": 2.5, "framePx": [37, 37], "inkPx": [3, 3, 34, 34]}
+            ]
+          },
+          {
+            "size": 12.5,
+            "weight": "semibold",
+            "classes": [
+              {"scaleClass": "1x", "refScale": 1.0, "framePx": [15, 15], "inkPx": [1, 1, 14, 14]},
+              {"scaleClass": "2x", "refScale": 2.5, "framePx": [38, 38], "inkPx": [3, 3, 35, 35]}
+            ]
+          },
+          {
+            "size": 13.0,
+            "weight": "semibold",
+            "classes": [
+              {"scaleClass": "1x", "refScale": 1.0, "framePx": [16, 16], "inkPx": [1, 2, 14, 15]},
+              {"scaleClass": "2x", "refScale": 2.5, "framePx": [40, 40], "inkPx": [3, 4, 36, 37]}
+            ]
+          },
+          {
+            "size": 13.5,
+            "weight": "semibold",
+            "classes": [
+              {"scaleClass": "1x", "refScale": 1.0, "framePx": [16, 16], "inkPx": [1, 1, 15, 15]},
+              {"scaleClass": "2x", "refScale": 2.5, "framePx": [41, 41], "inkPx": [3, 4, 37, 38]}
+            ]
+          },
+          {
+            "size": 14.0,
+            "weight": "semibold",
+            "classes": [
+              {"scaleClass": "1x", "refScale": 1.0, "framePx": [17, 17], "inkPx": [1, 2, 15, 16]},
+              {"scaleClass": "2x", "refScale": 2.5, "framePx": [42, 42], "inkPx": [3, 3, 39, 39]}
+            ]
+          },
+          {
+            "size": 15.0,
+            "weight": "semibold",
+            "classes": [
+              {"scaleClass": "1x", "refScale": 1.0, "framePx": [18, 18], "inkPx": [1, 2, 16, 17]},
+              {"scaleClass": "2x", "refScale": 2.5, "framePx": [45, 45], "inkPx": [3, 4, 41, 42]}
+            ]
+          },
+          {
+            "size": 16.0,
+            "weight": "semibold",
+            "classes": [
+              {"scaleClass": "1x", "refScale": 1.0, "framePx": [19, 19], "inkPx": [1, 2, 17, 18]},
+              {"scaleClass": "2x", "refScale": 2.5, "framePx": [47, 47], "inkPx": [3, 3, 44, 44]}
+            ]
+          },
+          {
+            "size": 17.0,
+            "weight": "semibold",
+            "classes": [
+              {"scaleClass": "1x", "refScale": 1.0, "framePx": [20, 20], "inkPx": [1, 2, 18, 19]},
+              {"scaleClass": "2x", "refScale": 2.5, "framePx": [52, 52], "inkPx": [4, 5, 47, 48]}
+            ]
+          },
+          {
+            "size": 18.0,
+            "weight": "semibold",
+            "classes": [
+              {"scaleClass": "1x", "refScale": 1.0, "framePx": [23, 23], "inkPx": [2, 3, 20, 21]},
+              {"scaleClass": "2x", "refScale": 2.5, "framePx": [54, 54], "inkPx": [4, 4, 50, 50]}
+            ]
+          },
+          {
+            "size": 20.0,
+            "weight": "semibold",
+            "classes": [
+              {"scaleClass": "1x", "refScale": 1.0, "framePx": [25, 25], "inkPx": [2, 3, 22, 23]},
+              {"scaleClass": "2x", "refScale": 2.5, "framePx": [59, 59], "inkPx": [4, 4, 55, 55]}
+            ]
+          },
+          {
+            "size": 22.0,
+            "weight": "semibold",
+            "classes": [
+              {"scaleClass": "1x", "refScale": 1.0, "framePx": [27, 27], "inkPx": [2, 3, 24, 25]},
+              {"scaleClass": "2x", "refScale": 2.5, "framePx": [67, 66], "inkPx": [5, 5, 61, 61]}
+            ]
+          },
+          {
+            "size": 24.0,
+            "weight": "semibold",
+            "classes": [
+              {"scaleClass": "1x", "refScale": 1.0, "framePx": [29, 29], "inkPx": [2, 3, 26, 27]},
+              {"scaleClass": "2x", "refScale": 2.5, "framePx": [72, 72], "inkPx": [5, 6, 66, 67]}
+            ]
+          },
+          {
+            "size": 26.0,
+            "weight": "semibold",
+            "classes": [
+              {"scaleClass": "1x", "refScale": 1.0, "framePx": [31, 31], "inkPx": [2, 3, 28, 29]},
+              {"scaleClass": "2x", "refScale": 2.5, "framePx": [79, 79], "inkPx": [6, 7, 72, 73]}
+            ]
+          },
+          {
+            "size": 28.0,
+            "weight": "semibold",
+            "classes": [
+              {"scaleClass": "1x", "refScale": 1.0, "framePx": [33, 33], "inkPx": [2, 3, 30, 31]},
+              {"scaleClass": "2x", "refScale": 2.5, "framePx": [84, 84], "inkPx": [6, 7, 77, 78]}
+            ]
+          },
+          {
+            "size": 30.0,
+            "weight": "semibold",
+            "classes": [
+              {"scaleClass": "1x", "refScale": 1.0, "framePx": [37, 37], "inkPx": [3, 3, 34, 34]},
+              {"scaleClass": "2x", "refScale": 2.5, "framePx": [91, 91], "inkPx": [7, 8, 83, 84]}
+            ]
+          },
+          {
+            "size": 32.0,
+            "weight": "semibold",
+            "classes": [
+              {"scaleClass": "1x", "refScale": 1.0, "framePx": [39, 39], "inkPx": [3, 3, 36, 36]},
+              {"scaleClass": "2x", "refScale": 2.5, "framePx": [96, 96], "inkPx": [7, 8, 88, 89]}
+            ]
+          }
+        ]
+      }
+    },
+    "square.fill": {
+      "provider": "Segoe Fluent Icons",
+      "providerVersion": "SegoeFluentIcons",
+      "glyph": "E73B",
+      "foregroundSemantic": "label",
+      "width": 16,
+      "height": 14,
+      "status": "provider-live-declared",
+      "rasterization": {
+        "kind": "gdi-glyph-outline",
+        "textureType": "GGO_GRAY8_BITMAP",
+        "fontEmSize": null,
+        "source": "live-gdi-getglyphoutlinew"
+      },
+      "mapping": {
+        "segoeName": "CheckboxFill",
+        "fit": "nearest",
+        "note": "MarkdownUI square bullet (ListBullet.square); a filled square; codepoint from the MDL2/Fluent table, not yet run on the Dell",
+        "source": "https://learn.microsoft.com/en-us/windows/apps/design/iconography/segoe-fluent-icons-font"
+      },
+      "layout": {
+        "source": "factory/tools/symbol-metrics/symbol-sizes.sh --capture-path (NSHostingView in an offscreen pinned-scale window drawn into a bitmap as the capture host does; non-resizable Image(systemName:).font(.system(size:)); half-coverage ink)",
+        "macOS": "Version 27.0.1 (Build 26A434)",
+        "referencePointSize": 13,
+        "aspect": 1.1428571428571428,
+        "inkRect": [0.125, 0.07142857142857142, 0.875, 0.9285714285714286],
+        "intrinsicSize": [16, 14],
+        "sourceOversample": 8,
+        "fontSizes": [
+          {
+            "size": 4.0,
+            "weight": "regular",
+            "classes": [
+              {"scaleClass": "1x", "refScale": 1.0, "framePx": [4, 4], "inkPx": [0, 0, 4, 4]},
+              {"scaleClass": "2x", "refScale": 2.5, "framePx": [11, 11], "inkPx": [1, 1, 10, 10]}
+            ]
+          },
+          {
+            "size": 5.0,
+            "weight": "regular",
+            "classes": [
+              {"scaleClass": "1x", "refScale": 1.0, "framePx": [7, 5], "inkPx": [1, 1, 5, 5]},
+              {"scaleClass": "2x", "refScale": 2.5, "framePx": [16, 14], "inkPx": [2, 2, 13, 13]}
+            ]
+          },
+          {
+            "size": 6.0,
+            "weight": "regular",
+            "classes": [
+              {"scaleClass": "1x", "refScale": 1.0, "framePx": [8, 8], "inkPx": [1, 2, 6, 7]},
+              {"scaleClass": "2x", "refScale": 2.5, "framePx": [18, 16], "inkPx": [2, 2, 15, 15]}
+            ]
+          },
+          {
+            "size": 9.0,
+            "weight": "regular",
+            "classes": [
+              {"scaleClass": "1x", "refScale": 1.0, "framePx": [11, 11], "inkPx": [1, 2, 9, 10]},
+              {"scaleClass": "2x", "refScale": 2.5, "framePx": [27, 25], "inkPx": [3, 3, 23, 23]}
+            ]
+          },
+          {
+            "size": 10.0,
+            "weight": "regular",
+            "classes": [
+              {"scaleClass": "1x", "refScale": 1.0, "framePx": [11, 11], "inkPx": [1, 1, 10, 10]},
+              {"scaleClass": "2x", "refScale": 2.5, "framePx": [29, 27], "inkPx": [3, 3, 25, 25]}
+            ]
+          },
+          {
+            "size": 11.0,
+            "weight": "regular",
+            "classes": [
+              {"scaleClass": "1x", "refScale": 1.0, "framePx": [12, 12], "inkPx": [1, 1, 11, 11]},
+              {"scaleClass": "2x", "refScale": 2.5, "framePx": [33, 30], "inkPx": [4, 3, 28, 27]}
+            ]
+          },
+          {
+            "size": 11.5,
+            "weight": "regular",
+            "classes": [
+              {"scaleClass": "1x", "refScale": 1.0, "framePx": [13, 13], "inkPx": [1, 2, 11, 12]},
+              {"scaleClass": "2x", "refScale": 2.5, "framePx": [34, 32], "inkPx": [4, 3, 30, 29]}
+            ]
+          },
+          {
+            "size": 12.0,
+            "weight": "regular",
+            "classes": [
+              {"scaleClass": "1x", "refScale": 1.0, "framePx": [13, 13], "inkPx": [1, 1, 12, 12]},
+              {"scaleClass": "2x", "refScale": 2.5, "framePx": [35, 33], "inkPx": [4, 3, 31, 30]}
+            ]
+          },
+          {
+            "size": 12.5,
+            "weight": "regular",
+            "classes": [
+              {"scaleClass": "1x", "refScale": 1.0, "framePx": [16, 14], "inkPx": [2, 2, 13, 13]},
+              {"scaleClass": "2x", "refScale": 2.5, "framePx": [37, 35], "inkPx": [4, 4, 32, 32]}
+            ]
+          },
+          {
+            "size": 13.0,
+            "weight": "regular",
+            "classes": [
+              {"scaleClass": "1x", "refScale": 1.0, "framePx": [16, 14], "inkPx": [2, 1, 14, 13]},
+              {"scaleClass": "2x", "refScale": 2.5, "framePx": [38, 35], "inkPx": [4, 4, 33, 32]}
+            ]
+          },
+          {
+            "size": 13.5,
+            "weight": "regular",
+            "classes": [
+              {"scaleClass": "1x", "refScale": 1.0, "framePx": [17, 15], "inkPx": [2, 2, 14, 14]},
+              {"scaleClass": "2x", "refScale": 2.5, "framePx": [39, 37], "inkPx": [4, 4, 34, 34]}
+            ]
+          },
+          {
+            "size": 14.0,
+            "weight": "regular",
+            "classes": [
+              {"scaleClass": "1x", "refScale": 1.0, "framePx": [17, 15], "inkPx": [2, 1, 15, 14]},
+              {"scaleClass": "2x", "refScale": 2.5, "framePx": [40, 38], "inkPx": [4, 4, 35, 35]}
+            ]
+          },
+          {
+            "size": 15.0,
+            "weight": "regular",
+            "classes": [
+              {"scaleClass": "1x", "refScale": 1.0, "framePx": [18, 16], "inkPx": [2, 2, 15, 15]},
+              {"scaleClass": "2x", "refScale": 2.5, "framePx": [44, 40], "inkPx": [5, 3, 39, 37]}
+            ]
+          },
+          {
+            "size": 16.0,
+            "weight": "regular",
+            "classes": [
+              {"scaleClass": "1x", "refScale": 1.0, "framePx": [19, 17], "inkPx": [2, 2, 16, 16]},
+              {"scaleClass": "2x", "refScale": 2.5, "framePx": [46, 42], "inkPx": [5, 3, 41, 39]}
+            ]
+          },
+          {
+            "size": 17.0,
+            "weight": "regular",
+            "classes": [
+              {"scaleClass": "1x", "refScale": 1.0, "framePx": [20, 18], "inkPx": [2, 2, 17, 17]},
+              {"scaleClass": "2x", "refScale": 2.5, "framePx": [49, 46], "inkPx": [5, 4, 43, 42]}
+            ]
+          },
+          {
+            "size": 18.0,
+            "weight": "regular",
+            "classes": [
+              {"scaleClass": "1x", "refScale": 1.0, "framePx": [21, 21], "inkPx": [2, 3, 18, 19]},
+              {"scaleClass": "2x", "refScale": 2.5, "framePx": [53, 49], "inkPx": [6, 5, 46, 45]}
+            ]
+          },
+          {
+            "size": 20.0,
+            "weight": "regular",
+            "classes": [
+              {"scaleClass": "1x", "refScale": 1.0, "framePx": [22, 22], "inkPx": [2, 2, 20, 20]},
+              {"scaleClass": "2x", "refScale": 2.5, "framePx": [57, 53], "inkPx": [6, 4, 51, 49]}
+            ]
+          },
+          {
+            "size": 22.0,
+            "weight": "regular",
+            "classes": [
+              {"scaleClass": "1x", "refScale": 1.0, "framePx": [26, 24], "inkPx": [3, 2, 23, 22]},
+              {"scaleClass": "2x", "refScale": 2.5, "framePx": [64, 60], "inkPx": [7, 6, 56, 55]}
+            ]
+          },
+          {
+            "size": 24.0,
+            "weight": "regular",
+            "classes": [
+              {"scaleClass": "1x", "refScale": 1.0, "framePx": [28, 26], "inkPx": [3, 2, 25, 24]},
+              {"scaleClass": "2x", "refScale": 2.5, "framePx": [68, 64], "inkPx": [7, 5, 61, 59]}
+            ]
+          },
+          {
+            "size": 26.0,
+            "weight": "regular",
+            "classes": [
+              {"scaleClass": "1x", "refScale": 1.0, "framePx": [30, 28], "inkPx": [3, 3, 26, 26]},
+              {"scaleClass": "2x", "refScale": 2.5, "framePx": [75, 71], "inkPx": [8, 7, 66, 65]}
+            ]
+          },
+          {
+            "size": 28.0,
+            "weight": "regular",
+            "classes": [
+              {"scaleClass": "1x", "refScale": 1.0, "framePx": [32, 30], "inkPx": [3, 3, 28, 28]},
+              {"scaleClass": "2x", "refScale": 2.5, "framePx": [81, 75], "inkPx": [9, 6, 72, 69]}
+            ]
+          },
+          {
+            "size": 30.0,
+            "weight": "regular",
+            "classes": [
+              {"scaleClass": "1x", "refScale": 1.0, "framePx": [35, 33], "inkPx": [4, 3, 31, 30]},
+              {"scaleClass": "2x", "refScale": 2.5, "framePx": [86, 82], "inkPx": [9, 8, 76, 75]}
+            ]
+          },
+          {
+            "size": 32.0,
+            "weight": "regular",
+            "classes": [
+              {"scaleClass": "1x", "refScale": 1.0, "framePx": [37, 35], "inkPx": [4, 3, 33, 32]},
+              {"scaleClass": "2x", "refScale": 2.5, "framePx": [92, 86], "inkPx": [10, 7, 82, 79]}
+            ]
+          },
+          {
+            "size": 4.0,
+            "weight": "bold",
+            "classes": [
+              {"scaleClass": "1x", "refScale": 1.0, "framePx": [4, 4], "inkPx": [0, 0, 4, 4]},
+              {"scaleClass": "2x", "refScale": 2.5, "framePx": [12, 12], "inkPx": [1, 2, 10, 11]}
+            ]
+          },
+          {
+            "size": 5.0,
+            "weight": "bold",
+            "classes": [
+              {"scaleClass": "1x", "refScale": 1.0, "framePx": [7, 5], "inkPx": [1, 0, 6, 5]},
+              {"scaleClass": "2x", "refScale": 2.5, "framePx": [16, 14], "inkPx": [2, 1, 14, 13]}
+            ]
+          },
+          {
+            "size": 6.0,
+            "weight": "bold",
+            "classes": [
+              {"scaleClass": "1x", "refScale": 1.0, "framePx": [8, 8], "inkPx": [1, 1, 7, 7]},
+              {"scaleClass": "2x", "refScale": 2.5, "framePx": [18, 17], "inkPx": [2, 2, 16, 16]}
+            ]
+          },
+          {
+            "size": 9.0,
+            "weight": "bold",
+            "classes": [
+              {"scaleClass": "1x", "refScale": 1.0, "framePx": [11, 11], "inkPx": [1, 2, 9, 10]},
+              {"scaleClass": "2x", "refScale": 2.5, "framePx": [27, 26], "inkPx": [3, 3, 24, 24]}
+            ]
+          },
+          {
+            "size": 10.0,
+            "weight": "bold",
+            "classes": [
+              {"scaleClass": "1x", "refScale": 1.0, "framePx": [12, 12], "inkPx": [1, 2, 10, 11]},
+              {"scaleClass": "2x", "refScale": 2.5, "framePx": [30, 28], "inkPx": [3, 3, 26, 26]}
+            ]
+          },
+          {
+            "size": 11.0,
+            "weight": "bold",
+            "classes": [
+              {"scaleClass": "1x", "refScale": 1.0, "framePx": [13, 13], "inkPx": [1, 2, 11, 12]},
+              {"scaleClass": "2x", "refScale": 2.5, "framePx": [32, 30], "inkPx": [3, 2, 29, 28]}
+            ]
+          },
+          {
+            "size": 11.5,
+            "weight": "bold",
+            "classes": [
+              {"scaleClass": "1x", "refScale": 1.0, "framePx": [13, 13], "inkPx": [1, 1, 12, 12]},
+              {"scaleClass": "2x", "refScale": 2.5, "framePx": [35, 33], "inkPx": [4, 3, 31, 30]}
+            ]
+          },
+          {
+            "size": 12.0,
+            "weight": "bold",
+            "classes": [
+              {"scaleClass": "1x", "refScale": 1.0, "framePx": [14, 14], "inkPx": [1, 2, 12, 13]},
+              {"scaleClass": "2x", "refScale": 2.5, "framePx": [36, 35], "inkPx": [4, 4, 32, 32]}
+            ]
+          },
+          {
+            "size": 12.5,
+            "weight": "bold",
+            "classes": [
+              {"scaleClass": "1x", "refScale": 1.0, "framePx": [16, 14], "inkPx": [2, 1, 14, 13]},
+              {"scaleClass": "2x", "refScale": 2.5, "framePx": [38, 36], "inkPx": [4, 4, 33, 33]}
+            ]
+          },
+          {
+            "size": 13.0,
+            "weight": "bold",
+            "classes": [
+              {"scaleClass": "1x", "refScale": 1.0, "framePx": [17, 15], "inkPx": [2, 2, 14, 14]},
+              {"scaleClass": "2x", "refScale": 2.5, "framePx": [39, 37], "inkPx": [4, 4, 34, 34]}
+            ]
+          },
+          {
+            "size": 13.5,
+            "weight": "bold",
+            "classes": [
+              {"scaleClass": "1x", "refScale": 1.0, "framePx": [17, 15], "inkPx": [2, 1, 15, 14]},
+              {"scaleClass": "2x", "refScale": 2.5, "framePx": [40, 38], "inkPx": [4, 3, 35, 35]}
+            ]
+          },
+          {
+            "size": 14.0,
+            "weight": "bold",
+            "classes": [
+              {"scaleClass": "1x", "refScale": 1.0, "framePx": [18, 16], "inkPx": [2, 2, 15, 15]},
+              {"scaleClass": "2x", "refScale": 2.5, "framePx": [41, 39], "inkPx": [4, 3, 37, 36]}
+            ]
+          },
+          {
+            "size": 15.0,
+            "weight": "bold",
+            "classes": [
+              {"scaleClass": "1x", "refScale": 1.0, "framePx": [18, 17], "inkPx": [2, 2, 16, 16]},
+              {"scaleClass": "2x", "refScale": 2.5, "framePx": [45, 42], "inkPx": [5, 4, 40, 39]}
+            ]
+          },
+          {
+            "size": 16.0,
+            "weight": "bold",
+            "classes": [
+              {"scaleClass": "1x", "refScale": 1.0, "framePx": [19, 17], "inkPx": [2, 1, 17, 16]},
+              {"scaleClass": "2x", "refScale": 2.5, "framePx": [48, 44], "inkPx": [5, 4, 42, 41]}
+            ]
+          },
+          {
+            "size": 17.0,
+            "weight": "bold",
+            "classes": [
+              {"scaleClass": "1x", "refScale": 1.0, "framePx": [20, 18], "inkPx": [2, 1, 18, 17]},
+              {"scaleClass": "2x", "refScale": 2.5, "framePx": [50, 48], "inkPx": [5, 4, 45, 44]}
+            ]
+          },
+          {
+            "size": 18.0,
+            "weight": "bold",
+            "classes": [
+              {"scaleClass": "1x", "refScale": 1.0, "framePx": [21, 21], "inkPx": [2, 2, 19, 19]},
+              {"scaleClass": "2x", "refScale": 2.5, "framePx": [54, 51], "inkPx": [6, 5, 48, 47]}
+            ]
+          },
+          {
+            "size": 20.0,
+            "weight": "bold",
+            "classes": [
+              {"scaleClass": "1x", "refScale": 1.0, "framePx": [23, 23], "inkPx": [2, 2, 21, 21]},
+              {"scaleClass": "2x", "refScale": 2.5, "framePx": [59, 55], "inkPx": [6, 4, 53, 51]}
+            ]
+          },
+          {
+            "size": 22.0,
+            "weight": "bold",
+            "classes": [
+              {"scaleClass": "1x", "refScale": 1.0, "framePx": [27, 25], "inkPx": [3, 2, 24, 23]},
+              {"scaleClass": "2x", "refScale": 2.5, "framePx": [66, 62], "inkPx": [7, 6, 58, 57]}
+            ]
+          },
+          {
+            "size": 24.0,
+            "weight": "bold",
+            "classes": [
+              {"scaleClass": "1x", "refScale": 1.0, "framePx": [29, 27], "inkPx": [3, 3, 25, 25]},
+              {"scaleClass": "2x", "refScale": 2.5, "framePx": [70, 67], "inkPx": [7, 6, 63, 62]}
+            ]
+          },
+          {
+            "size": 26.0,
+            "weight": "bold",
+            "classes": [
+              {"scaleClass": "1x", "refScale": 1.0, "framePx": [31, 29], "inkPx": [3, 3, 27, 27]},
+              {"scaleClass": "2x", "refScale": 2.5, "framePx": [77, 73], "inkPx": [8, 6, 69, 67]}
+            ]
+          },
+          {
+            "size": 28.0,
+            "weight": "bold",
+            "classes": [
+              {"scaleClass": "1x", "refScale": 1.0, "framePx": [33, 31], "inkPx": [3, 3, 29, 29]},
+              {"scaleClass": "2x", "refScale": 2.5, "framePx": [84, 78], "inkPx": [9, 7, 74, 72]}
+            ]
+          },
+          {
+            "size": 30.0,
+            "weight": "bold",
+            "classes": [
+              {"scaleClass": "1x", "refScale": 1.0, "framePx": [36, 35], "inkPx": [4, 4, 32, 32]},
+              {"scaleClass": "2x", "refScale": 2.5, "framePx": [88, 85], "inkPx": [9, 8, 79, 78]}
+            ]
+          },
+          {
+            "size": 32.0,
+            "weight": "bold",
+            "classes": [
+              {"scaleClass": "1x", "refScale": 1.0, "framePx": [38, 36], "inkPx": [4, 3, 34, 33]},
+              {"scaleClass": "2x", "refScale": 2.5, "framePx": [95, 89], "inkPx": [10, 7, 85, 82]}
+            ]
+          },
+          {
+            "size": 4.0,
+            "weight": "semibold",
+            "classes": [
+              {"scaleClass": "1x", "refScale": 1.0, "framePx": [4, 4], "inkPx": [0, 0, 4, 4]},
+              {"scaleClass": "2x", "refScale": 2.5, "framePx": [12, 12], "inkPx": [1, 2, 10, 11]}
+            ]
+          },
+          {
+            "size": 5.0,
+            "weight": "semibold",
+            "classes": [
+              {"scaleClass": "1x", "refScale": 1.0, "framePx": [7, 5], "inkPx": [1, 0, 6, 5]},
+              {"scaleClass": "2x", "refScale": 2.5, "framePx": [16, 14], "inkPx": [2, 1, 14, 13]}
+            ]
+          },
+          {
+            "size": 6.0,
+            "weight": "semibold",
+            "classes": [
+              {"scaleClass": "1x", "refScale": 1.0, "framePx": [8, 8], "inkPx": [1, 1, 7, 7]},
+              {"scaleClass": "2x", "refScale": 2.5, "framePx": [18, 16], "inkPx": [2, 1, 16, 15]}
+            ]
+          },
+          {
+            "size": 9.0,
+            "weight": "semibold",
+            "classes": [
+              {"scaleClass": "1x", "refScale": 1.0, "framePx": [11, 11], "inkPx": [1, 2, 9, 10]},
+              {"scaleClass": "2x", "refScale": 2.5, "framePx": [27, 25], "inkPx": [3, 2, 24, 23]}
+            ]
+          },
+          {
+            "size": 10.0,
+            "weight": "semibold",
+            "classes": [
+              {"scaleClass": "1x", "refScale": 1.0, "framePx": [12, 12], "inkPx": [1, 2, 10, 11]},
+              {"scaleClass": "2x", "refScale": 2.5, "framePx": [30, 28], "inkPx": [3, 3, 26, 26]}
+            ]
+          },
+          {
+            "size": 11.0,
+            "weight": "semibold",
+            "classes": [
+              {"scaleClass": "1x", "refScale": 1.0, "framePx": [13, 13], "inkPx": [1, 2, 11, 12]},
+              {"scaleClass": "2x", "refScale": 2.5, "framePx": [32, 30], "inkPx": [3, 3, 28, 28]}
+            ]
+          },
+          {
+            "size": 11.5,
+            "weight": "semibold",
+            "classes": [
+              {"scaleClass": "1x", "refScale": 1.0, "framePx": [13, 13], "inkPx": [1, 1, 12, 12]},
+              {"scaleClass": "2x", "refScale": 2.5, "framePx": [35, 33], "inkPx": [4, 4, 30, 30]}
+            ]
+          },
+          {
+            "size": 12.0,
+            "weight": "semibold",
+            "classes": [
+              {"scaleClass": "1x", "refScale": 1.0, "framePx": [14, 14], "inkPx": [1, 2, 12, 13]},
+              {"scaleClass": "2x", "refScale": 2.5, "framePx": [36, 34], "inkPx": [4, 3, 32, 31]}
+            ]
+          },
+          {
+            "size": 12.5,
+            "weight": "semibold",
+            "classes": [
+              {"scaleClass": "1x", "refScale": 1.0, "framePx": [16, 14], "inkPx": [2, 1, 14, 13]},
+              {"scaleClass": "2x", "refScale": 2.5, "framePx": [37, 35], "inkPx": [4, 3, 33, 32]}
+            ]
+          },
+          {
+            "size": 13.0,
+            "weight": "semibold",
+            "classes": [
+              {"scaleClass": "1x", "refScale": 1.0, "framePx": [16, 14], "inkPx": [2, 1, 14, 13]},
+              {"scaleClass": "2x", "refScale": 2.5, "framePx": [38, 36], "inkPx": [4, 3, 34, 33]}
+            ]
+          },
+          {
+            "size": 13.5,
+            "weight": "semibold",
+            "classes": [
+              {"scaleClass": "1x", "refScale": 1.0, "framePx": [17, 15], "inkPx": [2, 2, 14, 14]},
+              {"scaleClass": "2x", "refScale": 2.5, "framePx": [40, 38], "inkPx": [4, 4, 35, 35]}
+            ]
+          },
+          {
+            "size": 14.0,
+            "weight": "semibold",
+            "classes": [
+              {"scaleClass": "1x", "refScale": 1.0, "framePx": [17, 15], "inkPx": [2, 1, 15, 14]},
+              {"scaleClass": "2x", "refScale": 2.5, "framePx": [41, 39], "inkPx": [4, 4, 36, 36]}
+            ]
+          },
+          {
+            "size": 15.0,
+            "weight": "semibold",
+            "classes": [
+              {"scaleClass": "1x", "refScale": 1.0, "framePx": [18, 16], "inkPx": [2, 1, 16, 15]},
+              {"scaleClass": "2x", "refScale": 2.5, "framePx": [45, 41], "inkPx": [5, 3, 40, 38]}
+            ]
+          },
+          {
+            "size": 16.0,
+            "weight": "semibold",
+            "classes": [
+              {"scaleClass": "1x", "refScale": 1.0, "framePx": [19, 17], "inkPx": [2, 1, 17, 16]},
+              {"scaleClass": "2x", "refScale": 2.5, "framePx": [47, 43], "inkPx": [5, 3, 42, 40]}
+            ]
+          },
+          {
+            "size": 17.0,
+            "weight": "semibold",
+            "classes": [
+              {"scaleClass": "1x", "refScale": 1.0, "framePx": [20, 18], "inkPx": [2, 1, 18, 17]},
+              {"scaleClass": "2x", "refScale": 2.5, "framePx": [50, 48], "inkPx": [5, 5, 44, 44]}
+            ]
+          },
+          {
+            "size": 18.0,
+            "weight": "semibold",
+            "classes": [
+              {"scaleClass": "1x", "refScale": 1.0, "framePx": [21, 21], "inkPx": [2, 2, 19, 19]},
+              {"scaleClass": "2x", "refScale": 2.5, "framePx": [54, 50], "inkPx": [6, 5, 47, 46]}
+            ]
+          },
+          {
+            "size": 20.0,
+            "weight": "semibold",
+            "classes": [
+              {"scaleClass": "1x", "refScale": 1.0, "framePx": [23, 23], "inkPx": [2, 3, 20, 21]},
+              {"scaleClass": "2x", "refScale": 2.5, "framePx": [59, 55], "inkPx": [6, 5, 52, 51]}
+            ]
+          },
+          {
+            "size": 22.0,
+            "weight": "semibold",
+            "classes": [
+              {"scaleClass": "1x", "refScale": 1.0, "framePx": [27, 25], "inkPx": [3, 3, 23, 23]},
+              {"scaleClass": "2x", "refScale": 2.5, "framePx": [65, 61], "inkPx": [7, 5, 58, 56]}
+            ]
+          },
+          {
+            "size": 24.0,
+            "weight": "semibold",
+            "classes": [
+              {"scaleClass": "1x", "refScale": 1.0, "framePx": [29, 27], "inkPx": [3, 3, 25, 25]},
+              {"scaleClass": "2x", "refScale": 2.5, "framePx": [70, 66], "inkPx": [7, 6, 62, 61]}
+            ]
+          },
+          {
+            "size": 26.0,
+            "weight": "semibold",
+            "classes": [
+              {"scaleClass": "1x", "refScale": 1.0, "framePx": [30, 28], "inkPx": [3, 2, 27, 26]},
+              {"scaleClass": "2x", "refScale": 2.5, "framePx": [76, 72], "inkPx": [8, 6, 68, 66]}
+            ]
+          },
+          {
+            "size": 28.0,
+            "weight": "semibold",
+            "classes": [
+              {"scaleClass": "1x", "refScale": 1.0, "framePx": [32, 30], "inkPx": [3, 2, 29, 28]},
+              {"scaleClass": "2x", "refScale": 2.5, "framePx": [83, 77], "inkPx": [9, 7, 73, 71]}
+            ]
+          },
+          {
+            "size": 30.0,
+            "weight": "semibold",
+            "classes": [
+              {"scaleClass": "1x", "refScale": 1.0, "framePx": [36, 34], "inkPx": [4, 3, 32, 31]},
+              {"scaleClass": "2x", "refScale": 2.5, "framePx": [88, 84], "inkPx": [9, 8, 78, 77]}
+            ]
+          },
+          {
+            "size": 32.0,
+            "weight": "semibold",
+            "classes": [
+              {"scaleClass": "1x", "refScale": 1.0, "framePx": [38, 36], "inkPx": [4, 4, 33, 33]},
+              {"scaleClass": "2x", "refScale": 2.5, "framePx": [94, 88], "inkPx": [10, 7, 84, 81]}
+            ]
+          }
+        ]
+      }
     }
   }
 }

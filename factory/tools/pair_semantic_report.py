@@ -6,7 +6,7 @@ Mac capture host with factory/tools/mac-ax-dump/AXDump.swift; no AX API across p
 
 The gate comes from <case>/pair.json "semanticGate":
   {
-    "fields":   ["role","name","toggle","enabled","focus","value","bounds","order","count","range","help","heading","link"],   // help: UIA HelpText = AXHelp; heading: UIA heading level > 0 = AXHeading; link: UIA Hyperlink = AXLink (ABI 0.13 extras)   // "range": slider RangeValue (value, min, max; with "smallChange": the declared SmallChange)  // what gates; anything not listed is reported only
+    "fields":   ["role","name","toggle","enabled","focus","value","bounds","order","count","range","help","heading","link"],   // help: UIA FullDescription (hint -> AccessKit description) = AXHelp; heading: UIA localized type "heading" or Level > 0 = AXHeading; link: UIA Hyperlink = AXLink (ABI 0.13 extras)   // "range": slider RangeValue (value, min, max; with "smallChange": the declared SmallChange)  // what gates; anything not listed is reported only
     "scope":    "main" | "dialog" | "all",           // main window tree, the extra windows (TaskDialog / sheet / NSAlert), or both (default all)
     "roles":    ["button", ...],                      // optional: compare only elements whose normalised role is listed (default: everything except IGNORED_ROLES)
     "ignoreNames": ["Close"],                         // element names dropped on both sides
@@ -96,10 +96,11 @@ def flatten_win(node, origin, scale, role_map, out, depth=0, list_rows=False):
         for c in labels:
             flatten_win(c, origin, scale, role_map, out, depth, list_rows)
     level = node.get("headingLevel")
+    loc = (node.get("localizedRole") or node.get("uia3LocalizedControlType") or "").lower()
     out.append(dict(role=role, name=None if switch_label else clean(node.get("name")), value=None if toggle else clean(value), enabled=bool(node.get("enabled", True)), focus=bool(node.get("focus")),
                     toggle=toggle, bounds=bounds, depth=depth, raw=node.get("role"), range=node.get("range"),
-                    # ABI 0.13 extras (gated only when listed in fields): UIA HelpText, heading level > 0, Hyperlink control type
-                    help=clean(node.get("helpText")) or None, heading=isinstance(level, (int, float)) and level > 0, link=role == "link"))
+                    # ABI 0.13 extras (gated only when listed in fields): UIA FullDescription, heading (localized type or Level > 0), Hyperlink control type
+                    help=clean(node.get("fullDescription")) or None, heading=loc == "heading" or (isinstance(level, (int, float)) and level > 0), link=role == "link"))
     for c in kids:
         flatten_win(c, origin, scale, role_map, out, depth + 1, list_rows)
 

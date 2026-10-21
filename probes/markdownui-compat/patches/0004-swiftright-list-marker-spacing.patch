@@ -1,0 +1,15 @@
+diff --git a/Sources/MarkdownUI/Views/Blocks/ListItemView.swift b/Sources/MarkdownUI/Views/Blocks/ListItemView.swift
+index fb5feb9..ab79bd3 100644
+--- a/Sources/MarkdownUI/Views/Blocks/ListItemView.swift
++++ b/Sources/MarkdownUI/Views/Blocks/ListItemView.swift
+@@ -39,6 +39,10 @@ struct ListItemView: View {
+         .textStyleFont()
+         .readWidth(column: 0)
+         .frame(width: self.markerWidth, alignment: .trailing)
++        #if SWIFTRIGHT
++          // SwiftRight (#74): the Mac's Label puts 8 pt between marker and text, the runtime's 6 (measured: Mac text 6 px = 2.4 pt right of Windows at 2.5x).
++          .padding(.trailing, 2)
++        #endif
+     }
+     #if os(visionOS)
+       .labelStyle(BulletItemStyle())

@@ -184,7 +184,7 @@ class SemanticTests(unittest.TestCase):
         self.assertEqual(S.compare_run(w, m, dict(fields=["role", "name", "count"], dialogs=dict(count=1)))[0], [])
 
     def test_abi013_extras_help_heading_link(self):
-        w = dict(windows=[win_window([win_el("Title", "Text", 0, 0, 40, 16, headingLevel=2), win_el("Save", "Button", 0, 20, 40, 20, helpText="Saves the file"),
+        w = dict(windows=[win_window([win_el("Title", "Text", 0, 0, 40, 16, headingLevel=2), win_el("Save", "Button", 0, 20, 40, 20, fullDescription="Saves the file"),
                                       win_el("Docs", "Hyperlink", 0, 40, 40, 16), win_el("Plain", "Text", 0, 60, 40, 16)])])
         m = dict(windows=[mac_window([mac_el("Title", "AXHeading", 0, 0, 40, 16), mac_el("Save", "AXButton", 0, 20, 40, 20, help="Saves the file"),
                                       mac_el("Docs", "AXLink", 0, 40, 40, 16), mac_el("Plain", "AXStaticText", 0, 60, 40, 16)])])
@@ -193,10 +193,16 @@ class SemanticTests(unittest.TestCase):
         self.assertEqual(mm, []); self.assertEqual(info["main"], dict(windows=4, mac=4))
         # mutations: a missing hint, a missing heading level and a link that is plain text on Windows each fail their own field
         w["windows"][0]["tree"]["children"][1].pop("headingLevel")
-        w["windows"][0]["tree"]["children"][2]["helpText"] = ""
+        w["windows"][0]["tree"]["children"][2]["fullDescription"] = ""
         w["windows"][0]["tree"]["children"][3]["role"] = "Text"
         mm, _ = S.compare_run(w, m, cfg)
         self.assertEqual(sorted(x["field"] for x in mm), ["heading", "help", "link", "role"])
+
+    def test_abi013_heading_from_localized_type_and_helptext_ignored(self):
+        w = dict(windows=[win_window([win_el("Title", "Text", 0, 0, 40, 16, localizedRole="heading"), win_el("Save", "Button", 0, 20, 40, 20, helpText="Saves the file")])])
+        m = dict(windows=[mac_window([mac_el("Title", "AXHeading", 0, 0, 40, 16), mac_el("Save", "AXButton", 0, 20, 40, 20, help="Saves the file")])])
+        mm, _ = S.compare_run(w, m, dict(fields=["role", "name", "count", "heading", "help"]))
+        self.assertEqual([x["field"] for x in mm], ["help"])   # UIA HelpText no longer counts; only FullDescription does
 
     def test_abi013_extras_are_not_gated_unless_listed(self):
         w = dict(windows=[win_window([win_el("Save", "Button", 0, 0, 40, 20)])])

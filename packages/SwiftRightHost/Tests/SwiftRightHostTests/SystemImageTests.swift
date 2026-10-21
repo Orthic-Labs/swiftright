@@ -36,6 +36,20 @@ final class SystemImageTests: XCTestCase {
         XCTAssertLessThanOrEqual(t.symbols.count, Int(t.providerPolicy.maxSymbols))
     }
 
+    func testBasicShapeSymbolsAreInTheShippedTableWithMeasuredFontLayouts() throws {
+        // Issue #73: MarkdownUI list bullets (circle.fill at round(13 / 3) = 4 pt, circle, square.fill) and task lists. Needs the Mac measurement merge
+        // (factory/tools/symbol-metrics/merge-symbol-table.py) of these names, sizes 4, 5, 6 and the standard size list, in all three weights.
+        let t = try SystemImageTable.standard()
+        for (name, glyph) in [("circle", "E91F"), ("circle.fill", "EA3B"), ("square", "E739"), ("square.fill", "E73B"),
+                              ("checkmark.square", "E73A"), ("checkmark.square.fill", "E73D")] {
+            let s = try XCTUnwrap(t.symbols[name], name)
+            XCTAssertEqual(s.glyph, glyph, name)
+            XCTAssertEqual(s.layout?.fontWeights, ["regular", "semibold", "bold"], name)
+            for size in [13.0, 17.0] { XCTAssertNotNil(s.layout?.fontLayout(pointSize: size, scale: 2.5)?.measured, "\(name) \(size)") }
+        }
+        for size in [4.0, 5.0, 6.0] { XCTAssertNotNil(t.symbols["circle.fill"]?.layout?.fontLayout(pointSize: size, scale: 2.5)?.measured, "circle.fill \(size)") }
+    }
+
     func testRejectsAnInvalidTable() throws {
         XCTAssertThrowsError(try SystemImageTable.decode(Data("{}".utf8)))
         var json = try String(contentsOfFile: URL(fileURLWithPath: #filePath).deletingLastPathComponent().deletingLastPathComponent().deletingLastPathComponent()

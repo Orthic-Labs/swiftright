@@ -177,6 +177,53 @@ function Resolve-Target($proc, $step, $mainH) {
 
 function Rect-Of($h) { $r = New-Object IxNative+RECT; [void][IxNative]::GetWindowRect($h, [ref]$r); return @($r.left, $r.top, $r.right, $r.bottom) }
 
+# Native UIA3 probe (CUIAutomation8): FullDescription 30159, Level 30154, LocalizedControlType 30004; every failure returns null
+if (-not ('Uia3Probe' -as [type])) {
+Add-Type -TypeDefinition @"
+using System;
+using System.Runtime.InteropServices;
+[StructLayout(LayoutKind.Sequential)] public struct UiaPt { public int x; public int y; }
+[ComImport, Guid("D22108AA-8AC5-49A5-837B-37BBB3D7591E"), InterfaceType(ComInterfaceType.InterfaceIsIUnknown)]
+public interface IUiaElement {
+    void SetFocus();
+    void GetRuntimeId(out IntPtr a);
+    void FindFirst(int s, IntPtr c, out IntPtr e);
+    void FindAll(int s, IntPtr c, out IntPtr e);
+    void FindFirstBuildCache(int s, IntPtr c, IntPtr r, out IntPtr e);
+    void FindAllBuildCache(int s, IntPtr c, IntPtr r, out IntPtr e);
+    void BuildUpdatedCache(IntPtr r, out IntPtr e);
+    [PreserveSig] int GetCurrentPropertyValue(int id, [MarshalAs(UnmanagedType.Struct)] out object v);
+}
+[ComImport, Guid("30CBE57D-D9D0-452A-AB13-7AC5AC4825EE"), InterfaceType(ComInterfaceType.InterfaceIsIUnknown)]
+public interface IUiaAutomation {
+    void CompareElements(IntPtr a, IntPtr b, out int same);
+    void CompareRuntimeIds(IntPtr a, IntPtr b, out int same);
+    void GetRootElement(out IntPtr e);
+    void ElementFromHandle(IntPtr h, out IntPtr e);
+    [PreserveSig] int ElementFromPoint(UiaPt pt, out IUiaElement e);
+}
+public class Uia3Result { public string Description; public int Level; public string LocalizedType; }
+public static class Uia3Probe {
+    static IUiaAutomation auto;
+    static string Str(IUiaElement e, int id) { object v; if (e.GetCurrentPropertyValue(id, out v) == 0 && v is string) return (string)v; return null; }
+    public static Uia3Result Read(int x, int y, string expectName) {
+        try {
+            if (auto == null) auto = (IUiaAutomation)Activator.CreateInstance(Type.GetTypeFromCLSID(new Guid("E22AD333-B25F-4064-9C3E-0C1B4AEAC6B4")));
+            IUiaElement e; UiaPt p; p.x = x; p.y = y;
+            if (auto.ElementFromPoint(p, out e) != 0 || e == null) return null;
+            string name = Str(e, 30005) ?? "";
+            if ((expectName ?? "") != name) return null;   // the point hit another element: report nothing
+            Uia3Result r = new Uia3Result();
+            r.Description = Str(e, 30159); r.LocalizedType = Str(e, 30004);
+            object lv; if (e.GetCurrentPropertyValue(30154, out lv) == 0 && lv is int) r.Level = (int)lv;
+            return r;
+        } catch { return null; }
+    }
+}
+"@
+}
+$script:Uia3Budget = 600
+
 function Dump-Element($el, [int]$depth, [int]$maxDepth) {
     $o = [ordered]@{}
     $c = $el.Current
@@ -184,10 +231,21 @@ function Dump-Element($el, [int]$depth, [int]$maxDepth) {
     $o.automationId = $c.AutomationId; $o.className = $c.ClassName
     $r = $c.BoundingRectangle
     $o.bounds = $(if ($r.IsEmpty) { $null } else { @([math]::Round($r.X, 1), [math]::Round($r.Y, 1), [math]::Round($r.Width, 1), [math]::Round($r.Height, 1)) })
-    # ABI 0.13 accessibility extras: HelpText (hint/placeholder), FullDescription (30159), HeadingLevel (30173), AriaRole; absent or unsupported properties are left out
+    # ABI 0.13 accessibility extras: HelpText (hint/placeholder), AriaRole; absent or unsupported properties are left out
     try { if ($c.HelpText) { $o.helpText = $c.HelpText } } catch { }
-    try { $v = $el.GetCurrentPropertyValue([Windows.Automation.AutomationProperty]::LookupById(30159), $true); if ($v -is [string] -and $v) { $o.fullDescription = $v } } catch { }
-    try { $v = $el.GetCurrentPropertyValue([Windows.Automation.AutomationProperty]::LookupById(30173), $true); if ($v -is [int] -and $v -gt 0) { $o.headingLevel = $v } } catch { }
+    # FullDescription (30159) and Level (30154) are unknown to the managed UIA2 client: read them through native UIA3 at the element's centre (bounded; failure leaves the fields absent)
+    if (-not $r.IsEmpty -and -not $c.IsOffscreen -and $script:Uia3Budget -gt 0) {
+        $script:Uia3Budget--
+        try {
+            $x3 = [int]($r.X + $r.Width / 2); $y3 = [int]($r.Y + $r.Height / 2)
+            $n3 = [Uia3Probe]::Read($x3, $y3, [string]$c.Name)
+            if ($n3) {
+                if ($n3.Description) { $o.fullDescription = $n3.Description }
+                if ($n3.Level -gt 0) { $o.headingLevel = $n3.Level }
+                if ($n3.LocalizedType) { $o.uia3LocalizedControlType = $n3.LocalizedType }
+            }
+        } catch { }
+    }
     try { if ($c.AriaRole) { $o.ariaRole = $c.AriaRole } } catch { }
     $o.enabled = [bool]$c.IsEnabled; $o.focus = [bool]$c.HasKeyboardFocus; $o.offscreen = [bool]$c.IsOffscreen; $o.focusable = [bool]$c.IsKeyboardFocusable
     try { $p = $null; if ($el.TryGetCurrentPattern([Windows.Automation.TogglePattern]::Pattern, [ref]$p)) { $o.toggle = $p.Current.ToggleState.ToString() } } catch { }
