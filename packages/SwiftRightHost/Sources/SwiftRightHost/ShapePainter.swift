@@ -167,7 +167,10 @@ public enum ShapePainter {
             let half = strokeWidth / 2
             let stroked = Rect(x: frame.x - half, y: frame.y - half, w: frame.w + strokeWidth, h: frame.h + strokeWidth)
             let strokedRadius = radius == 0 ? 0 : min(radius + half, min(stroked.w, stroked.h) / 2)
-            return .primitive(.rect(stroked, color: 0, radius: strokedRadius, borderColor: colour, borderWidth: strokeWidth))
+            // The fill is the stroke's own RGB at alpha 0, never 0x00000000: gpui's quad shader lerps the straight-alpha background toward the straight border colour across the
+            // edge pixel (`lerp(background, over(background, border), t)`), so a transparent-black background pulls RGB to black by t and then SRC_ALPHA blending applies t again
+            // (coverage squared: red 25 % edge over white gave (207,194,194), Mac 255,203,203; #71). An alpha-0 fill with the border's RGB keeps RGB constant and lerps only alpha.
+            return .primitive(.rect(stroked, color: colour & 0xFFFF_FF00, radius: strokedRadius, borderColor: colour, borderWidth: strokeWidth))
         }
     }
 

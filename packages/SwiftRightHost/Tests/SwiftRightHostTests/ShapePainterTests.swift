@@ -44,9 +44,27 @@ final class ShapePainterTests: XCTestCase {
     func testCircularRoundedStrokeIsCentredOnThePath() throws {
         let n = try shapeNode(RoundedRectangle(cornerRadius: 6, style: .circular).stroke(Color.blue, lineWidth: 2).frame(width: 40, height: 20), w: 100, h: 100)
         guard case .primitive(.rect(let r, let color, let radius, let border, let width)) = try ShapePainter.plan(n, bounds: Rect(x: 100, y: 100, w: 100, h: 50), scale: 2.5) else { return XCTFail() }
-        XCTAssertEqual(color, 0); XCTAssertEqual(border, 0x0088ffff); XCTAssertEqual(width, 5)
+        XCTAssertEqual(color, 0x0088ff00, "stroke background is the border RGB at alpha 0 (#71)"); XCTAssertEqual(border, 0x0088ffff); XCTAssertEqual(width, 5)
         XCTAssertEqual(r, Rect(x: 97.5, y: 97.5, w: 105, h: 55))      // grown by half the 5 px line on every side
         XCTAssertEqual(radius, 15 + 2.5)
+    }
+
+    /// #71: models gpui's quad_fragment edge pixel (lerp of straight background toward over(background, border) by inner coverage t, times outer coverage in alpha,
+    /// then SRC_ALPHA / INV_SRC_ALPHA over white) and checks the planned stroke yields straight-alpha red: R stays 255, G = B = 255 (1 - a).
+    func testStrokeEdgePixelIsStraightAlphaNotSquaredCoverage() throws {
+        let n = try shapeNode(RoundedRectangle(cornerRadius: 6, style: .circular).stroke(Color(red: 1, green: 0.2, blue: 0.2), lineWidth: 2).frame(width: 40, height: 20), w: 100, h: 100)
+        guard case .primitive(.rect(_, let bg, _, let border, _)) = try ShapePainter.plan(n, bounds: Rect(x: 100, y: 100, w: 100, h: 50), scale: 1.25) else { return XCTFail() }
+        func v(_ c: UInt32) -> [Double] { [24, 16, 8, 0].map { Double((c >> UInt32($0)) & 255) / 255 } }
+        let b = v(bg), e = v(border), t = 0.25
+        // over(background, border): alpha = ea + ba (1 - ea); rgb = (e.rgb ea + b.rgb ba (1 - ea)) / alpha
+        let alpha = e[3] + b[3] * (1 - e[3])
+        let over = (0..<3).map { (e[$0] * e[3] + b[$0] * b[3] * (1 - e[3])) / alpha }
+        let src = (0..<3).map { b[$0] + (over[$0] - b[$0]) * t }
+        let a = (b[3] + (alpha - b[3]) * t)         // outer coverage 1
+        let out = src.map { UInt8(((($0 * a) + (1 - a)) * 255).rounded()) }
+        XCTAssertEqual(out[0], 255, "red keeps full R at partial coverage")
+        XCTAssertEqual(out[1], UInt8(((e[1] * 0.25 + 0.75) * 255).rounded()), "G = straight-alpha blend at 25 % coverage, not coverage squared")
+        XCTAssertEqual(out[1], out[2])
     }
 
     func testRectangleStrokeKeepsSharpCorners() throws {
