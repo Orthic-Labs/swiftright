@@ -272,13 +272,36 @@ func capture(_ witness: AnyView, width: CGFloat, height: CGFloat, to path: Strin
         try runSteps(steps, driver: driver, png: path, ax: ax)
         pump(0.3)
     }
-    try writePNG(driver, to: path)
+    try writeImageRendererPNG(AnyView(witness), width: width, height: height, to: path)
     if let ax { try AXDump.write(main: window, scale: Double(captureScale), to: ax) }
     if let ax, let dump = driver.listDump() {
         let listPath = ax.replacingOccurrences(of: "/ax-", with: "/list-")
         try JSONSerialization.data(withJSONObject: dump, options: [.prettyPrinted]).write(to: URL(fileURLWithPath: listPath))
     }
     print("MAC_CAPTURE \(Int((width * captureScale).rounded()))x\(Int((height * captureScale).rounded())) scale=\(captureScale) appearance=\(window.effectiveAppearance.name.rawValue) png=\(path)")
+}
+
+
+/// Issue #54: `.brightness` is a colour filter that `cacheDisplay` does not apply (CI 39409471434); `ImageRenderer` does, so this case captures through it.
+/// Issue #60 capsule-stroke-v1: `cacheDisplay` also draws a flat tab at each end of a stroked continuous Capsule (CI 39625068738; Apple's capsule path has zero-length
+/// line segments at both ends) that neither ImageRenderer nor a CGContext stroke of the same path draws (offscreen check, 21 Oct), so this case captures through ImageRenderer too.
+@MainActor
+func writeImageRendererPNG(_ witness: AnyView, width: CGFloat, height: CGFloat, to path: String) throws {
+    let content = ZStack(alignment: .center) { witness }
+        .frame(width: width, height: height, alignment: .center)
+        .background(Color.white)
+        .environment(\.colorScheme, .light)
+    let renderer = ImageRenderer(content: content)
+    renderer.scale = captureScale
+    guard let rendered = renderer.cgImage else { throw NSError(domain: "MacHost", code: 30) }
+    // Into an sRGB bitmap, so the PNG holds sRGB values whatever space ImageRenderer drew in (the measured brightness rule is on sRGB channels).
+    guard let space = CGColorSpace(name: CGColorSpace.sRGB),
+          let context = CGContext(data: nil, width: rendered.width, height: rendered.height, bitsPerComponent: 8, bytesPerRow: 0, space: space,
+                                  bitmapInfo: CGImageAlphaInfo.premultipliedLast.rawValue) else { throw NSError(domain: "MacHost", code: 32) }
+    context.draw(rendered, in: CGRect(x: 0, y: 0, width: rendered.width, height: rendered.height))
+    guard let image = context.makeImage(),
+          let png = NSBitmapImageRep(cgImage: image).representation(using: .png, properties: [:]) else { throw NSError(domain: "MacHost", code: 31) }
+    try png.write(to: URL(fileURLWithPath: path))
 }
 
 @main
