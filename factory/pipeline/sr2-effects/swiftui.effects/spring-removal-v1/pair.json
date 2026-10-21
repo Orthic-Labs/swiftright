@@ -39,6 +39,7 @@
   "extentTolerancePx": 1.0,
   "progressTolerance": 0.005,
   "stripPx": 1,
-  "note": "PROVISIONAL (issue #54): 1 px, device-pixel snapping. Gaps between samples are at most 0.3 s (after a gap over 1 s SwiftUI advances a spring one frame). Dense samples every 0.03 s after the 0.205 s interruption (CI 39595832450) fixed the retarget model: one integration of the new spring from the presented state with 2.34 x the old velocity, steps at interruption + (n + 3/4) h; offline fit to the 15 Mac samples is within 0.11 pt (0.28 px)."
+  "note": "PROVISIONAL (issue #54): 1 px, device-pixel snapping. Gaps between samples are at most 0.3 s (after a gap over 1 s SwiftUI advances a spring one frame). Dense samples every 0.03 s after the 0.205 s interruption (CI 39595832450) fixed the retarget model: one integration of the new spring from the presented state with 2.34 x the old velocity, steps at interruption + (n + 3/4) h; offline fit to the 15 Mac samples is within 0.11 pt (0.28 px). alwaysStrip: CI 39603065974 frame 0.415 s: the Mac edge is 339.008 px (column 339 reads 253/254/255, coverage 0.008, below the detector), ours 339.0; 100 pixels, 2 levels, one column; the extent gate (1 px) still decides.",
+  "alwaysStrip": true
  }
 }

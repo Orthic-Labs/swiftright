@@ -65,6 +65,7 @@ def main():
     tol_p = gate.get("progressTolerance", 0.004)
     tol_edge = gate.get("edgeTolerancePx", tol_e)
     strip = gate.get("stripPx", 1)
+    always = bool(gate.get("alwaysStrip", False))   # mask every edge strip: a Mac edge a few levels off a whole pixel (coverage under the detector's floor) still differs from our snapped one
     rows, fails = [], 0
     for run in runs:
         maclog = (out / f"mac-run-{run:02d}.log").read_text() if (out / f"mac-run-{run:02d}.log").is_file() else ""
@@ -108,9 +109,9 @@ def main():
                             pos = run_[e]
                             lo, hi = int(pos) - strip, int(pos) + strip + 1
                             if tr["axis"] == "x":
-                                mask.paste(255, (max(0, lo), 0, min(mi.size[0], hi), mi.size[1])) if abs(pos - round(pos)) > 1e-6 or abs(mrun[e] - wrun[e]) > 1e-6 else None
+                                mask.paste(255, (max(0, lo), 0, min(mi.size[0], hi), mi.size[1])) if always or abs(pos - round(pos)) > 1e-6 or abs(mrun[e] - wrun[e]) > 1e-6 else None
                             else:
-                                mask.paste(255, (0, max(0, lo), mi.size[0], min(mi.size[1], hi))) if abs(pos - round(pos)) > 1e-6 or abs(mrun[e] - wrun[e]) > 1e-6 else None
+                                mask.paste(255, (0, max(0, lo), mi.size[0], min(mi.size[1], hi))) if always or abs(pos - round(pos)) > 1e-6 or abs(mrun[e] - wrun[e]) > 1e-6 else None
                 ok = ok and t["extentOk"] and t.get("edgesOk", True)
                 # progress: SwiftUI (Mac wrapper log) vs runtime presented frame
                 if geom is not None and "from" in tr:
