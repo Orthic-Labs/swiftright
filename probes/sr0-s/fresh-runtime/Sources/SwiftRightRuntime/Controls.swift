@@ -91,13 +91,17 @@ public struct RGBAImage: Hashable, Sendable {
     public let rgba: [UInt8]
     /// Stable across processes and runs: equal pixels give an equal id.
     public let contentID: UInt64
+    /// CoreGraphics' `shouldInterpolate`: true for an image decoded through ImageIO (the Mac draws it with the sharpening interpolating-source downscale; issue #72), false for
+    /// pixels built by hand (`CGImage(... shouldInterpolate: false ...)` on the Mac, and `RGBAImage(width:height:rgba:)` here). Not part of `contentID`; part of equality.
+    public let interpolates: Bool
 
     /// Nil when a dimension is not positive or `rgba.count != width * height * 4`.
-    public init?(width: Int, height: Int, rgba: [UInt8]) {
+    public init?(width: Int, height: Int, rgba: [UInt8], interpolates: Bool = false) {
         guard width > 0, height > 0, width <= 1 << 20, height <= 1 << 20, rgba.count == width * height * 4 else { return nil }
         self.width = width
         self.height = height
         self.rgba = rgba
+        self.interpolates = interpolates
         var hash: UInt64 = 0xcbf29ce484222325
         func mix(_ byte: UInt8) { hash = (hash ^ UInt64(byte)) &* 0x100000001b3 }
         for shift in stride(from: 0, to: 64, by: 8) { mix(UInt8(truncatingIfNeeded: UInt64(width) >> UInt64(shift))) }
@@ -106,8 +110,15 @@ public struct RGBAImage: Hashable, Sendable {
         contentID = hash
     }
 
-    public static func == (a: RGBAImage, b: RGBAImage) -> Bool { a.contentID == b.contentID && a.width == b.width && a.height == b.height }
-    public func hash(into hasher: inout Hasher) { hasher.combine(contentID); hasher.combine(width); hasher.combine(height) }
+    private init(copying other: RGBAImage, interpolates: Bool) {
+        width = other.width; height = other.height; rgba = other.rgba; contentID = other.contentID; self.interpolates = interpolates
+    }
+
+    /// The same pixels with `shouldInterpolate` set (no rehash).
+    public func withInterpolation(_ flag: Bool) -> RGBAImage { flag == interpolates ? self : RGBAImage(copying: self, interpolates: flag) }
+
+    public static func == (a: RGBAImage, b: RGBAImage) -> Bool { a.contentID == b.contentID && a.width == b.width && a.height == b.height && a.interpolates == b.interpolates }
+    public func hash(into hasher: inout Hasher) { hasher.combine(contentID); hasher.combine(width); hasher.combine(height); hasher.combine(interpolates) }
 }
 
 /// Image resize details resolved for a host renderer.

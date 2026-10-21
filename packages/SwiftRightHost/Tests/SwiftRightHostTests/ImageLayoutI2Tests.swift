@@ -63,6 +63,77 @@ final class ImageLayoutI2Tests: XCTestCase {
         XCTAssertTrue(ImageResampler.plan(for: .high).mip)
     }
 
+    // MARK: interpolating-source reduction (issue #72)
+
+    /// A 12 x 1 opaque step edge, 40 on the left half and 200 on the right, as grey pixels.
+    private func step12(interpolates: Bool) -> RGBAImage {
+        RGBAImage(width: 12, height: 1, rgba: (0..<12).flatMap { x -> [UInt8] in let v: UInt8 = x < 6 ? 40 : 200; return [v, v, v, 255] }, interpolates: interpolates)!
+    }
+    private func greys(_ image: RGBAImage) -> [Int] { (0..<image.width).map { Int(image.rgba[$0 * 4]) } }
+
+    func testAnInterpolatingSourceReducesWithTheSharpenedCornerAlignedKernel() {
+        // Expected from the offline fit (Catmull-Rom widened by the ratio, centres at t * (n - 1) / (m - 1) + 0.5); the Mac overshoots a 200 plateau to 206..209 and a 40 plateau to 31..34 the same way.
+        let five = greys(ImageResampler.resample(step12(interpolates: true), width: 5, height: 1, level: nil))
+        let expectedFive = [40, 34, 120, 206, 200]
+        XCTAssertEqual(five.count, 5)
+        for i in 0..<5 { XCTAssertLessThanOrEqual(abs(five[i] - expectedFive[i]), 1, "5: \(five)") }
+        XCTAssertGreaterThan(five.max()!, 200, "overshoot above the plateau")
+        XCTAssertLessThan(five.min()!, 40, "overshoot below the plateau")
+        let six = greys(ImageResampler.resample(step12(interpolates: true), width: 6, height: 1, level: nil))
+        let expectedSix = [40, 40, 46, 194, 200, 200]
+        for i in 0..<6 { XCTAssertLessThanOrEqual(abs(six[i] - expectedSix[i]), 1, "6: \(six)") }
+        // the output stays opaque and grey
+        let out = ImageResampler.resample(step12(interpolates: true), width: 5, height: 1, level: nil)
+        for i in 0..<5 { XCTAssertEqual(out.rgba[i * 4 + 3], 255); XCTAssertEqual(out.rgba[i * 4], out.rgba[i * 4 + 2]) }
+    }
+
+    func testAHandBuiltImageKeepsTheI2BilinearAndSoDoesAnExplicitLevel() {
+        let plain = greys(ImageResampler.resample(step12(interpolates: false), width: 5, height: 1, level: nil))
+        let expected = [40, 40, 120, 200, 200]   // triangle at the pixel centre, not widened (the I2 fit)
+        for i in 0..<5 { XCTAssertLessThanOrEqual(abs(plain[i] - expected[i]), 1, "\(plain)") }
+        XCTAssertEqual(ImageResampler.resample(step12(interpolates: false), width: 5, height: 1, level: nil).rgba,
+                       ImageResampler.resample(step12(interpolates: false), width: 5, height: 1, level: .low).rgba)
+        // an explicit .interpolation(_:) is the I2 plan whatever the source says
+        for level in [Image.Interpolation.low, .medium, .high, Image.Interpolation.none] {
+            XCTAssertEqual(ImageResampler.resample(step12(interpolates: true), width: 5, height: 1, level: level).rgba,
+                           ImageResampler.resample(step12(interpolates: false), width: 5, height: 1, level: level).rgba, "\(level)")
+        }
+    }
+
+    func testAnInterpolatingSourceKeepsTheI2PathWhenEnlargedOrUnchanged() {
+        var pixels: [UInt8] = []
+        for i in 0..<12 {
+            let r = UInt8((i * 37) % 256), g = UInt8((i * 91) % 256), b = UInt8((i * 53) % 256)
+            pixels += [r, g, b, 255]
+        }
+        let a = RGBAImage(width: 4, height: 3, rgba: pixels, interpolates: false)!
+        let b = a.withInterpolation(true)
+        XCTAssertNotEqual(a, b); XCTAssertEqual(a.contentID, b.contentID); XCTAssertEqual(a.rgba, b.rgba)
+        for (w, h) in [(8, 6), (4, 3), (9, 3), (4, 7)] {
+            XCTAssertEqual(ImageResampler.resample(a, width: w, height: h, level: nil).rgba, ImageResampler.resample(b, width: w, height: h, level: nil).rgba, "\(w)x\(h)")
+        }
+        // one axis reduced, the other enlarged: only the reduced axis changes plan
+        let reducedOnly = ImageResampler.resample(b, width: 2, height: 3, level: nil), enlargedAxis = ImageResampler.resample(b, width: 4, height: 6, level: nil)
+        XCTAssertEqual(enlargedAxis.rgba, ImageResampler.resample(a, width: 4, height: 6, level: nil).rgba)
+        XCTAssertNotEqual(reducedOnly.rgba, ImageResampler.resample(a, width: 2, height: 3, level: nil).rgba)
+    }
+
+    func testInterpolatingReductionPlanIsOnlyTheDefaultLevelOfAnInterpolatingSource() {
+        XCTAssertTrue(ImageResampler.plan(for: nil, interpolates: true).interpolatedReduction)
+        XCTAssertFalse(ImageResampler.plan(for: nil).interpolatedReduction)
+        for level in [Image.Interpolation.none, .low, .medium, .high] { XCTAssertFalse(ImageResampler.plan(for: level, interpolates: true).interpolatedReduction) }
+        XCTAssertEqual(ImageResampler.plan(for: nil), ImageResampler.plan(for: .low))
+    }
+
+    func testTheInterpolatesFlagSurvivesOrientationAndIsPartOfEquality() {
+        let img = RGBAImage(width: 3, height: 2, rgba: [UInt8](repeating: 9, count: 24), interpolates: true)!
+        XCTAssertTrue(img.oriented(exif: 6).interpolates)
+        XCTAssertTrue(img.oriented(exif: 1).interpolates)
+        XCTAssertFalse(RGBAImage(width: 3, height: 2, rgba: [UInt8](repeating: 9, count: 24))!.interpolates)
+        XCTAssertNotEqual(img, img.withInterpolation(false))
+        XCTAssertEqual(Set([img, img.withInterpolation(true)]).count, 1)
+    }
+
     func testAlphaIsPremultipliedSoTransparentColourNeverBleeds() {
         // alpha 0 yellow beside opaque red, enlarged 4x: every output pixel is red with partial alpha, or transparent with RGB 0; a straight-alpha resample would give orange
         let img = RGBAImage(width: 2, height: 1, rgba: [255, 255, 0, 0, 255, 0, 0, 255])!

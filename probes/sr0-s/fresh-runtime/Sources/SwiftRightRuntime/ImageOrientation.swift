@@ -43,7 +43,7 @@ extension RGBAImage {
                 }
             }
         }
-        return RGBAImage(width: dw, height: dh, rgba: out)!
+        return RGBAImage(width: dw, height: dh, rgba: out, interpolates: interpolates)!
     }
 
     public func oriented(_ orientation: Image.Orientation) -> RGBAImage { oriented(exif: orientation.exif) }

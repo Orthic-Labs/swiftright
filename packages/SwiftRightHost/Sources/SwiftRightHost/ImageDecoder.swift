@@ -36,7 +36,12 @@ public enum ImageDecoder {
 
     /// Decodes `data`. An ICO yields the entry whose size is the smallest one at least `maxPixel` (else the largest). An image whose longer side is
     /// over `maxPixel` is box-filtered down so the longer side equals `maxPixel` (aspect kept, never upscaled). `maxPixel <= 0` means no limit.
+    /// The result has `interpolates == true`: this entry stands for ImageIO's `CGImageSourceCreateImageAtIndex`, whose CGImage the Mac draws with its interpolating-source downscale (issue #72).
     public static func decode(_ data: Data, maxPixel: Int) throws -> RGBAImage {
+        try decodeUnmarked(data, maxPixel: maxPixel).withInterpolation(true)
+    }
+
+    private static func decodeUnmarked(_ data: Data, maxPixel: Int) throws -> RGBAImage {
         if backend == .system { return try ImagePolicy.decode(data, maxPixel: maxPixel) }
         let bytes = [UInt8](data)
         let image: RGBAImage

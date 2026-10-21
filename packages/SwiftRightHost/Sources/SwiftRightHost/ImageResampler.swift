@@ -9,6 +9,10 @@ import Foundation
 ///   - `.low` and no modifier: bilinear (triangle) sampled at the destination pixel centre, NOT widened on a reduction (it aliases when shrinking).
 ///   - `.medium`: the same bilinear after 2 x 2 box halvings while the reduction is more than 2:1 (a mip chain).
 ///   - `.high`: the same mip chain, then a cubic with Mitchell-Netravali parameters `ImageResampler.highCubic`, sampled at the pixel centre, not widened.
+///   - an INTERPOLATING source (`RGBAImage.interpolates`, CoreGraphics' shouldInterpolate; every image decoded through ImageIO / `ImageDecoder`) with no `.interpolation` modifier, on an axis that
+///     REDUCES: Catmull-Rom (Mitchell B 0, C 0.5) widened by the reduction (support 2 x ratio), sampled at CORNER-ALIGNED centres c(t) = t * (source - 1) / (output - 1) + 0.5 (not the pixel centre), the
+///     horizontal-pass result clamped to 0...1 per premultiplied channel (issue #72, fitted to CI 39580013879: max 14 levels against 79/62/98 for the I2 bilinear; the residual is at alpha edges).
+///     An enlarged or unchanged axis keeps the I2 triangle, and so does every image built by hand (`interpolates == false`, the I2 calibration cases).
 /// Limits (measured and stated, not hidden): a source with an ODD side reduced by more than 2:1 is not reproduced (the Mac's mip chain for odd sizes was not identified; this
 /// implementation drops the odd last row or column); `.high` at 1:1 smooths (the Mac does); exact nearest-neighbour ties (a pixel centre exactly on a source boundary) are decided by float noise on the Mac and are not pinned here.
 public enum ImageResampler {
@@ -25,14 +29,20 @@ public enum ImageResampler {
         public var filter: Filter
         /// Halve (2 x 2 box) while the reduction is MORE than 2:1 on both axes (exactly 2:1 is sampled directly: measured).
         public var mip: Bool
-        public init(filter: Filter, mip: Bool) { self.filter = filter; self.mip = mip }
+        /// Reducing axes use the interpolating-source downscale (`ImageResampler.reduction*`, issue #72); other axes use `filter`.
+        public var interpolatedReduction: Bool
+        public init(filter: Filter, mip: Bool, interpolatedReduction: Bool = false) { self.filter = filter; self.mip = mip; self.interpolatedReduction = interpolatedReduction }
     }
 
-    /// The fitted plan for an `Image.Interpolation` level; nil (never set) draws like `.low`, as the Mac does.
-    public static func plan(for level: Image.Interpolation?) -> Plan {
+    /// Mitchell-Netravali (B, C) of the interpolating-source reduction: Catmull-Rom. Fitted, issue #72.
+    public static let reductionCubic: (b: Double, c: Double) = (0, 0.5)
+
+    /// The fitted plan for an `Image.Interpolation` level; nil (never set) draws like `.low`, as the Mac does, except that an `interpolates` source also reduces with `interpolatedReduction`.
+    public static func plan(for level: Image.Interpolation?, interpolates: Bool = false) -> Plan {
         switch level {
         case .none?: return Plan(filter: .nearest, mip: false)
-        case .low?, nil: return Plan(filter: .triangle, mip: false)
+        case .low?: return Plan(filter: .triangle, mip: false)
+        case nil: return Plan(filter: .triangle, mip: false, interpolatedReduction: interpolates)
         case .medium?: return Plan(filter: .triangle, mip: true)
         case .high?: return Plan(filter: .cubic(b: highCubic.b, c: highCubic.c), mip: true)
         }
@@ -41,7 +51,7 @@ public enum ImageResampler {
     /// Resamples `image` to `width` x `height` device pixels, the node's SNAPPED destination rect: the whole source is mapped onto it, so the sample scale is source / destination size
     /// (measured with fractional fit and fill frames: the unsnapped frame size is NOT the scale). An image drawn at its own size is returned as is.
     public static func resample(_ image: RGBAImage, width: Int, height: Int, level: Image.Interpolation?) -> RGBAImage {
-        let plan = plan(for: level)
+        let plan = plan(for: level, interpolates: image.interpolates)
         let frameWidth = Double(width), frameHeight = Double(height)
         // At its own size nearest and bilinear are the identity, so the image is returned as is. `.high` is NOT: its cubic (B > 0) smooths at 1:1, and so does the Mac (measured: up to 112 levels on line art).
         if width == image.width && height == image.height {
@@ -56,9 +66,10 @@ public enum ImageResampler {
         if plan.filter == .nearest {
             out = source.nearest(width: width, height: height, frameWidth: frameWidth, frameHeight: frameHeight)
         } else {
-            let wx = weights(source: source.width, output: width, frame: frameWidth, filter: plan.filter)
-            let wy = weights(source: source.height, output: height, frame: frameHeight, filter: plan.filter)
-            out = source.filtered(wx, wy, width: width, height: height)
+            let reduceX = plan.interpolatedReduction && source.width > width, reduceY = plan.interpolatedReduction && source.height > height
+            let wx = reduceX ? reductionWeights(source: source.width, output: width) : weights(source: source.width, output: width, frame: frameWidth, filter: plan.filter)
+            let wy = reduceY ? reductionWeights(source: source.height, output: height) : weights(source: source.height, output: height, frame: frameHeight, filter: plan.filter)
+            out = source.filtered(wx, wy, width: width, height: height, clampPass: reduceX || reduceY)
         }
         return out.image()
     }
@@ -96,6 +107,23 @@ public enum ImageResampler {
             let lo = max(0, Int((c - sup).rounded(.down))), hi = min(source - 1, Int((c + sup).rounded(.up)))
             guard lo <= hi else { return Taps(first: min(max(0, Int(c.rounded(.down))), source - 1), weights: [1]) }
             var w = (lo...hi).map { kernel(filter, Double($0) + 0.5 - c) }
+            let total = w.reduce(0, +)
+            if abs(total) > 1e-12 { w = w.map { $0 / total } }
+            return Taps(first: lo, weights: w.map { Float($0) })
+        }
+    }
+
+    /// Interpolating-source reduction taps (issue #72): Catmull-Rom widened by the ratio, centres at t * (source - 1) / (output - 1) + 0.5 (the source centre for a single output pixel), taps in range renormalised.
+    static func reductionWeights(source: Int, output: Int) -> [Taps] {
+        let ratio = Double(source) / Double(output)
+        let filter = Filter.cubic(b: reductionCubic.b, c: reductionCubic.c)
+        let step = output > 1 ? Double(source - 1) / Double(output - 1) : 0
+        let reach = support(filter) * ratio
+        return (0..<output).map { t in
+            let c = output > 1 ? Double(t) * step + 0.5 : Double(source) / 2
+            let lo = max(0, Int((c - reach).rounded(.down))), hi = min(source - 1, Int((c + reach).rounded(.up)))
+            guard lo <= hi else { return Taps(first: min(max(0, Int(c.rounded(.down))), source - 1), weights: [1]) }
+            var w = (lo...hi).map { kernel(filter, (Double($0) + 0.5 - c) / ratio) }
             let total = w.reduce(0, +)
             if abs(total) > 1e-12 { w = w.map { $0 / total } }
             return Taps(first: lo, weights: w.map { Float($0) })
@@ -157,7 +185,8 @@ public enum ImageResampler {
             return Buffer(width: w, height: h, p: out)
         }
 
-        func filtered(_ wx: [Taps], _ wy: [Taps], width w: Int, height h: Int) -> Buffer {
+        /// `clampPass`: the horizontal-pass result is clamped to 0...1 per channel before the vertical pass (the Mac's 8-bit intermediate; only the interpolating-source reduction uses it).
+        func filtered(_ wx: [Taps], _ wy: [Taps], width w: Int, height h: Int, clampPass: Bool = false) -> Buffer {
             var mid = [Float](repeating: 0, count: height * w * 4)   // horizontal pass
             for y in 0..<height {
                 for x in 0..<w {
@@ -168,6 +197,7 @@ public enum ImageResampler {
                         r += p[i] * weight; g += p[i + 1] * weight; b += p[i + 2] * weight; a += p[i + 3] * weight
                     }
                     let o = (y * w + x) * 4
+                    if clampPass { r = min(1, max(0, r)); g = min(1, max(0, g)); b = min(1, max(0, b)); a = min(1, max(0, a)) }
                     mid[o] = r; mid[o + 1] = g; mid[o + 2] = b; mid[o + 3] = a
                 }
             }

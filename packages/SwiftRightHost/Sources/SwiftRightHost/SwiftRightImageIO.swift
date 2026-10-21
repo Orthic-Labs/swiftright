@@ -14,7 +14,7 @@ public enum SwiftRightImageIO {
         let pixels = try ImagePolicy.decode(data, maxPixel: maxPixel)
         let hasAlpha = stride(from: 3, to: pixels.rgba.count, by: 4).contains { pixels.rgba[$0] != 255 }
         #if os(Windows)
-        return CGImage(pixels: pixels, alphaInfo: hasAlpha ? .last : .noneSkipLast)
+        return CGImage(pixels: pixels.withInterpolation(false), alphaInfo: hasAlpha ? .last : .noneSkipLast)   // the Mac builds this CGImage with shouldInterpolate: false
         #else
         let info: CGImageAlphaInfo = hasAlpha ? .last : .noneSkipLast
         guard let provider = CGDataProvider(data: Data(pixels.rgba) as CFData),

@@ -18,8 +18,8 @@
   "start"
  ],
  "edgeAATolerance": {
-  "levels": 100,
-  "reason": "CI 39580013879 (issue #61), 3 runs x 2 phases identical: the host's fitted bilinear (ImageResampler.plan(nil): triangle, sampled at the pixel centre, not widened; reproduced offline to max 1 level) against a Mac downscale that is widened and slightly sharpened (blue plateaus overshoot 200 -> 206..209 and 40 -> 31..34; no standard kernel fits: widened Mitchell best, max 43/26/41 per cell). The I2 fit (default == .low, max 1) used sources built with shouldInterpolate: false; this case decodes through ImageIO on the Mac (UNVERIFIED: shouldInterpolate true selects CoreGraphics' high-quality downscale). Measured: Half 40->20x21 max 79, Fraction 40->25 max 62, Squashed palette 40->30x15 max 98, all inside the 1 px edge band (0 out-of-band), smooth gradients (Fit, Quarter) max 3; position and size exact. Rounded up to 100; N=3 identical runs, widen only with new evidence. Fixing it means carrying shouldInterpolate on RGBAImage (SwiftRightRuntime) and a widened plan."
+  "levels": 20,
+  "reason": "CI 39580013879 (issue #72): the Mac draws this ImageIO-decoded (shouldInterpolate true) source with a sharpening interpolating-source downscale; the host now reproduces it (ImageResampler interpolatedReduction: Catmull-Rom widened by the ratio, corner-aligned centres t*(n-1)/(m-1)+0.5, horizontal pass clamped), fitted offline to the three Mac runs (identical): Half 40->20x21 max 13, Fraction 40->25 max 14, Squashed palette 40->30x15 max 11, smooth gradients (Fit, Quarter) max 0-1, versus 79/62/98 for the I2 bilinear (#61). The residual sits at alpha-hole edges and the white diagonal. Tolerance 20 = offline residual 14 + float/8-bit-rounding margin; I2 cases (shouldInterpolate false) keep the I2 bilinear unchanged."
  },
  "hazeTolerance": 0,
  "steps": [

@@ -117,7 +117,7 @@ public final class ResolvedNodePainter {
     /// Registered pixel images (`Image(decorative:scale:)`), one per content id, painted size and opacity: kept while a committed tree uses them.
     /// `level` is the `Image.Interpolation` (-1 = never set, 0 none ... 3 high).
     /// `brightness` is the `.brightness` amounts above the image, outermost first (#54): the pixels are registered adjusted.
-    struct PixelKey: Hashable { var contentID: UInt64; var width: UInt32; var height: UInt32; var alpha: UInt8; var level: Int8 = -1; var brightness: [Float] = [] }
+    struct PixelKey: Hashable { var contentID: UInt64; var width: UInt32; var height: UInt32; var alpha: UInt8; var level: Int8 = -1; var interpolates = false; var brightness: [Float] = [] }
     /// The last variant registered for each image node (bridge node id): what the transient path keeps painting while the size is changing.
     private var lastPixelKey: [UInt64: PixelKey] = [:]
     /// Live resize and animation (wave 1 block I2, docs/foundations-images-fonts.md 1.3): while true, an image node whose destination size changed keeps painting its last registered variant
@@ -903,9 +903,9 @@ public final class ResolvedNodePainter {
         let levelCode: Int8 = level.map { l -> Int8 in switch l { case .none: return 0; case .low: return 1; case .medium: return 2; case .high: return 3 } } ?? -1
         let oversize = targetW > 8192 || targetH > 8192 || targetW * targetH * 4 > 64 << 20
         let w = oversize ? UInt32(min(image.width, max(1, targetW))) : UInt32(targetW), h = oversize ? UInt32(min(image.height, max(1, targetH))) : UInt32(targetH)
-        var key = PixelKey(contentID: image.contentID, width: w, height: h, alpha: UInt8((node.opacity * 255).rounded()), level: levelCode, brightness: brightness)
+        var key = PixelKey(contentID: image.contentID, width: w, height: h, alpha: UInt8((node.opacity * 255).rounded()), level: levelCode, interpolates: image.interpolates, brightness: brightness)
         var transient = false
-        if isLiveResizing, id != 0, let last = lastPixelKey[id], last != key, last.contentID == key.contentID, last.level == key.level, last.alpha == key.alpha, last.brightness == key.brightness,
+        if isLiveResizing, id != 0, let last = lastPixelKey[id], last != key, last.contentID == key.contentID, last.level == key.level, last.interpolates == key.interpolates, last.alpha == key.alpha, last.brightness == key.brightness,
            pendingPixelImages[last] != nil || pixelImages[last] != nil {
             key = last; transient = true      // keep the last registered variant: the renderer scales it into the new rect
         }
