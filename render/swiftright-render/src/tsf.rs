@@ -24,7 +24,7 @@ use windows::Win32::UI::TextServices::{
     CLSID_TF_ThreadMgr, ITextStoreACP, ITextStoreACPSink, ITextStoreACP_Impl, ITfCompositionView, ITfContext,
     ITfContextOwnerCompositionServices, ITfContextOwnerCompositionSink, ITfContextOwnerCompositionSink_Impl,
     ITfCandidateListUIElement, ITfDocumentMgr, ITfRange, ITfSource, ITfThreadMgr, ITfUIElementMgr, ITfUIElementSink,
-    ITfUIElementSink_Impl, TEXT_STORE_LOCK_FLAGS, TEXT_STORE_TEXT_CHANGE_FLAGS, TS_ATTRVAL, TS_LC_CHANGE, TS_RUNINFO, TS_RT_PLAIN,
+    ITfUIElementSink_Impl, TEXT_STORE_LOCK_FLAGS, TEXT_STORE_TEXT_CHANGE_FLAGS, TS_ATTRVAL, TS_LC_CHANGE, TS_LC_CREATE, TS_LC_DESTROY, TS_RUNINFO, TS_RT_PLAIN,
     TS_SELECTIONSTYLE, TS_SELECTION_ACP, TS_STATUS, TS_TEXTCHANGE, TS_AE_END, TS_AE_START,
 };
 
@@ -110,6 +110,8 @@ struct State {
     /// Merged async lock requests waiting for a grant (0 none).
     pending: Cell<u32>,
     composing: Cell<bool>,
+    /// An IME candidate list UI element is open (ITfUIElementSink Begin .. End).
+    cand_open: Cell<bool>,
     /// A text field has IME focus and the window is associated with the document manager.
     associated: Cell<bool>,
     node: Cell<u64>,
@@ -126,6 +128,7 @@ impl State {
             lock: Cell::new(0),
             pending: Cell::new(0),
             composing: Cell::new(false),
+            cand_open: Cell::new(false),
             associated: Cell::new(false),
             node: Cell::new(0),
             last_snap: Cell::new(0),
@@ -740,6 +743,9 @@ impl UiSink {
         });
         tsf_log_capped!("tsf_ui_element event={event} id={id} candidate_list={}", cand.is_some());
         if cand.is_some() {
+            self.st.cand_open.set(true);
+        }
+        if cand.is_some() {
             view::log_candidate_ui(self.st.hwnd_ptr(), event);
         }
     }
@@ -762,6 +768,7 @@ impl ITfUIElementSink_Impl for UiSink_Impl {
 
     fn EndUIElement(&self, dwuielementid: u32) -> windows::core::Result<()> {
         tsf_log_capped!("tsf_ui_element event=end id={dwuielementid}");
+        self.st.cand_open.set(false);
         Ok(())
     }
 }
@@ -1033,6 +1040,13 @@ pub fn layout_changed() {
     let Some(sink) = st.sink() else { return };
     let r = unsafe { sink.OnLayoutChange(TS_LC_CHANGE, VIEW_COOKIE) };
     tsf_log!("tsf_layout_change view={VIEW_COOKIE} hr=0x{:08X}", hr_of(&r));
+    // #33 experiment (SWIFTRIGHT_IME_FOLLOW_MODE=recreate): the Microsoft IME re-reads GetTextExt after TS_LC_CHANGE but keeps an
+    // open candidate list in place; report the view destroyed and recreated so it rebuilds its UI at the new position.
+    if st.cand_open.get() && std::env::var("SWIFTRIGHT_IME_FOLLOW_MODE").map_or(false, |m| m == "recreate") {
+        let d = unsafe { sink.OnLayoutChange(TS_LC_DESTROY, VIEW_COOKIE) };
+        let c = unsafe { sink.OnLayoutChange(TS_LC_CREATE, VIEW_COOKIE) };
+        tsf_log!("tsf_layout_recreate destroy_hr=0x{:08X} create_hr=0x{:08X}", hr_of(&d), hr_of(&c));
+    }
 }
 
 /// WM_SWR_TSF handler (UI thread, window subclass): grants a queued async lock request.
