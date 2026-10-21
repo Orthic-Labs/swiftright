@@ -450,7 +450,31 @@ pub(crate) fn shrink_prefix(kept: &str) -> String {
     s
 }
 
-/// Rev 0.12: `shape_once`, then, under `ext.max_lines`, the longest prefix + ELLIPSIS that fits in that many lines.
+/// Byte offsets (char boundaries) from `lo` to the end of `text`, ascending: the candidate cut points of the last kept line.
+pub(crate) fn cut_points(text: &str, lo: usize) -> Vec<usize> {
+    let lo = lo.min(text.len());
+    let mut v: Vec<usize> = text.char_indices().map(|(i, _)| i).filter(|&i| i >= lo).collect();
+    v.push(text.len());
+    v.dedup();
+    v
+}
+
+/// The largest index `i` in `0..len` with `fits(i)` true, assuming `fits` is true up to some index and false after it; None when
+/// `fits(0)` is false.
+pub(crate) fn last_fitting(len: usize, mut fits: impl FnMut(usize) -> Result<bool, Status>) -> Result<Option<usize>, Status> {
+    if len == 0 || !fits(0)? {
+        return Ok(None);
+    }
+    let (mut ok, mut bad) = (0usize, len);
+    while bad - ok > 1 {
+        let mid = ok + (bad - ok) / 2;
+        if fits(mid)? { ok = mid } else { bad = mid }
+    }
+    Ok(Some(ok))
+}
+
+/// `shape_once`, then, under `ext.max_lines`, CoreText-style tail truncation (#51): lines 1..n-1 wrap as usual and the last kept
+/// line takes as many characters of the rest of the text as fit with the ellipsis (not just the words that wrapped onto it).
 pub fn shape(ts: &WindowTextSystem, r: &Request, key: u64) -> Result<Measured, Status> {
     let n = r.ext.map_or(0, |e| e.max_lines) as usize;
     let full = shape_once(ts, r, key)?;
@@ -458,8 +482,8 @@ pub fn shape(ts: &WindowTextSystem, r: &Request, key: u64) -> Result<Measured, S
         return Ok(full);
     }
     let ends: Vec<usize> = full.lines.iter().map(|l| (l.utf8_start + l.utf8_len) as usize).collect();
-    let mut kept = limit_prefix(r.text, &ends, n).unwrap_or_default();
-    for _ in 0..512 {
+    let shape_cut = |cut: usize| -> Result<Measured, Status> {
+        let kept = r.text[..cut].trim_end();
         let cand = format!("{kept}{ELLIPSIS}");
         let q = Request {
             ext: r.ext,
@@ -475,14 +499,33 @@ pub fn shape(ts: &WindowTextSystem, r: &Request, key: u64) -> Result<Measured, S
             max_width: r.max_width,
             gpui_ratio: r.gpui_ratio,
         };
-        let mut m = shape_once(ts, &q, key)?;
-        if m.lines.len() <= n || kept.is_empty() {
-            m.src = Some(r.text.to_string());
-            return Ok(m);
-        }
-        kept = shrink_prefix(&kept);
+        shape_once(ts, &q, key)
+    };
+    // The last kept line starts where line n starts in the full layout; a paragraph break inside it ends the kept text there.
+    let lo = if n >= 2 { ends[n - 2] } else { 0 };
+    let mut hi = r.text.len();
+    if let Some(nl) = r.text[lo..].find('\n') {
+        hi = lo + nl;
     }
-    Err(E_PLATFORM)
+    let cuts = cut_points(&r.text[..hi], lo);
+    let best = last_fitting(cuts.len(), |i| Ok(shape_cut(cuts[i])?.lines.len() <= n))?;
+    let cut = match best {
+        Some(i) => cuts[i],
+        None => {
+            // Not even the ellipsis fits after the wrapped lines: fall back to dropping characters from the whole-line prefix.
+            let mut kept = limit_prefix(r.text, &ends, n).unwrap_or_default();
+            for _ in 0..512 {
+                if kept.is_empty() || shape_cut(kept.len())?.lines.len() <= n {
+                    break;
+                }
+                kept = shrink_prefix(&kept);
+            }
+            kept.len()
+        }
+    };
+    let mut m = shape_cut(cut)?;
+    m.src = Some(r.text.to_string());
+    Ok(m)
 }
 
 /// Shapes `r.text` with GPUI's text system. Rev 0.6: '\n' splits paragraphs.
@@ -912,6 +955,23 @@ mod max_lines_tests {
         assert_eq!(limit_prefix("abc def ghi", &[4, 8, 11], 1).as_deref(), Some("abc"));
         assert_eq!(limit_prefix("abc def ghi", &[4, 8, 11], 2).as_deref(), Some("abc def"));
         assert_eq!(limit_prefix("ab\ncd\nef", &[3, 6, 8], 2).as_deref(), Some("ab\ncd"));
+    }
+
+    #[test]
+    fn cut_points_are_char_boundaries_from_lo() {
+        assert_eq!(cut_points("ab cd", 3), vec![3, 4, 5]);
+        assert_eq!(cut_points("a\u{e9}b", 1), vec![1, 3, 4]);
+        assert_eq!(cut_points("abc", 9), vec![3]);
+    }
+
+    #[test]
+    fn last_fitting_finds_the_boundary() {
+        let f = |limit: usize| move |i: usize| -> Result<bool, Status> { Ok(i <= limit) };
+        assert_eq!(last_fitting(10, f(6)).unwrap(), Some(6));
+        assert_eq!(last_fitting(10, f(0)).unwrap(), Some(0));
+        assert_eq!(last_fitting(10, f(99)).unwrap(), Some(9));
+        assert_eq!(last_fitting(10, |_| Ok(false)).unwrap(), None);
+        assert_eq!(last_fitting(0, f(3)).unwrap(), None);
     }
 
     #[test]
