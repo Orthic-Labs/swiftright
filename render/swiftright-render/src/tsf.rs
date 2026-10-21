@@ -300,36 +300,29 @@ impl ITextStoreACP_Impl for TextStore_Impl {
         Ok(())
     }
 
-    fn RequestLock(&self, dwlockflags: u32, phrsession: *mut HRESULT) -> windows::core::Result<()> {
-        if phrsession.is_null() {
-            return err(E_INVALIDARG);
-        }
+    fn RequestLock(&self, dwlockflags: u32) -> windows::core::Result<HRESULT> {
         let want = dwlockflags & TS_LF_READWRITE;
         if want != TS_LF_READ && want != TS_LF_READWRITE {
             return err(E_INVALIDARG);
         }
         let sync = dwlockflags & TS_LF_SYNC != 0;
         let st = &self.st;
-        let out = |hr: HRESULT| unsafe { *phrsession = hr };
         let Some(sink) = st.sink() else { return err(E_UNEXPECTED) };
         if st.lock.get() == 0 && !host_active() {
             // Free and the host text bridge is idle: grant now (also for an async request).
             let hr = st.grant(&sink, want);
-            out(hr);
             st.flush_pending();
-            return Ok(());
+            return Ok(hr);
         }
         if sync {
             tsf_log_capped!("tsf_lock sync_denied held=0x{:X} host_busy={}", st.lock.get(), host_active());
-            out(TS_E_SYNCHRONOUS);
-            return Ok(());
+            return Ok(TS_E_SYNCHRONOUS);
         }
         let merged = if st.pending.get() == TS_LF_READWRITE || want == TS_LF_READWRITE { TS_LF_READWRITE } else { TS_LF_READ };
         st.pending.set(merged);
         tsf_log_capped!("tsf_lock queued flags=0x{merged:X} held=0x{:X} host_busy={}", st.lock.get(), host_active());
         st.post_grant();
-        out(TS_S_ASYNC);
-        Ok(())
+        Ok(TS_S_ASYNC)
     }
 
     fn GetStatus(&self) -> windows::core::Result<TS_STATUS> {
@@ -687,13 +680,10 @@ impl ITextStoreACP_Impl for TextStore_Impl {
 
 #[allow(non_snake_case)]
 impl ITfContextOwnerCompositionSink_Impl for TextStore_Impl {
-    fn OnStartComposition(&self, _pcomposition: Ref<'_, ITfCompositionView>, pfok: *mut BOOL) -> windows::core::Result<()> {
+    fn OnStartComposition(&self, _pcomposition: Ref<'_, ITfCompositionView>) -> windows::core::Result<BOOL> {
         self.st.composing.set(true);
-        if !pfok.is_null() {
-            unsafe { *pfok = BOOL(1) };
-        }
         tsf_log!("tsf_composition event=start");
-        Ok(())
+        Ok(BOOL(1))
     }
 
     fn OnUpdateComposition(&self, _pcomposition: Ref<'_, ITfCompositionView>, _prangenew: Ref<'_, ITfRange>) -> windows::core::Result<()> {
