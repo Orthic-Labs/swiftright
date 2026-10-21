@@ -418,6 +418,7 @@ Each gate's measurements are in its pair.json. Oracle PASS-WITH-CAVEATS; the Gro
 - **Stage 2 (own TSF `ITextStoreACP`, held patch `docs/held-patches/swiftright-03-tsf-store.patch`):**
   - Composition, conversion, commit and both Escape cases passed over TSF (F7live 18/21 at tag ime33-tsf5).
   - After a move the IME re-read `GetTextExt` and got the new rect, but the list did not move. `TS_LC_DESTROY` + `TS_LC_CREATE` did not move it either (tag ime33-tsf6).
+- **Reverted build verified:** the CI build of a74868aee (run 39537361391) on the Dell scored F7live 20/21 at tag ime33-revert. That matches the same-day tuple-13 baseline (20/21) and master 77c041240 (20/21); the one failure is the follow check, the accepted limit.
 - **Decision:** Astra chose option A: revert, keep the patch and evidence, and close. TSF reproduced the same failure while adding about 800 lines and untested input-lifecycle risk (other IMEs, R10). Logged in the workspace `decisions.md`.
 - **Lessons for any TSF revival (in the patch):**
   - Keep the IMM context: the probe and tools read the open status through it.
