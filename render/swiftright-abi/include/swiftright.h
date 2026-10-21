@@ -1350,6 +1350,8 @@ SWR_API swr_status swr_get_api_v10(swr_api_v08 *out, uint32_t caller_size);
 #define SWR_WHEEL_DELTA        120
 #define SWR_MOD_PRECISE        0x100u
 #define SWR_ROLE_SCROLL_BAR    16
+/* Additive (#74): a link (AccessKit Role::Link, UIA Hyperlink), e.g. a link run inside a Text; older renderers show it as a generic node. */
+#define SWR_ROLE_LINK          17
 
 /* 0.11 view of swr_bootstrap_info: the 136 bytes of the 0.10 view at identical offsets (abi_minor 11, api_table_size
  * sizeof(swr_api_v08) = 184, fn_count 22), plus the wheel delta (144 bytes). */

@@ -24,6 +24,8 @@ pub const ABI_MINOR_V12: u32 = 12;
 pub const ROLE_SLIDER: u32 = 15;
 /// Rev 0.11: AccessKit Role::ScrollBar (UIA ScrollBar; RangeValuePattern from a range entry, value 0..1).
 pub const ROLE_SCROLL_BAR: u32 = 16;
+/// Additive (#74): a link (UIA Hyperlink), e.g. a link run inside a Text.
+pub const ROLE_LINK: u32 = 17;
 pub const FEATURES_MAX: usize = 16;
 pub const FALLBACKS_MAX: usize = 8;
 pub const FACE_AXES_MAX: usize = 8;

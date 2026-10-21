@@ -119,6 +119,7 @@ pub fn build_tree() -> TreeUpdate {
             // Rev 0.11 (issue #31). Role::ScrollBar -> UIA ScrollBar (accesskit_windows 0.35.1 node.rs control_type); the range entry
             // (value 0..1) gives it the RangeValue pattern (is_range_value_pattern_supported = numeric_value is some).
             ROLE_SCROLL_BAR => Role::ScrollBar,
+            ROLE_LINK => Role::Link,
             _ => Role::GenericContainer,
         };
         let mut node = Node::new(role);
