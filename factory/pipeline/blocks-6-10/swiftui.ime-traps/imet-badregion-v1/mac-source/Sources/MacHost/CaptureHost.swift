@@ -54,6 +54,9 @@ final class StepRunner {
             if let w = tv.window {
                 let r = w.convertFromScreen(tv.firstRect(forCharacterRange: NSRange(location: tv.selectedRange().location, length: 0), actualRange: nil))
                 line += " caretXpx=\(String(format: "%.2f", Double(r.origin.x * captureScale)))"
+                // The text origin: the same measure at offset 0 (the field's left text edge, independent of glyph advances; block 40 gates it, sr1-decisions #50).
+                let o = w.convertFromScreen(tv.firstRect(forCharacterRange: NSRange(location: 0, length: 0), actualRange: nil))
+                line += " originXpx=\(String(format: "%.2f", Double(o.origin.x * captureScale)))"
             }
         } else { line += " fieldEditor=0 firstResponder=\(type(of: window.firstResponder as Any))" }
         print(line)

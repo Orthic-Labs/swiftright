@@ -22,5 +22,10 @@
  "macArgs": [
   "--steps",
   "[{\"op\":\"click\",\"x\":150,\"y\":55},{\"op\":\"wait\",\"ms\":250},{\"op\":\"ime\",\"action\":\"compose\",\"text\":\"\\u314e\"},{\"op\":\"ime\",\"action\":\"compose\",\"text\":\"\\ud558\"},{\"op\":\"ime\",\"action\":\"compose\",\"text\":\"\\ud55c\"},{\"op\":\"ime\",\"action\":\"commit\",\"text\":\"\\ud55c\"},{\"op\":\"ime\",\"action\":\"compose\",\"text\":\"\\u3131\"},{\"op\":\"ime\",\"action\":\"compose\",\"text\":\"\\uadf8\"},{\"op\":\"ime\",\"action\":\"compose\",\"text\":\"\\uae00\"},{\"op\":\"ime\",\"action\":\"commit\",\"text\":\"\\uae00\"},{\"op\":\"wait\",\"ms\":250}]"
- ]
+ ],
+ "imeGate": {
+  "note": "marked range, selected range and composed text per step, text origin x (offset 0) within 1 px, and no marked range in an unfocused field (docs/sr1-decisions.md #15, issue #50)",
+  "origin": true,
+  "originTolerancePx": 1.0
+ }
 }

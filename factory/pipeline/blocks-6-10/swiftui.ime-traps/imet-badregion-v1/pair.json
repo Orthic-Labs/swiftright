@@ -22,5 +22,16 @@
  "macArgs": [
   "--steps",
   "[{\"op\":\"click\",\"x\":150,\"y\":55},{\"op\":\"wait\",\"ms\":250},{\"op\":\"ime\",\"action\":\"compose\",\"text\":\"ok\"},{\"op\":\"ime\",\"action\":\"cancel\"},{\"op\":\"wait\",\"ms\":250}]"
- ]
+ ],
+ "imeGate": {
+  "note": "Windows-only steps: the two invalid composing regions (steps 1 and 2) must leave step 0's state untouched; the final Windows state equals the Mac's final field editor state (marked, selection, text, origin x). Issue #50.",
+  "origin": true,
+  "originTolerancePx": 1.0,
+  "windowsOnly": {
+   "unchanged": [
+    1,
+    2
+   ]
+  }
+ }
 }

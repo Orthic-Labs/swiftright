@@ -186,12 +186,20 @@ struct HostPlacement {
         } catch { fail(error) }
     }
 
+    /// The focused field's caret x (at the selection start) and text origin x (offset 0), window pixels from the product caretBounds (the TSF text extent): block 40 gates the origin (sr1-decisions #50).
+    func caretGeometry(_ id: String, _ location: Int) -> String {
+        guard graph?.focusedTextFieldID == id, let input, let instance = graph?.nodeInstance(id) else { return "" }
+        let node = UInt64(instance + 1), at = UInt32(truncatingIfNeeded: location)
+        guard let c = input.caretBounds(node: node, range: UTF16Span(start: at, end: at)), let o = input.caretBounds(node: node, range: UTF16Span(start: 0, end: 0)) else { return "" }
+        return " caretXpx=\(String(format: "%.2f", Double(c.x))) originXpx=\(String(format: "%.2f", Double(o.x)))"
+    }
+
     /// The text model of every TextField after a commit or a script step.
     func logFields(_ root: ResolvedNode, tag: String) {
         func visit(_ n: ResolvedNode) {
             if n.kind == "TextField", let s = graph?.textInput(n.id) {
                 let m = s.markedRange.map { "\($0.location)+\($0.length)" } ?? "none"
-                print("HOST_FIELD tag=\(tag) id=\(n.id) committed=\(s.committed.debugDescription) display=\(s.display.debugDescription) selection=\(s.selection.location)+\(s.selection.length) marked=\(m) focused=\(graph?.focusedTextFieldID == n.id)")
+                print("HOST_FIELD tag=\(tag) id=\(n.id) committed=\(s.committed.debugDescription) display=\(s.display.debugDescription) selection=\(s.selection.location)+\(s.selection.length) marked=\(m) focused=\(graph?.focusedTextFieldID == n.id)\(caretGeometry(n.id, s.selection.location))")
             }
             n.children.forEach(visit)
         }

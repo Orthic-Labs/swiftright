@@ -13,12 +13,24 @@ Per step (the Nth script line against the Nth MAC_FACT line) and once more for t
   text       the composed string is equal. The Windows log is written in the console code page, so a non-ASCII character comes out as several unrelated bytes there:
              an all-ASCII Mac string must match exactly; a string with non-ASCII characters must match up to its first non-ASCII character and the Windows string must continue
              beyond it (the exact characters are compared on the final frame by the semantic gate, from UIA values).
-A different number of steps, or a missing log or line, fails. Everything else in the logs (committed text, focus, caret x) is reported, not gated here."""
+A different number of steps, or a missing log or line, fails. Everything else in the logs (committed text, focus, caret x) is reported, not gated here.
+
+Block 40 (swiftui.ime-traps, issue #50) has two TextFields, so the Windows host logs one HOST_FIELD per field per step: the focused field's line (focused=true) is the one compared with the Mac's field editor,
+and a field that does not hold the focus must carry no marked range (composition must not leak across a focus change). Optional "imeGate" keys in pair.json:
+  "origin": true             also GATE the text origin: originXpx (the x of offset 0 in the focused field, capture px; Mac MAC_FACT originXpx from firstRect, Windows HOST_FIELD originXpx from
+                             HostTextInput.caretBounds) must agree within "originTolerancePx" (default 1.0) at every step and at the final state. caretXpx (the caret at the selection start) is REPORTED only:
+                             Windows draws the body font at 12 pt and the Mac at 13 pt (decision 2), so an advance-dependent x differs by design. A missing value on either side fails.
+  "windowsOnly": {"unchanged": [1, 2]}   for a case whose Mac side cannot take the same steps (imet-badregion-v1: AppKit raises for an invalid range): Windows steps listed must leave the state of step 0
+                             untouched (refused), and the final Windows state must equal the final Mac state; no per-step pairing."""
 import json, re, sys
 from pathlib import Path
 
-WIN_RE = re.compile(r'HOST_FIELD tag=(\S+) id=\S+ committed="(.*?)" display="(.*?)" selection=(\d+)\+(\d+) marked=(none|\d+\+\d+) focused=(\w+)')
-MAC_RE = re.compile(r'MAC_FACT step=(\S+) fieldEditor=\d+ text="(.*?)" selection=(\d+)\+(\d+) marked=(\d+)\+(\d+)')
+WIN_RE = re.compile(r'HOST_FIELD tag=(\S+) id=(\S+) committed="(.*?)" display="(.*?)" selection=(\d+)\+(\d+) marked=(none|\d+\+\d+) focused=(\w+)(?: caretXpx=(-?[\d.]+) originXpx=(-?[\d.]+))?')
+MAC_RE = re.compile(r'MAC_FACT step=(\S+) fieldEditor=\d+ text="(.*?)" selection=(\d+)\+(\d+) marked=(?:(\d+)\+(\d+)|none)(?: caretXpx=(-?[\d.]+))?(?: originXpx=(-?[\d.]+))?')
+
+
+def num(v):
+    return None if v is None else float(v)
 
 
 def marked_range(loc, length):
@@ -31,10 +43,22 @@ def windows_steps(path):
         return None
     rows = []
     for m in WIN_RE.finditer(path.read_bytes().decode("latin-1")):
-        tag, committed, display, s0, s1, marked, focused = m.groups()
+        tag, fid, committed, display, s0, s1, marked, focused, cx, ox = m.groups()
         mk = None if marked == "none" else marked_range(*(int(v) for v in marked.split("+")))
-        rows.append(dict(tag=tag, committed=committed, text=display, selection=[int(s0), int(s1)], marked=mk, focused=focused == "true"))
-    return [r for r in rows if r["tag"] == "script"], (rows[-1] if rows else None)
+        rows.append(dict(tag=tag, id=fid, committed=committed, text=display, selection=[int(s0), int(s1)], marked=mk, focused=focused == "true", caretX=num(cx), originX=num(ox)))
+    script = [r for r in rows if r["tag"] == "script"]
+    nfields = len({r["id"] for r in script}) or 1
+    if len(script) % nfields:
+        return [], None, [f"windows script lines {len(script)} are not a multiple of the {nfields} fields"]
+    steps, leaks = [], []
+    for k in range(0, len(script), nfields):
+        chunk = script[k:k + nfields]
+        focused = [r for r in chunk if r["focused"]]
+        if len(focused) != 1:
+            return [], None, [f"windows step {k // nfields}: {len(focused)} focused fields, expected 1"]
+        steps.append(focused[0])
+        leaks += [f"windows step {k // nfields}: unfocused field {r['id']} holds marked range {r['marked']}" for r in chunk if not r["focused"] and r["marked"] is not None]
+    return steps, (steps[-1] if steps else None), leaks
 
 
 def mac_steps(path):
@@ -43,8 +67,8 @@ def mac_steps(path):
         return None
     rows = []
     for m in MAC_RE.finditer(path.read_text(encoding="utf-8", errors="replace")):
-        step, text, s0, s1, m0, m1 = m.groups()
-        rows.append(dict(step=step, text=text, selection=[int(s0), int(s1)], marked=marked_range(int(m0), int(m1))))
+        step, text, s0, s1, m0, m1, cx, ox = m.groups()
+        rows.append(dict(step=step, text=text, selection=[int(s0), int(s1)], marked=marked_range(int(m0 or 0), int(m1 or 0)), caretX=num(cx), originX=num(ox)))
     return rows, (rows[-1] if rows else None)
 
 
@@ -56,8 +80,18 @@ def text_equal(mac, win):
     return win.startswith(prefix) and len(win) > len(prefix)
 
 
-def step_mismatches(label, mac, win):
+def origin_mismatches(label, mac, win, tol):
+    if mac.get("originX") is None or win.get("originX") is None:
+        return [f"{label}: originXpx missing (mac {mac.get('originX')}, windows {win.get('originX')})"]
+    if abs(mac["originX"] - win["originX"]) > tol:
+        return [f"{label}: text origin x mac {mac['originX']} != windows {win['originX']} (tolerance {tol} px)"]
+    return []
+
+
+def step_mismatches(label, mac, win, tol=None):
     why = []
+    if tol is not None:
+        why += origin_mismatches(label, mac, win, tol)
     if mac["marked"] != win["marked"]:
         why.append(f"{label}: marked range mac {mac['marked']} != windows {win['marked']}")
     if mac["selection"] != win["selection"]:
@@ -69,6 +103,9 @@ def step_mismatches(label, mac, win):
 
 def main():
     case, out = Path(sys.argv[1]).resolve(), Path(sys.argv[2]).resolve()
+    cfg = json.loads((case / "pair.json").read_text()).get("imeGate", {})
+    tol = float(cfg.get("originTolerancePx", 1.0)) if cfg.get("origin") else None
+    win_only = cfg.get("windowsOnly")
     rows = []
     for macpng in sorted((out / "mac").glob("run-[0-9][0-9].png")):
         n = macpng.stem.split("-")[1]
@@ -77,17 +114,31 @@ def main():
         if w is None or m is None:
             why.append(f"missing log: windows host log {'present' if w else 'MISSING'}, mac run log {'present' if m else 'MISSING'}")
         else:
-            wsteps, wfinal = w
+            wsteps, wfinal, wnotes = w
+            why += wnotes
             msteps = [r for r in m[0] if r["step"] != "start"]
+            if win_only:
+                if not wsteps or not msteps:
+                    why.append("windows-only case: missing windows steps or mac final state")
+                else:
+                    base = wsteps[0]
+                    for k in win_only.get("unchanged", []):
+                        if k >= len(wsteps):
+                            why.append(f"step {k}: no windows script line")
+                        elif any(wsteps[k][f] != base[f] for f in ("text", "selection", "marked")):
+                            why.append(f"step {k}: windows state changed by a refused range ({base['text']!r} {base['selection']} {base['marked']} -> {wsteps[k]['text']!r} {wsteps[k]['selection']} {wsteps[k]['marked']})")
+                    why += step_mismatches("final state", msteps[-1], wsteps[-1], tol)
+                rows.append(dict(run=int(n), ok=not why, why=why, steps=[]))
+                continue
             if not msteps or len(wsteps) != len(msteps):
                 why.append(f"step count: windows script steps {len(wsteps)}, mac MAC_FACT steps {len(msteps)}")
             for k, (ms, ws) in enumerate(zip(msteps, wsteps)):
-                bad = step_mismatches(f"step {k} ({ms['step']})", ms, ws)
-                steps.append(dict(step=ms["step"], mac=dict(text=ms["text"], selection=ms["selection"], marked=ms["marked"]),
-                                  windows=dict(text=ws["text"], selection=ws["selection"], marked=ws["marked"]), ok=not bad))
+                bad = step_mismatches(f"step {k} ({ms['step']})", ms, ws, tol)
+                steps.append(dict(step=ms["step"], mac=dict(text=ms["text"], selection=ms["selection"], marked=ms["marked"], caretX=ms["caretX"], originX=ms["originX"]),
+                                  windows=dict(text=ws["text"], selection=ws["selection"], marked=ws["marked"], caretX=ws["caretX"], originX=ws["originX"]), ok=not bad))
                 why += bad
             if msteps and wfinal:
-                why += step_mismatches("final state", msteps[-1], wfinal)
+                why += step_mismatches("final state", msteps[-1], wfinal, tol)
             elif msteps:
                 why.append("final state: no HOST_FIELD line in the windows host log")
         rows.append(dict(run=int(n), ok=not why, why=why, steps=steps))
