@@ -57,6 +57,8 @@ struct StackSpec: Sendable, Equatable {
     /// Overlay axis only: the base view (the one that sets the size) is the last child, not the first. `background` lays the background layer before the view so that
     /// it paints behind it; `overlay` lays the layer after. Both size the layer to the base and leave the base's size and place unchanged.
     var baseIsLast = false
+    /// A custom alignment this stack aligns its children on (HStack / VStack with a custom `alignment:`); nil for the standard ones (issue #68).
+    var customGuide: GuideKey?
 
     init(name: String, axis: StackAxis, cross: CrossAlignment, alignment: Alignment = .center,
          spacing: CGFloat, fillsCross: Bool, retainsRemovedRowState: Bool = false) {
@@ -220,13 +222,14 @@ extension Graph {
     }
 
     /// The proposal a `.fixedSize` view passes down: nil (ideal) on each fixed axis.
-    private func fixedProposal(_ proposal: ProposedViewSize, _ horizontal: Bool, _ vertical: Bool) -> ProposedViewSize {
+    func fixedProposal(_ proposal: ProposedViewSize, _ horizontal: Bool, _ vertical: Bool) -> ProposedViewSize {
         ProposedViewSize(width: horizontal ? nil : proposal.width, height: vertical ? nil : proposal.height)
     }
 
     func place(_ node: Node, in rect: LayoutRect, proposal: ProposedViewSize) {
         node.frame = snapToPixelGrid(rect, scale: scale)
         node.exactFrame = rect
+        if let box = node.anchorBox { box.rect = node.frame.cgRect }
         // #44: SwiftUI lays a `.scaleEffect` subtree out in the scaled view's own coordinates (origin 0) and snaps there; its pixels are the scaled view's
         // snapped origin plus those local frames, then scaled. Measured: a seven-row VStack under scaleEffect(1.4) (CI stack-ties-scaled-v1) matches only
         // this; snapping the absolute positions differs by a pixel on two rows. The subtree is placed once at origin 0 to record its local frames.
@@ -556,7 +559,9 @@ extension Graph {
         }
 
         var contentCross = sizes.map(axis.cross).max() ?? 0
-        if spec.cross.isBaseline, axis == .horizontal, !children.isEmpty {
+        if let key = guidedKey(children, spec) {
+            contentCross = guideLayout(children, sizes, proposals, key, axis).extent
+        } else if spec.cross.isBaseline, axis == .horizontal, !children.isEmpty {
             let b = baselineOffsets(children, sizes, proposals, spec.cross)
             contentCross = b.extent
         }
@@ -641,17 +646,22 @@ extension Graph {
             case .horizontal:
                 let plan = stackPlan(children, spec, proposal)
                 let rowHeight = plan.size.height
-                let aligned = spec.cross.isBaseline ? baselineOffsets(children, plan.sizes, plan.proposals, spec.cross).offsets : nil
+                let guided = guidedCrossOffsets(children, plan, spec, crossLength: rowHeight)
+                let aligned = guided == nil && spec.cross.isBaseline ? baselineOffsets(children, plan.sizes, plan.proposals, spec.cross).offsets : nil
                 var first: CGFloat?, last: CGFloat?
                 for (index, child) in children.enumerated() {
                     guard let b = baselines(of: child, plan.proposals[index]) else { continue }
                     let slack = rowHeight - plan.sizes[index].height
                     let y: CGFloat
-                    switch spec.cross {
-                    case .start: y = 0
-                    case .middle: y = slack / 2
-                    case .end: y = slack
-                    case .firstBaseline, .lastBaseline: y = aligned?[index] ?? 0
+                    if let guided {
+                        y = guided[index]
+                    } else {
+                        switch spec.cross {
+                        case .start: y = 0
+                        case .middle: y = slack / 2
+                        case .end: y = slack
+                        case .firstBaseline, .lastBaseline: y = aligned?[index] ?? 0
+                        }
                     }
                     first = min(first ?? .infinity, y + b.first)
                     last = max(last ?? -.infinity, y + b.last)
@@ -695,37 +705,54 @@ extension Graph {
             placeOverlay(children, spec, in: rect, proposal: proposal, mirrored: mirrored)
             return
         }
+        let frames = stackFrames(children, spec, in: rect, proposal: proposal)
+        for (index, child) in children.enumerated() {
+            place(child, in: mirroredRect(frames.rects[index], in: rect, if: mirrored), proposal: frames.plan.proposals[index])
+        }
+    }
+
+    /// The frames (unmirrored, in `rect`'s coordinates) a horizontal or vertical stack gives its children, with the plan they came from.
+    func stackFrames(_ children: [Node], _ spec: StackSpec, in rect: LayoutRect, proposal: ProposedViewSize) -> (rects: [LayoutRect], plan: StackPlan) {
         let axis = spec.axis
         let plan = stackPlan(children, spec, proposal)
         let crossLength = axis.cross(rect.size)
         let baseline = spec.cross.isBaseline && axis == .horizontal ? baselineOffsets(children, plan.sizes, plan.proposals, spec.cross) : nil
+        let guided = guidedCrossOffsets(children, plan, spec, crossLength: crossLength)
         var offset = axis == .vertical ? rect.minY : rect.minX
+        var rects: [LayoutRect] = []
         for (index, child) in children.enumerated() {
             var size = plan.sizes[index]
             // A Divider directly in a stack fills the stack's cross axis (the tallest sibling of an HStack, the widest of a VStack), not just the proposal it was measured under.
             if case .divider = child.kind { size = axis.size(main: axis.main(size), cross: crossLength) }
             let slack = crossLength - axis.cross(size)
             let crossOffset: CGFloat
-            switch spec.cross {
-            case .start: crossOffset = 0
-            case .middle: crossOffset = slack / 2
-            case .end: crossOffset = slack
-            case .firstBaseline, .lastBaseline: crossOffset = axis == .horizontal ? (baseline?.offsets[index] ?? 0) : slack / 2
+            if let guided {
+                crossOffset = guided[index]
+            } else {
+                switch spec.cross {
+                case .start: crossOffset = 0
+                case .middle: crossOffset = slack / 2
+                case .end: crossOffset = slack
+                case .firstBaseline, .lastBaseline: crossOffset = axis == .horizontal ? (baseline?.offsets[index] ?? 0) : slack / 2
+                }
             }
             let origin = axis == .vertical
                 ? LayoutPoint(x: rect.minX + crossOffset, y: offset)
                 : LayoutPoint(x: offset, y: rect.minY + crossOffset)
-            place(child, in: mirroredRect(LayoutRect(origin: origin, size: size), in: rect, if: mirrored), proposal: plan.proposals[index])
+            rects.append(LayoutRect(origin: origin, size: size))
             offset += axis.main(size) + (index < plan.gaps.count ? plan.gaps[index] : 0)
         }
+        return (rects, plan)
     }
-
 
     private func overlapPlan(_ children: [Node], _ spec: StackSpec, _ proposal: ProposedViewSize) -> StackPlan {
         let sizes = children.map { measure($0, proposal) }
         let width = sizes.map(\.width).max() ?? 0
         let height = sizes.map(\.height).max() ?? 0
         let childProposals = Array(repeating: proposal, count: children.count)
+        if !children.isEmpty, overlapGuided(children, spec) {
+            return StackPlan(children: children, sizes: sizes, proposals: childProposals, size: overlapLayout(children, sizes, childProposals, spec).size)
+        }
         return StackPlan(children: children, sizes: sizes, proposals: childProposals,
                          size: LayoutSize(width: width, height: height))
     }
@@ -747,45 +774,71 @@ extension Graph {
         let baseIndex = spec.baseIsLast ? children.count - 1 : 0
         let plan = overlayPlan(children, spec, proposal)
         place(children[baseIndex], in: mirroredRect(rect, in: rect, if: mirrored), proposal: plan.proposals[baseIndex])
+        let guided = overlapGuided(children, spec)
+        let hKey = GuideKey.h(spec.alignment.horizontal), vKey = GuideKey.v(spec.alignment.vertical)
         for index in children.indices where index != baseIndex {
             let child = children[index]
             let size = plan.sizes[index]
             let xSlack = rect.width - size.width
             let ySlack = rect.height - size.height
-            let x: CGFloat
+            var x: CGFloat
             switch spec.alignment.horizontal.kind {
             case .leading: x = rect.minX
-            case .center: x = rect.minX + xSlack / 2
+            case .center, .custom: x = rect.minX + xSlack / 2
             case .trailing: x = rect.minX + xSlack
             }
-            let y: CGFloat
+            var y: CGFloat
             switch spec.alignment.vertical.kind {
             case .top: y = rect.minY
-            case .center, .firstTextBaseline, .lastTextBaseline: y = rect.minY + ySlack / 2
+            case .center, .firstTextBaseline, .lastTextBaseline, .custom: y = rect.minY + ySlack / 2
             case .bottom: y = rect.minY + ySlack
+            }
+            if guided {
+                // the overlaid view's guides coincide with the base's (the base fills `rect`)
+                let baseSize = rect.size, baseProposal = plan.proposals[baseIndex]
+                x = rect.minX + guideValue(hKey, of: children[baseIndex], size: baseSize, proposal: baseProposal)
+                    - guideValue(hKey, of: child, size: size, proposal: plan.proposals[index])
+                y = rect.minY + guideValue(vKey, of: children[baseIndex], size: baseSize, proposal: baseProposal)
+                    - guideValue(vKey, of: child, size: size, proposal: plan.proposals[index])
             }
             place(child, in: mirroredRect(LayoutRect(x: x, y: y, width: size.width, height: size.height), in: rect, if: mirrored), proposal: plan.proposals[index])
         }
     }
 
     private func placeOverlap(_ children: [Node], _ spec: StackSpec, in rect: LayoutRect, proposal: ProposedViewSize, mirrored: Bool) {
-        for child in children {
-            let size = measure(child, proposal)
+        let rects = overlapFrames(children, spec, in: rect, proposal: proposal)
+        for (index, child) in children.enumerated() {
+            place(child, in: mirroredRect(rects[index], in: rect, if: mirrored), proposal: proposal)
+        }
+    }
+
+    /// The frames (unmirrored) of the children of an overlapping stack placed in `rect`, aligned by `spec.alignment` (by guides when a custom alignment or explicit guide is involved).
+    func overlapFrames(_ children: [Node], _ spec: StackSpec, in rect: LayoutRect, proposal: ProposedViewSize) -> [LayoutRect] {
+        let sizes = children.map { measure($0, proposal) }
+        if !children.isEmpty, overlapGuided(children, spec) {
+            let proposals = Array(repeating: proposal, count: children.count)
+            let layout = overlapLayout(children, sizes, proposals, spec)
+            let block = overlapBlockOffset(spec, slackX: rect.width - layout.size.width, slackY: rect.height - layout.size.height)
+            return children.indices.map {
+                LayoutRect(x: rect.minX + block.x + layout.x[$0], y: rect.minY + block.y + layout.y[$0], width: sizes[$0].width, height: sizes[$0].height)
+            }
+        }
+        return sizes.map { size in
             let xSlack = rect.width - size.width
             let ySlack = rect.height - size.height
             let x: CGFloat
             switch spec.alignment.horizontal.kind {
             case .leading: x = rect.minX
-            case .center: x = rect.minX + xSlack / 2
+            case .center, .custom: x = rect.minX + xSlack / 2
             case .trailing: x = rect.minX + xSlack
             }
             let y: CGFloat
             switch spec.alignment.vertical.kind {
             case .top: y = rect.minY
-            case .center, .firstTextBaseline, .lastTextBaseline: y = rect.minY + ySlack / 2
+            case .center, .firstTextBaseline, .lastTextBaseline, .custom: y = rect.minY + ySlack / 2
             case .bottom: y = rect.minY + ySlack
             }
-            place(child, in: mirroredRect(LayoutRect(x: x, y: y, width: size.width, height: size.height), in: rect, if: mirrored), proposal: proposal)
+            return LayoutRect(x: x, y: y, width: size.width, height: size.height)
         }
     }
 
@@ -819,6 +872,7 @@ extension Graph {
     func dividerIsVertical(_ node: Node) -> Bool {
         var child = node
         while let parent = child.parent {
+            if parent.view is any GridContainer { return false }   // a Divider in a Grid is a horizontal rule
             if case .stack(let spec) = parent.kind {
                 // The base of an `.overlay` modifier belongs to the stack around the modified view; the overlaid view does not (it sits in a ZStack-like layer: a horizontal rule).
                 if spec.axis == .overlay, (spec.baseIsLast ? childNodes(parent).last : childNodes(parent).first) === child { child = parent; continue }
@@ -835,18 +889,18 @@ extension Graph {
         return axis.size(main: dividerThickness, cross: crossLimit ?? 0)
     }
 
-    private func alignmentOffset(_ alignment: HorizontalAlignment, available: CGFloat) -> CGFloat {
+    func alignmentOffset(_ alignment: HorizontalAlignment, available: CGFloat) -> CGFloat {
         switch alignment.kind {
         case .leading: return 0
-        case .center: return available / 2
+        case .center, .custom: return available / 2
         case .trailing: return available
         }
     }
 
-    private func alignmentOffset(_ alignment: VerticalAlignment, available: CGFloat) -> CGFloat {
+    func alignmentOffset(_ alignment: VerticalAlignment, available: CGFloat) -> CGFloat {
         switch alignment.kind {
         case .top: return 0
-        case .center, .firstTextBaseline, .lastTextBaseline: return available / 2
+        case .center, .firstTextBaseline, .lastTextBaseline, .custom: return available / 2
         case .bottom: return available
         }
     }

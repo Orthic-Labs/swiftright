@@ -62,9 +62,17 @@ struct PreferenceValues {
 
 struct PreferenceContribution {
     let apply: (inout PreferenceValues) -> Void
+    /// A contribution that needs the node it is attached to (an anchor preference names that node's frame); set instead of `apply`'s work.
+    let applyAt: (@MainActor (Node, inout PreferenceValues) -> Void)?
 
     init<Key: PreferenceKey>(_ value: Key.Value, for key: Key.Type) {
         apply = { values in values.reduce(value, for: key) }
+        applyAt = nil
+    }
+
+    init<Key: PreferenceKey>(for key: Key.Type, at make: @escaping @MainActor (Node) -> Key.Value) {
+        apply = { _ in }
+        applyAt = { node, values in values.reduce(make(node), for: key) }
     }
 }
 
@@ -74,6 +82,15 @@ struct PreferenceObserver {
     let value: (PreferenceValues) -> Any
     let equals: (Any, Any) -> Bool
     let action: (Any) -> Void
+
+    /// An observer for a value that need not be `Equatable` (the layers of `backgroundPreferenceValue`): `equals` decides whether a new reduction differs.
+    init<Key: PreferenceKey>(_ key: Key.Type, equals: @escaping (Any, Any) -> Bool, action: @escaping (Key.Value) -> Void) {
+        self.key = ObjectIdentifier(key)
+        defaultValue = Key.defaultValue
+        value = { $0.value(for: key) }
+        self.equals = equals
+        self.action = { if let value = $0 as? Key.Value { action(value) } }
+    }
 
     init<Key: PreferenceKey>(_ key: Key.Type, action: @escaping (Key.Value) -> Void) where Key.Value: Equatable {
         self.key = ObjectIdentifier(key)

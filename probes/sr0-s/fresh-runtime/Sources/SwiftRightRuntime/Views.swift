@@ -252,25 +252,38 @@ extension TextField where Label == Text {
 
 // MARK: - Alignment
 
-public struct HorizontalAlignment: Sendable, Equatable {
-    enum Kind: Sendable { case leading, center, trailing }
+public struct HorizontalAlignment: Sendable, Hashable {
+    enum Kind: Sendable, Hashable { case leading, center, trailing, custom(AlignmentKey) }
     let kind: Kind
 
     public static let leading = HorizontalAlignment(kind: .leading)
     public static let center = HorizontalAlignment(kind: .center)
     public static let trailing = HorizontalAlignment(kind: .trailing)
 
+    /// A custom alignment identified by `id` (`AlignmentID`); its default guide value comes from `id.defaultValue(in:)`.
+    /// Apple: https://developer.apple.com/documentation/swiftui/horizontalalignment/init(_:)
+    public init(_ id: any AlignmentID.Type) {
+        kind = .custom(AlignmentKey(id))
+    }
+
+    init(kind: Kind) { self.kind = kind }
+
+    var isCustom: Bool {
+        if case .custom = kind { return true }
+        return false
+    }
+
     var crossAlignment: CrossAlignment {
         switch kind {
         case .leading: return .start
-        case .center: return .middle
+        case .center, .custom: return .middle
         case .trailing: return .end
         }
     }
 }
 
-public struct VerticalAlignment: Sendable, Equatable {
-    enum Kind: Sendable { case top, center, bottom, firstTextBaseline, lastTextBaseline }
+public struct VerticalAlignment: Sendable, Hashable {
+    enum Kind: Sendable, Hashable { case top, center, bottom, firstTextBaseline, lastTextBaseline, custom(AlignmentKey) }
     let kind: Kind
 
     public static let top = VerticalAlignment(kind: .top)
@@ -281,10 +294,23 @@ public struct VerticalAlignment: Sendable, Equatable {
     public static let firstTextBaseline = VerticalAlignment(kind: .firstTextBaseline)
     public static let lastTextBaseline = VerticalAlignment(kind: .lastTextBaseline)
 
+    /// A custom alignment identified by `id` (`AlignmentID`); its default guide value comes from `id.defaultValue(in:)`.
+    /// Apple: https://developer.apple.com/documentation/swiftui/verticalalignment/init(_:)
+    public init(_ id: any AlignmentID.Type) {
+        kind = .custom(AlignmentKey(id))
+    }
+
+    init(kind: Kind) { self.kind = kind }
+
+    var isCustom: Bool {
+        if case .custom = kind { return true }
+        return false
+    }
+
     var crossAlignment: CrossAlignment {
         switch kind {
         case .top: return .start
-        case .center: return .middle
+        case .center, .custom: return .middle
         case .bottom: return .end
         case .firstTextBaseline: return .firstBaseline
         case .lastTextBaseline: return .lastBaseline
@@ -316,6 +342,12 @@ extension View {
     ) -> some View {
         OverlayStack(base: self, overlay: content(), alignment: alignment)
     }
+
+    /// Draws `overlay` above this view, aligned in the view's frame; a `Color` is a view, so `.overlay(Color.red)` fills the view.
+    /// Apple: https://developer.apple.com/documentation/swiftui/view/overlay(_:alignment:)
+    public func overlay<Overlay: View>(_ overlay: Overlay, alignment: Alignment = .center) -> some View {
+        OverlayStack(base: self, overlay: overlay, alignment: alignment)
+    }
 }
 
 // MARK: - Stacks
@@ -332,7 +364,9 @@ public struct VStack<Content: View>: View, PrimitiveView {
     @MainActor public var body: Never { return fatalError("primitive view has no body") }
     var nodeKind: NodeKind {
         { var spec = StackSpec(name: "VStack", axis: .vertical, cross: alignment.crossAlignment,
-                         spacing: spacing ?? defaultStackSpacing, fillsCross: false); spec.spacingIsDefault = spacing == nil; return .stack(spec) }()
+                         spacing: spacing ?? defaultStackSpacing, fillsCross: false); spec.spacingIsDefault = spacing == nil
+          if alignment.isCustom { spec.customGuide = .h(alignment) }
+          return .stack(spec) }()
     }
     var nodeContent: (any View)? { content }
 }
@@ -349,7 +383,9 @@ public struct HStack<Content: View>: View, PrimitiveView {
     @MainActor public var body: Never { return fatalError("primitive view has no body") }
     var nodeKind: NodeKind {
         { var spec = StackSpec(name: "HStack", axis: .horizontal, cross: alignment.crossAlignment,
-                         spacing: spacing ?? defaultStackSpacing, fillsCross: false); spec.spacingIsDefault = spacing == nil; return .stack(spec) }()
+                         spacing: spacing ?? defaultStackSpacing, fillsCross: false); spec.spacingIsDefault = spacing == nil
+          if alignment.isCustom { spec.customGuide = .v(alignment) }
+          return .stack(spec) }()
     }
     var nodeContent: (any View)? { content }
 }
@@ -383,7 +419,9 @@ public struct LazyVStack<Content: View>: View, PrimitiveView {
     @MainActor public var body: Never { return fatalError("primitive view has no body") }
     var nodeKind: NodeKind {
         { var spec = StackSpec(name: "LazyVStack", axis: .vertical, cross: alignment.crossAlignment,
-                         spacing: spacing ?? defaultStackSpacing, fillsCross: false); spec.spacingIsDefault = spacing == nil; return .stack(spec) }()
+                         spacing: spacing ?? defaultStackSpacing, fillsCross: false); spec.spacingIsDefault = spacing == nil
+          if alignment.isCustom { spec.customGuide = .h(alignment) }
+          return .stack(spec) }()
     }
     var nodeContent: (any View)? { content }
 }

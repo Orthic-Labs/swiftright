@@ -144,6 +144,13 @@ extension Image {
         labelText = label.string
     }
 
+    /// Decoded pixels with an accessibility label: SwiftUI's `Image(_ cgImage:scale:orientation:label:)` with this runtime's pixel type.
+    /// Apple: https://developer.apple.com/documentation/swiftui/image/init(_:scale:orientation:label:)
+    nonisolated public init(_ image: RGBAImage, scale: CGFloat, label: Text) {
+        reference = .pixels(image, scale: scale > 0 ? scale : 1)
+        labelText = label.string
+    }
+
     /// Accepted; symbols draw monochrome in this runtime (#68).
     /// Apple: https://developer.apple.com/documentation/swiftui/image/symbolrenderingmode(_:)
     nonisolated public func symbolRenderingMode(_ mode: SymbolRenderingMode?) -> Image { self }

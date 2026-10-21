@@ -62,11 +62,14 @@ public struct GeometryProxy {
     let globalOrigin: CGPoint
     /// Origins (graph coordinates) of the nearest enclosing `.coordinateSpace(name:)` views, by name.
     let namedOrigins: [AnyHashable: CGPoint]
+    /// Anchored frames read through `proxy[anchor]` (issue #68); the graph rebuilds the reader's content when one of them moves.
+    let reads: AnchorReadLog?
 
-    init(size: CGSize, globalOrigin: CGPoint, namedOrigins: [AnyHashable: CGPoint] = [:]) {
+    init(size: CGSize, globalOrigin: CGPoint, namedOrigins: [AnyHashable: CGPoint] = [:], reads: AnchorReadLog? = nil) {
         self.size = size
         self.globalOrigin = globalOrigin
         self.namedOrigins = namedOrigins
+        self.reads = reads
     }
 
     /// No safe area exists in this runtime's windows.

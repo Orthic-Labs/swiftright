@@ -254,6 +254,10 @@ enum ModifierSpec {
     case offset(CGFloat, CGFloat)
     /// SR2 R1 (#36): `.position(x:y:)`. Takes the whole proposed space; the child is centred at the point in this node's coordinate space.
     case position(CGFloat, CGFloat)
+    /// Issue #68: `.alignmentGuide(_:computeValue:)`. Layout of the view itself is unchanged; the stack, ZStack or overlay that aligns on the guide reads the value.
+    case alignmentGuide(AlignmentGuideSpec)
+    /// Issue #68: `.gridColumnAlignment(_:)`, read by the enclosing Grid from the cell (through wrappers that pass their child through).
+    case gridCell(GridCellSpec)
 
     /// "modifier." plus `name`, as resolved records show it (static strings, no allocation per commit).
     var kindName: String {
@@ -298,6 +302,8 @@ enum ModifierSpec {
         case .tap: return "modifier.onTapGesture"
         case .offset: return "modifier.offset"
         case .position: return "modifier.position"
+        case .alignmentGuide: return "modifier.alignmentGuide"
+        case .gridCell: return "modifier.gridColumnAlignment"
         }
     }
 
@@ -343,6 +349,8 @@ enum ModifierSpec {
         case .tap: return "onTapGesture"
         case .offset: return "offset"
         case .position: return "position"
+        case .alignmentGuide: return "alignmentGuide"
+        case .gridCell: return "gridColumnAlignment"
         }
     }
 }
@@ -616,6 +624,10 @@ final class Node {
     var geometryBuilt: LayoutSize?
     /// The proxy inputs the content was last built from (size, global origin, named-space origins): a move at the same size rebuilds it too (#57).
     var geometryBuiltProxy: GeometryInputs?
+    /// The anchored frames the reader's content read through `proxy[anchor]` (issue #68): the reader is rebuilt when one of them moves.
+    var geometryAnchorReads: AnchorReadLog?
+    /// The frame holder an `anchorPreference` modifier on this node hands out in its `Anchor`s; layout keeps it current.
+    var anchorBox: AnchorFrameBox?
     var sliderGrab: CGFloat = 0
     /// Configured horizontal/vertical offsets; nil for legacy scroll nodes.
     var scrollOffsetX: CGFloat?
@@ -1060,6 +1072,8 @@ public final class Graph {
     var windowSchemeBase: ColorScheme?
     /// Turns on reduction only after a tree actually contains a preference source.
     private var preferenceReductionEnabled = false
+    /// Set when the tree has contained an `.alignmentGuide` or a custom alignment: stacks then check their children for explicit guides (issue #68). Never reset.
+    var alignmentGuidesLive = false
     /// Live `.onPreferenceChange` nodes; legacy flushes skip observer traversal entirely.
     private var preferenceObserverNodes: Set<NodeID> = []
     /// Observation change callbacks received (tests check that retired registrations stay silent).
@@ -1241,7 +1255,8 @@ public final class Graph {
         for (id, node) in geometryNodes {
             guard node.alive, nodes[id] === node else { geometryNodes[id] = nil; continue }
             guard let size = node.geometrySize else { continue }
-            if size == node.geometryBuilt, geometryInputs(node, size: size) == node.geometryBuiltProxy { continue }
+            if size == node.geometryBuilt, geometryInputs(node, size: size) == node.geometryBuiltProxy,
+               !(node.geometryAnchorReads?.isStale ?? false) { continue }
             node.fullDirty = true
             dirty[id] = node
             marked = true
@@ -1869,7 +1884,7 @@ public final class Graph {
         for child in node.childNodes { values.merge(child.preferences) }
         let ownSource: Bool
         if case .modifier(.preference(let contribution)) = node.kind {
-            contribution.apply(&values)
+            if let applyAt = contribution.applyAt { applyAt(node, &values) } else { contribution.apply(&values) }
             ownSource = true
         } else {
             ownSource = false
@@ -1950,6 +1965,7 @@ public final class Graph {
         node.environment = node.inherited
         let kind = node.kind
         if case .modifier(.preference) = kind { preferenceReductionEnabled = true }
+        if !alignmentGuidesLive { noteAlignmentGuides(kind) }
         if case .modifier(.onPreferenceChange) = kind {
             preferenceObserverNodes.insert(node.id)
         } else if !preferenceObserverNodes.isEmpty {
@@ -2035,6 +2051,8 @@ public final class Graph {
                     self?.noteChange(node)
                 }
             })
+        } else if case .stack(let labelSpec) = kind, labelSpec.name == "Label", let styled = styledLabelContent(node) {
+            produced = styled
         } else {
             produced = node.primitiveContent
         }
@@ -2105,6 +2123,7 @@ public final class Graph {
         case .image(let spec): key = .image(spec)
         case .scrollView(let configuration): key = .scrollView(configuration)
         case .layout: key = .always
+        case .modifier(.alignmentGuide): key = .always
         default: key = .none
         }
         if key == .always || key != node.layoutKey {
@@ -2151,8 +2170,10 @@ public final class Graph {
                 node.geometryBuilt = size
                 let inputs = geometryInputs(node, size: size)
                 node.geometryBuiltProxy = inputs
+                let reads = AnchorReadLog()
+                node.geometryAnchorReads = reads
                 return reader.makeContent(GeometryProxy(size: CGSize(width: size.width, height: size.height),
-                                                        globalOrigin: inputs.origin, namedOrigins: inputs.named))
+                                                        globalOrigin: inputs.origin, namedOrigins: inputs.named, reads: reads))
             }
             return node.view.evaluateBody()
         }

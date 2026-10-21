@@ -19,5 +19,5 @@ public struct NetworkImage<Content: View>: View {
 
 public struct DefaultNetworkImageLoader: Sendable {
     public static let shared = DefaultNetworkImageLoader()
-    public func image(from url: URL) async throws -> CGImage { throw URLError(.unsupportedURL) }
+    public func image(from url: URL) async throws -> RGBAImage { throw URLError(.unsupportedURL) }  // SwiftRight: decoded pixels, not CGImage
 }
