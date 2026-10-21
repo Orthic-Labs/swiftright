@@ -537,8 +537,11 @@ final class RowBox<Element, Index> {
     /// Where the row sat in the collection at the last expansion; the row binding tries it first when it reads the live
     /// collection. Not observed: moving a row does not change what its views read.
     @ObservationIgnored var hint: Index
+    /// The same value, unobserved: read where a registration is unwanted (the expansion that writes the box, a row closure).
+    @ObservationIgnored var latest: Element
     init(_ value: Element, hint: Index) {
         self.value = value
+        self.latest = value
         self.hint = hint
     }
 }
@@ -572,6 +575,11 @@ enum ExpansionContext {
     /// Ids of the rows this expansion saw new or with a changed element. The row views a ForEach builds can read the element
     /// directly (a bare `Text(row.wrappedValue.text)` has no body to track it), so the graph hands such a row its new view.
     static var changedRows: Set<AnyHashable> = []
+    /// Open `Graph.trackRowReads` scopes: row closures are running under the expanding node's observation scope, so a row
+    /// binding must not register the live collection or its box there (the row's own bodies track the box).
+    static var buildingRows = 0
+    /// The state boxes read while rows are built (only those are a dependency of the expanding node).
+    static var stateReads: [any StateBoxTouching] = []
 
     static func readData<T>(_ read: () -> T) -> T {
         guard let (graph, node) = owner else { return read() }
@@ -627,7 +635,8 @@ extension ForEach {
                     // A duplicate id reuses the first row's box (the graph keeps the first row of a duplicate id).
                     if live.insert(id).inserted {
                         known.hint = position
-                        if !elementsEqual(known.value, element) {
+                        if !elementsEqual(known.latest, element) {
+                            known.latest = element
                             known.value = element
                             ExpansionContext.changedRows.insert(AnyHashable(id))
                         }
@@ -654,6 +663,7 @@ extension ForEach {
                         // Inside a node's observation scope the row reads its box (a dependency on this row alone);
                         // everywhere else the live collection, so an event handler never sees a stale value.
                         if ObservationScope.tracking { return box.value }
+                        if ExpansionContext.buildingRows > 0 { return box.latest }
                         let current = data.wrappedValue
                         return locate(current).map { current[$0] } ?? fallback
                     },

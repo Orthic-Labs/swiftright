@@ -45,10 +45,8 @@ private struct TestSequence: View {
     let blocks: [(height: CGFloat, bottom: CGFloat)]
 
     var body: some View {
-        // patch 0006: the rows read `margins` when the stack expands them, outside this body's observation scope (a runtime gap: ForEach row closures are not tracked);
-        // reading it here makes the body depend on it
-        _ = margins
-        return VStack(alignment: .leading, spacing: 0) {
+        // The rows read `margins` when the stack expands them, outside this body's observation scope: the runtime attributes those reads to the expanding node (#75).
+        VStack(alignment: .leading, spacing: 0) {
             ForEach(Array(blocks.indices), id: \.self) { index in
                 TestBlock(height: blocks[index].height, bottom: blocks[index].bottom)
                     .onPreferenceChange(TestMarginKey.self) { value in margins[index] = value }

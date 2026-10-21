@@ -574,6 +574,9 @@ final class Node {
     var dataEvalMark = -1
     var dataToken = 0
     var dataTether: Tether?
+    /// Reads made by ForEach row closures while this node expanded them (`Graph.trackRowReads`): one registration per evaluation.
+    var rowToken = 0
+    var rowTether: Tether?
     /// Observation bookkeeping: the node's live tracking (if any) and which tracking is the current one.
     var tether: Tether?
     var trackToken = 0
@@ -1673,7 +1676,15 @@ public final class Graph {
         case .container:
             guard let container = view as? any ViewContainer else { return }
             if !container.supportsRefreshSkip { refreshable = false }
-            for (segment, part) in container.parts() {
+            let parts: [(Segment, any View)]
+            if container is any DynamicViewContent, let owner = ExpansionContext.owner {
+                // The row closures run here, outside the owner's body scope. What they read (a view's @State, a model) is a
+                // dependency of the node expanding them, which re-expands on change (SwiftUI: the owning view's rows re-run).
+                parts = owner.graph.trackRowReads(of: owner.node) { container.parts() }
+            } else {
+                parts = container.parts()
+            }
+            for (segment, part) in parts {
                 expand(part, prefix: prefix + [segment], into: &out, refreshable: &refreshable)
             }
         case .optional:
@@ -2036,6 +2047,11 @@ public final class Graph {
         node.viewReplaced = false
         node.dataStale = false
         node.fullDirty = false
+        if let rowTether = node.rowTether {
+            // This evaluation supersedes the row-closure reads of the last one (they re-register as the rows are rebuilt).
+            node.rowToken &+= 1
+            rowTether.version &+= 1
+        }
         node.environment = node.inherited
         let kind = node.kind
         if case .modifier(.preference) = kind { preferenceReductionEnabled = true }
@@ -2339,6 +2355,35 @@ public final class Graph {
                 self?.noteDataChange(node)
             }
         })
+    }
+
+    /// Runs `build` (a ForEach building its row views) and makes the `@State` its row closures read a dependency of `node`: a change
+    /// marks `node` fully dirty. Only state boxes are recorded (`State.wrappedValue` appends to `ExpansionContext.stateReads`), never
+    /// the ForEach's data or row boxes, which have their own finer paths (`trackData`, `RowBox`), so a data edit still re-expands
+    /// only the rows whose element changed.
+    func trackRowReads<T>(of node: Node, _ build: () -> T) -> T {
+        let token = node.rowToken
+        let tether = node.rowTether ?? Tether()
+        node.rowTether = tether
+        let outerReads = ExpansionContext.stateReads
+        ExpansionContext.stateReads = []
+        ExpansionContext.buildingRows += 1
+        let result = build()
+        ExpansionContext.buildingRows -= 1
+        let reads = ExpansionContext.stateReads
+        ExpansionContext.stateReads = outerReads
+        if !reads.isEmpty {
+            withObservationTracking({
+                _ = tether.version
+                for box in reads { box.touch() }
+            }, onChange: { [weak self, handle = node.handle] in
+                MainActor.assumeIsolated {
+                    guard let node = handle.node, node.rowToken == token else { return }
+                    self?.noteChange(node)
+                }
+            })
+        }
+        return result
     }
 
     private func scheduleFlush() {

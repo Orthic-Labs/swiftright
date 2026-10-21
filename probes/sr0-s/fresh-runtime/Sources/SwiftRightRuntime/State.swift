@@ -9,9 +9,16 @@ import Foundation
 /// dependencies; writes notify the graph through the observation onChange path.
 @Observable
 @MainActor
-final class StateBox<Value> {
+final class StateBox<Value>: StateBoxTouching {
     var value: Value
     init(_ value: Value) { self.value = value }
+    func touch() { _ = value }
+}
+
+/// Type-erased read of a state box, to register it with an observation scope (`Graph.trackRowReads`).
+@MainActor
+protocol StateBoxTouching: AnyObject {
+    func touch()
 }
 
 @MainActor
@@ -57,14 +64,22 @@ public struct State<Value>: DynamicPropertyStorage {
 
     @MainActor
     public var wrappedValue: Value {
-        get { cell.resolved.value }
+        get {
+            let box = cell.resolved
+            if ExpansionContext.buildingRows > 0 { ExpansionContext.stateReads.append(box) }
+            return box.value
+        }
         nonmutating set { cell.resolved.value = newValue }
     }
 
     @MainActor
     public var projectedValue: Binding<Value> {
         let cell = cell
-        return Binding(get: { cell.resolved.value }, set: { cell.resolved.value = $0 })
+        return Binding(get: {
+            let box = cell.resolved
+            if ExpansionContext.buildingRows > 0 { ExpansionContext.stateReads.append(box) }
+            return box.value
+        }, set: { cell.resolved.value = $0 })
     }
 
     @MainActor
