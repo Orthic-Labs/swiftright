@@ -205,13 +205,42 @@ public interface IUiaAutomation {
     [PreserveSig] int ElementFromPoint(UiaPt pt, out IUiaElement e);
 }
 public class Uia3Result { public string Description; public int Level; public string LocalizedType; }
+[ComImport, Guid("00000001-0000-0000-C000-000000000046"), InterfaceType(ComInterfaceType.InterfaceIsIUnknown)]
+public interface IUiaClassFactory {
+    [PreserveSig] int CreateInstance(IntPtr outer, ref Guid riid, [MarshalAs(UnmanagedType.Interface)] out object ppv);
+    [PreserveSig] int LockServer(bool fLock);
+}
 public static class Uia3Probe {
     static IUiaAutomation auto;
     public static string LastError;
+    [DllImport("UIAutomationCore.dll", PreserveSig = true)]
+    static extern int DllGetClassObject(ref Guid clsid, ref Guid iid, [MarshalAs(UnmanagedType.Interface)] out object ppv);
+    // CI 39614935875: CoCreateInstance of CUIAutomation8 fails with REGDB_E_CLASSNOTREG on the guest (no COM class registration there). Try registered activation of
+    // CUIAutomation8 then CUIAutomation, then the class factory taken straight from UIAutomationCore.dll, which needs no registration.
+    static IUiaAutomation Create() {
+        string errs = "";
+        foreach (string clsid in new[] { "E22AD333-B25F-4064-9C3E-0C1B4AEAC6B4", "FF48DBA4-60EF-4201-AA87-54103EEF594E" }) {
+            try { return (IUiaAutomation)Activator.CreateInstance(Type.GetTypeFromCLSID(new Guid(clsid))); }
+            catch (Exception ex) { errs += "activate " + clsid.Substring(0, 8) + ": " + ex.GetType().Name + "; "; }
+        }
+        foreach (string clsid in new[] { "E22AD333-B25F-4064-9C3E-0C1B4AEAC6B4", "FF48DBA4-60EF-4201-AA87-54103EEF594E" }) {
+            try {
+                Guid c = new Guid(clsid), cf = typeof(IUiaClassFactory).GUID, ia = typeof(IUiaAutomation).GUID; object f, o;
+                int hr = DllGetClassObject(ref c, ref cf, out f);
+                if (hr != 0 || f == null) { errs += "DllGetClassObject " + clsid.Substring(0, 8) + " hr=0x" + hr.ToString("X8") + "; "; continue; }
+                hr = ((IUiaClassFactory)f).CreateInstance(IntPtr.Zero, ref ia, out o);
+                if (hr != 0 || o == null) { errs += "CreateInstance " + clsid.Substring(0, 8) + " hr=0x" + hr.ToString("X8") + "; "; continue; }
+                return (IUiaAutomation)o;
+            } catch (Exception ex) { errs += "factory " + clsid.Substring(0, 8) + ": " + ex.GetType().Name + ": " + ex.Message + "; "; }
+        }
+        LastError = "no UIA automation object: " + errs;
+        return null;
+    }
     static string Str(IUiaElement e, int id) { object v; if (e.GetCurrentPropertyValue(id, out v) == 0 && v is string) return (string)v; return null; }
     public static Uia3Result Read(int x, int y, string expectName) {
         try {
-            if (auto == null) auto = (IUiaAutomation)Activator.CreateInstance(Type.GetTypeFromCLSID(new Guid("E22AD333-B25F-4064-9C3E-0C1B4AEAC6B4")));
+            if (auto == null) auto = Create();
+            if (auto == null) return null;
             IUiaElement e; UiaPt p; p.x = x; p.y = y;
             int hr = auto.ElementFromPoint(p, out e);
             if (hr != 0 || e == null) { LastError = "ElementFromPoint hr=0x" + hr.ToString("X8"); return null; }
