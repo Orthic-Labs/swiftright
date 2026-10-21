@@ -218,7 +218,8 @@ final class PathTests: XCTestCase {
         let rect = CGRect(x: 0, y: 0, width: 100, height: 40)
         XCTAssertEqual(Circle().path(in: rect).boundingRect.width, 40, accuracy: 1e-9)
         XCTAssertEqual(Rectangle().path(in: rect), Path(rect))
-        XCTAssertEqual(RoundedRectangle(cornerRadius: 4, style: .circular).path(in: rect), Path(roundedRect: rect, cornerRadius: 4))
+        var expectedRR = Path(); expectedRR.addRoundedRectFromRightMiddle(rect, cornerRadius: 4)
+        XCTAssertEqual(RoundedRectangle(cornerRadius: 4, style: .circular).path(in: rect), expectedRR)
         let capsule = Capsule(style: .circular).path(in: rect)
         XCTAssertEqual(Double(capsule.boundingRect.height), 40, accuracy: 1e-9)
         XCTAssertEqual(Capsule().shapeGeometry, .capsule(style: .continuous))
@@ -234,7 +235,8 @@ final class PathTests: XCTestCase {
         XCTAssertEqual(Double(b.minX), 5, accuracy: 1e-9); XCTAssertEqual(Double(b.width), 90, accuracy: 1e-9)
         XCTAssertEqual(inset.inset(by: 2).shapeGeometry, .inset(.circle, by: 7))
         let rr = RoundedRectangle(cornerRadius: 10, style: .circular).inset(by: 4).path(in: rect)
-        XCTAssertEqual(rr, Path(roundedRect: CGRect(x: 4, y: 4, width: 92, height: 92), cornerRadius: 6))
+        var expectedInset = Path(); expectedInset.addRoundedRectFromRightMiddle(CGRect(x: 4, y: 4, width: 92, height: 92), cornerRadius: 6)
+        XCTAssertEqual(rr, expectedInset)
         XCTAssertTrue(Rectangle().inset(by: 60).path(in: rect).isEmpty, "an inset past the centre leaves nothing")
         XCTAssertEqual(Capsule(style: .circular).inset(by: 3).path(in: CGRect(x: 0, y: 0, width: 50, height: 20)).boundingRect.height, 14, accuracy: 1e-9)
     }
@@ -322,5 +324,22 @@ final class PathTests: XCTestCase {
         XCTAssertEqual(Angle.degrees(180).radians, Double.pi, accuracy: 1e-12)
         XCTAssertEqual(Angle(radians: Double.pi / 2).degrees, 90, accuracy: 1e-12)
         XCTAssertLessThan(Angle.degrees(10), Angle.degrees(20))
+    }
+
+    // SwiftUI on macOS 27 (offscreen dump, 21 Oct 2026): RoundedRectangle(cornerRadius: 10, style: .circular) in 110 x 70 is
+    // m(110,35) l(110,60) c(100,70) l(10,70) c(0,60) l(0,10) c(10,0) l(100,0) c(110,10) z, so a dash or trim starts at the right edge's middle and runs down.
+    func testRoundedRectangleStartsAtTheRightEdgeMiddleLikeSwiftUI() {
+        var order: [String] = []
+        RoundedRectangle(cornerRadius: 10, style: .circular).path(in: CGRect(x: 0, y: 0, width: 110, height: 70)).forEach { e in
+            switch e {
+            case .move(let t): order.append("m\(Int(t.x)),\(Int(t.y))")
+            case .line(let t): order.append("l\(Int(t.x)),\(Int(t.y))")
+            case .curve(let t, _, _): order.append("c\(Int(t.x.rounded())),\(Int(t.y.rounded()))")
+            case .quadCurve(let t, _): order.append("q\(Int(t.x)),\(Int(t.y))")
+            case .closeSubpath: order.append("z")
+            }
+        }
+        XCTAssertEqual(Array(order.prefix(3)), ["m110,35", "l110,60", "c100,70"])
+        XCTAssertEqual(order.last, "z")
     }
 }

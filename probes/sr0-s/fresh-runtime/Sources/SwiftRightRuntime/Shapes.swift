@@ -88,7 +88,9 @@ public indirect enum ShapeGeometry: Equatable, Sendable {
         guard rect.width > 0, rect.height > 0 else { return Path() }
         switch style {
         case .circular:
-            return Path(roundedRect: rect, cornerRadius: radius)
+            var path = Path()
+            path.addRoundedRectFromRightMiddle(rect, cornerRadius: radius)
+            return path
         case .continuous:
             guard let elements = try? ContinuousRoundedGeometry.path(in: LayoutRect(x: rect.minX, y: rect.minY, width: rect.width, height: rect.height), cornerRadius: radius) else { return Path() }
             var path = Path()

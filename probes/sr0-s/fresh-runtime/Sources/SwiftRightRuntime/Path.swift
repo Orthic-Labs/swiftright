@@ -180,6 +180,25 @@ public struct Path: Equatable, Sendable {
         closeSubpath()
     }
 
+    /// The circular-cornered rounded rectangle exactly as SwiftUI's `RoundedRectangle(style: .circular).path(in:)` and `Capsule(style: .circular)` order it (macOS 27): it starts at
+    /// the middle of the right edge and runs clockwise on screen (down first), so dashes and `trim` begin where the Mac's do. (`Path(roundedRect:)` starts at the top-left corner.)
+    mutating func addRoundedRectFromRightMiddle(_ rect: CGRect, cornerRadius: CGFloat) {
+        let r = Double(max(0, min(cornerRadius, min(rect.width, rect.height) / 2)))
+        guard r > 0 else { addRect(rect); return }
+        let x0 = Double(rect.minX), y0 = Double(rect.minY), x1 = Double(rect.maxX), y1 = Double(rect.maxY)
+        let h = Double.pi / 2
+        move(to: CGPoint(x: x1, y: (y0 + y1) / 2))
+        lineIfMoved(to: CGPoint(x: x1, y: y1 - r))
+        appendEllipticalArc(center: CGPoint(x: x1 - r, y: y1 - r), rx: r, ry: r, start: 0, sweep: h, joinWithLine: true)
+        lineIfMoved(to: CGPoint(x: x0 + r, y: y1))
+        appendEllipticalArc(center: CGPoint(x: x0 + r, y: y1 - r), rx: r, ry: r, start: h, sweep: h, joinWithLine: true)
+        lineIfMoved(to: CGPoint(x: x0, y: y0 + r))
+        appendEllipticalArc(center: CGPoint(x: x0 + r, y: y0 + r), rx: r, ry: r, start: 2 * h, sweep: h, joinWithLine: true)
+        lineIfMoved(to: CGPoint(x: x1 - r, y: y0))
+        appendEllipticalArc(center: CGPoint(x: x1 - r, y: y0 + r), rx: r, ry: r, start: 3 * h, sweep: h, joinWithLine: true)
+        closeSubpath()
+    }
+
     /// Appends another path's elements.
     public mutating func addPath(_ other: Path) {
         for element in other.elements {
