@@ -16,6 +16,7 @@ public enum BridgeRevision: Int, Comparable, CustomStringConvertible {
     case v09 = 9
     case v10 = 10
     case v11 = 11
+    case v12 = 12
     public static func < (a: BridgeRevision, b: BridgeRevision) -> Bool { a.rawValue < b.rawValue }
     public var description: String { "0.\(rawValue)" }
 }
@@ -130,9 +131,48 @@ public enum BridgeNegotiation {
         }
     }
 
+    /// 0.12 negotiation (additive over the 0.11 `choose`): both 0.12 exports present: 0.12; exactly one: refused; neither: the 0.11
+    /// decision applies (a host that demands 0.12 is refused with a typed diagnostic).
+    public static func choose(hasBootstrapV07: Bool, hasApiV07: Bool, hasBootstrapV08: Bool, hasApiV08: Bool,
+                              hasBootstrapV09: Bool, hasApiV09: Bool, hasBootstrapV10: Bool, hasApiV10: Bool,
+                              hasBootstrapV11: Bool, hasApiV11: Bool, hasBootstrapV12: Bool, hasApiV12: Bool,
+                              minimum: BridgeRevision) throws -> BridgeRevision {
+        switch (hasBootstrapV12, hasApiV12) {
+        case (true, true):
+            return .v12
+        case (true, false):
+            throw BridgeError.startup("SWR_STARTUP_ERROR: missing symbol swr_get_api_v12 (swr_bootstrap_query_v12 present)")
+        case (false, true):
+            throw BridgeError.startup("SWR_STARTUP_ERROR: missing symbol swr_bootstrap_query_v12 (swr_get_api_v12 present)")
+        case (false, false):
+            let lower = try choose(hasBootstrapV07: hasBootstrapV07, hasApiV07: hasApiV07, hasBootstrapV08: hasBootstrapV08,
+                                   hasApiV08: hasApiV08, hasBootstrapV09: hasBootstrapV09, hasApiV09: hasApiV09,
+                                   hasBootstrapV10: hasBootstrapV10, hasApiV10: hasApiV10,
+                                   hasBootstrapV11: hasBootstrapV11, hasApiV11: hasApiV11, minimum: min(minimum, .v11))
+            if minimum > lower {
+                throw BridgeError.startup("SWR_STARTUP_ERROR: renderer is ABI \(lower) (no swr_bootstrap_query_v12), host requires \(minimum)")
+            }
+            return lower
+        }
+    }
+
+    /// Validates the 0.12 view BEFORE the table is requested: minor 12, every 0.11 size, and the path entry / transaction sizes.
+    public static func validateV12(_ i: swr_bootstrap_info_v12) throws {
+        try validateV11(i.v11, minor: UInt32(SWR_ABI_MINOR_V12))
+        let extra: [(String, UInt32, Int)] = [
+            ("path_entry", i.path_entry_size, MemoryLayout<swr_path_entry>.size),
+            ("transaction_v12", i.transaction_v12_size, MemoryLayout<swr_transaction_v12>.size),
+        ]
+        for (name, got, want) in extra where Int(got) != want {
+            throw BridgeError.startup("SWR_STARTUP_ERROR: \(name) table size mismatch expected \(want) got \(got)")
+        }
+    }
+
     /// Validates the 0.11 view BEFORE the table is requested: minor 11, every 0.10 size, and the wheel delta word.
-    public static func validateV11(_ i: swr_bootstrap_info_v11) throws {
-        try validateV10(i.v10, minor: UInt32(SWR_ABI_MINOR_V11))
+    public static func validateV11(_ i: swr_bootstrap_info_v11) throws { try validateV11(i, minor: UInt32(SWR_ABI_MINOR_V11)) }
+
+    static func validateV11(_ i: swr_bootstrap_info_v11, minor: UInt32) throws {
+        try validateV10(i.v10, minor: minor)
         if Int(i.wheel_delta) != Int(SWR_WHEEL_DELTA) {
             throw BridgeError.startup("SWR_STARTUP_ERROR: wheel delta mismatch expected \(SWR_WHEEL_DELTA) got \(i.wheel_delta)")
         }

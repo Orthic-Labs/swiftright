@@ -35,9 +35,53 @@ final class Arena {
 
 func cRect(_ r: Rect) -> swr_rect { swr_rect(x: r.x, y: r.y, w: r.w, h: r.h) }
 
-func cPrimitive(_ p: Primitive) -> swr_primitive {
+/// The path table of one transaction (ABI rev 0.12): equal specs share an entry. Filled by `cPrimitive` while a transaction is
+/// marshalled, then handed to the renderer as the tail of `swr_transaction_v12`.
+final class PathTable {
+    private(set) var entries: [swr_path_entry] = []
+    private(set) var commands: [UInt8] = []
+    private(set) var points: [Float] = []
+    private var index: [PathSpec: UInt32] = [:]
+
+    var isEmpty: Bool { entries.isEmpty }
+
+    func add(_ spec: PathSpec) -> UInt32 {
+        if let i = index[spec] { return i }
+        var e = swr_path_entry()
+        e.cmd_offset = UInt32(commands.count)
+        e.pt_offset = UInt32(points.count / 2)
+        for c in spec.commands {
+            switch c {
+            case .move(let x, let y): commands.append(UInt8(SWR_PATH_MOVE)); points += [x, y]
+            case .line(let x, let y): commands.append(UInt8(SWR_PATH_LINE)); points += [x, y]
+            case .quad(let cx, let cy, let x, let y): commands.append(UInt8(SWR_PATH_QUAD)); points += [cx, cy, x, y]
+            case .cubic(let ax, let ay, let bx, let by, let x, let y):
+                commands.append(UInt8(SWR_PATH_CUBIC)); points += [ax, ay, bx, by, x, y]
+            case .close: commands.append(UInt8(SWR_PATH_CLOSE))
+            }
+        }
+        e.cmd_count = UInt32(commands.count) - e.cmd_offset
+        e.pt_count = UInt32(points.count / 2) - e.pt_offset
+        e.flags = (spec.evenOdd ? SWR_PATH_EVEN_ODD : 0) | (spec.cap.rawValue << 1) | (spec.join.rawValue << 3)
+        e.miter_limit = spec.miterLimit
+        let i = UInt32(entries.count)
+        entries.append(e)
+        index[spec] = i
+        return i
+    }
+}
+
+/// `table` receives the path of a `.pathShape` / `.clipPath`; with none the primitive carries an invalid index, which the renderer
+/// refuses (SWR_E_BAD_ARG), so a host that emits paths must send the table (`BridgeWindow.commit` does on a 0.12 renderer).
+func cPrimitive(_ p: Primitive, table: PathTable? = nil) -> swr_primitive {
     var c = swr_primitive()
     switch p {
+    case .pathShape(let spec, let fill, let strokeColor, let strokeWidth):
+        c.kind = 4; c.color = fill; c.border_color = strokeColor; c.border_width = strokeWidth
+        c.image_id = table?.add(spec) ?? UInt32.max
+    case .clipPath(let r, let spec):
+        c.kind = 5; c.rect = cRect(r)
+        c.image_id = (table?.add(spec)).map { $0 + 1 } ?? UInt32.max
     case .rect(let r, let color, let radius, let borderColor, let borderWidth):
         c.kind = 1; c.rect = cRect(r); c.color = color
         c.radius = radius; c.border_color = borderColor; c.border_width = borderWidth
@@ -101,7 +145,7 @@ func cSemantic(_ s: SemanticNode, _ arena: Arena) -> swr_semantic {
 }
 
 /// Builds a C transaction in `arena` and returns it. Valid until `arena` dies.
-func cTransaction(_ t: Transaction, window: UInt64, arena: Arena) -> swr_transaction {
+func cTransaction(_ t: Transaction, window: UInt64, arena: Arena, table: PathTable? = nil) -> swr_transaction {
     var prims: [swr_primitive] = []
     var nodes: [swr_node] = []
     for n in t.upserts {
@@ -113,7 +157,7 @@ func cTransaction(_ t: Transaction, window: UInt64, arena: Arena) -> swr_transac
         c.flags = n.flags.rawValue
         c.prim_offset = UInt32(prims.count)
         c.prim_count = UInt32(n.primitives.count)
-        for p in n.primitives { prims.append(cPrimitive(p)) }
+        for p in n.primitives { prims.append(cPrimitive(p, table: table)) }
         if let s = n.semantic {
             c.has_semantic = 1
             c.semantic = cSemantic(s, arena)

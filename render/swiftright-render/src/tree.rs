@@ -8,6 +8,7 @@ use std::sync::Arc;
 
 use crate::abi::*;
 use crate::ax::{AxNode, AxRun, AxShared};
+use crate::paths::PathData;
 use crate::rt::LIVE_TREE_NODES;
 use crate::text::{Measured, RunSlab, Slab, TrackedImage};
 use std::sync::atomic::Ordering::SeqCst;
@@ -19,7 +20,11 @@ pub enum Prim {
     Underline { r: [f32; 4], color: u32 },
     /// Rev 0.6: the image scaled to fill `r`, corner radius `radius` (physical px).
     Image { r: [f32; 4], radius: f32, img: Arc<TrackedImage> },
+    /// Rev 0.12: a filled and/or stroked path (physical px, window space). `fill`/`stroke` are 0xRRGGBBAA; alpha 0 = absent.
+    Path { path: Arc<PathData>, fill: u32, stroke: u32, stroke_w: f32 },
     ClipPush([f32; 4]),
+    /// Rev 0.12: a clip by path (also intersected with the rect). Closed by the same ClipPop as ClipPush.
+    ClipPath { r: [f32; 4], path: Arc<PathData> },
     ClipPop,
     TranslatePush(f32, f32),
     TranslatePop,
@@ -175,6 +180,16 @@ unsafe fn convert_prims(
     runs: &RunSlab,
     images: &Slab<TrackedImage>,
 ) -> Result<Vec<Prim>, Status> {
+    convert_prims_with(prims, runs, images, &[])
+}
+
+/// `paths` is the decoded rev 0.12 path table of the transaction (empty for an older transaction: PATH and path clips then fail).
+unsafe fn convert_prims_with(
+    prims: &[Primitive],
+    runs: &RunSlab,
+    images: &Slab<TrackedImage>,
+    paths: &[Arc<PathData>],
+) -> Result<Vec<Prim>, Status> {
     let mut out = Vec::with_capacity(prims.len());
     let mut clip = 0i32;
     let mut xf = 0i32;
@@ -202,10 +217,32 @@ unsafe fn convert_prims(
                 let img = images.get(p.image).ok_or(E_STALE_HANDLE)?;
                 out.push(Prim::Image { r: rect4(&p.rect)?, radius: p.radius.max(0.0), img });
             }
-            PRIM_PATH => return Err(E_UNSUPPORTED),
+            PRIM_PATH => {
+                // Rev 0.12: image_id names the path table entry; color = fill, border_color/border_width = stroke.
+                let path = paths.get(p.image_id as usize).ok_or(E_BAD_ARG)?;
+                if !p.border_width.is_finite() || p.border_width < 0.0 {
+                    return Err(E_BAD_ARG);
+                }
+                let stroke_w = if p.border_color & 0xFF != 0 { p.border_width } else { 0.0 };
+                if p.color & 0xFF != 0 || stroke_w > 0.0 {
+                    out.push(Prim::Path {
+                        path: path.clone(),
+                        fill: p.color,
+                        stroke: if stroke_w > 0.0 { p.border_color } else { 0 },
+                        stroke_w,
+                    });
+                }
+            }
             PRIM_CLIP_PUSH => {
                 clip += 1;
-                out.push(Prim::ClipPush(rect4(&p.rect)?));
+                // Rev 0.12: a non-zero image_id is 1 + a path table entry (a path clip). Older renderers ignore the field
+                // and clip by the rect alone.
+                if p.image_id != 0 {
+                    let path = paths.get(p.image_id as usize - 1).ok_or(E_BAD_ARG)?;
+                    out.push(Prim::ClipPath { r: rect4(&p.rect)?, path: path.clone() });
+                } else {
+                    out.push(Prim::ClipPush(rect4(&p.rect)?));
+                }
             }
             PRIM_CLIP_POP => {
                 clip -= 1;
@@ -386,6 +423,16 @@ pub unsafe fn commit(
     commit_ranges(tree, runs, images, t, &[])
 }
 
+pub unsafe fn commit_ranges(
+    tree: &mut Tree,
+    runs: &RunSlab,
+    images: &Slab<TrackedImage>,
+    t: &Transaction,
+    ranges: &[RangeEntry],
+) -> Result<AxShared, Status> {
+    commit_tables(tree, runs, images, t, ranges, &[])
+}
+
 /// Rev 0.9: the numeric range of a slider arrives in the transaction's range table. Every entry must name a node upserted by the
 /// same transaction whose role is SWR_ROLE_SLIDER (rev 0.11: or SWR_ROLE_SCROLL_BAR, value 0..1); value, min, max, step and jump must be finite, min <= max, step and jump >= 0
 /// and the value inside [min, max]. Anything else is E_BAD_ARG and nothing is applied.
@@ -407,12 +454,14 @@ fn check_ranges(ranges: &[RangeEntry], ups: &[Node]) -> Result<HashMap<u64, [f64
     Ok(m)
 }
 
-pub unsafe fn commit_ranges(
+/// `paths` is the decoded rev 0.12 path table (empty when the transaction carries none).
+pub unsafe fn commit_tables(
     tree: &mut Tree,
     runs: &RunSlab,
     images: &Slab<TrackedImage>,
     t: &Transaction,
     ranges: &[RangeEntry],
+    paths: &[Arc<PathData>],
 ) -> Result<AxShared, Status> {
     if t.upsert_count > MAX_UPSERTS || t.remove_count > MAX_REMOVES || t.primitive_count > MAX_PRIMITIVES {
         return Err(E_TOO_LARGE);
@@ -436,7 +485,7 @@ pub unsafe fn commit_ranges(
         if end > prims.len() {
             return Err(E_BAD_ARG);
         }
-        let node_prims = convert_prims(&prims[n.prim_offset as usize..end], runs, images)?;
+        let node_prims = convert_prims_with(&prims[n.prim_offset as usize..end], runs, images, paths)?;
         let old_sem = tree.nodes.get(&n.id).and_then(|o| o.sem.as_ref());
         let mut sem = if n.has_semantic != 0 { Some(convert_sem(&n.semantic, old_sem)?) } else { None };
         if let Some(s) = sem.as_mut() {
@@ -828,6 +877,73 @@ mod tests {
 
     fn slabs() -> (RunSlab, Slab<TrackedImage>) {
         (Slab::new(&LIVE_RUNS, MAX_RUNS), Slab::new(&IMAGE_HANDLES, 16))
+    }
+
+    fn prim(kind: u32) -> Primitive {
+        Primitive {
+            kind, color: 0, rect: Rect { x: 0.0, y: 0.0, w: 10.0, h: 10.0 }, border_color: 0, border_width: 0.0, radius: 0.0,
+            image_id: 0, text_run: 0, m: [1.0, 0.0, 0.0, 1.0, 0.0, 0.0], image: 0,
+        }
+    }
+
+    fn square_table() -> Vec<Arc<PathData>> {
+        let cmds = [PATH_CMD_MOVE, PATH_CMD_LINE, PATH_CMD_LINE, PATH_CMD_CLOSE];
+        let pts = [0.0, 0.0, 10.0, 0.0, 10.0, 10.0];
+        let e = PathEntry { cmd_offset: 0, cmd_count: 4, pt_offset: 0, pt_count: 3, ..Default::default() };
+        crate::paths::decode_table(&[e], &cmds, &pts).unwrap()
+    }
+
+    #[test]
+    fn path_prim_needs_a_table_and_a_valid_index() {
+        let (runs, images) = slabs();
+        let table = square_table();
+        let mut p = prim(PRIM_PATH);
+        p.color = 0xFF0000FF;
+        // No table (an older transaction): the index is out of range.
+        assert_eq!(unsafe { convert_prims(&[p], &runs, &images) }.err(), Some(E_BAD_ARG));
+        let out = unsafe { convert_prims_with(&[p], &runs, &images, &table) }.unwrap();
+        assert!(matches!(out[0], Prim::Path { fill: 0xFF0000FF, stroke: 0, stroke_w, .. } if stroke_w == 0.0));
+        p.image_id = 1;
+        assert_eq!(unsafe { convert_prims_with(&[p], &runs, &images, &table) }.err(), Some(E_BAD_ARG));
+    }
+
+    #[test]
+    fn path_prim_stroke_rules() {
+        let (runs, images) = slabs();
+        let table = square_table();
+        let mut p = prim(PRIM_PATH);
+        p.border_color = 0x00FF00FF;
+        p.border_width = 2.0;
+        let out = unsafe { convert_prims_with(&[p], &runs, &images, &table) }.unwrap();
+        assert!(matches!(out[0], Prim::Path { fill: 0, stroke: 0x00FF00FF, stroke_w, .. } if stroke_w == 2.0));
+        // Neither fill nor stroke paints nothing and is dropped, not an error.
+        p.border_color = 0;
+        assert!(unsafe { convert_prims_with(&[p], &runs, &images, &table) }.unwrap().is_empty());
+        p.border_color = 0x00FF00FF;
+        p.border_width = f32::NAN;
+        assert_eq!(unsafe { convert_prims_with(&[p], &runs, &images, &table) }.err(), Some(E_BAD_ARG));
+        p.border_width = -1.0;
+        assert_eq!(unsafe { convert_prims_with(&[p], &runs, &images, &table) }.err(), Some(E_BAD_ARG));
+    }
+
+    #[test]
+    fn clip_push_with_image_id_is_a_path_clip_and_pairs_with_pop() {
+        let (runs, images) = slabs();
+        let table = square_table();
+        let mut push = prim(PRIM_CLIP_PUSH);
+        push.image_id = 1;
+        let pop = prim(PRIM_CLIP_POP);
+        let out = unsafe { convert_prims_with(&[push, pop], &runs, &images, &table) }.unwrap();
+        assert!(matches!(out[0], Prim::ClipPath { .. }) && matches!(out[1], Prim::ClipPop));
+        // Plain rect clip unchanged.
+        push.image_id = 0;
+        let out = unsafe { convert_prims_with(&[push, pop], &runs, &images, &[]) }.unwrap();
+        assert!(matches!(out[0], Prim::ClipPush(_)));
+        // Bad index, unbalanced.
+        push.image_id = 2;
+        assert_eq!(unsafe { convert_prims_with(&[push, pop], &runs, &images, &table) }.err(), Some(E_BAD_ARG));
+        push.image_id = 1;
+        assert_eq!(unsafe { convert_prims_with(&[push], &runs, &images, &table) }.err(), Some(E_BAD_ARG));
     }
 
     fn measured() -> Arc<Measured> {

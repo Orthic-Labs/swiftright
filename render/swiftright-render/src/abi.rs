@@ -18,6 +18,8 @@ pub const ABI_MINOR_V09: u32 = 9;
 pub const ABI_MINOR_V10: u32 = 10;
 /// Rev 0.11 (additive): minor reported ONLY by the `_v11` discovery exports (the 0.8 function table is unchanged: 22 functions).
 pub const ABI_MINOR_V11: u32 = 11;
+/// Rev 0.12 (additive): minor reported ONLY by the `_v12` discovery exports (the 0.8 function table is unchanged: 22 functions).
+pub const ABI_MINOR_V12: u32 = 12;
 /// Rev 0.9: AccessKit Role::Slider (UIA Slider; RangeValuePattern when a range entry is sent).
 pub const ROLE_SLIDER: u32 = 15;
 /// Rev 0.11: AccessKit Role::ScrollBar (UIA ScrollBar; RangeValuePattern from a range entry, value 0..1).
@@ -216,6 +218,17 @@ pub const CELL_LINE_BREAK: u32 = 0x2;
 pub const MAX_UPSERTS: u32 = 4096;
 pub const MAX_REMOVES: u32 = 4096;
 pub const MAX_PRIMITIVES: u32 = 65536;
+/// Rev 0.12 path table limits (per transaction). Larger -> E_TOO_LARGE.
+pub const MAX_PATHS: u32 = 4096;
+pub const MAX_PATH_CMDS: u32 = 1 << 20;
+pub const MAX_PATH_PTS: u32 = 1 << 21;
+/// Rev 0.12 path commands (one byte each) and PathEntry flags.
+pub const PATH_CMD_MOVE: u8 = 0;
+pub const PATH_CMD_LINE: u8 = 1;
+pub const PATH_CMD_QUAD: u8 = 2;
+pub const PATH_CMD_CUBIC: u8 = 3;
+pub const PATH_CMD_CLOSE: u8 = 4;
+pub const PATH_FLAG_EVEN_ODD: u32 = 0x1;
 
 #[repr(C)]
 #[derive(Clone, Copy, Default, Debug, PartialEq)]
@@ -895,6 +908,44 @@ pub struct BootstrapInfoV11 {
     pub reserved: u32,
 }
 
+/// Rev 0.12 `swr_bootstrap_info_v12` (152 bytes): the 0.11 view at identical offsets (abi_minor 12) + the path table sizes.
+#[repr(C)]
+#[derive(Clone, Copy)]
+pub struct BootstrapInfoV12 {
+    pub v11: BootstrapInfoV11,
+    pub path_entry_size: u32,
+    pub transaction_v12_size: u32,
+}
+
+/// Rev 0.12 `swr_path_entry` (32 bytes): one path of the transaction's path table. `cmd_offset`/`cmd_count` index the command byte
+/// array, `pt_offset`/`pt_count` index the point array (x, y float pairs, so `pt_offset` counts points, not floats).
+#[repr(C)]
+#[derive(Clone, Copy, Default, Debug, PartialEq)]
+pub struct PathEntry {
+    pub cmd_offset: u32,
+    pub cmd_count: u32,
+    pub pt_offset: u32,
+    pub pt_count: u32,
+    /// PATH_FLAG_*; stroke cap in bits 1..2 (0 butt, 1 round, 2 square), stroke join in bits 3..4 (0 miter, 1 round, 2 bevel).
+    pub flags: u32,
+    /// Stroke miter limit; 0 = 4.
+    pub miter_limit: f32,
+    pub reserved: [u32; 2],
+}
+
+/// Rev 0.12 `swr_transaction_v12` (128 bytes): the 88 bytes of `TransactionV09` + the path table. `struct_size >= 128` supplies it.
+#[repr(C)]
+pub struct TransactionV12 {
+    pub base: TransactionV09,
+    pub paths: *const PathEntry,
+    pub path_cmds: *const u8,
+    pub path_pts: *const f32,
+    pub path_count: u32,
+    pub path_cmd_total: u32,
+    pub path_pt_total: u32,
+    pub reserved: u32,
+}
+
 /// Rev 0.8 `swr_api_v08` (184 bytes): the 18 pointers of `ApiV07` at unchanged offsets + the 0.8 entries.
 #[repr(C)]
 #[derive(Clone, Copy)]
@@ -1001,6 +1052,12 @@ const _: () = assert!(std::mem::size_of::<BootstrapInfoV10>() == 136);
 const _: () = assert!(std::mem::offset_of!(BootstrapInfoV10, run_options_v10_size) == 128);
 const _: () = assert!(std::mem::offset_of!(BootstrapInfoV09, range_entry_size) == 120);
 const _: () = assert!(std::mem::size_of::<BootstrapInfoV11>() == 144);
+const _: () = assert!(std::mem::size_of::<BootstrapInfoV12>() == 152);
+const _: () = assert!(std::mem::offset_of!(BootstrapInfoV12, path_entry_size) == 144);
+const _: () = assert!(std::mem::size_of::<PathEntry>() == 32);
+const _: () = assert!(std::mem::size_of::<TransactionV12>() == 128);
+const _: () = assert!(std::mem::offset_of!(TransactionV12, paths) == 88);
+const _: () = assert!(std::mem::offset_of!(TransactionV12, path_count) == 112);
 const _: () = assert!(std::mem::offset_of!(BootstrapInfoV11, wheel_delta) == 136);
 const _: () = assert!(std::mem::offset_of!(BootstrapInfoV08, measure_request_v08_size) == 96);
 const _: () = assert!(std::mem::offset_of!(BootstrapInfoV08, system_fonts_size) == 112);

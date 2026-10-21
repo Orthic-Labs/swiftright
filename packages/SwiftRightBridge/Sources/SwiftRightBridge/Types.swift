@@ -74,9 +74,41 @@ public struct ImageHandle: Hashable {
     public init(raw: UInt64) { self.raw = raw }
 }
 
-/// Retained-primitive vocabulary. `.path` is declared by ABI v0 and rejected by the
-/// renderer with `unsupported` until a later revision.
+/// One path drawing command (ABI rev 0.12). Coordinates are physical window px, the space of `Primitive.rect`.
+public enum PathCommand: Hashable, Sendable {
+    case move(Float, Float)
+    case line(Float, Float)
+    /// Control point, then end point.
+    case quad(Float, Float, Float, Float)
+    /// Two control points, then end point.
+    case cubic(Float, Float, Float, Float, Float, Float)
+    case close
+}
+
+public enum PathCap: UInt32, Hashable, Sendable { case butt = 0, round = 1, square = 2 }
+public enum PathJoin: UInt32, Hashable, Sendable { case miter = 0, round = 1, bevel = 2 }
+
+/// A path of the transaction's path table (ABI rev 0.12): commands plus fill rule and stroke style. Equal specs share one table
+/// entry within a commit. `miterLimit` 0 = the renderer default (4).
+public struct PathSpec: Hashable, Sendable {
+    public var commands: [PathCommand]
+    public var evenOdd: Bool
+    public var cap: PathCap
+    public var join: PathJoin
+    public var miterLimit: Float
+    public init(commands: [PathCommand], evenOdd: Bool = false, cap: PathCap = .butt, join: PathJoin = .miter, miterLimit: Float = 0) {
+        self.commands = commands; self.evenOdd = evenOdd; self.cap = cap; self.join = join; self.miterLimit = miterLimit
+    }
+}
+
+/// Retained-primitive vocabulary. `.path` is declared by ABI v0 and rejected by the renderer with `unsupported`; rev 0.12 renderers
+/// paint `.pathShape` and `.clipPath` instead (check `Bridge.supportsPaths` first: an older renderer refuses the commit).
 public enum Primitive {
+    /// rev 0.12 (SWR_PRIM_PATH): `fill` and/or stroke (`strokeColor`, `strokeWidth` px) of `spec`, anti-aliased by the renderer.
+    case pathShape(PathSpec, fill: UInt32, strokeColor: UInt32 = 0, strokeWidth: Float = 0)
+    /// rev 0.12: like `.clipPush`, additionally clipped to `spec` (row bands, no anti-aliasing: see swiftright.h REVISION 0.12).
+    /// Closed by `.clipPop`. An older renderer clips to the rect alone.
+    case clipPath(Rect, PathSpec)
     case rect(Rect, color: UInt32, radius: Float = 0, borderColor: UInt32 = 0, borderWidth: Float = 0)
     case text(TextRunHandle, x: Float, y: Float)
     /// rev 0.6: the image scaled to fill the rect, with an optional corner radius (physical px).

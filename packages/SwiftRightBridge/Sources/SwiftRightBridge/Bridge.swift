@@ -75,6 +75,9 @@ public final class Bridge {
     /// `.scrollBar` node with a range. False on a 0.6 to 0.10 renderer: a scroll bar node is then published without a range.
     public var supportsPointerWheel: Bool { revision >= .v11 }
     public var supportsScrollBar: Bool { revision >= .v11 }
+    /// Rev 0.12 (issue #52): the renderer paints `Primitive.path` (SWR_PRIM_PATH) and path clips. False on a 0.6 to 0.11 renderer: a host
+    /// then draws shapes as bitmaps and clips by rectangle bands.
+    public var supportsPaths: Bool { revision >= .v12 }
     /// The explicit render scale `run` was given, nil when the window's DPI decides. Set by `run` before the window opens.
     public internal(set) var renderScale: Float?
 
@@ -574,9 +577,27 @@ public final class BridgeWindow {
     private func send(_ t: Transaction) throws {
         guard let fn = bridge.api.commit else { throw BridgeError.status(-3, "commit") }
         let arena = Arena()
-        var tx = cTransaction(t, window: handle, arena: arena)
+        let table: PathTable? = bridge.supportsPaths ? PathTable() : nil
+        var tx = cTransaction(t, window: handle, arena: arena, table: table)
         let rc: Int32
-        if bridge.supportsSliderRange {
+        if bridge.supportsPaths, let table {
+            // Rev 0.12: the 128-byte transaction carries the range table and the path table (possibly empty).
+            let ranges = cRanges(t, scrollBars: bridge.supportsScrollBar)
+            var tx12 = swr_transaction_v12()
+            tx12.base.base = tx
+            tx12.base.base.struct_size = UInt32(MemoryLayout<swr_transaction_v12>.size)
+            tx12.base.ranges = arena.array(ranges)
+            tx12.base.range_count = UInt32(ranges.count)
+            tx12.paths = arena.array(table.entries)
+            tx12.path_count = UInt32(table.entries.count)
+            tx12.path_cmds = arena.array(table.commands)
+            tx12.path_cmd_total = UInt32(table.commands.count)
+            tx12.path_pts = arena.array(table.points)
+            tx12.path_pt_total = UInt32(table.points.count / 2)
+            rc = withUnsafePointer(to: &tx12) { p in
+                p.withMemoryRebound(to: swr_transaction.self, capacity: 1) { fn($0) }
+            }
+        } else if bridge.supportsSliderRange {
             // Rev 0.9: the 88-byte transaction carries the range table (possibly empty).
             let ranges = cRanges(t, scrollBars: bridge.supportsScrollBar)
             var tx9 = swr_transaction_v09()

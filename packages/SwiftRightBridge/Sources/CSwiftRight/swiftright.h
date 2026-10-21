@@ -318,8 +318,10 @@ typedef struct swr_window_metrics {
                                        rect (corner radius honoured; color, border ignored).
                                        A stale handle fails the commit with
                                        SWR_E_STALE_HANDLE; width/height of rect may be 0. */
-#define SWR_PRIM_PATH            4  /* declared; SWR_E_UNSUPPORTED in v0 */
-#define SWR_PRIM_CLIP_PUSH       5  /* clip following primitives of this node to rect */
+#define SWR_PRIM_PATH            4  /* rev 0.12: filled and/or stroked path, see REVISION 0.12 at the end of this
+                                       header. SWR_E_UNSUPPORTED before 0.12. */
+#define SWR_PRIM_CLIP_PUSH       5  /* clip following primitives of this node to rect (rev 0.12: or to a path when
+                                       image_id != 0, see REVISION 0.12) */
 #define SWR_PRIM_CLIP_POP        6
 #define SWR_PRIM_TRANSFORM_PUSH  7  /* m = [a b c d tx ty]; v0: translation only */
 #define SWR_PRIM_TRANSFORM_POP   8
@@ -1360,6 +1362,100 @@ typedef struct swr_bootstrap_info_v11 {
 SWR_API swr_status swr_bootstrap_query_v11(swr_bootstrap_info_v11 *out, uint32_t caller_size);
 /* The 0.8 table (SWR_E_ABI when caller_size < sizeof(swr_api_v08)). */
 SWR_API swr_status swr_get_api_v11(swr_api_v08 *out, uint32_t caller_size);
+
+
+/* ===========================================================================================
+ * REVISION 0.12 (additive): path primitive and path clip (issue #52).
+ *
+ * Everything above is unchanged. `swr_bootstrap_query`, `_v07` to `_v11` still describe 0.6 to 0.11, so an older host runs
+ * unchanged on a 0.12 renderer. A 0.12 renderer adds two NEW exports, swr_bootstrap_query_v12 and swr_get_api_v12; a 0.11
+ * renderer lacks both, and a 0.12 host then falls back to the 0.11 view and draws shapes as host bitmaps (typed, never silent:
+ * check `supportsPaths`). The function table is the 0.8 table (22 functions, 184 bytes).
+ *
+ * PATH TABLE. A transaction of struct_size >= sizeof(swr_transaction_v12) (128 bytes: the 88 bytes of the 0.9 transaction, so
+ * the range table too, + the path table) carries three flat arrays: `paths` (swr_path_entry, path_count entries), `path_cmds`
+ * (one command byte each, path_cmd_total) and `path_pts` (x, y float pairs, path_pt_total POINTS, so 2 * path_pt_total floats).
+ * An entry names a window of each: commands [cmd_offset, cmd_offset + cmd_count), points [pt_offset, pt_offset + pt_count).
+ * Entries may share or overlap windows. The table lives for one transaction (the renderer copies what it keeps). Every entry is
+ * validated whether or not a primitive names it; one malformed entry fails the whole commit with SWR_E_BAD_ARG. Limits:
+ * SWR_PATH_MAX_PATHS, SWR_PATH_MAX_CMDS, SWR_PATH_MAX_PTS per transaction (SWR_E_TOO_LARGE).
+ *
+ * Commands: SWR_PATH_MOVE (1 point), SWR_PATH_LINE (1), SWR_PATH_QUAD (2: control, end), SWR_PATH_CUBIC (3: control, control,
+ * end), SWR_PATH_CLOSE (0). The stream starts with a MOVE; a drawing command needs a current point (after a CLOSE only a MOVE
+ * may follow); pt_count must equal the points the commands consume. Coordinates are physical px of the window (the space of
+ * swr_primitive.rect), finite and within +-1e6.
+ *
+ * swr_path_entry.flags: bit 0 SWR_PATH_EVEN_ODD (else non-zero winding); bits 1..2 stroke cap (0 butt, 1 round, 2 square);
+ * bits 3..4 stroke join (0 miter, 1 round, 2 bevel); other bits must be 0. miter_limit 0 = 4, else >= 1.
+ *
+ * SWR_PRIM_PATH: image_id = the path table index (out of range or no table -> SWR_E_BAD_ARG); color = fill 0xRRGGBBAA (alpha 0 =
+ * no fill); border_color and border_width = stroke (border_width px, alpha 0 or width 0 = no stroke); rect is ignored (the
+ * renderer takes the hull of the path; keep it equal to the path bounds for readers); radius, text_run, m, image are ignored.
+ * The fill is painted first and the stroke over it. The renderer tessellates the path and GPUI rasterises it with 4x MSAA, so
+ * the edge is anti-aliased. TRANSFORM_PUSH translation and CLIP_PUSH/POP apply as for a RECT. A primitive with neither fill nor
+ * stroke is dropped.
+ *
+ * Path clip: SWR_PRIM_CLIP_PUSH with image_id != 0 clips to the path with index image_id - 1 (intersected with rect), closed
+ * by the same SWR_PRIM_CLIP_POP. A renderer below 0.12 ignores image_id and clips to rect alone, so a host may send both
+ * and a bounding rect is a safe fallback. Rev 0.12 pass 1 implements the clip as horizontal row bands: GPUI 0.2.2 clips by
+ * rectangle only, so the renderer cuts the path into one-pixel rows, merges rows with equal spans, and paints each primitive
+ * under the clip once per band. The curved edge is a staircase (a pixel is inside when its centre is), NOT anti-aliased, for
+ * every primitive kind (text, images, rects and paths alike). A host that needs an anti-aliased edge on a shape keeps masking
+ * that shape's own bitmap. The clip applies to the rect-aligned content of the node's primitives only; rotation of
+ * text and bitmaps is NOT provided by 0.12 (TRANSFORM_PUSH stays translation only).
+ * ===========================================================================================*/
+#define SWR_ABI_MINOR_V12 12
+
+#define SWR_PATH_MOVE   0
+#define SWR_PATH_LINE   1
+#define SWR_PATH_QUAD   2
+#define SWR_PATH_CUBIC  3
+#define SWR_PATH_CLOSE  4
+#define SWR_PATH_EVEN_ODD 0x1u
+#define SWR_PATH_CAP_BUTT   0u
+#define SWR_PATH_CAP_ROUND  1u
+#define SWR_PATH_CAP_SQUARE 2u
+#define SWR_PATH_JOIN_MITER 0u
+#define SWR_PATH_JOIN_ROUND 1u
+#define SWR_PATH_JOIN_BEVEL 2u
+#define SWR_PATH_FLAGS_CAP(c)  ((uint32_t)(c) << 1)
+#define SWR_PATH_FLAGS_JOIN(j) ((uint32_t)(j) << 3)
+#define SWR_PATH_MAX_PATHS 4096u
+#define SWR_PATH_MAX_CMDS  1048576u
+#define SWR_PATH_MAX_PTS   2097152u
+
+typedef struct swr_path_entry {
+    uint32_t cmd_offset;
+    uint32_t cmd_count;
+    uint32_t pt_offset;          /* in points (x, y pairs), not floats */
+    uint32_t pt_count;
+    uint32_t flags;              /* SWR_PATH_EVEN_ODD | SWR_PATH_FLAGS_CAP(c) | SWR_PATH_FLAGS_JOIN(j) */
+    float    miter_limit;        /* 0 = 4 */
+    uint32_t reserved[2];
+} swr_path_entry;                /* 32 bytes */
+
+typedef struct swr_transaction_v12 {
+    swr_transaction_v09 base;    /* 88 bytes, identical offsets; base.base.struct_size = sizeof(swr_transaction_v12) */
+    const swr_path_entry *paths;
+    const uint8_t        *path_cmds;
+    const float          *path_pts;
+    uint32_t              path_count;
+    uint32_t              path_cmd_total;
+    uint32_t              path_pt_total;
+    uint32_t              reserved;
+} swr_transaction_v12;           /* 128 bytes */
+
+/* 0.12 view of swr_bootstrap_info: the 144 bytes of the 0.11 view at identical offsets (abi_minor 12, api_table_size
+ * sizeof(swr_api_v08) = 184, fn_count 22), plus the path entry and transaction sizes (152 bytes). */
+typedef struct swr_bootstrap_info_v12 {
+    swr_bootstrap_info_v11 v11;
+    uint32_t path_entry_size;            /* 32 */
+    uint32_t transaction_v12_size;       /* 128 */
+} swr_bootstrap_info_v12;
+
+SWR_API swr_status swr_bootstrap_query_v12(swr_bootstrap_info_v12 *out, uint32_t caller_size);
+/* The 0.8 table (SWR_E_ABI when caller_size < sizeof(swr_api_v08)). */
+SWR_API swr_status swr_get_api_v12(swr_api_v08 *out, uint32_t caller_size);
 
 #ifdef __cplusplus
 }

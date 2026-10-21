@@ -24,6 +24,9 @@ accesskit_windows = "=0.35.1"
 # gpui enables what it needs.
 image = { version = "=0.25.10", default-features = false }
 raw-window-handle = "=0.6.2"
+# Same version gpui 0.2.2 resolves to (Cargo.lock). Named only for LineCap / LineJoin, which gpui's StrokeOptions takes but does not
+# re-export (SWR_PRIM_PATH strokes, ABI 0.12).
+lyon_tessellation = "=1.0.22"
 # Same version gpui 0.2.2 resolves to (Cargo.lock). DirectWrite is already enabled by gpui; named here because the face resolver
 # (src/dwr.rs, ABI 0.8) calls it directly. Same pin and features as probes/f0-text-facts, which compiles in CI.
 windows = { version = "=0.61.3", features = ["Win32_Graphics_DirectWrite", "Win32_Foundation", "Win32_Graphics_Gdi"] }

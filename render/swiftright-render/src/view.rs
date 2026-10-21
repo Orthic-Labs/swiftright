@@ -25,6 +25,7 @@ use raw_window_handle::{HasWindowHandle, RawWindowHandle};
 use crate::abi::*;
 use crate::ax::{Actions, Activation};
 use crate::pace;
+use crate::paths::{Cap, Join, PathData, Seg};
 use crate::rt::*;
 use crate::scale;
 use crate::text::{RunSlab, Slab, TextCache, TrackedImage, MAX_RUNS};
@@ -773,11 +774,76 @@ fn paint_tracked(wl: &gpui::WrappedLine, origin: gpui::Point<Pixels>, line_heigh
     });
 }
 
-fn masked(window: &mut Window, clip: Option<Bounds<Pixels>>, f: impl FnOnce(&mut Window)) {
-    match clip {
-        Some(b) => window.with_content_mask(Some(ContentMask { bounds: b }), f),
-        None => f(window),
+/// One level of the per-node clip stack. `cover` is set for a rev 0.12 path clip: the row-band rectangles (window dips) whose union
+/// is the clip, already intersected with every clip below it. GPUI 0.2.2 clips by rectangle only (no path or alpha content mask,
+/// no offscreen layer reachable from Window), so a primitive under a path clip is painted once per rectangle.
+#[derive(Clone)]
+struct ClipEntry {
+    b: Bounds<Pixels>,
+    cover: Option<Arc<Vec<Bounds<Pixels>>>>,
+}
+
+/// Runs `f` under the clip. `hint` (the primitive's own bounds) skips cover rectangles it cannot touch.
+fn masked(window: &mut Window, clip: Option<Bounds<Pixels>>, cover: Option<&[Bounds<Pixels>]>, hint: Option<Bounds<Pixels>>, mut f: impl FnMut(&mut Window)) {
+    match (clip, cover) {
+        (Some(b), Some(rects)) => {
+            for r in rects {
+                if hint.as_ref().map_or(true, |h| h.intersects(r)) {
+                    window.with_content_mask(Some(ContentMask { bounds: b.intersect(r) }), |w| f(w));
+                }
+            }
+        }
+        (Some(b), None) => window.with_content_mask(Some(ContentMask { bounds: b }), |w| f(w)),
+        _ => f(window),
     }
+}
+
+/// A rev 0.12 path as a GPUI path in window dips (`inv` = 1 / scale), for fill (`stroke_w` None) or stroke.
+fn gpui_path(
+    path: &PathData,
+    origin: gpui::Point<Pixels>,
+    tx: (f32, f32),
+    inv: f32,
+    stroke_w: Option<f32>,
+) -> Option<gpui::Path<Pixels>> {
+    use gpui::{FillOptions, FillRule, PathBuilder, PathStyle, StrokeOptions};
+    use lyon_tessellation::{LineCap, LineJoin};
+    let tol = (0.1 * inv).max(0.005);
+    let style = match stroke_w {
+        None => PathStyle::Fill(
+            FillOptions::default()
+                .with_tolerance(tol)
+                .with_fill_rule(if path.even_odd { FillRule::EvenOdd } else { FillRule::NonZero }),
+        ),
+        Some(w) => PathStyle::Stroke(
+            StrokeOptions::default()
+                .with_tolerance(tol)
+                .with_line_width(w * inv)
+                .with_miter_limit(path.miter)
+                .with_line_cap(match path.cap {
+                    Cap::Butt => LineCap::Butt,
+                    Cap::Round => LineCap::Round,
+                    Cap::Square => LineCap::Square,
+                })
+                .with_line_join(match path.join {
+                    Join::Miter => LineJoin::Miter,
+                    Join::Round => LineJoin::Round,
+                    Join::Bevel => LineJoin::Bevel,
+                }),
+        ),
+    };
+    let pt = |p: &[f32; 2]| point(origin.x + px((p[0] + tx.0) * inv), origin.y + px((p[1] + tx.1) * inv));
+    let mut b = PathBuilder::fill().with_style(style);
+    for s in &path.segs {
+        match s {
+            Seg::Move(p) => b.move_to(pt(p)),
+            Seg::Line(p) => b.line_to(pt(p)),
+            Seg::Quad(c, p) => b.curve_to(pt(p), pt(c)),
+            Seg::Cubic(c1, c2, p) => b.cubic_bezier_to(pt(p), pt(c1), pt(c2)),
+            Seg::Close => b.close(),
+        }
+    }
+    b.build().ok()
 }
 
 /// True when `b` can put a pixel inside the window and inside the active clip. A primitive outside both is not
@@ -799,11 +865,13 @@ fn paint_tree(
     let inv = 1.0 / scale;
     for id in tree.order.iter() {
         let Some(node) = tree.nodes.get(id) else { continue };
-        let mut clips: Vec<Bounds<Pixels>> = Vec::new();
+        let mut clips: Vec<ClipEntry> = Vec::new();
         let mut tx = (0.0f32, 0.0f32);
         let mut tx_stack: Vec<(f32, f32)> = Vec::new();
         for p in &node.prims {
-            let clip = clips.last().cloned();
+            let clip = clips.last().map(|e| e.b);
+            let cover = clips.last().and_then(|e| e.cover.clone());
+            let cover = cover.as_deref().map(|v| v.as_slice());
             match p {
                 Prim::Rect { r, color, border_color, border_w, radius } => {
                     let b = Bounds::new(
@@ -820,7 +888,7 @@ fn paint_tree(
                     if *border_w > 0.0 {
                         q = q.border_widths(px(border_w * inv)).border_color(rgba(*border_color));
                     }
-                    masked(window, clip, |w| w.paint_quad(q));
+                    masked(window, clip, cover, Some(b), |w| w.paint_quad(q.clone()));
                 }
                 Prim::Text { x, y, run } => {
                     // The whole run (every paragraph), padded by 2 DIP for glyph overhang.
@@ -851,9 +919,9 @@ fn paint_tree(
                         if run.ext.track_dip != 0.0 || offs.is_some() {
                             // Rev 0.8 tracking: shape with gpui, paint every glyph at its layout position plus the tracking
                             // (G14: Window::paint_glyph is public). Tracking 0 keeps the unchanged path above.
-                            masked(window, clip, |w| paint_tracked(wl, o, lh, run.ext.track_dip * run.gpui_ratio, run.ext.color, offs.as_deref(), w));
+                            masked(window, clip, cover, Some(rb), |w| paint_tracked(wl, o, lh, run.ext.track_dip * run.gpui_ratio, run.ext.color, offs.as_deref(), w));
                         } else {
-                            masked(window, clip, |w| {
+                            masked(window, clip, cover, Some(rb), |w| {
                                 let _ = wl.paint(o, lh, TextAlign::Left, None, w, cx);
                             });
                         }
@@ -870,8 +938,8 @@ fn paint_tree(
                         }
                         let corners = Corners::all(px(*radius * inv));
                         let img = img.img.clone();
-                        masked(window, clip, |w| {
-                            let _ = w.paint_image(b, corners, img, 0, false);
+                        masked(window, clip, cover, Some(b), |w| {
+                            let _ = w.paint_image(b, corners, img.clone(), 0, false);
                         });
                     }
                 }
@@ -884,17 +952,78 @@ fn paint_tree(
                     if !visible(&b, &view, clip.as_ref()) {
                         continue;
                     }
-                    masked(window, clip, |w| w.paint_quad(fill(b, rgba(*color))));
+                    masked(window, clip, cover, Some(b), |w| w.paint_quad(fill(b, rgba(*color))));
                 }
                 Prim::ClipPush(r) => {
                     let mut b = Bounds::new(
                         point(origin.x + px((r[0] + tx.0) * inv), origin.y + px((r[1] + tx.1) * inv)),
                         size(px(r[2] * inv), px(r[3] * inv)),
                     );
+                    let mut cover_below = None;
                     if let Some(prev) = clips.last() {
-                        b = b.intersect(prev);
+                        b = b.intersect(&prev.b);
+                        cover_below = prev.cover.clone();
                     }
-                    clips.push(b);
+                    clips.push(ClipEntry { b, cover: cover_below });
+                }
+                Prim::ClipPath { r, path } => {
+                    // Rev 0.12 path clip: row bands of the path inside the clip rect (and the clip below), in window dips.
+                    let mut b = Bounds::new(
+                        point(origin.x + px((r[0] + tx.0) * inv), origin.y + px((r[1] + tx.1) * inv)),
+                        size(px(r[2] * inv), px(r[3] * inv)),
+                    );
+                    let mut below = None;
+                    if let Some(prev) = clips.last() {
+                        b = b.intersect(&prev.b);
+                        below = prev.cover.clone();
+                    }
+                    // Region in path space (physical px, before tx): the clip rect, bounded by the window.
+                    let region = [r[0], r[1], r[2], r[3]];
+                    let mut rects: Vec<Bounds<Pixels>> = Vec::new();
+                    for q in path.cover_rects(region, 1.0) {
+                        let rb = Bounds::new(
+                            point(origin.x + px((q[0] + tx.0) * inv), origin.y + px((q[1] + tx.1) * inv)),
+                            size(px(q[2] * inv), px(q[3] * inv)),
+                        );
+                        if !rb.intersects(&b) {
+                            continue;
+                        }
+                        match &below {
+                            None => rects.push(rb.intersect(&b)),
+                            Some(prev) => {
+                                for pr in prev.iter() {
+                                    if rb.intersects(pr) {
+                                        rects.push(rb.intersect(pr).intersect(&b));
+                                    }
+                                }
+                            }
+                        }
+                    }
+                    clips.push(ClipEntry { b, cover: Some(Arc::new(rects)) });
+                }
+                Prim::Path { path, fill: fill_c, stroke, stroke_w } => {
+                    let pad = *stroke_w * 0.5 * path.miter.max(1.5);
+                    let hull = Bounds::new(
+                        point(origin.x + px((path.bounds[0] + tx.0 - pad) * inv), origin.y + px((path.bounds[1] + tx.1 - pad) * inv)),
+                        size(px((path.bounds[2] + 2.0 * pad) * inv), px((path.bounds[3] + 2.0 * pad) * inv)),
+                    );
+                    if !visible(&hull, &view, clip.as_ref()) {
+                        continue;
+                    }
+                    // Fill, then stroke over it (SwiftUI's fill then stroke). GPUI tessellates with lyon and the DirectX
+                    // renderer rasterises paths with 4x MSAA into an intermediate texture, so the edge is anti-aliased.
+                    if fill_c & 0xFF != 0 {
+                        if let Some(gp) = gpui_path(path, origin, tx, inv, None) {
+                            let col = rgba(*fill_c);
+                            masked(window, clip, cover, Some(hull), |w| w.paint_path(gp.clone(), col));
+                        }
+                    }
+                    if *stroke_w > 0.0 && stroke & 0xFF != 0 {
+                        if let Some(gp) = gpui_path(path, origin, tx, inv, Some(*stroke_w)) {
+                            let col = rgba(*stroke);
+                            masked(window, clip, cover, Some(hull), |w| w.paint_path(gp.clone(), col));
+                        }
+                    }
                 }
                 Prim::ClipPop => {
                     clips.pop();

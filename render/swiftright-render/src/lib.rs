@@ -14,6 +14,7 @@ mod dwr;
 mod faces;
 mod font;
 mod pace;
+mod paths;
 mod rt;
 mod scale;
 mod text;
@@ -422,7 +423,32 @@ pub extern "C" fn swr_commit(t: *const Transaction) -> Status {
         } else {
             &[]
         };
-        let r = view::with_ui(|ui| unsafe { tree::commit_ranges(&mut ui.tree, &ui.runs, &ui.images, t, ranges) });
+        // Rev 0.12: a transaction of struct_size >= sizeof(TransactionV12) carries a path table. It is decoded and validated whole
+        // before anything touches the tree; a smaller transaction has none (a PATH primitive or path clip in it is then refused).
+        let paths: Vec<Arc<paths::PathData>> = if (t.struct_size as usize) >= std::mem::size_of::<TransactionV12>() {
+            let t12 = unsafe { &*(t as *const Transaction as *const TransactionV12) };
+            let decoded = unsafe {
+                if t12.path_count > MAX_PATHS || t12.path_cmd_total > MAX_PATH_CMDS || t12.path_pt_total > MAX_PATH_PTS {
+                    Err(E_TOO_LARGE)
+                } else {
+                    tree::slice_of(t12.paths, t12.path_count).and_then(|e| {
+                        let c = tree::slice_of(t12.path_cmds, t12.path_cmd_total)?;
+                        let p = tree::slice_of(t12.path_pts, t12.path_pt_total.checked_mul(2).ok_or(E_TOO_LARGE)?)?;
+                        paths::decode_table(e, c, p)
+                    })
+                }
+            };
+            match decoded {
+                Ok(v) => v,
+                Err(e) => {
+                    bump(S_COMMITS_REJ);
+                    return e;
+                }
+            }
+        } else {
+            Vec::new()
+        };
+        let r = view::with_ui(|ui| unsafe { tree::commit_tables(&mut ui.tree, &ui.runs, &ui.images, t, ranges, &paths) });
         PH_TREE.add(qpc_now() - t_start);
         match r {
             Err(e) => {
@@ -1007,6 +1033,40 @@ pub extern "C" fn swr_bootstrap_query_v11(out: *mut BootstrapInfoV11, caller_siz
         }
         SWR_OK
     })
+}
+
+/// Rev 0.12 discovery (additive): the 0.11 view at identical offsets (abi_minor 12; the 184-byte table and 22 functions are the
+/// 0.8 ones) + the path entry and transaction sizes. A renderer that exports this symbol paints SWR_PRIM_PATH and path clips.
+#[no_mangle]
+pub extern "C" fn swr_bootstrap_query_v12(out: *mut BootstrapInfoV12, caller_size: u32) -> Status {
+    guard!({
+        let need = std::mem::size_of::<BootstrapInfoV12>() as u32;
+        if out.is_null() || caller_size < need {
+            return E_BAD_ARG;
+        }
+        let mut v11 = std::mem::MaybeUninit::<BootstrapInfoV11>::uninit();
+        let rc = swr_bootstrap_query_v11(v11.as_mut_ptr(), std::mem::size_of::<BootstrapInfoV11>() as u32);
+        if rc != SWR_OK {
+            return rc;
+        }
+        let mut v11 = unsafe { v11.assume_init() };
+        v11.v10.v09.v08.v07.base.abi_minor = ABI_MINOR_V12;
+        v11.v10.v09.v08.v07.base.struct_size = need;
+        unsafe {
+            *out = BootstrapInfoV12 {
+                v11,
+                path_entry_size: std::mem::size_of::<PathEntry>() as u32,
+                transaction_v12_size: std::mem::size_of::<TransactionV12>() as u32,
+            };
+        }
+        SWR_OK
+    })
+}
+
+/// Rev 0.12 function table: identical to the 0.8 table (no new functions; the path table travels in the transaction).
+#[no_mangle]
+pub extern "C" fn swr_get_api_v12(out: *mut ApiV08, caller_size: u32) -> Status {
+    swr_get_api_v08(out, caller_size)
 }
 
 /// Rev 0.11 function table: identical to the 0.8 table (no new functions; the wheel opt-in is a run-options flag).
@@ -1647,6 +1707,26 @@ mod v08_tests {
         assert_eq!(swr_bootstrap_query_v11(std::ptr::null_mut(), 144), E_BAD_ARG);
         let mut small = std::mem::MaybeUninit::<BootstrapInfoV11>::uninit();
         assert_eq!(swr_bootstrap_query_v11(small.as_mut_ptr(), 136), E_BAD_ARG);
+    }
+
+    #[test]
+    fn bootstrap_v12_extends_v11_and_reports_minor_12() {
+        let mut b = std::mem::MaybeUninit::<BootstrapInfoV12>::uninit();
+        assert_eq!(swr_bootstrap_query_v12(b.as_mut_ptr(), std::mem::size_of::<BootstrapInfoV12>() as u32), SWR_OK);
+        let b = unsafe { b.assume_init() };
+        assert_eq!(b.v11.v10.v09.v08.v07.base.abi_minor, 12);
+        assert_eq!(b.v11.v10.v09.v08.v07.base.struct_size, 152);
+        assert_eq!(b.path_entry_size, 32);
+        assert_eq!(b.transaction_v12_size, 128);
+        // The 0.11 view is untouched and the table is the 0.8 one.
+        let mut v11 = std::mem::MaybeUninit::<BootstrapInfoV11>::uninit();
+        assert_eq!(swr_bootstrap_query_v11(v11.as_mut_ptr(), std::mem::size_of::<BootstrapInfoV11>() as u32), SWR_OK);
+        assert_eq!(unsafe { v11.assume_init() }.v10.v09.v08.v07.base.abi_minor, 11);
+        assert_eq!(b.v11.v10.v09.v08.v07.base.api_table_size, 184);
+        assert_eq!(b.v11.v10.v09.v08.v07.base.fn_count, 22);
+        assert_eq!(swr_bootstrap_query_v12(std::ptr::null_mut(), 152), E_BAD_ARG);
+        let mut small = std::mem::MaybeUninit::<BootstrapInfoV12>::uninit();
+        assert_eq!(swr_bootstrap_query_v12(small.as_mut_ptr(), 144), E_BAD_ARG);
     }
 
     #[test]
