@@ -1502,6 +1502,11 @@ fn place_ime_windows(hwnd: *mut c_void) {
     let Some(r) = r else { return };
     let (x, y, w, h) = (r.x as i32, r.y as i32, (r.w as i32).max(1), (r.h as i32).max(1));
     ime_remember(x, y, w, h);
+    // #33 Stage 2: while the TSF store owns input, the IME reads positions through GetTextExt. Setting IMM composition or
+    // candidate forms then ends the TSF composition at every caret move (Dell F7live ime33-tsf2: one composition per key).
+    if tsf::associated() {
+        return;
+    }
     unsafe {
         let himc = ImmGetContext(hwnd);
         if himc.is_null() {
