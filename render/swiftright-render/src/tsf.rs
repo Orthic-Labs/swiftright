@@ -23,7 +23,7 @@ use windows::Win32::System::Com::{
 use windows::Win32::UI::TextServices::{
     CLSID_TF_ThreadMgr, ITextStoreACP, ITextStoreACPSink, ITextStoreACP_Impl, ITfCompositionView, ITfContext,
     ITfContextOwnerCompositionServices, ITfContextOwnerCompositionSink, ITfContextOwnerCompositionSink_Impl,
-    ITfDocumentMgr, ITfRange, ITfThreadMgr, TEXT_STORE_LOCK_FLAGS, TS_ATTRVAL, TS_LC_CHANGE, TS_RUNINFO, TS_RT_PLAIN,
+    ITfDocumentMgr, ITfRange, ITfThreadMgr, TEXT_STORE_LOCK_FLAGS, TEXT_STORE_TEXT_CHANGE_FLAGS, TS_ATTRVAL, TS_LC_CHANGE, TS_RUNINFO, TS_RT_PLAIN,
     TS_SELECTIONSTYLE, TS_SELECTION_ACP, TS_STATUS, TS_TEXTCHANGE, TS_AE_END, TS_AE_START,
 };
 
