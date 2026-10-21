@@ -292,6 +292,9 @@ public struct TextEditor: View, PrimitiveView {
 public struct Label<Title: View, Icon: View>: View, PrimitiveView {
     let title: Title
     let icon: Icon
+    /// The gap between icon and title: 8 pt on macOS 27 at every font and symbol measured (body, 13, 17, 24, title, caption; circle.fill, star, gear; offscreen
+    /// NSHostingView frames, 21 Oct 2026). Was 6 (unmeasured); MarkdownUI's patch 0004 made up the difference and is retired.
+    nonisolated static var iconTitleSpacing: CGFloat { 8 }
 
     public init(@ViewBuilder title: () -> Title, @ViewBuilder icon: () -> Icon) {
         self.title = title()
@@ -300,7 +303,7 @@ public struct Label<Title: View, Icon: View>: View, PrimitiveView {
 
     @MainActor public var body: Never { return fatalError("primitive view has no body") }
     var nodeKind: NodeKind {
-        .stack(StackSpec(name: "Label", axis: .horizontal, cross: .middle, spacing: 6, fillsCross: false))
+        .stack(StackSpec(name: "Label", axis: .horizontal, cross: .middle, spacing: Label<Title, Icon>.iconTitleSpacing, fillsCross: false))
     }
     /// The icon is decorative for accessibility, as in SwiftUI: the Label is announced by its title (macOS AX shows no image for a Label icon;
     /// MarkdownUI list bullets, factory run 39613454371).

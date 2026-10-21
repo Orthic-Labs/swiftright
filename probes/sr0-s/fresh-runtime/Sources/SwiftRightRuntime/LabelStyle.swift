@@ -47,7 +47,7 @@ public struct LabelStyleConfiguration {
 public struct DefaultLabelStyle: LabelStyle {
     public init() {}
     @MainActor public func makeBody(configuration: Configuration) -> some View {
-        HStack(spacing: 6) {
+        HStack(spacing: 8) {   // measured on macOS 27 (Label.iconTitleSpacing)
             configuration.icon
             configuration.title
         }
@@ -58,7 +58,7 @@ public struct DefaultLabelStyle: LabelStyle {
 public struct TitleAndIconLabelStyle: LabelStyle {
     public init() {}
     @MainActor public func makeBody(configuration: Configuration) -> some View {
-        HStack(spacing: 6) {
+        HStack(spacing: 8) {   // measured on macOS 27 (Label.iconTitleSpacing)
             configuration.icon
             configuration.title
         }

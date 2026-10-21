@@ -356,7 +356,7 @@ final class MarkdownCompatLayoutTests: XCTestCase {
     func testTitleAndIconStyleKeepsTheLabelsOwnLayout() throws {
         let plain = colors(try nodes(Label { Color.blue.frame(width: 20, height: 6) } icon: { Color.red.frame(width: 10, height: 10) }))
         let styled = colors(try nodes(Label { Color.blue.frame(width: 20, height: 6) } icon: { Color.red.frame(width: 10, height: 10) }.labelStyle(.titleAndIcon)))
-        XCTAssertEqual(plain.map(\.frame.minX), [0, 16], "icon, then title 6 pt apart")
+        XCTAssertEqual(plain.map(\.frame.minX), [0, 18], "icon, then title 8 pt apart (macOS 27)")
         XCTAssertEqual(styled.map(\.frame.minX), plain.map(\.frame.minX))
         XCTAssertEqual(styled.map(\.frame.minY), plain.map(\.frame.minY))
     }
