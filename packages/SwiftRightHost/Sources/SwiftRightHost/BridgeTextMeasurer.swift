@@ -68,6 +68,8 @@ public protocol TextRunSource: AnyObject {
     func runOverflows(text: String, font: Font?, style: TextRunStyle?, bounds: Rect) -> Bool
     /// The retained shaped run of one fragment of a styled Text (one line's stretch of one run), at its natural size: measured on first use. Nil when the source has none.
     func fragmentRun(text: String, font: Font?, style: TextRunStyle?, color: UInt32?) throws -> NaturalTextRun?
+    /// The glyph outlines of a run (run px, origin top-left, y down) and the colour it was shaped in, for text under `.rotationEffect` (#69). Nil when the source has none.
+    func outline(of run: TextRunHandle) -> (outline: TextOutline, color: UInt32)?
 }
 
 /// A natural-size run: the handle and its pixel extent.
@@ -91,6 +93,7 @@ extension TextRunSource {
     }
     public func runOverflows(text: String, font: Font?, style: TextRunStyle?, bounds: Rect) -> Bool { runOverflows(text: text, font: font, bounds: bounds) }
     public func fragmentRun(text: String, font: Font?, style: TextRunStyle?, color: UInt32?) throws -> NaturalTextRun? { nil }
+    public func outline(of run: TextRunHandle) -> (outline: TextOutline, color: UInt32)? { nil }
 
     /// A source without per-run colour paints every run in its one colour.
     public func run(text: String, font: Font?, bounds: Rect, color: UInt32) throws -> TextRunHandle {
@@ -386,8 +389,23 @@ public final class BridgeTextMeasurer: TextMeasurer, TextRunSource {
         return try bridge.measure(r)
     }
 
+    /// The colour each run was shaped in (#69: a rotated run is redrawn from its outline in that colour). Runs not listed were shaped in `textColor`.
+    private var runColors: [UInt64: UInt32] = [:]
+
     /// Shapes `request` in `color` (the single-line search for `lineLimit(1)` included); the caller owns the returned run.
     private func shape(_ request: TextMeasureRequest, color: UInt32) throws -> SwiftRightBridge.TextMeasurement {
+        let m = try shapeRun(request, color: color)
+        if color != textColor { runColors[m.run.raw] = color }
+        return m
+    }
+
+    /// Rev 0.14 (#69): the glyph outlines of a retained run and the colour it was shaped in; nil on an older renderer.
+    public func outline(of run: TextRunHandle) -> (outline: TextOutline, color: UInt32)? {
+        guard bridge.supportsTextOutlines, let o = try? bridge.outline(of: run) else { return nil }
+        return (o, runColors[run.raw] ?? textColor)
+    }
+
+    private func shapeRun(_ request: TextMeasureRequest, color: UInt32) throws -> SwiftRightBridge.TextMeasurement {
         let shaping = try TextRequestAdapter.shapingRequest(for: request, body: body, fonts: fonts, scale: scale, textColor: color, systemFonts: systemFonts)
         if let limit = request.lineLimit {
             let viaRenderer = try NativeLineLimit.shape(shaping, limit: limit, rendererSupportsMaxLines: rendererHasExtendedRequest,

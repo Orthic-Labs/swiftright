@@ -528,6 +528,7 @@ public final class ResolvedNodePainter {
     /// `rotations` are the `.rotationEffect`s above the node, outermost first, anchors in window pixels: shapes are rotated through their path raster; any other painted content stays unrotated and is reported.
     public func emit(_ node: ResolvedNode, id: UInt64, bounds: Rect, textColor: UInt32? = nil, rotations: [ShapeRotation] = []) throws -> NodeEmission {
         var emission = try emitContent(node, id: id, bounds: bounds, textColor: textColor, rotations: rotations)
+        if ShapeRotation.isRotated(rotations), !Self.isShapeKind(node.kind) { emission.primitives = try rotatedText(emission.primitives, id: id, transform: ShapeRotation.combined(rotations)) }
         if !brightness.isEmpty {
             emission.primitives = emission.primitives.map {
                 if case .rect(let r, let color, let radius, let borderColor, let borderWidth) = $0 {
@@ -602,7 +603,8 @@ public final class ResolvedNodePainter {
         }
         // `.allowsHitTesting(false)` (R1, #36): the node takes no pointer hits. Its painting and its accessibility actions are unchanged.
         if !node.accessibility.allowsHitTesting, emission.flags.contains(.hitTarget) { emission.flags.remove(.hitTarget) }
-        if ShapeRotation.isRotated(rotations), !emission.primitives.isEmpty, !Self.isShapeKind(node.kind), node.kind != "Image" {
+        if ShapeRotation.isRotated(rotations), !Self.isShapeKind(node.kind), node.kind != "Image",
+           emission.primitives.contains(where: { if case .image = $0 { return false } else if case .clipPop = $0 { return false } else { return true } }) {
             rotationLimitationCount += 1
             if rotationLimitationKinds.insert(node.kind).inserted {
                 log("rotationEffect limitation: \(node.kind) is painted unrotated (the host rotates shapes only; the renderer transform is translation only)")
@@ -980,6 +982,48 @@ public final class ResolvedNodePainter {
         log("SYSTEM_IMAGE_FRAME name=\(reference.name) xPX=\(Int(bounds.x)) yPX=\(Int(bounds.y)) widthPX=\(Int(bounds.w)) heightPX=\(Int(bounds.h)) canvasInsetPX=\(Int(inset)) tintRGBA=\(String(format: "%08x", tint))")
         return .image(handle, Rect(x: bounds.x - inset + imageGuardBand, y: bounds.y - inset + imageGuardBand,
                                    w: bounds.w + 2 * inset - 2 * imageGuardBand, h: bounds.h + 2 * inset - 2 * imageGuardBand))
+    }
+
+    /// Text under `.rotationEffect` (#69): each text run whose glyph outlines the source can give (renderer rev 0.14) is filled from those outlines, placed at the run's
+    /// origin and rotated in window pixels, by the path rasterizer in the colour the run was shaped in, and drawn as a bitmap. Runs without outlines stay as they are
+    /// (and are reported as a rotation limitation).
+    private func rotatedText(_ primitives: [Primitive], id: UInt64, transform: CGAffineTransform) throws -> [Primitive] {
+        guard let text, primitives.contains(where: { if case .text = $0 { return true } else { return false } }) else { return primitives }
+        var out: [Primitive] = []
+        for (index, primitive) in primitives.enumerated() {
+            guard case .text(let run, let x, let y) = primitive, let (outline, color) = text.outline(of: run) else { out.append(primitive); continue }
+            let path = Self.path(outline, scale: scale)
+            let placed = ShapeRotation.concatenate(CGAffineTransform(translationX: CGFloat(x), y: CGFloat(y)), transform)
+            guard let raster = try PathRasterizer.rasterize(path: path, transform: placed, scale: CGFloat(scale), fillRGBA: color) else { continue }
+            let placement = Rect(x: Float(raster.originX) + imageGuardBand, y: Float(raster.originY) + imageGuardBand,
+                                 w: Float(raster.image.width) - 2 * imageGuardBand, h: Float(raster.image.height) - 2 * imageGuardBand)
+            let handle = try registerRGBA(raster.image)
+            let key = id | (UInt64(0x300 + index) << 48)
+            if let stale = pendingShapeImages[key] { _ = images.release(stale) }
+            pendingShapeImages[key] = handle
+            out.append(.image(handle, placement))
+        }
+        return out
+    }
+
+    /// A run outline (run px) as a Path in points.
+    static func path(_ outline: TextOutline, scale: Float) -> Path {
+        var path = Path(), k = 0
+        let s = CGFloat(scale)
+        func pt() -> CGPoint { defer { k += 2 }; return CGPoint(x: CGFloat(outline.points[k]) / s, y: CGFloat(outline.points[k + 1]) / s) }
+        for c in outline.commands {
+            let need = c == 0 || c == 1 ? 2 : c == 2 ? 4 : c == 3 ? 6 : 0
+            guard k + need <= outline.points.count else { break }
+            switch c {
+            case 0: path.move(to: pt())
+            case 1: path.addLine(to: pt())
+            case 2: let c1 = pt(); path.addQuadCurve(to: pt(), control: c1)
+            case 3: let c1 = pt(), c2 = pt(); path.addCurve(to: pt(), control1: c1, control2: c2)
+            case 4: path.closeSubpath()
+            default: break
+            }
+        }
+        return path
     }
 
     /// An Image under `.rotationEffect` (#69): its upright bitmap (the pixels `pixelImagePrimitive` or `systemImagePrimitive` would register, over the same rectangle) resampled through

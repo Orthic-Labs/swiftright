@@ -17,6 +17,17 @@ public extension Bridge {
     /// `swr_bootstrap_query`, validates ABI identity, and only then resolves the function
     /// table. Throws `BridgeError.startup` with a deterministic message on any mismatch.
     static func load(path: String? = nil, minimumRevision: BridgeRevision = .v06) throws -> Bridge {
+        let bridge = try loadNegotiated(path: path, minimumRevision: minimumRevision)
+        // Rev 0.14 (#69) adds one export and no new view of the existing tables: the host takes `swr_text_run_outline` by name when the renderer has it.
+        let chosen = path ?? ProcessInfo.processInfo.environment[rendererPathVariable] ?? "swiftright_render.dll"
+        if bridge.revision >= .v13, let module = chosen.withCString(encodedAs: UTF16.self, { LoadLibraryW($0) }),
+           let raw = GetProcAddress(module, "swr_text_run_outline") {
+            bridge.textRunOutline = unsafeBitCast(raw, to: TextRunOutlineFn.self)
+        }
+        return bridge
+    }
+
+    private static func loadNegotiated(path: String?, minimumRevision: BridgeRevision) throws -> Bridge {
         let chosen = path
             ?? ProcessInfo.processInfo.environment[rendererPathVariable]
             ?? "swiftright_render.dll"

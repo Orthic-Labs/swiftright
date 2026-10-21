@@ -10,6 +10,12 @@ final class StyledFake: TextMeasurer, TextRunSource {
     var fragments: [Fragment] = []
     var plain: [Fragment] = []
     private var next: UInt64 = 100
+    /// #69: when set, every run's outline is a 10 x 10 px square at (2, 3) in run px, shaped in opaque black.
+    var squareOutlines = false
+    func outline(of run: TextRunHandle) -> (outline: TextOutline, color: UInt32)? {
+        guard squareOutlines else { return nil }
+        return (TextOutline(commands: [0, 1, 1, 1, 4], points: [2, 3, 12, 3, 12, 13, 2, 13]), 0x0000_00ff)
+    }
 
     func measure(_ request: TextMeasureRequest) -> SwiftRightRuntime.TextMeasurement {
         SwiftRightRuntime.TextMeasurement(size: LayoutSize(width: CGFloat(request.text.count) * 8, height: 16), baseline: 12, lineCount: 1)

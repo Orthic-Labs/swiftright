@@ -1,0 +1,12 @@
+{
+ "macArgs": [
+  "--fonts",
+  "{repo}/factory/resources/fonts/Tinos-Regular.ttf"
+ ],
+ "edgeAATolerance": {
+  "levels": 160,
+  "maxOverFraction": 0.08,
+  "maxMeanAbs": 6,
+  "reason": "PROVISIONAL (issue #69): not yet measured on a CI pair. Same Tinos outlines on both sides; Mac CoreText draws rotated glyphs with its own rasterizer, Windows fills the ttf-parser outlines with the host PathRasterizer (unhinted both). Fit from the first run."
+ }
+}

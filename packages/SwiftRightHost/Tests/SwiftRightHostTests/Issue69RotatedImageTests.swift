@@ -53,3 +53,41 @@ final class Issue69RotatedImageTests: XCTestCase {
         XCTAssertEqual(painter.rotationLimitationCount, 0)
     }
 }
+
+// Issue #69: Text under `.rotationEffect` is filled from the run's glyph outlines (renderer rev 0.14), rotated in window pixels.
+@MainActor
+final class Issue69RotatedTextTests: XCTestCase {
+    private func emitRotated(_ fake: StyledFake) throws -> (NodeEmission, FakeImages, ResolvedNodePainter) {
+        let graph = Graph(Text("Hi").rotationEffect(.degrees(45)), measurer: fake, scale: 1)
+        graph.rootProposal = ProposedViewSize(width: 200, height: 200)
+        graph.flush()
+        let images = FakeImages()
+        let painter = ResolvedNodePainter(images: images, scale: 1, text: fake, log: { _ in })
+        let node = try XCTUnwrap(flatten(try XCTUnwrap(graph.snapshot())).first { $0.kind == "Text" })
+        let f = node.pixelFrame
+        let bounds = Rect(x: Float(f.x), y: Float(f.y), w: Float(f.width), h: Float(f.height))
+        let turn = ShapeRotation(radians: .pi / 4, anchorX: Double(bounds.x + bounds.w / 2), anchorY: Double(bounds.y + bounds.h / 2))
+        painter.beginCommit()
+        let out = try painter.emit(node, id: 1, bounds: bounds, rotations: [turn])
+        painter.endCommit(committed: true)
+        return (out, images, painter)
+    }
+
+    func testRotatedTextIsFilledFromItsOutline() throws {
+        let fake = StyledFake(); fake.squareOutlines = true
+        let (out, images, painter) = try emitRotated(fake)
+        XCTAssertEqual(out.primitives.count, 1)
+        guard case .image(let handle, _, _)? = out.primitives.first, let entry = images.registered[handle.raw] else { return XCTFail("no bitmap") }
+        let coverage = stride(from: 3, to: entry.rgba.count, by: 4).reduce(0.0) { $0 + Double(entry.rgba[$1]) / 255 }
+        XCTAssertEqual(coverage, 100, accuracy: 3, "the 10 x 10 square keeps its area when turned")
+        XCTAssertGreaterThan(entry.width, 12, "a square turned 45 degrees is wider than it was")
+        XCTAssertEqual(painter.rotationLimitationCount, 0)
+        XCTAssertEqual(out.semantic?.label, "Hi")
+    }
+
+    func testWithoutOutlinesTheRunStaysAndIsReported() throws {
+        let (out, _, painter) = try emitRotated(StyledFake())
+        guard case .text? = out.primitives.first else { return XCTFail("the run is kept") }
+        XCTAssertEqual(painter.rotationLimitationCount, 1)
+    }
+}

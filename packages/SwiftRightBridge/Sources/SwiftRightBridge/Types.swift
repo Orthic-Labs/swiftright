@@ -65,6 +65,13 @@ public struct NodeFlags: OptionSet {
 
 /// Retained shaped-text handle returned by `Bridge.measure`. Release it explicitly with
 /// `Bridge.release(_:)` (owner frees). Opaque, generation-tagged.
+/// Glyph outlines of a text run (rev 0.14, #69): `commands` are 0 move, 1 line, 2 quad, 3 cubic, 4 close (1, 1, 2, 3 and 0 points); `points` are x, y pairs in run px.
+public struct TextOutline: Equatable {
+    public var commands: [UInt8]
+    public var points: [Float]
+    public init(commands: [UInt8], points: [Float]) { self.commands = commands; self.points = points }
+}
+
 public struct TextRunHandle: Hashable {
     public let raw: UInt64
     public init(raw: UInt64) { self.raw = raw }

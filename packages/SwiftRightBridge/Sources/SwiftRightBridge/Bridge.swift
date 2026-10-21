@@ -81,6 +81,26 @@ public final class Bridge {
     /// Rev 0.13 (issue #60): the renderer reads the accessibility extras table (`SemanticNode.extras`: hint, value, description, heading and
     /// link traits). False on a 0.6 to 0.12 renderer: the extras are then not sent and the element is published as before.
     public var supportsAccessibilityExtras: Bool { revision >= .v13 }
+    /// Rev 0.14 (#69): `swr_text_run_outline`, the glyph outlines of a measured run; nil on an older renderer.
+    public typealias TextRunOutlineFn = @convention(c) (UInt64, UnsafeMutablePointer<UInt8>?, UInt32, UnsafeMutablePointer<Float>?, UInt32,
+                                                        UnsafeMutablePointer<UInt32>?, UnsafeMutablePointer<UInt32>?) -> Int32
+    var textRunOutline: TextRunOutlineFn?
+    /// The renderer returns glyph outlines for text runs (`outline(of:)`), so the host can rotate text itself.
+    public var supportsTextOutlines: Bool { textRunOutline != nil }
+
+    /// The glyph outlines of a retained run (rev 0.14, #69): physical px of the run, origin at its top-left, y down, nonzero fill. Emoji are not included.
+    public func outline(of run: TextRunHandle) throws -> TextOutline {
+        guard let fn = textRunOutline else { throw BridgeError.status(-3, "text_run_outline") }
+        var nc: UInt32 = 0, np: UInt32 = 0
+        var rc = fn(run.raw, nil, 0, nil, 0, &nc, &np)
+        if rc != 0 { throw BridgeError.status(rc, "swr_text_run_outline") }
+        var cmds = [UInt8](repeating: 0, count: Int(nc)), pts = [Float](repeating: 0, count: Int(np) * 2)
+        let cc = nc, pc = np
+        rc = cmds.withUnsafeMutableBufferPointer { c in pts.withUnsafeMutableBufferPointer { p in fn(run.raw, c.baseAddress, cc, p.baseAddress, pc, &nc, &np) } }
+        if rc != 0 { throw BridgeError.status(rc, "swr_text_run_outline") }
+        guard nc == cc, np == pc else { throw BridgeError.status(-3, "swr_text_run_outline changed size between calls") }
+        return TextOutline(commands: cmds, points: pts)
+    }
     /// The explicit render scale `run` was given, nil when the window's DPI decides. Set by `run` before the window opens.
     public internal(set) var renderScale: Float?
 
