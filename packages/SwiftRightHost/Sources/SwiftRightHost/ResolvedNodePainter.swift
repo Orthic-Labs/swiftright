@@ -554,7 +554,7 @@ public final class ResolvedNodePainter {
                         if let runs = node.styledText?.runs { fontPoints = max(fontPoints, runs.map { Self.pointSize(of: $0.font) }.max() ?? 0) }
                         region = ClipMask.inkRegion(bounds, fontPx: fontPoints * scale)
                     }
-                    if case .image(_, let r, _) = primitive, !Self.isShapeKind(node.kind), node.kind != "Gradient" { region = r }
+                    if case .image(_, let r, _) = primitive, !Self.isShapeKind(node.kind), node.kind != "Gradient", node.kind != "Image" { region = r }
                     if let region {
                         // Rev 0.12 (#53): the renderer's nested path clips cut the same row bands from the masks' paths over text and bitmaps alike (view.rs `Prim::ClipPath` bounds every
                         // primitive up to its `clipPop`), so the host builds no bands there and only classifies the region (all / none / partial). Host bands are the fallback for an older renderer.
@@ -909,7 +909,11 @@ public final class ResolvedNodePainter {
             return NodeEmission(primitives: [.image(handle, placement)], semantic: nil, flags: [], structural: false)
 
         case "Image":
-            if ShapeRotation.isRotated(rotations) { return try rotatedImageEmission(node, bounds: bounds, id: id, transform: ShapeRotation.combined(rotations)) }
+            // #76: an Image under a curved clip is resampled on the host (identity transform) with the clip's anti-aliased coverage multiplied in, instead of the renderer's
+            // rectangular bands or path clip (a 1 px staircase).
+            if ShapeRotation.isRotated(rotations) || !clipMasks.isEmpty {
+                return try rotatedImageEmission(node, bounds: bounds, id: id, transform: ShapeRotation.isRotated(rotations) ? ShapeRotation.combined(rotations) : .identity)
+            }
             if case .pixels(let image, _)? = node.image {
                 return NodeEmission(primitives: [try pixelImagePrimitive(node, image, bounds: bounds, id: id)],
                                     semantic: SemanticNode(role: .image, label: node.accessibility.label ?? "", identifier: node.id,

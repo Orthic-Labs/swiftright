@@ -114,4 +114,26 @@ final class ClipShapeTextTests: XCTestCase {
         let partial = stride(from: 3, to: entry.rgba.count, by: 4).filter { entry.rgba[$0] > 0 && entry.rgba[$0] < 255 }.count
         XCTAssertGreaterThan(partial, 0, "an anti-aliased edge has partial coverage")
     }
+
+    // Issue #76: an Image under a curved clip is one bitmap with the clip's anti-aliased coverage in its alpha, not a renderer clip around a shared bitmap.
+    @MainActor
+    func testImageUnderACurvedClipIsAMaskedBitmap() throws {
+        let src = RGBAImage(width: 60, height: 60, rgba: [UInt8](repeating: 200, count: 60 * 60 * 4))!
+        let images = FakeImages()
+        let painter = ResolvedNodePainter(images: images, scale: 1, log: { _ in })
+        painter.usesRendererPaths = true
+        let graph = Graph(Image(decorative: src, scale: 1).resizable().frame(width: 60, height: 60).clipShape(Circle()), scale: 1)
+        graph.rootProposal = ProposedViewSize(width: 200, height: 200)
+        graph.flush()
+        var upserts: [NodeUpsert] = []
+        _ = try painter.commit(root: try XCTUnwrap(graph.snapshot()), version: 1, previousLive: [], submit: { upserts = $0.upserts })
+        let prims = upserts.flatMap { $0.primitives }
+        XCTAssertFalse(prims.contains { if case .clipPath = $0 { return true } else { return false } })
+        let bitmaps = prims.compactMap { p -> ImageHandle? in if case .image(let h, _, _) = p { return h } else { return nil } }
+        XCTAssertEqual(bitmaps.count, 1)
+        let rgba = try XCTUnwrap(images.registered[bitmaps[0].raw]).rgba
+        let alphas = stride(from: 3, to: rgba.count, by: 4).map { Int(rgba[$0]) }
+        XCTAssertEqual(alphas.filter { $0 == 0 }.count > 100, true, "the corners are outside the circle")
+        XCTAssertGreaterThan(alphas.filter { $0 > 0 && $0 < 255 }.count, 20, "the rim is anti-aliased")
+    }
 }
