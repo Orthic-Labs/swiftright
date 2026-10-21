@@ -125,9 +125,11 @@ struct HostPlacement {
             // Bundled fonts register before the first measurement and are verified to resolve to the registered bytes.
             let fonts = BundledFontLibrary(bridge: bridge)
             if let dir = hostBundledFontDirectory() {
+                var familyHandles: [String: [UInt64]] = [:]   // #78: several faces share one family name; the family resolves to one of the faces registered so far
                 for registration in try fonts.registerAll(in: dir) {
                     let resolved = try bridge.resolveFont(family: registration.family)
-                    guard resolved.source == .bundled, resolved.handle == registration.handle else {
+                    familyHandles[registration.family, default: []].append(registration.handle)
+                    guard resolved.source == .bundled, familyHandles[registration.family]!.contains(resolved.handle) else {
                         throw NSError(domain: "HostBundledFontNotResolved", code: 1, userInfo: [NSLocalizedDescriptionKey: "\(registration.family): \(resolved.source)"])
                     }
                     print("HOST_BUNDLED_FONT family=\(registration.family) weight=\(registration.weight) faces=\(registration.faceCount) sha256=sha256:\(registration.sha256Hex) abi=\(bridge.revision) resolve=\(resolved.source)")
