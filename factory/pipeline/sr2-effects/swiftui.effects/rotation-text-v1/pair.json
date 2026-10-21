@@ -3,10 +3,26 @@
   "--fonts",
   "{repo}/factory/resources/fonts/Tinos-Regular.ttf"
  ],
- "edgeAATolerance": {
-  "levels": 160,
-  "maxOverFraction": 0.08,
-  "maxMeanAbs": 6,
-  "reason": "PROVISIONAL (issue #69): not yet measured on a CI pair. Same Tinos outlines on both sides; Mac CoreText draws rotated glyphs with its own rasterizer, Windows fills the ttf-parser outlines with the host PathRasterizer (unhinted both). Fit from the first run."
- }
+ "textGate": {
+  "helper": "factory/tools/pair_text_report.py",
+  "rect": [
+   255,
+   128,
+   535,
+   457
+  ],
+  "edgeTolerancePx": 1,
+  "ink": "half-coverage (luminance<=127)"
+ },
+ "excludeRects": [
+  {
+   "name": "rotated glyph region (Tinos, same font bytes): AA only, CoreText rasterizer vs host PathRasterizer over ttf-parser outlines (Mac ink about 12% heavier; best sub-pixel shift -0.6 px x). Gated by pair_text_report.py: exact outside, half-coverage ink bbox within 1 px. CI 39619303218 recomputed: bbox mac=win=[265,139,523,444], delta 0, outside diff 0, 3/3.",
+   "rect": [
+    255,
+    128,
+    535,
+    457
+   ]
+  }
+ ]
 }
