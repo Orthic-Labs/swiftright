@@ -545,6 +545,9 @@ public final class ResolvedNodePainter {
                 guard case .rect(let r, let color, let radius, let borderColor, let borderWidth) = primitive, !clipMasks.allSatisfy({ $0.covers(r) }) || offGrid(r) else {
                     // A text run or a bitmap (drawn by the renderer, which clips by rectangles) is drawn once per band of the clip's inside (#43). A text run's region is its frame grown
                     // by the ink allowance (`ClipMask.inkExpansionEm`), so overhang past the frame is cut by the mask and not by the frame (#53).
+                    // #76: a text run under a curved clip is drawn by the host from its glyph outlines (renderer rev 0.14) with the clip's anti-aliased coverage multiplied in,
+                    // instead of the renderer's rectangular bands or path clip (a 1 px staircase). Needs the outlines; without them the run falls through to the clip below.
+                    if case .text = primitive, let aa = try antialiasedClippedText(primitive, id: id, index: index) { out.append(aa); continue }
                     var region: Rect?
                     if case .text = primitive {
                         var fontPoints = Self.pointSize(of: node.style.font)
@@ -1004,6 +1007,20 @@ public final class ResolvedNodePainter {
             out.append(.image(handle, placement))
         }
         return out
+    }
+
+    /// One text run filled from its outline at its origin, in the colour it was shaped in, with every active clip mask multiplied into its alpha (#76). Nil when the source has no outline.
+    private func antialiasedClippedText(_ primitive: Primitive, id: UInt64, index: Int) throws -> Primitive? {
+        guard let text, case .text(let run, let x, let y) = primitive, let (outline, color) = text.outline(of: run), !outline.commands.isEmpty else { return nil }
+        let placed = CGAffineTransform(translationX: CGFloat(x), y: CGFloat(y))
+        guard let raster = try PathRasterizer.rasterize(path: Self.path(outline, scale: scale), transform: placed, scale: CGFloat(scale), fillRGBA: color) else { return nil }
+        let placement = Rect(x: Float(raster.originX) + imageGuardBand, y: Float(raster.originY) + imageGuardBand,
+                             w: Float(raster.image.width) - 2 * imageGuardBand, h: Float(raster.image.height) - 2 * imageGuardBand)
+        let handle = try registerRGBA(masked(raster.image, placement: placement))
+        let key = id | (UInt64(0x400 + index) << 48)
+        if let stale = pendingShapeImages[key] { _ = images.release(stale) }
+        pendingShapeImages[key] = handle
+        return .image(handle, placement)
     }
 
     /// A run outline (run px) as a Path in points.

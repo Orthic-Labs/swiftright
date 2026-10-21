@@ -92,4 +92,26 @@ final class ClipShapeTextTests: XCTestCase {
         // frame was 53 pt out and the margin reached the circle (#53): ink could genuinely overhang that far, so that placement draws.
         XCTAssertEqual(textCount(p), 0)
     }
+
+    // Issue #76: a text run under a curved clip is filled from its outline with the clip's anti-aliased coverage, as a bitmap, instead of the renderer's band or path clip.
+    @MainActor
+    func testTextUnderACurvedClipIsAnAntialiasedBitmapWhenOutlinesExist() throws {
+        let fake = StyledFake(); fake.squareOutlines = true
+        let images = FakeImages()
+        let painter = ResolvedNodePainter(images: images, scale: 2.5, text: fake, log: { _ in })
+        painter.usesRendererPaths = true
+        let graph = Graph(Text("Hello").frame(width: 60, height: 40).clipShape(Circle()), measurer: fake, scale: 2.5)
+        graph.rootProposal = ProposedViewSize(width: 320, height: 240)
+        graph.flush()
+        var upserts: [NodeUpsert] = []
+        _ = try painter.commit(root: try XCTUnwrap(graph.snapshot()), version: 1, previousLive: [], submit: { upserts = $0.upserts })
+        let prims = upserts.flatMap { $0.primitives }
+        XCTAssertFalse(prims.contains { if case .text = $0 { return true } else { return false } }, "the run is drawn as a bitmap")
+        XCTAssertFalse(prims.contains { if case .clipPath = $0 { return true } else { return false } }, "no renderer clip around it")
+        let bitmaps = prims.compactMap { p -> ImageHandle? in if case .image(let h, _, _) = p { return h } else { return nil } }
+        XCTAssertEqual(bitmaps.count, 1)
+        let entry = try XCTUnwrap(images.registered[bitmaps[0].raw])
+        let partial = stride(from: 3, to: entry.rgba.count, by: 4).filter { entry.rgba[$0] > 0 && entry.rgba[$0] < 255 }.count
+        XCTAssertGreaterThan(partial, 0, "an anti-aliased edge has partial coverage")
+    }
 }
