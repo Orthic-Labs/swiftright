@@ -615,12 +615,37 @@ public final class ResolvedNodePainter {
         return NodeEmission(primitives: primitives, semantic: semantic, flags: [], structural: false)
     }
 
+    /// #55: a Text mid `.contentTransition(.numericText())` roll. Each glyph is its own natural-size run at its resolved offset, its alpha scaled by the glyph's opacity,
+    /// and the node is clipped to its line box vertically (widened sideways so a digit that enters from the left of a growing frame is not cut).
+    private func emitNumericRoll(_ node: ResolvedNode, _ roll: ResolvedNumericRoll, label: String, bounds: Rect, textColor: UInt32?) throws -> NodeEmission {
+        guard let text else { throw HostPaintError.unsupportedNode("Text (no text measurer)") }
+        let scheme = node.style.colorScheme
+        let inherited = textColor.map { ($0 & 0xffffff00) | UInt32((Double($0 & 255) * node.opacity).rounded()) }
+        let base = adjusted(try node.style.foreground.map { try HostPaint.rgba($0, opacity: node.opacity, scheme: scheme) } ?? inherited
+            ?? HostPaint.rgba(.semantic("label"), opacity: node.opacity, scheme: scheme))
+        let pixel = baseScale
+        var primitives: [Primitive] = []
+        for glyph in roll.glyphs where glyph.opacity > 0 && glyph.text != " " {
+            let alpha = UInt32((Double(base & 255) * min(max(glyph.opacity, 0), 1)).rounded())
+            let color = (base & 0xffffff00) | alpha
+            guard let natural = try text.fragmentRun(text: glyph.text, font: node.style.font, style: nil, color: color) else {
+                throw HostPaintError.measuredRunGeometryMismatch(glyph.text)
+            }
+            primitives.append(.text(natural.run, x: (bounds.x + Float(glyph.x) * pixel).rounded(), y: (bounds.y + Float(glyph.y) * pixel).rounded()))
+        }
+        var emission = NodeEmission(primitives: primitives, semantic: SemanticNode(role: .staticText, label: label, identifier: node.id, disabled: !node.accessibility.isEnabled),
+                                    flags: [], structural: false)
+        emission.clipTo = Rect(x: bounds.x - bounds.h, y: bounds.y, w: bounds.w + 2 * bounds.h, h: bounds.h)
+        return emission
+    }
+
     private func emitContent(_ node: ResolvedNode, id: UInt64, bounds: Rect, textColor: UInt32?, rotations: [ShapeRotation]) throws -> NodeEmission {
         switch node.kind {
         case "Text":
             if let styled = node.styledText { return try emitStyledText(node, styled, bounds: bounds, textColor: textColor) }
             guard let string = node.text, !string.isEmpty else { return NodeEmission(primitives: [], semantic: nil, flags: [], structural: false) }
             guard let text else { throw HostPaintError.unsupportedNode("Text (no text measurer)") }
+            if let roll = node.numericRoll, textScaleFactor == 1 { return try emitNumericRoll(node, roll, label: string, bounds: bounds, textColor: textColor) }
             // Opacity is baked into the text run's colour alpha (the run is created per presented opacity, so an animated fade re-measures each frame).
             // A text without its own colour fades the primary label colour.
             let inherited = textColor.map { ($0 & 0xffffff00) | UInt32((Double($0 & 255) * node.opacity).rounded()) }

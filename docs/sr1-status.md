@@ -390,7 +390,7 @@ Each gate's measurements are in its pair.json. Oracle PASS-WITH-CAVEATS; the Gro
 - **Implementation:** a one-line Text under `.scaleEffect` is shaped at its point size × the factor and placed at its scaled origin. The size is floored to half points within the 9–40 pt table, and text styles use their macOS size. The baseline lands at factor × the unscaled baseline.
 - **Evidence:** CI run 39420788106 at 3105dfaf4 passed scale-text-v1 20/20. That case is digits-v1's four rows at ×1.5. Its text regions, exclusions and position tolerances are scaled about the anchor, and its accessibility bounds tolerance is 0.25 pt, because UIA reports whole pixels while macOS frames fall on half pixels.
 - **Fallback:** wrapped text, custom fonts and sizes outside the table keep their measured size, centred, and are counted.
-- **Known difference:** at 33 pt the Windows font switches to its Display optical size.
+- **Known difference:** at 33 pt the Windows font switches to its Display optical size. This is intended (nearest Segoe instance by log distance, decision G70; SF is already near its Display optical size there): docs/sr2-plan.md, issue #55.
 
 ## 21 October: text and bitmaps under a curved clip (#43)
 - **Change:** a text run or bitmap under a non-rectangular `clipShape` is drawn once per band of the clip's inside. Rows with the same inside spans are merged, and each span is a renderer rect clip. This is exact clipping with a one-pixel staircase where SwiftUI anti-aliases, and needs no ABI change (ABI 0.12 is still deferred).

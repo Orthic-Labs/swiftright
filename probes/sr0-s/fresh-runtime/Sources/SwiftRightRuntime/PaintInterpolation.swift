@@ -17,10 +17,16 @@ import Foundation
 struct PaintValues: Equatable, Sendable {
     var color: ResolvedColor?
     var lineWidth: Double?
+    /// A Text under `.contentTransition(.numericText())`: the number of text changes it has seen. An animated change moves this by one, so its presented value
+    /// between the two counts is the progress of the digit roll (`NumericTextRoll.swift`). Nil on every other node.
+    var roll: Double?
+
+    init(color: ResolvedColor?, lineWidth: Double?, roll: Double? = nil) { self.color = color; self.lineWidth = lineWidth; self.roll = roll }
 
     static func mix(_ a: PaintValues?, _ b: PaintValues?, _ t: Double) -> PaintValues? {
         guard let a, let b else { return b }
         var out = b
+        if let ra = a.roll, let rb = b.roll { out.roll = ra + (rb - ra) * t }
         if let ca = a.color, let cb = b.color { out.color = ResolvedColor.interpolated(ca, cb, t) }
         if let wa = a.lineWidth, let wb = b.lineWidth { out.lineWidth = max(0, wa + (wb - wa) * t) }   // an overshooting spring never draws a negative width
         return out
@@ -30,7 +36,8 @@ struct PaintValues: Equatable, Sendable {
     static func distance(_ a: PaintValues?, _ b: PaintValues?) -> (color: Double, lineWidth: Double) {
         guard let a, let b else { return (0, 0) }
         var color = 0.0, width = 0.0
-        if let ca = a.color, let cb = b.color { color = ResolvedColor.distance(ca, cb) }
+        if let ra = a.roll, let rb = b.roll { color = abs(rb - ra) }   // a roll settles like a unit change of an opacity-like value
+        if let ca = a.color, let cb = b.color { color = max(color, ResolvedColor.distance(ca, cb)) }
         if let wa = a.lineWidth, let wb = b.lineWidth { width = abs(wb - wa) }
         return (color, width)
     }

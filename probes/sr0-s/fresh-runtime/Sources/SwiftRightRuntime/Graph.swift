@@ -660,6 +660,16 @@ final class Node {
     var snapPaint: PaintValues?
     /// The node's evaluated paint (its animation target): a shape's explicit colour and stroke width, a `Color` view's colour, else the foreground style.
     var targetPaint: PaintValues? {
+        var paint = basePaint
+        if let roll = numericRoll {
+            if paint == nil { paint = PaintValues(color: nil, lineWidth: nil) }
+            paint?.roll = Double(roll.serial)
+        }
+        return paint
+    }
+    /// A Text's numeric-text roll state (`NumericTextRoll.swift`); nil unless `.contentTransition(.numericText…)` is in effect.
+    var numericRoll: NumericRollState?
+    private var basePaint: PaintValues? {
         switch kind {
         case .shape(let resolved):
             if let p = resolved.paint {
@@ -934,6 +944,9 @@ public struct ResolvedNode: Equatable, Sendable {
     public var tint: ResolvedColor? = nil
     /// Gradient nodes only (#60): the stops and geometry the host rasterises into a bitmap of the node's frame.
     public var gradient: ResolvedGradient? = nil
+    /// Text nodes under `.contentTransition(.numericText…)` only, while an animated text change is rolling (#55): each glyph of the old and new text with its offset
+    /// and opacity. The host paints these instead of `text`. Nil otherwise (the node is then plain text).
+    public var numericRoll: ResolvedNumericRoll? = nil
 }
 
 /// What `.clipShape(_:style:)` asks of its subtree: paint only inside `geometry` laid out in the modifier node's frame.
@@ -2386,6 +2399,7 @@ public final class Graph {
     /// Collects the nodes whose layout target (frame or target opacity) differs from the previous commit's, and records the
     /// new targets as the baseline for the next.
     private func collectChanged(_ node: Node, into out: inout [Node]) {
+        updateNumericRoll(node)
         let geometry = node.targetGeometry
         let scale = node.targetScale
         let paint = node.targetPaint
@@ -2593,6 +2607,7 @@ public final class Graph {
             styledText: styledText(of: node)
         )
         resolvedNode.gradient = gradient
+        resolvedNode.numericRoll = resolveNumericRoll(node, style: style, text: text)
         // #54: a control reads the environment's tint where it paints its accent (a prominent Button's fill, a Toggle's on state, a Slider's fill).
         switch kind {
         case .button, .toggle, .slider: resolvedNode.tint = node.environment.tint

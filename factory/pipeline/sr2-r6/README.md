@@ -8,6 +8,6 @@ Gate: F-path edge statistics. Text and bitmaps under a non-rectangular clip are 
 
 **Adapted, no pixel case:**
 - `glassEffect` / `Glass`: no material on Windows, where the Pulse notch is solid.
-- `contentTransition(.numericText())`: swaps at once.
+- `contentTransition(.numericText())`: rolls the changed digits inside an animation transaction (#55, factory/pipeline/sr2-adapted); other transitions swap at once.
 
 On the Mac they draw a material and a per-glyph roll that Windows deliberately does not, so a Mac-vs-Windows comparison would only measure the adaptation. Their APIs compile against both SwiftUI and the runtime.
