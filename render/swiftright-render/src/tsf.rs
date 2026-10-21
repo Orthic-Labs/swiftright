@@ -257,12 +257,32 @@ struct TextStore {
 
 impl TextStore {
     /// Replaces [start, end) with `text`; marked while a composition is active, committed otherwise.
+    /// The host's replace_and_mark marks only the text it inserts and commits the rest of the old composition, while a TSF
+    /// composition spans every edit the IME made (Dell F7live ime33-tsf3: "ni" then "h" committed the hiragana). So an edit
+    /// that touches the marked range re-marks the merged range: marked text before the edit + `text` + marked text after it.
     fn edit(&self, start: u32, end: u32, text: &[u16]) -> windows::core::Result<TS_TEXTCHANGE> {
-        let marking = self.st.composing.get() || view::tsf_host_marked().is_some();
+        let marked = view::tsf_host_marked();
+        let marking = self.st.composing.get() || marked.is_some();
         let n = text.len() as u32;
         let ok = if marking {
-            view::tsf_host_replace_and_mark(Some((start, end)), text, Some((n, n)))
+            let (ms, me) = match marked {
+                Some((ms, me)) if start <= me && end >= ms => (ms.min(start), me.max(end)),
+                _ => (start, end),
+            };
+            let piece = |a: u32, b: u32| if a < b { view::tsf_host_text(a, b).map(|t| t.0) } else { Some(Vec::new()) };
+            match (piece(ms, start), piece(end, me)) {
+                (Some(pre), Some(post)) => {
+                    let mut full = pre;
+                    full.extend_from_slice(text);
+                    full.extend_from_slice(&post);
+                    let caret = (start - ms) + n;
+                    tsf_log_capped!("tsf_edit marked range={start},{end} n={n} mark={ms},{me} mark_len={}", full.len());
+                    view::tsf_host_replace_and_mark(Some((ms, me)), &full, Some((caret, caret)))
+                }
+                _ => false,
+            }
         } else {
+            tsf_log_capped!("tsf_edit commit range={start},{end} n={n}");
             view::tsf_host_replace(Some((start, end)), text)
         };
         if !ok {
