@@ -1,0 +1,51 @@
+{
+ "semanticGate": {
+  "fields": [
+   "role",
+   "name",
+   "count",
+   "order",
+   "bounds"
+  ],
+  "scope": "main",
+  "phases": [
+   "start",
+   ""
+  ],
+  "boundsTolerancePt": 0.05
+ },
+ "phaseShots": [
+  "start"
+ ],
+ "hazeTolerance": 4,
+ "edgeAATolerance": {
+  "levels": 4,
+  "reason": "PROVISIONAL (issue #61): not yet measured on a CI pair; fit from the first run. unmeasured: WIC transform against CoreGraphics on a grey kTRC profile; 4 levels is a placeholder"
+ },
+ "steps": [
+  {
+   "op": "wait",
+   "ms": 700
+  },
+  {
+   "op": "dump",
+   "label": "start"
+  },
+  {
+   "op": "wait",
+   "ms": 250
+  },
+  {
+   "op": "shot",
+   "label": "start"
+  },
+  {
+   "op": "wait",
+   "ms": 200
+  }
+ ],
+ "macArgs": [
+  "--steps",
+  "[{\"op\":\"wait\",\"ms\":700},{\"op\":\"dump\",\"label\":\"start\"},{\"op\":\"wait\",\"ms\":250},{\"op\":\"shot\",\"label\":\"start\"},{\"op\":\"wait\",\"ms\":200}]"
+ ]
+}
