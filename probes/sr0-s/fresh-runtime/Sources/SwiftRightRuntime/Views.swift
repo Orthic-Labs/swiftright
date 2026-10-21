@@ -114,7 +114,7 @@ extension ConditionalContent: ViewContainer {
     }
 }
 
-@MainActor
+@MainActor @preconcurrency
 @resultBuilder
 public struct ViewBuilder {
     public static func buildBlock() -> EmptyView { EmptyView() }

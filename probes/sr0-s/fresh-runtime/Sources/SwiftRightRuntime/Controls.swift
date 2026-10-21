@@ -178,10 +178,10 @@ public struct Image: View, PrimitiveView {
     }
 
     /// Apple: https://developer.apple.com/documentation/swiftui/image/init(systemname:)
-    public init(systemName: String) { reference = .system(systemName) }
+    nonisolated public init(systemName: String) { reference = .system(systemName) }
 
     /// Apple: https://developer.apple.com/documentation/swiftui/image/init(_:)
-    public init(_ name: String) { reference = .named(name) }
+    nonisolated public init(_ name: String) { reference = .named(name) }
 
     /// Draws decoded pixels. The intrinsic size is the pixel size divided by `scale` (points); the image is not resizable until `.resizable()`.
     /// Apple: https://developer.apple.com/documentation/swiftui/image/init(decorative:scale:orientation:)
@@ -190,7 +190,7 @@ public struct Image: View, PrimitiveView {
 
     /// Lets image content resize to proposed dimensions.
     /// Apple: https://developer.apple.com/documentation/swiftui/image/resizable(capInsets:resizingMode:)
-    public func resizable(capInsets: EdgeInsets = EdgeInsets(), resizingMode: ResizingMode = .stretch) -> Self {
+    nonisolated public func resizable(capInsets: EdgeInsets = EdgeInsets(), resizingMode: ResizingMode = .stretch) -> Self {
         var image = self
         image.capInsets = capInsets
         image.resizingMode = resizingMode

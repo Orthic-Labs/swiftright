@@ -1,0 +1,49 @@
+diff --git a/Sources/MarkdownUI/Extensibility/AssetImageProvider.swift b/Sources/MarkdownUI/Extensibility/AssetImageProvider.swift
+index abeb003..e2dba20 100644
+--- a/Sources/MarkdownUI/Extensibility/AssetImageProvider.swift
++++ b/Sources/MarkdownUI/Extensibility/AssetImageProvider.swift
+@@ -28,6 +28,15 @@ public struct AssetImageProvider: ImageProvider {
+     self.bundle = bundle
+   }
+ 
++  #if SWIFTRIGHT
++    // SwiftRight (Windows): no UIKit/AppKit image type; asset images resolve by name through Image(_:bundle:label:).
++    public func makeImage(url: URL?) -> some View {
++      if let url = url {
++        Image(self.name(url), bundle: self.bundle, label: Text(self.name(url)))
++          .resizable()
++      }
++    }
++  #else
+   public func makeImage(url: URL?) -> some View {
+     if let url = url, let image = self.image(url: url) {
+       ResizeToFit(idealSize: image.size) {
+@@ -48,6 +57,7 @@ public struct AssetImageProvider: ImageProvider {
+       }
+     #endif
+   }
++  #endif
+ }
+ 
+ extension ImageProvider where Self == AssetImageProvider {
+@@ -59,12 +69,14 @@ extension ImageProvider where Self == AssetImageProvider {
+   }
+ }
+ 
+-#if canImport(UIKit)
++#if SWIFTRIGHT
++#elseif canImport(UIKit)
+   private typealias PlatformImage = UIImage
+ #elseif canImport(AppKit)
+   private typealias PlatformImage = NSImage
+ #endif
+ 
++#if !SWIFTRIGHT
+ extension Image {
+   fileprivate init(platformImage: PlatformImage) {
+     #if canImport(UIKit)
+@@ -74,3 +86,4 @@ extension Image {
+     #endif
+   }
+ }
++#endif
