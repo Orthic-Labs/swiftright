@@ -23,7 +23,8 @@ use windows::Win32::System::Com::{
 use windows::Win32::UI::TextServices::{
     CLSID_TF_ThreadMgr, ITextStoreACP, ITextStoreACPSink, ITextStoreACP_Impl, ITfCompositionView, ITfContext,
     ITfContextOwnerCompositionServices, ITfContextOwnerCompositionSink, ITfContextOwnerCompositionSink_Impl,
-    ITfDocumentMgr, ITfRange, ITfThreadMgr, TEXT_STORE_LOCK_FLAGS, TEXT_STORE_TEXT_CHANGE_FLAGS, TS_ATTRVAL, TS_LC_CHANGE, TS_RUNINFO, TS_RT_PLAIN,
+    ITfCandidateListUIElement, ITfDocumentMgr, ITfRange, ITfSource, ITfThreadMgr, ITfUIElementMgr, ITfUIElementSink,
+    ITfUIElementSink_Impl, TEXT_STORE_LOCK_FLAGS, TEXT_STORE_TEXT_CHANGE_FLAGS, TS_ATTRVAL, TS_LC_CHANGE, TS_RUNINFO, TS_RT_PLAIN,
     TS_SELECTIONSTYLE, TS_SELECTION_ACP, TS_STATUS, TS_TEXTCHANGE, TS_AE_END, TS_AE_START,
 };
 
@@ -717,6 +718,54 @@ impl ITfContextOwnerCompositionSink_Impl for TextStore_Impl {
     }
 }
 
+// ------------------------------------------------------------------------------------------------ candidate UI evidence
+
+/// Thread-manager UI element sink. Shows every IME UI (pbShow stays TRUE) and, for a candidate list while the store owns the
+/// window's input, writes the same `ime_cand` line the IMM path writes at IMN_OPENCANDIDATE / IMN_CHANGECANDIDATE.
+#[implement(ITfUIElementSink)]
+struct UiSink {
+    st: Rc<State>,
+}
+
+impl UiSink {
+    fn note(&self, id: u32, event: &str) {
+        if !self.st.associated.get() {
+            return;
+        }
+        let cand = UIMGR.with(|u| {
+            let u = u.borrow();
+            let mgr = u.as_ref()?;
+            let el = unsafe { mgr.GetUIElement(id).ok()? };
+            el.cast::<ITfCandidateListUIElement>().ok().map(|_| ())
+        });
+        tsf_log_capped!("tsf_ui_element event={event} id={id} candidate_list={}", cand.is_some());
+        if cand.is_some() {
+            view::log_candidate_ui(self.st.hwnd_ptr(), event);
+        }
+    }
+}
+
+#[allow(non_snake_case)]
+impl ITfUIElementSink_Impl for UiSink_Impl {
+    fn BeginUIElement(&self, dwuielementid: u32, pbshow: *mut BOOL) -> windows::core::Result<()> {
+        if !pbshow.is_null() {
+            unsafe { *pbshow = BOOL(1) };
+        }
+        self.note(dwuielementid, "open");
+        Ok(())
+    }
+
+    fn UpdateUIElement(&self, dwuielementid: u32) -> windows::core::Result<()> {
+        self.note(dwuielementid, "change");
+        Ok(())
+    }
+
+    fn EndUIElement(&self, dwuielementid: u32) -> windows::core::Result<()> {
+        tsf_log_capped!("tsf_ui_element event=end id={dwuielementid}");
+        Ok(())
+    }
+}
+
 // ------------------------------------------------------------------------------------------------ owner (UI thread)
 
 /// The COM handles. Only `sync` and `teardown` touch it; everything the store callbacks need lives in `State`.
@@ -727,9 +776,13 @@ struct Tsf {
     st: Rc<State>,
     hwnd: *mut c_void,
     com_balance: bool,
+    /// ITfSource cookie of the UI element sink (candidate list open/update evidence), 0 when not advised.
+    ui_cookie: u32,
 }
 
 thread_local! {
+    /// The thread manager's UI element manager, read by the UI element sink (kept out of the sink to avoid a reference cycle).
+    static UIMGR: RefCell<Option<ITfUIElementMgr>> = const { RefCell::new(None) };
     static TSF: RefCell<Option<Tsf>> = const { RefCell::new(None) };
     /// The state of the live store, readable by the notification entry points without touching the `TSF` borrow.
     static CUR: RefCell<Option<Rc<State>>> = const { RefCell::new(None) };
@@ -766,7 +819,21 @@ fn init(hwnd: *mut c_void) -> Result<Tsf, (&'static str, u32)> {
         Ok((tm, dm, ctx))
     })();
     match built {
-        Ok((tm, dm, ctx)) => Ok(Tsf { tm: Some(tm), dm: Some(dm), ctx: Some(ctx), st, hwnd, com_balance }),
+        Ok((tm, dm, ctx)) => {
+            // Candidate list evidence: TSF IMEs report their candidate UI through ITfUIElementSink, not IMN_OPENCANDIDATE.
+            let mut ui_cookie = 0u32;
+            if let (Ok(src), Ok(mgr)) = (tm.cast::<ITfSource>(), tm.cast::<ITfUIElementMgr>()) {
+                let sink: ITfUIElementSink = UiSink { st: st.clone() }.into();
+                match unsafe { src.AdviseSink(&ITfUIElementSink::IID, &sink) } {
+                    Ok(c) => {
+                        ui_cookie = c;
+                        UIMGR.with(|u| *u.borrow_mut() = Some(mgr));
+                    }
+                    Err(e) => tsf_log!("tsf_ui_sink_failed hr=0x{:08X}", e.code().0 as u32),
+                }
+            }
+            Ok(Tsf { tm: Some(tm), dm: Some(dm), ctx: Some(ctx), st, hwnd, com_balance, ui_cookie })
+        }
         Err(e) => {
             if let Some(t) = activated.take() {
                 let _ = unsafe { t.Deactivate() };
@@ -837,6 +904,13 @@ impl Tsf {
         *self.st.sink.borrow_mut() = None;
         self.st.mask.set(0);
         drop(self.ctx.take());
+        UIMGR.with(|u| *u.borrow_mut() = None);
+        if self.ui_cookie != 0 {
+            if let Some(src) = self.tm.as_ref().and_then(|t| t.cast::<ITfSource>().ok()) {
+                let _ = unsafe { src.UnadviseSink(self.ui_cookie) };
+            }
+            self.ui_cookie = 0;
+        }
         if let Some(tm) = self.tm.take() {
             let _ = unsafe { tm.Deactivate() };
             drop(tm);

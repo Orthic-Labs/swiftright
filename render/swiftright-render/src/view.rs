@@ -1415,7 +1415,7 @@ unsafe extern "system" fn scan_windows(h: *mut c_void, l: isize) -> i32 {
 }
 
 /// Evidence line for IMN_OPENCANDIDATE / IMN_CHANGECANDIDATE: the candidate form the IME holds, the visible IME / our windows, our caret.
-fn log_candidate_ui(hwnd: *mut c_void, event: &str) {
+pub(crate) fn log_candidate_ui(hwnd: *mut c_void, event: &str) {
     unsafe {
         let mut form = CandidateForm { index: 0, style: 0, pt: [0, 0], rc: [0; 4] };
         let himc = ImmGetContext(hwnd);
