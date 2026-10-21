@@ -46,8 +46,7 @@ SCALE, OX, OY = 2.5, 40, 20
 CASES = {}
 # measured on 15 October 2026 (see docs/sr1-decisions.md F17..F21); None = not yet measured (the case then gates exactly)
 TOLERANCE = {"alpha-blend-v1": None,
-             "scaled-down-v1": (64, 0, "box filter (Windows) vs CoreGraphics interpolation (Mac) on a downscaled image, measured 15 Oct 2026 on this case at scale 2.5: max 64/255 on the 1 px ring edges of the 40 -> 30 px palette image, "
-                                       "<= 43 on the 40 -> 20 and 40 -> 25 px checker/diagonal image, <= 3 on the smooth gradients; position and size match exactly (the gate's frame check); N=1 measurement, widen only with N=20 evidence")}
+             "scaled-down-v1": (100, 0, "CI 39580013879 (issue #61), 3 runs x 2 phases identical: the host's fitted bilinear (ImageResampler.plan(nil): triangle, sampled at the pixel centre, not widened; reproduced offline to max 1 level) against a Mac downscale that is widened and slightly sharpened (blue plateaus overshoot 200 -> 206..209 and 40 -> 31..34; no standard kernel fits: widened Mitchell best, max 43/26/41 per cell). The I2 fit (default == .low, max 1) used sources built with shouldInterpolate: false; this case decodes through ImageIO on the Mac (UNVERIFIED: shouldInterpolate true selects CoreGraphics' high-quality downscale). Measured: Half 40->20x21 max 79, Fraction 40->25 max 62, Squashed palette 40->30x15 max 98, all inside the 1 px edge band (0 out-of-band), smooth gradients (Fit, Quarter) max 3; position and size exact. Rounded up to 100; N=3 identical runs, widen only with new evidence. Fixing it means carrying shouldInterpolate on RGBAImage (SwiftRightRuntime) and a widened plan.")}
 
 
 def chunk(t, d):

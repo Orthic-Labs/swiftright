@@ -186,6 +186,24 @@ final class ImagePolicyTests: XCTestCase {
         }
     }
 
+    /// A grey kTRC profile (XYZ PCS) converts to R = G = B = encode(TRC(v)); the WIC fallback rejected it (issue #61).
+    func testGreyKTRCProfileMapsEveryChannelThroughTheCurve() throws {
+        func be32(_ v: Int) -> [UInt8] { [UInt8(v >> 24 & 255), UInt8(v >> 16 & 255), UInt8(v >> 8 & 255), UInt8(v & 255)] }
+        var profile = [UInt8](repeating: 0, count: 128)
+        profile.replaceSubrange(16..<20, with: Array("GRAY".utf8)); profile.replaceSubrange(20..<24, with: Array("XYZ ".utf8))
+        let curve: [UInt8] = Array("curv".utf8) + be32(0) + be32(1) + [0x01, 0xCD, 0, 0]      // one entry: u8Fixed8 gamma 1.8 (0x01CD = 1.80078), padded to 4
+        profile += be32(1) + Array("kTRC".utf8) + be32(144) + be32(curve.count) + curve
+        let converter = try XCTUnwrap(ICCMatrixTRC(profile: profile))
+        let out = converter.toSRGB(RGBAImage(width: 3, height: 1, rgba: [0, 0, 0, 255, 128, 128, 128, 200, 255, 255, 255, 255])!)
+        XCTAssertEqual(Array(out.rgba[0..<3]), [0, 0, 0])
+        XCTAssertEqual(Array(out.rgba[8..<11]), [255, 255, 255])
+        XCTAssertEqual(out.rgba[7], 200, "alpha is untouched")
+        let g = Double(out.rgba[4])
+        XCTAssertEqual(out.rgba[5], out.rgba[4]); XCTAssertEqual(out.rgba[6], out.rgba[4])
+        let linear = pow(128.0 / 255, 1.80078), expected = (linear <= 0.0031308 ? 12.92 * linear : 1.055 * pow(linear, 1 / 2.4) - 0.055) * 255
+        XCTAssertEqual(g, expected.rounded(), accuracy: 1)
+    }
+
     func testMatrixTRCRefusesWhatItCannotConvert() {
         XCTAssertNil(ICCMatrixTRC(profile: []))
         XCTAssertNil(ICCMatrixTRC(profile: [UInt8](repeating: 0, count: 200)))

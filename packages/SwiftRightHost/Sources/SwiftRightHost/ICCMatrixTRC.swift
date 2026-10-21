@@ -4,7 +4,7 @@ import SwiftRightRuntime
 /// Wave 0 block I1: ICC matrix/TRC RGB profile -> sRGB, in Swift. Why it exists: the WIC colour transform (IWICColorTransform) gamut-MAPS colours that fall outside sRGB, CoreGraphics CLIPS them
 /// (measured: Display P3 (176,36,120) gives sRGB G = 0 on the Mac and G = 21 through WIC; the transform's output is identical for every rendering intent written into the profile header,
 /// so the intent cannot be set to match). Matrix/TRC profiles (Display P3, Adobe RGB, camera and scanner RGB profiles, sRGB variants) are the usual embedded profiles and need no LUT, so this
-/// converts them exactly the way a clipping colorimetric conversion does; a profile with an A2B0 LUT, a grey or CMYK profile falls back to the WIC transform.
+/// converts them exactly the way a clipping colorimetric conversion does; a grey kTRC profile (XYZ PCS) is the same curve on all three channels; a profile with an A2B0 LUT, a Lab-PCS grey or a CMYK profile falls back to the WIC transform.
 /// Maths: linearise each channel through the profile's TRC, multiply by the profile's D50 colorant matrix to XYZ(D50), by the inverse of sRGB's D50 colorant matrix to linear sRGB,
 /// clip to 0...1, encode with the sRGB curve, round to nearest. Alpha is untouched (straight).
 struct ICCMatrixTRC {
@@ -16,7 +16,8 @@ struct ICCMatrixTRC {
         guard p.count >= 132 else { return nil }
         func u32(_ i: Int) -> Int { i + 4 <= p.count ? Int(p[i]) << 24 | Int(p[i + 1]) << 16 | Int(p[i + 2]) << 8 | Int(p[i + 3]) : -1 }
         func tag4(_ i: Int) -> String { i + 4 <= p.count ? String(decoding: p[i..<i + 4], as: UTF8.self) : "" }
-        guard tag4(16) == "RGB ", tag4(20) == "XYZ " else { return nil }
+        let isGrey = tag4(16) == "GRAY"
+        guard tag4(16) == "RGB " || isGrey, tag4(20) == "XYZ " else { return nil }
         let n = u32(128)
         guard n > 0, n < 200, p.count >= 132 + n * 12 else { return nil }
         var tags: [String: (Int, Int)] = [:]
@@ -27,7 +28,8 @@ struct ICCMatrixTRC {
             guard let (o, s) = tags[name], s >= 20, o >= 0, o + 20 <= p.count, tag4(o) == "XYZ " else { return nil }
             return [s15(o + 8), s15(o + 12), s15(o + 16)]
         }
-        guard let r = xyz("rXYZ"), let g = xyz("gXYZ"), let b = xyz("bXYZ") else { return nil }
+        let colorants = isGrey ? nil : [xyz("rXYZ"), xyz("gXYZ"), xyz("bXYZ")]
+        if !isGrey { guard colorants![0] != nil, colorants![1] != nil, colorants![2] != nil else { return nil } }
         func curve(_ name: String) -> [Double]? {
             guard let (o, s) = tags[name], s >= 12, o >= 0, o + s <= p.count else { return nil }
             var f: (Double) -> Double
@@ -60,8 +62,17 @@ struct ICCMatrixTRC {
             }
             return (0..<256).map { max(0, min(1, f(Double($0) / 255))) }
         }
+        if isGrey {
+            // Grey profile (kTRC, XYZ PCS): Y = TRC(v), XYZ(D50) = Y x D50 white, and the D50 white maps to linear sRGB (1, 1, 1), so R = G = B = TRC(v): identity matrix on three copies of the curve.
+            // Not yet measured against ImageIO (issue #61, png-icc-grey-v1 gates it on the next CI pair); the WIC colour transform rejects a grey source context for BGRA (HRESULT 0x800707DB, ERROR_INVALID_PROFILE).
+            guard let k = curve("kTRC") else { return nil }
+            curves = [k, k, k]
+            matrix = [1, 0, 0, 0, 1, 0, 0, 0, 1]
+            return
+        }
         guard let cr = curve("rTRC"), let cg = curve("gTRC"), let cb = curve("bTRC") else { return nil }
         curves = [cr, cg, cb]
+        let r = colorants![0]!, g = colorants![1]!, b = colorants![2]!
         // profile RGB -> XYZ(D50): columns are the colorants; sRGB (D50, Bradford) colorants as in the ICC sRGB profile
         let toXYZ = [r[0], g[0], b[0], r[1], g[1], b[1], r[2], g[2], b[2]]
         let srgb: [Double] = [0.4360747, 0.3850649, 0.1430804, 0.2225045, 0.7168786, 0.0606169, 0.0139322, 0.0971045, 0.7141733]
