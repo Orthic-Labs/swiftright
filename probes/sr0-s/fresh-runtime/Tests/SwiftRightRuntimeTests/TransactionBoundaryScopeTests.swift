@@ -290,17 +290,16 @@ final class TransactionBoundaryScopeTests: XCTestCase {
         XCTAssertEqual(mid[2], 30, accuracy: 1e-9, "the inner write runs the inner 1 s animation (halfway)")
     }
 
-    // Outside onChange: x written under the outer transaction, y under the inner one nested in it, z under the outer again.
+    // Outside onChange: `trigger` written under the outer transaction, `third` under the inner one nested in it (#59: the comment named a
+    // third write under the outer transaction that the test never made; `follower`, written by trigger's onChange, is not asserted here).
     func testNestedWithAnimationWritesTakeTheInnermostOpenTransaction() {
         let model = ChainModel()
-        let (graph, records) = chain(model)
-        let base = records.items.count
+        let (graph, _) = chain(model)
         withAnimation(.linear(duration: 2.0)) {
             model.trigger = 40
             withAnimation(.linear(duration: 1.0)) { model.third = 40 }
         }
         graph.flush()
-        _ = records.items.dropFirst(base)
         graph.tick(now: 0)
         graph.tick(now: 0.5)
         let mid = widths(graph)
