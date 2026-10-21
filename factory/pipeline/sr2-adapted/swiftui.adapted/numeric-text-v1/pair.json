@@ -31,8 +31,8 @@
   "phases": [
    ""
   ],
-  "boundsYTolerancePt": 0.25,
-  "boundsYReason": "Mac AX bounds are whole points, Windows UIA whole device pixels (0.4 pt at 2.5): 0.25 pt as in scale-text-v1 (#44); run 39592537071 measured 0.2 pt"
+  "boundsYTolerancePt": 0.4,
+  "boundsYReason": "one device pixel at 2.5 (0.4 pt): Windows UIA reports whole device pixels; run 39595115787 measured y 0.2 pt and height 0.4 pt (32.8 vs 33.2) with pixels exact"
  },
  "steps": [
   {
