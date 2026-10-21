@@ -40,3 +40,12 @@ No ABI revision for S1. ABI 0.12 (path table) stays deferred; its triggers now a
   - Decision: keep the adaptation (the view is drawn as without the modifier); no pixel case, because a Mac comparison would only measure the adaptation (Mac references use headlessGlass).
 - **33 pt switches to the Display optical size: intended, not a bug.** SF is one variable font with a continuous optical-size axis (SFNS.ttf on macOS 27: opsz 17 to 96, default 28), so SwiftUI text at 33 pt is already shaped at an optical size near its Display end. Segoe UI Variable has three named instances (Small 8, Text 10.5, Display 36) and gpui cannot vary opsz (G11), so the host picks the nearest by log distance (`SegoeOpticalFamily`, decision G70): the Text/Display boundary is 25.9 DIP, so 33 DIP is Display and 25.5 DIP is Text. The step is the instance snapping, not a mismatch of the switch point. Whether SF's Text/Display switch sits at 20 pt as a named-family rule is not verified here (only the axis range was read from the installed font).
 
+
+## 21 October: unmodelled effects delivered (#54)
+Factory run 39607046649 (renderer-0.12-37f054db, stage 7bebe246e): all 8 sr2-effects cases pass.
+- **Spring settling and retarget:** interrupted springs use the one-device-pixel rule. A retarget integrates the new spring from the presented state with 2.34× the old velocity; that factor is fitted to 15 dense Mac samples from one bouncy-to-bouncy scenario. spring-removal-v1 clock gate: 60/60.
+- **Non-uniform scaleEffect** for fills. Strokes widen by the geometric mean, and text keeps uniform size.
+- **Brightness on bitmaps** and symbol tints.
+- **.tint** on Button, Toggle and Slider, using the shaded artwork accent.
+- **Colour and line-width interpolation in Oklab:** colour matches the Mac's mid-animation frames exactly.
+- **minimumScaleFactor** survives pixel snapping.
