@@ -1,4 +1,4 @@
-# swiftright-02 ready metrics (HELD PATCH, UNBUILT, UNTESTED)
+# swiftright-02 ready metrics (APPLIED; was a held patch)
 
 Patch: `swiftright-02-ready-metrics.patch` (renderer + bridge; `git apply --check` passes against the repo; Swift files only syntax-parsed with `swiftc -parse`, never compiled or run).
 
@@ -35,3 +35,6 @@ Renderer DLL hash; therefore the pin and every receipt bound to the renderer. Br
 Log requested, `initial-client`, `ready-client`, `Bridge.metrics` at ready, the first window-metrics event, `Bridge.metrics` inside `onEvent`, and host `GetClientRect`: expect 800x600 throughout. Also run `swift test` for SwiftRightBridge and `cargo test` for the renderer (client_size tests).
 
 UNBUILT. UNTESTED.
+
+## Status (21 Oct): applied
+The change is in the tree (see #49); the .patch file is kept as history only and must not be re-applied.

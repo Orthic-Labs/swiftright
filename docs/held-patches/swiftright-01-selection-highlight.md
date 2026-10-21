@@ -1,3 +1,6 @@
-# swiftright-01 selection highlight (HELD PATCH, UNBUILT and UNTESTED)
+# swiftright-01 selection highlight (APPLIED; was a held patch)
 
 Adds pure `selectionRects(cells:lines:start:end:origin:lineHeightPx:lineBreakWidth:)` to packages/SwiftRightBridge Marshal.swift (one rect per visual line over the selected cells; a selected line-break cell adds a 4 DIP nub; collapsed or out-of-range gives none), plus headless XCTest `SelectionRectsTests`. FreshOnBridge and SliceApp BridgeBackend TextField drawing now emit those rects (colour constant `selectionColor` 0x99C9EFFF) before the text primitive, only for the focused field with non-empty selection; caret stays at the selection focus end; collapsed selection unchanged. Contract addition: selected text is visibly highlighted; Mac oracle shows selection at launch 0+5. Reopens: FreshOnBridge exe; SliceApp exe and therefore both MSIX; pixel assertions; matrix; cross-compare semantics unaffected but must be re-recorded. Assumptions: cell index equals UTF-16 index (as the existing caret code assumes); gated on focusedRow like the caret, so an unfocused field shows no highlight. Verified only by `git apply --check`.
+
+## Status (21 Oct): applied
+The change is in the tree (see #49); the .patch file is kept as history only and must not be re-applied.
