@@ -31,4 +31,13 @@ if [ "$confirm" -ne 1 ] && [ "$dry" -ne 1 ]; then
     echo "refusing live tuple12 run without --confirm-windows-gui (use --dry-run for plan)" >&2
     exit 2
 fi
-exec python3 -I "$ROOT/qualification/run.py" run --tuple "$TUPLE" --runs 20 --win-runs 20 "$@"
+rc=0
+python3 -I "$ROOT/qualification/run.py" run --tuple "$TUPLE" --runs 20 --win-runs 20 "$@" || rc=$?
+
+# Last stage: perf-watch (#65). Reports warn/fail on vblanks, M2, R10 leak slope, F7 flake; exits non-zero only on fail.
+if [ "$dry" -ne 1 ]; then
+    pw=0
+    python3 -I "$ROOT/qualification/perf-watch.py" || pw=$?
+    [ "$rc" -eq 0 ] && rc=$pw
+fi
+exit "$rc"
