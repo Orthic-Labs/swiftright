@@ -258,6 +258,9 @@ enum ModifierSpec {
     case alignmentGuide(AlignmentGuideSpec)
     /// Issue #68: `.gridColumnAlignment(_:)`, read by the enclosing Grid from the cell (through wrappers that pass their child through).
     case gridCell(GridCellSpec)
+    /// Issue #60 (pass 2): the indeterminate `ProgressView` spinner. Layout passes through; the node resolves a rotation of `step / steps` of a turn about the centre, where `step` is
+    /// the whole number of `period / steps` intervals of the host clock that have elapsed (`Graph.tick` commits whenever the step changes). A repeat-forever driver for this control only.
+    case spinner(steps: Int, period: Double)
 
     /// "modifier." plus `name`, as resolved records show it (static strings, no allocation per commit).
     var kindName: String {
@@ -304,6 +307,7 @@ enum ModifierSpec {
         case .position: return "modifier.position"
         case .alignmentGuide: return "modifier.alignmentGuide"
         case .gridCell: return "modifier.gridColumnAlignment"
+        case .spinner: return "modifier.rotationEffect"
         }
     }
 
@@ -351,6 +355,7 @@ enum ModifierSpec {
         case .position: return "position"
         case .alignmentGuide: return "alignmentGuide"
         case .gridCell: return "gridColumnAlignment"
+        case .spinner: return "spinner"
         }
     }
 }
@@ -374,6 +379,8 @@ enum NodeKind {
     case slider(SliderSpec)
     case image(ImageSpec)
     case color(ResolvedColor)
+    /// Issue #60: a `LinearGradient` / `RadialGradient` view; the host rasterises it into a bitmap of the node's frame.
+    case gradient(ResolvedGradient)
     case textEditor(Binding<String>)
     case divider
     case shape(ResolvedShape)
@@ -925,6 +932,8 @@ public struct ResolvedNode: Equatable, Sendable {
     public var styledText: ResolvedStyledText? = nil
     /// Button, Toggle and Slider nodes only (#54): the environment's `.tint(_:)`, nil when none is set (the accent colour then applies). A host paints the control's accent in it.
     public var tint: ResolvedColor? = nil
+    /// Gradient nodes only (#60): the stops and geometry the host rasterises into a bitmap of the node's frame.
+    public var gradient: ResolvedGradient? = nil
 }
 
 /// What `.clipShape(_:style:)` asks of its subtree: paint only inside `geometry` laid out in the modifier node's frame.
@@ -1121,6 +1130,8 @@ public final class Graph {
     /// Host-supplied time in seconds of the last `tick(now:)`; nil before the first tick. It has no required origin. A motion
     /// does not start at it: a motion begins at the next tick (see `advanceMotions`).
     var clock: Double?
+    /// Steps of the spinner nodes as of the last tick (#60).
+    private var shownSpinnerSteps: [String: Int] = [:]
     private var closed = false
     /// The focused node with the smallest id seen so far while resolving a record.
     private var resolveFocus: Node?
@@ -1572,8 +1583,27 @@ public final class Graph {
         let wasAnimating = !ghosts.isEmpty || animating.contains { $0.motion != nil && $0.alive }
         clock = now
         advanceMotions(now: now, anchoring: true)
-        if wasAnimating { emit(animationNames: []) }
+        // Issue #60: an indeterminate ProgressView spins by the host clock. Nothing is re-evaluated; the resolved rotation of a spinner node follows `clock`, so a commit is
+        // emitted only when some spinner's step changed since the last one.
+        let spinnerMoved = ModifierSpec.spinnersCreated && spinnersChangedStep()
+        if wasAnimating || spinnerMoved { emit(animationNames: []) }
         TransactionContext.drainDeferred()
+    }
+
+    /// The step (0, 1, 2, ... without bound) of a spinner on the host clock: one step per `period / steps` seconds; 0 before the first tick.
+    func spinnerStep(steps: Int, period: Double) -> Int {
+        guard let clock, steps > 0, period > 0, clock.isFinite else { return 0 }
+        return Int((clock / period * Double(steps)).rounded(.down))
+    }
+
+    /// The spinner steps shown by the last commit, by node id; true when any live spinner is now at another step (or a new one appeared).
+    private func spinnersChangedStep() -> Bool {
+        var current: [String: Int] = [:]
+        for node in nodes.values where node.alive {
+            if case .modifier(.spinner(let steps, let period)) = node.kind { current[node.idString] = spinnerStep(steps: steps, period: period) }
+        }
+        defer { shownSpinnerSteps = current }
+        return current != shownSpinnerSteps
     }
 
     /// Tears the whole tree down: disappear actions run, tasks are cancelled, running animations and
@@ -2516,6 +2546,9 @@ public final class Graph {
             }
             if paintIsForeground, style.foreground != nil { style = ResolvedStyle(font: style.font, foreground: presented, colorScheme: style.colorScheme) }
         }
+        if case .modifier(.spinner(let steps, let period)) = kind { rotation = ResolvedRotation(angle: .degrees(360 * Double(spinnerStep(steps: steps, period: period) % max(steps, 1)) / Double(max(steps, 1))), anchor: .center) }
+        var gradient: ResolvedGradient?
+        if case .gradient(let resolvedGradient) = kind { gradient = resolvedGradient.resolvingTint(node.environment) }
         var scaleEffect: ResolvedScale?
         if case .modifier(.scale(let x, let y, let anchor)) = kind {
             let presented = node.presentedScale ?? CGSize(width: x, height: y)
@@ -2559,6 +2592,7 @@ public final class Graph {
             scaleLocalFrame: node.motion == nil ? node.scaleLocalFrame : nil,
             styledText: styledText(of: node)
         )
+        resolvedNode.gradient = gradient
         // #54: a control reads the environment's tint where it paints its accent (a prominent Button's fill, a Toggle's on state, a Slider's fill).
         switch kind {
         case .button, .toggle, .slider: resolvedNode.tint = node.environment.tint
@@ -2690,6 +2724,7 @@ public final class Graph {
         case .slider: return "SliderControl"
         case .image: return "Image"
         case .color: return "Color"
+        case .gradient: return "Gradient"
         case .shape(let shape):
             return shape.geometry.kindName
         case .textEditor: return "TextEditor"

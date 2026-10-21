@@ -460,7 +460,7 @@ public final class ResolvedNodePainter {
                 }
                 return $0
             }
-            if !Self.isShapeKind(node.kind), node.kind != "Image", emission.primitives.contains(where: { if case .image = $0 { return true } else { return false } }) { brightnessImageLimitationCount += 1 }
+            if !Self.isShapeKind(node.kind), node.kind != "Image", node.kind != "Gradient", emission.primitives.contains(where: { if case .image = $0 { return true } else { return false } }) { brightnessImageLimitationCount += 1 }
         }
         if !clipMasks.isEmpty || paintScaled {
             var out: [Primitive] = []
@@ -475,7 +475,7 @@ public final class ResolvedNodePainter {
                         if let runs = node.styledText?.runs { fontPoints = max(fontPoints, runs.map { Self.pointSize(of: $0.font) }.max() ?? 0) }
                         region = ClipMask.inkRegion(bounds, fontPx: fontPoints * scale)
                     }
-                    if case .image(_, let r, _) = primitive, !Self.isShapeKind(node.kind) { region = r }
+                    if case .image(_, let r, _) = primitive, !Self.isShapeKind(node.kind), node.kind != "Gradient" { region = r }
                     if let region {
                         // Rev 0.12 (#53): the renderer's nested path clips cut the same row bands from the masks' paths over text and bitmaps alike (view.rs `Prim::ClipPath` bounds every
                         // primitive up to its `clipPop`), so the host builds no bands there and only classifies the region (all / none / partial). Host bands are the fallback for an older renderer.
@@ -764,6 +764,25 @@ public final class ResolvedNodePainter {
         case "Color":
             guard let color = node.color else { throw HostPaintError.colorMetadataRequired }
             return NodeEmission(primitives: [.rect(bounds, color: try HostPaint.rgba(color, opacity: node.opacity, scheme: node.style.colorScheme))], semantic: nil, flags: [], structural: false)
+
+        case "Gradient":
+            // Issue #60: one bitmap of the node's snapped pixel frame, rasterised by `GradientRaster` (stops in gamma-encoded sRGB, straight alpha) and masked by any `.clipShape`
+            // above it (so `Shape.fill(gradient)` has the shape's anti-aliased edge). A rotation above the node is not applied (counted as a limitation).
+            guard let gradient = node.gradient else { throw HostPaintError.unsupportedNode("Gradient (no gradient metadata)") }
+            let snapX = DevicePixelSnap.edges(origin: Double(bounds.x), length: Double(bounds.w), scale: Double(scale))
+            let snapY = DevicePixelSnap.edges(origin: Double(bounds.y), length: Double(bounds.h), scale: Double(scale))
+            guard snapX.length >= 1, snapY.length >= 1 else { return NodeEmission(primitives: [], semantic: nil, flags: [], structural: false) }
+            let stops = try gradient.stops.map { GradientRaster.Stop(location: $0.location, rgba: adjusted(try HostPaint.rgba($0.color, opacity: node.opacity, scheme: node.style.colorScheme))) }
+            guard let raster = GradientRaster.render(geometry: gradient.geometry, stops: stops, widthPX: Int(snapX.length), heightPX: Int(snapY.length), scale: Double(scale)) else {
+                throw HostPaintError.unsupportedNode("Gradient (frame over \(GradientRaster.maxPixels) pixels)")
+            }
+            let placement = Rect(x: Float(snapX.origin) + imageGuardBand, y: Float(snapY.origin) + imageGuardBand,
+                                 w: Float(raster.width) - 2 * imageGuardBand, h: Float(raster.height) - 2 * imageGuardBand)
+            let image = masked(raster, placement: placement)
+            let handle = try registerRGBA(image)
+            if let stale = pendingShapeImages[id] { _ = images.release(stale) }
+            pendingShapeImages[id] = handle
+            return NodeEmission(primitives: [.image(handle, placement)], semantic: nil, flags: [], structural: false)
 
         case "Image":
             if case .pixels(let image, _)? = node.image {

@@ -2,7 +2,7 @@ import SwiftRightRuntime
 import XCTest
 @testable import SwiftRightRuntime
 
-// Issue #60: ProgressView (determinate bar, indeterminate ring, label).
+// Issue #60: ProgressView (determinate bar, indeterminate stepped spinner, label).
 
 @MainActor
 final class Issue60ProgressViewTests: XCTestCase {
@@ -44,22 +44,81 @@ final class Issue60ProgressViewTests: XCTestCase {
         XCTAssertEqual(Double(track.frame.minY), Double(label.frame.minY) + Double(label.frame.height) + 4, accuracy: 0.5)
     }
 
-    func testIndeterminateIsASixteenPointRing() throws {
-        let graph = i60Graph(ProgressView())
-        let ring = try XCTUnwrap(i60Nodes(graph, kind: "Circle").first)
-        XCTAssertEqual(ring.frame.width, 16); XCTAssertEqual(ring.frame.height, 16)
-        XCTAssertEqual(ring.shape?.geometry, .trimmed(.circle, from: 0, to: 0.75))
-        XCTAssertEqual(ring.shape?.paint?.kind, .stroke)
-        XCTAssertEqual(i60Nodes(graph, kind: "Capsule").count, 0)
+    /// The spinner's own rotation node: the outermost `.rotationEffect`-kind node (the tick rotations sit inside it).
+    private func spinnerNode(_ graph: Graph) throws -> ResolvedNode {
+        try XCTUnwrap(i60Nodes(graph, kind: "modifier.rotationEffect").first)
     }
 
-    func testNilValueAndLabelledSpinnerStackLabelBelowTheRing() throws {
+    func testIndeterminateIsASixteenPointSpinnerOfTwelveTicks() throws {
+        let graph = i60Graph(ProgressView())
+        let spinner = try spinnerNode(graph)
+        XCTAssertEqual(spinner.frame.width, 16); XCTAssertEqual(spinner.frame.height, 16)
+        let ticks = i60Nodes(graph, kind: "Capsule")
+        XCTAssertEqual(ticks.count, 12)
+        // 1.5 x 4 pt ticks, snapped to the device-pixel grid of the test graph (scale 1: 1.5 pt rounds to 2).
+        XCTAssertTrue(ticks.allSatisfy { abs($0.frame.width - 1.5) <= 0.5 && abs($0.frame.height - 4) <= 0.5 }, "\(ticks.map { $0.frame.size })")
+        XCTAssertEqual(i60Nodes(graph, kind: "modifier.rotationEffect").count, 13, "the spinner and one rotation per tick")
+        XCTAssertEqual(i60Nodes(graph, kind: "Circle").count, 0)
+        let opacities = ticks.compactMap { node -> Double? in
+            if case .semanticAlpha("label", let a)? = node.shape?.paint?.color { return a }
+            return nil
+        }
+        XCTAssertEqual(opacities.first, 1)
+        XCTAssertEqual(try XCTUnwrap(opacities.last), 0.15, accuracy: 1e-9)
+        XCTAssertEqual(opacities, opacities.sorted(by: >), "the tail fades")
+    }
+
+    func testNilValueAndLabelledSpinnerStackLabelBelowTheSpinner() throws {
         let nilValue = i60Graph(ProgressView(value: nil as Double?))
-        XCTAssertEqual(i60Nodes(nilValue, kind: "Circle").count, 1)
+        XCTAssertEqual(i60Nodes(nilValue, kind: "Capsule").count, 12)
         let graph = i60Graph(ProgressView("Please wait"))
-        let ring = try XCTUnwrap(i60Nodes(graph, kind: "Circle").first)
+        let spinner = try spinnerNode(graph)
         let label = try XCTUnwrap(i60Text(graph, "Please wait"))
-        XCTAssertEqual(Double(label.frame.minY), Double(ring.frame.minY) + 16 + 8, accuracy: 0.5)
+        XCTAssertEqual(Double(label.frame.minY), Double(spinner.frame.minY) + 16 + 8, accuracy: 0.5)
+    }
+
+    func testSpinnerTurnsInThirtyDegreeStepsByTheHostClock() throws {
+        let graph = i60Graph(ProgressView())
+        func degrees() throws -> Double { try XCTUnwrap(spinnerNode(graph).rotation).angle.degrees }
+        XCTAssertEqual(try degrees(), 0, "before the first tick")
+        graph.tick(now: 5.0)
+        XCTAssertEqual(try degrees(), 0, accuracy: 1e-9, "clock 5.0 s is a whole number of turns")
+        graph.tick(now: 5.5)
+        XCTAssertEqual(try degrees(), 180, accuracy: 1e-9)
+        graph.tick(now: 5.99)
+        XCTAssertEqual(try degrees(), 330, accuracy: 1e-9)
+        graph.tick(now: 6.0)
+        XCTAssertEqual(try degrees(), 0, accuracy: 1e-9)
+        graph.tick(now: 6.1)
+        XCTAssertEqual(try degrees(), 30, accuracy: 1e-9)
+        XCTAssertEqual(try XCTUnwrap(spinnerNode(graph).rotation).anchor, .center)
+    }
+
+    func testTickCommitsOnlyWhenTheSpinnerStepChanges() {
+        let graph = i60Graph(ProgressView())
+        var records = 0
+        graph.commitSink = { _ in records += 1 }
+        graph.tick(now: 1.01)   // the first tick: the spinner has not been shown at a step yet
+        let first = records
+        XCTAssertEqual(first, 1)
+        graph.tick(now: 1.02)
+        graph.tick(now: 1.05)
+        XCTAssertEqual(records, first, "same step (a step is 1/12 s): no commit")
+        graph.tick(now: 1.09)
+        XCTAssertEqual(records, first + 1)
+        graph.tick(now: 1.10)
+        XCTAssertEqual(records, first + 1)
+        graph.tick(now: 1.17)
+        XCTAssertEqual(records, first + 2)
+    }
+
+    func testAGraphWithoutASpinnerCommitsNothingOnTicks() {
+        let graph = i60Graph(Text("no spinner"))
+        var records = 0
+        graph.commitSink = { _ in records += 1 }
+        graph.tick(now: 1)
+        graph.tick(now: 2)
+        XCTAssertEqual(records, 0)
     }
 
     func testViewBuilderLabelForms() {
@@ -68,6 +127,6 @@ final class Issue60ProgressViewTests: XCTestCase {
         XCTAssertEqual(i60Nodes(determinate, kind: "Capsule").count, 2)
         let spinner = i60Graph(ProgressView { Text("Working") })
         XCTAssertNotNil(i60Text(spinner, "Working"))
-        XCTAssertEqual(i60Nodes(spinner, kind: "Circle").count, 1)
+        XCTAssertEqual(i60Nodes(spinner, kind: "Capsule").count, 12)
     }
 }

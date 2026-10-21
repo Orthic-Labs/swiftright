@@ -152,7 +152,7 @@ extension Graph {
             )
         case .color:
             return LayoutSize(width: finiteLength(proposal.width) ?? 0, height: finiteLength(proposal.height) ?? 0)
-        case .shape:
+        case .shape, .gradient:
             return LayoutSize(width: finiteLength(proposal.width) ?? 10, height: finiteLength(proposal.height) ?? 10)
         case .divider:
             // A Divider is a thin rule across the axis its enclosing stack does NOT lay out along (vertical in an HStack, whether or not a frame wraps it).
@@ -243,7 +243,7 @@ extension Graph {
             for child in childNodes(node) { capture(child) }
         }
         switch node.kind {
-        case .text, .textField, .textEditor, .spacer, .image, .color, .divider, .shape:
+        case .text, .textField, .textEditor, .spacer, .image, .color, .divider, .shape, .gradient:
             break
         case .modifier(.padding(let insets)):
             guard let child = childNodes(node).first else { return }

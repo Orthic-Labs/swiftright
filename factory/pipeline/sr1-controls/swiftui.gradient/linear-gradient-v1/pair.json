@@ -1,0 +1,8 @@
+{
+ "edgeAATolerance": {
+  "levels": 48,
+  "maxOverFraction": 0.02,
+  "maxMeanAbs": 2,
+  "reason": "PROVISIONAL, unmeasured (issue #60 pass 2): a smooth gradient has no uniform 3x3 neighbourhood, so every gradient pixel is inside the gate's edge band and the statistics bound the interpolation difference (8-bit rounding, colour-space and dither choices): mean absolute difference at most 2 levels. The per-pixel ceiling and the over-32 fraction bound the anti-aliased edge of the rounded rectangles. Fit from the first CI pair, then tighten (ideally to hazeTolerance 1)."
+ }
+}

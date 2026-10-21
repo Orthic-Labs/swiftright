@@ -1,22 +1,23 @@
 import Foundation
 
-// Issue #60 (SR1 backlog), first pass: `Gradient`, `Gradient.Stop` and `LinearGradient`.
+// Issue #60 (SR1 backlog), pass 2: `Gradient`, `Gradient.Stop`, `LinearGradient` and `RadialGradient`.
 //
-// ADAPTATION: the host's shape painter has no gradient fill (a `ShapePaint` carries one `ResolvedColor`), so a linear gradient is COMPOSED from existing
-// primitives instead: `bandCount` equal strips of solid `Color`, laid out in a VStack (or HStack) with no spacing, each strip the gradient's colour at the
-// strip's centre. A gradient used where a view is expected (`.overlay(gradient)`, `.background(gradient)`, `gradient.frame(...)`, `Shape.fill(gradient)`) is
-// therefore stepped, not smooth: with 32 bands a 40 pt gradient steps every 1.25 pt (each step is a distinct colour only where the colours differ enough).
-// A host gradient fill (one `SWR` gradient primitive) would replace the bands; until then this is the whole implementation.
+// A gradient used where a view is expected (`LinearGradient(...)`, `.overlay(gradient)`, `.background(gradient)`, `Shape.fill(gradient)`) is ONE resolved node of kind
+// "Gradient" carrying a `ResolvedGradient` (stops, start/end points or centre/radii). The host rasterises it into a bitmap of the node's snapped pixel frame
+// (`GradientRaster` in SwiftRightHost), so it is smooth, at any angle. `Shape.fill(gradient)` is the gradient view under `.clipShape(shape)`: the host masks the bitmap
+// with the shape's anti-aliased coverage, the same mask path every `.clipShape` uses.
+//
+// Colour interpolation (decision, UNVERIFIED against a macOS 27 capture until the linear-gradient-v1 pair runs): stops are interpolated per channel, linearly, in
+// gamma-encoded sRGB (the device RGB space SwiftUI and Core Graphics default to) with straight (non-premultiplied) alpha; the host quantises each pixel once, rounding
+// to the nearest 8-bit level. A stop with alpha 0 (`Color.clear`) has no hue of its own: the other stop's colour is used, so `blue -> clear` fades blue's alpha only.
+// Semantic colours are resolved by the host before interpolation (light/dark scheme of the node).
+// Sampling: the colour at a pixel is that of its centre; beyond the first and last stop the gradient is clamped (extended), as SwiftUI draws it.
 //
 // APPROXIMATIONS (each stated where it applies):
-// - The gradient axis is the dominant axis of `startPoint` -> `endPoint` (vertical when |dy| >= |dx|). A diagonal gradient is drawn along that one axis, not
-//   along the diagonal.
-// - Colours blend in straight (non-premultiplied) sRGB for two `rgba` colours; two semantic colours with the same name blend their alpha; a semantic colour
-//   against `clear` fades the semantic colour's alpha (the usual `Color.blue -> Color.clear` fade keeps its hue); any other pair of semantic colours steps at the
-//   midpoint (semantic names resolve in the host, so they cannot be blended here).
 // - As a plain `ShapeStyle` (`foregroundStyle(gradient)`, `AnyShapeStyle(gradient)`, `stroke(gradient)`) a gradient resolves to its colour at the midpoint, because a
-//   `ShapeStyle` here resolves to one colour. `Shape.fill(_:)` and `View.background(_:)` have `LinearGradient` overloads that draw the bands instead.
-// RadialGradient and AngularGradient are not provided (they need a host primitive; concentric bands would not be a faithful angular sweep).
+//   `ShapeStyle` here resolves to one colour. `Shape.fill(_:)` and `View.background(_:)` have gradient overloads that draw the real gradient.
+// - A gradient view's ideal size is a shape's (10 x 10 when nothing is proposed), as SwiftUI's `LinearGradient` body is a `Rectangle` filled with the style.
+// AngularGradient and EllipticalGradient are not provided.
 
 /// Apple: https://developer.apple.com/documentation/swiftui/gradient
 public struct Gradient: Equatable, Sendable {
@@ -104,16 +105,50 @@ extension ResolvedColor {
     }
 }
 
-/// A colour gradient along a line from `startPoint` to `endPoint` (unit points of the view). Used as a view it fills the space it is offered, as a stack of solid
-/// bands (see the file header); used as a `ShapeStyle` it resolves to its midpoint colour, except in `Shape.fill(_:)` and `View.background(_:)`, which draw the bands.
+/// What a gradient node resolves to for the host: ordered stops and the geometry in unit points of the node's frame.
+public struct ResolvedGradient: Equatable, Sendable {
+    public struct Stop: Equatable, Sendable {
+        public var location: Double
+        public var color: ResolvedColor
+        public init(location: Double, color: ResolvedColor) { self.location = location; self.color = color }
+    }
+
+    public enum Geometry: Equatable, Sendable {
+        /// Along the line from `start` to `end` (unit points of the frame); the colour is constant on lines perpendicular to it, in the frame's pixel space.
+        case linear(start: UnitPoint, end: UnitPoint)
+        /// Rings about `center` (unit point of the frame): radii in points, `startRadius` at location 0 and `endRadius` at location 1.
+        case radial(center: UnitPoint, startRadius: Double, endRadius: Double)
+    }
+
+    public var geometry: Geometry
+    /// Sorted by location (stable), locations clamped to 0...1. Never empty (an empty gradient resolves to one clear stop).
+    public var stops: [Stop]
+
+    public init(geometry: Geometry, stops: [Stop]) {
+        self.geometry = geometry
+        self.stops = stops.isEmpty ? [Stop(location: 0, color: .semantic("clear"))] : stops
+    }
+
+    init(geometry: Geometry, gradient: Gradient) {
+        let ordered = gradient.stops.enumerated().sorted { a, b in
+            a.element.location == b.element.location ? a.offset < b.offset : a.element.location < b.element.location
+        }.map { Stop(location: min(max(Double($0.element.location), 0), 1), color: $0.element.color.resolvedColor) }
+        self.init(geometry: geometry, stops: ordered)
+    }
+
+    /// Stops with a `.tint` colour replaced by the environment's tint.
+    func resolvingTint(_ environment: EnvironmentValues) -> ResolvedGradient {
+        ResolvedGradient(geometry: geometry, stops: stops.map { Stop(location: $0.location, color: $0.color.resolvingTint(environment)) })
+    }
+}
+
+/// A colour gradient along a line from `startPoint` to `endPoint` (unit points of the view). Used as a view it fills the space it is offered, drawn by the host as one
+/// smooth bitmap (see the file header); used as a `ShapeStyle` it resolves to its midpoint colour, except in `Shape.fill(_:)` and `View.background(_:)`, which draw it.
 /// Apple: https://developer.apple.com/documentation/swiftui/lineargradient
 public struct LinearGradient: ShapeStyle, Equatable, Sendable {
     public let gradient: Gradient
     public let startPoint: UnitPoint
     public let endPoint: UnitPoint
-
-    /// Number of solid strips a gradient view is drawn with.
-    static let bandCount = 32
 
     /// Apple: https://developer.apple.com/documentation/swiftui/lineargradient/init(gradient:startpoint:endpoint:)
     public init(gradient: Gradient, startPoint: UnitPoint, endPoint: UnitPoint) {
@@ -135,62 +170,88 @@ public struct LinearGradient: ShapeStyle, Equatable, Sendable {
     /// The colour at the middle of the gradient: what a single-colour `ShapeStyle` use gets.
     public var resolvedColor: ResolvedColor { gradient.resolvedColor(at: 0.5) }
 
-    /// True when the gradient runs mainly top to bottom (the band axis). Equal extents count as vertical.
-    var isVertical: Bool { abs(endPoint.y - startPoint.y) >= abs(endPoint.x - startPoint.x) }
+    var resolved: ResolvedGradient { ResolvedGradient(geometry: .linear(start: startPoint, end: endPoint), gradient: gradient) }
+}
 
-    /// The colour of band `index` of `count`, sampled at the band's centre along the gradient axis. A degenerate gradient (start == end) is its first colour.
-    func bandColor(_ index: Int, of count: Int = LinearGradient.bandCount) -> ResolvedColor {
-        let position = (Double(index) + 0.5) / Double(count)
-        let from = Double(isVertical ? startPoint.y : startPoint.x)
-        let to = Double(isVertical ? endPoint.y : endPoint.x)
-        guard to != from else { return gradient.resolvedColor(at: 0) }
-        return gradient.resolvedColor(at: (position - from) / (to - from))
+extension LinearGradient: View, PrimitiveView {
+    @MainActor public var body: Never { return fatalError("LinearGradient has no body") }
+    var nodeKind: NodeKind { .gradient(resolved) }
+    var nodeContent: (any View)? { nil }
+}
+
+/// A colour gradient in rings about `center`, from `startRadius` (location 0) to `endRadius` (location 1), in points.
+/// Apple: https://developer.apple.com/documentation/swiftui/radialgradient
+public struct RadialGradient: ShapeStyle, Equatable, Sendable {
+    public let gradient: Gradient
+    public let center: UnitPoint
+    public let startRadius: CGFloat
+    public let endRadius: CGFloat
+
+    /// Apple: https://developer.apple.com/documentation/swiftui/radialgradient/init(gradient:center:startradius:endradius:)
+    public init(gradient: Gradient, center: UnitPoint, startRadius: CGFloat, endRadius: CGFloat) {
+        self.gradient = gradient
+        self.center = center
+        self.startRadius = startRadius
+        self.endRadius = endRadius
+    }
+
+    /// Apple: https://developer.apple.com/documentation/swiftui/radialgradient/init(colors:center:startradius:endradius:)
+    public init(colors: [Color], center: UnitPoint, startRadius: CGFloat, endRadius: CGFloat) {
+        self.init(gradient: Gradient(colors: colors), center: center, startRadius: startRadius, endRadius: endRadius)
+    }
+
+    /// Apple: https://developer.apple.com/documentation/swiftui/radialgradient/init(stops:center:startradius:endradius:)
+    public init(stops: [Gradient.Stop], center: UnitPoint, startRadius: CGFloat, endRadius: CGFloat) {
+        self.init(gradient: Gradient(stops: stops), center: center, startRadius: startRadius, endRadius: endRadius)
+    }
+
+    /// The colour at the middle of the gradient: what a single-colour `ShapeStyle` use gets.
+    public var resolvedColor: ResolvedColor { gradient.resolvedColor(at: 0.5) }
+
+    var resolved: ResolvedGradient {
+        ResolvedGradient(geometry: .radial(center: center, startRadius: Double(startRadius), endRadius: Double(endRadius)), gradient: gradient)
     }
 }
 
-extension LinearGradient: View {
-    @MainActor public var body: some View { LinearGradientBands(gradient: self) }
-}
-
-/// The bands of a gradient view. Each band is a plain `Color` node (greedy), so the stack splits the space it is offered evenly.
-struct LinearGradientBands: View {
-    let gradient: LinearGradient
-
-    @MainActor var body: some View {
-        if gradient.isVertical {
-            VStack(spacing: 0) {
-                ForEach(0..<LinearGradient.bandCount, id: \.self) { index in
-                    Color(resolved: gradient.bandColor(index))
-                }
-            }
-        } else {
-            HStack(spacing: 0) {
-                ForEach(0..<LinearGradient.bandCount, id: \.self) { index in
-                    Color(resolved: gradient.bandColor(index))
-                }
-            }
-        }
-    }
+extension RadialGradient: View, PrimitiveView {
+    @MainActor public var body: Never { return fatalError("RadialGradient has no body") }
+    var nodeKind: NodeKind { .gradient(resolved) }
+    var nodeContent: (any View)? { nil }
 }
 
 extension Shape {
-    /// Fills the shape with a gradient: the gradient's bands clipped to the shape (the host has no gradient fill; see the file header).
+    /// Fills the shape with a gradient: the gradient view clipped to the shape (the host masks its bitmap with the shape's anti-aliased coverage).
     /// Apple: https://developer.apple.com/documentation/swiftui/shape/fill(_:style:)
     public func fill(_ gradient: LinearGradient) -> some View {
+        gradient.clipShape(self)
+    }
+
+    /// Apple: https://developer.apple.com/documentation/swiftui/shape/fill(_:style:)
+    public func fill(_ gradient: RadialGradient) -> some View {
         gradient.clipShape(self)
     }
 }
 
 extension View {
-    /// Draws a gradient behind this view, offered the view's size (bands; see the file header).
+    /// Draws a gradient behind this view, offered the view's size.
     /// Apple: https://developer.apple.com/documentation/swiftui/view/background(_:ignoressafeareaedges:)
     public func background(_ gradient: LinearGradient) -> some View {
+        BackgroundStack(base: self, background: gradient, alignment: .center)
+    }
+
+    /// Apple: https://developer.apple.com/documentation/swiftui/view/background(_:ignoressafeareaedges:)
+    public func background(_ gradient: RadialGradient) -> some View {
         BackgroundStack(base: self, background: gradient, alignment: .center)
     }
 
     /// Draws a gradient clipped to `shape` behind this view.
     /// Apple: https://developer.apple.com/documentation/swiftui/view/background(_:in:fillstyle:)
     public func background<T: Shape>(_ gradient: LinearGradient, in shape: T) -> some View {
+        BackgroundStack(base: self, background: gradient.clipShape(shape), alignment: .center)
+    }
+
+    /// Apple: https://developer.apple.com/documentation/swiftui/view/background(_:in:fillstyle:)
+    public func background<T: Shape>(_ gradient: RadialGradient, in shape: T) -> some View {
         BackgroundStack(base: self, background: gradient.clipShape(shape), alignment: .center)
     }
 }

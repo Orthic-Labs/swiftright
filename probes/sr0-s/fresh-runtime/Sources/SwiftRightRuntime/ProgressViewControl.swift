@@ -1,12 +1,14 @@
 import Foundation
 
-// Issue #60 (SR1 backlog), first pass: ProgressView, composed from existing primitives (shapes, GeometryReader, stacks). No host painting is needed.
+// Issue #60 (SR1 backlog), passes 1 and 2: ProgressView, composed from existing primitives (shapes, GeometryReader, stacks, `.rotationEffect`). No host painting is needed.
 //
-// Metrics are GUESSED from AppKit's NSProgressIndicator, not measured on macOS 27 (the SR0 oracle has no ProgressView capture yet):
+// Metrics are GUESSED from AppKit's NSProgressIndicator, not measured on macOS 27 (the SR0 oracle has no ProgressView capture yet; pass 2 re-checked and kept them):
 //   - linear bar: 6 pt tall, a capsule track (10% black, `Color.secondary` at 0.2), a capsule fill in the tint (accent) colour, as wide as the proposal;
-//   - circular (indeterminate): a 16 x 16 ring of three quarters, 2 pt stroke, NOT animated (the runtime has no repeating animation, and a spinning ring
-//     needs a host-driven clock; the host should replace the static ring with a spinner when it grows one);
+//   - circular (indeterminate): a 16 x 16 spinner of 12 rounded ticks (1.5 x 4 pt, from radius 4 to 8, `Color.primary`), fading from full opacity at the head to 15% at
+//     the tail (the tail trails the head counter-clockwise: the head moves clockwise);
 //   - a label sits above a bar, leading aligned, 4 pt apart; above or below a spinner it is 8 pt apart.
+// The spinner turns by the host clock: one step of 30 degrees every 1/12 s (one turn per second, the classic NSProgressIndicator cadence; also a guess), driven by
+// `ModifierSpec.spinner` (see `Graph.tick`), which is a repeat-forever driver for this control only; the runtime has no general repeating animation or TimelineView.
 // The value label (`currentValueLabel`) is not modelled: `CurrentValueLabel` is always `EmptyView`.
 
 /// A bar showing progress (`value` out of `total`) or, with no value, a spinner.
@@ -111,14 +113,42 @@ struct LinearProgressBar: View {
     }
 }
 
-/// A static three-quarter ring, 16 x 16 pt (not animated; see the file header).
+extension ModifierSpec {
+    /// True once any spinner view has been built in this process: `Graph.tick` only looks for spinner nodes then.
+    nonisolated(unsafe) static var spinnersCreated = false
+    static func noteSpinner() { spinnersCreated = true }
+}
+
+/// The indeterminate spinner: 12 ticks, 16 x 16 pt, stepped round by the host clock (see the file header).
 struct IndeterminateSpinner: View {
     static let diameter: CGFloat = 16
+    static let tickCount = 12
+    /// Seconds per turn.
+    static let period: Double = 1
+    static let tickWidth: CGFloat = 1.5
+    static let tickLength: CGFloat = 4
+    static let tailOpacity: Double = 0.15
+
+    /// Opacity of tick `index` (0 is the head).
+    static func opacity(ofTick index: Int) -> Double {
+        1 - (1 - tailOpacity) * Double(index) / Double(tickCount - 1)
+    }
 
     @MainActor var body: some View {
-        Circle()
-            .trim(from: 0, to: 0.75)
-            .stroke(Color.secondary, lineWidth: 2)
-            .frame(width: IndeterminateSpinner.diameter, height: IndeterminateSpinner.diameter)
+        let _ = ModifierSpec.noteSpinner()
+        Modified(content: ring, spec: .spinner(steps: IndeterminateSpinner.tickCount, period: IndeterminateSpinner.period))
+    }
+
+    @MainActor private var ring: some View {
+        ZStack {
+            ForEach(0..<IndeterminateSpinner.tickCount, id: \.self) { index in
+                Capsule()
+                    .fill(Color.primary.opacity(IndeterminateSpinner.opacity(ofTick: index)))
+                    .frame(width: IndeterminateSpinner.tickWidth, height: IndeterminateSpinner.tickLength)
+                    .frame(width: IndeterminateSpinner.diameter, height: IndeterminateSpinner.diameter, alignment: .top)
+                    .rotationEffect(.degrees(-360 * Double(index) / Double(IndeterminateSpinner.tickCount)))
+            }
+        }
+        .frame(width: IndeterminateSpinner.diameter, height: IndeterminateSpinner.diameter)
     }
 }
