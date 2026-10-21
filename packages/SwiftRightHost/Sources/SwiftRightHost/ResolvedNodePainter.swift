@@ -55,6 +55,13 @@ public final class ResolvedNodePainter {
         return out
     }
 
+    /// Set by the host to `bridge.supportsPaths` (renderer ABI >= 0.12, #52). A vector path shape (trimmed, inset, custom, rotated, off-grid, joined, capped) is then emitted as
+    /// one anti-aliased `Primitive.pathShape` drawn by the renderer instead of a host bitmap. Off (the default) is exactly the earlier bitmap route. A shape under a
+    /// `.clipShape` mask stays a masked bitmap either way: the renderer clips by row bands (no anti-aliased edge), so only the shape's own mask gives the soft edge.
+    public var usesRendererPaths = false
+    /// Path shapes drawn by the renderer since this painter was made.
+    public private(set) var rendererPathCount = 0
+
     /// `.clipShape` masks above the node being emitted (SR2 R6). Host-rasterised shapes and solid rects are masked; text and bitmaps, which the renderer draws, are
     /// drawn once per band of the clip's inside, each band a rect clip (#43).
     private var clipMasks: [ClipMask] = []
@@ -442,7 +449,14 @@ public final class ResolvedNodePainter {
                         switch ClipMask.rectCover(clipMasks, region: region) {
                         case .all: out.append(primitive)
                         case .none: break
-                        case .rects(let bands): for band in bands { out += [.clipPush(band), primitive, .clipPop] }
+                        case .rects(let bands):
+                            // Rev 0.12: one nested path clip per mask, the renderer cuts the row bands itself. Otherwise the host's bands.
+                            let specs = clipMasks.compactMap(\.path)
+                            if usesRendererPaths, specs.count == clipMasks.count {
+                                out += specs.map { .clipPath(region, $0) } + [primitive] + specs.map { _ in .clipPop }
+                            } else {
+                                for band in bands { out += [.clipPush(band), primitive, .clipPop] }
+                            }
                         }
                         continue
                     }
@@ -543,6 +557,13 @@ public final class ResolvedNodePainter {
                 return NodeEmission(primitives: [primitive], semantic: nil, flags: [], structural: false)
             case .path(var request):
                 request.fillRGBA = request.fillRGBA.map(adjusted); request.strokeRGBA = request.strokeRGBA.map(adjusted)
+                // Rev 0.12: the renderer draws the path itself (anti-aliased, no host bitmap). Not under a clip mask (see `usesRendererPaths`), and not a dashed stroke
+                // (`rendererPath` is nil then): both keep the bitmap below.
+                if usesRendererPaths, clipMasks.isEmpty, let drawn = try PathShapeRaster.rendererPath(request) {
+                    rendererPathCount += 1
+                    return NodeEmission(primitives: [.pathShape(drawn.spec, fill: drawn.fill, strokeColor: drawn.strokeColor, strokeWidth: drawn.strokeWidthPX)],
+                                        semantic: nil, flags: [], structural: false)
+                }
                 // A vector path (trimmed, inset, dashed, custom, or a style the ABI rect cannot draw): rasterised on the host and registered as one image, kept under the
                 // node id like the continuous route, so the commit releases the previous frame's handle when the node repaints or goes away. Nothing to draw -> no primitive.
                 guard let result = try PathShapeRaster.render(request) else { return NodeEmission(primitives: [], semantic: nil, flags: [], structural: false) }

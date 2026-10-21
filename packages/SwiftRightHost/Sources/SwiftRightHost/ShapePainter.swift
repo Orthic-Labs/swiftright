@@ -206,6 +206,57 @@ public enum PathShapeRaster {
         return Result(image: raster.image, placement: placement)
     }
 
+    /// A renderer-drawn path (ABI rev 0.12, `Primitive.pathShape`): the request's geometry placed exactly as `render` places it (snapped origin, then the rotation),
+    /// in window pixels, with the stroke width in pixels. Nil when the renderer cannot draw it the same way (a dashed stroke, no area, nothing to paint), so the
+    /// caller falls back to `render`. The renderer paints with GPUI's anti-aliased path fill and stroke (4x MSAA); `fillStyle.isAntialiased == false` is not honoured there.
+    public static func rendererPath(_ request: PathShapeRequest) throws -> (spec: PathSpec, fill: UInt32, strokeColor: UInt32, strokeWidthPX: Float)? {
+        guard request.bounds.w.isFinite, request.bounds.h.isFinite, request.bounds.x.isFinite, request.bounds.y.isFinite,
+              request.scale.isFinite, request.scale > 0 else { throw HostPaintError.pathShapeRasterInput(1) }
+        let widthPoints = Double(request.strokeStyle.lineWidth)
+        guard request.strokeRGBA == nil || (widthPoints.isFinite && widthPoints >= 0) else { throw HostPaintError.pathShapeRasterInput(2) }
+        guard request.strokeStyle.dash.allSatisfy({ $0 <= 0 }) || request.strokeRGBA == nil else { return nil }
+        let snapX = request.snapsToPixels ? DevicePixelSnap.edges(origin: Double(request.bounds.x), length: Double(request.bounds.w), scale: Double(request.scale))
+            : (origin: Double(request.bounds.x), length: Double(request.bounds.w))
+        let snapY = request.snapsToPixels ? DevicePixelSnap.edges(origin: Double(request.bounds.y), length: Double(request.bounds.h), scale: Double(request.scale))
+            : (origin: Double(request.bounds.y), length: Double(request.bounds.h))
+        guard snapX.length > 0, snapY.length > 0 else { return nil }
+        let scale = Double(request.scale)
+        let rect = CGRect(x: 0, y: 0, width: snapX.length / scale, height: snapY.length / scale)
+        let path = request.geometry.makePath(in: rect)
+        let t = ShapeRotation.concatenate(CGAffineTransform(translationX: CGFloat(snapX.origin), y: CGFloat(snapY.origin)), request.rotation)
+        let a = Double(t.a), b = Double(t.b), c = Double(t.c), d = Double(t.d), tx = Double(t.tx), ty = Double(t.ty)
+        func px(_ p: CGPoint) -> (Float, Float) {
+            let x = Double(p.x) * scale, y = Double(p.y) * scale
+            return (Float(a * x + c * y + tx), Float(b * x + d * y + ty))
+        }
+        var commands: [PathCommand] = []
+        var open = false
+        for element in path.elements {
+            switch element {
+            case .move(let to): let p = px(to); commands.append(.move(p.0, p.1)); open = true
+            case .line(let to): guard open else { continue }; let p = px(to); commands.append(.line(p.0, p.1))
+            case .quadCurve(let to, let control):
+                guard open else { continue }
+                let q = px(control), p = px(to); commands.append(.quad(q.0, q.1, p.0, p.1))
+            case .curve(let to, let c1, let c2):
+                guard open else { continue }
+                let q1 = px(c1), q2 = px(c2), p = px(to); commands.append(.cubic(q1.0, q1.1, q2.0, q2.1, p.0, p.1))
+            case .closeSubpath: guard open else { continue }; commands.append(.close); open = false
+            }
+        }
+        guard !commands.isEmpty else { return nil }
+        let width = Float(widthPoints * scale * abs(a * d - b * c).squareRoot())
+        let hasStroke = request.strokeRGBA.map { $0 & 255 != 0 } == true && width > 0 && width.isFinite
+        let hasFill = request.fillRGBA.map { $0 & 255 != 0 } == true
+        guard hasFill || hasStroke else { return nil }
+        let miter = Float(request.strokeStyle.miterLimit)
+        let spec = PathSpec(commands: commands, evenOdd: request.fillStyle.isEOFilled,
+                            cap: { switch request.strokeStyle.lineCap { case .butt: return .butt; case .round: return .round; case .square: return .square } }(),
+                            join: { switch request.strokeStyle.lineJoin { case .miter: return .miter; case .round: return .round; case .bevel: return .bevel } }(),
+                            miterLimit: miter.isFinite && miter >= 1 ? miter : 0)
+        return (spec, hasFill ? request.fillRGBA! : 0, hasStroke ? request.strokeRGBA! : 0, hasStroke ? width : 0)
+    }
+
     /// Rasterises and registers: the returned handle is owned by the caller until the node is removed. Nil when there is nothing to draw.
     public static func primitive(_ registry: ImageRegistering, _ request: PathShapeRequest) throws -> (primitive: Primitive, image: ImageHandle)? {
         guard let result = try render(request) else { return nil }

@@ -6,15 +6,19 @@ import SwiftRightBridge
 public struct ClipMask: Equatable, Sendable {
     public let x0: Int, y0: Int, width: Int, height: Int
     public let alpha: [UInt8]
+    /// The same outline as a renderer path (ABI rev 0.12), in window pixels: set by `render` when the renderer can draw it (`PathShapeRaster.rendererPath`). Used to
+    /// send a text run or bitmap under this clip as `Primitive.clipPath` instead of a host-computed set of rect bands (the renderer cuts the same row bands).
+    public var path: PathSpec?
 
     /// The mask of `geometry` laid out in `bounds` (window pixels) at `scale`; an empty mask (clips everything) when the shape has no area.
     public static func render(geometry: ShapeGeometry, fillStyle: FillStyle, bounds: Rect, scale: Float) throws -> ClipMask {
         let request = PathShapeRequest(bounds: bounds, scale: scale, geometry: geometry, fillRGBA: 0xffffffff, strokeRGBA: nil, fillStyle: fillStyle)
         guard let result = try PathShapeRaster.render(request) else { return ClipMask(x0: 0, y0: 0, width: 0, height: 0, alpha: []) }
+        let spec = try PathShapeRaster.rendererPath(request)?.spec
         let w = result.image.width, h = result.image.height
         var a = [UInt8](repeating: 0, count: w * h)
         result.image.rgba.withUnsafeBufferPointer { p in for i in 0..<(w * h) { a[i] = p[i * 4 + 3] } }
-        return ClipMask(x0: Int((result.placement.x - imageGuardBand).rounded()), y0: Int((result.placement.y - imageGuardBand).rounded()), width: w, height: h, alpha: a)
+        return ClipMask(x0: Int((result.placement.x - imageGuardBand).rounded()), y0: Int((result.placement.y - imageGuardBand).rounded()), width: w, height: h, alpha: a, path: spec)
     }
 
     @inline(__always) func coverage(_ x: Int, _ y: Int) -> UInt8 {
