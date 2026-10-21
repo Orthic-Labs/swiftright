@@ -239,7 +239,7 @@ impl State {
         if new.len != old.len || new.hash != old.hash {
             if mask & TS_AS_TEXT_CHANGE != 0 {
                 let ch = TS_TEXTCHANGE { acpStart: 0, acpOldEnd: old.len as i32, acpNewEnd: new.len as i32 };
-                let r = unsafe { sink.OnTextChange(0, &ch) };
+                let r = unsafe { sink.OnTextChange(TEXT_STORE_TEXT_CHANGE_FLAGS(0), &ch) };
                 tsf_log_capped!("tsf_text_change old_len={} new_len={} hr=0x{:08X}", old.len, new.len, hr_of(&r));
             }
             if mask & TS_AS_SEL_CHANGE != 0 {
@@ -899,7 +899,7 @@ pub fn sync(hwnd: *mut c_void, node: u64) {
                         if mask & TS_AS_TEXT_CHANGE != 0 {
                             let len = st.known.get().len as i32;
                             let ch = TS_TEXTCHANGE { acpStart: 0, acpOldEnd: len, acpNewEnd: len };
-                            let _ = unsafe { sink.OnTextChange(0, &ch) };
+                            let _ = unsafe { sink.OnTextChange(TEXT_STORE_TEXT_CHANGE_FLAGS(0), &ch) };
                         }
                         if mask & TS_AS_SEL_CHANGE != 0 {
                             let _ = unsafe { sink.OnSelectionChange() };
