@@ -1,1 +1,8 @@
-{}
+{
+ "edgeAATolerance": {
+  "levels": 80,
+  "maxOverPixels": 10,
+  "maxMeanAbs": 0.5,
+  "reason": "Measured on CI 39579395357 (macOS 27, scale 2.5): interior values are exact on both sides (blue, red 255/102/102, green 0/153/0, grey), so brightness itself is exact. All 342 differing pixels are shape anti-aliasing: both circles have the same area (74 px diameter, 4300 px), the rounded-rect straight edge column differs by 0.6 vs 0.584 coverage (4 levels) and its corners by up to 17, and the circle's right-extreme column x=299 over rows 340..349 has half coverage on the Mac and none here (diffs 76/70/58/43/24 symmetric about the centre row; 8 pixels over 32). Mean in-band difference 0.30; no out-of-band difference."
+ }
+}

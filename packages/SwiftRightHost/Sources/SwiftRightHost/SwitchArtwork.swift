@@ -94,7 +94,8 @@ public enum SwitchArtwork {
         let pxPerPointX = Double(widthPX) / controlWidth, pxPerPointY = Double(heightPX) / controlHeight
         let knobX = knobOriginX(isOn: isOn)
         var base = trackColor(isOn: isOn, isEnabled: isEnabled, scheme: dark ? .dark : .light)
-        if let tint { base = AccentTint.remap(base, accent: trackColor(isOn: true, isEnabled: true, scheme: dark ? .dark : .light), to: tint) }
+        if let tint { let accent = trackColor(isOn: true, isEnabled: true, scheme: dark ? .dark : .light)
+            base = AccentTint.remap(base, accent: accent, to: AccentTint.shaded(tint: tint, artworkAccent: accent, dark: dark)) }
         // dark: the knob is white at `knobAlpha` over the track, so it is a blend INSIDE the track; light: an opaque white knob over the track
         let knobAlpha = dark ? ToggleDarkData.knobAlpha : 1.0
         let strength = dark ? ToggleDarkData.shadowStrength : shadowStrength

@@ -67,7 +67,13 @@ public enum SliderArtwork {
         if let hit = cache[key] { return hit }
         if cache.count > 64 { cache.removeAll() }
         var planes = scheme == .dark ? dark : light
-        if let tint { planes = planes.with(accent: (Double(tint >> 16 & 255), Double(tint >> 8 & 255), Double(tint & 255))) }
+        if let tint {
+            // the fill is the tint shaded the way the measured accent fill is shaded against the accent itself (`AccentTint.shaded`)
+            let a = planes.accent
+            let artwork = UInt32(a.0.rounded()) << 16 | UInt32(a.1.rounded()) << 8 | UInt32(a.2.rounded())
+            let shaded = AccentTint.shaded(tint: tint, artworkAccent: artwork, dark: scheme == .dark)
+            planes = planes.with(accent: (Double(shaded >> 16 & 255), Double(shaded >> 8 & 255), Double(shaded & 255)))
+        }
         let image = rasterize(widthPX: widthPX, heightPX: heightPX, thumbOffsetPX: thumbOffsetPX, fillEndPX: fillEndPX, isEnabled: isEnabled, planes: planes, scale: scale)
         cache[key] = image
         return image

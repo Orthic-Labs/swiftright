@@ -7,9 +7,9 @@
   1.0
  ],
  "edgeAATolerance": {
-  "levels": 160,
-  "maxOverFraction": 0.06,
-  "maxMeanAbs": 6,
-  "reason": "PROVISIONAL, unmeasured (issue #54): only the circle's anti-aliased edge band is statistical (F-path edge statistics); the rectangles and every interior are exact, which is what decides the interpolation space."
+  "levels": 48,
+  "maxOverFraction": 0.005,
+  "maxMeanAbs": 1,
+  "reason": "Measured on CI 39579395357 (macOS 27, scale 2.5): rest frames 0 and 4 differ only on the circle's anti-aliased edge band (260 / 268 pixels, max 14, mean 0.18 over the 7860 band pixels); every rectangle and interior is exact. The mid frames decided the interpolation space: the Mac reads 212/90/119, 167/106/167, 118/109/212 at 0.25/0.5/0.75 for red 255/51/51 to blue 51/102/255, which is Oklab (gamma gave 204/64/102 ... 153/77/153), now the runtime's space; the band limits are those of frame 0 with margin."
  }
 }

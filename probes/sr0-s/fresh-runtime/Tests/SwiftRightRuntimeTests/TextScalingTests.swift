@@ -14,8 +14,33 @@ final class ProportionalMeasurer: TextMeasurer {
     }
 }
 
+/// Widths that are not on the device-pixel grid (a real measurer's are not): 0.37 pt more than half the point size per character.
+@MainActor
+final class OffGridMeasurer: TextMeasurer {
+    func measure(_ r: TextMeasureRequest) -> TextMeasurement {
+        let pt = r.fontMetadata?.pointSize ?? 13
+        var w = CGFloat(r.text.count) * (pt / 2 + 0.37)
+        if let bound = r.proposedWidth { w = min(w, bound) }
+        return TextMeasurement(size: LayoutSize(width: w, height: pt * 1.2), baseline: pt, lineCount: 1)
+    }
+}
+
 @MainActor
 final class TextScalingTests: XCTestCase {
+    /// CI 39579395357 (minimum-scale-v1, Windows host): the placed frame is snapped to device pixels, the memoised size is not; the resolved node still carries the shrunk font.
+    func testTheShrunkFontSurvivesPixelSnappingOfTheFrame() throws {
+        let g = Graph(Text("Pulse notch status line").font(.system(size: 20)).lineLimit(1).minimumScaleFactor(0.5).frame(width: 150, height: 30, alignment: .leading),
+                      measurer: OffGridMeasurer(), scale: 2.5)
+        g.rootProposal = ProposedViewSize(width: 320, height: 240)
+        g.flush()
+        func walk(_ n: ResolvedNode) -> [ResolvedNode] { [n] + n.children.flatMap(walk) }
+        let t = try XCTUnwrap(walk(try XCTUnwrap(g.snapshot())).first { $0.kind == "Text" })
+        let size = try XCTUnwrap(t.style.font?.metadata?.pointSize)
+        XCTAssertLessThan(size, 20, "shrunk")
+        let exact = try XCTUnwrap(t.exactFrame, "the snapped frame is off the measured size, which is what the lookup must tolerate")
+        XCTAssertNotEqual(t.frame.width, exact.width)
+    }
+
     private func text<V: View>(_ view: V, width: CGFloat) throws -> ResolvedNode {
         let g = Graph(view, measurer: ProportionalMeasurer())
         g.rootProposal = ProposedViewSize(width: width, height: 100)

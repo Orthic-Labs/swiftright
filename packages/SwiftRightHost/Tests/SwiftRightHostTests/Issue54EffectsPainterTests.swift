@@ -163,23 +163,35 @@ final class Issue54EffectsPainterTests: XCTestCase {
         XCTAssertFalse(hasPixel(borderedImage, near: red, within: 8), "a bordered button has no accent fill to tint")
     }
 
+    /// `.tint(.red)` = 0xff383c: a switch track, checkbox box and slider fill measured 249/55/59 on macOS 27 (CI 39579395357), the accent artwork's own 2.35 % shade.
+    private let shadedRed: UInt32 = 0xf9373b
+
+    func testTheShadeOfTheArtworkAccentCarriesToTheTint() {
+        XCTAssertEqual(AccentTint.shaded(tint: 0xff383c, artworkAccent: 0x0078f9, dark: false), shadedRed)
+        XCTAssertEqual(AccentTint.shaded(tint: 0xff383c, artworkAccent: 0x007bff, dark: false), 0xff383c, "the accent itself (a prominent Button) takes the tint as it is")
+        // dark: 0x067eff is the accent lightened 2.3 %
+        let dark = AccentTint.shaded(tint: 0xff383c, artworkAccent: 0x067eff, dark: true)
+        XCTAssertEqual(dark >> 16 & 255, 255)
+        XCTAssertEqual(Double(dark >> 8 & 255), 56 + (255 - 56) * 0.0231, accuracy: 1.5)
+        XCTAssertEqual(AccentTint.shaded(tint: 0xff383c, artworkAccent: 0xe6e6e6, dark: false), 0xff383c, "not an accent shade: the tint unchanged")
+    }
+
     func testASwitchTracksInTheTintOnlyWhenOn() throws {
         let red = try XCTUnwrap(HostPaint.rgba(Color.red.resolvedColor, opacity: 1)) >> 8
         let on = try commit(Toggle("Enabled", isOn: .constant(true)).labelsHidden().toggleStyle(.switch).tint(.red))
         let onImage = try XCTUnwrap(on.images.registered.values.first)
-        XCTAssertTrue(hasPixel(onImage, near: red, within: 0), "the on track is the tint")
+        XCTAssertTrue(hasPixel(onImage, near: shadedRed, within: 0), "the on track is the tint darkened 2.35 % (measured on the Mac: 249/55/59)")
         XCTAssertFalse(hasPixel(onImage, near: 0x0078f9, within: 8))
         let off = try commit(Toggle("Enabled", isOn: .constant(false)).labelsHidden().toggleStyle(.switch).tint(.red))
         XCTAssertFalse(hasPixel(try XCTUnwrap(off.images.registered.values.first), near: red, within: 8), "the off track keeps its grey")
         let box = try commit(Toggle("Enabled", isOn: .constant(true)).toggleStyle(.checkbox).tint(.red))
-        XCTAssertTrue(box.images.registered.values.contains { hasPixel($0, near: red, within: 0) }, "the checked box is the tint")
+        XCTAssertTrue(box.images.registered.values.contains { hasPixel($0, near: shadedRed, within: 0) }, "the checked box is the shaded tint")
     }
 
     func testASliderFillsInTheTint() throws {
-        let red = try XCTUnwrap(HostPaint.rgba(Color.red.resolvedColor, opacity: 1)) >> 8
         let tinted = try commit(Slider(value: .constant(0.6), in: 0...1).frame(width: 200).tint(.red))
         let image = try XCTUnwrap(tinted.images.registered.values.max { $0.rgba.count < $1.rgba.count })
-        XCTAssertTrue(hasPixel(image, near: red, within: 3))
+        XCTAssertTrue(hasPixel(image, near: shadedRed, within: 2), "the fill is the shaded tint (249/55/59 on the Mac)")
         XCTAssertFalse(hasPixel(image, near: 0x0078f9, within: 6))
     }
 }

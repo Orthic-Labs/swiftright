@@ -3,9 +3,18 @@
   0.0,
   0.105,
   0.205,
-  0.315,
+  0.235,
+  0.265,
+  0.295,
+  0.325,
+  0.355,
+  0.385,
+  0.415,
   0.455,
+  0.5,
+  0.55,
   0.607,
+  0.7,
   0.757,
   0.907,
   1.057,
@@ -30,6 +39,6 @@
   "extentTolerancePx": 1.0,
   "progressTolerance": 0.005,
   "stripPx": 1,
-  "note": "PROVISIONAL (issue #54): 1 px, device-pixel snapping. Gaps between samples are at most 0.3 s (after a gap over 1 s SwiftUI advances a spring one frame). The frames from 0.607 s bracket the interrupted spring's removal."
+  "note": "PROVISIONAL (issue #54): 1 px, device-pixel snapping. Gaps between samples are at most 0.3 s (after a gap over 1 s SwiftUI advances a spring one frame). CI 39579395357 failed at 0.315 s (Mac bar 197.0 pt, ours 184.0) and 0.455 s (109.4, 106.0): the interrupted spring's first 0.25 s after the interruption at 0.205 s is denser here (every 0.03 s to 0.415 s) to fit the Mac's retargeting model; the tail from 0.607 s matches within 0.3 pt."
  }
 }

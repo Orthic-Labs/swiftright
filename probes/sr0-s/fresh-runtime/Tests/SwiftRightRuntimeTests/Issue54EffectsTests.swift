@@ -42,6 +42,17 @@ final class PaintInterpolationTests: XCTestCase {
         return [r, g, b, a]
     }
 
+    /// CI 39579395357, macOS 27: red 255/51/51 to blue 51/102/255 reads 212/90/119, 167/106/167, 118/109/212 at 0.25, 0.5, 0.75 of a linear animation.
+    func testDefaultColourSpaceIsOklabAsMeasuredOnTheMac() throws {
+        XCTAssertEqual(ColorInterpolation.space, .oklab)
+        let from = ResolvedColor.rgba(1, 51.0 / 255, 51.0 / 255, 1), to = ResolvedColor.rgba(51.0 / 255, 102.0 / 255, 1, 1)
+        for (t, want) in [(0.25, [212, 90, 119]), (0.5, [167, 106, 167]), (0.75, [118, 109, 212])] as [(Double, [Double])] {
+            let c = try components(ResolvedColor.interpolated(from, to, t))
+            for k in 0..<3 { XCTAssertEqual((c[k] * 255).rounded(), want[k], "t \(t) channel \(k)") }
+        }
+        XCTAssertEqual(try components(ResolvedColor.interpolated(from, to, 0)).prefix(3).map { ($0 * 255).rounded() }, [255, 51, 51])
+    }
+
     func testColourInterpolationIsPerComponentAndClamped() throws {
         let mid = try components(ResolvedColor.interpolated(paintRed.resolvedColor, paintBlue.resolvedColor, 0.5, in: .sRGB))
         XCTAssertEqual(mid, [0.5, 0, 0.5, 1])
@@ -55,7 +66,8 @@ final class PaintInterpolationTests: XCTestCase {
         XCTAssertEqual(under, [1, 0, 0, 1])
         // alpha is interpolated on its own (straight alpha)
         let faded = try components(ResolvedColor.interpolated(.rgba(1, 0, 0, 0), .rgba(1, 0, 0, 1), 0.25))
-        XCTAssertEqual(faded, [1, 0, 0, 0.25])
+        XCTAssertEqual(faded[3], 0.25)
+        for k in 0..<3 { XCTAssertEqual(faded[k], [1, 0, 0][k], accuracy: 1e-9) }
         // the same semantic colour fades its alpha; other pairs take the new colour
         XCTAssertEqual(ResolvedColor.interpolated(.semantic("label"), .semanticAlpha("label", 0.5), 0.5), .semanticAlpha("label", 0.75))
         XCTAssertEqual(ResolvedColor.interpolated(.semantic("label"), .semantic("accentColor"), 0.5), .semantic("accentColor"))
@@ -73,9 +85,12 @@ final class PaintInterpolationTests: XCTestCase {
         g.tick(now: 0)
         XCTAssertEqual(try fill(g), paintRed.resolvedColor, "nothing moves at progress 0")
         g.tick(now: 0.5)
-        XCTAssertEqual(try components(try fill(g)), [0.5, 0, 0.5, 1])
-        XCTAssertEqual(try components(try foreground(g)), [0.5, 0, 0.5, 1], "a foreground style animates")
-        XCTAssertEqual(try components(try colorView(g)), [0.5, 0, 0.5, 1], "a Color view animates")
+        // Oklab midpoint of red and blue (the measured space, see PaintInterpolation.swift)
+        let mid = [0.5504410670996633, 0.32562068470935013, 0.6365006535344367, 1]
+        for (got, what) in [(try fill(g), "a shape fill"), (try foreground(g), "a foreground style"), (try colorView(g), "a Color view")] {
+            let c = try components(got)
+            for k in 0..<4 { XCTAssertEqual(c[k], mid[k], accuracy: 1e-6, "\(what) animates in Oklab, channel \(k)") }
+        }
         XCTAssertEqual(try lineWidth(g), 5, accuracy: 1e-9)
         let stroke = try XCTUnwrap(try nodes(g).compactMap(\.shape).last?.paint)
         XCTAssertEqual(stroke.strokeStyle?.lineWidth ?? stroke.lineWidth, 5, "the stroke style follows the width")

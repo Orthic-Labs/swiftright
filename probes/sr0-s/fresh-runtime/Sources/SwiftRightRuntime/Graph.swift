@@ -2544,9 +2544,15 @@ public final class Graph {
         if case .modifier(.clipShape(let geometry, let fillStyle)) = kind { clipShape = ResolvedClipShape(geometry: node.presentedGeometry ?? geometry, fillStyle: fillStyle) }
         // R5: a Text shrunk by `minimumScaleFactor` draws with the font that produced its placed size.
         var style = node.style
+        // The placed frame is snapped to device pixels, the memoised size is not (CI 39579395357: the exact comparison never matched with the real measurer, the
+        // host painted the unshrunk font and found no measured run for the bounds): the memoised size nearest the exact placed rect, within one device pixel.
+        let pixel = 1 / max(scale, 1e-6) + 1e-6
         if case .text = kind, !node.memoScaledFont.isEmpty,
-           let width = node.memoScaledFont.keys.sorted(by: { ($0 ?? .infinity) < ($1 ?? .infinity) }).first(where: { key in
-               node.memo[key].map { abs($0.width - node.frame.width) < 0.001 && abs($0.height - node.frame.height) < 0.001 } ?? false }),
+           let width = node.memoScaledFont.keys.compactMap({ key -> (key: CGFloat?, distance: CGFloat)? in
+               guard let size = node.memo[key] else { return nil }
+               let dw = abs(size.width - node.exactFrame.width), dh = abs(size.height - node.exactFrame.height)
+               return dw <= pixel && dh <= pixel ? (key, dw + dh) : nil
+           }).min(by: { ($0.distance, $0.key ?? .infinity) < ($1.distance, $1.key ?? .infinity) })?.key,
            let shrunk = node.memoScaledFont[width] {
             style = ResolvedStyle(font: shrunk, foreground: style.foreground, colorScheme: style.colorScheme)
         }

@@ -55,7 +55,8 @@ public enum CheckboxArtwork {
         let n = samplesPerAxis, total = Double(n * n)
         let pxPerPointX = Double(widthPX) / side, pxPerPointY = Double(heightPX) / side
         var box = boxColor(isOn: isOn, isEnabled: isEnabled, scheme: dark ? .dark : .light)
-        if let tint { box = AccentTint.remap(box, accent: boxColor(isOn: true, isEnabled: true, scheme: dark ? .dark : .light), to: tint) }
+        if let tint { let accent = boxColor(isOn: true, isEnabled: true, scheme: dark ? .dark : .light)
+            box = AccentTint.remap(box, accent: accent, to: AccentTint.shaded(tint: tint, artworkAccent: accent, dark: dark)) }
         let checkColour = dark ? (isEnabled ? ToggleDarkData.checkOn : ToggleDarkData.checkOnDisabled) : (isEnabled ? CheckboxArtworkData.checkOn : CheckboxArtworkData.checkOnDisabled)
         let boxRGB = [Double(box >> 16 & 255), Double(box >> 8 & 255), Double(box & 255)]
         let checkRGB = [Double(checkColour >> 16 & 255), Double(checkColour >> 8 & 255), Double(checkColour & 255)]

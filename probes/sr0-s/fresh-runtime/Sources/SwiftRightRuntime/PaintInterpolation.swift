@@ -6,8 +6,10 @@ import Foundation
 // Semantics (and what is measured, what is not):
 // - SwiftUI animates a colour as its resolved components and an opacity (all four are interpolated, straight alpha, no premultiplication). A spring that
 //   overshoots (progress above 1 or below 0) is clamped to 0...1 per component where it is drawn, so the components are clamped here.
-// - UNMEASURED: whether the components are interpolated gamma-encoded or in linear light. `ColorInterpolation.space` is the single switch; the factory case
-//   `paint-animated-v1` (factory/pipeline/sr2-effects) has a mid-frame whose two spaces differ by 55 levels per channel, so the first CI pair decides it.
+// - MEASURED (CI 39579395357, macOS 27, paint-colour-v1): the components are interpolated in Oklab (the space SwiftUI's Gradient also uses on macOS 26+), not
+//   gamma-encoded and not in linear light. Red 255/51/51 to blue 51/102/255 at progress 0.25 / 0.5 / 0.75 reads 212/90/119, 167/106/167, 118/109/212 on the Mac;
+//   Oklab reproduces all nine channel values exactly (gamma gives 204/64/102 ... 153/77/153, linear light 226/68/143 ... 190/81/190). Alpha stays straight and linear.
+//   `ColorInterpolation.space` is the single switch.
 // - Two `.rgba` colours interpolate per component. Two semantic colours of the same name interpolate their alpha. Any other pair (a different semantic colour,
 //   or a semantic against an `rgba`) cannot be blended here (semantic names resolve in the host), so it takes the new colour as soon as the layer is past
 //   progress 0. A spring settles on a colour change like an opacity-like value (`distance`).
@@ -44,9 +46,9 @@ struct PaintValues: Equatable, Sendable {
 }
 
 enum ColorInterpolation {
-    enum Space { case sRGB, linear }
-    /// The space colour components are interpolated in (see the header: unmeasured, gamma-encoded until a CI pair says otherwise).
-    static let space: Space = .sRGB
+    enum Space { case sRGB, linear, oklab }
+    /// The space colour components are interpolated in (see the header: Oklab, measured against a macOS 27 capture).
+    static let space: Space = .oklab
 
     static func clamp(_ v: Double) -> Double { min(max(v, 0), 1) }
     static func decode(_ v: Double) -> Double { v <= 0.04045 ? v / 12.92 : pow((v + 0.055) / 1.055, 2.4) }
@@ -56,11 +58,43 @@ enum ColorInterpolation {
     static func mix(_ a: Double, _ b: Double, _ t: Double, in space: Space = ColorInterpolation.space) -> Double {
         let p = clamp(a), q = clamp(b)
         switch space {
-        case .sRGB: return clamp(p + (q - p) * t)
+        case .sRGB, .oklab: return clamp(p + (q - p) * t)   // Oklab mixes three channels together: `mixRGB`
         case .linear:
             let lp = decode(p), lq = decode(q)
             return clamp(encode(clamp(lp + (lq - lp) * t)))
         }
+    }
+}
+
+extension ColorInterpolation {
+    /// (r, g, b) of `a` -> `b` at `t` in `space`, each 0...1. Oklab (Ottosson, 2020) is a joint transform, so its three channels are mixed together; the others per channel.
+    static func mixRGB(_ a: (Double, Double, Double), _ b: (Double, Double, Double), _ t: Double, in space: Space) -> (Double, Double, Double) {
+        guard space == .oklab else {
+            return (mix(a.0, b.0, t, in: space), mix(a.1, b.1, t, in: space), mix(a.2, b.2, t, in: space))
+        }
+        let la = oklab(a), lb = oklab(b)
+        return fromOklab((la.0 + (lb.0 - la.0) * t, la.1 + (lb.1 - la.1) * t, la.2 + (lb.2 - la.2) * t))
+    }
+
+    static func oklab(_ c: (Double, Double, Double)) -> (Double, Double, Double) {
+        let r = decode(clamp(c.0)), g = decode(clamp(c.1)), b = decode(clamp(c.2))
+        let l = cbrt(0.4122214708 * r + 0.5363325363 * g + 0.0514459929 * b)
+        let m = cbrt(0.2119034982 * r + 0.6806995451 * g + 0.1073969566 * b)
+        let s = cbrt(0.0883024619 * r + 0.2817188376 * g + 0.6299787005 * b)
+        return (0.2104542553 * l + 0.7936177850 * m - 0.0040720468 * s,
+                1.9779984951 * l - 2.4285922050 * m + 0.4505937099 * s,
+                0.0259040371 * l + 0.7827717662 * m - 0.8086757660 * s)
+    }
+
+    /// Back to gamma-encoded sRGB, each channel clamped to 0...1 (a mix can leave the gamut, and an overshooting spring leaves it further).
+    static func fromOklab(_ c: (Double, Double, Double)) -> (Double, Double, Double) {
+        let l = c.0 + 0.3963377774 * c.1 + 0.2158037573 * c.2
+        let m = c.0 - 0.1055613458 * c.1 - 0.0638541728 * c.2
+        let s = c.0 - 0.0894841775 * c.1 - 1.2914855480 * c.2
+        let l3 = l * l * l, m3 = m * m * m, s3 = s * s * s
+        return (encode(clamp(4.0767416621 * l3 - 3.3077115913 * m3 + 0.2309699292 * s3)),
+                encode(clamp(-1.2684380046 * l3 + 2.6097574011 * m3 - 0.3413193965 * s3)),
+                encode(clamp(-0.0041960863 * l3 - 0.7034186147 * m3 + 1.7076147010 * s3)))
     }
 }
 
@@ -78,8 +112,8 @@ extension ResolvedColor {
     static func interpolated(_ a: ResolvedColor, _ b: ResolvedColor, _ t: Double, in space: ColorInterpolation.Space = ColorInterpolation.space) -> ResolvedColor {
         if a == b { return b }
         if case .rgba(let r1, let g1, let b1, let a1) = a, case .rgba(let r2, let g2, let b2, let a2) = b {
-            return .rgba(ColorInterpolation.mix(r1, r2, t, in: space), ColorInterpolation.mix(g1, g2, t, in: space), ColorInterpolation.mix(b1, b2, t, in: space),
-                         ColorInterpolation.clamp(a1 + (a2 - a1) * t))
+            let rgb = ColorInterpolation.mixRGB((r1, g1, b1), (r2, g2, b2), t, in: space)
+            return .rgba(rgb.0, rgb.1, rgb.2, ColorInterpolation.clamp(a1 + (a2 - a1) * t))
         }
         if let pa = a.semanticParts, let pb = b.semanticParts, pa.name == pb.name {
             let alpha = ColorInterpolation.clamp(pa.alpha + (pb.alpha - pa.alpha) * t)
