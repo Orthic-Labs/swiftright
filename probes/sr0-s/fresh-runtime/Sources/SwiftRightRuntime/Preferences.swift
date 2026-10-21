@@ -51,6 +51,13 @@ struct PreferenceValues {
         entries[identifier] = entries[identifier]?.reducing(with: next) ?? next
     }
 
+    /// Applies `transform` to the value the subtree reduced to (the key's default when no descendant contributed).
+    mutating func transform<Key: PreferenceKey>(_ key: Key.Type, _ transform: (inout Key.Value) -> Void) {
+        var current = value(for: key)
+        transform(&current)
+        set(current, for: key)
+    }
+
     mutating func merge(_ next: PreferenceValues) {
         for (identifier, nextEntry) in next.entries {
             entries[identifier] = entries[identifier]?.reducing(with: nextEntry) ?? nextEntry
@@ -67,6 +74,12 @@ struct PreferenceContribution {
 
     init<Key: PreferenceKey>(_ value: Key.Value, for key: Key.Type) {
         apply = { values in values.reduce(value, for: key) }
+        applyAt = nil
+    }
+
+    /// `transformPreference`: rewrites the value the subtree below reduced to instead of adding one.
+    init<Key: PreferenceKey>(transforming key: Key.Type, _ transform: @escaping (inout Key.Value) -> Void) {
+        apply = { values in values.transform(key, transform) }
         applyAt = nil
     }
 
