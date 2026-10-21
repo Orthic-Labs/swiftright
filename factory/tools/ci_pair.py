@@ -210,6 +210,8 @@ def copy_package(case, pkg, stage_dir):
         dst = pkg / rel; dst.parent.mkdir(parents=True, exist_ok=True)
         if f.name == "Package.swift":
             dst.write_text(f.read_text().replace("@@PRODUCT_STAGE@@", str(stage_dir).replace("\\", "\\\\")))
+        elif f.suffix == ".swift" and b"@@CAPTURE_SCALE@@" in f.read_bytes():
+            dst.write_text(pair.stamp_scale(f.read_text(), pair.case_scale(case)))
         else:
             shutil.copyfile(f, dst)
 

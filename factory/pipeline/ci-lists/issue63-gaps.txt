@@ -1,6 +1,8 @@
 # Issue #63: SR1 known gaps (hairline strokes, other scales, symbol sizes, default text colour). Cases are PROVISIONAL until their first CI pair.
-# mixed-layout-v1 runs at the single capture scale 2.5; scale-125/150 variants need a per-case scale (pair.py CAPTURE_SCALE).
+# mixed-layout-v1 runs at 2.5; scale-125-v1 / scale-150-v1 clone it at pair.json captureScale 1.25 / 1.5 (pair.py case_scale).
 factory/pipeline/sr1-gaps/swiftui.path/hairline-strokes-v1
 factory/pipeline/sr1-gaps/swiftui.layout/mixed-layout-v1
 factory/pipeline/sr1-gaps/swiftui.system-symbols/symbol-sizes-v1
 factory/pipeline/sr1-gaps/swiftui.text/default-text-colour-v1
+factory/pipeline/sr1-gaps/swiftui.layout/scale-125-v1
+factory/pipeline/sr1-gaps/swiftui.layout/scale-150-v1

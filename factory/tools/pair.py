@@ -16,7 +16,21 @@ SSH = ["ssh", "-o", "BatchMode=yes", "win"]
 EXE_REL = r"scratch\x86_64-unknown-windows-msvc\release\FactoryProbe.exe"
 STAGE_ROOT = rf"{WIN_ROOT}\product-stage"
 DEFAULT_RENDERER = rf"{WIN_ROOT}\inputs\renderer-0.7-baseline-22ad719b\swiftright_render.dll"
-CAPTURE_SCALE = 2.5   # the density both sides capture at (the Windows Graph's scale; every Mac host gets --scale 2.5) and the scale every Mac host pins its window and displayScale to (decision C12)
+ALLOWED_SCALES = (1.0, 1.25, 1.5, 2.0, 2.5)   # <case>/pair.json "captureScale" (issues #61/#63); absent = 2.5
+CAPTURE_SCALE = 2.5   # the DEFAULT density (a case's pair.json captureScale overrides it per case through apply_gate_config, which sets this global; the capture is 320x240 pt, i.e. 320*S x 240*S px; pixel rects in pair.json are in that capture); the density both sides capture at (the Windows Graph's scale; every Mac host gets --scale 2.5) and the scale every Mac host pins its window and displayScale to (decision C12)
+
+
+def case_scale(case):
+    """The case's capture scale: pair.json "captureScale" (one of ALLOWED_SCALES) or the 2.5 default."""
+    pj = case / "pair.json"
+    s = float(json.loads(pj.read_text()).get("captureScale", 2.5)) if pj.is_file() else 2.5
+    assert s in ALLOWED_SCALES, f"captureScale {s} not in {ALLOWED_SCALES}"
+    return s
+
+
+def stamp_scale(text, scale):
+    """Windows package sources: the token @@CAPTURE_SCALE@@ (a case host that needs a non-default scale writes `let factoryRenderScale: Float = @@CAPTURE_SCALE@@`) becomes the case's scale literal. Text without the token is returned unchanged (default cases stay byte-identical)."""
+    return text.replace("@@CAPTURE_SCALE@@", repr(float(scale))) if "@@CAPTURE_SCALE@@" in text else text
 
 
 def sh(cmd, log=None, check=True, timeout=None):
@@ -46,6 +60,8 @@ def windows(case, name, runs, out, shared=False, sandbox=False, stage=None, rend
             if f.is_file() and "scratch" not in f.relative_to(case / "package").parts:
                 if f.name == "Package.swift":
                     z.writestr(f.relative_to(case / "package").as_posix(), f.read_text().replace("@@PRODUCT_STAGE@@", stage_dir.replace("\\", "\\\\")))
+                elif f.suffix == ".swift" and b"@@CAPTURE_SCALE@@" in f.read_bytes():
+                    z.writestr(f.relative_to(case / "package").as_posix(), stamp_scale(f.read_text(), case_scale(case)))
                 else:
                     z.write(f, f.relative_to(case / "package").as_posix())
     wzip = rf"{host}\package-{ts}.zip"
@@ -354,7 +370,8 @@ def load_phases(case):
 
 def apply_gate_config(case):
     """Sets the per-case gate globals from <case>/pair.json (main() and ci_pair.set_globals call this; compare() reads the globals)."""
-    global HAZE, EDGE_AA, EDGE_STATS, DASH_GEOM, EXPECT_FAIL
+    global HAZE, EDGE_AA, EDGE_STATS, DASH_GEOM, EXPECT_FAIL, CAPTURE_SCALE
+    CAPTURE_SCALE = case_scale(case)
     pj = json.loads((case / "pair.json").read_text()) if (case / "pair.json").is_file() else {}
     HAZE = int(pj.get("hazeTolerance", 0))
     et = pj.get("edgeAATolerance")
@@ -384,7 +401,7 @@ def compare(out, runs, exclusions=(), frames=0, phases=()):
         if not (a.is_file() and b.is_file()):
             rows.append(dict(run=i, **fr, error="missing capture")); continue
         im, iw = Image.open(a).convert("RGB"), Image.open(b).convert("RGB")
-        if im.size != iw.size or im.size != (800, 600):
+        if im.size != iw.size or im.size != (round(320 * CAPTURE_SCALE), round(240 * CAPTURE_SCALE)):
             rows.append(dict(run=i, **fr, error=f"size mac={im.size} win={iw.size}")); continue
         full = ImageChops.difference(im, iw)
         gated = full.copy()
