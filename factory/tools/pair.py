@@ -118,8 +118,20 @@ def mac(case, name, runs, out, clock=None, strict=False):
     pj = case / "pair.json"
     mac_args = json.loads(pj.read_text()).get("macArgs", []) if pj.is_file() else []   # extra host arguments for the case (e.g. ["--press", "1"])
     mac_args = [a.replace("{repo}", str(Path(__file__).resolve().parents[2])) for a in mac_args]   # "{repo}" makes a resource path independent of the working directory (CI, Dell, Mac)
-    sh(["/usr/bin/xcrun", "swiftc", "-parse-as-library", "-O", "-module-cache-path", str(build / "mc"),
-        "-o", str(cache / "bin/host"), *srcs], log=out / "mac-build.log")
+    if (case / "mac-source/Package.swift").is_file():
+        # A case whose Mac host needs SwiftPM dependencies (issue #68: swift-markdown-ui) ships mac-source/Package.swift (executable target MacHost, path Sources/MacHost).
+        # The case sources and the shared tool sources picked above are copied into one package tree under the build root and built there; the executable goes to the run root as `host`.
+        pdir = build / "macpkg" / name
+        shutil.copytree(case / "mac-source", pdir, dirs_exist_ok=True)
+        for s in srcs:
+            if not Path(s).resolve().is_relative_to((case / "mac-source/Sources").resolve()):
+                shutil.copyfile(s, pdir / "Sources/MacHost" / Path(s).name)
+        sh(["/usr/bin/xcrun", "swift", "build", "-c", "release", "--package-path", str(pdir), "--scratch-path", str(build / "macpkg-scratch" / name),
+            "-Xswiftc", "-module-cache-path", "-Xswiftc", str(build / "mc")], log=out / "mac-build.log", timeout=3600)
+        shutil.copyfile(build / "macpkg-scratch" / name / "release/MacHost", cache / "bin/host"); (cache / "bin/host").chmod(0o755)
+    else:
+        sh(["/usr/bin/xcrun", "swiftc", "-parse-as-library", "-O", "-module-cache-path", str(build / "mc"),
+            "-o", str(cache / "bin/host"), *srcs], log=out / "mac-build.log")
     # the host only accepts scratch roots under a prefix hard-coded in its source
     m = re.search(r'scratchPrefix\s*=\s*"([^"]+)"', "\n".join(Path(s).read_text() for s in srcs))
     base = Path(m.group(1)) if m else cache / "scratch"

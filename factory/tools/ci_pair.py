@@ -11,7 +11,7 @@
 Layout under --root mirrors the repository: <root>/<case>/runs/<ts>/{mac,windows}/*.png, build.json (mac + scale guard), build-windows.json (stage, renderer).
 Records use the local consolidation/results.jsonl shape (run_round6.py) plus runner fields.
 Gates are pair.py's own (compare, recorded scale guard, semantic gate); nothing is tuned here."""
-import argparse, contextlib, hashlib, importlib.util, io, json, os, re, shutil, subprocess, sys, time
+import argparse, contextlib, hashlib, importlib.util, io, json, os, re, shutil, subprocess, sys, tarfile, time
 from pathlib import Path
 
 HERE = Path(__file__).resolve().parent
@@ -214,6 +214,32 @@ def copy_package(case, pkg, stage_dir):
             shutil.copyfile(f, dst)
 
 
+def run_prebuild(case, stage_dir):
+    """<case>/prebuild.json {"stageExtra": ["probes/markdownui-compat"], "run": ["sh probes/markdownui-compat/fetch.sh"]} (issue #68: MarkdownUI on Windows).
+    stageExtra: repository paths that are not product paths (stage-product.py PATHS, so the stage hash of every other case is unchanged); each is git-archived from HEAD into the
+    stage dir, beside the product, when absent. run: commands executed with the stage dir as working directory and line-ending conversion off (so a patch applies to fetched sources).
+    Returns what ran, for build-windows.json; a failing command fails the job."""
+    pj = case / "prebuild.json"
+    if not pj.is_file():
+        return None
+    cfg = json.loads(pj.read_text())
+    stage_dir = Path(stage_dir)
+    done = dict(stageExtra=[], run=[])
+    for rel in cfg.get("stageExtra", []):
+        if not (stage_dir / rel).is_dir():
+            tar = subprocess.run(["git", "-C", str(REPO), "archive", "--format=tar", "HEAD", "--", rel], capture_output=True, check=True).stdout
+            with tarfile.open(fileobj=io.BytesIO(tar)) as t:
+                t.extractall(stage_dir, filter="data")
+        done["stageExtra"].append(rel)
+    env = dict(os.environ, GIT_CONFIG_COUNT="1", GIT_CONFIG_KEY_0="core.autocrlf", GIT_CONFIG_VALUE_0="false")
+    for cmd in cfg.get("run", []):
+        r = subprocess.run(cmd, shell=True, cwd=stage_dir, env=env)
+        done["run"].append(dict(cmd=cmd, exit=r.returncode))
+        if r.returncode:
+            sys.exit(f"prebuild command failed ({r.returncode}): {cmd}")
+    return done
+
+
 def cmd_windows(a):
     case = case_path(a.case)
     out = run_dir(a.root, a.case, a.ts)
@@ -225,6 +251,7 @@ def cmd_windows(a):
     host = Path(a.work) / "hosts" / slug(a.case)
     host.mkdir(parents=True, exist_ok=True)
     pkg = host / "package"
+    prebuild = run_prebuild(case, a.stage_dir)
     copy_package(case, pkg, Path(a.stage_dir))
     build_log = out / "windows-swift-build.log"
     t = time.time()
@@ -269,7 +296,7 @@ def cmd_windows(a):
     info = dict(stage=stage, renderer=dict(path=str(a.renderer), label=a.renderer_label, sha256=sha), case=a.case, captureKind=kind, flickerProbe=a.flicker_probe,
                 runner=dict(os=os.environ.get("RUNNER_OS", ""), image=os.environ.get("ImageOS", ""), video=guest.get("video"),
                             exeSha256=guest.get("exe_sha256"), rendererSha256=guest.get("renderer_sha256")),
-                capture=dict(ok=ok, runs=a.runs, done=len(done), bad=bad[:5], guestOk=guest.get("ok"), guestError=guest.get("error")))
+                capture=dict(ok=ok, runs=a.runs, done=len(done), bad=bad[:5], guestOk=guest.get("ok"), guestError=guest.get("error")), prebuild=prebuild)
     (out / "build-windows.json").write_text(json.dumps(info, indent=1))
     print(f"windows capture {kind} {len(done) - len(bad)}/{a.runs} ok" + (f" first error: {bad[0]}" if bad else ""), flush=True)
     if not ok:

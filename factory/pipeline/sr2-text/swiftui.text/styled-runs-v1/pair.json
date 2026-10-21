@@ -1,0 +1,88 @@
+{
+ "textColourGate": {
+  "tolerance": 40,
+  "regions": [
+   {
+    "name": "row 1 Text + Text: plain, bold, blue runs",
+    "rect": [
+     100,
+     50,
+     700,
+     110
+    ],
+    "align": "leading",
+    "position": {
+     "firstInkYTolerancePx": 3,
+     "baselineTolerancePx": 3,
+     "inkCentreYTolerancePx": 2,
+     "firstInkXTolerancePx": 2,
+     "reason": "PROVISIONAL, unmeasured: F2 body-text rows (decision G71) widened for the run flow; fit from the first CI factory-pair runs, then tighten (a tolerance is measured and named)"
+    }
+   },
+   {
+    "name": "row 2 Text(AttributedString): yellow background run, underlined run",
+    "rect": [
+     100,
+     110,
+     700,
+     180
+    ],
+    "align": "leading",
+    "position": {
+     "firstInkYTolerancePx": 3,
+     "baselineTolerancePx": 3,
+     "inkCentreYTolerancePx": 2,
+     "firstInkXTolerancePx": 2,
+     "reason": "PROVISIONAL, unmeasured: F2 body-text rows (decision G71) widened for the run flow; fit from the first CI factory-pair runs, then tighten (a tolerance is measured and named)"
+    }
+   }
+  ],
+  "position": {
+   "align": "leading",
+   "reason": "per-row tolerances in each region (provisional, see the regions)"
+  }
+ },
+ "excludeRects": [
+  {
+   "name": "row 1 Text + Text: plain, bold, blue runs glyph region (Segoe UI vs SF, decision 2; run widths differ so per-run boxes are not comparable); gated by the position gate and the semantic frame gate; every pixel outside the two row bands is exact",
+   "rect": [
+    100,
+    50,
+    700,
+    110
+   ]
+  },
+  {
+   "name": "row 2 Text(AttributedString): yellow background run, underlined run glyph region (Segoe UI vs SF, decision 2; run widths differ so per-run boxes are not comparable); gated by the position gate and the semantic frame gate; every pixel outside the two row bands is exact",
+   "rect": [
+    100,
+    110,
+    700,
+    180
+   ]
+  }
+ ],
+ "semanticGate": {
+  "fields": [
+   "role",
+   "name",
+   "count",
+   "order",
+   "boundsY"
+  ],
+  "scope": "main",
+  "phases": [
+   ""
+  ]
+ },
+ "steps": [
+  {
+   "op": "wait",
+   "ms": 600
+  }
+ ],
+ "macArgs": [
+  "--steps",
+  "[{\"op\":\"wait\",\"ms\":600}]"
+ ]
+}
