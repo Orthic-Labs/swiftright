@@ -1,8 +1,8 @@
 {
  "edgeAATolerance": {
-  "levels": 160,
-  "maxOverFraction": 0.05,
-  "maxMeanAbs": 5,
-  "reason": "Hairline strokes (below 1.5 px, issue #63) land on fractional device pixels: the F-path curved/stroke edge statistics apply (sr1-decisions, 20 Oct F-path pixel gate); PROVISIONAL until the first CI pair."
+  "levels": 120,
+  "maxOverFraction": 0.145,
+  "maxMeanAbs": 9,
+  "reason": "Hairline strokes at 1.25, 2.5 and 3.1 px (issue #63). Measured on CI 39579399339 (3 identical runs): maxInBand 102, over-32 pixels 2023 of 15936 band pixels (12.69%), mean 8.15, out-of-band 0. Positions and centres match Mac; the renderer quantises edge coverage (GPUI path 4x MSAA gives 0.5/0.75 steps; rect quad borders snap their outer edge, 2.3 px drawn for 2.5 px), so widths differ by up to 0.5 px. tolerance = measured plus about 15%."
  }
 }

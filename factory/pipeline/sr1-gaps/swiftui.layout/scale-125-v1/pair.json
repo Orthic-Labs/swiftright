@@ -1,42 +1,5 @@
 {
  "captureScale": 1.25,
- "textColourGate": {
-  "tolerance": 40,
-  "regions": [
-   {
-    "name": "row 1 text",
-    "rect": [
-     50,
-     25,
-     200,
-     48
-    ],
-    "align": "leading",
-    "position": {
-     "firstInkYTolerancePx": 3,
-     "baselineTolerancePx": 3,
-     "inkCentreYTolerancePx": 2,
-     "firstInkXTolerancePx": 2,
-     "reason": "PROVISIONAL: body-text row tolerances copied from styled-runs-v1 (F2, decision G71); fit from the first CI pair"
-    }
-   }
-  ],
-  "position": {
-   "align": "leading",
-   "reason": "per-region tolerances"
-  }
- },
- "excludeRects": [
-  {
-   "name": "text glyph region at capture scale 1.25 (Segoe UI vs SF, decision 2); gated by the text-colour position gate; every pixel outside it is exact",
-   "rect": [
-    50,
-    25,
-    200,
-    48
-   ]
-  }
- ],
  "edgeAATolerance": {
   "levels": 160,
   "maxOverFraction": 0.05,

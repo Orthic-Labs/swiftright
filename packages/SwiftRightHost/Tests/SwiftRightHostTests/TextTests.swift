@@ -26,13 +26,13 @@ final class TextRequestAdapterTests: XCTestCase {
 
     func testBodyTextIs13DIPWithTheMacLineHeight() throws {
         // decision G40: body is 13 DIP point-for-point with the Mac, whatever the Windows message font profile says (12 DIP here)
-        let m = try TextRequestAdapter.shapingRequest(for: req("+", width: 40), body: body, fonts: nil, scale: 2.5, textColor: 0x1f1f1fff)
+        let m = try TextRequestAdapter.shapingRequest(for: req("+", width: 40), body: body, fonts: nil, scale: 2.5, textColor: 0x272727ff)
         XCTAssertEqual(m.fontFamily, "Segoe UI Variable Text"); XCTAssertEqual(m.fontSize, 13); XCTAssertEqual(m.lineHeight, 16); XCTAssertEqual(m.weight, 400); XCTAssertEqual(m.maxWidth, 100)
     }
 
     func testCustomFontResolvesThroughTheBundledLibraryWithCoreTextLineHeight() throws {
         let font = Font.custom("Tinos-Regular", size: 18)
-        let m = try TextRequestAdapter.shapingRequest(for: req("SwiftRight", font: font, limit: 1, width: 128), body: body, fonts: FakeFonts(), scale: 2.5, textColor: 0x1f1f1fff)
+        let m = try TextRequestAdapter.shapingRequest(for: req("SwiftRight", font: font, limit: 1, width: 128), body: body, fonts: FakeFonts(), scale: 2.5, textColor: 0x272727ff)
         XCTAssertEqual(m.fontFamily, "Tinos"); XCTAssertEqual(m.fontSize, 18); XCTAssertEqual(m.lineHeight, 20); XCTAssertEqual(m.weight, 400)
         XCTAssertEqual(m.maxWidth, 320)
         let bold = try TextRequestAdapter.shapingRequest(for: req("x", font: Font.custom("Tinos", size: 18).weight(.bold)), body: body, fonts: FakeFonts(), scale: 1, textColor: 0)
@@ -102,7 +102,7 @@ final class SystemFontAdapterTests: XCTestCase {
         TextMeasureRequest(text: text, fontID: font.id, proposedWidth: width, scale: scale, fontMetadata: font.metadata, lineLimit: limit)
     }
     private func shape(_ font: Font, limit: Int? = nil, width: CGFloat? = nil, scale: Float = 2.5) throws -> MeasureRequest {
-        try TextRequestAdapter.shapingRequest(for: req(font, limit: limit, width: width, scale: CGFloat(scale)), body: body, fonts: nil, scale: scale, textColor: 0x1f1f1fff)
+        try TextRequestAdapter.shapingRequest(for: req(font, limit: limit, width: width, scale: CGFloat(scale)), body: body, fonts: nil, scale: scale, textColor: 0x272727ff)
     }
 
     func testSystemFontIsASegoeVariableFamilyAtTheRequestedSizeAndWeightWithTheMacLine() throws {

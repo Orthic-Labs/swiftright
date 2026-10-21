@@ -16,6 +16,11 @@ import json, re, sys
 from pathlib import Path
 from PIL import Image
 
+
+def _px(im):
+    """Pixel sequence on Pillow 11 (getdata, the CI pin) and Pillow 12+ (get_flattened_data)."""
+    return im.get_flattened_data() if hasattr(im, "get_flattened_data") else im.getdata()
+
 BG = (255, 255, 255)
 
 
@@ -125,12 +130,12 @@ def main():
             all_ok &= cell_ok
             if iw:
                 a, b = im.crop(p["region"]), iw.crop(p["region"])
-                shape_px += sum(1 for u, v in zip(a.get_flattened_data(), b.get_flattened_data()) if u != v)
+                shape_px += sum(1 for u, v in zip(_px(a), _px(b)) if u != v)
                 masked_a.paste(BG, p["region"]); masked_b.paste(BG, p["region"])
             row["cells"].append(dict(name=c["name"], size=c["size"], ok=cell_ok, expectedFrame=fr, loggedFrame=logged_frame, frameOk=frame_ok,
                                      modelInk=p["modelInk"], macInk=mi_rel, windowsInk=rel(wi, fr), macInkAbs=mi, windowsInkAbs=wi, macInkExact=(mi_rel == p["modelInk"]), inkExactMacWindows=(None if iw is None else wi == mi), frameExact=(None if mac_only else logged_frame == fr), inkOk=ink_ok, macMatchesTable=ink_table_ok, measuredSize=p["measuredSize"],
                                      expectedTint=c["tint"], macTint=mt and [round(v) for v in mt], windowsTint=wt and [round(v) for v in wt], tintOk=tint_ok))
-        outside = 0 if not iw else sum(1 for u, v in zip(masked_a.get_flattened_data(), masked_b.get_flattened_data()) if u != v)
+        outside = 0 if not iw else sum(1 for u, v in zip(_px(masked_a), _px(masked_b)) if u != v)
         row.update(ok=all_ok and outside == 0, differingPixelsOutsideCells=outside, glyphShapeDiffPixels=shape_px)
         rows.append(row)
     passed = sum(1 for r in rows if r.get("ok"))

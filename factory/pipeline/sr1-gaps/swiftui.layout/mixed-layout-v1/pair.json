@@ -1,6 +1,6 @@
 {
  "textColourGate": {
-  "tolerance": 40,
+  "tolerance": 2,
   "regions": [
    {
     "name": "row 1 text",
@@ -37,10 +37,10 @@
   }
  ],
  "edgeAATolerance": {
-  "levels": 160,
-  "maxOverFraction": 0.05,
+  "levels": 120,
+  "maxOverFraction": 0.065,
   "maxMeanAbs": 5,
-  "reason": "Hairline strokes (below 1.5 px, issue #63) land on fractional device pixels: the F-path curved/stroke edge statistics apply (sr1-decisions, 20 Oct F-path pixel gate); PROVISIONAL until the first CI pair."
+  "reason": "Stroked rounded rectangle edges (issue #63). Measured on CI 39579399339 (3 identical runs): maxInBand 103, over-32 pixels 790 of 13979 band pixels (5.65%), mean 4.42, out-of-band 0 (placement exact). Cause: the renderer's rect quad snaps the half-pixel stroke edge on the right/bottom (Mac keeps a 0.5 coverage pixel, Windows 0), a sub-pixel AA difference, not geometry; tolerance = measured plus about 15%."
  },
  "steps": [
   {

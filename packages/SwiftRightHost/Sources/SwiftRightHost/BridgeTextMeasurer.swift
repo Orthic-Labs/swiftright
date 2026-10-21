@@ -329,7 +329,7 @@ public final class BridgeTextMeasurer: TextMeasurer, TextRunSource {
     private static let cacheBound = 8192
 
     public init(bridge: Bridge, scale: Float, body: BodyFontProfile, fonts: CustomFontResolving? = nil,
-                textColor: UInt32 = 0x1f1f1fff, systemFonts: SystemFontMapper? = nil, log: @escaping (String) -> Void = { print($0) }) {
+                textColor: UInt32 = 0x272727ff, systemFonts: SystemFontMapper? = nil, log: @escaping (String) -> Void = { print($0) }) {
         self.bridge = bridge; self.scale = scale; self.body = body; self.fonts = fonts; self.textColor = textColor; self.log = log
         // A 0.8 renderer says which system families exist; a 0.7 renderer cannot, so Windows 11 is assumed (decision G42).
         if let systemFonts { self.systemFonts = systemFonts }
