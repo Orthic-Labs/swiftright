@@ -53,6 +53,8 @@ public enum ListMetrics {
     public static let sidebarContentInset: CGFloat = 20
     /// The legacy vertical scroller's reserved width at the inset List's trailing edge (measured, controls-b).
     public static let insetScrollerGutter: CGFloat = 16.8
+    /// The sidebar's row width is 17 pt (42.5 px) short of the list when its rows overflow (Mac rows [150,125,457.5,80] in a 500 px list, CI 39608902542), though no scroller is drawn.
+    public static let sidebarScrollerGutter: CGFloat = 17
     /// The inset List's bottom inset in its scrollable document (measured, controls-b: 10 + 72 + 10 = 92 pt).
     public static let insetBottomInset: CGFloat = 10
 
@@ -84,8 +86,15 @@ public enum ListMetrics {
         documentHeight(look, rowHeights: rowHeights) > viewportHeight
     }
 
-    /// The width a List reserves at its trailing edge for a legacy vertical scroller: the inset style's (a sidebar uses an overlay scroller, which takes no space, CI 39605683991), and only when the rows overflow. Zero otherwise.
-    public static func trailingGutter(_ look: ListLook, overflows: Bool) -> CGFloat { look == .inset && overflows ? insetScrollerGutter : 0 }
+    /// The width a List reserves at its trailing edge for a legacy vertical scroller: the inset style's (and the sidebar's 17 pt, with no scroller drawn), and only when the rows overflow. Zero otherwise.
+    public static func trailingGutter(_ look: ListLook, overflows: Bool) -> CGFloat {
+        guard overflows else { return 0 }
+        switch look {
+        case .inset: return insetScrollerGutter
+        case .sidebar: return sidebarScrollerGutter
+        case .plain: return 0
+        }
+    }
 
     /// The rectangle of a row (`content` is the row content's frame in the List's coordinates, `listFrame` the List's), derived from the layout rules
     /// above: the row is `rowHeight` tall around its content, whose centre is the row's centre, and it spans the list's width less `trailingGutter`.
