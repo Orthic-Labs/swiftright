@@ -1,0 +1,79 @@
+{
+ "textColourGate": {
+  "tolerance": 8,
+  "regions": [
+   {
+    "name": "line 1 default colour",
+    "rect": [
+     100,
+     50,
+     700,
+     95
+    ],
+    "align": "leading",
+    "position": {
+     "firstInkYTolerancePx": 3,
+     "baselineTolerancePx": 3,
+     "inkCentreYTolerancePx": 2,
+     "firstInkXTolerancePx": 2,
+     "reason": "PROVISIONAL: body-text row tolerances copied from styled-runs-v1 (F2, decision G71)"
+    }
+   },
+   {
+    "name": "line 2 default colour",
+    "rect": [
+     100,
+     95,
+     700,
+     150
+    ],
+    "align": "leading",
+    "position": {
+     "firstInkYTolerancePx": 3,
+     "baselineTolerancePx": 3,
+     "inkCentreYTolerancePx": 2,
+     "firstInkXTolerancePx": 2,
+     "reason": "PROVISIONAL: body-text row tolerances copied from styled-runs-v1 (F2, decision G71)"
+    }
+   }
+  ],
+  "position": {
+   "align": "leading",
+   "reason": "per-row tolerances in each region (provisional)"
+  }
+ },
+ "excludeRects": [
+  {
+   "name": "text glyph region lines 1-2 (Segoe UI vs SF, decision 2); gated by the text-colour and position gates",
+   "rect": [
+    100,
+    50,
+    700,
+    150
+   ]
+  }
+ ],
+ "semanticGate": {
+  "fields": [
+   "role",
+   "name",
+   "count",
+   "order",
+   "boundsY"
+  ],
+  "scope": "main",
+  "phases": [
+   ""
+  ]
+ },
+ "steps": [
+  {
+   "op": "wait",
+   "ms": 600
+  }
+ ],
+ "macArgs": [
+  "--steps",
+  "[{\"op\":\"wait\",\"ms\":600}]"
+ ]
+}
