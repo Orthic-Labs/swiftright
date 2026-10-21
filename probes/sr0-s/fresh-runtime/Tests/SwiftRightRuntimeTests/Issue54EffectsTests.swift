@@ -140,6 +140,57 @@ final class PaintInterpolationTests: XCTestCase {
     }
 }
 
+/// The spring-removal-v1 witness: a bar 100 -> 250 pt, back to 100 at 0.205 s.
+private struct MacRetargetScreen: View {
+    @Bindable var model: SpringBarModel
+    var body: some View {
+        Color.blue.frame(width: model.wide ? 250 : 100, height: 40)
+            .frame(width: 300, height: 60, alignment: .leading)
+    }
+}
+
+@MainActor
+final class SpringRetargetMeasuredTests: XCTestCase {
+    private func width(_ g: Graph) throws -> CGFloat {
+        func walk(_ n: ResolvedNode) -> [ResolvedNode] { [n] + n.children.flatMap(walk) }
+        return try XCTUnwrap(walk(try XCTUnwrap(g.snapshot())).first { $0.kind == "Color" }).frame.width
+    }
+
+    /// CI 39595832450, macOS 27, scale 2.5: the bar's right edge (extent / 2.5, pt) at the clock samples of spring-removal-v1, `.bouncy` both ways, the second started at 0.205 s.
+    /// The retarget continues from the presented state with 2.34 x its velocity (`SpringMath.mergedVelocityFactor`); widths are snapped to 0.4 pt, so each sample is checked to 0.5 pt.
+    func testAnInterruptedBouncySpringFollowsTheMacBarEdge() throws {
+        let mac: [(Double, CGFloat)] = [
+            (0.105, 168.648), (0.205, 233.459), (0.235, 245.851), (0.265, 234.892), (0.295, 213.569), (0.325, 188.513), (0.355, 164.090), (0.385, 142.759),
+            (0.415, 125.600), (0.455, 109.423), (0.5, 99.332), (0.55, 94.541), (0.607, 94.130), (0.7, 97.096), (0.757, 98.709), (0.907, 100),
+        ]
+        let model = SpringBarModel()
+        let g = Graph(MacRetargetScreen(model: model), scale: 2.5)
+        g.flush()
+        withAnimation(.bouncy) { model.wide = true }
+        g.flush()
+        g.tick(now: 0)
+        for (t, want) in mac {
+            g.tick(now: t)
+            if t == 0.205 {
+                XCTAssertEqual(try width(g), want, accuracy: 0.5, "t \(t)")
+                withAnimation(.bouncy) { model.wide = false }
+                g.flush()
+                g.tick(now: t)   // the replay ticks again at the interruption: the old value is still shown
+            }
+            XCTAssertEqual(try width(g), want, accuracy: 0.5, "t \(t)")
+        }
+    }
+
+    func testTheContinuedSpringStepsOnTheIntegratorsGrid() {
+        XCTAssertEqual(SpringMath.continuedSteps(elapsed: 0), 0, "the old value is shown at the interruption")
+        XCTAssertEqual(SpringMath.continuedSteps(elapsed: 0.03), 10, "Mac: 10 steps by the first sample, 0.03 s after")
+        XCTAssertEqual(SpringMath.continuedSteps(elapsed: 0.0301), 10)
+        XCTAssertEqual(SpringMath.continuedSteps(elapsed: 0.0334), 11)
+        XCTAssertEqual(SpringMath.continuedSteps(elapsed: 0.295), 89, "Mac: 88.5 steps after, 89 taken")
+        XCTAssertEqual(SpringMath.mergedVelocityFactor, 2.34)
+    }
+}
+
 @MainActor
 final class SpringRemovalRuleTests: XCTestCase {
     private func width(_ g: Graph) throws -> CGFloat {

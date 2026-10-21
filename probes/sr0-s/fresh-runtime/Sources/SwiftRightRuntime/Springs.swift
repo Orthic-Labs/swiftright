@@ -94,6 +94,32 @@ struct SpringParameters {
 enum SpringMath {
     static let step = 1.0 / 300
 
+    /// A parameterised spring that interrupts a spring starts with this multiple of the presented velocity. MEASURED (CI 39595832450, macOS 27, spring-removal-v1, `.bouncy` 100 -> 250 pt
+    /// interrupted at 0.205 s by `.bouncy` back to 100, 20 clock samples): the motion after the interruption is ONE semi-implicit Euler integration of the new spring from the
+    /// presented position, with 2.34 x the velocity the old spring had, and the same 1/300 s steps. Fitted: 0.1 pt of the Mac's bar edge at every sample but one (0.5 pt at 0.5 s),
+    /// where a closed-form continuation at the same velocity is up to 15 pt off and the old rule (1 x) 13 pt. One scenario only: the factor is not yet known to depend on the spring.
+    static let mergedVelocityFactor = 2.34
+
+    /// Steps an integrated spring that continued from an interrupted one has taken `elapsed` seconds after the interruption. Fitted to the 20 Mac samples (CI 39595832450): the step
+    /// ends fall on `interruption + (n + 3/4) h` for n >= -1 (any phase from 0.6 to 1 h fits every sample), a step counts when it ends strictly before the sample, so
+    /// `ceil(elapsed / h - 3/4) + 1`: 10 steps at 0.03 s, 89 at 0.295 s after (88.5 h). Zero at the interruption itself, where the old value is still
+    /// shown (Mac, 0.205 s: the old spring's own value to 1e-3 pt).
+    static func continuedSteps(elapsed: Double) -> Int {
+        guard elapsed > 0 else { return 0 }
+        return max(1, Int((elapsed / step - 0.75 - 1e-9).rounded(.up)) + 1)
+    }
+
+    /// Displacement from the target `elapsed` seconds after an interruption, starting from displacement `d0` with rate `v0` (already scaled by `mergedVelocityFactor`):
+    /// semi-implicit Euler, `v += (-k d - c v) h; d += v h`, the integrator every built-in spring uses.
+    static func continuedDisplacement(d0: Double, v0: Double, k: Double, c: Double, elapsed: Double) -> Double {
+        var d = d0, v = v0
+        for _ in 0..<min(continuedSteps(elapsed: elapsed), 3 * 300 * 10) {
+            v += (-k * d - c * v) * step
+            d += v * step
+        }
+        return d
+    }
+
     private struct Key: Hashable { let k: Double; let c: Double }
     /// Per spring: `ends[n]` is the time step n+1 ends (accumulated as SwiftUI does), `values[n]` the value after n+1 steps, from rest at 0 toward 1.
     private static var trajectories: [Key: (ends: [Double], values: [Double])] = [:]

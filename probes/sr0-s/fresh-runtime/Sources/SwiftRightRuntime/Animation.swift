@@ -393,6 +393,33 @@ final class MotionLayer {
         }
     }
 
+    /// Per component, the displacement from the target after each step of an integrated spring that continued from an interrupted one (`SpringMath.continuedDisplacement`),
+    /// extended on demand: a layer is read at every frame and by the removal rule at every 5 ms.
+    private var continuedTrajectory: [[Double]] = []
+    private var continuedRate: [Double] = []
+
+    /// Displacement of component `i` from the target `elapsed` seconds after the interruption: the integrator's steps for an integrated spring (measured, see
+    /// `SpringMath.mergedVelocityFactor`), else the closed-form free motion.
+    func continuedRemainder(_ i: Int, _ c: (displacement: [Double], velocity: [Double]), elapsed: Double) -> Double {
+        guard case .integratedSpring(let k, let damping) = animation.curve else {
+            return freeRemainder(d0: c.displacement[i], v0: c.velocity[i], t: elapsed)
+        }
+        if continuedTrajectory.isEmpty {
+            continuedTrajectory = (0..<5).map { [c.displacement[$0]] }
+            continuedRate = c.velocity
+        }
+        let n = min(SpringMath.continuedSteps(elapsed: elapsed), 3000)
+        if continuedTrajectory[i].count > n { return continuedTrajectory[i][n] }
+        var d = continuedTrajectory[i], v = continuedRate[i]
+        while d.count <= n {
+            v += (-k * d[d.count - 1] - damping * v) * SpringMath.step
+            d.append(d[d.count - 1] + v * SpringMath.step)
+        }
+        continuedTrajectory[i] = d
+        continuedRate[i] = v
+        return d[n]
+    }
+
     /// The value this layer contributes at `elapsed` seconds, given the value below it.
     func value(below: Presentation, elapsed rawElapsed: Double) -> Presentation {
         if finished { return to }
@@ -401,7 +428,7 @@ final class MotionLayer {
             let target = to.components
             var out = target
             for i in 0..<5 {
-                out[i] = target[i] - freeRemainder(d0: continuation.displacement[i], v0: continuation.velocity[i], t: elapsed)
+                out[i] = target[i] - continuedRemainder(i, continuation, elapsed: elapsed)
             }
             var presented = Presentation(components: out)
             let restProgress = 1 - freeRemainder(d0: 1, v0: 0, t: elapsed)
@@ -467,7 +494,7 @@ final class MotionLayer {
     }
 
     private func continuationWithin(_ c: (displacement: [Double], velocity: [Double]), tolerance: [Double], extras: [(amplitude: Double, tolerance: Double)], at t: Double) -> Bool {
-        for i in 0..<5 where abs(freeRemainder(d0: c.displacement[i], v0: c.velocity[i], t: t)) > tolerance[i] { return false }
+        for i in 0..<5 where abs(continuedRemainder(i, c, elapsed: t)) > tolerance[i] { return false }
         if !extras.isEmpty {
             let rest = abs(freeRemainder(d0: 1, v0: 0, t: t))
             for extra in extras where rest * extra.amplitude > extra.tolerance { return false }
@@ -775,6 +802,7 @@ extension Graph {
                 let from = chain.base.components, to = top.to.components
                 velocity = (0..<5).map { -(to[$0] - from[$0]) * rate }
             }
+            if case .integratedSpring = animation.curve { velocity = velocity.map { $0 * SpringMath.mergedVelocityFactor } }
             layer.continuation = (
                 displacement: (0..<5).map { t[$0] - c[$0] },
                 velocity: velocity

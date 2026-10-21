@@ -120,7 +120,9 @@ final class SpringTests: XCTestCase {
             let next = try width(g)
             let rateAfter = Double(next - at) * 60
             XCTAssertGreaterThan(rateAfter, 0.3 * rate, "offset \(offset): keeps moving the same way at first (\(rateAfter) vs \(rate))")
-            XCTAssertLessThan(rateAfter, 1.5 * rate, "offset \(offset): no fling (\(rateAfter) vs \(rate))")
+            // Measured on the Mac (CI 39595832450, spring-removal-v1): the retarget carries 2.34 x the presented velocity (`SpringMath.mergedVelocityFactor`), so the bar keeps its
+            // direction for a moment and moves up to about twice as fast; a restart from rest (0) or a fling (several x) is still excluded.
+            XCTAssertLessThan(rateAfter, 2.5 * rate, "offset \(offset): no fling (\(rateAfter) vs \(rate))")
             g.tickSteps(from: t0 + 1.0 / 60, to: t0 + 3)
             XCTAssertEqual(try width(g), 100)
         }
