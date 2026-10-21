@@ -93,6 +93,11 @@ final class StyledTextPainterTests: XCTestCase {
         // the background spans the fragment's 16 px width and the line's 16 px height, behind its text
         XCTAssertEqual(boxes[0].rect, Rect(x: origin.x + 24, y: origin.y, w: 16, h: 16))
         XCTAssertEqual(boxes[0].color, try HostPaint.rgba(Color.yellow.resolvedColor, opacity: 1))
+        // the Mac multiplies glyphs over a background run with it: the "cd" glyph colour is the label colour times the opaque yellow, "ab " keeps the measurer's colour
+        let label = try HostPaint.rgba(.semantic("label"), opacity: 1), yellow = try HostPaint.rgba(Color.yellow.resolvedColor, opacity: 1)
+        func product(_ shift: UInt32) -> UInt32 { UInt32((Double((label >> shift) & 255) * Double((yellow >> shift) & 255) / 255).rounded()) << shift }
+        XCTAssertNil(fake.fragments[0].color)
+        XCTAssertEqual(fake.fragments[1].color, product(24) | product(16) | product(8) | (label & 255))
         let order = emission.primitives.map { p -> String in
             switch p { case .rect: return "rect"; case .text: return "text"; default: return "other" }
         }

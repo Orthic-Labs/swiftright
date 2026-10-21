@@ -588,10 +588,18 @@ public final class ResolvedNodePainter {
                 let x = (area.x + Float(fragment.x) * pixel).rounded()
                 let y = (area.y + Float(fragment.y) * pixel).rounded()
                 let width = (Float(fragment.width) * pixel).rounded()
-                let runColour = try colour(of: run)
+                var runColour = try colour(of: run)
                 if let background = run.background {
-                    primitives.append(.rect(Rect(x: x, y: (area.y + Float(line.top) * pixel).rounded(), w: width, h: (Float(line.height) * pixel).rounded()),
-                                            color: adjusted(try HostPaint.rgba(background, opacity: node.opacity, scheme: scheme))))
+                    let backdrop = adjusted(try HostPaint.rgba(background, opacity: node.opacity, scheme: scheme))
+                    primitives.append(.rect(Rect(x: x, y: (area.y + Float(line.top) * pixel).rounded(), w: width, h: (Float(line.height) * pixel).rounded()), color: backdrop))
+                    // The Mac draws glyphs over a background run multiplied with it (CI 39592765511 styled-runs-v1: 39,39,39 text on 255,204,0 is 39,31,0 in the glyph core and
+                    // its anti-aliased edges), so the glyph colour is the text colour times the run's backdrop (over white where it is translucent); the renderer's normal
+                    // coverage blend of that colour over the backdrop then equals a multiply blend at every coverage.
+                    let a = Double(backdrop & 255) / 255
+                    func mix(_ shift: UInt32) -> Double { Double((backdrop >> shift) & 255) * a + 255 * (1 - a) }
+                    let base = runColour ?? label
+                    func mul(_ shift: UInt32) -> UInt32 { UInt32((Double((base >> shift) & 255) * mix(shift) / 255).rounded()) << shift }
+                    runColour = mul(24) | mul(16) | mul(8) | (base & 255)
                 }
                 guard let natural = try text.fragmentRun(text: fragment.text, font: run.font, style: run.style, color: runColour) else {
                     throw HostPaintError.measuredRunGeometryMismatch(fragment.text)
