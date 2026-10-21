@@ -69,6 +69,9 @@ RENDERERS = {
     # ABI 0.11 (#31): opt-in wheel event SWR_PTR_WHEEL and the scroll bar role; same text and layout behaviour as c13b62a4. render-windows CI run 39063620618 on ffd1abe2082f8dfe8f3f9699372e90d688b4f5c8.
     "renderer-0.11-ffd1abe2": dict(runId=39063620618, artifact="swiftright-render-ffd1abe2082f8dfe8f3f9699372e90d688b4f5c8",
                                    sha256="cea9dcc2ccdc589c1b29ba4f86d14970a34884a913948bb80695bb6909b7e9e6"),
+    # ABI 0.11 plus the additive SWR_M08_MAX_LINES measure flag (#51: lineLimit truncation with a fitting ellipsis) and the TextCache byte budget (#34). render-windows CI run 39566076783 on 0f11374cb.
+    "renderer-0.11-0f11374c": dict(runId=39566076783, artifact="swiftright-render-0f11374cb75bc88e4b041468df02df3869b6b395",
+                                   sha256="a42397091571d07dc16b70710a26f3bf9809e01a6027af3e2f715d5d1739ecf0"),
 }
 BLOCK_LABELS = {"swiftui.slider": "37 slider", "swiftui.on-hover": "38 on-hover", "swiftui.uia-walk": "39 uia-walk",
                 "swiftui.compat": "41 compat", "swiftui.ime-traps": "40 ime-traps"}
