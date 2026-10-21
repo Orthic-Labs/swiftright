@@ -9,7 +9,8 @@
 #     The driver performs NO UIA action (no SetFocus, no Invoke) between the first Narrator command and the activation, so a
 #     focus move onto the Delete button and the removal of its row can only come from Narrator. The removal is read back as
 #     model state (UIA tree, and the exe's EVT lines after exit: source=ax invoke, state remove, disappear).
-#   * Narrator SPEECH (what it announces) cannot be read without audio: recorded as FAIL-not-automatable.
+#   * Narrator SPEECH (what it announces) is checked from an audio loopback transcript (scripts/listen-loopback.ps1, WASAPI loopback of the
+#     default render endpoint + offline System.Speech phrase/dictation grammars, #23): check narrator-speech-content.
 # Narrator's prior state is recorded and restored: the run refuses to start if Narrator is already running.
 param(
   [string]$Base = 'D:\Claude\sr0s-bridge06b',
@@ -103,6 +104,29 @@ foreach ($k in ($regBefore.Keys | Sort-Object)) { if ($regBefore[$k] -eq $null) 
 $listenBefore = [SRN.N]::UiaClientsAreListening()
 Add-Check 'narrator-prior-state' 'INFO' "narrator_running=False caps_lock_on=$capsBefore uia_clients_listening=$listenBefore registry_keys_snapshotted=$($regBefore.Keys.Count)"
 
+# ------------------------------------------------------------ audio loopback listener (separate child process, same interactive session)
+$listenWav = "$Out.listen.wav"; $listenJson = "$Out.listen.json"; $listenReady = "$Out.listen.ready"; $listenStop = "$Out.listen.stop"
+$listenLog = "$Out.listen.out.txt"; $listenErr = "$Out.listen.err.txt"
+# What the run makes Narrator say: the Row 3 field (Name 'Row 3', role edit; focused by the driver while Narrator runs, value 'AX value')
+# and the Delete button reached by Caps Lock + Right (Name 'Delete', role button). Digits get a spoken variant for the recognizer.
+$listenPhrases = @('Delete', 'button', 'Delete button', 'Row 3', 'Row three', 'Row 3 edit', 'Row three edit', 'edit', 'AX value')
+$listenProc = $null; $listenStartErr = ''
+foreach ($f in @($listenWav, $listenJson, $listenReady, $listenStop, $listenLog, $listenErr)) { Remove-Item -LiteralPath $f -Force -ErrorAction SilentlyContinue }
+try {
+  $lArgs = "-NoProfile -ExecutionPolicy Bypass -File `"$PSScriptRoot\listen-loopback.ps1`" -Wav `"$listenWav`" -Json `"$listenJson`" -Seconds 420 -ReadyFile `"$listenReady`" -StopFile `"$listenStop`" -Phrases `"$($listenPhrases -join '|')`""
+  $listenProc = Start-Process -FilePath "$env:WINDIR\System32\WindowsPowerShell\v1.0\powershell.exe" -ArgumentList $lArgs -PassThru -WindowStyle Hidden -RedirectStandardOutput $listenLog -RedirectStandardError $listenErr
+  $sw = [Diagnostics.Stopwatch]::StartNew()
+  while ($sw.ElapsedMilliseconds -lt 45000 -and -not (Test-Path -LiteralPath $listenReady) -and -not $listenProc.HasExited) { Start-Sleep -Milliseconds 200 }
+  if (-not (Test-Path -LiteralPath $listenReady)) {
+    $le = ''; if (Test-Path -LiteralPath $listenErr) { $le = ((Get-Content -LiteralPath $listenErr -ErrorAction SilentlyContinue | Select-Object -First 3) -join ' ') }
+    $listenStartErr = "listener did not start capture within 45 s (exited=$($listenProc.HasExited)): $le"
+    if (-not $listenProc.HasExited) { Stop-Process -Id $listenProc.Id -Force -ErrorAction SilentlyContinue }
+    $listenProc = $null
+  } else { Start-Sleep -Milliseconds 500 }
+} catch { $listenStartErr = "listener launch exception: $($_.Exception.Message)"; $listenProc = $null }
+Log "listener proc=$(if ($listenProc) { $listenProc.Id } else { 'none' }) wav=$listenWav json=$listenJson start_error=[$listenStartErr]"
+
+$row3Focused = $false; $nav = $null
 $tap = $null; $narStarted = $false; $reached = $false; $gone = $false; $uuid6 = $null; $moved = $false
 try {
   # ---------------------------------------------------------- Narrator first: its startup must not eat the exe script's 40 s step timers
@@ -135,6 +159,7 @@ try {
   [void](Focus-Edit 'Row 3')
   Start-Sleep -Milliseconds 1200
   $e3 = Edit 'Row 3'; $id3 = $e3.Current.AutomationId
+  $row3Focused = ((Focused-Info).Id -eq $id3)   # Row 3 held focus while Narrator was running, so Narrator should have announced it
   $uuid6 = Row-Uuid (Edit 'Row 6'); $delId = "row/$uuid6/delete"
   $evs = $tap.Snapshot()
   $f3 = @($evs | Where-Object { $_.Kind -eq 'focus' -and $_.Id -eq $id3 })
@@ -186,7 +211,6 @@ try {
     # driver fallback so the exe's script can finish; NOT counted as Narrator evidence
     [void](Invoke-El (Find-Id $delId 3000) 'driver fallback: Delete (row 6)')
   }
-  Add-Check 'narrator-speech-content' 'FAIL-not-automatable' 'what Narrator announces (names, roles, caret and text-change speech) is output only as audio; Windows has no non-audio speech log or UIA-visible speech history for Narrator. UIA queries reaching our provider are evidenced indirectly by the focus/activation effects above. A person must listen, or the lane needs an audio loopback recorder plus speech recognition, which is not "verified without audio".'
 }
 catch { Log "driver_exception: $($_.Exception.Message)"; Add-Check 'driver-run' 'FAIL' "exception: $($_.Exception.Message)" }
 finally {
@@ -210,6 +234,7 @@ finally {
     Start-Sleep -Milliseconds 1500
   }
   $stillRunning = @(Get-Process -Name 'Narrator*' -ErrorAction SilentlyContinue).Count
+  if ($listenProc -ne $null) { try { Set-Content -LiteralPath $listenStop -Value (Get-Date -Format o) } catch { } }   # Narrator is gone: end the recording; the listener transcribes while the registry settles
   $listenAfter = [SRN.N]::UiaClientsAreListening()
   # Windows (AtBroker / Narrator exit handlers) rewrites ATConfig\narrator asynchronously after exit: wait for the registry to settle, restore, verify, retry.
   function Reg-DiffDetail($bf, $af) {   # value-level differences: "key\name(before->after)"
@@ -265,6 +290,57 @@ finally {
   if ($capsNow -ne $capsBefore -and $script:Hwnd -ne [IntPtr]::Zero -and -not $script:Proc.HasExited) { $capsFixed = (Send-GatedKey $VK_CAPS 'caps-lock-restore' 200); $capsNow = ([SRN.N]::GetKeyState(0x14) -band 1) }
   $leftover = @(Get-Process | Where-Object { $pidsBefore -notcontains $_.Id -and $_.Name -like 'Narrator*' }).Count
   Add-Check 'narrator-stopped-and-state-restored' $(if ($stillRunning -eq 0 -and $listenAfter -eq $listenBefore -and $capsNow -eq $capsBefore -and $regLeft.Count -eq 0) { 'PASS' } else { 'FAIL' }) "exit_path=$exitPath narrator_processes_left=$stillRunning uia_clients_listening before=$listenBefore after=$listenAfter caps_lock before=$capsBefore after=$capsNow (restore press=$capsFixed) registry_keys_changed_by_narrator=[$($regDiff -join ' ; ')] registry_restored=$($regRestored.Count) still_different_after_restore=[$($regLeft -join ' ; ')] os_managed_residual=[$($regOs -join ' ; ') values=$($leftDetail -join ' ; ')] (before-snapshot in $Out.regbackup.txt)"
+  # ---------------------------------------------------------- Narrator speech content (#23): verdict from the loopback transcript
+  # Required names: only those tied to steps that ran. A name counts when any recognised text contains it (digits normalised: 'three' = '3').
+  $minPeak = 200; $navRan = ($nav -ne $null -and $nav.Count -gt 0)
+  # Offline System.Speech cannot resolve Narrator's fast TTS word for word (Dell narrator23-b: roles such as 'button' and 'Row 3' were not
+  # recognised), but it does hear the provider-supplied names. Required, from any grammar's text: a word of the window title (UIA name
+  # from our provider, 'SwiftRight FreshOnBridge': 'fresh' was heard in every Dell run, 'swift right' only in some) once Narrator ran,
+  # and 'Delete' (the button name Narrator reached).
+  $req = New-Object System.Collections.Generic.List[string]
+  if ($narStarted) { $req.Add('fresh') }
+  if ($reached) { $req.Add('Delete') }
+  $speechStatus = 'FAIL'; $speechDetail = ''
+  try {
+    if ($listenProc -ne $null) {
+      if (-not $listenProc.WaitForExit(120000)) { Stop-Process -Id $listenProc.Id -Force -ErrorAction SilentlyContinue; throw 'listener did not finish transcribing within 120 s (killed)' }
+    }
+    if ($listenProc -eq $null) {
+      $speechStatus = 'FAIL-not-automatable'; $speechDetail = "audio loopback could not start: $listenStartErr (no recorded audio, so Narrator speech cannot be checked here)"
+    } elseif (-not (Test-Path -LiteralPath $listenJson)) {
+      $le = ''; if (Test-Path -LiteralPath $listenErr) { $le = ((Get-Content -LiteralPath $listenErr -ErrorAction SilentlyContinue | Select-Object -First 3) -join ' ') }
+      $speechStatus = 'FAIL-not-automatable'; $speechDetail = "listener produced no transcript JSON (exit=$($listenProc.ExitCode)): $le"
+    } else {
+      $lj = Get-Content -LiteralPath $listenJson -Raw | ConvertFrom-Json
+      $items = @($lj.phrases)
+      $norm = { param($t) $x = ([string]$t).ToLowerInvariant(); foreach ($d in @(@('zero','0'),@('one','1'),@('two','2'),@('three','3'),@('four','4'),@('five','5'),@('six','6'),@('seven','7'),@('eight','8'),@('nine','9'))) { $x = $x -replace "\b$($d[0])\b", $d[1] }; return ($x -replace '[^a-z0-9 ]', ' ' -replace '\s+', ' ').Trim() }
+      $parts = @(); $missing = @()
+      foreach ($p in $req) {
+        $pn = (& $norm $p); $best = $null
+        foreach ($it in $items) {
+          if (" $(& $norm $it.text) " -like "* $pn *") { if ($best -eq $null -or [double]$it.confidence -gt [double]$best.confidence) { $best = $it } }
+        }
+        if ($best -ne $null) { $parts += "'$p' found conf=$($best.confidence) offset=$($best.offsetMs)ms text=[$($best.text)]" }
+        else { $missing += $p; $parts += "'$p' NOT found in any recognised text" }
+      }
+      $nPhrase = @($items | Where-Object { $_.grammar -eq 'phrase' }).Count; $nDict = @($items | Where-Object { $_.grammar -eq 'dictation' }).Count
+      $dictText = (@($items | Where-Object { $_.grammar -eq 'dictation' } | Select-Object -First 12 | ForEach-Object { "$($_.offsetMs)ms:'$($_.text)'($($_.confidence))" }) -join ' | ')
+      $stats = "samples=$($lj.samples) recorded_s=$($lj.recordedSeconds) peak=$($lj.peak)/32767 nonzero_fraction=$($lj.nonZeroFraction) total_results=$($items.Count) (phrase=$nPhrase dictation=$nDict)"
+      $paths = "wav=$listenWav json=$listenJson"
+      $silent = ([int]$lj.peak -lt $minPeak)
+      if ($req.Count -eq 0) {
+        $speechStatus = 'NOT-RUN'; $speechDetail = "no Narrator-announced step ran (Delete button reached=$reached, Row 3 focused=$row3Focused, nav commands=$($navRan)); nothing to check. $stats; $paths"
+      } elseif ($missing.Count -eq 0) {
+        $speechStatus = 'PASS'; $speechDetail = "required provider names recognised in the loopback transcript: $($parts -join '; '). $stats; $paths"
+      } else {
+        $speechStatus = 'FAIL'
+        $why = $(if ($silent) { "SILENT capture (peak $($lj.peak) < $minPeak): no audible output reached the loopback, so this is no-audio, not mis-recognition" } else { "audio was captured (non-silent) but the required phrases were not recognised" })
+        $speechDetail = "$why. $($parts -join '; '). dictation fallback heard: $dictText. $stats; $paths"
+      }
+    }
+  } catch { $speechStatus = 'FAIL-not-automatable'; $speechDetail = "loopback transcript could not be produced or read: $($_.Exception.Message); $listenStartErr; wav=$listenWav json=$listenJson" }
+  if (-not $navRan -and $speechStatus -ne 'FAIL-not-automatable') { $speechStatus = 'NOT-RUN'; $speechDetail = "Narrator navigation did not run (no commands sent). $speechDetail" }
+  Add-Check 'narrator-speech-content' $speechStatus $speechDetail
   Close-And-Collect 'F8'
 }
 

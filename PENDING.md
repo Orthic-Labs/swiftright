@@ -11,7 +11,7 @@ State (19 Oct 2026): tuple 13 QUALIFIED (`docs/sr0-status.md` top, `qualificatio
 | C | Requalify tuple 12 | Superseded by tuple 13 (19 Oct): tuple 12 failed R10 (leak flag); tuple 13 qualified, all stages in run r3 |
 | 1 | Prior qualification runner | tuple 13 qualified through `qualification/tuple13-run.sh` (run r3, exit 0) |
 | 2 | Dell stage trees | tuple 13 Dell trees under `D:\Claude\swiftright\.work\sr0-r13\` (workload, smoke, typecheck/src); nothing deleted |
-| 3 | Narrator speech content | Adrian will listen later |
+| 3 | Narrator speech content | DONE 21 Oct (#23): checked automatically from an audio loopback transcript instead of a person listening. `listen-loopback.ps1` records the Dell's speaker output during the narrator lane and transcribes it offline (System.Speech). `narrator-speech-content` requires the provider-supplied names Narrator speaks: a window-title word ('fresh', from 'SwiftRight FreshOnBridge') and 'Delete' (the button Narrator reached). Tuple 13: PASS at tag narrator23-d (narrator lane 9 pass, 0 fail; the one FAIL-not-automatable is the pre-existing UIA-listener attribution). The b and c transcripts contain both names too. Offline recognition does not resolve roles such as 'button' reliably, so roles are recorded, not required |
 | 4 | W08 | must be fixed, not accepted as limitation |
 | 5 | Comparison repeat count | accepted: 20 Mac & 20 Windows per config on final 0.6 tuple |
 | 6 | Freeze | DONE 20 Oct: SR0 frozen on tuple 13 (Adrian: "why would we not freeze it if it's qualified?"), `docs/sr0-freeze.md`, tag `sr0-freeze-abi-0.6` |
@@ -20,7 +20,7 @@ State (19 Oct 2026): tuple 13 QUALIFIED (`docs/sr0-status.md` top, `qualificatio
 | 8 | Unproven recorder items | R8 settled, R5 closed, R6 accepted limitation per current decision record |
 | 9 | Selection highlight not painted | RESOLVED 20 Oct: painted. WGC live frames of F5 (launch focus Row 1, 0+5) show highlight and caret from the first frame (`probes/sr0-s/fresh-on-bridge/out/tuple13-selection-wgc/`); earlier 'not painted' came from F1 / plain F3, which have no launch focus. Only the colour differs from the Mac (153,201,239 vs 179,215,255), SR1 parity |
 | 10 | Renderer ready metrics | in the tuple 13 build (stage a9556b77f); Full16 x20 320/320 on tuple 13 |
-| 11 | IME candidate list after layout move | Dropped for SR0 (19 Oct, #24): the held IMM32 patch reopens the renderer (tuple 13) at ~25% expected effect; the native gate keeps `candidate-window-follows-layout-move` as the one allowed FAIL. SR1 carries the TSF ITextStoreACP design (docs/held-patches/swiftright-03-ime-candidate-follow.md, outline b) |
+| 11 | IME candidate list after layout move | Accepted limit (21 Oct, #33 closed): the Microsoft IME keeps an open candidate list in place after a layout move under IMM32 and TSF alike (Dell evidence in docs/sr1-status.md); the native gate keeps `candidate-window-follows-layout-move` as the one allowed FAIL. TSF store held: docs/held-patches/swiftright-03-tsf-store.patch |
 | 12 | SR1 factory | owned by Codex factory session; renderer/ABI edits remain held until SR0 closes |
 
-Four user decisions currently govern close-out: 20-per-side comparison is accepted; W08 must be fixed, not accepted (guard-vs-upstream is Adrian's open decision, issue #19); freeze remains held; Narrator listening happens later.
+Four user decisions currently govern close-out: 20-per-side comparison is accepted; W08 must be fixed, not accepted (guard-vs-upstream is Adrian's open decision, issue #19); freeze remains held; Narrator speech is now checked from a loopback transcript (row 3).

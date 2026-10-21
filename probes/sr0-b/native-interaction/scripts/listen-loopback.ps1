@@ -2,11 +2,17 @@
 # built-in Windows recognizer (System.Speech, en-US dictation) to -Json: [{ "offsetMs": n, "durationMs": n, "text": "..." }].
 # Used by the R9 narrator check so Narrator's spoken output is checked from a transcript, not by a person listening (#23).
 # Must run in the interactive desktop session (the console's audio endpoint). Built-in Windows APIs only; no installs.
+# Optional: -Phrases (a list, or one string with '|' separators) adds a closed phrase grammar (wildcard + any one phrase + wildcard)
+# next to the dictation grammar, which stays loaded as the fallback so unmatched speech is not forced onto a phrase. With -Phrases each
+# result also carries "grammar" ('phrase' | 'dictation') and the JSON adds signal stats. -StopFile ends the recording when the file appears
+# (-Seconds is then only the upper bound). -ReadyFile is written once capture has actually started.
 param(
   [Parameter(Mandatory)][string]$Wav,
   [Parameter(Mandatory)][string]$Json,
   [int]$Seconds = 60,
-  [string]$ReadyFile = ''
+  [string]$ReadyFile = '',
+  [string[]]$Phrases = @(),
+  [string]$StopFile = ''
 )
 $ErrorActionPreference = 'Stop'
 Add-Type -Language CSharp -TypeDefinition @'
@@ -38,7 +44,8 @@ public static class Loopback {
     const uint AUDCLNT_BUFFERFLAGS_SILENT = 0x2;
 
     // Returns the number of 16-bit mono samples written; the WAV is 16 kHz-free (device rate), mono, 16-bit.
-    public static long Record(string path, int seconds) {
+    public static int LastRate; public static long NonZero; public static int Peak;
+    public static long Record(string path, int seconds, string stopFile, string readyFile) {
         var en = (IMMDeviceEnumerator)new MMDeviceEnumerator();
         IMMDevice dev; Check(en.GetDefaultAudioEndpoint(0 /*eRender*/, 1 /*eMultimedia*/, out dev));
         var iidClient = new Guid("1CB9AD4C-DBFA-4c32-B178-C2F568A703B2"); object o;
@@ -56,8 +63,11 @@ public static class Loopback {
         var ms = new MemoryStream(); var bw = new BinaryWriter(ms);
         int bytesPer = bits / 8; long samples = 0;
         Check(client.Start());
+        LastRate = rate; NonZero = 0; Peak = 0;
+        if (!string.IsNullOrEmpty(readyFile)) File.WriteAllText(readyFile, DateTime.Now.ToString("o"));
+        bool useStop = !string.IsNullOrEmpty(stopFile);
         var end = DateTime.UtcNow.AddSeconds(seconds);
-        while (DateTime.UtcNow < end) {
+        while (DateTime.UtcNow < end && !(useStop && File.Exists(stopFile))) {
             Thread.Sleep(10);
             uint packet; Check(cap.GetNextPacketSize(out packet));
             while (packet > 0) {
@@ -74,7 +84,8 @@ public static class Loopback {
                         }
                     }
                     double m = Math.Max(-1, Math.Min(1, sum / channels));
-                    bw.Write((short)(m * 32767)); samples++;
+                    short sv = (short)(m * 32767); bw.Write(sv); samples++;
+                    if (sv != 0) { NonZero++; int a = Math.Abs((int)sv); if (a > Peak) Peak = a; }
                 }
                 Check(cap.ReleaseBuffer(frames));
                 Check(cap.GetNextPacketSize(out packet));
@@ -92,22 +103,60 @@ public static class Loopback {
     static void Check(int hr) { if (hr < 0) Marshal.ThrowExceptionForHR(hr); }
 }
 '@
-if ($ReadyFile) { Set-Content -LiteralPath $ReadyFile -Value (Get-Date -Format o) }
-$n = [Loopback]::Record($Wav, $Seconds)
+$n = [Loopback]::Record($Wav, $Seconds, $StopFile, $ReadyFile)
+$rate = [Loopback]::LastRate; $nonZero = [Loopback]::NonZero; $peak = [Loopback]::Peak
+$dur = if ($rate -gt 0) { $n / [double]$rate } else { 0 }
+$limit = if ($StopFile) { $dur } else { $Seconds }   # end-of-file test below: the actual duration when the stop file ended the recording
+$plist = @(); foreach ($p in $Phrases) { foreach ($q in ([string]$p -split '\|')) { if ($q.Trim()) { $plist += $q.Trim() } } }
+$usePhrases = $plist.Count -gt 0
 Add-Type -AssemblyName System.Speech
-$culture = [System.Globalization.CultureInfo]::GetCultureInfo('en-US')
-$rec = New-Object System.Speech.Recognition.SpeechRecognitionEngine($culture)
-$rec.LoadGrammar((New-Object System.Speech.Recognition.DictationGrammar))
-$rec.SetInputToWaveFile($Wav)
 $out = New-Object System.Collections.Generic.List[object]
-while ($true) {
-    $r = $rec.Recognize()
-    if ($null -eq $r) {
-        # Recognize returns null on silence or at the end of the file; stop once the stream position reaches the end.
-        if ($rec.AudioPosition.TotalSeconds -ge ($Seconds - 0.5) -or $rec.AudioState -eq 'Stopped') { break } else { continue }
+if ($n -ge ($rate / 2)) {   # a WAV with no (or almost no) samples cannot be recognized; the stats still go to the JSON
+    $culture = [System.Globalization.CultureInfo]::GetCultureInfo('en-US')
+    $rec = New-Object System.Speech.Recognition.SpeechRecognitionEngine($culture)
+    $dict = New-Object System.Speech.Recognition.DictationGrammar; $dict.Name = 'dictation'
+    if ($usePhrases) {
+        $ch = New-Object System.Speech.Recognition.Choices
+        foreach ($q in $plist) { $ch.Add($q) }
+        $gb = New-Object System.Speech.Recognition.GrammarBuilder
+        $gb.Culture = $culture
+        $gb.AppendWildcard(); $gb.Append($ch); $gb.AppendWildcard()   # any one phrase, inside longer speech
+        $pg = New-Object System.Speech.Recognition.Grammar($gb); $pg.Name = 'phrase'
+        $rec.LoadGrammar($pg)
+        $rec.MaxAlternates = 4
     }
-    $out.Add([ordered]@{ offsetMs = [int]$r.Audio.AudioPosition.TotalMilliseconds; durationMs = [int]$r.Audio.Duration.TotalMilliseconds; text = $r.Text; confidence = [math]::Round($r.Confidence, 3) })
+    $rec.LoadGrammar($dict)
+    $rec.SetInputToWaveFile($Wav)
+    $nulls = 0
+    while ($true) {
+        # Once the WAV is consumed, Recognize throws "No audio input is supplied" instead of returning null (Dell, narrator23-a): end of input.
+        try { $r = $rec.Recognize() } catch [System.Management.Automation.MethodInvocationException] { if ($_.Exception.InnerException -is [System.InvalidOperationException]) { break } else { throw } }
+        if ($null -eq $r) {
+            # Recognize returns null on silence or at the end of the file; stop once the stream position reaches the end.
+            $nulls++
+            if ($rec.AudioPosition.TotalSeconds -ge ($limit - 0.5) -or $rec.AudioState -eq 'Stopped' -or $nulls -gt 200) { break } else { continue }
+        }
+        $nulls = 0
+        $off = [int]$r.Audio.AudioPosition.TotalMilliseconds; $dm = [int]$r.Audio.Duration.TotalMilliseconds
+        $row = [ordered]@{ offsetMs = $off; durationMs = $dm; text = $r.Text; confidence = [math]::Round($r.Confidence, 3) }
+        if ($usePhrases) {
+            $row['grammar'] = $(if ($r.Grammar -ne $null -and $r.Grammar.Name) { $r.Grammar.Name } else { 'dictation' })
+            $row['alt'] = $false
+        }
+        $out.Add($row)
+        if ($usePhrases) {
+            # when the top hypothesis came from dictation, keep phrase-grammar alternates (marked alt) so a lower-ranked phrase match is not lost
+            foreach ($a in $r.Alternates) {
+                try {
+                    if ($a.Grammar -ne $null -and $a.Grammar.Name -eq 'phrase' -and $row['grammar'] -ne 'phrase') {
+                        $out.Add([ordered]@{ offsetMs = $off; durationMs = $dm; text = $a.Text; confidence = [math]::Round($a.Confidence, 3); grammar = 'phrase'; alt = $true })
+                    }
+                } catch { }
+            }
+        }
+    }
+    $rec.Dispose()
 }
-$rec.Dispose()
-@{ samples = $n; seconds = $Seconds; phrases = $out } | ConvertTo-Json -Depth 4 | Set-Content -LiteralPath $Json -Encoding utf8
-"LISTEN_DONE samples=$n phrases=$($out.Count)"
+$nzf = if ($n -gt 0) { [math]::Round($nonZero / [double]$n, 4) } else { 0 }
+@{ samples = $n; seconds = $Seconds; recordedSeconds = [math]::Round($dur, 2); sampleRate = $rate; nonZeroSamples = $nonZero; nonZeroFraction = $nzf; peak = $peak; phraseMode = $usePhrases; phrases = $out } | ConvertTo-Json -Depth 4 | Set-Content -LiteralPath $Json -Encoding utf8
+"LISTEN_DONE samples=$n phrases=$($out.Count) peak=$peak nonzero_fraction=$nzf"
