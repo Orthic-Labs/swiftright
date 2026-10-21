@@ -396,7 +396,7 @@ Bounds and geometry (block 39): the uia-walk comparator gates role, name, toggle
 
 List gutter sampler (block 39): the N=20 list gate in run 38872207896 sampled the label-ink background in the list gutter (fixed in 943f64db4). The gutter is white on both platforms in that run, so the result stands. The fixed sampler is proven at N=3 only (run 38916920414).
 
-Spec wording (block 39): H16 is accepted: rows are gated by the list gate and the list-rect pixels. H21 is accepted for legacy scrollers; the overlay-scroller gutter stays unknown.
+Spec wording (block 39): H16 is accepted: rows are gated by the list gate and the list-rect pixels. H21 is accepted for legacy scrollers; the overlay-scroller gutter was measured report-only at N=3 (H21a); issue #58 adds the gated case `factory/pipeline/sr1-scroll/controls-b-v1-overlay-gated-v1` (the list gate decides under overlay; list `factory/pipeline/ci-lists/issue58-scroll.txt`), unproven as a gate until it passes.
 
 Block 40 gate claim: pixels are report-only on every block 40 case (H28, issue #3), and only the semantic gate decides: role, name, value and enabled of the two fields and the value line, in the end state. No text-origin or IME marked-range gate is declared, so intermediate composition state is not gated. The earlier "semantic, text-origin and IME gates decide" wording applied to block 15 only.
 

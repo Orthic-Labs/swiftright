@@ -1,0 +1,3 @@
+# controls-b-v1-overlay-gated-v1 (issue #58, H21)
+
+controls-b-v1 (same source, steps, list gate and region pixel gates) with the Mac scroller style requested overlay (`"macScrollerStyle": "overlay"`, AppleShowScrollBars WhenScrolling set by `factory/tools/mac-accessibility.sh` on the CI runner only). Unlike controls-b-v1-overlay-v1 (report-only), the list gate (row positions and the label-ink gutter sampler) decides, so the overlay gutter is asserted on both platforms. Windows has no overlay mode: ListPainter keeps the 16.8 pt gutter regardless of style and paints no scroll bar (H39), so the Windows side stays legacy-modelled. Read `runs/<ts>/mac/ax-01.json`, `mac/list-01.json` and `mac-accessibility.txt` for the effective style and the Mac gutter.
