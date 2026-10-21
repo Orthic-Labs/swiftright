@@ -84,8 +84,8 @@ public enum ListMetrics {
         documentHeight(look, rowHeights: rowHeights) > viewportHeight
     }
 
-    /// The width a List reserves at its trailing edge for a legacy vertical scroller: the inset style's (and the sidebar's, by estimate), and only when the rows overflow. Zero otherwise.
-    public static func trailingGutter(_ look: ListLook, overflows: Bool) -> CGFloat { look != .plain && overflows ? insetScrollerGutter : 0 }
+    /// The width a List reserves at its trailing edge for a legacy vertical scroller: the inset style's (a sidebar uses an overlay scroller, which takes no space, CI 39605683991), and only when the rows overflow. Zero otherwise.
+    public static func trailingGutter(_ look: ListLook, overflows: Bool) -> CGFloat { look == .inset && overflows ? insetScrollerGutter : 0 }
 
     /// The rectangle of a row (`content` is the row content's frame in the List's coordinates, `listFrame` the List's), derived from the layout rules
     /// above: the row is `rowHeight` tall around its content, whose centre is the row's centre, and it spans the list's width less `trailingGutter`.

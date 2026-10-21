@@ -1,0 +1,38 @@
+{
+ "semanticGate": {
+  "fields": [
+   "role",
+   "name",
+   "count",
+   "order",
+   "help",
+   "heading",
+   "link"
+  ],
+  "scope": "main",
+  "phases": [
+   ""
+  ]
+ },
+ "excludeRects": [
+  {
+   "name": "stack glyph bands: header, Save button, value, link, plain text (Segoe UI vs SF, sr1-decisions #2; PROVISIONAL band covers the centred 5-row stack, tighten after the first pair); tree gated by the semantic gate",
+   "rect": [
+    250,
+    112,
+    550,
+    488
+   ]
+  }
+ ],
+ "steps": [
+  {
+   "op": "wait",
+   "ms": 600
+  }
+ ],
+ "macArgs": [
+  "--steps",
+  "[{\"op\":\"wait\",\"ms\":600}]"
+ ]
+}

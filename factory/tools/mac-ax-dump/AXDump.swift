@@ -57,6 +57,10 @@ enum AXDump {
         let label = string(get(object, "accessibilityLabel")) ?? string(get(object, "accessibilityTitle"))
         if let label, !label.isEmpty { d["name"] = label }
         if let v = number(get(object, "accessibilityValue")) { d["value"] = v }
+        // ABI 0.13 accessibility extras: AXHelp, AXDescription, AXRoleDescription (heading / link), compared with UIA HelpText, FullDescription, heading level / Hyperlink
+        if let help = string(get(object, "accessibilityHelp")), !help.isEmpty { d["help"] = help }
+        if let desc = string(get(object, "accessibilityAttributedDescription")) ?? string(get(object, "accessibilityDescription")), !desc.isEmpty { d["description"] = desc }
+        if let rd = string(get(object, "accessibilityRoleDescription")), !rd.isEmpty { d["roleDescription"] = rd }
         if let placeholder = string(get(object, "accessibilityPlaceholderValue")), !placeholder.isEmpty { d["placeholder"] = placeholder }
         // a slider's range (round 6 block 37): AXMinValue / AXMaxValue, compared with the UIA RangeValue Minimum / Maximum
         if string(get(object, "accessibilityRole")) == "AXSlider" {

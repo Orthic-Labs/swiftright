@@ -442,7 +442,7 @@ public final class ResolvedNodePainter {
                 let rows = ListPainter.rows(of: n, bounds: bounds, scale: scale)
                 for (index, child) in n.children.enumerated() where index < rows.count {
                     // Text inside an active selection is white.
-                    let colour = rows[index].isSelected && ListPainter.selectionColor(active: listIsActive, isEnabled: rows[index].isEnabled) == ListPainter.selectionActive ? ListPainter.selectedTextColor : childTextColor
+                    let colour = rows[index].isSelected && ListPainter.selectionColor(active: listIsActive, isEnabled: rows[index].isEnabled) == ListPainter.selectionActive ? ListPainter.selectedTextColor : (look == .sidebar ? ListPainter.sidebarLabelColor : childTextColor)
                     try walk(child, parent: id, order: UInt32(index), clip: childClip, rotations: childRotations, textColor: colour, row: rows[index], rowList: (bounds, look), a11y: childA11y, hidden: childHidden, transform: childTransform, brightness: childBrightness, clipMasks: childMasks, scaleOrigin: childOrigin)
                 }
             } else {
@@ -465,7 +465,7 @@ public final class ResolvedNodePainter {
             self.clipMasks = clipMasks
             paintStretch = nodeStretch
             // The legacy scroller of a List or ScrollView is painted above its content: a child node ordered after the last child, clipped to the container.
-            if n.kind == "List" || n.kind == "ScrollView", let scroll = n.scroll, let layout = ScrollerPainter.layout(frame: bounds, scale: scale, scroll: scroll) {
+            if n.kind == "List" || n.kind == "ScrollView", let scroll = n.scroll, !(n.kind == "List" && ListPainter.look(of: n) == .sidebar), let layout = ScrollerPainter.layout(frame: bounds, scale: scale, scroll: scroll) {
                 let scrollerID = id | Self.scrollerNodeFlag
                 current.insert(scrollerID)
                 runtimeIDs[scrollerID] = n.id

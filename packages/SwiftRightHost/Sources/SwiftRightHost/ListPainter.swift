@@ -19,9 +19,11 @@ public enum ListPainter {
     public static let selectionInsetPoints: Float = 10
         public static let separatorInsetPoints: Float = 16
     public static let selectedTextColor: UInt32 = 0xffffffff
-    /// The sidebar style (issue #60 pass 3): the list's ground is grey 229 (E13, measured on the Mac); the selection of a list that is not the key view is a grey
+    /// The sidebar style (issue #60 pass 3): the list's ground is grey 228 (CI 39605683991; E13 said 229); the selection of a list that is not the key view is a grey
     /// darker than the ground (an estimate, 0xd1d1d1: not measured). The active selection is the accent, as in the inset style.
-    public static let sidebarBackground: UInt32 = 0xe5e5e5
+    public static let sidebarBackground: UInt32 = 0xe4e4e4
+    /// Sidebar row labels are grey, not the primary label colour (measured from the Mac capture, CI 39605683991: ink 69).
+    public static let sidebarLabelColor: UInt32 = 0x454545ff
     public static let sidebarSelectionInactive: UInt32 = 0xd1d1d1
 
     public static func look(of node: ResolvedNode) -> ListLook { ListLook(style: node.listStyle) }

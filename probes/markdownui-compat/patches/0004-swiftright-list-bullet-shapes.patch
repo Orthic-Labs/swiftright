@@ -1,5 +1,5 @@
 diff --git a/Sources/MarkdownUI/Theme/BlockStyle/ListBullet.swift b/Sources/MarkdownUI/Theme/BlockStyle/ListBullet.swift
-index a4f7c21..f787034 100644
+index a4f7c21..5d16bbc 100644
 --- a/Sources/MarkdownUI/Theme/BlockStyle/ListBullet.swift
 +++ b/Sources/MarkdownUI/Theme/BlockStyle/ListBullet.swift
 @@ -1,6 +1,33 @@
@@ -9,7 +9,7 @@ index a4f7c21..f787034 100644
 +  #if SWIFTRIGHT
 +    // SwiftRight: the host paints only measured SF Symbols and "circle.fill" at this size is not in its table (the host refuses the whole frame),
 +    // so the bullet is a shape. Measured on the Mac capture (markdown-basic-v1, scale 2.5, 13 pt body): a disc is 4 pt across (the symbol font size,
-+    // round(13 / 3)) and its right edge sits 4.8 pt inside the marker box (#74: an earlier fit assumed a 16 pt body, the size Windows resolved before it took the macOS 13).
++    // round(13 / 3)) and its right edge sits 0.4 pt inside the marker box, which is the min-width (1.5 em) frame the marker style puts it in (run 39605245676: Mac disc right edge 99 px = 39.6 pt, box edge 40 pt).
 +    private enum Kind { case disc, circle, square }
 +    private let kind: Kind
 +
@@ -25,7 +25,7 @@ index a4f7c21..f787034 100644
 +          }
 +        }
 +        .frame(width: side, height: side)
-+        .padding(.trailing, 4.8)
++        .padding(.trailing, 0.4)
 +      }
 +    }
 +
@@ -42,3 +42,18 @@ index a4f7c21..f787034 100644
    }
 +  #endif
  }
+diff --git a/Sources/MarkdownUI/Views/Blocks/ListItemView.swift b/Sources/MarkdownUI/Views/Blocks/ListItemView.swift
+index fb5feb9..ab79bd3 100644
+--- a/Sources/MarkdownUI/Views/Blocks/ListItemView.swift
++++ b/Sources/MarkdownUI/Views/Blocks/ListItemView.swift
+@@ -39,6 +39,10 @@ struct ListItemView: View {
+         .textStyleFont()
+         .readWidth(column: 0)
+         .frame(width: self.markerWidth, alignment: .trailing)
++        #if SWIFTRIGHT
++          // SwiftRight (#74): the Mac's Label puts 8 pt between marker and text, the runtime's 6 (measured: Mac text 6 px = 2.4 pt right of Windows at 2.5x).
++          .padding(.trailing, 2)
++        #endif
+     }
+     #if os(visionOS)
+       .labelStyle(BulletItemStyle())

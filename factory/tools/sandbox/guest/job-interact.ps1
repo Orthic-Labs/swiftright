@@ -184,6 +184,11 @@ function Dump-Element($el, [int]$depth, [int]$maxDepth) {
     $o.automationId = $c.AutomationId; $o.className = $c.ClassName
     $r = $c.BoundingRectangle
     $o.bounds = $(if ($r.IsEmpty) { $null } else { @([math]::Round($r.X, 1), [math]::Round($r.Y, 1), [math]::Round($r.Width, 1), [math]::Round($r.Height, 1)) })
+    # ABI 0.13 accessibility extras: HelpText (hint/placeholder), FullDescription (30159), HeadingLevel (30173), AriaRole; absent or unsupported properties are left out
+    try { if ($c.HelpText) { $o.helpText = $c.HelpText } } catch { }
+    try { $v = $el.GetCurrentPropertyValue([Windows.Automation.AutomationProperty]::LookupById(30159), $true); if ($v -is [string] -and $v) { $o.fullDescription = $v } } catch { }
+    try { $v = $el.GetCurrentPropertyValue([Windows.Automation.AutomationProperty]::LookupById(30173), $true); if ($v -is [int] -and $v -gt 0) { $o.headingLevel = $v } } catch { }
+    try { if ($c.AriaRole) { $o.ariaRole = $c.AriaRole } } catch { }
     $o.enabled = [bool]$c.IsEnabled; $o.focus = [bool]$c.HasKeyboardFocus; $o.offscreen = [bool]$c.IsOffscreen; $o.focusable = [bool]$c.IsKeyboardFocusable
     try { $p = $null; if ($el.TryGetCurrentPattern([Windows.Automation.TogglePattern]::Pattern, [ref]$p)) { $o.toggle = $p.Current.ToggleState.ToString() } } catch { }
     try { $p = $null; if ($el.TryGetCurrentPattern([Windows.Automation.ValuePattern]::Pattern, [ref]$p)) { $o.value = $p.Current.Value } } catch { }

@@ -208,7 +208,7 @@ final class ListPainterTests: XCTestCase {
         let list = try upsert(r, kind: "List")
         let rs = rects(list.primitives)
         XCTAssertEqual(rs.count, 1, "the ground only: a sidebar has no row separators")
-        XCTAssertEqual(rs[0].1, 0xe5e5e5ff)
+        XCTAssertEqual(rs[0].1, 0xe4e4e4ff)
         let node = flatten(r.root).first { $0.kind == "List" }!
         let rows = ListPainter.rows(of: node, bounds: list.bounds, scale: 2.5)
         XCTAssertEqual(rows.map { $0.rect.y }, [125, 205, 285])
@@ -230,6 +230,11 @@ final class ListPainterTests: XCTestCase {
     func testSidebarSelectionIsARoundedRectangleInAccentOrGrey() throws {
         XCTAssertEqual(try sidebarSelectionFill(active: true), ListPainter.selectionActive)
         XCTAssertEqual(try sidebarSelectionFill(active: false), ListPainter.sidebarSelectionInactive)
+    }
+
+    func testSidebarLabelsAreGreyAndItsGroundIs228() {
+        XCTAssertEqual(ListPainter.sidebarLabelColor, 0x454545ff)
+        XCTAssertEqual(ListPainter.sidebarBackground, 0xe4e4e4)
     }
 
     func testSidebarRowMetricsAreThirtyTwoPointsAtLeast() {

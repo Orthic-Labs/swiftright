@@ -6,7 +6,7 @@ Mac capture host with factory/tools/mac-ax-dump/AXDump.swift; no AX API across p
 
 The gate comes from <case>/pair.json "semanticGate":
   {
-    "fields":   ["role","name","toggle","enabled","focus","value","bounds","order","count","range"],   // "range": slider RangeValue (value, min, max; with "smallChange": the declared SmallChange)  // what gates; anything not listed is reported only
+    "fields":   ["role","name","toggle","enabled","focus","value","bounds","order","count","range","help","heading","link"],   // help: UIA HelpText = AXHelp; heading: UIA heading level > 0 = AXHeading; link: UIA Hyperlink = AXLink (ABI 0.13 extras)   // "range": slider RangeValue (value, min, max; with "smallChange": the declared SmallChange)  // what gates; anything not listed is reported only
     "scope":    "main" | "dialog" | "all",           // main window tree, the extra windows (TaskDialog / sheet / NSAlert), or both (default all)
     "roles":    ["button", ...],                      // optional: compare only elements whose normalised role is listed (default: everything except IGNORED_ROLES)
     "ignoreNames": ["Close"],                         // element names dropped on both sides
@@ -46,7 +46,7 @@ WIN_ROLE = {"Button": "button", "CheckBox": "checkbox", "Text": "text", "Edit": 
 # Mac AX role (or role/subrole) -> normalised. AXSwitch is a checkbox subrole on macOS; Windows publishes a switch as a UIA Button with a toggle state (below).
 MAC_ROLE = {"AXButton": "button", "AXCheckBox": "checkbox", "AXCheckBox/AXSwitch": "switch", "AXStaticText": "text", "AXTextField": "textfield", "AXTextArea": "textfield",
             "AXImage": "image", "AXGroup": "group", "AXWindow": "window", "AXSheet": "dialog", "AXDialog": "dialog", "AXScrollArea": "pane", "AXSplitGroup": "group", "AXList": "list",
-            "AXRadioButton": "radio", "AXSlider": "slider", "AXLink": "link", "AXMenuBar": "menubar", "AXToolbar": "toolbar", "AXPopUpButton": "combobox", "AXUnknown": "unknown",
+            "AXRadioButton": "radio", "AXHeading": "text", "AXSlider": "slider", "AXLink": "link", "AXMenuBar": "menubar", "AXToolbar": "toolbar", "AXPopUpButton": "combobox", "AXUnknown": "unknown",
             "AXWindow/AXDialog": "window", "AXWindow/AXSystemDialog": "window", "AXWindow/AXFloatingWindow": "window", "AXButton/AXToolbarButton": "button"}
 WIN_DIALOG_CLASSES = {"#32770"}   # TaskDialog / MessageBox host window class
 
@@ -95,8 +95,11 @@ def flatten_win(node, origin, scale, role_map, out, depth=0, list_rows=False):
     if switch_label:
         for c in labels:
             flatten_win(c, origin, scale, role_map, out, depth, list_rows)
+    level = node.get("headingLevel")
     out.append(dict(role=role, name=None if switch_label else clean(node.get("name")), value=None if toggle else clean(value), enabled=bool(node.get("enabled", True)), focus=bool(node.get("focus")),
-                    toggle=toggle, bounds=bounds, depth=depth, raw=node.get("role"), range=node.get("range")))
+                    toggle=toggle, bounds=bounds, depth=depth, raw=node.get("role"), range=node.get("range"),
+                    # ABI 0.13 extras (gated only when listed in fields): UIA HelpText, heading level > 0, Hyperlink control type
+                    help=clean(node.get("helpText")) or None, heading=isinstance(level, (int, float)) and level > 0, link=role == "link"))
     for c in kids:
         flatten_win(c, origin, scale, role_map, out, depth + 1, list_rows)
 
@@ -133,6 +136,7 @@ def flatten_mac(node, role_map, out, depth=0, list_rows=False):
         name = node.get("placeholder")
     out.append(dict(role=role, name=clean(name), value=None if toggle else clean(value) if value is not None else None,
                     enabled=bool(node.get("enabled", True)), focus=bool(node.get("focus")), toggle=toggle, bounds=node.get("bounds"), depth=depth, raw=key,
+                    help=clean(node.get("help")) or None, heading=r == "AXHeading" or (node.get("roleDescription") or "").lower() == "heading", link=role == "link",
                     default=bool(node.get("default")), cancel=bool(node.get("cancel")), destructive=bool(node.get("destructive")),
                     range=(dict(value=_num(node.get("value")), minimum=_num(node.get("min")), maximum=_num(node.get("max"))) if r == "AXSlider" else None)))
     for c in node.get("children", []):
