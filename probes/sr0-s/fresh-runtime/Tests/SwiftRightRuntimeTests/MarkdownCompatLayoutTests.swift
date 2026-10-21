@@ -413,3 +413,19 @@ private struct PointKey: PreferenceKey {
         value = nextValue() ?? value
     }
 }
+
+@MainActor final class LabelAccessibilityTests: XCTestCase {
+    func testALabelIconIsHiddenFromAccessibility() throws {
+        let g = Graph(Label("Title", systemImage: "circle.fill"), scale: 2.5); g.flush()
+        var images: [Bool] = [], titles: [Bool] = []
+        func walk(_ n: ResolvedNode, hidden: Bool) {
+            let hidden = hidden || n.accessibility.isHidden
+            if n.kind == "Image" { images.append(hidden) }
+            if n.kind == "Text" { titles.append(hidden) }
+            n.children.forEach { walk($0, hidden: hidden) }
+        }
+        walk(try XCTUnwrap(g.snapshot()), hidden: false)
+        XCTAssertEqual(images, [true], "the icon is decorative")
+        XCTAssertEqual(titles, [false])
+    }
+}

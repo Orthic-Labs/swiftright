@@ -302,7 +302,9 @@ public struct Label<Title: View, Icon: View>: View, PrimitiveView {
     var nodeKind: NodeKind {
         .stack(StackSpec(name: "Label", axis: .horizontal, cross: .middle, spacing: 6, fillsCross: false))
     }
-    var nodeContent: (any View)? { TupleView((icon, title)) }
+    /// The icon is decorative for accessibility, as in SwiftUI: the Label is announced by its title (macOS AX shows no image for a Label icon;
+    /// MarkdownUI list bullets, factory run 39613454371).
+    var nodeContent: (any View)? { TupleView((icon.accessibilityHidden(true), title)) }
 }
 
 extension Label where Title == Text, Icon == Image {

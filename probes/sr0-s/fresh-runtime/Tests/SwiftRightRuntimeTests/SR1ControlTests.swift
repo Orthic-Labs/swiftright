@@ -276,7 +276,8 @@ final class SR1ControlTests: XCTestCase {
 
         let label = sr1Kind(graph, "Label")
         XCTAssertEqual(label.count, 1)
-        XCTAssertEqual(label[0].children.map(\.kind), ["Image", "Text"])
+        XCTAssertEqual(label[0].children.map(\.kind), ["modifier.accessibilityHidden", "Text"], "the icon is decorative for accessibility")
+        XCTAssertEqual(label[0].children.first?.children.map(\.kind), ["Image"])
         XCTAssertEqual(label[0].children.last?.text, "Inbox")
 
         let dividers = sr1Kind(graph, "Divider")
