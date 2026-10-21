@@ -10,6 +10,21 @@ public struct PaintScale: Equatable, Sendable {
     /// The factor radii, stroke widths and raster sizes take: the geometric mean of the axes (exact for a uniform scale, which is what S1 uses).
     public var uniform: Float { (abs(sx) * abs(sy)).squareRoot() }
 
+    /// What is left of the transform after the uniform factor (#54): the per-axis stretch (sx / uniform, sy / uniform), signed, so a flip shows. (1, 1) for a uniform scale.
+    /// A shape is drawn at `uniform` x its size and this stretch is then applied to it as an affine transform, which is what SwiftUI does with a non-uniform
+    /// `scaleEffect`: a capsule keeps its straight edge and gets elliptical ends, a circle becomes an ellipse.
+    public var stretch: (x: Float, y: Float) {
+        let u = uniform
+        guard u > 0, u.isFinite else { return (1, 1) }
+        return (sx / u, sy / u)
+    }
+
+    /// True when the scale is not uniform (or flips an axis): shapes then take the path route with the stretch as a transform.
+    public var isStretched: Bool {
+        let s = stretch
+        return abs(s.x - 1) > 1e-4 || abs(s.y - 1) > 1e-4
+    }
+
     public func map(_ r: Rect) -> Rect {
         let x0 = r.x * sx + tx, x1 = (r.x + r.w) * sx + tx
         let y0 = r.y * sy + ty, y1 = (r.y + r.h) * sy + ty

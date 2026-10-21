@@ -50,7 +50,8 @@ public enum ButtonPainter {
         }
         // An empty frame (a Button laid out at zero size) has nothing to draw; SwiftUI draws nothing for it.
         guard width > 0, height > 0 else { return ButtonPaintPlan(image: nil, placement: bounds, isEnabled: isEnabled, look: look, labelColor: try labelColor(of: node)) }
-        let image = ButtonArtwork.render(widthPX: Int(width), heightPX: Int(height), scale: scale, isEnabled: isEnabled, prominent: look == .prominent, dark: node.style.colorScheme == .dark)
+        let image = ButtonArtwork.render(widthPX: Int(width), heightPX: Int(height), scale: scale, isEnabled: isEnabled, prominent: look == .prominent, dark: node.style.colorScheme == .dark,
+                                         tint: AccentTint.rgb(of: node))
         return ButtonPaintPlan(image: image,
                                placement: Rect(x: bounds.x + imageGuardBand, y: bounds.y + imageGuardBand, w: width - 2 * imageGuardBand, h: height - 2 * imageGuardBand),
                                isEnabled: isEnabled, look: look, labelColor: try labelColor(of: node))

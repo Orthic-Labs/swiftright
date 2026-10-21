@@ -7,7 +7,7 @@ import Foundation
 // completions behave as they do for frames. As in SwiftUI, the presented shape is the NEW shape value with only its `animatableData` replaced by the
 // interpolated value: properties outside `animatableData` take their new values at once, and a shape whose data is `EmptyAnimatableData` switches at once.
 // Animated per shape: `trim(from:to:)` (from, to), `inset(by:)` (amount), `RoundedRectangle` (corner radius), and a custom shape's `animatableData`.
-// Not animated (switch at once, as in SwiftUI): Rectangle, Circle, Capsule, Path. Paint (colour, line width) is not interpolated in this block.
+// Not animated (switch at once, as in SwiftUI): Rectangle, Circle, Capsule, Path. Paint (colour, line width) interpolates as its own channel since #54: see PaintInterpolation.swift.
 
 /// Apple: https://developer.apple.com/documentation/swiftui/vectorarithmetic
 public protocol VectorArithmetic: AdditiveArithmetic {

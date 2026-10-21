@@ -1,0 +1,114 @@
+{
+ "textColourGate": {
+  "tolerance": 40,
+  "regions": [
+   {
+    "name": "row 1: shrinks to fit (0.5 allowed)",
+    "rect": [
+     200,
+     160,
+     600,
+     240
+    ],
+    "align": "leading",
+    "position": {
+     "firstInkYTolerancePx": 4,
+     "baselineTolerancePx": 4,
+     "inkCentreYTolerancePx": 3,
+     "firstInkXTolerancePx": 2,
+     "reason": "PROVISIONAL, unmeasured: F2 body-text rows (decision G71) widened for a shrunk size (SwiftUI's continuous size against the half-point steps here, up to 0.5 pt of font size); fit from the first CI factory-pair runs, then tighten (a tolerance is measured and named)"
+    }
+   },
+   {
+    "name": "row 2: fits, unscaled",
+    "rect": [
+     200,
+     260,
+     600,
+     340
+    ],
+    "align": "leading",
+    "position": {
+     "firstInkYTolerancePx": 4,
+     "baselineTolerancePx": 4,
+     "inkCentreYTolerancePx": 3,
+     "firstInkXTolerancePx": 2,
+     "reason": "PROVISIONAL, unmeasured: F2 body-text rows (decision G71) widened for a shrunk size (SwiftUI's continuous size against the half-point steps here, up to 0.5 pt of font size); fit from the first CI factory-pair runs, then tighten (a tolerance is measured and named)"
+    }
+   },
+   {
+    "name": "row 3: 0.8 allowed, truncates",
+    "rect": [
+     200,
+     360,
+     600,
+     440
+    ],
+    "align": "leading",
+    "position": {
+     "firstInkYTolerancePx": 4,
+     "baselineTolerancePx": 4,
+     "inkCentreYTolerancePx": 3,
+     "firstInkXTolerancePx": 2,
+     "reason": "PROVISIONAL, unmeasured: F2 body-text rows (decision G71) widened for a shrunk size (SwiftUI's continuous size against the half-point steps here, up to 0.5 pt of font size); fit from the first CI factory-pair runs, then tighten (a tolerance is measured and named)"
+    }
+   }
+  ],
+  "position": {
+   "align": "leading",
+   "reason": "per-row tolerances in each region (provisional, see the regions)"
+  }
+ },
+ "excludeRects": [
+  {
+   "name": "row 1: shrinks to fit (0.5 allowed) glyph region (Segoe UI vs SF, decision 2); gated by the position gate and the semantic frame gate; every pixel outside the three row bands is exact",
+   "rect": [
+    200,
+    160,
+    600,
+    240
+   ]
+  },
+  {
+   "name": "row 2: fits, unscaled glyph region (Segoe UI vs SF, decision 2); gated by the position gate and the semantic frame gate; every pixel outside the three row bands is exact",
+   "rect": [
+    200,
+    260,
+    600,
+    340
+   ]
+  },
+  {
+   "name": "row 3: 0.8 allowed, truncates glyph region (Segoe UI vs SF, decision 2); gated by the position gate and the semantic frame gate; every pixel outside the three row bands is exact",
+   "rect": [
+    200,
+    360,
+    600,
+    440
+   ]
+  }
+ ],
+ "semanticGate": {
+  "fields": [
+   "role",
+   "name",
+   "count",
+   "order",
+   "boundsY"
+  ],
+  "scope": "main",
+  "phases": [
+   ""
+  ]
+ },
+ "steps": [
+  {
+   "op": "wait",
+   "ms": 600
+  }
+ ],
+ "macArgs": [
+  "--steps",
+  "[{\"op\":\"wait\",\"ms\":600}]"
+ ]
+}

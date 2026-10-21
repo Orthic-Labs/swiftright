@@ -17,16 +17,18 @@ public enum SwitchArtwork {
     static let shadowStrength = 0.0562, shadowReach = 4.5, shadowLift = 0.75
     static let samplesPerAxis = 8
 
-    private struct Key: Hashable { let width: Int, height: Int, isOn: Bool, isEnabled: Bool, dark: Bool }
+    private struct Key: Hashable { let width: Int, height: Int, isOn: Bool, isEnabled: Bool, dark: Bool, tint: UInt32? }
     nonisolated(unsafe) private static var cache: [Key: ContinuousRGBAImage] = [:]
     private static let cacheLock = NSLock()
 
     /// Straight-alpha RGBA of the switch at `widthPX` x `heightPX` device pixels (the control's frame in pixels). Memoised per state and size.
-    public static func render(widthPX: Int, heightPX: Int, isOn: Bool, isEnabled: Bool, scheme: ColorScheme = .light) -> ContinuousRGBAImage {
-        let key = Key(width: widthPX, height: heightPX, isOn: isOn, isEnabled: isEnabled, dark: scheme == .dark)
+    /// `tint` (0xRRGGBB, #54) replaces the accent of the on track (`AccentTint`).
+    public static func render(widthPX: Int, heightPX: Int, isOn: Bool, isEnabled: Bool, scheme: ColorScheme = .light, tint: UInt32? = nil) -> ContinuousRGBAImage {
+        let tint = isOn ? tint : nil
+        let key = Key(width: widthPX, height: heightPX, isOn: isOn, isEnabled: isEnabled, dark: scheme == .dark, tint: tint)
         cacheLock.lock(); defer { cacheLock.unlock() }
         if let hit = cache[key] { return hit }
-        let image = rasterize(widthPX: widthPX, heightPX: heightPX, isOn: isOn, isEnabled: isEnabled, dark: scheme == .dark)
+        let image = rasterize(widthPX: widthPX, heightPX: heightPX, isOn: isOn, isEnabled: isEnabled, dark: scheme == .dark, tint: tint)
         cache[key] = image
         return image
     }
@@ -87,11 +89,12 @@ public enum SwitchArtwork {
         return coverage
     }
 
-    private static func rasterize(widthPX: Int, heightPX: Int, isOn: Bool, isEnabled: Bool, dark: Bool = false) -> ContinuousRGBAImage {
+    private static func rasterize(widthPX: Int, heightPX: Int, isOn: Bool, isEnabled: Bool, dark: Bool = false, tint: UInt32? = nil) -> ContinuousRGBAImage {
         let n = samplesPerAxis, total = Double(n * n)
         let pxPerPointX = Double(widthPX) / controlWidth, pxPerPointY = Double(heightPX) / controlHeight
         let knobX = knobOriginX(isOn: isOn)
-        let base = trackColor(isOn: isOn, isEnabled: isEnabled, scheme: dark ? .dark : .light)
+        var base = trackColor(isOn: isOn, isEnabled: isEnabled, scheme: dark ? .dark : .light)
+        if let tint { base = AccentTint.remap(base, accent: trackColor(isOn: true, isEnabled: true, scheme: dark ? .dark : .light), to: tint) }
         // dark: the knob is white at `knobAlpha` over the track, so it is a blend INSIDE the track; light: an opaque white knob over the track
         let knobAlpha = dark ? ToggleDarkData.knobAlpha : 1.0
         let strength = dark ? ToggleDarkData.shadowStrength : shadowStrength

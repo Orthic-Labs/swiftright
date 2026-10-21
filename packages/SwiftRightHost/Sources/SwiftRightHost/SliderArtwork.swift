@@ -20,6 +20,10 @@ public enum SliderArtwork {
         let accent: (Double, Double, Double)
         let disabledAlpha: Double
         let trackColour: Double // 0 (black) or 255 (white)
+
+        func with(accent: (Double, Double, Double)) -> Planes {
+            Planes(mask: mask, shadow: shadow, bodyAlpha: bodyAlpha, accent: accent, disabledAlpha: disabledAlpha, trackColour: trackColour)
+        }
     }
 
     private static func decode16(_ b64: String, count: Int) -> [Double] {
@@ -42,7 +46,7 @@ public enum SliderArtwork {
     private static let capEmpty = decode8(SliderArtworkData.capEmpty, count: 14 * 8)
     private static let capFill = decode8(SliderArtworkData.capFill, count: 14 * 8)
 
-    private struct Key: Hashable { let w: Int, h: Int, thumb: Int, fill: Int, enabled: Bool, dark: Bool, scale: Int }
+    private struct Key: Hashable { let w: Int, h: Int, thumb: Int, fill: Int, enabled: Bool, dark: Bool, scale: Int, tint: UInt32? }
     nonisolated(unsafe) private static var cache: [Key: ContinuousRGBAImage] = [:]
     private static let cacheLock = NSLock()
 
@@ -56,12 +60,15 @@ public enum SliderArtwork {
 
     /// Straight-alpha RGBA of the control: `(widthPX + 2 margin) x (heightPX + 2 margin)`, the control's frame sitting `margin` px in from the top left.
     /// `thumbOffsetPX`: the thumb's left edge from the track's left edge; `fillEndPX`: where the fill ends (`fraction * widthPX`).
-    public static func render(widthPX: Int, heightPX: Int, thumbOffsetPX: Int, fillEndPX: Double, isEnabled: Bool, scheme: ColorScheme, scale: Float = referenceScale) -> ContinuousRGBAImage {
-        let key = Key(w: widthPX, h: heightPX, thumb: thumbOffsetPX, fill: Int((fillEndPX * 8).rounded()), enabled: isEnabled, dark: scheme == .dark, scale: Int((scale * 100).rounded()))
+    /// `tint` (0xRRGGBB, #54) replaces the accent of the fill.
+    public static func render(widthPX: Int, heightPX: Int, thumbOffsetPX: Int, fillEndPX: Double, isEnabled: Bool, scheme: ColorScheme, scale: Float = referenceScale, tint: UInt32? = nil) -> ContinuousRGBAImage {
+        let key = Key(w: widthPX, h: heightPX, thumb: thumbOffsetPX, fill: Int((fillEndPX * 8).rounded()), enabled: isEnabled, dark: scheme == .dark, scale: Int((scale * 100).rounded()), tint: tint)
         cacheLock.lock(); defer { cacheLock.unlock() }
         if let hit = cache[key] { return hit }
         if cache.count > 64 { cache.removeAll() }
-        let image = rasterize(widthPX: widthPX, heightPX: heightPX, thumbOffsetPX: thumbOffsetPX, fillEndPX: fillEndPX, isEnabled: isEnabled, planes: scheme == .dark ? dark : light, scale: scale)
+        var planes = scheme == .dark ? dark : light
+        if let tint { planes = planes.with(accent: (Double(tint >> 16 & 255), Double(tint >> 8 & 255), Double(tint & 255))) }
+        let image = rasterize(widthPX: widthPX, heightPX: heightPX, thumbOffsetPX: thumbOffsetPX, fillEndPX: fillEndPX, isEnabled: isEnabled, planes: planes, scale: scale)
         cache[key] = image
         return image
     }
@@ -176,7 +183,7 @@ public enum SliderPainter {
         let dx = bounds.x - Float(node.pixelFrame.x), dy = bounds.y - Float(node.pixelFrame.y)
         let margin = SliderArtwork.marginPX(scale: scale)
         let image = SliderArtwork.render(widthPX: width, heightPX: height, thumbOffsetPX: slider.thumbOffsetPixels, fillEndPX: slider.fraction * Double(width),
-                                         isEnabled: node.accessibility.isEnabled, scheme: node.style.colorScheme, scale: scale)
+                                         isEnabled: node.accessibility.isEnabled, scheme: node.style.colorScheme, scale: scale, tint: AccentTint.rgb(of: node))
         return SliderPaintPlan(image: image,
                                placement: Rect(x: Float(track.x) + dx - Float(margin) + imageGuardBand, y: Float(track.y) + dy - Float(margin) + imageGuardBand,
                                                w: Float(image.width) - 2 * imageGuardBand, h: Float(image.height) - 2 * imageGuardBand),

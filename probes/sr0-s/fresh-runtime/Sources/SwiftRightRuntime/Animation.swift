@@ -290,6 +290,8 @@ struct Presentation {
     var geometry: ShapeGeometry? = nil
     /// A `.scaleEffect` node's factors (SR2 R4); nil for other nodes. Interpolated with the layer's progress, like `geometry`.
     var scale: CGSize? = nil
+    /// The node's paint (#54): colour and stroke width, interpolated with the layer's progress (`PaintInterpolation.swift`).
+    var paint: PaintValues? = nil
 
     static func lerp(_ a: Presentation, _ b: Presentation, _ t: Double) -> Presentation {
         if t == 0 { return a }
@@ -301,7 +303,8 @@ struct Presentation {
                               width: mix(a.frame.width, b.frame.width), height: mix(a.frame.height, b.frame.height)),
             opacity: a.opacity + (b.opacity - a.opacity) * t,
             geometry: ShapeGeometry.interpolate(a.geometry, b.geometry, t),
-            scale: Self.mixScale(a.scale, b.scale, k)
+            scale: Self.mixScale(a.scale, b.scale, k),
+            paint: PaintValues.mix(a.paint, b.paint, t)
         )
     }
 
@@ -309,11 +312,12 @@ struct Presentation {
         [Double(frame.minX), Double(frame.minY), Double(frame.width), Double(frame.height), opacity]
     }
 
-    init(frame: LayoutRect, opacity: Double, geometry: ShapeGeometry? = nil, scale: CGSize? = nil) {
+    init(frame: LayoutRect, opacity: Double, geometry: ShapeGeometry? = nil, scale: CGSize? = nil, paint: PaintValues? = nil) {
         self.frame = frame
         self.opacity = opacity
         self.geometry = geometry
         self.scale = scale
+        self.paint = paint
     }
 
     static func mixScale(_ a: CGSize?, _ b: CGSize?, _ k: CGFloat) -> CGSize? {
@@ -356,8 +360,12 @@ final class MotionLayer {
     var continuationFrom: ShapeGeometry?
     /// The scale presented when this spring took over (SR2 R4); follows the same from-rest spring as the geometry.
     var continuationScaleFrom: CGSize?
+    /// The paint presented when this spring took over (#54); follows the same from-rest spring as the geometry and scale.
+    var continuationPaintFrom: PaintValues?
     /// Seconds after which a spring that starts at rest is removed (its distance and the display scale decide: `SpringModel.settle`); nil until `startLayer` sets it.
     var springSettle: Double?
+    /// The graph's display scale, which the removal tolerances depend on; set by `startLayer`.
+    var displayScale = 1.0
 
     init(to: Presentation, animation: Animation, transaction: AnimationTransaction) {
         self.to = to
@@ -399,6 +407,7 @@ final class MotionLayer {
             let restProgress = 1 - freeRemainder(d0: 1, v0: 0, t: elapsed)
             presented.geometry = ShapeGeometry.interpolate(continuationFrom ?? to.geometry, to.geometry, restProgress)
             presented.scale = Presentation.mixScale(continuationScaleFrom ?? to.scale, to.scale, CGFloat(restProgress))
+            presented.paint = PaintValues.mix(continuationPaintFrom ?? to.paint, to.paint, restProgress)
             return presented
         }
         let progress: Double
@@ -428,31 +437,49 @@ final class MotionLayer {
             if isSpring, let springSettle { return animation.curve == .spring ? springSettle * animation.duration / SpringModel.perceptual : springSettle }
             return animation.visualDuration
         }
-        // a continued spring ends when every component is within 1 % of the largest starting displacement of the target
+        // Removal rule (#54). SwiftUI removes a spring once every animated component stays within its one-device-pixel tolerance (`SpringModel.tolerances`, C11),
+        // whichever spring it is; a spring that continued from an interrupted one follows the same rule on the displacement and velocity it took over with (it used
+        // a relative 1 % of the largest displacement before, which removed a long interrupted spring up to a pixel early). A component that is not a frame
+        // component (a shape's geometry, a scale, a colour) follows a from-rest spring (see `value`) and is held to the opacity-like unit tolerance (colour, scale,
+        // geometry) or the width tolerance (line width) on its own amplitude.
         let c = continuation!
-        let scale = max(c.displacement.map(abs).max() ?? 0, 1e-9)
-        // A geometry that is still moving follows a critically damped spring from rest (see `value`): it must also be within the opacity-like
-        // unit tolerance (0.0006) before the layer goes; otherwise a shape-only spring that interrupts a spring would end on its first tick.
-        let geometryMoves = continuationFrom != to.geometry || continuationScaleFrom != to.scale
+        let tolerance = SpringModel.tolerances(scale: displayScale)
+        var extras: [(amplitude: Double, tolerance: Double)] = []
+        // A geometry that is still moving must also be within the unit tolerance before the layer goes; otherwise a shape-only spring that interrupts a spring
+        // would end on its first tick.
+        if continuationFrom != to.geometry { extras.append((1, tolerance[4])) }
+        if let a = continuationScaleFrom, let b = to.scale, a != b {
+            extras.append((Double(max(abs(b.width - a.width), abs(b.height - a.height))), tolerance[4]))
+        }
+        let paintMove = PaintValues.distance(continuationPaintFrom, to.paint)
+        if paintMove.color > 0 { extras.append((paintMove.color, tolerance[4])) }
+        if paintMove.lineWidth > 0 { extras.append((paintMove.lineWidth, tolerance[2])) }
         var t = 0.0
         let horizon = animation.curve == .spring ? 4.0 : 10.0
         while t < horizon {
-            let within = (0..<5).allSatisfy { i in abs(freeRemainder(d0: c.displacement[i], v0: c.velocity[i], t: t)) <= 0.0105 * scale }
-            if within && (!geometryMoves || abs(freeRemainder(d0: 1, v0: 0, t: t)) <= 0.0006) {
+            if continuationWithin(c, tolerance: tolerance, extras: extras, at: t) {
                 // an oscillating spring may pass inside the band at a zero crossing: it is done only when it stays inside
-                if animation.curve == .spring || stays(c, scale: scale, geometryMoves: geometryMoves, from: t) { return t }
+                if animation.curve == .spring || stays(c, tolerance: tolerance, extras: extras, from: t) { return t }
             }
             t += 0.005
         }
         return horizon
     }
 
-    private func stays(_ c: (displacement: [Double], velocity: [Double]), scale: Double, geometryMoves: Bool, from t0: Double) -> Bool {
+    private func continuationWithin(_ c: (displacement: [Double], velocity: [Double]), tolerance: [Double], extras: [(amplitude: Double, tolerance: Double)], at t: Double) -> Bool {
+        for i in 0..<5 where abs(freeRemainder(d0: c.displacement[i], v0: c.velocity[i], t: t)) > tolerance[i] { return false }
+        if !extras.isEmpty {
+            let rest = abs(freeRemainder(d0: 1, v0: 0, t: t))
+            for extra in extras where rest * extra.amplitude > extra.tolerance { return false }
+        }
+        return true
+    }
+
+    private func stays(_ c: (displacement: [Double], velocity: [Double]), tolerance: [Double], extras: [(amplitude: Double, tolerance: Double)], from t0: Double) -> Bool {
         var t = t0
         while t < t0 + 1 {
             t += 0.005
-            if !(0..<5).allSatisfy({ i in abs(freeRemainder(d0: c.displacement[i], v0: c.velocity[i], t: t)) <= 0.0105 * scale }) { return false }
-            if geometryMoves && abs(freeRemainder(d0: 1, v0: 0, t: t)) > 0.0006 { return false }
+            if !continuationWithin(c, tolerance: tolerance, extras: extras, at: t) { return false }
         }
         return true
     }
@@ -663,6 +690,7 @@ extension Graph {
             }
             node.presentedGeometry = node.targetGeometry
             node.presentedScale = node.targetScale
+            node.presentedPaint = node.targetPaint
         }
         if firstPresentation || transactions.isEmpty {
             for node in changed { snap(node) }
@@ -702,10 +730,11 @@ extension Graph {
             snap(node)
             return
         }
-        let target = Presentation(frame: node.frame, opacity: node.targetOpacity, geometry: node.targetGeometry, scale: node.targetScale)
+        let target = Presentation(frame: node.frame, opacity: node.targetOpacity, geometry: node.targetGeometry, scale: node.targetScale, paint: node.targetPaint)
         let chain = node.motion ?? MotionChain(base: Presentation(frame: node.presentedFrame, opacity: node.presentedOpacity, geometry: node.presentedGeometry,
-                                                                  scale: node.presentedScale))
+                                                                  scale: node.presentedScale, paint: node.presentedPaint))
         let layer = MotionLayer(to: target, animation: animation, transaction: transaction)
+        layer.displayScale = Double(scale)
         if layer.isSpring {
             let fromPresentation = chain.layers.isEmpty ? chain.base : (clock.map { chain.value(at: $0) } ?? chain.layers.last!.to)
             var displacement = zip(target.components, fromPresentation.components).map { $0 - $1 }
@@ -716,6 +745,10 @@ extension Graph {
             if let a = fromPresentation.scale, let b = target.scale {
                 displacement[4] = max(abs(displacement[4]), Double(max(abs(b.width - a.width), abs(b.height - a.height))))
             }
+            // A colour change settles like an opacity-like value (components 0...1) and a line width change like a width (#54).
+            let paintMove = PaintValues.distance(fromPresentation.paint, target.paint)
+            displacement[4] = max(abs(displacement[4]), paintMove.color)
+            displacement[2] = max(abs(displacement[2]), paintMove.lineWidth)
             switch animation.curve {
             case .integratedSpring(let k, let c):
                 layer.springSettle = SpringMath.integratedSettle(k: k, c: c, displacement: displacement, scale: Double(scale))
@@ -748,6 +781,7 @@ extension Graph {
             )
             layer.continuationFrom = current.geometry
             layer.continuationScaleFrom = current.scale
+            layer.continuationPaintFrom = current.paint
             finishChain(chain)
             chain.base = current
         }
@@ -788,6 +822,7 @@ extension Graph {
         node.presentedOpacity = node.targetOpacity
         node.presentedGeometry = node.targetGeometry
         node.presentedScale = node.targetScale
+        node.presentedPaint = node.targetPaint
     }
 
     /// Ends a node's motion when the node goes away.
@@ -824,11 +859,13 @@ extension Graph {
                 node.presentedOpacity = chain.base.opacity
                 node.presentedGeometry = chain.base.geometry
                 node.presentedScale = chain.base.scale
+                node.presentedPaint = chain.base.paint
             } else {
                 node.presentedFrame = value.frame
                 node.presentedOpacity = value.opacity
                 node.presentedGeometry = value.geometry
                 node.presentedScale = value.scale
+                node.presentedPaint = value.paint
             }
         }
     }

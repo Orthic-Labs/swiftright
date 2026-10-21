@@ -32,11 +32,17 @@ public final class ResolvedNodePainter {
     public private(set) var scaleTextLimitationCount = 0
     /// `.brightness` amounts above the node being emitted, outermost first (SR2 R4): applied to its colours innermost first, each clamped.
     private var brightness: [Float] = []
-    /// Image content (not shapes) painted under `.brightness` since this painter was made: bitmaps are drawn unadjusted.
+    /// Painted artwork images (a Button, Toggle or Slider body, a List highlight, a text field) under `.brightness` since this painter was made: they are drawn unadjusted.
+    /// Pixel images (`Image(decorative:)`) and symbols are adjusted (#54), as are shapes, solid colours and text.
     public private(set) var brightnessImageLimitationCount = 0
 
     /// The `.scaleEffect` factor on the Text being emitted (R4b, #42); 1 when unscaled.
     private var textScaleFactor: Float = 1
+    /// The non-uniform part of the `.scaleEffect`s above the node being emitted (#54), nil when they are uniform: a shape is drawn at the uniform factor and stretched by this.
+    /// The stretch is applied before any `.rotationEffect` above (a rotation inside the scale is not told apart from one outside it).
+    private var paintStretch: (x: Float, y: Float)?
+    /// True while the node being emitted is under a `.scaleEffect` that changes its painting: a uniform factor other than 1, or a stretch (a x2, y0.5 scale has factor 1).
+    private var paintScaled: Bool { scale != baseScale || paintStretch != nil }
 
     /// `font` at `factor` x its point size (a text style takes its macOS size and weight), in half points within the measurer's 9...40 pt table; nil when it has no size.
     static func scaledFont(_ font: Font?, by factor: Float) -> Font? {
@@ -76,6 +82,22 @@ public final class ResolvedNodePainter {
         return ClipMask.apply(clipMasks, to: image, originX: Int((placement.x - imageGuardBand).rounded()), originY: Int((placement.y - imageGuardBand).rounded()))
     }
 
+    /// Straight-alpha RGBA bytes through the `.brightness` amounts (outermost first, applied innermost first, each clamped), alpha unchanged: the same arithmetic as `adjusted`.
+    public static func brightened(_ rgba: [UInt8], by amounts: [Float]) -> [UInt8] {
+        let table: [UInt8] = (0..<256).map { value in
+            var v = Float(value) / 255
+            for b in amounts.reversed() { v = min(max(v + b, 0), 1) }
+            return UInt8((v * 255).rounded())
+        }
+        var out = rgba
+        var i = 0
+        while i + 3 < out.count {
+            out[i] = table[Int(out[i])]; out[i + 1] = table[Int(out[i + 1])]; out[i + 2] = table[Int(out[i + 2])]
+            i += 4
+        }
+        return out
+    }
+
     /// A colour (0xRRGGBBAA) through the `.brightness` amounts above the node being emitted.
     func adjusted(_ rgba: UInt32) -> UInt32 {
         guard !brightness.isEmpty else { return rgba }
@@ -94,7 +116,8 @@ public final class ResolvedNodePainter {
     var pendingShapeImages: [UInt64: ImageHandle] = [:]
     /// Registered pixel images (`Image(decorative:scale:)`), one per content id, painted size and opacity: kept while a committed tree uses them.
     /// `level` is the `Image.Interpolation` (-1 = never set, 0 none ... 3 high).
-    struct PixelKey: Hashable { var contentID: UInt64; var width: UInt32; var height: UInt32; var alpha: UInt8; var level: Int8 = -1 }
+    /// `brightness` is the `.brightness` amounts above the image, outermost first (#54): the pixels are registered adjusted.
+    struct PixelKey: Hashable { var contentID: UInt64; var width: UInt32; var height: UInt32; var alpha: UInt8; var level: Int8 = -1; var brightness: [Float] = [] }
     /// The last variant registered for each image node (bridge node id): what the transient path keeps painting while the size is changing.
     private var lastPixelKey: [UInt64: PixelKey] = [:]
     /// Live resize and animation (wave 1 block I2, docs/foundations-images-fonts.md 1.3): while true, an image node whose destination size changed keeps painting its last registered variant
@@ -291,9 +314,11 @@ public final class ResolvedNodePainter {
             scale = nodeScale
             self.brightness = brightness
             self.clipMasks = clipMasks
-            defer { scale = baseScale; self.brightness = []; self.clipMasks = []; textScaleFactor = 1 }
             // A factor of 0 (`.scaleEffect(shown ? 1 : 0)`, the first frame of a pop-in) paints nothing: no raster may be asked for at scale 0.
             let collapsed = !transform.isIdentity && (transform.sx == 0 || transform.sy == 0)
+            let nodeStretch: (x: Float, y: Float)? = !collapsed && !scaledText && transform.isStretched ? transform.stretch : nil
+            paintStretch = nodeStretch
+            defer { scale = baseScale; self.brightness = []; self.clipMasks = []; textScaleFactor = 1; paintStretch = nil }
             var emission: NodeEmission
             if collapsed { emission = NodeEmission(primitives: [], semantic: nil, flags: [], structural: false) }
             else if let row, let rowList { emission = try emitListRow(n, id: id, row: row, look: rowList.look, contentBounds: bounds, textColor: textColor) }
@@ -363,6 +388,7 @@ public final class ResolvedNodePainter {
             scale = nodeScale
             self.brightness = brightness
             self.clipMasks = clipMasks
+            paintStretch = nodeStretch
             // The legacy scroller of a List or ScrollView is painted above its content: a child node ordered after the last child, clipped to the container.
             if n.kind == "List" || n.kind == "ScrollView", let scroll = n.scroll, let layout = ScrollerPainter.layout(frame: bounds, scale: scale, scroll: scroll) {
                 let scrollerID = id | Self.scrollerNodeFlag
@@ -434,12 +460,12 @@ public final class ResolvedNodePainter {
                 }
                 return $0
             }
-            if !Self.isShapeKind(node.kind), emission.primitives.contains(where: { if case .image = $0 { return true } else { return false } }) { brightnessImageLimitationCount += 1 }
+            if !Self.isShapeKind(node.kind), node.kind != "Image", emission.primitives.contains(where: { if case .image = $0 { return true } else { return false } }) { brightnessImageLimitationCount += 1 }
         }
-        if !clipMasks.isEmpty || scale != baseScale {
+        if !clipMasks.isEmpty || paintScaled {
             var out: [Primitive] = []
             for (index, primitive) in emission.primitives.enumerated() {
-                func offGrid(_ r: Rect) -> Bool { scale != baseScale && [r.x, r.y, r.w, r.h].contains { $0 != $0.rounded() } }
+                func offGrid(_ r: Rect) -> Bool { paintScaled && [r.x, r.y, r.w, r.h].contains { $0 != $0.rounded() } }
                 guard case .rect(let r, let color, let radius, let borderColor, let borderWidth) = primitive, !clipMasks.allSatisfy({ $0.covers(r) }) || offGrid(r) else {
                     // A text run or a bitmap (drawn by the renderer, which clips by rectangles) is drawn once per band of the clip's inside (#43).
                     var region: Rect?
@@ -630,7 +656,7 @@ public final class ResolvedNodePainter {
             return emission
 
         case "Rectangle", "RoundedRectangle", "Circle", "Capsule", "Path":
-            switch try ShapePainter.plan(node, bounds: bounds, scale: scale, rotations: rotations, underScaleEffect: scale != baseScale) {
+            switch try ShapePainter.plan(node, bounds: bounds, scale: scale, rotations: rotations, underScaleEffect: paintScaled, stretch: paintStretch) {
             case .primitive(let primitive):
                 return NodeEmission(primitives: [primitive], semantic: nil, flags: [], structural: false)
             case .path(var request):
@@ -801,7 +827,7 @@ public final class ResolvedNodePainter {
             fontSize = spec.size; weight = spec.weight
         }
         guard bounds.w > 0, bounds.h > 0 else { throw HostPaintError.systemImageContractMismatch("empty frame") }
-        let tint = try HostPaint.rgba(node.style.foreground ?? .semantic(registry.defaultForeground(for: reference)), opacity: node.opacity, scheme: node.style.colorScheme)
+        let tint = adjusted(try HostPaint.rgba(node.style.foreground ?? .semantic(registry.defaultForeground(for: reference)), opacity: node.opacity, scheme: node.style.colorScheme))
         let targetWidth = fontSize == nil ? UInt32(max(1, bounds.w)) : UInt32(max(1, bounds.w.rounded())), targetHeight = fontSize == nil ? UInt32(max(1, bounds.h)) : UInt32(max(1, bounds.h.rounded()))
         let handle = try registry.handle(for: reference, tint: tint, width: targetWidth, height: targetHeight, fontSize: fontSize, weight: weight)
         let inset = registry.canvasInset(for: reference, fontSize: fontSize, weight: weight, width: targetWidth, height: targetHeight)
@@ -826,9 +852,9 @@ public final class ResolvedNodePainter {
         let levelCode: Int8 = level.map { l -> Int8 in switch l { case .none: return 0; case .low: return 1; case .medium: return 2; case .high: return 3 } } ?? -1
         let oversize = targetW > 8192 || targetH > 8192 || targetW * targetH * 4 > 64 << 20
         let w = oversize ? UInt32(min(image.width, max(1, targetW))) : UInt32(targetW), h = oversize ? UInt32(min(image.height, max(1, targetH))) : UInt32(targetH)
-        var key = PixelKey(contentID: image.contentID, width: w, height: h, alpha: UInt8((node.opacity * 255).rounded()), level: levelCode)
+        var key = PixelKey(contentID: image.contentID, width: w, height: h, alpha: UInt8((node.opacity * 255).rounded()), level: levelCode, brightness: brightness)
         var transient = false
-        if isLiveResizing, id != 0, let last = lastPixelKey[id], last != key, last.contentID == key.contentID, last.level == key.level, last.alpha == key.alpha,
+        if isLiveResizing, id != 0, let last = lastPixelKey[id], last != key, last.contentID == key.contentID, last.level == key.level, last.alpha == key.alpha, last.brightness == key.brightness,
            pendingPixelImages[last] != nil || pixelImages[last] != nil {
             key = last; transient = true      // keep the last registered variant: the renderer scales it into the new rect
         }
@@ -843,6 +869,7 @@ public final class ResolvedNodePainter {
                 source = ImageResampler.resample(image, width: Int(w), height: Int(h), level: level)
             }
             var rgba = source.rgba
+            if !key.brightness.isEmpty { rgba = Self.brightened(rgba, by: key.brightness) }
             if key.alpha != 255 {
                 for i in stride(from: 3, to: rgba.count, by: 4) { rgba[i] = UInt8((Int(rgba[i]) * Int(key.alpha) + 127) / 255) }
             }

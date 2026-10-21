@@ -41,10 +41,10 @@ public enum TogglePainter {
         let role: NodeRole
         switch artwork {
         case .switchControl:
-            image = SwitchArtwork.render(widthPX: Int(width), heightPX: Int(height), isOn: isOn, isEnabled: isEnabled, scheme: node.style.colorScheme)
+            image = SwitchArtwork.render(widthPX: Int(width), heightPX: Int(height), isOn: isOn, isEnabled: isEnabled, scheme: node.style.colorScheme, tint: AccentTint.rgb(of: node))
             role = .switchControl
         case .checkbox:
-            image = CheckboxArtwork.render(widthPX: Int(width), heightPX: Int(height), isOn: isOn, isEnabled: isEnabled, scheme: node.style.colorScheme)
+            image = CheckboxArtwork.render(widthPX: Int(width), heightPX: Int(height), isOn: isOn, isEnabled: isEnabled, scheme: node.style.colorScheme, tint: AccentTint.rgb(of: node))
             role = .checkbox
         }
         return TogglePaintPlan(

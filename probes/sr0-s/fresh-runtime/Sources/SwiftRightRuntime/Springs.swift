@@ -9,8 +9,12 @@ import Foundation
 //   spring(response: r, dampingFraction: f):   omega = 2 pi / r, zeta = f
 //   .snappy / .bouncy:                         duration 0.5, bounce 0.15 / 0.3 (each `extraBounce` adds to the bounce)
 // `.default`, `.smooth` and `.spring` keep the measured table (`SpringModel`, decision C4), which is this integrator sampled at 12.5 ms.
-// Not modelled (named in docs/sr2-plan.md): when SwiftUI removes a parameterised spring (the spike found no rule; the runtime removes it once every
-// animated component stays within the C11 one-device-pixel tolerance), `blendDuration`, and a non-zero `initialVelocity`.
+// Removal (#54, docs/sr2-plan.md): the spike found no parameterised-spring rule of its own, so every spring (table, integrated, closed form, and a spring that
+// continues from an interrupted one) is removed by SwiftUI's documented settling rule (`Spring.settlingDuration`: the time after which ALL later values stay
+// within epsilon) applied per component with the measured C11 tolerances (`SpringModel.tolerances`: x, y 0.5 / scale pt; width, height 1.05 / scale pt;
+// opacity-like values, which colour and scale changes count as, 0.0006; a stroke's line width as a width). `integratedSettle`, `closedSettle`,
+// `SpringModel.settle` and `MotionLayer.motionDuration` are that one rule over each form.
+// Not modelled: `blendDuration`, and a non-zero `initialVelocity` (the notch uses neither).
 
 extension Animation {
     /// Apple: https://developer.apple.com/documentation/swiftui/animation/spring(duration:bounce:blendduration:)

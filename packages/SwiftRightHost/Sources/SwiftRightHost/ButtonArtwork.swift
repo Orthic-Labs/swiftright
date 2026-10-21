@@ -7,7 +7,7 @@ import SwiftRightRuntime
 public enum ButtonArtwork {
     static let samplesPerAxis = 8
 
-    private struct Key: Hashable { let width: Int, height: Int, scale: Float, isEnabled: Bool, prominent: Bool, dark: Bool }
+    private struct Key: Hashable { let width: Int, height: Int, scale: Float, isEnabled: Bool, prominent: Bool, dark: Bool, tint: UInt32? }
     nonisolated(unsafe) private static var cache: [Key: ContinuousRGBAImage] = [:]
     private static let cacheLock = NSLock()
 
@@ -44,20 +44,23 @@ public enum ButtonArtwork {
     }
 
     /// Straight-alpha RGBA of the button at `widthPX` x `heightPX` device pixels at `scale` pixels per point. Memoised per state and size.
-    public static func render(widthPX: Int, heightPX: Int, scale: Float, isEnabled: Bool, prominent: Bool = false, dark: Bool = false) -> ContinuousRGBAImage {
-        let key = Key(width: widthPX, height: heightPX, scale: scale, isEnabled: isEnabled, prominent: prominent, dark: dark)
+    /// `tint` (0xRRGGBB, #54) replaces the accent of a prominent button's fill (`AccentTint`); it is ignored for the other looks.
+    public static func render(widthPX: Int, heightPX: Int, scale: Float, isEnabled: Bool, prominent: Bool = false, dark: Bool = false, tint: UInt32? = nil) -> ContinuousRGBAImage {
+        let tint = prominent ? tint : nil
+        let key = Key(width: widthPX, height: heightPX, scale: scale, isEnabled: isEnabled, prominent: prominent, dark: dark, tint: tint)
         cacheLock.lock(); defer { cacheLock.unlock() }
         if let hit = cache[key] { return hit }
-        let image = rasterize(widthPX: widthPX, heightPX: heightPX, scale: scale, isEnabled: isEnabled, prominent: prominent, dark: dark)
+        let image = rasterize(widthPX: widthPX, heightPX: heightPX, scale: scale, isEnabled: isEnabled, prominent: prominent, dark: dark, tint: tint)
         cache[key] = image
         return image
     }
 
-    private static func rasterize(widthPX: Int, heightPX: Int, scale: Float, isEnabled: Bool, prominent: Bool, dark: Bool) -> ContinuousRGBAImage {
+    private static func rasterize(widthPX: Int, heightPX: Int, scale: Float, isEnabled: Bool, prominent: Bool, dark: Bool, tint: UInt32?) -> ContinuousRGBAImage {
         let n = samplesPerAxis, total = Double(n * n)
         let pxPerPoint = Double(scale)
         let widthPt = Double(widthPX) / pxPerPoint, heightPt = Double(heightPX) / pxPerPoint
-        let fill = fillColor(isEnabled: isEnabled, prominent: prominent, dark: dark)
+        var fill = fillColor(isEnabled: isEnabled, prominent: prominent, dark: dark)
+        if let tint { fill = AccentTint.remap(fill, accent: fillColor(isEnabled: true, prominent: true, dark: dark), to: tint) }
         let rgb = [UInt8(fill >> 16 & 255), UInt8(fill >> 8 & 255), UInt8(fill & 255)]
         var rgba = [UInt8](repeating: 0, count: max(0, widthPX * heightPX * 4))
         for py in 0..<heightPX {

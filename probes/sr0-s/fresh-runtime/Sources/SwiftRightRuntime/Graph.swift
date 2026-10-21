@@ -648,6 +648,23 @@ final class Node {
     /// A `.scaleEffect` node's presented (animated) factors; nil for other nodes.
     var presentedScale: CGSize?
     var snapScale: CGSize?
+    /// #54: the node's presented (animated) paint, and as of the last change detection. See `PaintInterpolation.swift`.
+    var presentedPaint: PaintValues?
+    var snapPaint: PaintValues?
+    /// The node's evaluated paint (its animation target): a shape's explicit colour and stroke width, a `Color` view's colour, else the foreground style.
+    var targetPaint: PaintValues? {
+        switch kind {
+        case .shape(let resolved):
+            if let p = resolved.paint {
+                return PaintValues(color: p.color.resolvingTint(environment), lineWidth: p.kind == .stroke ? p.lineWidth.map { Double($0) } : nil)
+            }
+            return style.foreground.map { PaintValues(color: $0, lineWidth: nil) }
+        case .color(let resolved):
+            return PaintValues(color: resolved, lineWidth: nil)
+        default:
+            return style.foreground.map { PaintValues(color: $0, lineWidth: nil) }
+        }
+    }
     /// A `.scaleEffect` node's evaluated factors (its animation target).
     var targetScale: CGSize? {
         if case .modifier(.scale(let x, let y, _)) = kind { return CGSize(width: x, height: y) }
@@ -906,6 +923,8 @@ public struct ResolvedNode: Equatable, Sendable {
     /// Text nodes made of styled runs only (#68): the runs with fonts and colours resolved, and the line limit. Nil for a plain Text (the node is then the string in `text`
     /// with `style`) and for every other node.
     public var styledText: ResolvedStyledText? = nil
+    /// Button, Toggle and Slider nodes only (#54): the environment's `.tint(_:)`, nil when none is set (the accent colour then applies). A host paints the control's accent in it.
+    public var tint: ResolvedColor? = nil
 }
 
 /// What `.clipShape(_:style:)` asks of its subtree: paint only inside `geometry` laid out in the modifier node's frame.
@@ -2339,12 +2358,14 @@ public final class Graph {
     private func collectChanged(_ node: Node, into out: inout [Node]) {
         let geometry = node.targetGeometry
         let scale = node.targetScale
-        if node.frame != node.snapFrame || node.targetOpacity != node.snapOpacity || geometry != node.snapGeometry || scale != node.snapScale {
+        let paint = node.targetPaint
+        if node.frame != node.snapFrame || node.targetOpacity != node.snapOpacity || geometry != node.snapGeometry || scale != node.snapScale || paint != node.snapPaint {
             out.append(node)
             node.snapFrame = node.frame
             node.snapOpacity = node.targetOpacity
             node.snapGeometry = geometry
             node.snapScale = scale
+            node.snapPaint = paint
         }
         for child in node.childNodes { collectChanged(child, into: &out) }
     }
@@ -2417,12 +2438,18 @@ public final class Graph {
             }
         }
         var color: ResolvedColor?
-        if case .color(let resolved) = kind { color = resolved }
+        if case .color(let resolved) = kind { color = node.presentedPaint?.color ?? resolved }
         var shape: ResolvedShape?
         if case .shape(let resolvedShape) = kind {
             var paint = resolvedShape.paint
             if let p = paint, case .semantic(let name) = p.color, name == "tint" { paint = p.withColor(p.color.resolvingTint(node.environment)) }
             if let p = paint, case .semanticAlpha(let name, _) = p.color, name == "tint" { paint = p.withColor(p.color.resolvingTint(node.environment)) }
+            // #54: an animated colour or line width (the presented paint) replaces the evaluated one.
+            if let presented = node.presentedPaint, var p = paint {
+                if let c = presented.color { p = p.withColor(c) }
+                if p.kind == .stroke, let w = presented.lineWidth { p = p.withLineWidth(CGFloat(w)) }
+                paint = p
+            }
             shape = ResolvedShape(geometry: node.presentedGeometry ?? resolvedShape.geometry, paint: paint)
         }
         let labelsHidden: Bool?
@@ -2479,12 +2506,22 @@ public final class Graph {
            let shrunk = node.memoScaledFont[width] {
             style = ResolvedStyle(font: shrunk, foreground: style.foreground, colorScheme: style.colorScheme)
         }
+        // #54: an animated foreground style (a node whose paint is its foreground: not a `Color` view, not a shape with its own paint).
+        if let presented = node.presentedPaint?.color {
+            var paintIsForeground = true
+            switch kind {
+            case .color: paintIsForeground = false
+            case .shape(let s): paintIsForeground = s.paint == nil
+            default: break
+            }
+            if paintIsForeground, style.foreground != nil { style = ResolvedStyle(font: style.font, foreground: presented, colorScheme: style.colorScheme) }
+        }
         var scaleEffect: ResolvedScale?
         if case .modifier(.scale(let x, let y, let anchor)) = kind {
             let presented = node.presentedScale ?? CGSize(width: x, height: y)
             scaleEffect = ResolvedScale(x: presented.width, y: presented.height, anchor: anchor)
         }
-        return ResolvedNode(
+        var resolvedNode = ResolvedNode(
             id: node.idString,
             instance: node.instance,
             kind: kindName(node),
@@ -2522,6 +2559,12 @@ public final class Graph {
             scaleLocalFrame: node.motion == nil ? node.scaleLocalFrame : nil,
             styledText: styledText(of: node)
         )
+        // #54: a control reads the environment's tint where it paints its accent (a prominent Button's fill, a Toggle's on state, a Slider's fill).
+        switch kind {
+        case .button, .toggle, .slider: resolvedNode.tint = node.environment.tint
+        default: break
+        }
+        return resolvedNode
     }
 
     /// Role, label and value for the accessibility backend. A primitive sets the role; a List's direct children

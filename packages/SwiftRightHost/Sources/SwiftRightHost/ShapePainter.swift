@@ -84,7 +84,19 @@ public enum ShapePaintPlan {
 public enum ShapePainter {
     /// Resolves a Rectangle / RoundedRectangle / Circle node to its paint, from runtime geometry and paint only.
     /// `rotations` are the `.rotationEffect`s above the node (outermost first, anchors in the same window pixels as `bounds`): a rotated shape always takes the path route, with the rotation in its request.
-    public static func plan(_ node: ResolvedNode, bounds: Rect, scale: Float, rotations: [ShapeRotation] = [], underScaleEffect: Bool = false) throws -> ShapePaintPlan {
+    /// `stretch` is the non-uniform part of a `.scaleEffect` above the node (`PaintScale.stretch`, #54): `bounds` is then the shape's final (scaled) frame in window pixels,
+    /// and the shape is drawn in the frame that the stretch maps onto it (same centre) and stretched about that centre, so its radii and ends become elliptical.
+    /// A stroke is widened by the geometric mean of the two factors (the rasteriser's rule), not per axis.
+    public static func plan(_ node: ResolvedNode, bounds: Rect, scale: Float, rotations: [ShapeRotation] = [], underScaleEffect: Bool = false, stretch: (x: Float, y: Float)? = nil) throws -> ShapePaintPlan {
+        var bounds = bounds
+        var stretchTransform: CGAffineTransform?
+        if let stretch, stretch.x != 0, stretch.y != 0, stretch.x.isFinite, stretch.y.isFinite, abs(stretch.x - 1) > 1e-4 || abs(stretch.y - 1) > 1e-4 {
+            let cx = Double(bounds.x) + Double(bounds.w) / 2, cy = Double(bounds.y) + Double(bounds.h) / 2
+            let w = bounds.w / abs(stretch.x), h = bounds.h / abs(stretch.y)
+            bounds = Rect(x: Float(cx) - w / 2, y: Float(cy) - h / 2, w: w, h: h)
+            let sx = Double(stretch.x), sy = Double(stretch.y)
+            stretchTransform = CGAffineTransform(a: CGFloat(sx), b: 0, c: 0, d: CGFloat(sy), tx: CGFloat(cx - sx * cx), ty: CGFloat(cy - sy * cy))
+        }
         guard let shape = node.shape else { throw HostPaintError.shapeMetadataRequired }
         let paint = shape.paint ?? ShapePaint.implicitFill(foreground: node.style.foreground)
         let colour = try HostPaint.rgba(paint.color, opacity: node.opacity, scheme: node.style.colorScheme)
@@ -98,14 +110,16 @@ public enum ShapePainter {
         // A shape on bounds off the device-pixel grid (under `.scaleEffect`, SR2 R4) takes the path raster unsnapped: SwiftUI scales after layout, so the edges fall between
         // pixels and are anti-aliased there (CI 39411214255 scale-center-v1: Mac rows 80 % / 20 % covered); the renderer's rect snaps them and loses up to a pixel per side.
         let offGrid = underScaleEffect && [bounds.x, bounds.y, bounds.w, bounds.h].contains { $0 != $0.rounded() }
-        if rotated || offGrid || needsPathRoute(shape.geometry, paint) {
+        if rotated || stretchTransform != nil || offGrid || needsPathRoute(shape.geometry, paint) {
             let stroke = paint.kind == .stroke
             var request = PathShapeRequest(bounds: bounds, scale: scale, geometry: shape.geometry,
                                           fillRGBA: stroke ? nil : colour, strokeRGBA: stroke ? colour : nil,
                                           strokeStyle: paint.strokeStyle ?? StrokeStyle(lineWidth: paint.lineWidth ?? 0),
                                           fillStyle: paint.fillStyle ?? FillStyle())
+            // The stretch applies first, then the rotations above (a rotation inside the scale, or the other order, is not told apart: see `ResolvedNodePainter`).
             if rotated { request.rotation = ShapeRotation.combined(rotations) }
-            if offGrid { request.snapsToPixels = false }
+            if let stretchTransform { request.rotation = ShapeRotation.concatenate(stretchTransform, request.rotation) }
+            if offGrid || stretchTransform != nil { request.snapsToPixels = false }
             return .path(request)
         }
         var frame = bounds

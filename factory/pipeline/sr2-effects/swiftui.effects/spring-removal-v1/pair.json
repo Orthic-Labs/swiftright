@@ -1,0 +1,35 @@
+{
+ "clock": [
+  0.0,
+  0.105,
+  0.205,
+  0.315,
+  0.455,
+  0.607,
+  0.757,
+  0.907,
+  1.057,
+  1.207,
+  1.5
+ ],
+ "clockGate": {
+  "tracks": [
+   {
+    "name": "bar",
+    "kind": "Color",
+    "index": 0,
+    "colour": [
+     0,
+     136,
+     255
+    ],
+    "axis": "x",
+    "line": 300
+   }
+  ],
+  "extentTolerancePx": 1.0,
+  "progressTolerance": 0.005,
+  "stripPx": 1,
+  "note": "PROVISIONAL (issue #54): 1 px, device-pixel snapping. Gaps between samples are at most 0.3 s (after a gap over 1 s SwiftUI advances a spring one frame). The frames from 0.607 s bracket the interrupted spring's removal."
+ }
+}

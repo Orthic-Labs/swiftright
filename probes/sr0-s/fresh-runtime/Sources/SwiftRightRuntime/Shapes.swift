@@ -191,6 +191,13 @@ public struct ShapePaint: Equatable, Sendable {
         ShapePaint(kind: kind, color: color, lineWidth: lineWidth, strokeStyle: strokeStyle, fillStyle: fillStyle)
     }
 
+    /// This paint with another stroke width (the stroke style's too), for an animated line width (#54).
+    func withLineWidth(_ width: CGFloat) -> ShapePaint {
+        var style = strokeStyle
+        style?.lineWidth = width
+        return ShapePaint(kind: kind, color: color, lineWidth: width, strokeStyle: style, fillStyle: fillStyle)
+    }
+
     /// The paint SwiftUI gives a shape with no `.fill` / `.stroke`: a non-zero fill in the inherited foreground style (`.foregroundStyle`), else `.primary`.
     public static func implicitFill(foreground: ResolvedColor?) -> ShapePaint {
         ShapePaint(kind: .fill, color: foreground ?? .semantic("label"), lineWidth: nil)

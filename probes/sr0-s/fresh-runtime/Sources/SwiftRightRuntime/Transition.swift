@@ -62,7 +62,7 @@ extension Graph {
     /// The presentation a freshly inserted node starts from: its target, moved and faded by the transition of the inserted subtree it belongs to.
     /// `fresh` holds the nodes presented for the first time in this commit.
     func insertionStart(_ node: Node, fresh: Set<ObjectIdentifier>) -> Presentation {
-        let target = Presentation(frame: node.frame, opacity: node.targetOpacity, geometry: node.targetGeometry, scale: node.targetScale)
+        let target = Presentation(frame: node.frame, opacity: node.targetOpacity, geometry: node.targetGeometry, scale: node.targetScale, paint: node.targetPaint)
         var top = node
         while let parent = top.parent, fresh.contains(ObjectIdentifier(parent)) { top = parent }
         var transition = AnyTransition.opacity

@@ -126,8 +126,8 @@ extension View {
         Modified(content: self, spec: .rotation(angle, anchor))
     }
 
-    /// Sets the tint of this view's subtree: the `.tint` shape style resolves to it (else the accent colour). Controls keep their measured accent artwork
-    /// (tinting them is not modelled; the Pulse notch slice S1 has none under its tint). Apple: https://developer.apple.com/documentation/swiftui/view/tint(_:)-93mfq
+    /// Sets the tint of this view's subtree: the `.tint` shape style resolves to it (else the accent colour), and Button, Toggle and Slider nodes carry it
+    /// (`ResolvedNode.tint`) for the host to paint their accent (#54). Apple: https://developer.apple.com/documentation/swiftui/view/tint(_:)-93mfq
     public func tint(_ tint: Color?) -> some View {
         environment(\.tint, tint?.resolvedColor)
     }
