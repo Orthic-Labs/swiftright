@@ -94,7 +94,8 @@ MarkdownUI 2.4.1 now type-checks with zero errors against the SwiftRight runtime
   - The asset image provider resolves images by name, because there is no UIKit or AppKit image type.
   - `Color(light:dark:)` uses the light value.
 - **Runtime APIs added** (three passes): the SwiftUI AttributedString scope, Text.LineStyle, Font variants, custom alignment guides, Grid, anchor preferences, LabelStyle, AnyShapeStyle, transformEnvironment/transformPreference, OpenURLAction, @ScaledMetric, lineSpacing and multilineTextAlignment (both carried), `LayoutSubview.priority`, and the CGSize-first `sizeThatFits`.
+- **Windows (Dell, toolchain 6.4.0):** `swift build --target MarkdownUI` completes (exit 0). It needed patch 0003, which reads cmark's extension node types by parsing a sample, because Windows has no dlopen or dlsym. The probe shim also re-exports FoundationNetworking for URLSession.
 - **Not done yet:**
-  - A Windows compile and a rendered sample.
+  - A rendered sample.
   - Styled Text runs: inline bold, italic, code and links render as plain characters, and inline images are not drawn.
   - `multilineTextAlignment` and `lineSpacing` are carried but not applied by Text layout.

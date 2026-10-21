@@ -1,0 +1,47 @@
+diff --git a/Sources/MarkdownUI/Parser/MarkdownParser.swift b/Sources/MarkdownUI/Parser/MarkdownParser.swift
+index 76bbd19..d9d0c3b 100644
+--- a/Sources/MarkdownUI/Parser/MarkdownParser.swift
++++ b/Sources/MarkdownUI/Parser/MarkdownParser.swift
+@@ -493,6 +493,36 @@ private struct ExtensionNodeTypes {
+ 
+   static let shared = ExtensionNodeTypes()
+ 
++  #if SWIFTRIGHT && os(Windows)
++  // SwiftRight (Windows): no dlopen/dlsym. Parse a tiny table + strikethrough document with the extensions and read the
++  // node types off the tree by their type strings.
++  private init() {
++    cmark_gfm_core_extensions_ensure_registered()
++    var found: [String: cmark_node_type] = [:]
++    if let parser = cmark_parser_new(CMARK_OPT_DEFAULT) {
++      for name in ["table", "strikethrough"] {
++        if let ext = cmark_find_syntax_extension(name) { cmark_parser_attach_syntax_extension(parser, ext) }
++      }
++      let doc = "| a |\n| - |\n| b |\n\n~~s~~\n"
++      cmark_parser_feed(parser, doc, doc.utf8.count)
++      if let root = cmark_parser_finish(parser) {
++        let iter = cmark_iter_new(root)
++        while cmark_iter_next(iter) != CMARK_EVENT_DONE {
++          if let node = cmark_iter_get_node(iter), let name = cmark_node_get_type_string(node) {
++            found[String(cString: name)] = cmark_node_get_type(node)
++          }
++        }
++        cmark_iter_free(iter)
++        cmark_node_free(root)
++      }
++      cmark_parser_free(parser)
++    }
++    self.CMARK_NODE_TABLE = found["table"] ?? CMARK_NODE_NONE
++    self.CMARK_NODE_TABLE_ROW = found["table_row"] ?? CMARK_NODE_NONE
++    self.CMARK_NODE_TABLE_CELL = found["table_cell"] ?? CMARK_NODE_NONE
++    self.CMARK_NODE_STRIKETHROUGH = found["strikethrough"] ?? CMARK_NODE_NONE
++  }
++  #else
+   private init() {
+     func findNodeType(_ name: String, in handle: UnsafeMutableRawPointer!) -> cmark_node_type? {
+       guard let symbol = dlsym(handle, name) else {
+@@ -512,4 +542,5 @@ private struct ExtensionNodeTypes {
+ 
+     dlclose(handle)
+   }
++  #endif
+ }

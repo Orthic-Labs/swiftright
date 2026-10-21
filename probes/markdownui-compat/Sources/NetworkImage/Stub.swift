@@ -1,5 +1,7 @@
 import SwiftUI
+#if canImport(CoreGraphics)
 import CoreGraphics
+#endif
 
 public enum NetworkImageState {
     case empty
