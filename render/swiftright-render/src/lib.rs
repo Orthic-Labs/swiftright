@@ -19,7 +19,6 @@ mod scale;
 mod text;
 mod trace;
 mod tree;
-mod tsf;
 mod view;
 
 use std::ffi::c_void;

@@ -29,7 +29,6 @@ use crate::rt::*;
 use crate::scale;
 use crate::text::{RunSlab, Slab, TextCache, TrackedImage, MAX_RUNS};
 use crate::trace;
-use crate::tsf;
 use crate::tree::{Prim, Tree};
 
 #[link(name = "user32")]
@@ -1170,132 +1169,6 @@ impl EntityInputHandler for RootView {
     }
 }
 
-
-// ------------------------------------------------ TSF host bridge (#33 Stage 2)
-// The text store in tsf.rs reaches the host only through these functions; each goes through with_ime (UI thread, non-reentrant guard).
-// A successful edit raises the same EV_IME notice as the GPUI InputHandler path above.
-
-pub(crate) fn tsf_host_selection() -> Option<(u32, u32, bool)> {
-    with_ime(|h, win, node| {
-        let f = h.ime_get_selection?;
-        let mut s = Utf16Selection::default();
-        if f(h.ctx_ptr(), win, node, &mut s) != SWR_OK {
-            return None;
-        }
-        Some((s.range.start, s.range.end, s.reversed != 0))
-    })
-    .flatten()
-}
-
-pub(crate) fn tsf_host_marked() -> Option<(u32, u32)> {
-    with_ime(|h, win, node| {
-        let f = h.ime_get_marked?;
-        let mut r = Utf16Range::default();
-        let mut has = 0i32;
-        if f(h.ctx_ptr(), win, node, &mut r, &mut has) != SWR_OK || has == 0 {
-            return None;
-        }
-        Some((r.start, r.end))
-    })
-    .flatten()
-}
-
-/// Text of the UTF-16 range [start, end) (end = u32::MAX: to the end of the field) and the range the host actually returned.
-pub(crate) fn tsf_host_text(start: u32, end: u32) -> Option<(Vec<u16>, u32, u32)> {
-    let mut cap = 4096usize;
-    for _ in 0..2 {
-        let (mut buf, len, adj) = with_ime(|h, win, node| {
-            let f = h.ime_copy_text?;
-            let mut buf = vec![0u16; cap];
-            let mut len = 0u32;
-            let mut adj = Utf16Range::default();
-            let rc = f(h.ctx_ptr(), win, node, Utf16Range { start, end }, buf.as_mut_ptr(), buf.len() as u32, &mut len, &mut adj);
-            if rc != SWR_OK {
-                return None;
-            }
-            Some((buf, len, adj))
-        })
-        .flatten()?;
-        if len as usize > cap && len < (1 << 22) {
-            cap = len as usize;
-            continue;
-        }
-        buf.truncate((len as usize).min(buf.len()));
-        return Some((buf, adj.start, adj.end));
-    }
-    None
-}
-
-pub(crate) fn tsf_host_replace(range: Option<(u32, u32)>, text: &[u16]) -> bool {
-    let ok = with_ime(|h, win, node| {
-        let Some(f) = h.ime_replace else { return false };
-        let r = range.map(|(s, e)| Utf16Range { start: s, end: e });
-        let rp = r.as_ref().map_or(std::ptr::null(), |x| x as *const Utf16Range);
-        f(h.ctx_ptr(), win, node, rp, text.as_ptr(), text.len() as u32) == SWR_OK
-    });
-    if ok == Some(true) {
-        ime_notice(IME_COMMIT);
-        true
-    } else {
-        false
-    }
-}
-
-/// `sel` is relative to the start of `text` (same convention as the GPUI path).
-pub(crate) fn tsf_host_replace_and_mark(range: Option<(u32, u32)>, text: &[u16], sel: Option<(u32, u32)>) -> bool {
-    let ok = with_ime(|h, win, node| {
-        let Some(f) = h.ime_replace_and_mark else { return false };
-        let r = range.map(|(s, e)| Utf16Range { start: s, end: e });
-        let rp = r.as_ref().map_or(std::ptr::null(), |x| x as *const Utf16Range);
-        let s = sel.map(|(s, e)| Utf16Range { start: s, end: e });
-        let sp = s.as_ref().map_or(std::ptr::null(), |x| x as *const Utf16Range);
-        f(h.ctx_ptr(), win, node, rp, text.as_ptr(), text.len() as u32, sp) == SWR_OK
-    });
-    if ok == Some(true) {
-        ime_notice(IME_MARK);
-        true
-    } else {
-        false
-    }
-}
-
-pub(crate) fn tsf_host_unmark() -> bool {
-    let ok = with_ime(|h, win, node| match h.ime_unmark {
-        Some(f) => f(h.ctx_ptr(), win, node) == SWR_OK,
-        None => false,
-    });
-    if ok == Some(true) {
-        ime_notice(IME_UNMARK);
-        true
-    } else {
-        false
-    }
-}
-
-/// Client physical px rect of the UTF-16 range [start, end): the union of the caret rects at both ends.
-pub(crate) fn tsf_host_bounds(start: u32, end: u32) -> Option<Rect> {
-    with_ime(|h, win, node| {
-        let f = h.ime_caret_bounds?;
-        let mut a = Rect::default();
-        if f(h.ctx_ptr(), win, node, Utf16Range { start, end: start }, &mut a) != SWR_OK {
-            return None;
-        }
-        if end <= start {
-            return Some(a);
-        }
-        let mut b = Rect::default();
-        if f(h.ctx_ptr(), win, node, Utf16Range { start: end, end }, &mut b) != SWR_OK {
-            return Some(a);
-        }
-        let l = a.x.min(b.x);
-        let t = a.y.min(b.y);
-        let r = (a.x + a.w).max(b.x + b.w);
-        let bt = (a.y + a.h).max(b.y + b.h);
-        Some(Rect { x: l, y: t, w: r - l, h: bt - t })
-    })
-    .flatten()
-}
-
 // ---------------------------------------------------------- IME window placement (subclass)
 // GPUI 0.2.2 (not vendored) calls ImmSetComposition/CandidateWindow once, at WM_IME_STARTCOMPOSITION,
 // and forwards WM_IME_SETCONTEXT / WM_IME_NOTIFY to DefWindowProc. Microsoft IME positions its candidate
@@ -1337,7 +1210,6 @@ extern "system" {
     fn DefSubclassProc(hwnd: *mut c_void, msg: u32, w: usize, l: isize) -> isize;
 }
 const WM_PAINT: u32 = 0x000F;
-const WM_DESTROY: u32 = 0x0002;
 const WM_MOUSEWHEEL: u32 = 0x020A;
 const WM_MOUSEHWHEEL: u32 = 0x020E;
 const WM_IME_SETCONTEXT: u32 = 0x0281;
@@ -1346,32 +1218,8 @@ const WM_IME_STARTCOMPOSITION: u32 = 0x010D;
 const WM_IME_ENDCOMPOSITION: u32 = 0x010E;
 const WM_IME_COMPOSITION: u32 = 0x010F;
 static IME_MSG_LOGS: AtomicU32 = AtomicU32::new(0);
-static IME_T0: AtomicI64 = AtomicI64::new(0);
 
-/// Milliseconds since the first IME log call / subclass install (QPC).
-fn ime_ts_ms() -> f64 {
-    let now = qpc_now();
-    let _ = IME_T0.compare_exchange(0, now, SeqCst, SeqCst);
-    (now - IME_T0.load(SeqCst)) as f64 * 1000.0 / qpc_freq() as f64
-}
-
-/// Every `ime_*` stderr line goes through this: the line text is unchanged, with ` t_ms=<ms since start>` appended.
-macro_rules! ime_log {
-    ($($arg:tt)*) => {{
-        let s = format!($($arg)*);
-        // No timestamp suffix: the native probe parses these lines by their trailing fields (a ` t_ms=` suffix hid the candidate window from it,
-        // #33 2026-10-21); stderr order already gives the sequence.
-        let _ = ime_ts_ms();
-        eprintln!("[swiftright-render] {}", s);
-    }};
-}
-
-fn ime_caret_rect(hwnd: *mut c_void) -> Option<Rect> {
-    ime_caret_rect_at(hwnd, 0)
-}
-
-/// Caret rect (client physical px) of the character `off` UTF-16 units after the composition start (or selection start).
-fn ime_caret_rect_at(_hwnd: *mut c_void, off: u32) -> Option<Rect> {
+fn ime_caret_rect(_hwnd: *mut c_void) -> Option<Rect> {
     with_ime(|h, win, node| {
         let mut sel = Utf16Selection::default();
         let mut mr = Utf16Range::default();
@@ -1383,7 +1231,7 @@ fn ime_caret_rect_at(_hwnd: *mut c_void, off: u32) -> Option<Rect> {
         };
         let f = h.ime_caret_bounds?;
         let mut out = Rect::default();
-        if f(h.ctx_ptr(), win, node, Utf16Range { start: range.start + off, end: range.start + off }, &mut out) != SWR_OK {
+        if f(h.ctx_ptr(), win, node, Utf16Range { start: range.start, end: range.start }, &mut out) != SWR_OK {
             return None;
         }
         Some(out)
@@ -1415,7 +1263,7 @@ unsafe extern "system" fn scan_windows(h: *mut c_void, l: isize) -> i32 {
 }
 
 /// Evidence line for IMN_OPENCANDIDATE / IMN_CHANGECANDIDATE: the candidate form the IME holds, the visible IME / our windows, our caret.
-pub(crate) fn log_candidate_ui(hwnd: *mut c_void, event: &str) {
+fn log_candidate_ui(hwnd: *mut c_void, event: &str) {
     unsafe {
         let mut form = CandidateForm { index: 0, style: 0, pt: [0, 0], rc: [0; 4] };
         let himc = ImmGetContext(hwnd);
@@ -1431,8 +1279,8 @@ pub(crate) fn log_candidate_ui(hwnd: *mut c_void, event: &str) {
             Some(r) => format!("{},{},{},{}", o[0] + r.x as i32, o[1] + r.y as i32, r.w as i32, r.h as i32),
             None => "none".to_string(),
         };
-        ime_log!(
-            "ime_cand event={event} got={got} form_style={} form_pt={},{} form_rc={},{},{},{} cand_windows=[{}] caret={caret}",
+        eprintln!(
+            "[swiftright-render] ime_cand event={event} got={got} form_style={} form_pt={},{} form_rc={},{},{},{} cand_windows=[{}] caret={caret}",
             form.style, form.pt[0], form.pt[1], form.rc[0], form.rc[1], form.rc[2], form.rc[3], sc.out.join(";")
         );
     }
@@ -1450,19 +1298,10 @@ fn ime_remember(x: i32, y: i32, w: i32, h: i32) {
 /// composition/candidate windows at the new caret. Runs from paint (UI thread); only when
 /// the caret rect actually changed. Host access goes through with_ime (no re-entrancy).
 fn ime_replace_on_layout(hwnd: *mut c_void) {
-    // #33 Stage 2: the TSF text store follows the focused composing field (associate / dissociate, text and selection notifications).
-    if !hwnd.is_null() {
-        let node = if LIVE_WINDOW.load(SeqCst) == 0 { 0 } else { IME_NODE.load(SeqCst) };
-        tsf::sync(hwnd, node);
-    }
     if IME_NODE.load(SeqCst) == 0 || hwnd.is_null() {
         return;
     }
-    // While the store owns the window's input, IMM has no composition (TSF owns it), so the composition state comes from the store.
-    let active = if tsf::associated() {
-        tsf::composing()
-    } else {
-        unsafe {
+    let active = unsafe {
         let himc = ImmGetContext(hwnd);
         if himc.is_null() {
             false
@@ -1470,7 +1309,6 @@ fn ime_replace_on_layout(hwnd: *mut c_void) {
             let n = ImmGetCompositionStringW(himc, 0x0008, std::ptr::null_mut(), 0);
             ImmReleaseContext(hwnd, himc);
             n > 0
-        }
         }
     };
     if !active {
@@ -1489,9 +1327,8 @@ fn ime_replace_on_layout(hwnd: *mut c_void) {
         return;
     }
     if old.0 != i32::MIN {
-        ime_log!("ime_replace reason=layout old={},{},{},{} new={},{},{},{}", old.0, old.1, old.2, old.3, new.0, new.1, new.2, new.3);
+        eprintln!("[swiftright-render] ime_replace reason=layout old={},{},{},{} new={},{},{},{}", old.0, old.1, old.2, old.3, new.0, new.1, new.2, new.3);
         place_ime_windows(hwnd);
-        tsf::layout_changed();
     } else {
         ime_remember(new.0, new.1, new.2, new.3);
     }
@@ -1502,11 +1339,6 @@ fn place_ime_windows(hwnd: *mut c_void) {
     let Some(r) = r else { return };
     let (x, y, w, h) = (r.x as i32, r.y as i32, (r.w as i32).max(1), (r.h as i32).max(1));
     ime_remember(x, y, w, h);
-    // #33 Stage 2: while the TSF store owns input, the IME reads positions through GetTextExt. Setting IMM composition or
-    // candidate forms then ends the TSF composition at every caret move (Dell F7live ime33-tsf2: one composition per key).
-    if tsf::associated() {
-        return;
-    }
     unsafe {
         let himc = ImmGetContext(hwnd);
         if himc.is_null() {
@@ -1516,8 +1348,6 @@ fn place_ime_windows(hwnd: *mut c_void) {
         let cand = CandidateForm { index: 0, style: 0x0080, pt: [x, y + h], rc: [x, y, x + w, y + h] }; // CFS_EXCLUDE
         ImmSetCompositionWindow(himc, &cf);
         ImmSetCandidateWindow(himc, &cand);
-        // #33: candidate forms for indices 1-3 are NOT set: with them the Microsoft IME's modern candidate list never showed on the Dell desktop
-        // (2026-10-21, even with no other change); tuple 13 sets index 0 only.
         ImmReleaseContext(hwnd, himc);
     }
 }
@@ -1542,23 +1372,9 @@ unsafe extern "system" fn ime_subclass_proc(hwnd: *mut c_void, msg: u32, w: usiz
         on_modal_message();
         return 0;
     }
-    if msg == tsf::WM_SWR_TSF {
-        tsf::on_lock_message();
-        return 0;
-    }
-    if msg == WM_DESTROY {
-        tsf::teardown(hwnd);
-    }
     // Rev 0.11 (issue #31): a host that asked for SWR_PTR_WHEEL gets the wheel and GPUI does not also handle it. Any other host
     // (flags without RUN_POINTER_WHEEL) leaves the message to GPUI exactly as before.
     if (msg == WM_MOUSEWHEEL || msg == WM_MOUSEHWHEEL) && POINTER_WHEEL.load(SeqCst) && on_wheel(hwnd, msg, w, l) {
-        return 0;
-    }
-    // #33 Stage 2: while the TSF store owns input, IMM composition messages must not reach GPUI (it would insert the text a second time).
-    if tsf::associated() && matches!(msg, WM_IME_STARTCOMPOSITION | WM_IME_ENDCOMPOSITION | WM_IME_COMPOSITION) {
-        if IME_MSG_LOGS.fetch_add(1, SeqCst) < 400 {
-            eprintln!("[swiftright-render] tsf_imm_msg_dropped msg=0x{msg:04X}");
-        }
         return 0;
     }
     let out = DefSubclassProc(hwnd, msg, w, l);
@@ -1571,7 +1387,7 @@ unsafe extern "system" fn ime_subclass_proc(hwnd: *mut c_void, msg: u32, w: usiz
         WM_IME_SETCONTEXT | WM_IME_NOTIFY | WM_IME_STARTCOMPOSITION | WM_IME_ENDCOMPOSITION | WM_IME_COMPOSITION => {
             // Evidence for the next desktop run: which IME messages arrive, and what they carry.
             if IME_MSG_LOGS.fetch_add(1, SeqCst) < 400 {
-                ime_log!("ime_msg msg=0x{msg:04X} wparam=0x{w:X} lparam=0x{:X}", l as usize);
+                eprintln!("[swiftright-render] ime_msg msg=0x{msg:04X} wparam=0x{w:X} lparam=0x{:X}", l as usize);
             }
             if msg == WM_IME_ENDCOMPOSITION {
                 ime_remember(i32::MIN, 0, 0, 0);
@@ -1589,9 +1405,8 @@ unsafe extern "system" fn ime_subclass_proc(hwnd: *mut c_void, msg: u32, w: usiz
 }
 
 fn install_ime_subclass(hwnd: *mut c_void) {
-    let _ = ime_ts_ms(); // start the ime_* log clock
     let ok = unsafe { SetWindowSubclass(hwnd, ime_subclass_proc, 0x5352_494D, 0) };
-    ime_log!("ime_subclass installed={ok}");
+    eprintln!("[swiftright-render] ime_subclass installed={ok}");
 }
 
 // ------------------------------------------------------------- launch / loop

@@ -411,3 +411,16 @@ Each gate's measurements are in its pair.json. Oracle PASS-WITH-CAVEATS; the Gro
   - `scale-text-v1`, run 39470683102: 20/20.
   - R6, run 39469210989: 4/4 including `clip-bitmap-v1`.
 - **Tests:** runtime 602/602, host 341/341.
+
+## 21 October: the IME candidate list after a layout move is an accepted limit (#33)
+- **Outcome:** after a layout move during a composition, the Microsoft Japanese IME's open candidate list stays where it opened. Its next list opens at the new caret. This is an IME limitation, so #33 is closed as an accepted SR1 limit. The renderer stays on the frozen tuple-13 IMM path (source identical to 77c041240).
+- **Stage 1 (IMM32, Dell desktop, real IME):** answering IMR_QUERYCHARPOSITION, `ImmSetCandidateWindow`, `ImmNotifyIME` and an `OnLayoutChange` nudge on the CUAS context all left the open list in place.
+- **Stage 2 (own TSF `ITextStoreACP`, held patch `docs/held-patches/swiftright-03-tsf-store.patch`):**
+  - Composition, conversion, commit and both Escape cases passed over TSF (F7live 18/21 at tag ime33-tsf5).
+  - After a move the IME re-read `GetTextExt` and got the new rect, but the list did not move. `TS_LC_DESTROY` + `TS_LC_CREATE` did not move it either (tag ime33-tsf6).
+- **Decision:** Astra chose option A: revert, keep the patch and evidence, and close. TSF reproduced the same failure while adding about 800 lines and untested input-lifecycle risk (other IMEs, R10). Logged in the workspace `decisions.md`.
+- **Lessons for any TSF revival (in the patch):**
+  - Keep the IMM context: the probe and tools read the open status through it.
+  - Set no IMM forms while associated: they end the TSF composition.
+  - Merge each IME edit into the host's marked range: the host's replace-and-mark commits the rest.
+  - TSF IMEs report the candidate list through `ITfUIElementSink`, not IMN_OPENCANDIDATE.

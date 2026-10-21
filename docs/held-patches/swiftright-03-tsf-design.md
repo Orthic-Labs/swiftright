@@ -59,3 +59,8 @@ The documented TSF mechanism is a text store of our own, `ITextStoreACP`, whose 
   - native F1 smoke 17/17;
   - R10 leak.
 - **Pins:** SR0 tuple 13 stays frozen (#33 is an accepted SR0 limit). The new renderer is an SR1 pin.
+
+## Outcome (21 October): not shipped
+Stage 2 was built and run on the Dell desktop (F7live tags ime33-tsf1 to ime33-tsf6). TSF composition works, but the open modern candidate list does not follow a layout move: the IME re-reads `GetTextExt` after `TS_LC_CHANGE`, and `TS_LC_DESTROY` + `TS_LC_CREATE` does not move it either. This is the same result as IMM32.
+
+Astra chose option A: the renderer returns to the IMM path, #33 is an accepted SR1 limit, and the store is kept as `swiftright-03-tsf-store.patch` (diff from 77c041240). See docs/sr1-status.md, 21 October (#33).

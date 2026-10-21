@@ -26,9 +26,7 @@ image = { version = "=0.25.10", default-features = false }
 raw-window-handle = "=0.6.2"
 # Same version gpui 0.2.2 resolves to (Cargo.lock). DirectWrite is already enabled by gpui; named here because the face resolver
 # (src/dwr.rs, ABI 0.8) calls it directly. Same pin and features as probes/f0-text-facts, which compiles in CI.
-windows = { version = "=0.61.3", features = ["Win32_Graphics_DirectWrite", "Win32_Foundation", "Win32_Graphics_Gdi", "Win32_System_Com", "Win32_UI_TextServices", "Win32_UI_Input_Ime"] }
-# The `implement` macro (src/tsf.rs, TSF text store) expands to `windows_core::` paths; same version windows 0.61.3 resolves to (Cargo.lock).
-windows-core = "=0.61.2"
+windows = { version = "=0.61.3", features = ["Win32_Graphics_DirectWrite", "Win32_Foundation", "Win32_Graphics_Gdi"] }
 # RightKit's rotating plain-text writer (SWR_FRAME_LOG trace file). Exact pin; default features
 # off so the `http` (ureq) upload stack stays out of the renderer. No tracing or global subscriber:
 # the writer is constructed at the point of use, so nothing is initialised for the host.
