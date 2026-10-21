@@ -192,9 +192,14 @@ public struct MeasureRequest {
     /// Rev 0.8 text extension (tracking, features, simulations policy, fallback list, baseline offset...). nil keeps the
     /// 0.6 measure path and behaviour on every renderer; a non-nil value on a pre-0.8 renderer throws SWR_E_UNSUPPORTED.
     public var `extension`: TextExtension?
+    /// Additive ABI flag SWR_M08_MAX_LINES (#51): at most this many visual lines (1...1000); text past it ends in a fitting ellipsis.
+    /// nil = no limit and the request is byte-for-byte what it was. A non-nil value takes the 0.8 path (an `extension` of defaults when none
+    /// is given) and throws SWR_E_UNSUPPORTED on a pre-0.8 renderer; `TextMeasurement.extensionReport.applied` says whether it was honoured.
+    public var maxLines: Int?
     public init(text: String, fontFamily: String = "Segoe UI", locale: String = "en-US",
                 weight: UInt32 = 400, color: UInt32 = 0x1F1F1FFF, fontSize: Float = 16,
-                lineHeight: Float = 24, scale: Float, maxWidth: Float = 0, extension: TextExtension? = nil) {
+                lineHeight: Float = 24, scale: Float, maxWidth: Float = 0, extension: TextExtension? = nil, maxLines: Int? = nil) {
+        self.maxLines = maxLines
         self.text = text; self.fontFamily = fontFamily; self.locale = locale; self.weight = weight
         self.color = color; self.fontSize = fontSize; self.lineHeight = lineHeight
         self.scale = scale; self.maxWidth = maxWidth; self.extension = `extension`

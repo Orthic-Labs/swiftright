@@ -326,6 +326,47 @@ final class TextExtensionTests: XCTestCase {
         XCTAssertEqual(m.firstBaseline, 12)
     }
 
+    // MARK: maxLines (#51, SWR_M08_MAX_LINES)
+
+    private func limited(_ n: Int?, _ e: TextExtension? = nil) -> MeasureRequest {
+        var r = req(e); r.maxLines = n; return r
+    }
+
+    func testMaxLinesSetsFlagAndReservedOnTheV08Path() throws {
+        _ = try bridge08().measure(limited(1))   // no extension given: defaults ride the 0.8 path
+        XCTAssertEqual(v08Calls, 1)
+        XCTAssertEqual(legacyCalls, 0)
+        XCTAssertEqual(seenRequest.flags, UInt32(SWR_M08_MAX_LINES))
+        XCTAssertEqual(seenRequest.reserved, 1)
+        _ = try bridge08().measure(limited(3, TextExtension(baselineOffsetDIP: 4)))
+        XCTAssertEqual(seenRequest.flags, UInt32(SWR_M08_MAX_LINES | SWR_M08_BASELINE_OFFSET))
+        XCTAssertEqual(seenRequest.reserved, 3)
+        XCTAssertEqual(UInt32(SWR_M08_MAX_LINES), 0x2)
+        XCTAssertEqual(UInt32(SWR_M08_APPLIED_MAX_LINES), 0x40)
+        XCTAssertEqual(TextExtensionApplied.maxLines.rawValue, 0x40)
+    }
+
+    func testNoMaxLinesLeavesFlagsAndReservedUnchanged() throws {
+        _ = try bridge08().measure(req(TextExtension(features: [.kern])))
+        XCTAssertEqual(seenRequest.flags, 0)
+        XCTAssertEqual(seenRequest.reserved, 0)
+        _ = try bridge08().measure(req())
+        XCTAssertEqual(legacyCalls, 1, "maxLines nil and extension nil stays the 0.6 path")
+    }
+
+    func testMaxLinesRangeAndPre08Refusal() {
+        XCTAssertThrowsError(try bridge08().measure(limited(0))) {
+            guard case BridgeError.status(let rc, _) = $0 else { return XCTFail("\($0)") }
+            XCTAssertEqual(rc, -1)
+        }
+        XCTAssertThrowsError(try bridge08().measure(limited(1001)))
+        XCTAssertNoThrow(try bridge08().measure(limited(1000)))
+        XCTAssertThrowsError(try bridge07().measure(limited(1))) {
+            guard case BridgeError.status(let rc, _) = $0 else { return XCTFail("\($0)") }
+            XCTAssertEqual(rc, -15, "never dropped silently on a pre-0.8 renderer")
+        }
+    }
+
     func testDefaultExtensionKeepsZeroedFields() throws {
         _ = try bridge08().measure(req(TextExtension(features: [.kern])))
         let q = seenRequest

@@ -164,3 +164,44 @@ final class MultiLineTextTests: XCTestCase {
         XCTAssertEqual(try select("abcdefghijklmnop", perLine: 5, limit: 1), "abcd\u{2026}")
     }
 }
+
+/// #51: `.lineLimit(n)` rides the renderer's SWR_M08_MAX_LINES; the host search is only the fallback.
+final class NativeLineLimitTests: XCTestCase {
+    private struct M { var tag: String; var applied: Bool }
+    private func base() -> MeasureRequest { MeasureRequest(text: "hello world", fontFamily: "Tinos", fontSize: 18, lineHeight: 20, scale: 2.5, maxWidth: 100) }
+
+    func testRequestCarriesTheLimitOnlyInRange() {
+        XCTAssertEqual(NativeLineLimit.request(base(), limit: 1)?.maxLines, 1)
+        XCTAssertEqual(NativeLineLimit.request(base(), limit: 1000)?.maxLines, 1000)
+        XCTAssertNil(NativeLineLimit.request(base(), limit: 0))
+        XCTAssertNil(NativeLineLimit.request(base(), limit: 1001))
+        XCTAssertNil(base().maxLines, "an unlimited request is unchanged")
+    }
+
+    func testNativeResultWinsWhenTheRendererReportsApplied() throws {
+        var seen: [Int?] = [], released = 0, fell = 0
+        let r = try NativeLineLimit.shape(base(), limit: 1, rendererSupportsMaxLines: true,
+            native: { seen.append($0.maxLines); return M(tag: "native", applied: true) }, applied: { $0.applied },
+            release: { _ in released += 1 }, fallback: { fell += 1; return M(tag: "host", applied: false) })
+        XCTAssertEqual(r.measurement.tag, "native"); XCTAssertTrue(r.native)
+        XCTAssertEqual(seen, [1]); XCTAssertEqual(released, 0); XCTAssertEqual(fell, 0)
+    }
+
+    func testFallsBackWhenNotAppliedUnsupportedOrRefused() throws {
+        var released: [String] = []
+        func run(support: Bool, limit: Int = 1, native: @escaping (MeasureRequest) throws -> M) throws -> (M, Bool) {
+            try NativeLineLimit.shape(base(), limit: limit, rendererSupportsMaxLines: support, native: native, applied: { $0.applied },
+                                      release: { released.append($0.tag) }, fallback: { M(tag: "host", applied: false) })
+        }
+        let old = try run(support: true) { _ in M(tag: "old-renderer", applied: false) }
+        XCTAssertEqual(old.0.tag, "host"); XCTAssertFalse(old.1); XCTAssertEqual(released, ["old-renderer"], "the unapplied run is released")
+        var calls = 0
+        let none = try run(support: false) { _ in calls += 1; return M(tag: "n", applied: true) }
+        XCTAssertEqual(none.0.tag, "host"); XCTAssertEqual(calls, 0, "no 0.8 extension: the request is never sent")
+        let big = try run(support: true, limit: 5000) { _ in calls += 1; return M(tag: "n", applied: true) }
+        XCTAssertEqual(big.0.tag, "host"); XCTAssertEqual(calls, 0)
+        struct Refused: Error {}
+        let refused = try run(support: true) { _ in throw Refused() }
+        XCTAssertEqual(refused.0.tag, "host")
+    }
+}

@@ -105,6 +105,8 @@ public struct TextExtensionApplied: OptionSet, Equatable {
     public static let fallbacks = TextExtensionApplied(rawValue: UInt32(SWR_M08_APPLIED_FALLBACKS))
     public static let weight = TextExtensionApplied(rawValue: UInt32(SWR_M08_APPLIED_WEIGHT))
     public static let italic = TextExtensionApplied(rawValue: UInt32(SWR_M08_APPLIED_ITALIC))
+    /// SWR_M08_MAX_LINES honoured (#51).
+    public static let maxLines = TextExtensionApplied(rawValue: UInt32(SWR_M08_APPLIED_MAX_LINES))
 }
 
 /// Requested and NOT done. A host that cares (the gates do) records these as adapted entries.
@@ -256,6 +258,11 @@ public extension Bridge {
         var q = swr_measure_request_v08()
         q.struct_size = UInt32(MemoryLayout<swr_measure_request_v08>.size)
         q.flags = ext.baselineOffsetDIP != nil ? UInt32(SWR_M08_BASELINE_OFFSET) : 0
+        if let n = r.maxLines {
+            if n < 1 || n > 1000 { throw BridgeError.status(-1, "swr_measure_text_v08 (maxLines outside 1...1000)") }
+            q.flags |= UInt32(SWR_M08_MAX_LINES)
+            q.reserved = UInt32(n)
+        }
         var base = swr_measure_request()
         base.struct_size = UInt32(MemoryLayout<swr_measure_request>.size)
         let t = arena.string(r.text); base.text = t.ptr; base.text_len = t.len

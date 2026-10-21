@@ -29,8 +29,17 @@ func factoryColor(_ value: ResolvedColor?, dark: Bool, opacity: Double = 1) thro
     let alpha = UInt32((Double(color & 255) * min(1, max(0, opacity))).rounded())
     return (color & 0xffffff00) | alpha
 }
-struct FactoryFont { let family: String; let size: Float; let weight: UInt32; var lineHeight: Float { size * 1.5 } }
-func factoryFont(_ id: String, _ metadata: Font.Metadata?) throws -> FactoryFont {
+struct FactoryFont { let family: String; let size: Float; let weight: UInt32; var lineHeight: Float { customLineHeight ?? size * 1.5 }; var customLineHeight: Float? = nil }
+/// Bundled font directory: beside the exe, a `Resources` folder there, or the same one above a SwiftPM scratch layout (nil when the case bundles none).
+func factoryBundledFontDirectory() -> URL? {
+    var dir = URL(fileURLWithPath: CommandLine.arguments[0]).deletingLastPathComponent()
+    for _ in 0..<8 {
+        for candidate in [dir, dir.appendingPathComponent("Resources", isDirectory: true)] where !BundledFontLibrary.fontFiles(in: candidate).isEmpty { return candidate }
+        dir.deleteLastPathComponent()
+    }
+    return nil
+}
+func factoryFont(_ id: String, _ metadata: Font.Metadata?, fonts: BundledFontLibrary? = nil) throws -> FactoryFont {
     var size: Float = 16, weight: UInt32 = 400, family = "Segoe UI"
     if id.hasPrefix("system("), let tail = id.split(separator:"(").dropFirst().first {
         let fields = tail.split(separator:")")[0].split(separator:",")
@@ -42,7 +51,13 @@ func factoryFont(_ id: String, _ metadata: Font.Metadata?) throws -> FactoryFont
           "textStyle.footnote":13,"textStyle.caption":12,"textStyle.caption2":11][id] ?? 16
     }
     if let m = metadata {
-        if m.isCustom { throw NSError(domain:"FactoryABIPrivateFontCollectionUnavailable",code:1,userInfo:[NSLocalizedDescriptionKey:m.familyName ?? id]) }
+        if m.isCustom {
+            // Bundled (registered) family: the renderer shapes it from the registered bytes; line height is the CoreText rule over the file's hhea.
+            guard let name = m.familyName, let fonts, let provider = fonts.providerFamily(forCustomName: name), let metrics = fonts.metrics(forCustomName: name),
+                  let point = m.pointSize, point > 0 else { throw NSError(domain:"FactoryCustomFontNotBundled",code:1,userInfo:[NSLocalizedDescriptionKey:m.familyName ?? id]) }
+            let weight = (m.weight ?? .regular).classValue
+            return FactoryFont(family: provider, size: Float(point), weight: weight, customLineHeight: metrics.lineHeight(pointSize: Float(point)))
+        }
         if let value = m.pointSize { size = Float(value) }
         if let value = m.weight { weight = ["regular":400,"medium":500,"semibold":600,"bold":700][value.rawValue] ?? 400 }
         if let value = m.familyName { family = value }
@@ -74,16 +89,38 @@ func factoryImage(_ reference: ImageReference, bridge: Bridge) throws -> (ImageH
 @MainActor final class NativeMeasurer: TextMeasurer {
     let bridge: Bridge
     let scale: Float
-    init(_ bridge: Bridge, _ scale: Float) { self.bridge = bridge; self.scale = scale }
+    let fonts: BundledFontLibrary?
+    /// lineLimit seen per text+font, so paint requests the same truncation as measure (ResolvedNode carries no limit).
+    private var limits: [String: Set<Int>] = [:]
+    init(_ bridge: Bridge, _ scale: Float, fonts: BundledFontLibrary?) { self.bridge = bridge; self.scale = scale; self.fonts = fonts }
+    static func key(_ text: String, _ fontID: String) -> String { fontID + "\u{0}" + text }
+    /// The one lineLimit measured for this text and font; nil when none was; throws when measure saw conflicting limits (fail closed).
+    func lineLimit(text: String, fontID: String) throws -> Int? {
+        let seen = limits[Self.key(text, fontID)] ?? []
+        if seen.count > 1 { throw NSError(domain:"FactoryAmbiguousLineLimit",code:1,userInfo:[NSLocalizedDescriptionKey:text]) }
+        return seen.first
+    }
     func measure(_ request: TextMeasureRequest) -> SwiftRightRuntime.TextMeasurement {
         do {
-            let font = try factoryFont(request.fontID,request.fontMetadata)
-            let result = try bridge.measure(MeasureRequest(text: request.text, fontFamily: font.family, weight:font.weight,
-              fontSize: font.size, lineHeight: font.lineHeight, scale: scale,
-              maxWidth: Float(request.proposedWidth ?? 0) * scale))
+            let font = try factoryFont(request.fontID,request.fontMetadata,fonts:fonts)
+            if let limit = request.lineLimit { limits[Self.key(request.text, request.fontID), default: []].insert(limit) }
+            let maxWidth = Float(request.proposedWidth ?? 0) * scale
+            var native = false
+            var result: SwiftRightBridge.TextMeasurement
+            if let limit = request.lineLimit, bridge.supportsTextExtension, (1...1000).contains(limit),
+               let limited = try? bridge.measure(MeasureRequest(text: request.text, fontFamily: font.family, weight:font.weight,
+                 fontSize: font.size, lineHeight: font.lineHeight, scale: scale, maxWidth: maxWidth, maxLines: limit)) {
+                if limited.extensionReport?.applied.contains(.maxLines) == true { result = limited; native = true }
+                else { bridge.release(limited.run); result = try bridge.measure(MeasureRequest(text: request.text, fontFamily: font.family, weight:font.weight,
+                  fontSize: font.size, lineHeight: font.lineHeight, scale: scale, maxWidth: maxWidth)) }
+            } else {
+                result = try bridge.measure(MeasureRequest(text: request.text, fontFamily: font.family, weight:font.weight,
+                  fontSize: font.size, lineHeight: font.lineHeight, scale: scale, maxWidth: maxWidth))
+            }
             bridge.release(result.run)
-            let lines = request.lineLimit.map { min(result.lineCount,$0) } ?? result.lineCount
-            let height = request.lineLimit.map { min(result.height/scale,Float($0)*font.lineHeight) } ?? result.height/scale
+            // The renderer truncated natively: its line count and height are the truth. Otherwise (older renderer) clamp as before.
+            let lines = native ? result.lineCount : (request.lineLimit.map { min(result.lineCount,$0) } ?? result.lineCount)
+            let height = native ? result.height/scale : (request.lineLimit.map { min(result.height/scale,Float($0)*font.lineHeight) } ?? result.height/scale)
             return SwiftRightRuntime.TextMeasurement(size: LayoutSize(width: CGFloat(result.width / scale),
               height: CGFloat(height)), baseline: CGFloat(result.firstBaseline / scale), lineCount:lines)
         } catch { fatalError("Native measurement failed: \(error)") }
@@ -101,6 +138,8 @@ func factoryImage(_ reference: ImageReference, bridge: Bridge) throws -> (ImageH
     var live: Set<UInt64> = []
     var runtimeIDs: [UInt64: String] = [:]
     var errors: [String] = []
+    var fonts: BundledFontLibrary?
+    var measurer: NativeMeasurer?
     init(_ bridge: Bridge) { self.bridge = bridge }
     func ready(_ window: BridgeWindow) {
         self.window = window
@@ -108,7 +147,17 @@ func factoryImage(_ reference: ImageReference, bridge: Bridge) throws -> (ImageH
             let metrics = try window.metrics()
             scale = metrics.scale
             viewport = Rect(x: 0, y: 0, w: Float(metrics.width), h: Float(metrics.height))
-            let graph = Graph(__WITNESS__(), measurer: NativeMeasurer(bridge, scale), scale: CGFloat(scale))
+            // Bundled fonts register exactly once per file, before the first measurement (swr_font_register is process-lifetime).
+            if let dir = factoryBundledFontDirectory() {
+                let library = BundledFontLibrary(bridge: bridge)
+                for registration in try library.registerAll(in: dir) {
+                    print("FACTORY_BUNDLED_FONT family=\(registration.family) weight=\(registration.weight) faces=\(registration.faceCount) sha256=sha256:\(registration.sha256Hex) flags=\(registration.flags.rawValue)")
+                }
+                fonts = library
+            }
+            let measurer = NativeMeasurer(bridge, scale, fonts: fonts)
+            self.measurer = measurer
+            let graph = Graph(__WITNESS__(), measurer: measurer, scale: CGFloat(scale))
             graph.rootProposal = ProposedViewSize(width: CGFloat(metrics.width) / CGFloat(scale), height: CGFloat(metrics.height) / CGFloat(scale))
             graph.commitSink = { [weak self] record in self?.commit(record) }
             self.graph = graph
@@ -138,9 +187,12 @@ func factoryImage(_ reference: ImageReference, bridge: Bridge) throws -> (ImageH
             switch n.kind {
             case "Text":
                 if let text = n.text, !text.isEmpty {
-                    let font = try factoryFont(n.style.font?.id ?? "",n.style.font?.metadata)
+                    let fontID = n.style.font?.id ?? ""
+                    let font = try factoryFont(fontID,n.style.font?.metadata,fonts:fonts)
+                    // Paint requests the same renderer truncation measure did, so three lines never paint under lineLimit(1).
+                    let limit = try measurer?.lineLimit(text:text,fontID:fontID)
                     let measured = try bridge.measure(MeasureRequest(text: text,fontFamily:font.family,weight:font.weight,color:try factoryColor(n.style.foreground,dark:themeDark,opacity:n.opacity),fontSize:font.size,
-                      lineHeight:font.lineHeight,scale:scale,maxWidth:bounds.w))
+                      lineHeight:font.lineHeight,scale:scale,maxWidth:bounds.w,maxLines:limit.flatMap { bridge.supportsTextExtension && (1...1000).contains($0) ? $0 : nil }))
                     runs.append(measured.run)
                     primitives = [.clipPush(bounds), .text(measured.run, x: bounds.x, y: bounds.y), .clipPop]
                     semantic = SemanticNode(role: .staticText, label: text, identifier: n.id, disabled: !n.accessibility.isEnabled)

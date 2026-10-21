@@ -148,6 +148,8 @@ public final class BundledFontLibrary {
     private var providerFamilies: [String: String] = [:]
     /// provider family (lower-cased) -> vertical metrics read from the registered bytes.
     private var metricsByFamily: [String: FontFileMetrics] = [:]
+    /// Standardized file path -> its registration: a file is handed to the renderer once per library, however often it is registered.
+    private var registeredFiles: [String: FontRegistration] = [:]
     private let bridge: Bridge
 
     public init(bridge: Bridge) { self.bridge = bridge }
@@ -176,12 +178,15 @@ public final class BundledFontLibrary {
 
     @discardableResult
     public func register(file: URL) throws -> FontRegistration {
+        let path = file.standardizedFileURL.path
+        if let done = registeredFiles[path] { return done }
         let data = try Data(contentsOf: file, options: [.mappedIfSafe])
         let reg = try bridge.registerFont([UInt8](data))
         registrations.append(reg)
         if let metrics = FontFileMetrics.parse([UInt8](data)) { metricsByFamily[reg.family.lowercased()] = metrics }
         providerFamilies[reg.family.lowercased()] = reg.family
         providerFamilies[file.deletingPathExtension().lastPathComponent.lowercased()] = reg.family
+        registeredFiles[path] = reg
         return reg
     }
 

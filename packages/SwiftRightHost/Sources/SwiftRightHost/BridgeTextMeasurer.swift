@@ -154,6 +154,32 @@ public enum TextRequestAdapter {
     public static var customExtension: TextExtension { TextExtension(features: [.kern], simulations: .forbidAll) }
 }
 
+/// `.lineLimit(n)` through the renderer's own truncation (additive ABI flag SWR_M08_MAX_LINES, #51): one request carries the limit, the renderer ends the
+/// text in a fitting ellipsis, and measure and paint (both shape through the same call) agree. The host-side prefix search (`SingleLineText`) is only the
+/// fallback when the renderer cannot or did not apply the flag (an older renderer), so a limit is never silently dropped.
+public enum NativeLineLimit {
+    public static let maxSupported = 1000
+
+    /// The request with the limit set, or nil when the limit cannot go native (outside 1...1000).
+    public static func request(_ shaping: MeasureRequest, limit: Int) -> MeasureRequest? {
+        guard (1...maxSupported).contains(limit) else { return nil }
+        var r = shaping; r.maxLines = limit
+        return r
+    }
+
+    /// Native first; the fallback runs when the renderer has no 0.8 text extension, the limit is out of range, the native request is refused, or the result does not
+    /// report SWR_M08_APPLIED_MAX_LINES (the rejected measurement is released first).
+    public static func shape<M>(_ shaping: MeasureRequest, limit: Int, rendererSupportsMaxLines: Bool,
+                                native: (MeasureRequest) throws -> M, applied: (M) -> Bool, release: (M) -> Void,
+                                fallback: () throws -> M) rethrows -> (measurement: M, native: Bool) {
+        if rendererSupportsMaxLines, let r = request(shaping, limit: limit), let result = try? native(r) {
+            if applied(result) { return (result, true) }
+            release(result)
+        }
+        return (try fallback(), false)
+    }
+}
+
 /// Text with `.lineLimit(n)`: the longest prefix plus an ellipsis that fits the width in at most `n` lines (n = 1: one line). The search is
 /// logarithmically bounded; every rejected measurement is released by `release`, only the returned run stays with the caller.
 public enum SingleLineText {
@@ -329,23 +355,34 @@ public final class BridgeTextMeasurer: TextMeasurer, TextRunSource {
     private func shape(_ request: TextMeasureRequest, color: UInt32) throws -> SwiftRightBridge.TextMeasurement {
         let shaping = try TextRequestAdapter.shapingRequest(for: request, body: body, fonts: fonts, scale: scale, textColor: color, systemFonts: systemFonts)
         if let limit = request.lineLimit {
-            do {
-                let selection = try SingleLineText.select(request.text, maxWidth: shaping.maxWidth, lineLimit: limit,
-                    measure: { candidate -> SwiftRightBridge.TextMeasurement in
-                        var r = shaping; r.text = candidate
-                        return try measureOnce(r, request: request)
-                    },
-                    width: { $0.width }, lineCount: { $0.lineCount }, release: { _ = bridge.release($0.run) })
-                log("TEXT_SINGLE_LINE originalUTF8=\(request.text.utf8.count) displayUTF8=\(selection.displayText.utf8.count) lineLimit=\(limit) candidateCount=\(selection.candidateCount) maxWidthPX=\(shaping.maxWidth)")
-                return selection.measurement
-            } catch TextMeasureError.noCandidateFits {
-                // Not even the ellipsis fits the offered width (decision F2): the ellipsis alone, which overflows the offer by its own width. macOS clips the first glyphs instead.
-                var r = shaping; r.text = "\u{2026}"
-                log("TEXT_ELLIPSIS_ONLY originalUTF8=\(request.text.utf8.count) lineLimit=\(limit) maxWidthPX=\(shaping.maxWidth)")
-                return try measureOnce(r, request: request)
-            }
+            let viaRenderer = try NativeLineLimit.shape(shaping, limit: limit, rendererSupportsMaxLines: rendererHasExtendedRequest,
+                native: { try measureOnce($0, request: request) },
+                applied: { $0.extensionReport?.applied.contains(.maxLines) == true },
+                release: { _ = bridge.release($0.run) },
+                fallback: { try hostSideLineLimit(shaping, limit: limit, request: request) })
+            if viaRenderer.native { log("TEXT_MAX_LINES native lineLimit=\(limit) originalUTF8=\(request.text.utf8.count) lines=\(viaRenderer.measurement.lineCount) maxWidthPX=\(shaping.maxWidth)") }
+            return viaRenderer.measurement
         }
         return try measureOnce(shaping, request: request)
+    }
+
+    /// The pre-#51 path: the longest prefix plus an ellipsis found by measuring candidates (renderers without SWR_M08_MAX_LINES).
+    private func hostSideLineLimit(_ shaping: MeasureRequest, limit: Int, request: TextMeasureRequest) throws -> SwiftRightBridge.TextMeasurement {
+        do {
+            let selection = try SingleLineText.select(request.text, maxWidth: shaping.maxWidth, lineLimit: limit,
+                measure: { candidate -> SwiftRightBridge.TextMeasurement in
+                    var r = shaping; r.text = candidate
+                    return try measureOnce(r, request: request)
+                },
+                width: { $0.width }, lineCount: { $0.lineCount }, release: { _ = bridge.release($0.run) })
+            log("TEXT_SINGLE_LINE originalUTF8=\(request.text.utf8.count) displayUTF8=\(selection.displayText.utf8.count) lineLimit=\(limit) candidateCount=\(selection.candidateCount) maxWidthPX=\(shaping.maxWidth)")
+            return selection.measurement
+        } catch TextMeasureError.noCandidateFits {
+            // Not even the ellipsis fits the offered width (decision F2): the ellipsis alone, which overflows the offer by its own width. macOS clips the first glyphs instead.
+            var r = shaping; r.text = "\u{2026}"
+            log("TEXT_ELLIPSIS_ONLY originalUTF8=\(request.text.utf8.count) lineLimit=\(limit) maxWidthPX=\(shaping.maxWidth)")
+            return try measureOnce(r, request: request)
+        }
     }
 
     public func measure(_ request: TextMeasureRequest) -> SwiftRightRuntime.TextMeasurement {

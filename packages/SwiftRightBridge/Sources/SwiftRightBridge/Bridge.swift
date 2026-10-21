@@ -388,7 +388,7 @@ public final class Bridge {
     public func measure(_ request: MeasureRequest) throws -> TextMeasurement {
         var r = request
         r.scale = Bridge.measureScale(requested: request.scale, renderScale: renderScale)
-        if let ext = r.extension {
+        if let ext = r.extension ?? (r.maxLines != nil ? TextExtension() : nil) {
             guard let te = textExtension else {
                 throw BridgeError.status(-15, "swr_measure_text_v08 (renderer ABI \(revision) has no text extension; send the request without `extension` to measure the 0.6 way)")
             }
