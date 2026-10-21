@@ -178,7 +178,9 @@ function Resolve-Target($proc, $step, $mainH) {
 function Rect-Of($h) { $r = New-Object IxNative+RECT; [void][IxNative]::GetWindowRect($h, [ref]$r); return @($r.left, $r.top, $r.right, $r.bottom) }
 
 # Native UIA3 probe (CUIAutomation8): FullDescription 30159, Level 30154, LocalizedControlType 30004; every failure returns null
+$script:Uia3AddTypeError = $null
 if (-not ('Uia3Probe' -as [type])) {
+try {
 Add-Type -TypeDefinition @"
 using System;
 using System.Runtime.InteropServices;
@@ -205,22 +207,25 @@ public interface IUiaAutomation {
 public class Uia3Result { public string Description; public int Level; public string LocalizedType; }
 public static class Uia3Probe {
     static IUiaAutomation auto;
+    public static string LastError;
     static string Str(IUiaElement e, int id) { object v; if (e.GetCurrentPropertyValue(id, out v) == 0 && v is string) return (string)v; return null; }
     public static Uia3Result Read(int x, int y, string expectName) {
         try {
             if (auto == null) auto = (IUiaAutomation)Activator.CreateInstance(Type.GetTypeFromCLSID(new Guid("E22AD333-B25F-4064-9C3E-0C1B4AEAC6B4")));
             IUiaElement e; UiaPt p; p.x = x; p.y = y;
-            if (auto.ElementFromPoint(p, out e) != 0 || e == null) return null;
+            int hr = auto.ElementFromPoint(p, out e);
+            if (hr != 0 || e == null) { LastError = "ElementFromPoint hr=0x" + hr.ToString("X8"); return null; }
             string name = Str(e, 30005) ?? "";
-            if ((expectName ?? "") != name) return null;   // the point hit another element: report nothing
+            if ((expectName ?? "") != name) { LastError = "hit name [" + name + "] != [" + expectName + "]"; return null; }   // the point hit another element: report nothing
             Uia3Result r = new Uia3Result();
             r.Description = Str(e, 30159); r.LocalizedType = Str(e, 30004);
             object lv; if (e.GetCurrentPropertyValue(30154, out lv) == 0 && lv is int) r.Level = (int)lv;
             return r;
-        } catch { return null; }
+        } catch (Exception ex) { LastError = ex.GetType().Name + ": " + ex.Message; return null; }
     }
 }
 "@
+} catch { $script:Uia3AddTypeError = $_.Exception.Message }
 }
 $script:Uia3Budget = 600
 
@@ -239,12 +244,13 @@ function Dump-Element($el, [int]$depth, [int]$maxDepth) {
         try {
             $x3 = [int]($r.X + $r.Width / 2); $y3 = [int]($r.Y + $r.Height / 2)
             $n3 = [Uia3Probe]::Read($x3, $y3, [string]$c.Name)
+            if (-not $n3) { try { $o.uia3Error = [string][Uia3Probe]::LastError } catch { $o.uia3Error = "probe unavailable: $script:Uia3AddTypeError" } }
             if ($n3) {
                 if ($n3.Description) { $o.fullDescription = $n3.Description }
                 if ($n3.Level -gt 0) { $o.headingLevel = $n3.Level }
                 if ($n3.LocalizedType) { $o.uia3LocalizedControlType = $n3.LocalizedType }
             }
-        } catch { }
+        } catch { $o.uia3Error = "call failed: $($_.Exception.Message) / add-type: $script:Uia3AddTypeError" }
     }
     try { if ($c.AriaRole) { $o.ariaRole = $c.AriaRole } } catch { }
     $o.enabled = [bool]$c.IsEnabled; $o.focus = [bool]$c.HasKeyboardFocus; $o.offscreen = [bool]$c.IsOffscreen; $o.focusable = [bool]$c.IsKeyboardFocusable
