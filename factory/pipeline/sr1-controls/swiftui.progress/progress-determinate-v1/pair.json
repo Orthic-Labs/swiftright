@@ -1,9 +1,9 @@
 {
  "hazeTolerance": 1,
  "edgeAATolerance": {
-  "levels": 48,
-  "maxOverFraction": 0.08,
-  "maxMeanAbs": 6,
-  "reason": "Metrics measured on CI 39583112762 (issue #60 pass 3, macOS 27, scale 2.5): bar 8 pt (20 px) centred in a 19.6 pt view, track 240 grey with 1 px rings of 223 and 235, accent fill 0,122,255 full height and 2 px shorter than fraction x width, width exact. ProgressViewControl now reproduces them; PROVISIONAL gate until the next CI pair: only capsule end anti-aliasing (Mac end profile 162/82/27 vs ours from the same ramp) and 1-level opacity rounding of the track greys (hazeTolerance 1) remain."
+  "levels": 20,
+  "maxOverFraction": 0.02,
+  "maxMeanAbs": 1,
+  "reason": "CI 39591036683 (stage 980a056f6, scale 2.5): Windows track interior was 194 vs Mac 240 and ring 206 vs 235 because the three translucent track capsules accumulated; now opaque greys 223/235/240. Flat interiors, rings and fill 0,122,255 must then be exact; only capsule end anti-aliasing remains (end corner pixel Mac 255 vs Windows 15,129,253; ramp up to ~14 levels), so edge tolerance is 20 levels. PROVISIONAL until the next CI pair."
  }
 }

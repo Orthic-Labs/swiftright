@@ -104,16 +104,17 @@ struct LinearProgressBar: View {
     static let viewHeight: CGFloat = 19.6
     /// The fill is this much shorter than fraction x width.
     static let fillInset: CGFloat = 0.8
-    /// The track's 1 px rings at scale 2.5, as `Color.primary` opacities over a white background: 223, 235 and 240 grey.
-    static let ringOpacity = 32.0 / 216.0, innerRingOpacity = 20.0 / 216.0, bodyOpacity = 15.0 / 216.0
+    /// The track's 1 px rings at scale 2.5 as OPAQUE greys (223, 235, 240; light appearance). The layers are drawn over each other, so translucent fills would accumulate
+    /// (the 980a056f6 capture showed 194 inside instead of 240).
+    static let ringGrey = 223.0 / 255.0, innerRingGrey = 235.0 / 255.0, bodyGrey = 240.0 / 255.0
     static let ringWidth: CGFloat = 0.4
     let fraction: Double
 
     @MainActor var body: some View {
         ZStack(alignment: .leading) {
-            Capsule().fill(Color.primary.opacity(LinearProgressBar.ringOpacity))
-            Capsule().fill(Color.primary.opacity(LinearProgressBar.innerRingOpacity)).padding(LinearProgressBar.ringWidth)
-            Capsule().fill(Color.primary.opacity(LinearProgressBar.bodyOpacity)).padding(2 * LinearProgressBar.ringWidth)
+            Capsule().fill(Color(white: LinearProgressBar.ringGrey))
+            Capsule().fill(Color(white: LinearProgressBar.innerRingGrey)).padding(LinearProgressBar.ringWidth)
+            Capsule().fill(Color(white: LinearProgressBar.bodyGrey)).padding(2 * LinearProgressBar.ringWidth)
             GeometryReader { proxy in
                 Capsule()
                     .fill(TintShapeStyle())

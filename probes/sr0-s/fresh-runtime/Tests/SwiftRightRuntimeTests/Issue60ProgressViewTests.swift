@@ -25,12 +25,12 @@ final class Issue60ProgressViewTests: XCTestCase {
         XCTAssertEqual(track.frame.width, 100); XCTAssertEqual(track.frame.height, 8)
         XCTAssertEqual(Double(fill.frame.width), 25 - 0.8, accuracy: 0.5, "0.8 pt (2 px at scale 2.5) shorter than the fraction")
         XCTAssertEqual(fill.frame.height, 8)
-        let rings = capsules[0..<3].compactMap { node -> Double? in
-            if case .semanticAlpha("label", let a)? = node.shape?.paint?.color { return a }
+        let greys = capsules[0..<3].compactMap { node -> Double? in
+            if case .rgba(let r, _, _, 1)? = node.shape?.paint?.color { return r }
             return nil
         }
-        XCTAssertEqual(rings.count, 3)
-        XCTAssertEqual(rings[0], 32.0 / 216.0, accuracy: 1e-9); XCTAssertEqual(rings[2], 15.0 / 216.0, accuracy: 1e-9)
+        XCTAssertEqual(greys.count, 3, "opaque greys: translucent layers would accumulate")
+        XCTAssertEqual(greys[0], 223.0 / 255.0, accuracy: 1e-9); XCTAssertEqual(greys[2], 240.0 / 255.0, accuracy: 1e-9)
         XCTAssertEqual(fill.frame.minX, track.frame.minX, "the fill starts at the leading edge")
         XCTAssertEqual(fill.frame.minY, track.frame.minY)
         XCTAssertEqual(fill.shape?.paint?.color, .semantic("accentColor"), "the tint, which is the accent colour unless .tint(_:) set one")
