@@ -72,6 +72,9 @@ RENDERERS = {
     # ABI 0.11 plus the additive SWR_M08_MAX_LINES measure flag (#51: lineLimit truncation with a fitting ellipsis) and the TextCache byte budget (#34). render-windows CI run 39566076783 on 0f11374cb.
     "renderer-0.11-0f11374c": dict(runId=39566076783, artifact="swiftright-render-0f11374cb75bc88e4b041468df02df3869b6b395",
                                    sha256="a42397091571d07dc16b70710a26f3bf9809e01a6027af3e2f715d5d1739ecf0"),
+    # Same plus CoreText-style tail truncation for max lines (#51). render-windows CI run 39568230510 on edf8f7f2d.
+    "renderer-0.11-edf8f7f2": dict(runId=39568230510, artifact="swiftright-render-edf8f7f2d9131a5e8fe4a19cee40cf46b99b4eea",
+                                   sha256="b12e6725f7e5dbe22584890246853d6bda2104e4ca566a13416ad259e79d3213"),
 }
 BLOCK_LABELS = {"swiftui.slider": "37 slider", "swiftui.on-hover": "38 on-hover", "swiftui.uia-walk": "39 uia-walk",
                 "swiftui.compat": "41 compat", "swiftui.ime-traps": "40 ime-traps"}
