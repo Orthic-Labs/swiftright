@@ -614,6 +614,8 @@ final class Node {
     /// GeometryReader (R1): the size layout last gave this node, and the size its content was last built for.
     var geometrySize: LayoutSize?
     var geometryBuilt: LayoutSize?
+    /// The proxy inputs the content was last built from (size, global origin, named-space origins): a move at the same size rebuilds it too (#57).
+    var geometryBuiltProxy: GeometryInputs?
     var sliderGrab: CGFloat = 0
     /// Configured horizontal/vertical offsets; nil for legacy scroll nodes.
     var scrollOffsetX: CGFloat?
@@ -1213,13 +1215,33 @@ public final class Graph {
         if !presentedBeforeAppear { commit() }
     }
 
-    /// Lays the tree out and marks dirty every live GeometryReader whose laid-out size differs from the size its content was built for. True when any was marked.
+    /// What a GeometryReader's proxy is built from: its size, its origin in graph coordinates, and the origin of the nearest enclosing view for each
+    /// `.coordinateSpace(name:)` (the node where the environment's name list grows; the modifier is layout-transparent, so its frame is the named view's).
+    func geometryInputs(_ node: Node, size: LayoutSize) -> GeometryInputs {
+        var named: [AnyHashable: CGPoint] = [:]
+        var current: Node? = node
+        while let a = current {
+            let names = a.environment.coordinateSpaceNames
+            let inherited = a.parent?.environment.coordinateSpaceNames.count ?? 0
+            if names.count > inherited {
+                for name in names[inherited...] where named[name] == nil {
+                    named[name] = CGPoint(x: a.frame.minX, y: a.frame.minY)
+                }
+            }
+            current = a.parent
+        }
+        return GeometryInputs(size: size, origin: CGPoint(x: node.frame.minX, y: node.frame.minY), named: named)
+    }
+
+    /// Lays the tree out and marks dirty every live GeometryReader whose laid-out size, origin or named-space origins differ from what its content was
+    /// built for. True when any was marked.
     func markStaleGeometry() -> Bool {
         layoutRoot()
         var marked = false
         for (id, node) in geometryNodes {
             guard node.alive, nodes[id] === node else { geometryNodes[id] = nil; continue }
-            guard let size = node.geometrySize, size != node.geometryBuilt else { continue }
+            guard let size = node.geometrySize else { continue }
+            if size == node.geometryBuilt, geometryInputs(node, size: size) == node.geometryBuiltProxy { continue }
             node.fullDirty = true
             dirty[id] = node
             marked = true
@@ -2125,10 +2147,12 @@ public final class Graph {
             if node.info.isGeometryReader, let reader = node.view as? any GeometryReading {
                 geometryNodes[node.id] = node
                 // Until layout has given the reader a size it has no content (so nothing appears with a zero size); the layout pass then evaluates it again.
-                guard let size = node.geometrySize else { node.geometryBuilt = nil; return EmptyView() }
+                guard let size = node.geometrySize else { node.geometryBuilt = nil; node.geometryBuiltProxy = nil; return EmptyView() }
                 node.geometryBuilt = size
+                let inputs = geometryInputs(node, size: size)
+                node.geometryBuiltProxy = inputs
                 return reader.makeContent(GeometryProxy(size: CGSize(width: size.width, height: size.height),
-                                                        globalOrigin: CGPoint(x: node.frame.minX, y: node.frame.minY)))
+                                                        globalOrigin: inputs.origin, namedOrigins: inputs.named))
             }
             return node.view.evaluateBody()
         }

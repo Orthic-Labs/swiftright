@@ -293,6 +293,56 @@ final class CompositionBlockTests: XCTestCase {
         XCTAssertEqual(all.first.map(frame), [0, 0, 10, 10])
     }
 
+    private final class Origins { var global: [CGPoint] = []; var named: [CGPoint] = []; var unknown: [CGPoint] = [] }
+
+    func testGeometryReaderNamedCoordinateSpaceIsRelativeToTheNamedView() throws {
+        let box = Origins()
+        _ = graph(VStack(spacing: 0) {
+            Color.green.frame(width: 10, height: 50)
+            VStack(spacing: 0) {
+                Color.blue.frame(width: 10, height: 30)
+                GeometryReader { proxy -> Color in
+                    box.global.append(proxy.frame(in: .global).origin)
+                    box.named.append(proxy.frame(in: .named("outer")).origin)
+                    box.unknown.append(proxy.frame(in: .named("nope")).origin)
+                    return Color.red
+                }.frame(width: 20, height: 40)
+            }.coordinateSpace(name: "outer")
+        }, w: 200, h: 200)
+        let g = try XCTUnwrap(box.global.last), n = try XCTUnwrap(box.named.last)
+        XCTAssertEqual(n.y, g.y - 50, "named origin = global origin minus the named view's origin (the 50 pt spacer above it)")
+        XCTAssertEqual(n.y, 30, "30 pt below the top of the named view")
+        XCTAssertEqual(box.unknown.last, box.global.last, "an unknown name reads as .global")
+    }
+
+    func testGeometryReaderNamedByCoordinateSpaceValue() throws {
+        let box = Origins()
+        _ = graph(VStack(spacing: 0) {
+            Color.green.frame(width: 10, height: 25)
+            GeometryReader { proxy -> Color in
+                box.named.append(proxy.frame(in: .named("me")).origin)
+                return Color.red
+            }.frame(width: 20, height: 20).coordinateSpace(.named("me"))
+        }, w: 200, h: 200)
+        XCTAssertEqual(box.named.last, .zero, "a reader inside its own named space is at (0, 0)")
+    }
+
+    func testGeometryReaderRebuildsWhenItMovesAtTheSameSize() throws {
+        let box = Origins()
+        let g = graph(GeometryReader { proxy -> Color in
+            box.global.append(proxy.frame(in: .global).origin)
+            return Color.red
+        }.frame(width: 20, height: 20).frame(maxWidth: .infinity, maxHeight: .infinity), w: 200, h: 100)
+        let first = try XCTUnwrap(box.global.last)
+        g.rootProposal = ProposedViewSize(width: 120, height: 60)
+        g.flush()
+        let second = try XCTUnwrap(box.global.last)
+        XCTAssertNotEqual(first, second, "the reader moved at the same 20 x 20 size, so its content was rebuilt with the new origin")
+        let reader = try XCTUnwrap(flatten(try XCTUnwrap(g.snapshot())).first { $0.kind == "GeometryReader" })
+        XCTAssertEqual(second.x, reader.frame.minX)
+        XCTAssertEqual(second.y, reader.frame.minY)
+    }
+
     // MARK: allowsHitTesting (runtime side; the host side is in SwiftRightHostTests)
 
     private final class Taps { var count = 0; var hover: [Bool] = [] }

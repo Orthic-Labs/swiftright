@@ -60,22 +60,66 @@ public struct GeometryProxy {
     /// The size layout gave the reader.
     public let size: CGSize
     let globalOrigin: CGPoint
+    /// Origins (graph coordinates) of the nearest enclosing `.coordinateSpace(name:)` views, by name.
+    let namedOrigins: [AnyHashable: CGPoint]
 
-    init(size: CGSize, globalOrigin: CGPoint) {
+    init(size: CGSize, globalOrigin: CGPoint, namedOrigins: [AnyHashable: CGPoint] = [:]) {
         self.size = size
         self.globalOrigin = globalOrigin
+        self.namedOrigins = namedOrigins
     }
 
     /// No safe area exists in this runtime's windows.
     public var safeAreaInsets: EdgeInsets { EdgeInsets() }
 
-    /// The reader's frame. `.local` is `(0, 0, size)`. `.global` is the origin the reader had in the graph's coordinates when its content was last built (a move
-    /// that leaves the size unchanged does not rebuild the content). `.named` is not supported and reads as `.global`.
+    /// The reader's frame. `.local` is `(0, 0, size)`. `.global` is the reader's origin in the graph's coordinates; `.named(n)` is that origin relative to the
+    /// nearest enclosing view marked `.coordinateSpace(name: n)` (an unknown name reads as `.global`). The content is rebuilt whenever any of these changes (#57).
     public func frame(in space: CoordinateSpace) -> CGRect {
         switch space {
         case .local: return CGRect(origin: .zero, size: size)
-        case .global, .named: return CGRect(origin: globalOrigin, size: size)
+        case .global: return CGRect(origin: globalOrigin, size: size)
+        case .named(let name):
+            guard let base = namedOrigins[name] else { return CGRect(origin: globalOrigin, size: size) }
+            return CGRect(origin: CGPoint(x: globalOrigin.x - base.x, y: globalOrigin.y - base.y), size: size)
         }
+    }
+}
+
+/// What a GeometryReader's content was built from (#57): rebuilt when any part changes.
+struct GeometryInputs: Equatable {
+    var size: LayoutSize
+    var origin: CGPoint
+    var named: [AnyHashable: CGPoint]
+}
+
+private enum CoordinateSpaceNamesKey: EnvironmentKey {
+    static var defaultValue: [AnyHashable] { [] }
+}
+
+extension EnvironmentValues {
+    /// Names declared by `.coordinateSpace(name:)` on this view and its ancestors, outermost first.
+    var coordinateSpaceNames: [AnyHashable] {
+        get { self[CoordinateSpaceNamesKey.self] }
+        set { self[CoordinateSpaceNamesKey.self] = newValue }
+    }
+}
+
+extension View {
+    /// Names this view's frame as a coordinate space that `GeometryProxy.frame(in: .named(name))` measures from. Layout and painting are unchanged.
+    /// Apple: https://developer.apple.com/documentation/swiftui/view/coordinatespace(name:)
+    public func coordinateSpace<T: Hashable>(name: T) -> some View {
+        let key = AnyHashable(name)
+        return Modified(content: self, spec: .environment({ (environment: inout EnvironmentValues) in
+            environment.coordinateSpaceNames.append(key)
+        }))
+    }
+
+    /// `.coordinateSpace(.named(name))`; `.global` and `.local` declare nothing.
+    /// Apple: https://developer.apple.com/documentation/swiftui/view/coordinatespace(_:)
+    public func coordinateSpace(_ space: CoordinateSpace) -> some View {
+        Modified(content: self, spec: .environment({ (environment: inout EnvironmentValues) in
+            if case .named(let name) = space { environment.coordinateSpaceNames.append(name) }
+        }))
     }
 }
 

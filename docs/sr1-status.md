@@ -348,7 +348,7 @@ Group (a modifier on a Group, including `background`, is applied to each member)
 - 3 curved-edge cases use the F-path edge statistics;
 - 2 translucent-overlap cases use `hazeTolerance` 1 for CoreAnimation's 8-bit blend rounding.
 
-Each gate's measurements are in its pair.json. Oracle PASS-WITH-CAVEATS; the Group-background and offset-hit caveats were fixed in 257594dcd. Documented limits: `.named` coordinate spaces read as `.global`, and a reader's global origin goes stale when it moves at the same size. Runtime 573/573, host 323/323.
+Each gate's measurements are in its pair.json. Oracle PASS-WITH-CAVEATS; the Group-background and offset-hit caveats were fixed in 257594dcd. Documented limits at delivery, both fixed on 21 Oct (#57): `.named` coordinate spaces now measure from the nearest `.coordinateSpace(name:)` view, and a reader rebuilds when it moves at the same size. Runtime 573/573, host 323/323.
 
 ## 20 October: SR2 R2 Animatable shapes delivered (#37)
 `VectorArithmetic`, `Animatable`, `AnimatablePair` and `EmptyAnimatableData` are in. A shape's geometry is now a presented channel that motion layers interpolate: trim from/to, inset, corner radius, and a custom shape's `animatableData`. The presented shape is the new value with only its animatable data interpolated, as in SwiftUI. User `Shape`s get SwiftUI's default `body`, and the runtime re-exports Foundation.
