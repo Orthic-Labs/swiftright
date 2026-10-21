@@ -1,0 +1,45 @@
+# Drift check for docs/proven-controls.json. Runs the generator in --check mode, a byte comparison
+# against its sources; it fails when the committed JSON no longer matches what generate.py builds.
+# Stdlib-only Python on the runner's python3; no secrets, no writes, read-only permissions.
+name: proven-controls
+
+on:
+  push:
+    paths:
+      - "factory/tools/proven-controls/**"
+      - "factory/pipeline/consolidation/**"
+      - "factory/pipeline/closure/**"
+      - "factory/pipeline/**/Witness.swift"
+      - "factory/registry/manifest.json"
+      - "docs/sr1-status.md"
+      - "docs/proven-controls.json"
+      - ".github/workflows/proven-controls.yml"
+  pull_request:
+    paths:
+      - "factory/tools/proven-controls/**"
+      - "factory/pipeline/consolidation/**"
+      - "factory/pipeline/closure/**"
+      - "factory/pipeline/**/Witness.swift"
+      - "factory/registry/manifest.json"
+      - "docs/sr1-status.md"
+      - "docs/proven-controls.json"
+      - ".github/workflows/proven-controls.yml"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: proven-controls-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  drift-check:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+      - name: Python version
+        run: python3 --version
+      - name: Check proven-controls drift
+        run: python3 factory/tools/proven-controls/generate.py --check
