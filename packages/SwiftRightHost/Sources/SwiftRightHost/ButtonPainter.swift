@@ -28,14 +28,16 @@ public enum ButtonPainter {
     public static func labelColor(of node: ResolvedNode) throws -> UInt32? {
         let look = look(of: node)
         let base = try baseLabelColor(of: node)
-        // Pressed, a button without a body dims its label (not measured: 0.6 of its colour).
+        // Pressed (measured on macOS 27, light, CI 39694640337): a `.plain` label keeps 0.75 of its strength (39 -> 93 grey on white); a `.borderless` label, grey at rest in
+        // the capture window (127), goes to the full label colour (38) instead of dimming.
         guard node.buttonIsPressed, node.accessibility.isEnabled, look == .plain || look == .borderless else { return base }
         let colour = try base ?? HostPaint.rgba(.semantic("label"), opacity: node.opacity, scheme: node.style.colorScheme)
+        if look == .borderless { return try HostPaint.rgba(.semantic("label"), opacity: node.opacity, scheme: node.style.colorScheme) }
         return (colour & 0xffffff00) | UInt32((Double(colour & 255) * pressedBodilessLabelAlpha).rounded())
     }
 
-    /// How much of its colour a pressed `.plain` or `.borderless` label keeps (an estimate, not measured).
-    public static let pressedBodilessLabelAlpha: Double = 0.6
+    /// How much of its colour a pressed `.plain` label keeps (measured: (255 - 93) / (255 - 39) = 0.75).
+    public static let pressedBodilessLabelAlpha: Double = 0.75
 
     private static func baseLabelColor(of node: ResolvedNode) throws -> UInt32? {
         let look = look(of: node)

@@ -24,8 +24,8 @@ public enum ButtonArtwork {
     // measure on its first CI pair. The bordered body darkens (light) or lightens (dark) toward black or white; the prominent body darkens toward black. The focus ring is the
     // 3 pt focus-ring band around the body: the accent at half opacity, following the body's corner outline.
     /// How far a pressed body moves toward black (light bordered, prominent) or white (dark bordered), as a fraction.
-    public static let pressedMix: Double = 0.12
-    public static let pressedProminentMix: Double = 0.18
+    public static let pressedMix: Double = 0.098
+    public static let pressedProminentMix: Double = 0.098
     /// The focus ring's width in points and its opacity (the accent, or the tint, at this alpha).
     public static let focusRingWidth: Double = 3
     public static let focusRingAlpha: UInt8 = 0x80

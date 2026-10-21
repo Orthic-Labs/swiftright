@@ -106,6 +106,7 @@ struct HostPlacement {
         return 10_000_000_000
     }()
     var pressedNode: UInt64 = 0
+    let buttonPointer = HostButtonPointer()   // #77: the pressed highlight of a Button follows the held pointer
     init(_ bridge: Bridge) { self.bridge = bridge }
 
     func ready(_ window: BridgeWindow) {
@@ -192,7 +193,8 @@ struct HostPlacement {
             graph.flush()
         case .pointer:
             // A press arms the node under the pointer; the release on the same node is the click (as AppKit and UIA buttons do).
-            if event.action == 1 { pressedNode = event.node; return }
+            if event.action == 1 { pressedNode = event.node; buttonPointer.press(x: event.x, y: event.y, scale: scale, graph: graph); return }
+            if event.action == 2 { buttonPointer.release(x: event.x, y: event.y, scale: scale, graph: graph) }
             guard event.action == 2, event.node != 0, pressedNode == event.node, let id = runtimeIDs[event.node] else { pressedNode = 0; return }
             pressedNode = 0
             var mods: EventModifiers = []

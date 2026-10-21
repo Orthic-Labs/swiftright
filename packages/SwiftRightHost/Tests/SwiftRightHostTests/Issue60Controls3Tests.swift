@@ -63,20 +63,21 @@ final class Issue60Controls3HostTests: XCTestCase {
     // MARK: Button pressed
 
     func testPressedColoursMoveTheFillAFixedFractionTowardBlackOrWhite() {
-        XCTAssertEqual(ButtonArtwork.pressedColor(0xebebeb, prominent: false, dark: false), 0xcfcfcf)
-        XCTAssertEqual(ButtonArtwork.pressedColor(0x303030, prominent: false, dark: true), 0x494949, "the dark bordered body lightens")
-        XCTAssertEqual(ButtonArtwork.pressedColor(0x007bff, prominent: true, dark: false), 0x0065d1)
-        XCTAssertEqual(ButtonArtwork.pressedColor(0x007bff, prominent: true, dark: true), 0x0065d1, "a prominent body darkens in both appearances")
+        // measured on macOS 27 (CI 39694640337): bordered body 235 -> 212, prominent (0,123,255) -> (0,111,230); the dark bordered body is not measured
+        XCTAssertEqual(ButtonArtwork.pressedColor(0xebebeb, prominent: false, dark: false), 0xd4d4d4)
+        XCTAssertEqual(ButtonArtwork.pressedColor(0x303030, prominent: false, dark: true), 0x444444, "the dark bordered body lightens")
+        XCTAssertEqual(ButtonArtwork.pressedColor(0x007bff, prominent: true, dark: false), 0x006fe6)
+        XCTAssertEqual(ButtonArtwork.pressedColor(0x007bff, prominent: true, dark: true), 0x006fe6, "a prominent body darkens in both appearances")
     }
 
     func testAPressedBodyIsFilledWithThePressedColour() {
         let normal = ButtonArtwork.render(widthPX: 300, heightPX: 60, scale: 2.5, isEnabled: true)
         let pressed = ButtonArtwork.render(widthPX: 300, heightPX: 60, scale: 2.5, isEnabled: true, pressed: true)
         XCTAssertEqual(pixel(normal, 150, 30).r, 0xeb)
-        XCTAssertEqual(pixel(pressed, 150, 30).r, 0xcf); XCTAssertEqual(pixel(pressed, 150, 30).a, 255)
+        XCTAssertEqual(pixel(pressed, 150, 30).r, 0xd4); XCTAssertEqual(pixel(pressed, 150, 30).a, 255)
         XCTAssertEqual(pressed.width, 300); XCTAssertEqual(pressed.height, 60, "a press changes colour, not size")
         let prominent = ButtonArtwork.render(widthPX: 300, heightPX: 60, scale: 2.5, isEnabled: true, prominent: true, pressed: true)
-        XCTAssertEqual(pixel(prominent, 150, 30).g, 0x65)
+        XCTAssertEqual(pixel(prominent, 150, 30).g, 0x6f)
         // a tint colours the prominent body first, then the press darkens it
         let tinted = ButtonArtwork.render(widthPX: 300, heightPX: 60, scale: 2.5, isEnabled: true, prominent: true, tint: 0xff383c, pressed: true)
         XCTAssertEqual(pixel(tinted, 150, 30).r, Int((255.0 * (1 - ButtonArtwork.pressedProminentMix)).rounded()))
@@ -158,7 +159,7 @@ final class Issue60Controls3HostTests: XCTestCase {
         guard case .image(let handle, _, _) = try XCTUnwrap(emission.primitives.first) else { return XCTFail("a bodied Button is an image") }
         let entry = try XCTUnwrap(images.registered[handle.raw])
         let o = (Int(entry.height) / 2 * Int(entry.width) + Int(entry.width) / 2) * 4
-        XCTAssertEqual(Int(entry.rgba[o + 1]), 0x65, "the prominent fill, darkened")
+        XCTAssertEqual(Int(entry.rgba[o + 1]), 0x6f, "the prominent fill, darkened")
     }
 
     func testAPressedPlainButtonDimsItsLabel() throws {
