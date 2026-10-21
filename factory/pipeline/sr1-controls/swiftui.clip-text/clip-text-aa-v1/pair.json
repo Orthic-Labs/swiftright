@@ -6,22 +6,22 @@
  "textGate": {
   "helper": "factory/tools/pair_text_report.py",
   "rect": [
-   200,
-   120,
-   450,
-   380
+   280,
+   180,
+   520,
+   420
   ],
   "edgeTolerancePx": 1,
   "ink": "half-coverage (luminance<=127)"
  },
  "excludeRects": [
   {
-   "name": "circle clip region (Tinos, same font bytes): glyph AA differs (CoreText vs host PathRasterizer over ttf-parser outlines); the clip edge is the host ClipMask coverage on Windows. Gated by pair_text_report.py: exact outside, half-coverage ink bbox within 1 px. PROVISIONAL (issue #76): rect from the layout (circle centre 325,250 px, radius 112.5); fit from the first CI pair.",
+   "name": "circle clip region (Tinos, same font bytes): glyph AA differs (CoreText vs host PathRasterizer over ttf-parser outlines); the clip edge is the host ClipMask coverage on Windows. Gated by pair_text_report.py: exact outside, half-coverage ink bbox within 1 px. PROVISIONAL (issue #76): rect from the layout (circle centre 400,300 px (content centred in the 800x600 capture), radius 112.5); fit from the first CI pair.",
    "rect": [
-    200,
-    120,
-    450,
-    380
+    280,
+    180,
+    520,
+    420
    ]
   }
  ]
