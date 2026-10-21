@@ -1509,11 +1509,8 @@ fn place_ime_windows(hwnd: *mut c_void) {
         let cand = CandidateForm { index: 0, style: 0x0080, pt: [x, y + h], rc: [x, y, x + w, y + h] }; // CFS_EXCLUDE
         ImmSetCompositionWindow(himc, &cf);
         ImmSetCandidateWindow(himc, &cand);
-        for index in 1..4u32 {
-            // The candidate form is per list index (0-3); an IME that opened a list on another index reads that one.
-            let c = CandidateForm { index, style: cand.style, pt: cand.pt, rc: cand.rc };
-            ImmSetCandidateWindow(himc, &c);
-        }
+        // #33: candidate forms for indices 1-3 are NOT set: with them the Microsoft IME's modern candidate list never showed on the Dell desktop
+        // (2026-10-21, even with no other change); tuple 13 sets index 0 only.
         ImmReleaseContext(hwnd, himc);
     }
 }
