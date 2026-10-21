@@ -30,7 +30,7 @@ enum SliceStyle {
     static let fieldBorder: UInt32 = 0x888888FF
     static let caretColor: UInt32 = 0x111111FF
     /// Selection highlight (system-like light blue, drawn behind the dark text), RGBA.
-    static let selectionColor: UInt32 = 0x99C9EFFF
+    static let selectionColor: UInt32 = 0xB3D7FFFF   // the Mac selection colour (179,215,255), as SwiftRightHost TextFieldPainter.selection (#48)
     /// The runtime sizes a TextField and a Button to their content only (no padding modifier for these), so the
     /// backend draws the box with these insets.
     static let fieldInsetX: Float = 6
