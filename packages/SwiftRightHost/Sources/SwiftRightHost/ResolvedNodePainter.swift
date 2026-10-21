@@ -602,7 +602,7 @@ public final class ResolvedNodePainter {
         }
         // `.allowsHitTesting(false)` (R1, #36): the node takes no pointer hits. Its painting and its accessibility actions are unchanged.
         if !node.accessibility.allowsHitTesting, emission.flags.contains(.hitTarget) { emission.flags.remove(.hitTarget) }
-        if ShapeRotation.isRotated(rotations), !emission.primitives.isEmpty, !Self.isShapeKind(node.kind) {
+        if ShapeRotation.isRotated(rotations), !emission.primitives.isEmpty, !Self.isShapeKind(node.kind), node.kind != "Image" {
             rotationLimitationCount += 1
             if rotationLimitationKinds.insert(node.kind).inserted {
                 log("rotationEffect limitation: \(node.kind) is painted unrotated (the host rotates shapes only; the renderer transform is translation only)")
@@ -904,6 +904,7 @@ public final class ResolvedNodePainter {
             return NodeEmission(primitives: [.image(handle, placement)], semantic: nil, flags: [], structural: false)
 
         case "Image":
+            if ShapeRotation.isRotated(rotations) { return try rotatedImageEmission(node, bounds: bounds, id: id, transform: ShapeRotation.combined(rotations)) }
             if case .pixels(let image, _)? = node.image {
                 return NodeEmission(primitives: [try pixelImagePrimitive(node, image, bounds: bounds, id: id)],
                                     semantic: SemanticNode(role: .image, label: node.accessibility.label ?? "", identifier: node.id,
@@ -979,6 +980,47 @@ public final class ResolvedNodePainter {
         log("SYSTEM_IMAGE_FRAME name=\(reference.name) xPX=\(Int(bounds.x)) yPX=\(Int(bounds.y)) widthPX=\(Int(bounds.w)) heightPX=\(Int(bounds.h)) canvasInsetPX=\(Int(inset)) tintRGBA=\(String(format: "%08x", tint))")
         return .image(handle, Rect(x: bounds.x - inset + imageGuardBand, y: bounds.y - inset + imageGuardBand,
                                    w: bounds.w + 2 * inset - 2 * imageGuardBand, h: bounds.h + 2 * inset - 2 * imageGuardBand))
+    }
+
+    /// An Image under `.rotationEffect` (#69): its upright bitmap (the pixels `pixelImagePrimitive` or `systemImagePrimitive` would register, over the same rectangle) resampled through
+    /// the rotation by `RotatedRaster` and drawn 1:1. Not cached: a rotated image is re-sampled on every commit that emits it.
+    private func rotatedImageEmission(_ node: ResolvedNode, bounds: Rect, id: UInt64, transform: CGAffineTransform) throws -> NodeEmission {
+        guard bounds.w >= 1, bounds.h >= 1 else { throw HostPaintError.systemImageContractMismatch("empty frame") }
+        let rgba: [UInt8], width: Int, height: Int, placement: Rect, semantic: SemanticNode
+        if case .pixels(let image, _)? = node.image {
+            guard node.opacity >= 0, node.opacity <= 1 else { throw HostPaintError.invalidFillOpacity }
+            let w = min(8192, Int(bounds.w.rounded())), h = min(8192, Int(bounds.h.rounded()))
+            var px = ImageResampler.resample(image, width: w, height: h, level: node.imageSizing?.interpolation).rgba
+            if !brightness.isEmpty { px = Self.brightened(px, by: brightness) }
+            let alpha = Int((node.opacity * 255).rounded())
+            if alpha != 255 { for i in stride(from: 3, to: px.count, by: 4) { px[i] = UInt8((Int(px[i]) * alpha + 127) / 255) } }
+            rgba = px; width = w; height = h; placement = bounds
+            semantic = SemanticNode(role: .image, label: node.accessibility.label ?? "", identifier: node.id, disabled: !node.accessibility.isEnabled)
+        } else {
+            guard let registry = systemImages else { throw HostPaintError.unsupportedNode("Image (no system image registry)") }
+            // the same checks and sizing as `systemImagePrimitive`, which returns the upright placement
+            guard case .image(_, let upright, _) = try systemImagePrimitive(node, bounds: bounds, registry: registry), let reference = node.image else {
+                throw HostPaintError.systemImageContractMismatch("no image reference")
+            }
+            let spec = node.imageSizing == nil ? SystemImageRegistry.fontSpec(node.style.font) : nil
+            let tint = adjusted(try HostPaint.rgba(node.style.foreground ?? .semantic(registry.defaultForeground(for: reference)), opacity: node.opacity, scheme: node.style.colorScheme))
+            let tw = spec == nil ? UInt32(max(1, bounds.w)) : UInt32(max(1, bounds.w.rounded())), th = spec == nil ? UInt32(max(1, bounds.h)) : UInt32(max(1, bounds.h.rounded()))
+            let r = try registry.raster(for: reference, tint: tint, width: tw, height: th, fontSize: spec?.size, weight: spec?.weight ?? "regular")
+            rgba = r.rgba; width = Int(r.width); height = Int(r.height)
+            placement = Rect(x: upright.x - imageGuardBand, y: upright.y - imageGuardBand, w: upright.w + 2 * imageGuardBand, h: upright.h + 2 * imageGuardBand)
+            semantic = SemanticNode(role: .image, label: node.accessibility.label ?? reference.name, identifier: node.id, disabled: !node.accessibility.isEnabled)
+        }
+        guard let rotated = RotatedRaster.rotate(rgba: rgba, width: width, height: height, placement: placement, transform: transform) else {
+            return NodeEmission(primitives: [], semantic: semantic, flags: [], structural: false)
+        }
+        let p = rotated.placement
+        let drawn = Rect(x: p.x + imageGuardBand, y: p.y + imageGuardBand, w: p.w - 2 * imageGuardBand, h: p.h - 2 * imageGuardBand)
+        let handle = try registerRGBA(masked(rotated.image, placement: drawn))
+        if let stale = pendingShapeImages[id] { _ = images.release(stale) }
+        pendingShapeImages[id] = handle
+        log("ROTATED_IMAGE source=\(width)x\(height) registered=\(rotated.image.width)x\(rotated.image.height) xPX=\(Int(p.x)) yPX=\(Int(p.y))")
+        return NodeEmission(primitives: [.image(handle, drawn)],
+                            semantic: semantic, flags: [], structural: false)
     }
 
     /// Decoded pixels painted to fill the node rect, as a device-pixel-exact buffer (wave 1 block I2): the image is resampled to the node's snapped device-pixel size with the filter fitted to the Mac
