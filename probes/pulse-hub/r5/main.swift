@@ -119,6 +119,8 @@ struct HostPlacement {
             images.scale = Double(scale)
             systemImages = images
             painter = ResolvedNodePainter(images: bridge, scale: scale, text: measurer, systemImages: images)
+            painter?.usesRendererPaths = bridge.supportsPaths
+            print("HOST_RENDERER_PATHS supported=\(bridge.supportsPaths) used=\(painter?.usesRendererPaths ?? false)")
             // The hub's view comes from an async load (preparedView), so the graph starts once it is ready, on the main actor inside the
             // renderer's message loop. (A top-level await in main would make COM MTA and the renderer's OleInitialize fail.)
             let startupScale = scale, startupMetrics = metrics

@@ -140,6 +140,8 @@ struct HostPlacement {
             images.scale = Double(scale)
             systemImages = images
             painter = ResolvedNodePainter(images: bridge, scale: scale, text: measurer, systemImages: images)
+            painter?.usesRendererPaths = bridge.supportsPaths
+            print("HOST_RENDERER_PATHS supported=\(bridge.supportsPaths) used=\(painter?.usesRendererPaths ?? false)")
             let graph = Graph(ZStack(alignment: .center) { Witness_r1_geometryreader_v1() }.frame(width: CGFloat(metrics.width) / CGFloat(scale), height: CGFloat(metrics.height) / CGFloat(scale), alignment: .center), measurer: measurer, scale: CGFloat(scale))
             images.install(on: graph)
             graph.rootProposal = ProposedViewSize(width: CGFloat(metrics.width) / CGFloat(scale), height: CGFloat(metrics.height) / CGFloat(scale))

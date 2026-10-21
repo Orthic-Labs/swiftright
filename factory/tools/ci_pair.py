@@ -75,6 +75,9 @@ RENDERERS = {
     # Same plus CoreText-style tail truncation for max lines (#51). render-windows CI run 39568230510 on edf8f7f2d.
     "renderer-0.11-edf8f7f2": dict(runId=39568230510, artifact="swiftright-render-edf8f7f2d9131a5e8fe4a19cee40cf46b99b4eea",
                                    sha256="b12e6725f7e5dbe22584890246853d6bda2104e4ca566a13416ad259e79d3213"),
+    # ABI 0.12 (#52): path table, SWR_PRIM_PATH fill/stroke, path clip. render-windows CI run 39569151699 on 37f054db6.
+    "renderer-0.12-37f054db": dict(runId=39569151699, artifact="swiftright-render-37f054db6c944a8dd4bf221183ac4bb0055f1501",
+                                   sha256="0e88698219b95a95156fd2c521afc93679b12b90fc19493309eeffcca1d3e93a"),
 }
 BLOCK_LABELS = {"swiftui.slider": "37 slider", "swiftui.on-hover": "38 on-hover", "swiftui.uia-walk": "39 uia-walk",
                 "swiftui.compat": "41 compat", "swiftui.ime-traps": "40 ime-traps"}

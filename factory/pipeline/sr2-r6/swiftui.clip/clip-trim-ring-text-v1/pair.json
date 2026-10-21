@@ -1,0 +1,19 @@
+{
+ "edgeAATolerance": {
+  "levels": 160,
+  "maxOverFraction": 0.05,
+  "maxMeanAbs": 5,
+  "reason": "Trim ring stroke and circle clip edge are path rasters (F-path curved-edge statistics, sr1-decisions 20 Oct F-path pixel gate); with ABI 0.12 the renderer draws both, so the statistics should hold or tighten. Inside and outside the clip exact."
+ },
+ "excludeRects": [
+  {
+   "name": "text row 22 pt semibold, wider than the 90 pt clip: glyph pixels differ (Segoe UI vs SF, decision 2) and the clip cuts the run at the left and right of the circle; gated here only by the circle's top and bottom arcs and the semantic frame gate. Rect at 2.5x: circle x 412..638, y 187..413, text band y 262..338.",
+   "rect": [
+    405,
+    262,
+    645,
+    338
+   ]
+  }
+ ]
+}
