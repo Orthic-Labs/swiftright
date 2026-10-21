@@ -15,8 +15,8 @@ Frozen reference build = `qualification/tuple13-candidate.json` (status QUALIFIE
 | new_dmg | `cc8bab86409a4ecf7ba52c6a5bb1ed3177683b39e235ed60019bf292badbc5fb` |
 
 Known SR0 limits carried into the freeze (recorded, not hidden):
-- Narrator spoken output not yet listened to by a person (#23); automated provider checks pass.
-- IME candidate list does not follow a layout move (SR1, #33).
-- Selection highlight and caret after launch focus: painted (WGC, 20 Oct, #25); only the highlight colour differs from the Mac (SR1 parity).
+- Narrator spoken output: checked on 21 Oct from an audio loopback transcript instead of a person (#23, closed). It found 'Delete', our provider's button name, and a word of the window title. Roles are not yet required, and matches are not tied to the activation step (#46).
+- IME candidate list does not follow a layout move: an accepted limit of the Microsoft IME (#33 closed), to be revisited in #45.
+- Selection highlight and caret after launch focus: painted (WGC, 20 Oct, #25); only the highlight colour differs from the Mac (SR1 parity, #48).
 
 From here: ABI 0.6 and the tuple 13 members do not change; product work continues on master under SR1 and later stages. Git tag `sr0-freeze-abi-0.6` marks the commit holding this record.
