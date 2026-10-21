@@ -1,8 +1,8 @@
 {
  "edgeAATolerance": {
-  "levels": 160,
-  "maxOverFraction": 0.05,
-  "maxMeanAbs": 5,
-  "reason": "PROVISIONAL (issue #60): stroked capsules are path rasters (renderer path stroke, ABI 0.12; F-path curved-edge statistics, sr1-decisions 20 Oct F-path pixel gate). Tighten to the first pair."
+  "levels": 24,
+  "maxOverFraction": 0.01,
+  "maxMeanAbs": 2,
+  "reason": "Measured on CI 39628085731 (ImageRenderer capture, 3 identical runs): maxInBand 14, over-32 pixels 0 of 26882 band pixels, out-of-band 0. Tolerance = measured max plus margin."
  }
 }
