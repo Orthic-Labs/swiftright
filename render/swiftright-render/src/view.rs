@@ -1458,7 +1458,7 @@ fn ime_replace_on_layout(hwnd: *mut c_void) {
     if IME_NODE.load(SeqCst) == 0 || hwnd.is_null() {
         return;
     }
-    // While the store owns the window's input the IMM context is NULL, so the composition state comes from the store.
+    // While the store owns the window's input, IMM has no composition (TSF owns it), so the composition state comes from the store.
     let active = if tsf::associated() {
         tsf::composing()
     } else {
@@ -1547,6 +1547,13 @@ unsafe extern "system" fn ime_subclass_proc(hwnd: *mut c_void, msg: u32, w: usiz
     // Rev 0.11 (issue #31): a host that asked for SWR_PTR_WHEEL gets the wheel and GPUI does not also handle it. Any other host
     // (flags without RUN_POINTER_WHEEL) leaves the message to GPUI exactly as before.
     if (msg == WM_MOUSEWHEEL || msg == WM_MOUSEHWHEEL) && POINTER_WHEEL.load(SeqCst) && on_wheel(hwnd, msg, w, l) {
+        return 0;
+    }
+    // #33 Stage 2: while the TSF store owns input, IMM composition messages must not reach GPUI (it would insert the text a second time).
+    if tsf::associated() && matches!(msg, WM_IME_STARTCOMPOSITION | WM_IME_ENDCOMPOSITION | WM_IME_COMPOSITION) {
+        if IME_MSG_LOGS.fetch_add(1, SeqCst) < 400 {
+            eprintln!("[swiftright-render] tsf_imm_msg_dropped msg=0x{msg:04X}");
+        }
         return 0;
     }
     let out = DefSubclassProc(hwnd, msg, w, l);

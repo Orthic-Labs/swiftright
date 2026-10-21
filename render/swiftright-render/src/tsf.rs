@@ -44,7 +44,6 @@ const TS_IAS_QUERYONLY: u32 = 0x2;
 const TS_DEFAULT_SELECTION: u32 = 0xFFFF_FFFF;
 const TS_SS_NOHIDDENTEXT: u32 = 0x8;
 const TF_POPF_ALL: u32 = 0x1;
-const IACE_DEFAULT: u32 = 0x10;
 const VIEW_COOKIE: u32 = 1;
 
 const TS_E_INVALIDPOS: HRESULT = HRESULT(0x8004_0200u32 as i32);
@@ -60,10 +59,6 @@ extern "system" {
     fn ClientToScreen(hwnd: *mut c_void, pt: *mut [i32; 2]) -> i32;
     fn GetClientRect(hwnd: *mut c_void, rect: *mut [i32; 4]) -> i32;
     fn PostMessageW(hwnd: *mut c_void, msg: u32, w: usize, l: isize) -> i32;
-}
-#[link(name = "imm32")]
-extern "system" {
-    fn ImmAssociateContextEx(hwnd: *mut c_void, himc: *mut c_void, flags: u32) -> i32;
 }
 
 static LOG_BUDGET: AtomicU32 = AtomicU32::new(600);
@@ -767,7 +762,7 @@ fn init(hwnd: *mut c_void) -> Result<Tsf, (&'static str, u32)> {
 }
 
 impl Tsf {
-    /// Makes the store the window's input owner: TSF focus on our document manager, IMM context NULL.
+    /// Makes the store the window's input owner: TSF focus on our document manager (IMM context kept).
     fn associate(&mut self) {
         let (Some(tm), Some(dm)) = (&self.tm, &self.dm) else { return };
         let r = unsafe { tm.AssociateFocus(HWND(self.hwnd), dm) };
@@ -777,7 +772,8 @@ impl Tsf {
         };
         drop(r); // the previous document manager, Released
         let _ = unsafe { tm.SetFocus(dm) };
-        unsafe { ImmAssociateContextEx(self.hwnd, std::ptr::null_mut(), 0) };
+        // The IMM context stays: IMM open/conversion status (WM_IME_CONTROL, ImmGetOpenStatus) maps to the thread's TSF
+        // compartments, which tools and the probe read. IMM composition messages are dropped in view.rs while associated.
         self.st.associated.set(true);
         tsf_log!("tsf_associate node={} hr=0x{hr:08X}", self.st.node.get());
     }
@@ -788,7 +784,6 @@ impl Tsf {
             let r = unsafe { tm.AssociateFocus(HWND(self.hwnd), Option::<&ITfDocumentMgr>::None) };
             drop(r);
         }
-        unsafe { ImmAssociateContextEx(self.hwnd, std::ptr::null_mut(), IACE_DEFAULT) };
         self.st.associated.set(false);
         self.st.pending.set(0);
         self.st.known.set(Known::default());
