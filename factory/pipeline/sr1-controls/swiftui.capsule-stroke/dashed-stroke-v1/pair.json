@@ -1,8 +1,8 @@
 {
  "edgeAATolerance": {
-  "levels": 160,
-  "maxOverFraction": 0.06,
-  "maxMeanAbs": 5,
-  "reason": "PROVISIONAL (issue #76): dashed strokes stay on the host bitmap route (PathRasterizer dash). Not yet measured on a CI pair; fit from the first run."
+  "levels": 210,
+  "maxOverFraction": 0.03,
+  "maxMeanAbs": 3,
+  "reason": "Measured on CI 39651515299 (3 identical runs, host bitmap route for dashes): maxInBand 204, over-32 pixels 340 of 12979 band pixels (2.6%), mean 2.54, out-of-band 0. Dash starts agree within 1 px along the top edge (Mac 52,72,97,122,147; Windows 52,73,98,123,148): the residual is the sub-pixel position of the butt dash ends (up to a full pixel of coverage at a dash end) and corner arcs. Tolerance = measured plus about 15%."
  }
 }
