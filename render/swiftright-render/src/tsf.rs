@@ -1041,8 +1041,8 @@ pub fn layout_changed() {
     let r = unsafe { sink.OnLayoutChange(TS_LC_CHANGE, VIEW_COOKIE) };
     tsf_log!("tsf_layout_change view={VIEW_COOKIE} hr=0x{:08X}", hr_of(&r));
     // #33 experiment (SWIFTRIGHT_IME_FOLLOW_MODE=recreate): the Microsoft IME re-reads GetTextExt after TS_LC_CHANGE but keeps an
-    // open candidate list in place; report the view destroyed and recreated so it rebuilds its UI at the new position.
-    if st.cand_open.get() && std::env::var("SWIFTRIGHT_IME_FOLLOW_MODE").map_or(false, |m| m == "recreate") {
+    // open candidate list in place (its UI element ends at once, so this keys on the composition); report the view destroyed and recreated so it rebuilds its UI at the new position.
+    if st.composing.get() && std::env::var("SWIFTRIGHT_IME_FOLLOW_MODE").map_or(false, |m| m == "recreate") {
         let d = unsafe { sink.OnLayoutChange(TS_LC_DESTROY, VIEW_COOKIE) };
         let c = unsafe { sink.OnLayoutChange(TS_LC_CREATE, VIEW_COOKIE) };
         tsf_log!("tsf_layout_recreate destroy_hr=0x{:08X} create_hr=0x{:08X}", hr_of(&d), hr_of(&c));
