@@ -81,6 +81,9 @@ RENDERERS = {
     # ABI 0.12 plus the additive link role SWR_ROLE_LINK (#74). render-windows CI run 39604236232 on 9bbe356f3.
     "renderer-0.12-9bbe356f": dict(runId=39604236232, artifact="swiftright-render-9bbe356f38a54a2762422244abd3be546992b2a2",
                                    sha256="5846bf914028b871fae4af1b5388ab71cf6b335320316a0eff5856b2ed1db3e4"),
+    # ABI 0.13 (accessibility extras: help, value, header/link, heading level) on top of 0.12 paths and the link role. render-windows CI run 39606975153 on 7bebe246e.
+    "renderer-0.13-7bebe246": dict(runId=39606975153, artifact="swiftright-render-7bebe246ee13c8a8d3f3ce280fe30b0650da5a69",
+                                   sha256="e77644998a30409125206d9c9dfd889fce7dc0b60792066f7c3d54d3813f89ad"),
 }
 BLOCK_LABELS = {"swiftui.slider": "37 slider", "swiftui.on-hover": "38 on-hover", "swiftui.uia-walk": "39 uia-walk",
                 "swiftui.compat": "41 compat", "swiftui.ime-traps": "40 ime-traps"}
