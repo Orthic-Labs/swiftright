@@ -1,8 +1,8 @@
 {
  "edgeAATolerance": {
-  "levels": 64,
-  "maxOverFraction": 0.03,
-  "maxMeanAbs": 4,
-  "reason": "PROVISIONAL (issue #76): not yet measured on a CI pair. Interior exact expected (bitmap 1:1); the rim is clip-coverage anti-aliasing on both sides (host ClipMask vs Core Animation mask). Fit from the first run."
+  "levels": 12,
+  "maxOverFraction": 0.005,
+  "maxMeanAbs": 1,
+  "reason": "Measured on CI 39647643771 (3 identical runs): maxInBand 6, over-32 pixels 0 of 33392 band pixels, out-of-band 0. Tolerance = measured max doubled."
  }
 }
