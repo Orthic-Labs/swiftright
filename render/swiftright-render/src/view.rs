@@ -1243,7 +1243,10 @@ fn ime_ts_ms() -> f64 {
 macro_rules! ime_log {
     ($($arg:tt)*) => {{
         let s = format!($($arg)*);
-        eprintln!("[swiftright-render] {} t_ms={:.1}", s, ime_ts_ms());
+        // No timestamp suffix: the native probe parses these lines by their trailing fields (a ` t_ms=` suffix hid the candidate window from it,
+        // #33 2026-10-21); stderr order already gives the sequence.
+        let _ = ime_ts_ms();
+        eprintln!("[swiftright-render] {}", s);
     }};
 }
 
