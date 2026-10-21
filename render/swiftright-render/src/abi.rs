@@ -20,6 +20,8 @@ pub const ABI_MINOR_V10: u32 = 10;
 pub const ABI_MINOR_V11: u32 = 11;
 /// Rev 0.12 (additive): minor reported ONLY by the `_v12` discovery exports (the 0.8 function table is unchanged: 22 functions).
 pub const ABI_MINOR_V12: u32 = 12;
+/// Rev 0.13 (additive): minor reported ONLY by the `_v13` discovery exports (the 0.8 function table is unchanged: 22 functions).
+pub const ABI_MINOR_V13: u32 = 13;
 /// Rev 0.9: AccessKit Role::Slider (UIA Slider; RangeValuePattern when a range entry is sent).
 pub const ROLE_SLIDER: u32 = 15;
 /// Rev 0.11: AccessKit Role::ScrollBar (UIA ScrollBar; RangeValuePattern from a range entry, value 0..1).
@@ -919,6 +921,47 @@ pub struct BootstrapInfoV12 {
     pub transaction_v12_size: u32,
 }
 
+/// Rev 0.13 `swr_bootstrap_info_v13` (160 bytes): the 0.12 view at identical offsets (abi_minor 13) + the accessibility extras sizes.
+#[repr(C)]
+#[derive(Clone, Copy)]
+pub struct BootstrapInfoV13 {
+    pub v12: BootstrapInfoV12,
+    pub ax_extra_entry_size: u32,
+    pub transaction_v13_size: u32,
+}
+
+/// Rev 0.13 limits of the accessibility extras table (per transaction / per string, in bytes). Larger -> E_TOO_LARGE.
+pub const MAX_AX_EXTRAS: u32 = 4096;
+pub const AX_EXTRA_STR_MAX: u32 = 4096;
+/// Rev 0.13 `swr_ax_extra_entry.flags`: SwiftUI `isHeader` (AccessKit Role::Heading) and `isLink` (Role::Link).
+pub const AXE_HEADER: u32 = 0x1;
+pub const AXE_LINK: u32 = 0x2;
+pub const AXE_KNOWN: u32 = AXE_HEADER | AXE_LINK;
+
+/// Rev 0.13 `swr_ax_extra_entry` (64 bytes): accessibility properties of one semantic node upserted by the same transaction.
+#[repr(C)]
+#[derive(Clone, Copy)]
+pub struct AxExtraEntry {
+    pub id: u64,
+    /// SwiftUI accessibilityHint: UIA HelpText (and FullDescription when `description` is empty).
+    pub help: Str,
+    /// SwiftUI accessibilityValue: UIA Value pattern (a static text cannot carry one: see ax.rs).
+    pub value: Str,
+    pub description: Str,
+    pub flags: u32,
+    /// 0 = unset (2 when AXE_HEADER); 1..=6 only with AXE_HEADER.
+    pub heading_level: u32,
+}
+
+/// Rev 0.13 `swr_transaction_v13` (144 bytes): the 128 bytes of `TransactionV12` + the extras table. `struct_size >= 144` supplies it.
+#[repr(C)]
+pub struct TransactionV13 {
+    pub base: TransactionV12,
+    pub extras: *const AxExtraEntry,
+    pub extra_count: u32,
+    pub reserved: u32,
+}
+
 /// Rev 0.12 `swr_path_entry` (32 bytes): one path of the transaction's path table. `cmd_offset`/`cmd_count` index the command byte
 /// array, `pt_offset`/`pt_count` index the point array (x, y float pairs, so `pt_offset` counts points, not floats).
 #[repr(C)]
@@ -1057,6 +1100,12 @@ const _: () = assert!(std::mem::size_of::<BootstrapInfoV11>() == 144);
 const _: () = assert!(std::mem::size_of::<BootstrapInfoV12>() == 152);
 const _: () = assert!(std::mem::offset_of!(BootstrapInfoV12, path_entry_size) == 144);
 const _: () = assert!(std::mem::size_of::<PathEntry>() == 32);
+const _: () = assert!(std::mem::size_of::<AxExtraEntry>() == 64);
+const _: () = assert!(std::mem::offset_of!(AxExtraEntry, flags) == 56);
+const _: () = assert!(std::mem::size_of::<TransactionV13>() == 144);
+const _: () = assert!(std::mem::offset_of!(TransactionV13, extras) == 128);
+const _: () = assert!(std::mem::size_of::<BootstrapInfoV13>() == 160);
+const _: () = assert!(std::mem::offset_of!(BootstrapInfoV13, ax_extra_entry_size) == 152);
 const _: () = assert!(std::mem::size_of::<TransactionV12>() == 128);
 const _: () = assert!(std::mem::offset_of!(TransactionV12, paths) == 88);
 const _: () = assert!(std::mem::offset_of!(TransactionV12, path_count) == 112);

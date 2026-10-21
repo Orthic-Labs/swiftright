@@ -176,6 +176,12 @@ public final class ResolvedNodePainter {
         return SemanticNode(role: .scrollBar, label: "", range: SliderRange(value: scroll.value, min: 0, max: 1, step: step, jump: jump))
     }
 
+    /// Set by the host to `bridge.supportsAccessibilityExtras` (renderer ABI >= 0.13, #60 item 6). The hint, the header and link traits and the value of a static text
+    /// are then published on the element (`SemanticNode.extras`: UIA HelpText, Heading, Hyperlink, FullDescription); a static text keeps its own name instead of
+    /// taking the `accessibilityValue` as one. False (the default, and every older renderer): the element is published as before and the extras are only recorded
+    /// in `accessibilityExtras`.
+    public var publishesAccessibilityExtras = false
+
     public func beginCommit() { pendingShapeImages = [:]; pendingPixelImages = [:]; pendingFieldLayouts = [:]; pendingAccessibilityExtras = [:] }
 
     /// `committed == false` releases the images created for the failed commit and keeps the previous ones.
@@ -245,7 +251,7 @@ public final class ResolvedNodePainter {
     /// What an element's accessibility modifiers ask for that the renderer ABI cannot carry yet (issue #60 pass 3, F10): the help text (`accessibilityHint`), the heading
     /// and link traits, and a value given to a static text (UIA names a static text from its value, so publishing it would rename the element). Recorded per bridge node id
     /// in `accessibilityExtras` for the commit that painted it; a host maps it to UIA HelpText, a heading and a Hyperlink control type once the ABI has fields for them
-    /// (proposal: ABI 0.13, `swr_semantic` tail `help` / `help_len`, roles HEADING = 17 and LINK = 18, a `value` on a static text published as RangeValue-free Value).
+    /// (delivered by ABI 0.13 when `publishesAccessibilityExtras` is set: the extras table; see swiftright.h REVISION 0.13).
     public struct AccessibilityExtras: Equatable {
         public var hint: String?
         public var isHeader = false
@@ -269,7 +275,15 @@ public final class ResolvedNodePainter {
     }
 
     /// Applies a patch to the semantic an element emitted (nil: the node publishes none).
-    static func apply(_ patch: A11yPatch, to semantic: SemanticNode?, bounds: Rect) -> SemanticNode? {
+    /// The rev 0.13 extras a patch asks for: hint, header and link traits, and (on a static text, where the value would rename the element) the value. Nil when none.
+    static func semanticExtras(of patch: A11yPatch, onStaticText: Bool) -> SemanticExtras? {
+        var x = SemanticExtras(hint: patch.hint ?? "", isHeader: patch.traits.contains("isHeader"), isLink: patch.traits.contains("isLink"))
+        if onStaticText, let value = patch.value { x.value = value }
+        return x.isEmpty ? nil : x
+    }
+
+    /// `deferStaticTextValue`: a static text's `accessibilityValue` is not written to its value (Windows names a static text from it); it travels in the extras.
+    static func apply(_ patch: A11yPatch, to semantic: SemanticNode?, bounds: Rect, deferStaticTextValue: Bool = false) -> SemanticNode? {
         guard !patch.isEmpty else { return semantic }
         guard var s = semantic else {
             // a view with no element of its own (a Rectangle) becomes an image element when it is given the trait and a label
@@ -277,7 +291,7 @@ public final class ResolvedNodePainter {
             return nil
         }
         if let label = patch.label { s.label = label }
-        if let value = patch.value { s.value = value }
+        if let value = patch.value, !(deferStaticTextValue && s.role == .staticText) { s.value = value }
         if patch.traits.contains("isImage"), s.role == .staticText || s.role == .group { s.role = .image }
         if patch.traits.contains("isButton"), s.role == .staticText || s.role == .group || s.role == .image { s.role = .button; s.actions.insert(.invoke) }
         if patch.traits.contains("isSelected") { s.selected = true }
@@ -388,7 +402,9 @@ public final class ResolvedNodePainter {
                 if n.kind == "modifier.accessibilityHidden", acc.isHidden { childHidden = true }
                 if n.kind == "modifier.accessibilityElement", !hidden, let behavior = acc.childBehavior, behavior == "combine" || behavior == "ignore" {
                     let label = behavior == "combine" ? Self.combinedLabel(n) : (a11y.label ?? "")
-                    emission.semantic = Self.apply(a11y, to: SemanticNode(role: behavior == "combine" ? .staticText : .group, label: a11y.label ?? label, identifier: n.id), bounds: bounds)
+                    let combined = SemanticNode(role: behavior == "combine" ? .staticText : .group, label: a11y.label ?? label, identifier: n.id)
+                    emission.semantic = Self.apply(a11y, to: combined, bounds: bounds, deferStaticTextValue: publishesAccessibilityExtras)
+                    if publishesAccessibilityExtras { emission.semantic?.extras = Self.semanticExtras(of: a11y, onStaticText: combined.role == .staticText) }
                     emission.semantic?.label = behavior == "combine" ? (a11y.label ?? label) : label
                     childHidden = true
                     childA11y = A11yPatch()
@@ -399,7 +415,11 @@ public final class ResolvedNodePainter {
                         let extras = Self.extras(of: a11y, on: before)
                         if !extras.isEmpty { pendingAccessibilityExtras[id] = extras }
                     }
-                    emission.semantic = Self.apply(a11y, to: emission.semantic, bounds: bounds)
+                    let before = emission.semantic
+                    emission.semantic = Self.apply(a11y, to: before, bounds: bounds, deferStaticTextValue: publishesAccessibilityExtras)
+                    if publishesAccessibilityExtras, let before, emission.semantic != nil {
+                        emission.semantic?.extras = Self.semanticExtras(of: a11y, onStaticText: before.role == .staticText)
+                    }
                     childA11y = A11yPatch()
                 } else if n.children.count != 1 {
                     childA11y = A11yPatch()   // a container with several children has no single element to take the patch

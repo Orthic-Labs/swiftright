@@ -448,7 +448,24 @@ pub extern "C" fn swr_commit(t: *const Transaction) -> Status {
         } else {
             Vec::new()
         };
-        let r = view::with_ui(|ui| unsafe { tree::commit_tables(&mut ui.tree, &ui.runs, &ui.images, t, ranges, &paths) });
+        // Rev 0.13: a transaction of struct_size >= sizeof(TransactionV13) carries the accessibility extras table.
+        let extras: &[AxExtraEntry] = if (t.struct_size as usize) >= std::mem::size_of::<TransactionV13>() {
+            let t13 = unsafe { &*(t as *const Transaction as *const TransactionV13) };
+            if t13.extra_count > MAX_AX_EXTRAS {
+                bump(S_COMMITS_REJ);
+                return E_TOO_LARGE;
+            }
+            match unsafe { tree::slice_of(t13.extras, t13.extra_count) } {
+                Ok(e) => e,
+                Err(e) => {
+                    bump(S_COMMITS_REJ);
+                    return e;
+                }
+            }
+        } else {
+            &[]
+        };
+        let r = view::with_ui(|ui| unsafe { tree::commit_full(&mut ui.tree, &ui.runs, &ui.images, t, ranges, &paths, extras) });
         PH_TREE.add(qpc_now() - t_start);
         match r {
             Err(e) => {
@@ -1061,6 +1078,40 @@ pub extern "C" fn swr_bootstrap_query_v12(out: *mut BootstrapInfoV12, caller_siz
         }
         SWR_OK
     })
+}
+
+/// Rev 0.13 discovery (additive): the 0.12 view at identical offsets (abi_minor 13; the 184-byte table and 22 functions are the
+/// 0.8 ones) + the accessibility extras entry and transaction sizes. A renderer that exports this symbol reads the extras table.
+#[no_mangle]
+pub extern "C" fn swr_bootstrap_query_v13(out: *mut BootstrapInfoV13, caller_size: u32) -> Status {
+    guard!({
+        let need = std::mem::size_of::<BootstrapInfoV13>() as u32;
+        if out.is_null() || caller_size < need {
+            return E_BAD_ARG;
+        }
+        let mut v12 = std::mem::MaybeUninit::<BootstrapInfoV12>::uninit();
+        let rc = swr_bootstrap_query_v12(v12.as_mut_ptr(), std::mem::size_of::<BootstrapInfoV12>() as u32);
+        if rc != SWR_OK {
+            return rc;
+        }
+        let mut v12 = unsafe { v12.assume_init() };
+        v12.v11.v10.v09.v08.v07.base.abi_minor = ABI_MINOR_V13;
+        v12.v11.v10.v09.v08.v07.base.struct_size = need;
+        unsafe {
+            *out = BootstrapInfoV13 {
+                v12,
+                ax_extra_entry_size: std::mem::size_of::<AxExtraEntry>() as u32,
+                transaction_v13_size: std::mem::size_of::<TransactionV13>() as u32,
+            };
+        }
+        SWR_OK
+    })
+}
+
+/// Rev 0.13 function table: identical to the 0.8 table (no new functions; the extras table travels in the transaction).
+#[no_mangle]
+pub extern "C" fn swr_get_api_v13(out: *mut ApiV08, caller_size: u32) -> Status {
+    swr_get_api_v08(out, caller_size)
 }
 
 /// Rev 0.12 function table: identical to the 0.8 table (no new functions; the path table travels in the transaction).
@@ -1727,6 +1778,27 @@ mod v08_tests {
         assert_eq!(swr_bootstrap_query_v12(std::ptr::null_mut(), 152), E_BAD_ARG);
         let mut small = std::mem::MaybeUninit::<BootstrapInfoV12>::uninit();
         assert_eq!(swr_bootstrap_query_v12(small.as_mut_ptr(), 144), E_BAD_ARG);
+    }
+
+    #[test]
+    fn bootstrap_v13_extends_v12_and_reports_minor_13() {
+        let mut b = std::mem::MaybeUninit::<BootstrapInfoV13>::uninit();
+        assert_eq!(swr_bootstrap_query_v13(b.as_mut_ptr(), std::mem::size_of::<BootstrapInfoV13>() as u32), SWR_OK);
+        let b = unsafe { b.assume_init() };
+        assert_eq!(b.v12.v11.v10.v09.v08.v07.base.abi_minor, 13);
+        assert_eq!(b.v12.v11.v10.v09.v08.v07.base.struct_size, 160);
+        assert_eq!(b.ax_extra_entry_size, 64);
+        assert_eq!(b.transaction_v13_size, 144);
+        assert_eq!(b.v12.path_entry_size, 32);
+        assert_eq!(b.v12.v11.v10.v09.v08.v07.base.api_table_size, 184);
+        assert_eq!(b.v12.v11.v10.v09.v08.v07.base.fn_count, 22);
+        // The 0.12 view still reports 12.
+        let mut v12 = std::mem::MaybeUninit::<BootstrapInfoV12>::uninit();
+        assert_eq!(swr_bootstrap_query_v12(v12.as_mut_ptr(), std::mem::size_of::<BootstrapInfoV12>() as u32), SWR_OK);
+        assert_eq!(unsafe { v12.assume_init() }.v11.v10.v09.v08.v07.base.abi_minor, 12);
+        assert_eq!(swr_bootstrap_query_v13(std::ptr::null_mut(), 160), E_BAD_ARG);
+        let mut small = std::mem::MaybeUninit::<BootstrapInfoV13>::uninit();
+        assert_eq!(swr_bootstrap_query_v13(small.as_mut_ptr(), 152), E_BAD_ARG);
     }
 
     #[test]

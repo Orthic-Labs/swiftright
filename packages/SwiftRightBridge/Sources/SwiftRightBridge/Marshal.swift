@@ -192,6 +192,28 @@ func cRanges(_ t: Transaction, scrollBars: Bool = true) -> [swr_range_entry] {
     return out
 }
 
+/// Rev 0.13: the extras table of a transaction (one entry per upserted node that carries non-empty extras). Strings live in `arena`.
+/// Heading level is clamped to 1...6 and sent only with the header trait (the renderer refuses any other combination).
+func cAxExtras(_ t: Transaction, arena: Arena) -> [swr_ax_extra_entry] {
+    func str(_ s: String) -> swr_str {
+        var s = s
+        while s.utf8.count > Int(SWR_AX_EXTRA_STR_MAX) { s.removeLast() }   // never cut inside a character
+        let (p, n) = arena.string(s)
+        return swr_str(ptr: p, len: n, reserved: 0)
+    }
+    var out: [swr_ax_extra_entry] = []
+    for n in t.upserts {
+        guard let x = n.semantic?.extras, !x.isEmpty else { continue }
+        var e = swr_ax_extra_entry()
+        e.id = n.id
+        e.help = str(x.hint); e.value = str(x.value); e.description = str(x.description)
+        e.flags = (x.isHeader ? SWR_AXE_HEADER : 0) | (x.isLink ? SWR_AXE_LINK : 0)
+        e.heading_level = x.isHeader ? UInt32(min(max(x.headingLevel ?? 0, 0), 6)) : 0
+        out.append(e)
+    }
+    return out
+}
+
 func decodeEvent(_ e: swr_event) -> BridgeEvent {
     var ev = e
     let bytes: [UInt8] = withUnsafeBytes(of: &ev.text) { Array($0) }

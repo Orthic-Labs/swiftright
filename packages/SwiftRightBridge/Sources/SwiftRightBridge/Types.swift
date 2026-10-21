@@ -150,6 +150,28 @@ public struct TextSelectionPosition {
     public init(run: NodeID, character: UInt32) { self.run = run; self.character = character }
 }
 
+/// ABI rev 0.13: accessibility properties of a node beyond label and value. Sent only to a renderer that reports
+/// `Bridge.supportsAccessibilityExtras`; an older renderer never sees them.
+public struct SemanticExtras: Equatable {
+    /// SwiftUI accessibilityHint: UIA HelpText (and FullDescription when `description` is empty).
+    public var hint: String
+    /// SwiftUI accessibilityValue: UIA Value pattern (appended to the description on a static text, which cannot hold a separate value).
+    public var value: String
+    public var description: String
+    /// SwiftUI isHeader: UIA Heading with `headingLevel` (nil = level 2).
+    public var isHeader: Bool
+    /// SwiftUI isLink: UIA Hyperlink.
+    public var isLink: Bool
+    /// 1...6; only meaningful with `isHeader`.
+    public var headingLevel: Int?
+    public init(hint: String = "", value: String = "", description: String = "", isHeader: Bool = false, isLink: Bool = false,
+                headingLevel: Int? = nil) {
+        self.hint = hint; self.value = value; self.description = description
+        self.isHeader = isHeader; self.isLink = isLink; self.headingLevel = headingLevel
+    }
+    public var isEmpty: Bool { hint.isEmpty && value.isEmpty && description.isEmpty && !isHeader && !isLink }
+}
+
 public struct SemanticNode {
     public var role: NodeRole
     public var label: String
@@ -173,11 +195,14 @@ public struct SemanticNode {
     public var disabled: Bool
     /// ABI rev 0.9: the numeric range of a `.slider` node (rev 0.11: or a `.scrollBar`, value 0...1); nil = none.
     public var range: SliderRange?
+    /// ABI rev 0.13: hint, value, description and heading / link traits; nil = none. Needs `Bridge.supportsAccessibilityExtras`.
+    public var extras: SemanticExtras?
     public init(role: NodeRole, label: String = "", value: String = "", actions: AXActions = [],
                 multiline: Bool = false, runs: [AXTextRun] = [],
                 selection: (anchor: TextSelectionPosition, focus: TextSelectionPosition)? = nil,
                 identifier: String = "", toggled: ToggledState = .none, selected: Bool? = nil,
-                disabled: Bool = false, range: SliderRange? = nil) {
+                disabled: Bool = false, range: SliderRange? = nil, extras: SemanticExtras? = nil) {
+        self.extras = extras
         self.role = role; self.label = label; self.value = value; self.actions = actions
         self.multiline = multiline; self.runs = runs; self.selection = selection
         self.identifier = identifier; self.toggled = toggled; self.selected = selected

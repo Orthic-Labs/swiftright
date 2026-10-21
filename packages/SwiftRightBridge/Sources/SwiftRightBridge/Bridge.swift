@@ -78,6 +78,9 @@ public final class Bridge {
     /// Rev 0.12 (issue #52): the renderer paints `Primitive.path` (SWR_PRIM_PATH) and path clips. False on a 0.6 to 0.11 renderer: a host
     /// then draws shapes as bitmaps and clips by rectangle bands.
     public var supportsPaths: Bool { revision >= .v12 }
+    /// Rev 0.13 (issue #60): the renderer reads the accessibility extras table (`SemanticNode.extras`: hint, value, description, heading and
+    /// link traits). False on a 0.6 to 0.12 renderer: the extras are then not sent and the element is published as before.
+    public var supportsAccessibilityExtras: Bool { revision >= .v13 }
     /// The explicit render scale `run` was given, nil when the window's DPI decides. Set by `run` before the window opens.
     public internal(set) var renderScale: Float?
 
@@ -580,7 +583,27 @@ public final class BridgeWindow {
         let table: PathTable? = bridge.supportsPaths ? PathTable() : nil
         var tx = cTransaction(t, window: handle, arena: arena, table: table)
         let rc: Int32
-        if bridge.supportsPaths, let table {
+        if bridge.supportsAccessibilityExtras, let table {
+            // Rev 0.13: the 144-byte transaction carries the range, path and extras tables (possibly empty).
+            let ranges = cRanges(t, scrollBars: bridge.supportsScrollBar)
+            let extras = cAxExtras(t, arena: arena)
+            var tx13 = swr_transaction_v13()
+            tx13.base.base.base = tx
+            tx13.base.base.base.struct_size = UInt32(MemoryLayout<swr_transaction_v13>.size)
+            tx13.base.base.ranges = arena.array(ranges)
+            tx13.base.base.range_count = UInt32(ranges.count)
+            tx13.base.paths = arena.array(table.entries)
+            tx13.base.path_count = UInt32(table.entries.count)
+            tx13.base.path_cmds = arena.array(table.commands)
+            tx13.base.path_cmd_total = UInt32(table.commands.count)
+            tx13.base.path_pts = arena.array(table.points)
+            tx13.base.path_pt_total = UInt32(table.points.count / 2)
+            tx13.extras = arena.array(extras)
+            tx13.extra_count = UInt32(extras.count)
+            rc = withUnsafePointer(to: &tx13) { p in
+                p.withMemoryRebound(to: swr_transaction.self, capacity: 1) { fn($0) }
+            }
+        } else if bridge.supportsPaths, let table {
             // Rev 0.12: the 128-byte transaction carries the range table and the path table (possibly empty).
             let ranges = cRanges(t, scrollBars: bridge.supportsScrollBar)
             var tx12 = swr_transaction_v12()

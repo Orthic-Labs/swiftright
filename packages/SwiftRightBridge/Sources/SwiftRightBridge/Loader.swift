@@ -52,23 +52,36 @@ public extension Bridge {
         let apiV11Raw = GetProcAddress(module, "swr_get_api_v11")
         let bootV12Raw = GetProcAddress(module, "swr_bootstrap_query_v12")
         let apiV12Raw = GetProcAddress(module, "swr_get_api_v12")
+        let bootV13Raw = GetProcAddress(module, "swr_bootstrap_query_v13")
+        let apiV13Raw = GetProcAddress(module, "swr_get_api_v13")
         let revision = try BridgeNegotiation.choose(hasBootstrapV07: bootV07Raw != nil, hasApiV07: apiV07Raw != nil,
                                                     hasBootstrapV08: bootV08Raw != nil, hasApiV08: apiV08Raw != nil,
                                                     hasBootstrapV09: bootV09Raw != nil, hasApiV09: apiV09Raw != nil,
                                                     hasBootstrapV10: bootV10Raw != nil, hasApiV10: apiV10Raw != nil,
                                                     hasBootstrapV11: bootV11Raw != nil, hasApiV11: apiV11Raw != nil,
                                                     hasBootstrapV12: bootV12Raw != nil, hasApiV12: apiV12Raw != nil,
+                                                    hasBootstrapV13: bootV13Raw != nil, hasApiV13: apiV13Raw != nil,
                                                     minimum: minimumRevision)
-        if revision >= .v08, let bootV08Raw = (revision == .v12 ? bootV12Raw : revision == .v11 ? bootV11Raw : revision == .v10 ? bootV10Raw : revision == .v09 ? bootV09Raw : bootV08Raw),
-           let apiV08Raw = (revision == .v12 ? apiV12Raw : revision == .v11 ? apiV11Raw : revision == .v10 ? apiV10Raw : revision == .v09 ? apiV09Raw : apiV08Raw) {
+        if revision >= .v08, let bootV08Raw = (revision == .v13 ? bootV13Raw : revision == .v12 ? bootV12Raw : revision == .v11 ? bootV11Raw : revision == .v10 ? bootV10Raw : revision == .v09 ? bootV09Raw : bootV08Raw),
+           let apiV08Raw = (revision == .v13 ? apiV13Raw : revision == .v12 ? apiV12Raw : revision == .v11 ? apiV11Raw : revision == .v10 ? apiV10Raw : revision == .v09 ? apiV09Raw : apiV08Raw) {
             typealias BootstrapV08Fn = @convention(c) (UnsafeMutablePointer<swr_bootstrap_info_v08>?, UInt32) -> Int32
             typealias BootstrapV09Fn = @convention(c) (UnsafeMutablePointer<swr_bootstrap_info_v09>?, UInt32) -> Int32
             typealias BootstrapV10Fn = @convention(c) (UnsafeMutablePointer<swr_bootstrap_info_v10>?, UInt32) -> Int32
+            typealias BootstrapV13Fn = @convention(c) (UnsafeMutablePointer<swr_bootstrap_info_v13>?, UInt32) -> Int32
             typealias BootstrapV12Fn = @convention(c) (UnsafeMutablePointer<swr_bootstrap_info_v12>?, UInt32) -> Int32
             typealias BootstrapV11Fn = @convention(c) (UnsafeMutablePointer<swr_bootstrap_info_v11>?, UInt32) -> Int32
             typealias GetAPIV08Fn = @convention(c) (UnsafeMutablePointer<swr_api_v08>?, UInt32) -> Int32
             var info8 = swr_bootstrap_info_v08()
-            if revision == .v12 {
+            if revision == .v13 {
+                let boot13 = unsafeBitCast(bootV08Raw, to: BootstrapV13Fn.self)
+                var info13 = swr_bootstrap_info_v13()
+                let rc13 = withUnsafeMutablePointer(to: &info13) { boot13($0, UInt32(MemoryLayout<swr_bootstrap_info_v13>.size)) }
+                if rc13 != 0 {
+                    throw BridgeError.startup("SWR_STARTUP_ERROR: bootstrap query v13 rejected rc=\(rc13)")
+                }
+                try BridgeNegotiation.validateV13(info13)
+                info8 = info13.v12.v11.v10.v09.v08
+            } else if revision == .v12 {
                 let boot12 = unsafeBitCast(bootV08Raw, to: BootstrapV12Fn.self)
                 var info12 = swr_bootstrap_info_v12()
                 let rc12 = withUnsafeMutablePointer(to: &info12) { boot12($0, UInt32(MemoryLayout<swr_bootstrap_info_v12>.size)) }

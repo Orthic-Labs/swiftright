@@ -7,7 +7,7 @@ use std::ffi::c_char;
 use std::sync::Arc;
 
 use crate::abi::*;
-use crate::ax::{AxNode, AxRun, AxShared};
+use crate::ax::{AxExtras, AxNode, AxRun, AxShared};
 use crate::paths::PathData;
 use crate::rt::LIVE_TREE_NODES;
 use crate::text::{Measured, RunSlab, Slab, TrackedImage};
@@ -45,6 +45,8 @@ pub struct Sem {
     pub toggled: u32,
     /// Rev 0.9: value, min, max, step, jump of a slider (set from the transaction's range table, never from the node).
     pub range: Option<[f64; 5]>,
+    /// Rev 0.13: set from the transaction's extras table, never from the node (an upsert without an entry clears it).
+    pub extras: Option<Arc<AxExtras>>,
     pub runs: Arc<Vec<SemRun>>,
     pub sel: Option<(u64, u32, u64, u32)>,
 }
@@ -387,6 +389,7 @@ unsafe fn convert_sem(s: &Semantic, old: Option<&Sem>) -> Result<Sem, Status> {
         identifier: arc_str(s.identifier, s.identifier_len, old.map(|o| &o.identifier))?,
         toggled: s.toggled,
         range: None,
+        extras: None,
         runs,
         sel: if s.flags & SEM_HAS_SELECTION != 0 {
             Some((s.sel_anchor_run, s.sel_anchor_char, s.sel_focus_run, s.sel_focus_char))
@@ -463,6 +466,59 @@ pub unsafe fn commit_tables(
     ranges: &[RangeEntry],
     paths: &[Arc<PathData>],
 ) -> Result<AxShared, Status> {
+    commit_full(tree, runs, images, t, ranges, paths, &[])
+}
+
+/// Rev 0.13: every entry names a semantic node upserted by the same transaction (no duplicates); flags within AXE_KNOWN; a heading
+/// level (1..=6) only with AXE_HEADER; each string at most AX_EXTRA_STR_MAX bytes of UTF-8. Anything else is E_BAD_ARG (E_TOO_LARGE
+/// for a long string or table) and nothing is applied. An entry with no content at all stores nothing.
+unsafe fn check_extras(extras: &[AxExtraEntry], ups: &[Node]) -> Result<HashMap<u64, Arc<AxExtras>>, Status> {
+    if extras.len() as u64 > MAX_AX_EXTRAS as u64 {
+        return Err(E_TOO_LARGE);
+    }
+    let mut m: HashMap<u64, Arc<AxExtras>> = HashMap::with_capacity(extras.len());
+    let text = |s: &Str| -> Result<Arc<str>, Status> {
+        if s.len > AX_EXTRA_STR_MAX {
+            return Err(E_TOO_LARGE);
+        }
+        arc_str(s.ptr, s.len, None)
+    };
+    for e in extras {
+        if e.flags & !AXE_KNOWN != 0 || e.heading_level > 6 || (e.heading_level != 0 && e.flags & AXE_HEADER == 0) {
+            return Err(E_BAD_ARG);
+        }
+        if !ups.iter().any(|n| n.id == e.id && n.has_semantic != 0) {
+            return Err(E_BAD_ARG);
+        }
+        let x = AxExtras {
+            help: text(&e.help)?,
+            value: text(&e.value)?,
+            description: text(&e.description)?,
+            header: e.flags & AXE_HEADER != 0,
+            link: e.flags & AXE_LINK != 0,
+            heading_level: e.heading_level as u8,
+        };
+        let stored = if x == AxExtras::default() { None } else { Some(Arc::new(x)) };
+        if m.contains_key(&e.id) {
+            return Err(E_BAD_ARG);
+        }
+        // Keep the id seen even for an empty entry, so a duplicate of it is refused too.
+        m.insert(e.id, stored.unwrap_or_default());
+    }
+    m.retain(|_, x| **x != AxExtras::default());
+    Ok(m)
+}
+
+/// `extras` is the rev 0.13 accessibility extras table (empty when the transaction carries none).
+pub unsafe fn commit_full(
+    tree: &mut Tree,
+    runs: &RunSlab,
+    images: &Slab<TrackedImage>,
+    t: &Transaction,
+    ranges: &[RangeEntry],
+    paths: &[Arc<PathData>],
+    extras: &[AxExtraEntry],
+) -> Result<AxShared, Status> {
     if t.upsert_count > MAX_UPSERTS || t.remove_count > MAX_REMOVES || t.primitive_count > MAX_PRIMITIVES {
         return Err(E_TOO_LARGE);
     }
@@ -475,6 +531,7 @@ pub unsafe fn commit_tables(
 
     // 1. Convert and check every upsert on its own (no tree access).
     let range_map = check_ranges(ranges, ups)?;
+    let extras_map = check_extras(extras, ups)?;
     let mut seen: HashSet<u64> = HashSet::with_capacity(ups.len());
     let mut fresh: Vec<PNode> = Vec::with_capacity(ups.len());
     for n in ups {
@@ -490,6 +547,7 @@ pub unsafe fn commit_tables(
         let mut sem = if n.has_semantic != 0 { Some(convert_sem(&n.semantic, old_sem)?) } else { None };
         if let Some(s) = sem.as_mut() {
             s.range = range_map.get(&n.id).copied();
+            s.extras = extras_map.get(&n.id).cloned();
         }
         fresh.push(PNode {
             id: n.id,
@@ -681,6 +739,7 @@ fn build_ax(tree: &Tree) -> AxShared {
             bounds: n.bounds,
             runs: s.runs.clone(),
             sel: s.sel,
+            extras: s.extras.clone(),
         });
     }
     AxShared {
@@ -1026,6 +1085,79 @@ mod tests {
         t.node(1, 0, 0, 0.0, Some("Text"), 0, 0);
         let r = unsafe { commit_ranges(&mut tree, &runs, &images, &t.raw(), &good) };
         assert_eq!(r.err(), Some(E_BAD_ARG));
+        assert_eq!(tree.version, 2, "refused commits leave the version");
+    }
+
+    fn extra(tx: &mut Tx, id: u64, help: &str, value: &str, description: &str, flags: u32, level: u32) -> AxExtraEntry {
+        let h = tx.string(help);
+        let v = tx.string(value);
+        let d = tx.string(description);
+        let st = |(ptr, len): (*const c_char, u32)| Str { ptr, len, reserved: 0 };
+        AxExtraEntry { id, help: st(h), value: st(v), description: st(d), flags, heading_level: level }
+    }
+
+    /// Rev 0.13: the extras table decorates nodes of the same transaction; bad entries refuse the whole commit; an upsert without
+    /// an entry clears the node's extras.
+    #[test]
+    fn ax_extras_table() {
+        let (runs, images) = slabs();
+        let mut tree = Tree::default();
+        let mut tx = Tx::new(1);
+        tx.node(1, 0, 0, 0.0, Some("Title"), 0, 0);
+        tx.node(2, 0, 0, 0.0, Some("Scan"), 0, 0);
+        let entries = [
+            extra(&mut tx, 1, "", "", "", AXE_HEADER, 3),
+            extra(&mut tx, 2, "Starts the scan", "ready", "", AXE_LINK, 0),
+        ];
+        let ax = unsafe { commit_full(&mut tree, &runs, &images, &tx.raw(), &[], &[], &entries) }.unwrap();
+        let x1 = ax.nodes.iter().find(|n| n.id == 1).unwrap().extras.clone().unwrap();
+        assert!(x1.header && !x1.link);
+        assert_eq!(x1.heading_level, 3);
+        let x2 = ax.nodes.iter().find(|n| n.id == 2).unwrap().extras.clone().unwrap();
+        assert_eq!((&*x2.help, &*x2.value, x2.link), ("Starts the scan", "ready", true));
+
+        // A later upsert without an entry clears them; an entry with no content stores nothing.
+        let mut tx2 = Tx::new(2);
+        tx2.node(1, 0, 0, 0.0, Some("Title"), 0, 0);
+        tx2.node(2, 0, 0, 0.0, Some("Scan"), 0, 0);
+        let empty = [extra(&mut tx2, 2, "", "", "", 0, 0)];
+        let ax = unsafe { commit_full(&mut tree, &runs, &images, &tx2.raw(), &[], &[], &empty) }.unwrap();
+        assert!(ax.nodes.iter().all(|n| n.extras.is_none()));
+
+        let long = "x".repeat(AX_EXTRA_STR_MAX as usize + 1);
+        let cases: [(&str, u32, Status); 8] = [
+            ("unknown flag", 0, E_BAD_ARG),
+            ("level without header", 1, E_BAD_ARG),
+            ("level above 6", 2, E_BAD_ARG),
+            ("unknown node", 3, E_BAD_ARG),
+            ("no semantic", 4, E_BAD_ARG),
+            ("duplicate", 5, E_BAD_ARG),
+            ("string too long", 6, E_TOO_LARGE),
+            ("bad utf8", 7, E_BAD_ARG),
+        ];
+        for (i, (what, kind, want)) in cases.iter().enumerate() {
+            let mut t = Tx::new(10 + i as u64);
+            t.node(1, 0, 0, 0.0, Some("Title"), 0, 0);
+            t.node(2, 0, 0, 0.0, None, 0, 0);
+            let es: Vec<AxExtraEntry> = match kind {
+                0 => vec![extra(&mut t, 1, "", "", "", 0x8, 0)],
+                1 => vec![extra(&mut t, 1, "", "", "", AXE_LINK, 2)],
+                2 => vec![extra(&mut t, 1, "", "", "", AXE_HEADER, 7)],
+                3 => vec![extra(&mut t, 9, "h", "", "", 0, 0)],
+                4 => vec![extra(&mut t, 2, "h", "", "", 0, 0)],
+                5 => vec![extra(&mut t, 1, "h", "", "", 0, 0), extra(&mut t, 1, "g", "", "", 0, 0)],
+                6 => vec![extra(&mut t, 1, &long, "", "", 0, 0)],
+                _ => {
+                    let mut e = extra(&mut t, 1, "h", "", "", 0, 0);
+                    let bad: Box<[u8]> = vec![0xff, 0xfe].into();
+                    e.help = Str { ptr: bad.as_ptr() as *const c_char, len: 2, reserved: 0 };
+                    t._strings.push(bad);
+                    vec![e]
+                }
+            };
+            let r = unsafe { commit_full(&mut tree, &runs, &images, &t.raw(), &[], &[], &es) };
+            assert_eq!(r.err(), Some(*want), "{what}");
+        }
         assert_eq!(tree.version, 2, "refused commits leave the version");
     }
 

@@ -27,6 +27,21 @@ pub struct AxRun {
     pub bounds: [f32; 4],
 }
 
+/// Rev 0.13: the accessibility extras of one node (hint, value, description, header and link traits). Immutable and shared.
+#[derive(Clone, Debug, Default, PartialEq)]
+pub struct AxExtras {
+    pub help: Arc<str>,
+    pub value: Arc<str>,
+    pub description: Arc<str>,
+    pub header: bool,
+    pub link: bool,
+    /// 0 = unset (2 for a heading); 1..=6.
+    pub heading_level: u8,
+}
+
+/// The heading level published when a header has none set. macOS AX reports a SwiftUI header with an unknown level.
+pub const DEFAULT_HEADING_LEVEL: u8 = 2;
+
 #[derive(Clone)]
 pub struct AxNode {
     pub id: u64,
@@ -42,6 +57,8 @@ pub struct AxNode {
     pub bounds: [f32; 4],
     pub runs: Arc<Vec<AxRun>>,
     pub sel: Option<(u64, u32, u64, u32)>,
+    /// Rev 0.13; None when the transaction carried no entry for the node.
+    pub extras: Option<Arc<AxExtras>>,
 }
 
 #[derive(Clone)]
@@ -76,8 +93,24 @@ fn rect(b: &[f32; 4]) -> Rect {
     }
 }
 
+/// The AccessKit role of a node after its traits (rev 0.13). `isLink` turns a static text, group, generic container or button
+/// into Role::Link (UIA Hyperlink; a button keeps its Click action); `isHeader` turns a static text or group into Role::Heading.
+/// Any other role keeps its own: a header trait on a text field or a slider changes nothing.
+pub fn effective_role(base: Role, x: Option<&AxExtras>) -> Role {
+    let Some(x) = x else { return base };
+    match base {
+        Role::Label | Role::Group | Role::GenericContainer | Role::Button if x.link => Role::Link,
+        Role::Label | Role::Group | Role::GenericContainer if x.header => Role::Heading,
+        _ => base,
+    }
+}
+
 pub fn build_tree() -> TreeUpdate {
     let s = lock_ax().clone();
+    build_tree_from(&s)
+}
+
+pub fn build_tree_from(s: &AxShared) -> TreeUpdate {
     let mut nodes: Vec<(NodeId, Node)> = Vec::new();
 
     let mut root = Node::new(Role::Window);
@@ -122,17 +155,57 @@ pub fn build_tree() -> TreeUpdate {
             ROLE_LINK => Role::Link,
             _ => Role::GenericContainer,
         };
+        let x = n.extras.as_deref();
+        let role = effective_role(role, x);
         let mut node = Node::new(role);
+        // A static text publishes its text as its VALUE, and accesskit_consumer `label_comes_from_value` (Role::Label only) makes the
+        // value the UIA Name. A static text promoted to Heading or Link has no such rule, so its text must be its label.
+        let promoted = n.role == ROLE_STATIC_TEXT && role != Role::Label;
         if !n.label.is_empty() {
             node.set_label(n.label.to_string());
+        } else if promoted && !n.value.is_empty() {
+            node.set_label(n.value.to_string());
         }
-        if n.role == ROLE_STATIC_TEXT {
+        if promoted {
+            if let Some(v) = x.map(|x| &x.value).filter(|v| !v.is_empty()) {
+                node.set_value(v.to_string());
+            }
+        } else if n.role == ROLE_STATIC_TEXT {
             // accesskit_consumer node.rs `label_comes_from_value` is true for Role::Label, and
             // accesskit_windows `name()` then writes the VALUE as UIA Name. The bridge's text
             // is the label, so a static text without a value publishes its label as the value.
             node.set_value(if n.value.is_empty() { n.label.to_string() } else { n.value.to_string() });
+        } else if let Some(v) = x.map(|x| &x.value).filter(|v| !v.is_empty() && n.role != ROLE_TEXT_FIELD) {
+            // Rev 0.13: an accessibilityValue on any other element is its UIA Value (the node's own value is replaced; a text
+            // field's value is its text and stays).
+            node.set_value(v.to_string());
         } else if !n.value.is_empty() || n.role == ROLE_TEXT_FIELD {
             node.set_value(n.value.to_string());
+        }
+        if let Some(x) = x {
+            // Rev 0.13. accesskit_windows 0.35.1 node.rs: UIA HelpText = `placeholder`, UIA FullDescription = `description`,
+            // UIA Level = `level` + 1 (accesskit's level is zero-based). The hint goes to HelpText and, when no description is
+            // given, FullDescription too. A Role::Label cannot hold a value apart from its name, so a value given to a static
+            // text is appended to the description instead of renaming the element.
+            if !x.help.is_empty() {
+                node.set_placeholder(x.help.to_string());
+            }
+            let mut desc: Vec<&str> = Vec::new();
+            if !x.description.is_empty() {
+                desc.push(&x.description);
+            } else if !x.help.is_empty() {
+                desc.push(&x.help);
+            }
+            if role == Role::Label && !x.value.is_empty() {
+                desc.push(&x.value);
+            }
+            if !desc.is_empty() {
+                node.set_description(desc.join(", "));
+            }
+            if role == Role::Heading {
+                let level = if x.heading_level == 0 { DEFAULT_HEADING_LEVEL } else { x.heading_level };
+                node.set_level(level as usize - 1);
+            }
         }
         if !n.identifier.is_empty() {
             // AccessKit author id -> UIA AutomationId (accesskit_windows node.rs automation_id).
@@ -312,6 +385,109 @@ fn global_char(node: u64, run_id: u64, idx: usize) -> usize {
         base += r.lengths.len();
     }
     0
+}
+
+#[cfg(test)]
+mod extras_tests {
+    use super::*;
+
+    fn node(id: u64, role: u32, label: &str, value: &str, extras: Option<AxExtras>) -> AxNode {
+        AxNode {
+            id,
+            parent: 0,
+            role,
+            actions: 0,
+            flags: 0,
+            toggled: 0,
+            range: None,
+            label: Arc::from(label),
+            value: Arc::from(value),
+            identifier: Arc::from(""),
+            bounds: [0.0, 0.0, 10.0, 10.0],
+            runs: Arc::new(Vec::new()),
+            sel: None,
+            extras: extras.map(Arc::new),
+        }
+    }
+
+    fn build(nodes: Vec<AxNode>) -> HashMap<u64, Node> {
+        let s = AxShared { window: 1, version: 1, title: "t".into(), focus: 0, nodes };
+        build_tree_from(&s).nodes.into_iter().map(|(id, n)| (id.0, n)).collect()
+    }
+
+    fn x() -> AxExtras {
+        AxExtras::default()
+    }
+
+    #[test]
+    fn absent_extras_keep_the_existing_mapping() {
+        let t = build(vec![node(1, ROLE_STATIC_TEXT, "Hello", "", None), node(2, ROLE_BUTTON, "Go", "", None)]);
+        let a = &t[&1];
+        assert_eq!(a.role(), Role::Label);
+        assert_eq!(a.value(), Some("Hello"));
+        assert_eq!(a.description(), None);
+        assert_eq!(a.placeholder(), None);
+        assert_eq!(a.level(), None);
+        assert_eq!(t[&2].role(), Role::Button);
+    }
+
+    #[test]
+    fn hint_is_help_text_and_full_description() {
+        let t = build(vec![node(2, ROLE_BUTTON, "Scan", "", Some(AxExtras { help: Arc::from("Starts the scan"), ..x() }))]);
+        let b = &t[&2];
+        assert_eq!(b.role(), Role::Button);
+        assert_eq!(b.placeholder(), Some("Starts the scan"));
+        assert_eq!(b.description(), Some("Starts the scan"));
+        // An explicit description wins for FullDescription; the hint stays HelpText.
+        let t = build(vec![node(2, ROLE_BUTTON, "Scan", "", Some(AxExtras { help: Arc::from("h"), description: Arc::from("d"), ..x() }))]);
+        assert_eq!(t[&2].placeholder(), Some("h"));
+        assert_eq!(t[&2].description(), Some("d"));
+    }
+
+    #[test]
+    fn header_is_a_heading_named_by_its_label_with_level_two_by_default() {
+        let t = build(vec![
+            node(1, ROLE_STATIC_TEXT, "Settings", "", Some(AxExtras { header: true, ..x() })),
+            node(2, ROLE_STATIC_TEXT, "Sub", "Sub", Some(AxExtras { header: true, heading_level: 3, ..x() })),
+        ]);
+        let h = &t[&1];
+        assert_eq!(h.role(), Role::Heading);
+        assert_eq!(h.label(), Some("Settings"));
+        assert_eq!(h.value(), None, "a heading has no Value pattern of its own");
+        assert_eq!(h.level(), Some(1), "zero-based: UIA Level 2");
+        assert_eq!(t[&2].level(), Some(2), "UIA Level 3");
+        // A text carried only in `value` still names the heading.
+        let t = build(vec![node(1, ROLE_STATIC_TEXT, "", "Only value", Some(AxExtras { header: true, ..x() }))]);
+        assert_eq!(t[&1].label(), Some("Only value"));
+    }
+
+    #[test]
+    fn link_trait_is_a_hyperlink_and_a_button_keeps_its_click() {
+        let t = build(vec![
+            node(1, ROLE_STATIC_TEXT, "Docs", "", Some(AxExtras { link: true, ..x() })),
+            node(2, ROLE_BUTTON, "Open", "", Some(AxExtras { link: true, ..x() })),
+        ]);
+        assert_eq!(t[&1].role(), Role::Link);
+        assert_eq!(t[&1].label(), Some("Docs"));
+        assert_eq!(t[&2].role(), Role::Link);
+        // Link wins over header; other roles ignore both traits.
+        assert_eq!(effective_role(Role::Label, Some(&AxExtras { link: true, header: true, ..x() })), Role::Link);
+        assert_eq!(effective_role(Role::TextInput, Some(&AxExtras { header: true, link: true, ..x() })), Role::TextInput);
+        assert_eq!(effective_role(Role::Slider, Some(&AxExtras { header: true, ..x() })), Role::Slider);
+    }
+
+    #[test]
+    fn value_is_a_value_pattern_except_on_a_static_text() {
+        let t = build(vec![
+            node(1, ROLE_GROUP, "Volume", "", Some(AxExtras { value: Arc::from("40 percent"), ..x() })),
+            node(2, ROLE_STATIC_TEXT, "Memory", "", Some(AxExtras { value: Arc::from("1.2 GB"), ..x() })),
+        ]);
+        assert_eq!(t[&1].value(), Some("40 percent"));
+        // The static text keeps its name (its value is the name); the extra value is appended to the description.
+        assert_eq!(t[&2].role(), Role::Label);
+        assert_eq!(t[&2].value(), Some("Memory"));
+        assert_eq!(t[&2].description(), Some("1.2 GB"));
+    }
 }
 
 #[cfg(test)]

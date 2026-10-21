@@ -1459,6 +1459,68 @@ SWR_API swr_status swr_bootstrap_query_v12(swr_bootstrap_info_v12 *out, uint32_t
 /* The 0.8 table (SWR_E_ABI when caller_size < sizeof(swr_api_v08)). */
 SWR_API swr_status swr_get_api_v12(swr_api_v08 *out, uint32_t caller_size);
 
+/* ===========================================================================================
+ * REVISION 0.13 (additive): accessibility extras (issue #60 item 6): hint, value, description, header and link traits.
+ *
+ * Everything above is unchanged. `swr_bootstrap_query`, `_v07` to `_v12` still describe 0.6 to 0.12. A 0.13 renderer adds two NEW
+ * exports, swr_bootstrap_query_v13 and swr_get_api_v13; a 0.12 renderer lacks both, and a 0.13 host then falls back to the 0.12
+ * view and sends no extras (check `supportsAccessibilityExtras`). The function table is the 0.8 table (22 functions, 184 bytes).
+ *
+ * EXTRAS TABLE. A transaction of struct_size >= sizeof(swr_transaction_v13) (144 bytes: the 128 bytes of the 0.12 transaction, so
+ * the range and path tables too, + the extras table) carries `extras` (swr_ax_extra_entry, extra_count entries, at most
+ * SWR_AX_MAX_EXTRAS). Each entry names a node that has a semantic and is upserted by the SAME transaction (otherwise, or a duplicate
+ * id, SWR_E_BAD_ARG, nothing applied), exactly like the range table: an upsert without an entry carries no extras, so a host
+ * re-sends the entry whenever it re-upserts the node. Strings are UTF-8 (not NUL-terminated, ptr + len), at most
+ * SWR_AX_EXTRA_STR_MAX bytes each (SWR_E_TOO_LARGE), empty = absent. Unknown flag bits, or a heading_level without
+ * SWR_AXE_HEADER or above 6, are SWR_E_BAD_ARG.
+ *
+ * Mapping (AccessKit 0.25.1 / accesskit_windows 0.35.1):
+ *  - help (SwiftUI accessibilityHint): UIA HelpText (AccessKit placeholder); also UIA FullDescription (description) when the entry
+ *    has no description.
+ *  - description: UIA FullDescription.
+ *  - value (SwiftUI accessibilityValue): UIA Value pattern on every role but a text field (whose value is its text). A static
+ *    text (Role::Label) cannot hold a value apart from its name (accesskit_consumer label_comes_from_value), so its value is
+ *    appended to the FullDescription and its name is unchanged.
+ *  - SWR_AXE_HEADER: a static text, group or generic container becomes Role::Heading (UIA Text control type, aria role "heading"),
+ *    named by its label; UIA Level = heading_level (1..6; 0 = 2, because macOS AX reports a SwiftUI header with an unknown level).
+ *  - SWR_AXE_LINK: a static text, group, generic container or button becomes Role::Link (UIA Hyperlink; a button keeps its Click
+ *    action). Link wins over header. Other roles ignore both traits.
+ * ===========================================================================================*/
+#define SWR_ABI_MINOR_V13 13
+
+#define SWR_AXE_HEADER 0x1u
+#define SWR_AXE_LINK   0x2u
+#define SWR_AX_MAX_EXTRAS     4096u
+#define SWR_AX_EXTRA_STR_MAX  4096u
+
+typedef struct swr_ax_extra_entry {
+    uint64_t id;
+    swr_str  help;
+    swr_str  value;
+    swr_str  description;
+    uint32_t flags;              /* SWR_AXE_* */
+    uint32_t heading_level;      /* 0 = unset (2), 1..6 only with SWR_AXE_HEADER */
+} swr_ax_extra_entry;            /* 64 bytes */
+
+typedef struct swr_transaction_v13 {
+    swr_transaction_v12 base;    /* 128 bytes, identical offsets; base.base.base.struct_size = sizeof(swr_transaction_v13) */
+    const swr_ax_extra_entry *extras;
+    uint32_t              extra_count;
+    uint32_t              reserved;
+} swr_transaction_v13;           /* 144 bytes */
+
+/* 0.13 view of swr_bootstrap_info: the 152 bytes of the 0.12 view at identical offsets (abi_minor 13, api_table_size
+ * sizeof(swr_api_v08) = 184, fn_count 22), plus the extras entry and transaction sizes (160 bytes). */
+typedef struct swr_bootstrap_info_v13 {
+    swr_bootstrap_info_v12 v12;
+    uint32_t ax_extra_entry_size;        /* 64 */
+    uint32_t transaction_v13_size;       /* 144 */
+} swr_bootstrap_info_v13;
+
+SWR_API swr_status swr_bootstrap_query_v13(swr_bootstrap_info_v13 *out, uint32_t caller_size);
+/* The 0.8 table (SWR_E_ABI when caller_size < sizeof(swr_api_v08)). */
+SWR_API swr_status swr_get_api_v13(swr_api_v08 *out, uint32_t caller_size);
+
 #ifdef __cplusplus
 }
 #endif
