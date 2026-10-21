@@ -253,6 +253,12 @@ def compare_lists(label, a, b, cfg):
                     mm.append(dict(where=f"{label}[{i}]", field="default", windows="not focused", mac="default (Return) button", name=y["name"]))
             elif f == "name" and "nameRoles" in cfg and x["role"] not in cfg["nameRoles"]:
                 continue   # names gate only for the listed roles (a hidden-label control has no name on the Mac)
+            elif f == "help" and x["role"] == y["role"] == "text" and y.get("value") and y.get("value") != y.get("name"):
+                # A static text's accessibilityValue (Mac AXValue) has no UIA slot of its own: AccessKit's Label takes its value as its Name, so the renderer
+                # (ax.rs, rev 0.13) appends it to the FullDescription after any hint. Expected Windows help = "<Mac help>, <Mac value>" (CI 39618595219: "forty-two").
+                want = ", ".join(v for v in (y.get("help"), y.get("value")) if v)
+                if (x.get("help") or None) != want:
+                    mm.append(dict(where=f"{label}[{i}]", field=f, windows=x.get(f), mac=want, role=(x["role"], y["role"]), note="static-text value appended to FullDescription"))
             elif (x.get(f) or None) != (y.get(f) or None) if f == "name" else x.get(f) != y.get(f):   # an element with no name is "" on Windows and absent on the Mac
                 mm.append(dict(where=f"{label}[{i}]", field=f, windows=x.get(f), mac=y.get(f), role=(x["role"], y["role"])))
     return mm
