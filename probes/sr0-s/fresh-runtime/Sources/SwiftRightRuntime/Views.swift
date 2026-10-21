@@ -142,11 +142,15 @@ extension Optional: View where Wrapped: View {
 // MARK: - Primitives
 
 public struct Text: View, PrimitiveView {
+    /// The characters of the Text: the whole string of a plain Text, the runs joined for a styled one.
     let string: String
-    public init(_ content: String) { string = content }
+    /// The runs of a styled Text (#68, StyledText.swift); nil for a plain Text, which keeps the environment's font and colour and is exactly what it was.
+    let runs: [TextRun]?
+    public init(_ content: String) { string = content; runs = nil }
     /// Text that is shown as written (no localisation lookup; the runtime has none, so it equals `init(_:)`).
     /// Apple: https://developer.apple.com/documentation/swiftui/text/init(verbatim:)
-    public init(verbatim content: String) { string = content }
+    public init(verbatim content: String) { string = content; runs = nil }
+    init(joined: String, runs: [TextRun]) { string = joined; self.runs = runs }
     @MainActor public var body: Never { return fatalError("primitive view has no body") }
     var nodeKind: NodeKind { .text(string) }
     var nodeContent: (any View)? { nil }

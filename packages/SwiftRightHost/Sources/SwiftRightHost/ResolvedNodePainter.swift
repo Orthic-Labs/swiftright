@@ -505,9 +505,87 @@ public final class ResolvedNodePainter {
 
     static func isShapeKind(_ kind: String) -> Bool { kind == "Rectangle" || kind == "RoundedRectangle" || kind == "Circle" || kind == "Capsule" || kind == "Path" }
 
+    /// The point size a run's font draws at (a text style takes its macOS size, no font is the body): the scale of its underline and strikethrough.
+    static func pointSize(of font: Font?) -> Float {
+        let m = font?.metadata
+        if let size = m?.pointSize { return Float(size) }
+        return MacTextStyles.all[m?.textStyle ?? "body"]?.size ?? 13
+    }
+
+    /// A Text of styled runs (#68). One undecorated run is one plain request with the run's font, colour, italic, kern and tracking (the renderer wraps and truncates it). Several runs
+    /// (or a decorated one) are laid out by `TextRunFlow` from the same measurements the runtime laid the node out with: each line's stretch of a run is one shaped fragment, a
+    /// background is a rect behind it, an underline or strikethrough a rect over it (every pattern solid), and the fragments sit on the line's shared baseline.
+    private func emitStyledText(_ node: ResolvedNode, _ styled: ResolvedStyledText, bounds: Rect, textColor: UInt32?) throws -> NodeEmission {
+        guard let string = node.text, !string.isEmpty else { return NodeEmission(primitives: [], semantic: nil, flags: [], structural: false) }
+        guard let text else { throw HostPaintError.unsupportedNode("Text (no text measurer)") }
+        let scheme = node.style.colorScheme
+        let inherited = textColor.map { ($0 & 0xffffff00) | UInt32((Double($0 & 255) * node.opacity).rounded()) }
+        // What a run without a colour of its own draws with: the node's foreground, an ancestor's (a Button label), the label colour where the measurer's default would differ
+        // (dark, faded, brightened), else nil: the measurer's own colour.
+        var fallback = try node.style.foreground.map { try HostPaint.rgba($0, opacity: node.opacity, scheme: scheme) } ?? inherited
+            ?? (scheme == .dark || node.opacity != 1 || !brightness.isEmpty ? try HostPaint.rgba(.semantic("label"), opacity: node.opacity, scheme: scheme) : nil)
+        fallback = fallback.map(adjusted)
+        func colour(of run: ResolvedTextRun) throws -> UInt32? {
+            guard let own = run.foreground else { return fallback }
+            return adjusted(try HostPaint.rgba(own, opacity: node.opacity, scheme: scheme))
+        }
+        var area = bounds
+        if textScaleFactor != 1 {
+            // Styled text under `.scaleEffect` keeps its measured size, centred on its scaled place (counted, as wrapped plain text is).
+            area = Rect(x: bounds.x + bounds.w / 2 - bounds.w / textScaleFactor / 2, y: bounds.y + bounds.h / 2 - bounds.h / textScaleFactor / 2,
+                        w: bounds.w / textScaleFactor, h: bounds.h / textScaleFactor)
+            scaleTextLimitationCount += 1
+        }
+        let semantic = SemanticNode(role: .staticText, label: string, identifier: node.id, disabled: !node.accessibility.isEnabled)
+        if styled.isNative {
+            let run = styled.runs[0]
+            let handle = try text.run(text: run.text, font: run.font, style: run.style, bounds: area, color: try colour(of: run))
+            var emission = NodeEmission(primitives: [.text(handle, x: area.x, y: area.y)], semantic: semantic, flags: [], structural: false)
+            if text.runOverflows(text: run.text, font: run.font, style: run.style, bounds: area) { emission.clipTo = area }
+            return emission
+        }
+        guard let measurer = text as? TextMeasurer else { throw HostPaintError.unsupportedNode("Text runs (no text measurer)") }
+        let pixelsPerPoint = CGFloat(baseScale), pixel = baseScale
+        let layout = measurer.flow(styled, frameWidth: CGFloat(area.w) / pixelsPerPoint, scale: pixelsPerPoint)
+        let label = try adjusted(HostPaint.rgba(.semantic("label"), opacity: node.opacity, scheme: scheme))
+        var primitives: [Primitive] = []
+        for line in layout.lines {
+            for fragment in layout.fragments[line.fragments] {
+                let run = styled.runs[fragment.run]
+                let x = (area.x + Float(fragment.x) * pixel).rounded()
+                let y = (area.y + Float(fragment.y) * pixel).rounded()
+                let width = (Float(fragment.width) * pixel).rounded()
+                let runColour = try colour(of: run)
+                if let background = run.background {
+                    primitives.append(.rect(Rect(x: x, y: (area.y + Float(line.top) * pixel).rounded(), w: width, h: (Float(line.height) * pixel).rounded()),
+                                            color: adjusted(try HostPaint.rgba(background, opacity: node.opacity, scheme: scheme))))
+                }
+                guard let natural = try text.fragmentRun(text: fragment.text, font: run.font, style: run.style, color: runColour) else {
+                    throw HostPaintError.measuredRunGeometryMismatch(fragment.text)
+                }
+                primitives.append(.text(natural.run, x: x, y: y))
+                guard run.underline != nil || run.strikethrough != nil else { continue }
+                let size = Self.pointSize(of: run.font)
+                let thickness = max(1, (size * 0.075 * pixel).rounded())
+                let baseline = y + Float(fragment.baseline) * pixel
+                func lineColour(_ line: ResolvedTextLine) throws -> UInt32 {
+                    try line.color.map { adjusted(try HostPaint.rgba($0, opacity: node.opacity, scheme: scheme)) } ?? runColour ?? label
+                }
+                if let underline = run.underline {
+                    primitives.append(.rect(Rect(x: x, y: (baseline + max(1, (size * 0.1 * pixel).rounded())).rounded(), w: width, h: thickness), color: try lineColour(underline)))
+                }
+                if let strike = run.strikethrough {
+                    primitives.append(.rect(Rect(x: x, y: (baseline - size * 0.3 * pixel).rounded(), w: width, h: thickness), color: try lineColour(strike)))
+                }
+            }
+        }
+        return NodeEmission(primitives: primitives, semantic: semantic, flags: [], structural: false)
+    }
+
     private func emitContent(_ node: ResolvedNode, id: UInt64, bounds: Rect, textColor: UInt32?, rotations: [ShapeRotation]) throws -> NodeEmission {
         switch node.kind {
         case "Text":
+            if let styled = node.styledText { return try emitStyledText(node, styled, bounds: bounds, textColor: textColor) }
             guard let string = node.text, !string.isEmpty else { return NodeEmission(primitives: [], semantic: nil, flags: [], structural: false) }
             guard let text else { throw HostPaintError.unsupportedNode("Text (no text measurer)") }
             // Opacity is baked into the text run's colour alpha (the run is created per presented opacity, so an animated fade re-measures each frame).

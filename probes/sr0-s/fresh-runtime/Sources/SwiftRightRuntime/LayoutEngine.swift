@@ -943,6 +943,7 @@ extension Graph {
 
     private func measureText(_ node: Node, _ string: String, width: CGFloat?) -> LayoutSize {
         let wrapWidth = finiteLength(width)
+        if case .text = node.kind, let styled = styledText(of: node) { return measureStyledText(node, styled, wrapWidth: wrapWidth) }   // styled runs (#68)
         let font = node.environment.textFont ?? Font(id: "body")
         let lineLimit: Int?
         if case .text = node.kind { lineLimit = node.environment.lineLimit } else { lineLimit = nil }

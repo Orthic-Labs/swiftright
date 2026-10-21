@@ -903,6 +903,9 @@ public struct ResolvedNode: Equatable, Sendable {
     public var exactFrame: LayoutRect? = nil
     /// The snapped frame in the coordinates of the nearest `.scaleEffect` ancestor (#44); nil outside one. A host draws a scaled subtree from these.
     public var scaleLocalFrame: LayoutRect? = nil
+    /// Text nodes made of styled runs only (#68): the runs with fonts and colours resolved, and the line limit. Nil for a plain Text (the node is then the string in `text`
+    /// with `style`) and for every other node.
+    public var styledText: ResolvedStyledText? = nil
 }
 
 /// What `.clipShape(_:style:)` asks of its subtree: paint only inside `geometry` laid out in the modifier node's frame.
@@ -954,7 +957,8 @@ extension ResolvedNode {
                      selection: selection, marked: marked, children: children, labelsHidden: labelsHidden, toggleStyle: toggleStyle,
                      fieldStyle: fieldStyle, placeholder: placeholder, accessibility: accessibility, style: style, image: image,
                      imageSizing: imageSizing, color: color, shapeStorage: shapeStorage, menu: menu, presentation: presentation, shortcut: shortcut,
-                     buttonStyle: buttonStyle, isDefaultButton: isDefaultButton, listStyle: listStyle, rowStyle: rowStyle, slider: slider, scroll: scroll, rotation: rotation)
+                     buttonStyle: buttonStyle, isDefaultButton: isDefaultButton, listStyle: listStyle, rowStyle: rowStyle, slider: slider, scroll: scroll, rotation: rotation,
+                     styledText: styledText)
     }
 }
 
@@ -2104,9 +2108,13 @@ public final class Graph {
                 font = base.metadata.map { Font(id: id, metadata: $0) } ?? Font(id: id)
             }
             let lineLimit = node.environment.lineLimit
-            key = font?.metadata == nil && lineLimit == nil
-                ? .text(string, font?.id)
-                : .styledText(string, font, lineLimit)
+            if let signature = styledLayoutSignature(of: node) {
+                key = .styledText(string + signature, font, lineLimit)   // runs with their own fonts and attributes (#68)
+            } else {
+                key = font?.metadata == nil && lineLimit == nil
+                    ? .text(string, font?.id)
+                    : .styledText(string, font, lineLimit)
+            }
         case .textField, .textEditor:
             let font = node.environment.textFont
             let string = node.textInput?.display ?? ""
@@ -2511,7 +2519,8 @@ public final class Graph {
             brightness: brightness,
             clipShape: clipShape,
             exactFrame: node.motion == nil && node.exactFrame != node.frame && node.exactFrame != .zero ? node.exactFrame : nil,
-            scaleLocalFrame: node.motion == nil ? node.scaleLocalFrame : nil
+            scaleLocalFrame: node.motion == nil ? node.scaleLocalFrame : nil,
+            styledText: styledText(of: node)
         )
     }
 

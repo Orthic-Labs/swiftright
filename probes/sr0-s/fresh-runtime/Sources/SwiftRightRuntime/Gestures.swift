@@ -100,7 +100,8 @@ extension Graph {
         for (n, depth) in gestureNodes(hover: false) where contains(hitFrame(n), x, y) && n.environment.isEnabled && n.environment.allowsHitTesting {
             if best == nil || depth >= best!.1 { best = (n, depth) }
         }
-        guard let (node, _) = best, case .modifier(.tap(let hook)) = node.kind, hook.count == 1 else { return false }
+        // No tap gesture there: a link run of a styled Text opens its URL (#68).
+        guard let (node, _) = best, case .modifier(.tap(let hook)) = node.kind, hook.count == 1 else { return openLink(atX: x, y: y) }
         hook.action()
         flush()
         return true

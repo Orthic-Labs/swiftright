@@ -30,8 +30,8 @@ extension Text {
 
 // MARK: - SwiftUI attribute scope
 
-/// The SwiftUI attributes of an `AttributedString` (`AttributeContainer.foregroundColor` and the rest). Values are carried on the string; `Text(AttributedString)`
-/// renders runs as plain text in this runtime, so these attributes are accepted and stored, not yet painted (#68).
+/// The SwiftUI attributes of an `AttributedString` (`AttributeContainer.foregroundColor` and the rest). `Text(AttributedString)` turns each run into a styled Text run
+/// (font, foreground and background colour, underline, strikethrough, kern, tracking, baseline offset, link; StyledText.swift) that a host measures and paints (#68).
 /// Apple: https://developer.apple.com/documentation/foundation/attributescopes/swiftuiattributes
 extension AttributeScopes {
     public struct SwiftUIAttributes: AttributeScope {
@@ -160,4 +160,11 @@ extension View {
     /// Accepted; symbol images keep their size in this runtime (#68).
     /// Apple: https://developer.apple.com/documentation/swiftui/view/imagescale(_:)
     public func imageScale(_ scale: Image.Scale) -> some View { self }
+}
+
+/// This runtime's SwiftUI attribute keys under a name that does not collide with Apple's SwiftUI scope when both are loaded (Mac tests).
+public enum SwiftRightTextAttributes {
+    public typealias Kerning = AttributeScopes.SwiftUIAttributes.KerningAttribute
+    public typealias Tracking = AttributeScopes.SwiftUIAttributes.TrackingAttribute
+    public typealias BaselineOffset = AttributeScopes.SwiftUIAttributes.BaselineOffsetAttribute
 }

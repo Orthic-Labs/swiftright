@@ -167,17 +167,11 @@ extension View {
 // MARK: - Text conveniences
 
 extension Text {
-    /// The characters of `attributedContent`, as plain text: runs, fonts and colours are dropped (the Text node carries one string; #68).
-    /// Apple: https://developer.apple.com/documentation/swiftui/text/init(_:)-1jk6v
-    public init(_ attributedContent: AttributedString) { self.init(String(attributedContent.characters)) }
+    // `Text(AttributedString)` and `Text + Text` keep their runs: see StyledText.swift.
 
     /// An inline image in text. Approximation: the node carries no inline images, so this is empty text and the image is not drawn (#68).
     /// Apple: https://developer.apple.com/documentation/swiftui/text/init(_:)-9fztj
     public init(_ image: Image) { self.init("") }
-
-    /// Joins two texts into one string. Approximation: per-segment modifiers are not kept, the result is one run (#68).
-    /// Apple: https://developer.apple.com/documentation/swiftui/text/+(_:_:)
-    public static func + (lhs: Text, rhs: Text) -> Text { Text(lhs.string + rhs.string) }
 }
 
 // MARK: - Line spacing (#68)

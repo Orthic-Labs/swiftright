@@ -57,6 +57,11 @@ public protocol TextRunSource: AnyObject {
     func cells(of run: TextRunHandle) -> [CharCell]
     /// True when the retained run for these bounds is wider than the frame the runtime gave it (a Text offered less than its glyphs need): the painter then clips the run to the frame.
     func runOverflows(text: String, font: Font?, bounds: Rect) -> Bool
+    /// `run(text:font:bounds:)` for a styled-Text run (#68): its italic, kern and tracking are part of the request. `color` nil keeps the source's own colour.
+    func run(text: String, font: Font?, style: TextRunStyle?, bounds: Rect, color: UInt32?) throws -> TextRunHandle
+    func runOverflows(text: String, font: Font?, style: TextRunStyle?, bounds: Rect) -> Bool
+    /// The retained shaped run of one fragment of a styled Text (one line's stretch of one run), at its natural size: measured on first use. Nil when the source has none.
+    func fragmentRun(text: String, font: Font?, style: TextRunStyle?, color: UInt32?) throws -> NaturalTextRun?
 }
 
 /// A natural-size run: the handle and its pixel extent.
@@ -72,6 +77,14 @@ extension TextRunSource {
     public func naturalRun(text: String, font: Font?, color: UInt32) throws -> NaturalTextRun? { nil }
     public func cells(of run: TextRunHandle) -> [CharCell] { [] }
     public func runOverflows(text: String, font: Font?, bounds: Rect) -> Bool { false }
+
+    /// A source that does not know run styles shapes the run without them.
+    public func run(text: String, font: Font?, style: TextRunStyle?, bounds: Rect, color: UInt32?) throws -> TextRunHandle {
+        if let color { return try run(text: text, font: font, bounds: bounds, color: color) }
+        return try run(text: text, font: font, bounds: bounds)
+    }
+    public func runOverflows(text: String, font: Font?, style: TextRunStyle?, bounds: Rect) -> Bool { runOverflows(text: text, font: font, bounds: bounds) }
+    public func fragmentRun(text: String, font: Font?, style: TextRunStyle?, color: UInt32?) throws -> NaturalTextRun? { nil }
 
     /// A source without per-run colour paints every run in its one colour.
     public func run(text: String, font: Font?, bounds: Rect, color: UInt32) throws -> TextRunHandle {
@@ -348,6 +361,22 @@ public final class BridgeTextMeasurer: TextMeasurer, TextRunSource {
             // The Mac pitch needs the renderer to round the block (it does so only with a 0.8 baseline): a 0.7 renderer keeps the single-line height per line.
             if let plan { r.lineHeight = plan.lineHeightDIP }
         }
+        // A styled-Text run (#68): italic, kerning and tracking ride in the 0.8 extension. A 0.7 renderer cannot carry them, so the run is drawn without and that is logged, not hidden.
+        if let style = request.runStyle, !style.isDefault {
+            if rendererHasExtendedRequest {
+                var e = r.extension ?? TextExtension()
+                if style.italic {
+                    e.italic = true
+                    e.simulations.remove(.forbidOblique)   // Segoe UI Variable has no italic face: DirectWrite slants the upright one
+                }
+                e.trackingDIP = Float(style.tracking)
+                e.kerningDIP = Float(style.kern)
+                r.extension = e
+            } else {
+                record([FontAdaptation(kind: .family, requested: "run style italic=\(style.italic) kern=\(style.kern) tracking=\(style.tracking)", applied: "none",
+                                       reason: "the renderer predates ABI 0.8: no italic, kerning or tracking")])
+            }
+        }
         return try bridge.measure(r)
     }
 
@@ -416,13 +445,13 @@ public final class BridgeTextMeasurer: TextMeasurer, TextRunSource {
 
     /// The retained measurement a Text node of these resolved pixel bounds paints: among the requests of the same text and font, the one whose reported (clamped, see
     /// `TextReportedWidth`) extent can have been snapped to the bounds.
-    private func retainedMatch(text: String, font: Font?, bounds: Rect) throws -> (key: TextMeasureRequest, value: SwiftRightBridge.TextMeasurement, chosen: RetainedRunChoice.Entry) {
+    private func retainedMatch(text: String, font: Font?, style: TextRunStyle? = nil, bounds: Rect) throws -> (key: TextMeasureRequest, value: SwiftRightBridge.TextMeasurement, chosen: RetainedRunChoice.Entry) {
         let fontID = font?.id ?? "body"
         let metadata = font?.metadata
         func reported(_ key: TextMeasureRequest, _ value: SwiftRightBridge.TextMeasurement) -> Float {
             TextReportedWidth.clamp(value.width, proposedDIP: key.proposedWidth, scale: scale)
         }
-        let matching = retained.filter { $0.key.text == text && $0.key.fontID == fontID && $0.key.fontMetadata == metadata && Float($0.key.scale) == scale }
+        let matching = retained.filter { $0.key.text == text && $0.key.fontID == fontID && $0.key.fontMetadata == metadata && Float($0.key.scale) == scale && $0.key.runStyle == style }
         let entries = matching.map { RetainedRunChoice.Entry(proposedWidth: $0.key.proposedWidth, width: reported($0.key, $0.value), height: $0.value.height,
                                                              lines: $0.value.lines.count, firstBaseline: $0.value.firstBaseline, shapedWidth: $0.value.width) }
         let chosen = try RetainedRunChoice.choose(entries, bounds: bounds, scale: scale, text: text)
@@ -460,9 +489,59 @@ public final class BridgeTextMeasurer: TextMeasurer, TextRunSource {
         let fontID = font?.id ?? "body"
         let metadata = font?.metadata
         guard let source = retained.first(where: { $0.key.text == text && $0.key.fontID == fontID && $0.key.fontMetadata == metadata
-                                                    && Float($0.key.scale) == scale && $0.key.proposedWidth == nil && $0.key.lineLimit == nil }) else { return nil }
+                                                    && Float($0.key.scale) == scale && $0.key.proposedWidth == nil && $0.key.lineLimit == nil && $0.key.runStyle == nil }) else { return nil }
         let measured = source.value
         guard color != textColor else {
+            return NaturalTextRun(run: measured.run, width: measured.width, height: measured.height, baseline: measured.firstBaseline)
+        }
+        let key = ColouredKey(request: source.key, color: color)
+        if let hit = coloured[key] { return NaturalTextRun(run: hit.run, width: hit.width, height: hit.height, baseline: hit.firstBaseline) }
+        guard coloured.count < Self.cacheBound else { throw TextMeasureError.measurementCacheBound }
+        let result = try shape(source.key, color: color)
+        coloured[key] = result
+        return NaturalTextRun(run: result.run, width: result.width, height: result.height, baseline: result.firstBaseline)
+    }
+
+    /// `run(text:font:bounds:color:)` for a styled-Text run (#68): the retained measurement of the same text, font and style whose extent can be the bounds, in `color`.
+    public func run(text: String, font: Font?, style: TextRunStyle?, bounds: Rect, color: UInt32?) throws -> TextRunHandle {
+        guard style != nil else {
+            if let color { return try run(text: text, font: font, bounds: bounds, color: color) }
+            return try run(text: text, font: font, bounds: bounds)
+        }
+        let (key, value, chosen) = try retainedMatch(text: text, font: font, style: style, bounds: bounds)
+        guard let color, color != textColor else { return value.run }
+        let coloredKey = ColouredKey(request: key, color: color)
+        if let hit = coloured[coloredKey] { return hit.run }
+        guard coloured.count < Self.cacheBound else { throw TextMeasureError.measurementCacheBound }
+        let result = try shape(key, color: color)
+        guard result.width == value.width, result.height == chosen.height, result.lines.count == chosen.lines else {
+            _ = bridge.release(result.run)
+            throw HostPaintError.measuredRunGeometryMismatch(text)
+        }
+        coloured[coloredKey] = result
+        return result.run
+    }
+
+    public func runOverflows(text: String, font: Font?, style: TextRunStyle?, bounds: Rect) -> Bool {
+        guard let match = try? retainedMatch(text: text, font: font, style: style, bounds: bounds) else { return false }
+        return match.value.width > bounds.w + 1
+    }
+
+    /// One fragment of a styled Text at its natural size: the retained unwrapped measurement of exactly this text, font and style (measured now when the layout never asked for it,
+    /// as a merged stretch of words is not one of the words it measured), in `color` (nil: the measurer's own colour).
+    public func fragmentRun(text: String, font: Font?, style: TextRunStyle?, color: UInt32?) throws -> NaturalTextRun? {
+        let fontID = font?.id ?? "body"
+        let metadata = font?.metadata
+        func find() -> (key: TextMeasureRequest, value: SwiftRightBridge.TextMeasurement)? {
+            retained.first(where: { $0.key.text == text && $0.key.fontID == fontID && $0.key.fontMetadata == metadata && Float($0.key.scale) == scale
+                                     && $0.key.proposedWidth == nil && $0.key.lineLimit == nil && $0.key.runStyle == style }).map { ($0.key, $0.value) }
+        }
+        if find() == nil {
+            _ = measure(TextMeasureRequest(text: text, fontID: fontID, proposedWidth: nil, scale: CGFloat(scale), fontMetadata: metadata, lineLimit: nil, runStyle: style))
+        }
+        guard let source = find() else { return nil }
+        let measured = source.value
+        guard let color, color != textColor else {
             return NaturalTextRun(run: measured.run, width: measured.width, height: measured.height, baseline: measured.firstBaseline)
         }
         let key = ColouredKey(request: source.key, color: color)

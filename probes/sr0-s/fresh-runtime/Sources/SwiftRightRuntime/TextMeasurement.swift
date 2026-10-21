@@ -10,9 +10,12 @@ public struct TextMeasureRequest: Hashable, Sendable {
     public let lineLimit: Int?
     public let proposedWidth: CGFloat?
     public let scale: CGFloat
+    /// Italic, kern and tracking of a styled-Text run (the font id does not carry them); nil for plain text and for a run that has none (#68).
+    public let runStyle: TextRunStyle?
 
     public init(text: String, fontID: String, proposedWidth: CGFloat?, scale: CGFloat, fontMetadata: Font.Metadata? = nil,
-                lineLimit: Int? = nil) {
+                lineLimit: Int? = nil, runStyle: TextRunStyle? = nil) {
+        self.runStyle = runStyle
         self.text = text
         self.fontID = fontID
         self.fontMetadata = fontMetadata
