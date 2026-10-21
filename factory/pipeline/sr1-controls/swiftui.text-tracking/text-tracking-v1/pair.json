@@ -1,0 +1,60 @@
+{
+ "macArgs": [
+  "--fonts",
+  "{repo}/factory/resources/fonts/Tinos-Regular.ttf"
+ ],
+ "textGate": {
+  "helper": "factory/tools/pair_text_report.py",
+  "rects": [
+   [
+    80,
+    60,
+    760,
+    155
+   ],
+   [
+    80,
+    155,
+    760,
+    253
+   ],
+   [
+    80,
+    253,
+    760,
+    350
+   ]
+  ],
+  "edgeTolerancePx": 1,
+  "ink": "half-coverage (luminance<=127)"
+ },
+ "excludeRects": [
+  {
+   "name": "line 1 glyph region (Tinos, same font bytes; AA only). PROVISIONAL (issue #60): rects estimated from the layout (frame origin 20 pt, lines about 39 pt apart at 2.5x); fit from the first CI pair. Gated per line by pair_text_report.py: exact outside, half-coverage ink bbox within 1 px, so the tracked line (wider) and the kerned line (narrower) each gate their width",
+   "rect": [
+    80,
+    60,
+    760,
+    155
+   ]
+  },
+  {
+   "name": "line 2 glyph region (Tinos, same font bytes; AA only). PROVISIONAL (issue #60): rects estimated from the layout (frame origin 20 pt, lines about 39 pt apart at 2.5x); fit from the first CI pair. Gated per line by pair_text_report.py: exact outside, half-coverage ink bbox within 1 px, so the tracked line (wider) and the kerned line (narrower) each gate their width",
+   "rect": [
+    80,
+    155,
+    760,
+    253
+   ]
+  },
+  {
+   "name": "line 3 glyph region (Tinos, same font bytes; AA only). PROVISIONAL (issue #60): rects estimated from the layout (frame origin 20 pt, lines about 39 pt apart at 2.5x); fit from the first CI pair. Gated per line by pair_text_report.py: exact outside, half-coverage ink bbox within 1 px, so the tracked line (wider) and the kerned line (narrower) each gate their width",
+   "rect": [
+    80,
+    253,
+    760,
+    350
+   ]
+  }
+ ]
+}

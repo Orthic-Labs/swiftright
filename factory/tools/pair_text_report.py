@@ -26,7 +26,9 @@ def npx(d):
 def main():
     case, out = Path(sys.argv[1]).resolve(), Path(sys.argv[2]).resolve()
     cfg = json.loads((case / "pair.json").read_text())["textGate"]
-    rect, tol = tuple(cfg["rect"]), int(cfg.get("edgeTolerancePx", 1))
+    # "rects" (several glyph regions, each with its own ink bbox gate; e.g. one per line, so a narrower line inside a wider one is still gated) or one "rect"
+    rects = [tuple(r) for r in cfg["rects"]] if "rects" in cfg else [tuple(cfg["rect"])]
+    rect, tol = rects[0], int(cfg.get("edgeTolerancePx", 1))
     rows = []
     for mac in sorted((out / "mac").glob("run-*.png")):
         n = mac.stem.split("-")[1]
@@ -39,11 +41,20 @@ def main():
             row.update(error=f"size mac={im.size} win={iw.size}", ok=False); rows.append(row); continue
         diff = ImageChops.difference(im, iw)
         inside = diff.crop(rect)
-        outside = diff.copy(); outside.paste((0, 0, 0), rect)
+        outside = diff.copy()
+        for r in rects: outside.paste((0, 0, 0), r)
         outside_px = npx(outside)
         ma, wa = bbox_of(im, rect, 127), bbox_of(iw, rect, 127)
         deltas = None if ma is None or wa is None else [w - m for m, w in zip(ma, wa)]
         ink_ok = deltas is not None and max(abs(d) for d in deltas) <= tol
+        regions = []
+        for r in rects:
+            m2, w2 = bbox_of(im, r, 127), bbox_of(iw, r, 127)
+            d2 = None if m2 is None or w2 is None else [w - m for m, w in zip(m2, w2)]
+            regions.append(dict(rect=list(r), mac=m2, windows=w2, deltaWindowsMinusMac=d2, match=d2 is not None and max(abs(d) for d in d2) <= tol))
+        if len(rects) > 1:
+            ink_ok = all(g["match"] for g in regions)
+            row.update(regions=regions)
         row.update(ok=outside_px == 0 and ink_ok,
                    outsideGlyphRegionDifferingPixels=outside_px,
                    inkBBoxHalfCoverage=dict(mac=ma, windows=wa, deltaWindowsMinusMac=deltas, tolerancePx=tol, match=ink_ok),
@@ -56,7 +67,9 @@ def main():
     (out / "text-report.json").write_text(json.dumps(rep, indent=1))
     aa = sorted({r.get("aaDifferingPixelsInGlyphRegion") for r in rows})
     print(f"{case.name}: pairs={len(rows)} gate={ok}/{len(rows)} outside-diff={sorted({r.get('outsideGlyphRegionDifferingPixels') for r in rows})} aaDiffPx min={aa[0] if aa else None} max={aa[-1] if aa else None}")
-    if rows and rows[0].get("inkBBoxHalfCoverage"):
+    for g in (rows[0].get("regions") or []) if rows else []:
+        print(f"  region {g['rect']}: mac={g['mac']} windows={g['windows']} delta={g['deltaWindowsMinusMac']}")
+    if rows and rows[0].get("inkBBoxHalfCoverage") and not rows[0].get("regions"):
         b = rows[0]["inkBBoxHalfCoverage"]
         print(f"  half-coverage ink bbox mac={b['mac']} windows={b['windows']} delta={b['deltaWindowsMinusMac']}")
     sys.exit(0 if rows and ok == len(rows) else 1)
