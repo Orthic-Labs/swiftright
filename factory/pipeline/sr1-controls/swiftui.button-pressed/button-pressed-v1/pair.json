@@ -1,0 +1,143 @@
+{
+ "steps": [
+  {
+   "op": "wait",
+   "ms": 700
+  },
+  {
+   "op": "dump",
+   "label": "start"
+  },
+  {
+   "op": "wait",
+   "ms": 250
+  },
+  {
+   "op": "shot",
+   "label": "rest"
+  },
+  {
+   "op": "down",
+   "x": 400,
+   "y": 177
+  },
+  {
+   "op": "wait",
+   "ms": 250
+  },
+  {
+   "op": "shot",
+   "label": "p-bordered"
+  },
+  {
+   "op": "up",
+   "x": 400,
+   "y": 177
+  },
+  {
+   "op": "wait",
+   "ms": 200
+  },
+  {
+   "op": "down",
+   "x": 400,
+   "y": 272
+  },
+  {
+   "op": "wait",
+   "ms": 250
+  },
+  {
+   "op": "shot",
+   "label": "p-prominent"
+  },
+  {
+   "op": "up",
+   "x": 400,
+   "y": 272
+  },
+  {
+   "op": "wait",
+   "ms": 200
+  },
+  {
+   "op": "down",
+   "x": 400,
+   "y": 357
+  },
+  {
+   "op": "wait",
+   "ms": 250
+  },
+  {
+   "op": "shot",
+   "label": "p-plain"
+  },
+  {
+   "op": "up",
+   "x": 400,
+   "y": 357
+  },
+  {
+   "op": "wait",
+   "ms": 200
+  },
+  {
+   "op": "down",
+   "x": 400,
+   "y": 432
+  },
+  {
+   "op": "wait",
+   "ms": 250
+  },
+  {
+   "op": "shot",
+   "label": "p-borderless"
+  },
+  {
+   "op": "up",
+   "x": 400,
+   "y": 432
+  },
+  {
+   "op": "wait",
+   "ms": 200
+  },
+  {
+   "op": "shot",
+   "label": "after"
+  }
+ ],
+ "macArgs": [
+  "--steps",
+  "[{\"op\":\"wait\",\"ms\":700},{\"op\":\"dump\",\"label\":\"start\"},{\"op\":\"wait\",\"ms\":250},{\"op\":\"shot\",\"label\":\"rest\"},{\"op\":\"down\",\"x\":400,\"y\":177},{\"op\":\"wait\",\"ms\":250},{\"op\":\"shot\",\"label\":\"p-bordered\"},{\"op\":\"up\",\"x\":400,\"y\":177},{\"op\":\"wait\",\"ms\":200},{\"op\":\"down\",\"x\":400,\"y\":272},{\"op\":\"wait\",\"ms\":250},{\"op\":\"shot\",\"label\":\"p-prominent\"},{\"op\":\"up\",\"x\":400,\"y\":272},{\"op\":\"wait\",\"ms\":200},{\"op\":\"down\",\"x\":400,\"y\":357},{\"op\":\"wait\",\"ms\":250},{\"op\":\"shot\",\"label\":\"p-plain\"},{\"op\":\"up\",\"x\":400,\"y\":357},{\"op\":\"wait\",\"ms\":200},{\"op\":\"down\",\"x\":400,\"y\":432},{\"op\":\"wait\",\"ms\":250},{\"op\":\"shot\",\"label\":\"p-borderless\"},{\"op\":\"up\",\"x\":400,\"y\":432},{\"op\":\"wait\",\"ms\":200},{\"op\":\"shot\",\"label\":\"after\"}]"
+ ],
+ "phaseShots": [
+  "rest",
+  "p-bordered",
+  "p-prominent",
+  "p-plain",
+  "p-borderless",
+  "after"
+ ],
+ "edgeAATolerance": {
+  "levels": 255,
+  "maxOverFraction": 1.0,
+  "maxMeanAbs": 255,
+  "reason": "PROVISIONAL (issue #77): first CI pair; this run only MEASURES the pressed looks (the gate passes whatever differs). Tighten after reading the first result."
+ },
+ "semanticGate": {
+  "fields": [
+   "role",
+   "name",
+   "count",
+   "order"
+  ],
+  "scope": "main",
+  "phases": [
+   "start"
+  ],
+  "boundsTolerancePt": 0.5
+ }
+}
