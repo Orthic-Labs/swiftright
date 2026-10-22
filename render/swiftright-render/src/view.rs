@@ -475,6 +475,9 @@ static AX_POLICY: std::sync::OnceLock<AxPolicy> = std::sync::OnceLock::new();
 static AX_LAST_PUBLISH: AtomicI64 = AtomicI64::new(0);
 static AX_TRAILING: std::sync::atomic::AtomicBool = std::sync::atomic::AtomicBool::new(false);
 pub static AX_PUBLISHES: AtomicU64 = AtomicU64::new(0);
+/// #45 step 5: the candidate list shown / changed / hidden since the last tree publication. Forces a publication even when the host
+/// snapshot did not change; cleared when the update is actually delivered, so the throttle's trailing publish still flushes it.
+static AX_CAND_DIRTY: std::sync::atomic::AtomicBool = std::sync::atomic::AtomicBool::new(false);
 pub static AX_THROTTLED: AtomicU64 = AtomicU64::new(0);
 /// Trailing-publish wakes that were throttled again (the timer fired before the interval was over) and re-armed.
 pub static AX_RETHROTTLED: AtomicU64 = AtomicU64::new(0);
@@ -510,12 +513,13 @@ impl RootView {
     /// Returns the time to wait before the throttled snapshot may be published (the caller schedules the trailing publish).
     fn publish_ax(&mut self) -> Option<std::time::Duration> {
         let version = SNAPSHOT.load(SeqCst);
-        if AX_PUBLISHED.load(SeqCst) == version {
+        if AX_PUBLISHED.load(SeqCst) == version && !AX_CAND_DIRTY.load(SeqCst) {
             return None;
         }
         let pol = ax_policy();
         if pol.off {
             AX_PUBLISHED.store(version, SeqCst);
+            AX_CAND_DIRTY.store(false, SeqCst);
             return None;
         }
         if pol.min_ticks > 0 {
@@ -528,6 +532,7 @@ impl RootView {
             AX_LAST_PUBLISH.store(now, SeqCst);
         }
         AX_PUBLISHED.store(version, SeqCst);
+        AX_CAND_DIRTY.store(false, SeqCst);
         AX_PUBLISHES.fetch_add(1, SeqCst);
         if let Some(a) = self.adapter.as_mut() {
             if let Some(events) = a.update_if_active(crate::ax::build_tree) {
@@ -1456,6 +1461,22 @@ thread_local! {
     static CAND_SHOWN: std::cell::Cell<bool> = const { std::cell::Cell::new(false) };
 }
 
+/// Stores the candidate list for the accessibility tree (None = closed) and, when it changed, asks the drain task for a tree
+/// publication (through `publish_ax`, so the AX throttle applies and a pending update is flushed by its trailing publish).
+fn cand_ax_set(c: Option<crate::ax::AxCand>) {
+    if crate::ax::set_cand(c) {
+        AX_CAND_DIRTY.store(true, SeqCst);
+        KICK.store(true, SeqCst);
+        signal_notify();
+    }
+}
+
+/// Popup row rectangles `(x, y, w, h)` in window-client physical px while the candidate list is shown, else None.
+#[allow(dead_code)]
+pub(crate) fn cand_row_bounds_client() -> Option<Vec<(f64, f64, f64, f64)>> {
+    crate::ax::cand_rows()
+}
+
 /// Hides the popup (UI thread). Logs `tsf_cand hide` once per shown -> hidden transition.
 pub(crate) fn cand_hide() {
     if !tsf::uiless() {
@@ -1469,6 +1490,7 @@ pub(crate) fn cand_hide() {
         }
     });
     CAND_SIDE.with(|c| c.set(None));
+    cand_ax_set(None);
     if CAND_SHOWN.with(|c| c.replace(false)) {
         eprintln!("[swiftright-render] tsf_cand hide qpc={}", qpc_now());
     }
@@ -1553,6 +1575,21 @@ pub(crate) fn cand_refresh() {
         true
     });
     if shown {
+        // Row rectangles in window-client px: the popup rect is in screen px, the client origin is `o`.
+        let mut o = [0i32, 0];
+        unsafe { ClientToScreen(hwnd, &mut o) };
+        let (rh, py) = (crate::cand_popup::row_height(scale), crate::cand_popup::padding_y(scale));
+        let rows: Vec<[f32; 4]> = (0..model.rows.len())
+            .map(|i| {
+                [
+                    (rect.left - o[0]) as f32,
+                    (rect.top - o[1] + py + i as i32 * rh) as f32,
+                    (rect.right - rect.left) as f32,
+                    rh as f32,
+                ]
+            })
+            .collect();
+        cand_ax_set(Some(crate::ax::AxCand { state: st.clone(), rows }));
         CAND_SHOWN.with(|c| c.set(true));
         eprintln!(
             "[swiftright-render] tsf_cand show rect={},{},{},{} side={side:?} sel={} page={} rows={} row_h={} qpc={}",

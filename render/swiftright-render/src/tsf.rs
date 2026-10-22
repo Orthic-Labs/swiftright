@@ -902,8 +902,9 @@ pub fn cand_pick(row: usize) {
     let index = st.first_on_page() + row;
     let set = unsafe { b.SetSelection(index as u32) };
     let set_hr = hr_of(&set);
-    let fin = unsafe { b.Finalize() };
-    tsf_log!("tsf_cand pick row={row} index={index} set_hr=0x{set_hr:08X} hr=0x{:08X}", hr_of(&fin));
+    // Finalize() returned S_OK but left the Microsoft IME composition marked (Dell run click-a); the selection is set, so Enter commits it.
+    let sent = send_enter();
+    tsf_log!("tsf_cand pick row={row} index={index} set_hr=0x{set_hr:08X} enter_sent={sent}");
 }
 
 /// Wheel over the popup (WM_SWR_CAND_WHEEL): moves the selection by one page of rows (`dir` > 0 forward, < 0 back).
@@ -1423,4 +1424,12 @@ pub fn teardown(hwnd: *mut c_void) {
     let t = TSF.with(|s| s.try_borrow_mut().ok().and_then(|mut g| g.take()));
     drop(t); // Tsf::drop -> shutdown
     FAILED.with(|f| f.set(false));
+}
+
+/// Types Enter into the focused window (the IME commits the selected candidate); returns how many events were injected.
+fn send_enter() -> u32 {
+    use windows::Win32::UI::Input::KeyboardAndMouse::{SendInput, INPUT, INPUT_0, INPUT_KEYBOARD, KEYBDINPUT, KEYEVENTF_KEYUP, VIRTUAL_KEY, VK_RETURN};
+    let key = |flags| INPUT { r#type: INPUT_KEYBOARD, Anonymous: INPUT_0 { ki: KEYBDINPUT { wVk: VIRTUAL_KEY(VK_RETURN.0), wScan: 0, dwFlags: flags, time: 0, dwExtraInfo: 0 } } };
+    let inputs = [key(Default::default()), key(KEYEVENTF_KEYUP)];
+    unsafe { SendInput(&inputs, std::mem::size_of::<INPUT>() as i32) }
 }

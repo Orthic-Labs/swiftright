@@ -7,7 +7,7 @@ use std::collections::HashMap;
 use std::sync::{Arc, Mutex};
 
 use accesskit::{
-    Action, ActionData, ActionHandler, ActionRequest, ActivationHandler, Node, NodeId, Orientation, Rect, Role,
+    Action, ActionData, ActionHandler, ActionRequest, ActivationHandler, Live, Node, NodeId, Orientation, Rect, Role,
     TextDirection, TextPosition, TextSelection, Toggled, TreeId, TreeInfo, TreeUpdate,
 };
 
@@ -84,6 +84,103 @@ pub fn lock_ax() -> std::sync::MutexGuard<'static, AxShared> {
 
 const ROOT_ID: NodeId = NodeId(0);
 
+// ---- #45 step 5: the open IME candidate list (own popup, UI-less TSF mode) as UIA nodes.
+// Reserved node ids: the top 4096 values of the u64 space, `CAND_ID_BASE ..= u64::MAX`. Host node and run ids are small
+// counters/handles handed out by the Swift host, so they never reach this range; `cand_overlay_fits` additionally drops the
+// overlay when a host id does, so a collision cannot corrupt the tree.
+//   CAND_ID_BASE      the ListBox "Candidates"
+//   CAND_ID_BASE + 1  the polite live label ("<candidate>, i of n")
+//   CAND_ID_BASE + 16 + row   the ListBoxOption of page row `row` (at most CAND_MAX_ROWS rows)
+pub const CAND_ID_BASE: u64 = u64::MAX - 0xFFF;
+const CAND_LIST_ID: NodeId = NodeId(CAND_ID_BASE);
+const CAND_LIVE_ID: NodeId = NodeId(CAND_ID_BASE + 1);
+const CAND_OPTION_BASE: u64 = CAND_ID_BASE + 16;
+pub const CAND_MAX_ROWS: usize = 64;
+
+/// The candidate list as the popup shows it: the IME state plus the popup row rectangles, `[x, y, w, h]` in window-client physical px
+/// (the coordinates of every other node's bounds), one per row of the current page.
+#[derive(Clone, Debug, PartialEq)]
+pub struct AxCand {
+    pub state: crate::cand::CandState,
+    pub rows: Vec<[f32; 4]>,
+}
+
+/// Published by view.rs `cand_refresh` / `cand_hide` (UI thread); read by `build_tree` on whichever thread UIA activates it, so it is
+/// a static and not a thread local.
+static CAND: Mutex<Option<AxCand>> = Mutex::new(None);
+
+/// Stores the new candidate list (None = closed). True when it differs from the stored one (a tree update is then due).
+pub fn set_cand(c: Option<AxCand>) -> bool {
+    let mut g = CAND.lock().unwrap_or_else(|e| e.into_inner());
+    if *g == c {
+        return false;
+    }
+    *g = c;
+    true
+}
+
+/// The stored popup row rectangles as `(x, y, w, h)` window-client px; None while no list is shown.
+pub fn cand_rows() -> Option<Vec<(f64, f64, f64, f64)>> {
+    let g = CAND.lock().unwrap_or_else(|e| e.into_inner());
+    g.as_ref().map(|c| c.rows.iter().map(|r| (r[0] as f64, r[1] as f64, r[2] as f64, r[3] as f64)).collect())
+}
+
+fn cand_overlay_fits(s: &AxShared) -> bool {
+    !s.nodes.iter().any(|n| n.id >= CAND_ID_BASE || n.runs.iter().any(|r| r.id >= CAND_ID_BASE))
+}
+
+/// "<candidate>, i of n" for the selected row (absolute index + 1 of the total); empty when the selection is not on this page.
+pub fn cand_live_text(c: &AxCand) -> String {
+    let st = &c.state;
+    match st.selected_row() {
+        Some(r) => format!("{}, {} of {}", st.strings[r], st.selection + 1, cand_total(st)),
+        None => String::new(),
+    }
+}
+
+fn cand_total(st: &crate::cand::CandState) -> usize {
+    (st.count as usize).max(st.first_on_page() + st.rows()).max(st.selection + 1)
+}
+
+fn cand_nodes(c: &AxCand, nodes: &mut Vec<(NodeId, Node)>) {
+    let st = &c.state;
+    let first = st.first_on_page();
+    let total = cand_total(st);
+    let sel = st.selected_row();
+    let rows = st.rows().min(CAND_MAX_ROWS);
+    let mut list = Node::new(Role::ListBox);
+    list.set_label("Candidates".to_string());
+    let mut children: Vec<NodeId> = Vec::with_capacity(rows + 1);
+    let (mut x0, mut y0, mut x1, mut y1) = (f64::MAX, f64::MAX, f64::MIN, f64::MIN);
+    for i in 0..rows {
+        let id = NodeId(CAND_OPTION_BASE + i as u64);
+        let mut o = Node::new(Role::ListBoxOption);
+        o.set_label(format!("{} {} of {}", st.strings[i], first + i + 1, total));
+        o.set_selected(sel == Some(i));
+        if let Some(b) = c.rows.get(i) {
+            let r = rect(b);
+            o.set_bounds(r);
+            x0 = x0.min(r.x0);
+            y0 = y0.min(r.y0);
+            x1 = x1.max(r.x1);
+            y1 = y1.max(r.y1);
+        }
+        children.push(id);
+        nodes.push((id, o));
+    }
+    if x0 <= x1 && y0 <= y1 {
+        list.set_bounds(Rect { x0, y0, x1, y1 });
+    }
+    // Fallback announcement: a polite live label whose text changes with the selection (UIA LiveRegionChanged).
+    let mut live = Node::new(Role::Label);
+    live.set_live(Live::Polite);
+    live.set_value(cand_live_text(c));
+    children.push(CAND_LIVE_ID);
+    nodes.push((CAND_LIVE_ID, live));
+    list.set_children(children);
+    nodes.push((CAND_LIST_ID, list));
+}
+
 fn rect(b: &[f32; 4]) -> Rect {
     Rect {
         x0: b[0] as f64,
@@ -107,11 +204,19 @@ pub fn effective_role(base: Role, x: Option<&AxExtras>) -> Role {
 
 pub fn build_tree() -> TreeUpdate {
     let s = lock_ax().clone();
-    build_tree_from(&s)
+    let cand = CAND.lock().unwrap_or_else(|e| e.into_inner()).clone();
+    build_tree_with(&s, cand.as_ref())
 }
 
 pub fn build_tree_from(s: &AxShared) -> TreeUpdate {
+    build_tree_with(s, None)
+}
+
+/// `cand` = the open candidate list (None = none); it becomes a ListBox child of the focused node (the root when the focus is
+/// not a published node). Focus stays where the snapshot has it.
+pub fn build_tree_with(s: &AxShared, cand: Option<&AxCand>) -> TreeUpdate {
     let mut nodes: Vec<(NodeId, Node)> = Vec::new();
+    let cand = cand.filter(|c| c.state.rows() > 0 && cand_overlay_fits(s));
 
     let mut root = Node::new(Role::Window);
     root.set_label(s.title.clone());
@@ -119,6 +224,10 @@ pub fn build_tree_from(s: &AxShared) -> TreeUpdate {
     let mut kids: HashMap<u64, Vec<NodeId>> = HashMap::new();
     for n in &s.nodes {
         kids.entry(n.parent).or_default().push(NodeId(n.id));
+    }
+    if cand.is_some() {
+        let host = if s.focus != 0 && s.nodes.iter().any(|n| n.id == s.focus) { s.focus } else { 0 };
+        kids.entry(host).or_default().push(CAND_LIST_ID);
     }
     root.set_children(kids.remove(&0).unwrap_or_default());
     nodes.push((ROOT_ID, root));
@@ -274,6 +383,10 @@ pub fn build_tree_from(s: &AxShared) -> TreeUpdate {
             run.set_bounds(rect(&r.bounds));
             nodes.push((NodeId(r.id), run));
         }
+    }
+
+    if let Some(c) = cand {
+        cand_nodes(c, &mut nodes);
     }
 
     let focus = if s.focus != 0 && s.nodes.iter().any(|n| n.id == s.focus) {
@@ -488,6 +601,107 @@ mod extras_tests {
         assert_eq!(t[&2].role(), Role::Label);
         assert_eq!(t[&2].value(), Some("Memory"));
         assert_eq!(t[&2].description(), Some("1.2 GB"));
+    }
+}
+
+#[cfg(test)]
+mod cand_tests {
+    use super::*;
+    use crate::cand::CandState;
+
+    fn host(id: u64, role: u32) -> AxNode {
+        AxNode {
+            id,
+            parent: 0,
+            role,
+            actions: 0,
+            flags: 0,
+            toggled: 0,
+            range: None,
+            label: Arc::from(""),
+            value: Arc::from(""),
+            identifier: Arc::from(""),
+            bounds: [0.0, 0.0, 100.0, 20.0],
+            runs: Arc::new(Vec::new()),
+            sel: None,
+            extras: None,
+        }
+    }
+
+    fn shared(nodes: Vec<AxNode>) -> AxShared {
+        AxShared { window: 1, version: 1, title: "t".into(), focus: 7, nodes }
+    }
+
+    fn cand() -> AxCand {
+        AxCand {
+            state: CandState {
+                strings: vec!["\u{4F60}".into(), "\u{59B3}".into(), "\u{5C3C}".into()],
+                selection: 11,
+                page: 1,
+                page_starts: vec![0, 9],
+                count: 14,
+                show_numbers: true,
+            },
+            rows: vec![[10.0, 30.0, 80.0, 24.0], [10.0, 54.0, 80.0, 24.0], [10.0, 78.0, 80.0, 24.0]],
+        }
+    }
+
+    fn tree(c: Option<&AxCand>) -> (HashMap<u64, Node>, TreeUpdate) {
+        let u = build_tree_with(&shared(vec![host(7, ROLE_TEXT_FIELD)]), c);
+        (u.nodes.iter().map(|(i, n)| (i.0, n.clone())).collect(), u)
+    }
+
+    #[test]
+    fn open_list_is_a_listbox_of_options_under_the_focused_field() {
+        let c = cand();
+        let (t, u) = tree(Some(&c));
+        let list = &t[&CAND_ID_BASE];
+        assert_eq!(list.role(), Role::ListBox);
+        assert_eq!(list.label(), Some("Candidates"));
+        assert!(t[&7].children().contains(&CAND_LIST_ID), "the list hangs off the edit node");
+        assert_eq!(u.focus, NodeId(7), "focus stays on the edit node");
+        let opts: Vec<&Node> = (0..3).map(|i| &t[&(CAND_ID_BASE + 16 + i)]).collect();
+        assert!(opts.iter().all(|o| o.role() == Role::ListBoxOption));
+        assert_eq!(opts.iter().filter(|o| o.is_selected() == Some(true)).count(), 1);
+        assert_eq!(opts[2].is_selected(), Some(true), "selection 11 = page 1 row 2");
+        assert_eq!(opts[0].is_selected(), Some(false));
+        assert_eq!(opts[0].label(), Some("\u{4F60} 10 of 14"));
+        assert_eq!(opts[2].label(), Some("\u{5C3C} 12 of 14"));
+        let b = opts[1].bounds().unwrap();
+        assert_eq!((b.x0, b.y0, b.x1, b.y1), (10.0, 54.0, 90.0, 78.0));
+        let lb = list.bounds().unwrap();
+        assert_eq!((lb.x0, lb.y0, lb.x1, lb.y1), (10.0, 30.0, 90.0, 102.0));
+    }
+
+    #[test]
+    fn live_label_follows_the_selection() {
+        let mut c = cand();
+        let (t, _) = tree(Some(&c));
+        let live = &t[&(CAND_ID_BASE + 1)];
+        assert_eq!(live.live(), Live::Polite);
+        assert_eq!(live.value(), Some("\u{5C3C}, 12 of 14"));
+        assert!(t[&CAND_ID_BASE].children().contains(&CAND_LIVE_ID));
+        c.state.selection = 9;
+        let (t, _) = tree(Some(&c));
+        assert_eq!(t[&(CAND_ID_BASE + 1)].value(), Some("\u{4F60}, 10 of 14"));
+    }
+
+    #[test]
+    fn closed_or_empty_list_adds_nothing() {
+        let (t, _) = tree(None);
+        assert!(t.keys().all(|k| *k < CAND_ID_BASE));
+        assert!(!t[&7].children().contains(&CAND_LIST_ID));
+        let mut c = cand();
+        c.state.strings.clear();
+        let (t, _) = tree(Some(&c));
+        assert!(t.keys().all(|k| *k < CAND_ID_BASE));
+    }
+
+    #[test]
+    fn host_id_in_the_reserved_range_drops_the_overlay() {
+        let s = shared(vec![host(7, ROLE_TEXT_FIELD), host(CAND_ID_BASE + 3, ROLE_GROUP)]);
+        let u = build_tree_with(&s, Some(&cand()));
+        assert_eq!(u.nodes.iter().filter(|(i, _)| i.0 >= CAND_ID_BASE).count(), 1);
     }
 }
 

@@ -25,7 +25,9 @@ param(
   # #45: record WinEvents and UIA text/selection/structure events of the probe window (EventLog.cs) into "$Out.events.txt"
   [switch]$EventLog,
   # #45: with -Tsf, also the UI-less spike (SWIFTRIGHT_IME_UILESS=1): the system candidate list is hidden and its contents logged
-  [switch]$UiLess
+  [switch]$UiLess,
+  # #45 step 4: instead of the R1 key test, click row 2 of our candidate popup with the mouse and check that the IME commits it, with no focus change
+  [switch]$ClickPick
 )
 . "$PSScriptRoot\native-common.ps1"
 if ($SysCaret) { $env:SWIFTRIGHT_IME_SYSTEM_CARET = '1' }
@@ -659,7 +661,29 @@ try {
   $winBefore = Snap-Windows   # snapshot immediately before the first Space
   $sp = Space-Until $row $v0 $NIPPON 4 $winBefore
   Add-Check 'conversion-to-nihon' $(if ($sp.Reached) { 'PASS' } else { 'FAIL' }) "Space presses=$($sp.Presses) marked after each press=[$($sp.Seen -join ' | ')] (target = the two ideographs for Japan; candidate order depends on the user's IME history, up to 4 presses allowed)"
-  if ($UiLess) {
+  if ($UiLess -and $ClickPick) {
+    [void](Send-GatedKey 0x20 'click-extra-space' 700)   # conversion list
+    $exeLines2 = @(Exe-ErrLines); $last = $null
+    for ($q = $exeLines2.Count - 1; $q -ge 0; $q--) { $mm = [regex]::Match([string]$exeLines2[$q], 'tsf_cand show rect=(-?\d+),(-?\d+),(-?\d+),(-?\d+) side=(\w+) sel=(\d+) page=(\d+) rows=(\d+) row_h=(\d+)'); if ($mm.Success) { $last = $mm; break } }
+    $fgBefore = [SRN.N]::GetForegroundWindow()
+    $valBefore = Value-Of (Edit $row)
+    if ($last -eq $null) { Add-Check 'own-candidate-click-pick' 'FAIL' 'no tsf_cand show before the click' }
+    else {
+      $rowH = [int]$last.Groups[9].Value; $sc2 = [SRN.N]::GetDpiForWindow($script:Hwnd) / 96.0; $padY = [int][math]::Round(4 * $sc2)
+      $cx = [int]([int]$last.Groups[1].Value + ([int]$last.Groups[3].Value - [int]$last.Groups[1].Value) / 2)
+      $cy = [int]([int]$last.Groups[2].Value + $padY + $rowH * 1.5)
+      Log "click row index 1 at screen $cx,$cy (popup rect $($last.Groups[1].Value),$($last.Groups[2].Value),$($last.Groups[3].Value),$($last.Groups[4].Value) row_h=$rowH pad=$padY)"
+      [SRN.N]::ClickAt($cx, $cy)
+      Start-Sleep -Milliseconds 900
+      $fgAfter = [SRN.N]::GetForegroundWindow()
+      $valAfter = Value-Of (Edit $row); $markedAfter = Marked-Of $row $v0
+      $tail = (Exe-ErrLines | Where-Object { $_ -match 'tsf_cand pick' } | Select-Object -Last 1)
+      Log "click result: value before=[$valBefore] after=[$valAfter] marked=[$markedAfter] pick-log=[$tail]"
+      Add-Check 'own-candidate-click-no-focus-steal' $(if ($fgBefore -eq $fgAfter -and $fgAfter -eq $script:Hwnd) { 'PASS' } else { 'FAIL' }) "foreground before=$($fgBefore.ToInt64()) after=$($fgAfter.ToInt64()) probe=$($script:Hwnd.ToInt64())"
+      Add-Check 'own-candidate-click-pick' $(if ($tail -match 'row=1 index=1 set_hr=0x00000000 hr=0x00000000' -and [string]::IsNullOrEmpty($markedAfter)) { 'PASS' } else { 'FAIL' }) "pick-log=[$tail] value=[$valAfter] marked=[$markedAfter] (the composition must be committed: no marked text left)"
+    }
+  }
+  elseif ($UiLess) {
     # #45 step 0 / R1: in UI-less mode (system list hidden) the IME must still handle Down and the number keys. Observed through the renderer's tsf_uiless update lines
     # (selection) and the field's value.
     Log ("R1 before keys value=[" + (Value-Of (Edit $row)) + "]")
