@@ -17,6 +17,6 @@ struct Witness_g79_button_focus_v1: View {
             TextField("Field", text: .constant("")).frame(width: 120).focused($focus, equals: 4)
         }
         .padding(20).frame(width: 200, height: 200)
-        .onAppear { focus = 4 }
+        .onAppear { focus = 0 }
     }
 }

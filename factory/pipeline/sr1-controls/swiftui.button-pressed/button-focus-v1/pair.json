@@ -21,24 +21,67 @@
   },
   {
    "op": "wait",
-   "ms": 600
-  },
-  {
-   "op": "shot",
-   "label": "front"
+   "ms": 500
   },
   {
    "op": "screen",
-   "label": "scr-front"
+   "label": "s0"
+  },
+  {
+   "op": "key",
+   "key": "Tab"
+  },
+  {
+   "op": "wait",
+   "ms": 400
+  },
+  {
+   "op": "screen",
+   "label": "s1"
+  },
+  {
+   "op": "key",
+   "key": "Tab"
+  },
+  {
+   "op": "wait",
+   "ms": 400
+  },
+  {
+   "op": "screen",
+   "label": "s2"
+  },
+  {
+   "op": "key",
+   "key": "Tab"
+  },
+  {
+   "op": "wait",
+   "ms": 400
+  },
+  {
+   "op": "screen",
+   "label": "s3"
+  },
+  {
+   "op": "key",
+   "key": "Tab"
+  },
+  {
+   "op": "wait",
+   "ms": 400
+  },
+  {
+   "op": "screen",
+   "label": "s4"
   }
  ],
  "macArgs": [
   "--steps",
-  "[{\"op\":\"wait\",\"ms\":700},{\"op\":\"dump\",\"label\":\"start\"},{\"op\":\"wait\",\"ms\":250},{\"op\":\"shot\",\"label\":\"rest\"},{\"op\":\"front\"},{\"op\":\"wait\",\"ms\":600},{\"op\":\"shot\",\"label\":\"front\"},{\"op\":\"screen\",\"label\":\"scr-front\"}]"
+  "[{\"op\":\"wait\",\"ms\":700},{\"op\":\"dump\",\"label\":\"start\"},{\"op\":\"wait\",\"ms\":250},{\"op\":\"shot\",\"label\":\"rest\"},{\"op\":\"front\"},{\"op\":\"wait\",\"ms\":500},{\"op\":\"screen\",\"label\":\"s0\"},{\"op\":\"key\",\"key\":\"Tab\"},{\"op\":\"wait\",\"ms\":400},{\"op\":\"screen\",\"label\":\"s1\"},{\"op\":\"key\",\"key\":\"Tab\"},{\"op\":\"wait\",\"ms\":400},{\"op\":\"screen\",\"label\":\"s2\"},{\"op\":\"key\",\"key\":\"Tab\"},{\"op\":\"wait\",\"ms\":400},{\"op\":\"screen\",\"label\":\"s3\"},{\"op\":\"key\",\"key\":\"Tab\"},{\"op\":\"wait\",\"ms\":400},{\"op\":\"screen\",\"label\":\"s4\"}]"
  ],
  "phaseShots": [
-  "rest",
-  "front"
+  "rest"
  ],
  "edgeAATolerance": {
   "levels": 255,
