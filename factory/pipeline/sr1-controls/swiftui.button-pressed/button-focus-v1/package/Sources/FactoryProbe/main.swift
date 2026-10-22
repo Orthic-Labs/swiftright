@@ -305,7 +305,7 @@ struct HostPlacement {
 }
 
 /// The density every gate was fitted at (decision C12 on the Mac). Passed to the renderer as an explicit render scale (decision H17).
-let factoryRenderScale: Float = 2.5
+let factoryRenderScale: Float = @@CAPTURE_SCALE@@   // stamped by pair.py / ci_pair.py from pair.json captureScale
 
 let result: Int32 = MainActor.assumeIsolated {
     do {
