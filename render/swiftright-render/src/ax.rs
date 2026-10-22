@@ -678,7 +678,7 @@ mod cand_tests {
         let mut c = cand();
         let (t, _) = tree(Some(&c));
         let live = &t[&(CAND_ID_BASE + 1)];
-        assert_eq!(live.live(), Live::Polite);
+        assert_eq!(live.live(), Some(Live::Polite));
         assert_eq!(live.value(), Some("\u{5C3C}, 12 of 14"));
         assert!(t[&CAND_ID_BASE].children().contains(&CAND_LIVE_ID));
         c.state.selection = 9;
