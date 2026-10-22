@@ -8,8 +8,10 @@ import Foundation
 // traversal wraps at both ends.
 //
 // Assumption (macOS "Keyboard navigation" default, System Settings > Keyboard, off): Tab reaches text fields
-// and lists but not buttons or toggles. `tabFocusesAllControls` models the setting turned on. ORACLE ITEM
-// for R6: verify on the Mac oracle that Tab skips a focus-bound Button with the default setting.
+// and lists but not buttons or toggles. `tabFocusesAllControls` models the setting turned on. VERIFIED on the Mac
+// oracle (22 Oct 2026, #79, CI runs 39721102417 / 39723337128): with the default setting a focus request on a
+// Button is refused (the TextField keeps the focus in every shot, no Button gets a ring) and Tab skips it; with
+// AppleKeyboardUIMode 3 Tab walks the Buttons in order and each shows its focus ring.
 
 /// One tab stop, in tree order.
 public struct FocusStop: Equatable, Sendable {
