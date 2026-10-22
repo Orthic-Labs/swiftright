@@ -1,5 +1,7 @@
-// The Combine module on platforms without Apple's (#88): OpenCombine re-exported, plus the Apple-named API it spells differently or lacks.
-//   - Publishers.CombineLatest / CombineLatest3 and Publisher.combineLatest (absent from OpenCombine 0.14).
+// The Combine module on platforms without Apple's (#88): the vendored OpenCombine re-exported (with its Apple-named Schedulers, NotificationCenter.publisher,
+// Timer.publish always compiled in: Vendor/README.md), plus what it lacks:
+//   - Publishers.CombineLatest / CombineLatest3 and Publisher.combineLatest, Publishers.Merge / Merge3 / MergeMany and Publisher.merge(with:)
+//     (absent from OpenCombine 0.14).
 // Measured on the Dell (Swift 6.4, Windows): OpenCombine 0.14.0 builds and runs ObservableObject, @Published, $property publishers, subjects, Future,
 // NotificationCenter publishing and DispatchQueue scheduling.
 #if canImport(Darwin)
