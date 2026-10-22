@@ -174,7 +174,23 @@ def mac(case, name, runs, out, clock=None, strict=False):
                     '<key>CFBundlePackageType</key><string>APPL</string><key>NSPrincipalClass</key><string>NSApplication</string><key>LSMinimumSystemVersion</key><string>14.0</string></dict></plist>')
                 sh(["/usr/bin/codesign", "--force", "--sign", "-", str(app)], log=out / f"mac-sign-{i:02d}.log")
                 err = out / f"mac-run-{i:02d}.err"
-                sh(["/usr/bin/open", "-n", "-W", "-a", str(app), "--stdout", str(out / f"mac-run-{i:02d}.log"), "--stderr", str(err), "--args", *host_args], log=out / f"mac-open-{i:02d}.log", timeout=180)
+                # the host may ask this (parent) process for a window-server capture: a `<png>.req` file naming the window number; the parent has the Screen Recording grant the launched app lacks
+                import threading
+                stop = threading.Event()
+                def serve_captures():
+                    while not stop.is_set():
+                        for req in mdir.glob("*.req"):
+                            try:
+                                num = req.read_text().strip(); target = Path(str(req)[:-4]); req.unlink()
+                                subprocess.run(["/usr/sbin/screencapture", "-l", num, "-x", "-o", str(target)], timeout=30)
+                            except Exception as e:
+                                print(f"screencapture request failed: {e}", flush=True)
+                        stop.wait(0.2)
+                watcher = threading.Thread(target=serve_captures, daemon=True); watcher.start()
+                try:
+                    sh(["/usr/bin/open", "-n", "-W", "-a", str(app), "--stdout", str(out / f"mac-run-{i:02d}.log"), "--stderr", str(err), "--args", *host_args], log=out / f"mac-open-{i:02d}.log", timeout=180)
+                finally:
+                    stop.set(); watcher.join(timeout=5)
                 if err.is_file() and err.stat().st_size:
                     with open(out / f"mac-run-{i:02d}.log", "a") as lg: lg.write(err.read_text())
                 continue

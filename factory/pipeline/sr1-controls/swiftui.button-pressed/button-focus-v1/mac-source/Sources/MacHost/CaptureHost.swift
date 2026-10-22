@@ -246,6 +246,12 @@ func runSteps(_ steps: [[String: Any]], driver: Driver, png: String, ax: String?
                 let task = Process(); task.executableURL = URL(fileURLWithPath: "/usr/sbin/screencapture")
                 task.arguments = ["-l", String(driver.window.windowNumber), "-x", "-o", out]
                 try task.run(); task.waitUntilExit()
+                if task.terminationStatus != 0 {
+                    // started through LaunchServices this process has no Screen Recording grant; the parent (pair.py) does: ask it for the capture and wait for the file
+                    try? String(driver.window.windowNumber).write(toFile: out + ".req", atomically: true, encoding: .utf8)
+                    for _ in 0..<200 { if FileManager.default.fileExists(atPath: out) { break }; pump(0.1) }
+                    print("MAC_SCREENCAPTURE_VIA_PARENT file=\(FileManager.default.fileExists(atPath: out))")
+                }
                 print("MAC_SCREENCAPTURE status=\(task.terminationStatus) window=\(driver.window.windowNumber) png=\(out)")
             case "front":
                 if !driver.window.isVisible { driver.window.setFrameOrigin(NSPoint(x: 40, y: 80)); driver.window.orderFrontRegardless() }
