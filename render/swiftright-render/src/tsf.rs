@@ -69,6 +69,13 @@ pub fn enabled() -> bool {
     *ON.get_or_init(|| std::env::var("SWIFTRIGHT_IME_TSF").map_or(false, |v| v == "1"))
 }
 
+/// Second opt-in gate (issue #45 UI-less spike): SWIFTRIGHT_IME_UILESS=1, effective only together with SWIFTRIGHT_IME_TSF=1. When on,
+/// the UI element sink hides the system candidate list (pbShow=FALSE) and records its contents for `uiless_candidates`.
+pub fn uiless() -> bool {
+    static ON: std::sync::OnceLock<bool> = std::sync::OnceLock::new();
+    *ON.get_or_init(|| enabled() && std::env::var("SWIFTRIGHT_IME_UILESS").map_or(false, |v| v == "1"))
+}
+
 static LOG_BUDGET: AtomicU32 = AtomicU32::new(600);
 
 macro_rules! tsf_log {
@@ -761,6 +768,87 @@ impl UiSink {
     }
 }
 
+thread_local! {
+    /// UI-less spike: id of the candidate list element being tracked, and its latest contents (strings of the current page,
+    /// selection relative to the page start, page number).
+    static UILESS_ID: Cell<Option<u32>> = const { Cell::new(None) };
+    static UILESS_STATE: RefCell<Option<(Vec<String>, usize, u32)>> = const { RefCell::new(None) };
+}
+
+/// Latest candidate list state captured in UI-less mode: (strings of the current page, capped at 9; selection index relative
+/// to the first string of that page; page number). `None` when UI-less is off or no candidate list is open. UI thread only.
+#[allow(dead_code)]
+pub fn uiless_candidates() -> Option<(Vec<String>, usize, u32)> {
+    if !uiless() {
+        return None;
+    }
+    UILESS_STATE.with(|s| s.borrow().clone())
+}
+
+/// Reads count / selection / page / the current page's strings (max 9) and logs them under `tsf_uiless <what>`.
+fn uiless_read(cand: &ITfCandidateListUIElement, id: u32, what: &str) {
+    let count = unsafe { cand.GetCount() }.unwrap_or(0);
+    let sel = unsafe { cand.GetSelection() }.unwrap_or(0);
+    let page = unsafe { cand.GetCurrentPage() }.unwrap_or(0);
+    // Page start indices: first call (NULL, 0) returns the page count, second fills the array. Raw vtable call so the
+    // optional-pointer shape of the generated wrapper cannot matter.
+    let mut pages = 0u32;
+    let hr1 = unsafe { (Interface::vtable(cand).GetPageIndex)(Interface::as_raw(cand), std::ptr::null_mut(), 0, &mut pages) };
+    let mut starts: Vec<u32> = vec![0; pages as usize];
+    let mut hr2 = HRESULT(0);
+    if hr1.is_ok() && pages > 0 {
+        hr2 = unsafe { (Interface::vtable(cand).GetPageIndex)(Interface::as_raw(cand), starts.as_mut_ptr(), pages, &mut pages) };
+    }
+    let (first, end) = if hr2.is_ok() && (page as usize) < starts.len() {
+        let f = starts[page as usize];
+        let e = starts.get(page as usize + 1).copied().unwrap_or(count);
+        (f, e.min(count))
+    } else {
+        (0, count) // no page table: treat all candidates as one page
+    };
+    tsf_log!(
+        "tsf_uiless {what} id={id} candidate_list=true count={count} selection={sel} page={page} pages={pages} first={first} end={end} page_hr=0x{:08X}/0x{:08X}",
+        hr1.0 as u32,
+        hr2.0 as u32
+    );
+    let mut out: Vec<String> = Vec::new();
+    for i in first..end.min(first.saturating_add(9)) {
+        let text = match unsafe { cand.GetString(i) } {
+            Ok(b) => String::from_utf16_lossy(&b),
+            Err(e) => format!("<err 0x{:08X}>", e.code().0 as u32),
+        };
+        tsf_log!("tsf_uiless cand i={i} text={text}");
+        out.push(text);
+    }
+    let rel = (sel.saturating_sub(first)) as usize;
+    UILESS_STATE.with(|s| *s.borrow_mut() = Some((out, rel, page)));
+}
+
+impl UiSink {
+    /// UI-less spike: `what` is begin / update. Returns true when `id` is a candidate list (and logs it).
+    fn uiless_event(&self, id: u32, what: &str) -> bool {
+        let el = UIMGR.with(|u| {
+            let u = u.borrow();
+            let mgr = u.as_ref()?;
+            unsafe { mgr.GetUIElement(id).ok() }
+        });
+        let cand = el.and_then(|e| e.cast::<ITfCandidateListUIElement>().ok());
+        match cand {
+            Some(c) => {
+                if what == "begin" || UILESS_ID.with(|t| t.get()) == Some(id) {
+                    UILESS_ID.with(|t| t.set(Some(id)));
+                    uiless_read(&c, id, what);
+                }
+                true
+            }
+            None => {
+                tsf_log!("tsf_uiless {what} id={id} candidate_list=false");
+                false
+            }
+        }
+    }
+}
+
 #[allow(non_snake_case)]
 impl ITfUIElementSink_Impl for UiSink_Impl {
     fn BeginUIElement(&self, dwuielementid: u32, pbshow: *mut BOOL) -> windows::core::Result<()> {
@@ -768,17 +856,30 @@ impl ITfUIElementSink_Impl for UiSink_Impl {
             unsafe { *pbshow = BOOL(1) };
         }
         self.note(dwuielementid, "open");
+        if uiless() && self.st.associated.get() {
+            if self.uiless_event(dwuielementid, "begin") && !pbshow.is_null() {
+                unsafe { *pbshow = BOOL(0) };
+            }
+        }
         Ok(())
     }
 
     fn UpdateUIElement(&self, dwuielementid: u32) -> windows::core::Result<()> {
         self.note(dwuielementid, "change");
+        if uiless() && UILESS_ID.with(|t| t.get()) == Some(dwuielementid) {
+            self.uiless_event(dwuielementid, "update");
+        }
         Ok(())
     }
 
     fn EndUIElement(&self, dwuielementid: u32) -> windows::core::Result<()> {
         tsf_log_capped!("tsf_ui_element event=end id={dwuielementid}");
         self.st.cand_open.set(false);
+        if uiless() && UILESS_ID.with(|t| t.get()) == Some(dwuielementid) {
+            tsf_log!("tsf_uiless end id={dwuielementid}");
+            UILESS_ID.with(|t| t.set(None));
+            UILESS_STATE.with(|s| *s.borrow_mut() = None);
+        }
         Ok(())
     }
 }
@@ -924,6 +1025,8 @@ impl Tsf {
         self.st.mask.set(0);
         drop(self.ctx.take());
         UIMGR.with(|u| *u.borrow_mut() = None);
+        UILESS_ID.with(|t| t.set(None));
+        UILESS_STATE.with(|s| *s.borrow_mut() = None);
         if self.ui_cookie != 0 {
             if let Some(src) = self.tm.as_ref().and_then(|t| t.cast::<ITfSource>().ok()) {
                 let _ = unsafe { src.UnadviseSink(self.ui_cookie) };
