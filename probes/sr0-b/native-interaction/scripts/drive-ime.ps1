@@ -204,10 +204,10 @@ function Space-Until([string]$row, [string]$v0, [string]$want, [int]$max, $winBa
     $n++
     if (-not (Send-GatedKey 0x20 "space-$n" 120)) { break }
     Start-Sleep -Milliseconds 350
-    Cand-Trigger
+    if (-not $UiLess) { Cand-Trigger }   # UI-less: the system list is hidden, there is no candidate window to find
     $m = Marked-Of $row $v0; $seen.Add($m)
-    if ($winBase -ne $null) { Capture-Evidence "space$n-t350"; Start-Sleep -Milliseconds 850; Capture-Evidence "space$n-t1200" }
-    if ($winBase -ne $null) { $cs = Candidate-Windows $winBase; $h = $cs.Hit | Select-Object -First 1; if ($h -ne $null) { $script:CandSeen = $h } }
+    if ($winBase -ne $null -and -not $UiLess) { Capture-Evidence "space$n-t350"; Start-Sleep -Milliseconds 850; Capture-Evidence "space$n-t1200" }
+    if ($winBase -ne $null -and -not $UiLess) { $cs = Candidate-Windows $winBase; $h = $cs.Hit | Select-Object -First 1; if ($h -ne $null) { $script:CandSeen = $h } }
     if ($m -eq $want) { break }
   }
   return [pscustomobject]@{ Presses = $n; Seen = $seen.ToArray(); Reached = ($seen.Count -gt 0 -and $seen[$seen.Count - 1] -eq $want) }
@@ -659,6 +659,19 @@ try {
   $winBefore = Snap-Windows   # snapshot immediately before the first Space
   $sp = Space-Until $row $v0 $NIPPON 4 $winBefore
   Add-Check 'conversion-to-nihon' $(if ($sp.Reached) { 'PASS' } else { 'FAIL' }) "Space presses=$($sp.Presses) marked after each press=[$($sp.Seen -join ' | ')] (target = the two ideographs for Japan; candidate order depends on the user's IME history, up to 4 presses allowed)"
+  if ($UiLess) {
+    # #45 step 0 / R1: in UI-less mode (system list hidden) the IME must still handle Down and the number keys. Observed through the renderer's tsf_uiless update lines
+    # (selection) and the field's value.
+    Log ("R1 before keys value=[" + (Value-Of (Edit $row)) + "]")
+    [void](Send-GatedKey 0x20 'R1-space-extra' 500)   # into conversion: the candidate list of conversion keys (Down, digits)
+    Log ("R1 after extra Space value=[" + (Value-Of (Edit $row)) + "]")
+    [void](Send-GatedKey 0x28 'R1-down-1' 300)
+    [void](Send-GatedKey 0x28 'R1-down-2' 300)
+    Log ("R1 after two Down value=[" + (Value-Of (Edit $row)) + "]")
+    [void](Send-GatedKey 0x33 'R1-digit-3' 500)
+    Log ("R1 after digit 3 value=[" + (Value-Of (Edit $row)) + "] marked=[" + (Marked-Of $row $v0) + "]")
+  }
+  if ($UiLess) { Log 'R1 done; the remaining checks need the system candidate window and are skipped in UI-less mode'; Close-And-Collect $Fixture; if ($EventLog) { Stop-EventLog "$Out.events.txt" }; Write-Result $Out "ime-$Fixture"; exit 0 }
   $m1 = Measure-Candidate $row $v0 $winBefore
   $a1 = Eval-Anchor $m1
 
