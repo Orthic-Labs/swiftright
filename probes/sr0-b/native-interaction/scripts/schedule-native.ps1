@@ -6,7 +6,7 @@
 # desktop lane to be free (nothing else may use the Dell desktop while it runs: it types real keys into the probe window).
 param(
   [string]$Base = 'D:\Claude\sr0s-bridge06b',
-  [Parameter(Mandatory)][ValidateSet('ime-f7', 'ime-f7live', 'ime-f7live-down', 'ime-f7live-syscaret', 'ime-f7live-tsf-caret', 'ime-f7live-events', 'ime-f7live-uiless', 'ime-f7live-clickpick', 'ime-f7live-numberpick', 'ime-f7live-uialist', 'ime-f7live-numberpick-sys', 'ime-f7-tsf', 'ime-f7live-syscaret-events', 'ime-ref-edge', 'ime-f8', 'narrator')][string]$Check,
+  [Parameter(Mandatory)][ValidateSet('ime-f7', 'ime-f7live', 'ime-f7live-down', 'ime-f7live-syscaret', 'ime-f7live-tsf-caret', 'ime-f7live-events', 'ime-f7live-uiless', 'ime-f7live-clickpick', 'ime-f7live-numberpick', 'ime-f7live-flip', 'ime-f7live-uialist', 'ime-f7live-numberpick-sys', 'ime-f7-tsf', 'ime-f7live-syscaret-events', 'ime-ref-edge', 'ime-f8', 'narrator')][string]$Check,
   [string]$Tag = 'run1',
   [Parameter(Mandatory)][string]$ExpectExe,
   [Parameter(Mandatory)][string]$ExpectDll
@@ -30,6 +30,7 @@ switch ($Check) {
   'ime-f7live-clickpick' { $drv = 'drive-ime.ps1'; $extra = '-Fixture F7live -Tsf -UiLess -ClickPick' }
   'ime-f7live-numberpick-sys' { $drv = 'drive-ime.ps1'; $extra = '-Fixture F7live -Tsf -NumberPick' }
   'ime-f7live-uialist' { $drv = 'drive-ime.ps1'; $extra = '-Fixture F7live -Tsf -UiLess -UiaList' }
+  'ime-f7live-flip' { $drv = 'drive-ime.ps1'; $extra = '-Fixture F7live -Tsf -UiLess -FlipAbove' }
   'ime-f7live-numberpick' { $drv = 'drive-ime.ps1'; $extra = '-Fixture F7live -Tsf -UiLess -NumberPick' }
   'ime-f7live-uiless' { $drv = 'drive-ime.ps1'; $extra = '-Fixture F7live -Tsf -UiLess' }
   'ime-f7live-events' { $drv = 'drive-ime.ps1'; $extra = '-Fixture F7live -EventLog' }

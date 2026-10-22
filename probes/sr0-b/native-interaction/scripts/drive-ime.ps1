@@ -29,7 +29,8 @@ param(
   # #45 step 4: instead of the R1 key test, click row 2 of our candidate popup with the mouse and check that the IME commits it, with no focus change
   [switch]$ClickPick,
   [switch]$NumberPick,
-  [switch]$UiaList
+  [switch]$UiaList,
+  [switch]$FlipAbove
 )
 . "$PSScriptRoot\native-common.ps1"
 if ($SysCaret) { $env:SWIFTRIGHT_IME_SYSTEM_CARET = '1' }
@@ -698,6 +699,33 @@ try {
       $lines2 = @(Exe-ErrLines); $pickAt = -1; for ($k = 0; $k -lt $lines2.Count; $k++) { if ($lines2[$k] -match 'tsf_cand pick') { $pickAt = $k } }
       $ended = ($pickAt -ge 0) -and (@($lines2[$pickAt..($lines2.Count - 1)] | Where-Object { $_ -match 'tsf_composition event=end' }).Count -gt 0)
       Add-Check 'own-candidate-click-pick' $(if ($tail -match 'row=1 index=1 set_hr=0x00000000' -and $ended -and $valAfter.StartsWith($v0) -and $valAfter.Length -gt $v0.Length) { 'PASS' } else { 'FAIL' }) "pick-log=[$tail] composition-ended-after-pick=$ended value=[$valAfter] (a candidate was written after the prefix and the composition ended)"
+    }
+  }
+  elseif ($FlipAbove) {
+    # #45 step 4: near the bottom of the work area our popup must flip above the caret, and come back below when there is room again.
+    [void](Send-GatedKey 0x20 'flip-extra-space' 1000)
+    Add-Type -AssemblyName System.Windows.Forms
+    $wa = [System.Windows.Forms.Screen]::FromHandle($script:Hwnd).WorkingArea
+    $pat = 'tsf_cand show rect=(-?\d+),(-?\d+),(-?\d+),(-?\d+) side=(\w+) sel=(\d+) page=(\d+) rows=(\d+) row_h=(\d+)'
+    $lastShow = { $r = $null; foreach ($l in @(Exe-ErrLines)) { $mm = [regex]::Match([string]$l, $pat); if ($mm.Success) { $r = $mm } }; $r }
+    $m0 = & $lastShow
+    if ($m0 -eq $null) { Add-Check 'own-candidate-flips-above-near-bottom' 'FAIL' 'no popup before the move' }
+    else {
+      $top0 = [int]$m0.Groups[2].Value; $h0 = [int]$m0.Groups[4].Value - $top0
+      $rc = New-Object SRN.RECT; [void][SRN.N]::GetWindowRect($script:Hwnd, [ref]$rc)
+      $dy = ($wa.Bottom - $h0 / 2) - $top0          # popup would end half a popup height below the work area
+      [void][SRN.N]::MoveWindow($script:Hwnd, $rc.Left, $rc.Top + $dy, $rc.Right - $rc.Left, $rc.Bottom - $rc.Top, $true)
+      Start-Sleep -Milliseconds 800
+      [void](Send-GatedKey 0x28 'flip-down' 1000)   # forces a refresh of the popup at the new place
+      $m1 = & $lastShow
+      $ok = ($m1 -ne $null) -and ($m1.Groups[5].Value -eq 'Above') -and ([int]$m1.Groups[4].Value -le $wa.Bottom) -and ([int]$m1.Groups[2].Value -ge $wa.Top)
+      Add-Check 'own-candidate-flips-above-near-bottom' $(if ($ok) { 'PASS' } else { 'FAIL' }) "work area bottom=$($wa.Bottom); moved window by dy=$dy; last popup=$(if ($m1) { $m1.Value } else { 'none' })"
+      [void][SRN.N]::MoveWindow($script:Hwnd, $rc.Left, $rc.Top, $rc.Right - $rc.Left, $rc.Bottom - $rc.Top, $true)
+      Start-Sleep -Milliseconds 800
+      [void](Send-GatedKey 0x28 'flip-down-2' 1000)
+      $m2 = & $lastShow
+      # by design (cand.rs hysteresis) the popup stays above while it still fits above, so it does not jump sides as the list height changes; back to Below is covered by the unit tests
+      Add-Check 'own-candidate-keeps-side-while-it-fits' $(if ($m2 -ne $null -and $m2.Groups[5].Value -eq 'Above' -and [int]$m2.Groups[2].Value -ge $wa.Top -and [int]$m2.Groups[4].Value -le $wa.Bottom) { 'PASS' } else { 'FAIL' }) "after moving back: last popup=$(if ($m2) { $m2.Value } else { 'none' }) (stays Above, inside the work area)"
     }
   }
   elseif ($UiaList) {
