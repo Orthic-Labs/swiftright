@@ -1,0 +1,117 @@
+{
+ "steps": [
+  {
+   "op": "wait",
+   "ms": 700
+  },
+  {
+   "op": "shot",
+   "label": "rest"
+  },
+  {
+   "op": "down",
+   "x": 250,
+   "y": 150
+  },
+  {
+   "op": "move",
+   "x": 300,
+   "y": 170,
+   "down": true
+  },
+  {
+   "op": "dragto",
+   "x": 300,
+   "y": 170
+  },
+  {
+   "op": "wait",
+   "ms": 150
+  },
+  {
+   "op": "move",
+   "x": 350,
+   "y": 190,
+   "down": true
+  },
+  {
+   "op": "dragto",
+   "x": 350,
+   "y": 190
+  },
+  {
+   "op": "wait",
+   "ms": 200
+  },
+  {
+   "op": "shot",
+   "label": "dragging"
+  },
+  {
+   "op": "up",
+   "x": 350,
+   "y": 190
+  },
+  {
+   "op": "wait",
+   "ms": 250
+  },
+  {
+   "op": "shot",
+   "label": "dropped"
+  },
+  {
+   "op": "down",
+   "x": 250,
+   "y": 425
+  },
+  {
+   "op": "up",
+   "x": 250,
+   "y": 425
+  },
+  {
+   "op": "wait",
+   "ms": 250
+  },
+  {
+   "op": "shot",
+   "label": "tapped"
+  },
+  {
+   "op": "down",
+   "x": 250,
+   "y": 425
+  },
+  {
+   "op": "up",
+   "x": 250,
+   "y": 425
+  },
+  {
+   "op": "wait",
+   "ms": 250
+  },
+  {
+   "op": "shot",
+   "label": "tapped-twice"
+  }
+ ],
+ "macArgs": [
+  "--steps",
+  "[{\"op\":\"wait\",\"ms\":700},{\"op\":\"shot\",\"label\":\"rest\"},{\"op\":\"down\",\"x\":250,\"y\":150},{\"op\":\"move\",\"x\":300,\"y\":170,\"down\":true},{\"op\":\"dragto\",\"x\":300,\"y\":170},{\"op\":\"wait\",\"ms\":150},{\"op\":\"move\",\"x\":350,\"y\":190,\"down\":true},{\"op\":\"dragto\",\"x\":350,\"y\":190},{\"op\":\"wait\",\"ms\":200},{\"op\":\"shot\",\"label\":\"dragging\"},{\"op\":\"up\",\"x\":350,\"y\":190},{\"op\":\"wait\",\"ms\":250},{\"op\":\"shot\",\"label\":\"dropped\"},{\"op\":\"down\",\"x\":250,\"y\":425},{\"op\":\"up\",\"x\":250,\"y\":425},{\"op\":\"wait\",\"ms\":250},{\"op\":\"shot\",\"label\":\"tapped\"},{\"op\":\"down\",\"x\":250,\"y\":425},{\"op\":\"up\",\"x\":250,\"y\":425},{\"op\":\"wait\",\"ms\":250},{\"op\":\"shot\",\"label\":\"tapped-twice\"}]"
+ ],
+ "phaseShots": [
+  "rest",
+  "dragging",
+  "dropped",
+  "tapped",
+  "tapped-twice"
+ ],
+ "edgeAATolerance": {
+  "levels": 40,
+  "maxOverFraction": 0.002,
+  "maxMeanAbs": 1,
+  "reason": "PROVISIONAL (flat-colour rectangles at integer or half-pixel offsets); refit from the first CI pair."
+ }
+}

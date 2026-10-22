@@ -407,6 +407,7 @@ function Do-Step($proc, $mainH, $step, [string]$out, [string]$n) {
             }
             return 'ok'
         }
+        'dragto' { return 'ok' }   # Mac-only step (the Mac host's drag move); the Windows side drives the same drag with move + down
         'down' {
             # #77: the primary button pressed and HELD at the client point (no up), so a following "shot" captures the pressed state; "up" releases it.
             $x = [int]$step.x; $y = [int]$step.y
