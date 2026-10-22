@@ -84,10 +84,10 @@
   "s4"
  ],
  "edgeAATolerance": {
-  "levels": 255,
-  "maxOverFraction": 1.0,
-  "maxMeanAbs": 255,
-  "reason": "PROVISIONAL (issue #79): first Mac vs Windows pair of the focus ring at scale 1 (the Mac window-server capture is 1x on the runner). Measuring run."
+  "levels": 64,
+  "maxOverFraction": 0.005,
+  "maxMeanAbs": 1,
+  "reason": "Measured on CI 39722299676 (default macOS keyboard access: Tab skips Buttons): identical in all five shots, maxInBand 61, over-32 pixels 12 of about 7900, mean 0.28. The Mac keeps the TextField focused throughout and no Button gets a ring; Windows matches (a focus request on a Button is refused unless Tab focuses all controls). Tolerance = measured plus margin."
  },
  "semanticGate": {
   "fields": [
@@ -150,5 +150,6 @@
   }
  ],
  "macLaunch": "open",
- "captureScale": 1.0
+ "captureScale": 1.0,
+ "hazeTolerance": 2
 }

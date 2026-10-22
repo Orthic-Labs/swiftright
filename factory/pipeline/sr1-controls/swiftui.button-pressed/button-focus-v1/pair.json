@@ -84,10 +84,10 @@
   "s4"
  ],
  "edgeAATolerance": {
-  "levels": 255,
-  "maxOverFraction": 1.0,
-  "maxMeanAbs": 255,
-  "reason": "PROVISIONAL (issue #79): first Mac vs Windows pair of the focus ring at scale 1 (the Mac window-server capture is 1x on the runner). Measuring run."
+  "levels": 140,
+  "maxOverFraction": 0.03,
+  "maxMeanAbs": 4,
+  "reason": "Measured on CI 39722299676 (3 identical runs, 18 pairs, scale 1, Mac window-server capture vs Windows, full keyboard access ON): ring colour (127,179,250) vs (128,179,250); ring positions and 4 px thickness agree. Residual: the plain and borderless rings hug the text and the Mac text is wider than Segoe (a few px at the ring ends), the bordered corner shape, and a 1-level colour offset of the window-server capture (hazeTolerance 2). Worst row: maxInBand 127, over-32 pixels 122 of 8079 (1.5%), mean 1.97. Tolerance = measured plus margin."
  },
  "semanticGate": {
   "fields": [
@@ -150,5 +150,6 @@
   }
  ],
  "macLaunch": "open",
- "captureScale": 1.0
+ "captureScale": 1.0,
+ "hazeTolerance": 2
 }
