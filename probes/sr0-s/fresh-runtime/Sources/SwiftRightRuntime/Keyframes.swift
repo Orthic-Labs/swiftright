@@ -8,7 +8,7 @@ import Foundation
 //   - LinearKeyframe: linear (or eased by `timingCurve`) from the previous value to `to` over `duration`. MoveKeyframe: jumps to `to` at once.
 //   - CubicKeyframe: a cubic Hermite from the previous value to `to`, with the given start and end velocities (zero when nil).
 //   - SpringKeyframe: a damped spring from the previous value (and velocity) toward `to`; the spring's `duration` and `bounce` give ω = 2π / duration and damping ratio 1 - bounce
-//     (bounce 0 critical, above 0 oscillating), the keyframe lasting `duration` seconds (default: the spring's own duration). NOT measured against SwiftUI's SpringKeyframe.
+//     (bounce 0 critical, above 0 oscillating), the keyframe lasting `duration` seconds (default: until the spring has settled). Values equal SwiftUI's KeyframeTimeline on macOS 27 to 0.1 (KeyframesTests).
 // Property values are `VectorArithmetic` (Double, CGFloat, Float). Not modelled: Animatable structs with several components as one property, `KeyframeTimeline`, and
 // `keyframeAnimator` pausing off screen.
 
@@ -99,7 +99,9 @@ public struct CubicKeyframe<Value: VectorArithmetic> {
 public struct SpringKeyframe<Value: VectorArithmetic> {
     let segment: KeyframeSegment<Value>
     public init(_ to: Value, duration: TimeInterval? = nil, spring: Spring = Spring(), startVelocity: Value? = nil) {
-        let length = duration ?? spring.duration
+        // without a duration the keyframe lasts until the spring has settled (macOS 27: a .snappy keyframe is still moving at 0.75 s and rests by 1.5 s): here until its
+        // envelope e^(-zeta omega t) is under 1e-6 of the displacement
+        let length = duration ?? max(spring.duration, -log(1e-6) / (max(min(1 - spring.bounce, 1), 0.0001) * 2 * Double.pi / max(spring.duration, 1e-6)))
         segment = KeyframeSegment(duration: length) { start, velocity, t in
             // the spring acts on the displacement of the start from the target, with the given start velocity (or the one carried from the previous keyframe)
             let v0 = startVelocity ?? velocity
