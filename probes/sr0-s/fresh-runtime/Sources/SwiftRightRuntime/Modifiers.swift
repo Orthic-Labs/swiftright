@@ -354,6 +354,15 @@ extension View {
         }))
     }
 
+    /// Where a one-line Text (`lineLimit(1)`) that does not fit puts its ellipsis: the start, the middle or the end (default). Only the one-line case is modelled; the renderer's
+    /// own tail truncation handles `.tail` and several lines.
+    /// Apple: https://developer.apple.com/documentation/swiftui/view/truncationmode(_:)
+    public func truncationMode(_ mode: Text.TruncationMode) -> some View {
+        Modified(content: self, spec: .environment({ (environment: inout EnvironmentValues) in
+            environment.truncationMode = mode
+        }))
+    }
+
     /// Limits descendant Text views to at most `number` lines; nil removes the limit.
     public func lineLimit(_ number: Int?) -> some View {
         Modified(content: self, spec: .environment({ (environment: inout EnvironmentValues) in

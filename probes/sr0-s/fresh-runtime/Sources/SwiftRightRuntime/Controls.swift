@@ -632,6 +632,10 @@ private enum LineLimitKey: EnvironmentKey {
     static var defaultValue: Int? { nil }
 }
 
+private enum TruncationModeKey: EnvironmentKey {
+    static var defaultValue: Text.TruncationMode { .tail }
+}
+
 private enum TextCaseKey: EnvironmentKey {
     static var defaultValue: Text.Case? { nil }
 }
@@ -660,6 +664,12 @@ extension EnvironmentValues {
     public var lineLimit: Int? {
         get { self[LineLimitKey.self] }
         set { self[LineLimitKey.self] = newValue }
+    }
+
+    /// `.truncationMode(_:)`: where a one-line Text that does not fit puts its ellipsis (#82).
+    public var truncationMode: Text.TruncationMode {
+        get { self[TruncationModeKey.self] }
+        set { self[TruncationModeKey.self] = newValue }
     }
 
     /// `.textCase(_:)`: the case descendant Text views display in; nil leaves the text as written.

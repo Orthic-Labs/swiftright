@@ -978,6 +978,48 @@ extension Graph {
                                      lineLimit: node.environment.lineLimit)
     }
 
+    /// `.truncationMode(.head | .middle)` on a one-line Text wider than its frame (#82): the string the host paints. Head keeps the longest suffix that fits after the ellipsis;
+    /// middle alternates one character from the end, then one from the start, while the whole still fits (measured on macOS 27: widths 120 -> 8 + 8 and 9 + 10 characters). A
+    /// space at the junction with the ellipsis is dropped. The renderer's own tail truncation covers `.tail`, other line limits and styled text.
+    func truncatedDisplay(_ node: Node, _ string: String) -> String {
+        let mode = node.environment.truncationMode
+        guard mode != .tail, node.environment.lineLimit == 1, !string.contains("\n"), styledText(of: node) == nil else { return string }
+        let bound = node.frame.width
+        guard bound.isFinite, bound > 0 else { return string }
+        let font = node.environment.textFont ?? Font(id: "body")
+        func width(_ s: String) -> CGFloat {
+            measurer.measure(TextMeasureRequest(text: s, fontID: font.id, proposedWidth: nil, scale: scale, fontMetadata: font.metadata, lineLimit: nil)).size.width
+        }
+        guard width(string) > bound + 0.01 else { return string }
+        let chars = Array(string)
+        func clean(_ prefix: Int, _ suffix: Int) -> String {
+            var head = Array(chars[..<prefix]), tail = Array(chars[(chars.count - suffix)...])
+            while head.last == " " { head.removeLast() }
+            while tail.first == " " { tail.removeFirst() }
+            return String(head) + "\u{2026}" + String(tail)
+        }
+        func fits(_ p: Int, _ q: Int) -> Bool { width(clean(p, q)) <= bound + 0.01 }
+        var p = 0, q = 0
+        switch mode {
+        case .head:
+            var lo = 0, hi = chars.count
+            while lo < hi { let mid = (lo + hi + 1) / 2; if fits(0, mid) { lo = mid } else { hi = mid - 1 } }
+            q = lo
+        case .middle:
+            var fromEnd = true
+            while p + q < chars.count {
+                let (np, nq) = fromEnd ? (p, q + 1) : (p + 1, q)
+                guard fits(np, nq) else { break }
+                p = np; q = nq; fromEnd.toggle()
+            }
+        case .tail: return string
+        }
+        let result = clean(p, q)
+        // keep the shaped run of the shown string, so the host finds it for the frame it was given
+        _ = measurer.measure(TextMeasureRequest(text: result, fontID: font.id, proposedWidth: bound, scale: scale, fontMetadata: font.metadata, lineLimit: nil))
+        return result
+    }
+
     private func measureText(_ node: Node, _ string: String, width: CGFloat?) -> LayoutSize {
         let wrapWidth = finiteLength(width)
         if case .text = node.kind, let styled = styledText(of: node) { return measureStyledText(node, styled, wrapWidth: wrapWidth) }   // styled runs (#68)

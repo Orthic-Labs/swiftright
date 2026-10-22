@@ -155,6 +155,9 @@ public struct Text: View, PrimitiveView {
     var nodeKind: NodeKind { .text(string) }
     var nodeContent: (any View)? { nil }
 
+    /// Apple: https://developer.apple.com/documentation/swiftui/text/truncationmode
+    public enum TruncationMode: Hashable, Sendable { case head, middle, tail }
+
     /// Apple: https://developer.apple.com/documentation/swiftui/text/case
     public enum Case: Hashable, Sendable {
         case uppercase, lowercase

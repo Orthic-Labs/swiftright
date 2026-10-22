@@ -2506,7 +2506,7 @@ public final class Graph {
         var marked: UTF16Range?
         switch kind {
         case .text(let string):
-            text = node.environment.textCase?.apply(string) ?? string
+            text = truncatedDisplay(node, node.environment.textCase?.apply(string) ?? string)
         case .textField, .textEditor:
             text = node.textInput?.display
             selection = node.textInput?.selection
