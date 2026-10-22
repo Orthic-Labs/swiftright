@@ -518,6 +518,8 @@ final class Node {
     let relative: [Segment]
     let handle: NodeHandle
     weak var parent: Node?
+    /// The graph that owns this node (ScrollViewReader proxies reach it from a view, #84).
+    weak var owner: Graph?
     private(set) var view: any View
     private(set) var info: ViewTypes.Info
 
@@ -1204,6 +1206,7 @@ public final class Graph {
         let node = Node(id: NodeID(segments: [.type(Graph.rootTypeName)]), relative: [], view: rootView,
                         info: ViewTypes.info(for: rootView), parent: nil)
         node.instance = 0
+        node.owner = self
         root = node
         nodes[node.id] = node
         nodesByString[node.idString] = node
@@ -1453,7 +1456,7 @@ public final class Graph {
     // MARK: Scrolling (#31)
 
     /// The vertical offset of a scroll container (a List, a vertical ScrollView or the legacy scroll node), or nil for other nodes.
-    private func verticalOffset(_ target: Node) -> CGFloat? {
+    func verticalOffset(_ target: Node) -> CGFloat? {
         switch target.kind {
         case .scroll: return target.scrollOffset
         case .scrollView(let configuration): return configuration.axes.contains(.vertical) ? (target.scrollOffsetY ?? 0) : nil
@@ -1473,7 +1476,7 @@ public final class Graph {
 
     /// Moves a scroll container to `proposed`, clamped to 0...maxOffset. Returns whether the offset changed.
     @discardableResult
-    private func moveScroll(_ target: Node, to proposed: CGFloat) -> Bool {
+    func moveScroll(_ target: Node, to proposed: CGFloat) -> Bool {
         guard let state = target.scrollState, let current = verticalOffset(target) else { return false }
         let clamped = min(max(0, proposed), CGFloat(state.maxOffset))
         guard clamped != current else { return false }
@@ -1827,6 +1830,7 @@ public final class Graph {
                 let created = Node(id: childID, relative: relatives[index], view: entry.view, info: entry.info, parent: parent)
                 instanceCounter += 1
                 created.instance = instanceCounter
+                created.owner = self
                 inherit(created, from: parent)
                 if let list = rowListAncestor(of: parent) {
                     if let restored = list.rowCache.take(childID) { created.storage = restored }
