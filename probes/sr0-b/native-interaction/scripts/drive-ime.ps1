@@ -17,9 +17,12 @@ param(
   [Parameter(Mandatory)][string]$ExpectDll,
   # #45 experiment E1: after the layout move is tracked, press Down once (selection change in the open list) and track the list again; a jump to the
   # new caret means the IME applies the new position only on a candidate update. Later checks may change (Down picks a prediction): diagnostic run only.
-  [switch]$DownAfterMove
+  [switch]$DownAfterMove,
+  # #45: run the fixture with the renderer's opt-in system caret (SWIFTRIGHT_IME_SYSTEM_CARET=1)
+  [switch]$SysCaret
 )
 . "$PSScriptRoot\native-common.ps1"
+if ($SysCaret) { $env:SWIFTRIGHT_IME_SYSTEM_CARET = '1' }
 
 # user32 calls for the post-move candidate track (IME_CANDIDATE_TRACK); not exposed by SRN.N, same Add-Type style as NativeHelpers.cs.
 if (-not ('SRN.WinTrack' -as [type])) {

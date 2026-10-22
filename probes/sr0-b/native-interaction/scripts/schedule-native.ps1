@@ -6,7 +6,7 @@
 # desktop lane to be free (nothing else may use the Dell desktop while it runs: it types real keys into the probe window).
 param(
   [string]$Base = 'D:\Claude\sr0s-bridge06b',
-  [Parameter(Mandatory)][ValidateSet('ime-f7', 'ime-f7live', 'ime-f7live-down', 'ime-ref-edge', 'ime-f8', 'narrator')][string]$Check,
+  [Parameter(Mandatory)][ValidateSet('ime-f7', 'ime-f7live', 'ime-f7live-down', 'ime-f7live-syscaret', 'ime-ref-edge', 'ime-f8', 'narrator')][string]$Check,
   [string]$Tag = 'run1',
   [Parameter(Mandatory)][string]$ExpectExe,
   [Parameter(Mandatory)][string]$ExpectDll
@@ -24,6 +24,7 @@ switch ($Check) {
   'ime-f7live' { $drv = 'drive-ime.ps1'; $extra = '-Fixture F7live' }
   'ime-f7live-down' { $drv = 'drive-ime.ps1'; $extra = '-Fixture F7live -DownAfterMove' }
   'ime-ref-edge' { $drv = 'drive-ime-ref.ps1'; $extra = '' }
+  'ime-f7live-syscaret' { $drv = 'drive-ime.ps1'; $extra = '-Fixture F7live -SysCaret' }
   'ime-f8' { $drv = 'drive-ime.ps1'; $extra = '-Fixture F8' }
   'narrator' { $drv = 'drive-narrator.ps1'; $extra = '' }
 }
