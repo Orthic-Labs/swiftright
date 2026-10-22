@@ -71,7 +71,8 @@ enum AXDump {
         d["focus"] = (get(object, "accessibilityFocused", getter: "isAccessibilityFocused") as? Bool) ?? false
         if let id = string(get(object, "accessibilityIdentifier")), !id.isEmpty { d["id"] = id }
         if let f = (get(object, "accessibilityFrame") as? NSValue)?.rectValue, f != .zero {
-            d["bounds"] = [Double(f.minX - origin.x), Double(origin.y + height - f.maxY), Double(f.width), Double(f.height)]
+            let finite: (Double) -> Double = { $0.isFinite ? $0 : 0 }   // a lazy container can report an unbounded frame; JSON cannot hold it
+            d["bounds"] = [finite(Double(f.minX - origin.x)), finite(Double(origin.y + height - f.maxY)), finite(Double(f.width)), finite(Double(f.height))]
         }
         var kids: [[String: Any]] = []
         if depth < 24, seen.insert(ObjectIdentifier(object)).inserted {
