@@ -64,3 +64,6 @@ The documented TSF mechanism is a text store of our own, `ITextStoreACP`, whose 
 Stage 2 was built and run on the Dell desktop (F7live tags ime33-tsf1 to ime33-tsf6). TSF composition works, but the open modern candidate list does not follow a layout move: the IME re-reads `GetTextExt` after `TS_LC_CHANGE`, and `TS_LC_DESTROY` + `TS_LC_CREATE` does not move it either. This is the same result as IMM32.
 
 Astra chose option A: the renderer returns to the IMM path, #33 is an accepted SR1 limit, and the store is kept as `swiftright-03-tsf-store.patch` (diff from 77c041240). See docs/sr1-status.md, 21 October (#33).
+
+## Update (22 October 2026, issue #45): in-tree behind SWIFTRIGHT_IME_TSF=1
+The store is now in the renderer tree (`render/swiftright-render/src/tsf.rs`, bridge in `view.rs`), off by default. With `SWIFTRIGHT_IME_TSF=1` (read once at window creation) the store owns composition as designed above; unset, the IMM32 path is unchanged (no TSF init, no `ImmAssociateContextEx` change). `layout_changed()` follows Chromium's `SendOnLayoutChange` order: `OnSelectionChange()` (when the advise mask has `TS_AS_SEL_CHANGE`) and then `OnLayoutChange(TS_LC_CHANGE)`. The patch file stays as the historical diff.
