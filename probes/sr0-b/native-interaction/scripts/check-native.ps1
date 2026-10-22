@@ -3,7 +3,7 @@
 #   win "powershell -NoProfile -ExecutionPolicy Bypass -File <dir>\check-native.ps1"
 $ErrorActionPreference = 'Stop'
 $bad = 0
-foreach ($f in @('native-common.ps1', 'drive-ime.ps1', 'drive-narrator.ps1', 'schedule-native.ps1', 'check-native.ps1')) {
+foreach ($f in @('native-common.ps1', 'drive-ime.ps1', 'drive-ime-ref.ps1', 'drive-narrator.ps1', 'schedule-native.ps1', 'check-native.ps1')) {
   $tokens = $null; $errs = $null
   [void][System.Management.Automation.Language.Parser]::ParseFile((Join-Path $PSScriptRoot $f), [ref]$tokens, [ref]$errs)
   if ($errs.Count -gt 0) { $bad++; foreach ($e in $errs) { "PARSE_ERROR $f line $($e.Extent.StartLineNumber): $($e.Message)" } } else { "PARSE_OK $f" }
