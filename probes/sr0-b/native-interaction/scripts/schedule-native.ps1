@@ -6,7 +6,7 @@
 # desktop lane to be free (nothing else may use the Dell desktop while it runs: it types real keys into the probe window).
 param(
   [string]$Base = 'D:\Claude\sr0s-bridge06b',
-  [Parameter(Mandatory)][ValidateSet('ime-f7', 'ime-f7live', 'ime-f7live-down', 'ime-f7live-syscaret', 'ime-f7live-tsf-caret', 'ime-f7live-events', 'ime-f7live-uiless', 'ime-f7live-syscaret-events', 'ime-ref-edge', 'ime-f8', 'narrator')][string]$Check,
+  [Parameter(Mandatory)][ValidateSet('ime-f7', 'ime-f7live', 'ime-f7live-down', 'ime-f7live-syscaret', 'ime-f7live-tsf-caret', 'ime-f7live-events', 'ime-f7live-uiless', 'ime-f7-tsf', 'ime-f7live-syscaret-events', 'ime-ref-edge', 'ime-f8', 'narrator')][string]$Check,
   [string]$Tag = 'run1',
   [Parameter(Mandatory)][string]$ExpectExe,
   [Parameter(Mandatory)][string]$ExpectDll
@@ -26,6 +26,7 @@ switch ($Check) {
   'ime-ref-edge' { $drv = 'drive-ime-ref.ps1'; $extra = '' }
   'ime-f7live-syscaret' { $drv = 'drive-ime.ps1'; $extra = '-Fixture F7live -SysCaret' }
   'ime-f7live-tsf-caret' { $drv = 'drive-ime.ps1'; $extra = '-Fixture F7live -SysCaret -Tsf' }
+  'ime-f7-tsf' { $drv = 'drive-ime.ps1'; $extra = '-Fixture F7 -Tsf' }
   'ime-f7live-uiless' { $drv = 'drive-ime.ps1'; $extra = '-Fixture F7live -Tsf -UiLess' }
   'ime-f7live-events' { $drv = 'drive-ime.ps1'; $extra = '-Fixture F7live -EventLog' }
   'ime-f7live-syscaret-events' { $drv = 'drive-ime.ps1'; $extra = '-Fixture F7live -SysCaret -EventLog' }
