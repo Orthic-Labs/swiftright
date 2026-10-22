@@ -13,10 +13,10 @@ public enum TextFieldColors {
     public static let selection: UInt32 = 0xb3d7ffff
     /// Caret: the accent (0,122,255), as measured on macOS 27 in an active key window (window-server capture, CI 39722299676); it was 0x111111, never gated.
     public static let caret: UInt32 = 0x007affff
-    /// A focused field's ring: 3 pt outside the frame to 1 pt inside it, the same extent and colour as a Button's, the outer corner radius about 8 pt (fitted to the Mac ring's corner rows, #80).
+    /// A focused field's ring: 3 pt outside the frame to 1 pt inside it, the same extent and colour as a Button's, the outer corner radius 9 pt = the field corner 6 pt + the 3 pt outset (the corner rows fit 8 to 9, #80).
     /// The caret: 2 px wide at 1x (measured, CI 39725683016: two full accent columns) and centred on the insertion boundary; one point at larger scales (not measured above 1x).
     public static func caretWidth(scale: Float) -> Float { max(2, scale) }
-    public static let focusRingOuterRadius = 8.0
+    public static let focusRingOuterRadius = 9.0
 }
 
 /// Caret and range geometry of a shaped run: x positions in pixels (relative to the run's left) at each UTF-16 offset.
