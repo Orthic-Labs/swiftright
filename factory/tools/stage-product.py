@@ -12,9 +12,9 @@ import argparse, hashlib, io, json, subprocess, sys, tarfile, time, zipfile
 from pathlib import Path
 
 REPO = Path(__file__).resolve().parents[2]
-PATHS = ["packages/SwiftRightBridge", "packages/SwiftRightHost", "probes/sr0-s/fresh-runtime",
+PATHS = ["packages/SwiftRightBridge", "packages/SwiftRightHost", "packages/SwiftRightCombine", "probes/sr0-s/fresh-runtime",
          "factory/pipeline/blocks-w0-i1/corpus", "factory/pipeline/blocks-w0-i1/expected"]   # the last two are test data of ImagePolicyTests (found from #filePath; absent = the tests skip)
-EXCLUDE = ["probes/sr0-s/fresh-runtime/out", "probes/sr0-s/fresh-runtime/.build"]
+EXCLUDE = ["probes/sr0-s/fresh-runtime/out", "probes/sr0-s/fresh-runtime/.build", "packages/SwiftRightCombine/Probe"]
 WIN_STAGE = r"D:\Claude\swiftright\.factory-work\product-stage"
 SSH = ["ssh", "-o", "BatchMode=yes", "win"]
 
