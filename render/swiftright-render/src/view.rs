@@ -1327,6 +1327,16 @@ extern "system" {
     fn GetCurrentProcessId() -> u32;
     fn ScreenToClient(hwnd: *mut c_void, pt: *mut [i32; 2]) -> i32;
     fn GetKeyState(vk: i32) -> i16;
+    fn CreateCaret(hwnd: *mut c_void, bitmap: *mut c_void, w: i32, h: i32) -> i32;
+    fn SetCaretPos(x: i32, y: i32) -> i32;
+    fn ShowCaret(hwnd: *mut c_void) -> i32;
+    fn DestroyCaret() -> i32;
+    fn NotifyWinEvent(event: u32, hwnd: *mut c_void, id_object: i32, id_child: i32);
+}
+#[link(name = "gdi32")]
+extern "system" {
+    fn CreateBitmap(w: i32, h: i32, planes: u32, bits_per_pel: u32, bits: *const c_void) -> *mut c_void;
+    fn DeleteObject(obj: *mut c_void) -> i32;
 }
 #[link(name = "comctl32")]
 extern "system" {
@@ -1463,11 +1473,71 @@ fn ime_replace_on_layout(hwnd: *mut c_void) {
     }
 }
 
+// #45: an invisible system caret at the composition caret. Chromium keeps one in step with its caret (ax_system_caret_win.cc: EVENT_OBJECT_LOCATIONCHANGE on
+// OBJID_CARET) and the Microsoft IME's open list follows a layout move there (measured 22 Oct 2026, Dell, Edge), while ours stays where it opened with IMM32
+// candidate forms and with a TSF store (TS_LC_CHANGE + a fresh GetTextExt rect). The caret is a Win32 caret drawn with an all-zero XOR bitmap, so it changes no
+// pixel; SetCaretPos makes user32 raise the location event, and it is raised explicitly as well. Opt-in (SWIFTRIGHT_IME_SYSTEM_CARET=1) until a desktop run proves it.
+static SYS_CARET: AtomicI32 = AtomicI32::new(0); // 0 none, 1 created
+static SYS_CARET_BMP: std::sync::atomic::AtomicUsize = std::sync::atomic::AtomicUsize::new(0);
+static SYS_CARET_HEIGHT: AtomicI32 = AtomicI32::new(0);
+
+fn sys_caret_enabled() -> bool {
+    static ON: std::sync::OnceLock<bool> = std::sync::OnceLock::new();
+    *ON.get_or_init(|| std::env::var("SWIFTRIGHT_IME_SYSTEM_CARET").map_or(false, |v| v == "1"))
+}
+
+fn sys_caret_place(hwnd: *mut c_void, x: i32, y: i32, h: i32) {
+    if !sys_caret_enabled() {
+        return;
+    }
+    unsafe {
+        if SYS_CARET.load(SeqCst) == 0 || SYS_CARET_HEIGHT.load(SeqCst) != h {
+            if SYS_CARET.load(SeqCst) != 0 {
+                DestroyCaret();
+            }
+            let old = SYS_CARET_BMP.swap(0, SeqCst);
+            if old != 0 {
+                DeleteObject(old as *mut c_void);
+            }
+            // 1 x h monochrome bitmap of zeros: XOR-ing it changes nothing on screen. Rows are WORD-aligned (2 bytes per row).
+            let zeros = vec![0u8; (h.max(1) as usize) * 2];
+            let bmp = CreateBitmap(1, h.max(1), 1, 1, zeros.as_ptr() as *const c_void);
+            SYS_CARET_BMP.store(bmp as usize, SeqCst);
+            let ok = CreateCaret(hwnd, bmp, 1, h.max(1));
+            SYS_CARET.store(if ok != 0 { 1 } else { 0 }, SeqCst);
+            SYS_CARET_HEIGHT.store(h, SeqCst);
+            if ok != 0 {
+                ShowCaret(hwnd);
+            }
+            eprintln!("[swiftright-render] ime_sys_caret create ok={ok} h={h}");
+        }
+        if SYS_CARET.load(SeqCst) != 0 {
+            SetCaretPos(x, y);
+            NotifyWinEvent(0x800B, hwnd, -8, 0); // EVENT_OBJECT_LOCATIONCHANGE, OBJID_CARET, CHILDID_SELF
+            eprintln!("[swiftright-render] ime_sys_caret pos={x},{y} h={h}");
+        }
+    }
+}
+
+fn sys_caret_destroy() {
+    if SYS_CARET.swap(0, SeqCst) != 0 {
+        unsafe {
+            DestroyCaret();
+            let old = SYS_CARET_BMP.swap(0, SeqCst);
+            if old != 0 {
+                DeleteObject(old as *mut c_void);
+            }
+        }
+        eprintln!("[swiftright-render] ime_sys_caret destroy");
+    }
+}
+
 fn place_ime_windows(hwnd: *mut c_void) {
     let r = ime_caret_rect(hwnd);
     let Some(r) = r else { return };
     let (x, y, w, h) = (r.x as i32, r.y as i32, (r.w as i32).max(1), (r.h as i32).max(1));
     ime_remember(x, y, w, h);
+    sys_caret_place(hwnd, x, y, h);
     unsafe {
         let himc = ImmGetContext(hwnd);
         if himc.is_null() {
@@ -1520,6 +1590,7 @@ unsafe extern "system" fn ime_subclass_proc(hwnd: *mut c_void, msg: u32, w: usiz
             }
             if msg == WM_IME_ENDCOMPOSITION {
                 ime_remember(i32::MIN, 0, 0, 0);
+                sys_caret_destroy();
             }
             if msg == WM_IME_COMPOSITION || msg == WM_IME_STARTCOMPOSITION || (msg == WM_IME_NOTIFY && matches!(w, 3 | 4 | 5 | 6 | 7)) {
                 place_ime_windows(hwnd);
