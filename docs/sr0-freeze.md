@@ -15,7 +15,7 @@ Frozen reference build = `qualification/tuple13-candidate.json` (status QUALIFIE
 | new_dmg | `cc8bab86409a4ecf7ba52c6a5bb1ed3177683b39e235ed60019bf292badbc5fb` |
 
 Known SR0 limits carried into the freeze (recorded, not hidden):
-- Narrator spoken output: checked on 21 Oct from an audio loopback transcript instead of a person (#23, closed). It found 'Delete', our provider's button name, and a word of the window title. Roles are not yet required, and matches are not tied to the activation step (#46).
+- Narrator spoken output: checked from an audio loopback recording instead of a person (#23, #46). Since 22 Oct the recording is placed on one clock with the driver's steps (QPC-aligned, silence zero-filled), and the name 'Delete' must be heard inside the window from the Delete key step to 1.5 s after the activation, recognised on that slice alone with a closed grammar (0.95 confidence; System.Speech dictation returns garbage on Narrator's fast one-word utterances). Narrator says the NAME only at its default verbosity (the word 'button' is never spoken), so the ROLE is required from UIA by the focus check (ControlType.Button, name Delete). Three consecutive Dell runs pass (narrator46-g/h/i).
 - IME candidate list does not follow a layout move: an accepted limit of the Microsoft IME (#33 closed), to be revisited in #45.
 - Selection highlight and caret after launch focus: painted (WGC, 20 Oct, #25); only the highlight colour differs from the Mac (SR1 parity, #48).
 

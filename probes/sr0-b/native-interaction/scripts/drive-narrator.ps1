@@ -20,6 +20,48 @@ param(
 )
 . "$PSScriptRoot\native-common.ps1"
 $ready = "$Out.ready"
+# #46: the words Narrator spoke inside ONE time window of the loopback WAV (PCM16 mono, 44-byte header, written by listen-loopback.ps1). The WAV is cut to [StartMs, EndMs] and recognised alone
+# with a CLOSED grammar of the few words the lane expects (no dictation): System.Speech dictation returns garbage on Narrator's fast one-word utterances ("League swygert"), a closed grammar
+# returns them at 0.94-0.95 confidence (measured on the Dell, narrator46-e). Results below MinConf are rejection noise (0.03-0.10 on slices without the word) and are dropped.
+# Narrator speaks without gaps, so segment start times cannot separate steps; the window does.
+function Recognize-WavSlice([string]$Wav, [int]$StartMs, [int]$EndMs, [string[]]$Words, [double]$MinConf = 0.5) {
+  $bytes = [IO.File]::ReadAllBytes($Wav); $rate = [BitConverter]::ToInt32($bytes, 24)
+  $a = 44 + 2 * [int][math]::Floor([math]::Max(0, $StartMs) * $rate / 1000.0); $b = [math]::Min($bytes.Length, 44 + 2 * [int][math]::Floor($EndMs * $rate / 1000.0))
+  $a = [math]::Min($a, $bytes.Length); $n = $b - $a
+  if ($n -lt [int]($rate / 2)) { return [pscustomobject]@{ Words = @(); Seconds = [math]::Round($n / 2.0 / $rate, 2); Error = 'slice shorter than 250 ms' } }
+  $tmp = "$Wav.slice-$StartMs-$EndMs.wav"
+  $fs = [IO.File]::Create($tmp); $w = New-Object IO.BinaryWriter($fs)
+  $w.Write([Text.Encoding]::ASCII.GetBytes('RIFF')); $w.Write([int](36 + $n)); $w.Write([Text.Encoding]::ASCII.GetBytes('WAVEfmt ')); $w.Write([int]16); $w.Write([int16]1); $w.Write([int16]1)
+  $w.Write([int]$rate); $w.Write([int]($rate * 2)); $w.Write([int16]2); $w.Write([int16]16); $w.Write([Text.Encoding]::ASCII.GetBytes('data')); $w.Write([int]$n); $w.Write($bytes, $a, $n); $w.Flush(); $fs.Close()
+  Add-Type -AssemblyName System.Speech
+  $heard = New-Object System.Collections.Generic.List[string]; $err = ''
+  try {
+    $culture = [System.Globalization.CultureInfo]::GetCultureInfo('en-US')
+    $rec = New-Object System.Speech.Recognition.SpeechRecognitionEngine($culture)
+    $ch = New-Object System.Speech.Recognition.Choices; foreach ($q in $Words) { $ch.Add($q) }
+    foreach ($count in 1, 2) {   # one word, or two in a row ("edit delete")
+      $gb = New-Object System.Speech.Recognition.GrammarBuilder; $gb.Culture = $culture
+      foreach ($i in 1..$count) { $gb.Append($ch) }
+      $rec.LoadGrammar((New-Object System.Speech.Recognition.Grammar($gb)))
+    }
+    $rec.SetInputToWaveFile($tmp)
+    $nulls = 0
+    while ($true) {
+      try { $r = $rec.Recognize() } catch [System.Management.Automation.MethodInvocationException] { if ($_.Exception.InnerException -is [System.InvalidOperationException]) { break } else { throw } }
+      if ($null -eq $r) { $nulls++; if ($nulls -gt 6) { break } else { continue } }
+      $nulls = 0
+      if ($r.Confidence -ge $MinConf) { $heard.Add(('{0}({1:N2})' -f $r.Text, $r.Confidence)) }
+    }
+    $rec.Dispose()
+  } catch { $err = $_.Exception.Message }
+  Remove-Item -LiteralPath $tmp -Force -ErrorAction SilentlyContinue
+  return [pscustomobject]@{ Words = @($heard); Seconds = [math]::Round($n / 2.0 / $rate, 2); Error = $err }
+}
+# #46 timing model: key steps are stamped with Stopwatch.GetTimestamp() (QPC ticks, one system-wide clock), the same clock the listener
+# uses for its capture start (ready file: qpc= freq=) and for placing packets in the WAV (qpcPos). WAV offset ms = (step - capStart) * 1000 / freq.
+$script:Marks = New-Object System.Collections.Generic.List[object]
+function Mark([string]$name) { $t = [Diagnostics.Stopwatch]::GetTimestamp(); $script:Marks.Add([pscustomobject]@{ Name = $name; Qpc = $t; Utc = [DateTime]::UtcNow.ToString('o') }); return $t }
+$script:CapQpc = $null; $script:CapFreq = $null; $script:CapUtc = ''
 $VK_CAPS = [uint16]0x14; $VK_RIGHT = [uint16]0x27; $VK_ENTER = [uint16]0x0D; $VK_TAB = [uint16]0x09
 
 Log "host=$env:COMPUTERNAME user=$env:USERNAME session=$((Get-Process -Id $PID).SessionId) started=$(Get-Date -Format o)"
@@ -124,12 +166,22 @@ try {
     $listenProc = $null
   } else { Start-Sleep -Milliseconds 500 }
 } catch { $listenStartErr = "listener launch exception: $($_.Exception.Message)"; $listenProc = $null }
+if ($listenProc -ne $null -and (Test-Path -LiteralPath $listenReady)) {
+  try {
+    $rt = (Get-Content -LiteralPath $listenReady -Raw)
+    if ($rt -match 'qpc=(\d+)\s+freq=(\d+)\s+utc=(\S+)') { $script:CapQpc = [int64]$Matches[1]; $script:CapFreq = [int64]$Matches[2]; $script:CapUtc = $Matches[3] }
+    if ($script:CapFreq -ne [Diagnostics.Stopwatch]::Frequency) { $script:CapQpc = $null }   # different clock base: offsets would be meaningless
+  } catch { $script:CapQpc = $null }
+}
+Log "listener capture_start qpc=$($script:CapQpc) freq=$($script:CapFreq) utc=$($script:CapUtc)"
 Log "listener proc=$(if ($listenProc) { $listenProc.Id } else { 'none' }) wav=$listenWav json=$listenJson start_error=[$listenStartErr]"
 
 $row3Focused = $false; $nav = $null
+$tNarStart = $null; $tReached = $null; $tFocusSeen = $null; $tAct = $null
 $tap = $null; $narStarted = $false; $reached = $false; $gone = $false; $uuid6 = $null; $moved = $false
 try {
   # ---------------------------------------------------------- Narrator first: its startup must not eat the exe script's 40 s step timers
+  $tNarStart = Mark 'narrator-start'
   [void](Start-Process -FilePath "$env:WINDIR\System32\Narrator.exe" -PassThru)
   $narStarted = $true
   $sw = [Diagnostics.Stopwatch]::StartNew(); $running = $false; $listening = $false
@@ -182,11 +234,12 @@ try {
   $mark = $tap.Count
   $nav = New-Object System.Collections.Generic.List[string]
   for ($i = 1; $i -le 22; $i++) {
+    $tKey = Mark "narrator-next-$i"
     if (-not (Send-GatedChord @($VK_CAPS) $VK_RIGHT "narrator-next-$i" 450)) { break }
     $f = Focused-Info
     $nav.Add("${i}:$($f.Type -replace 'ControlType\.','')|$($f.Name)|$($f.Id)|pid=$($f.Pid)")
     if ($f.Id -ne $startFocus.Id) { $moved = $true }
-    if ($f.Id -eq $delId) { $reached = $true; break }
+    if ($f.Id -eq $delId) { $reached = $true; $tReached = $tKey; $tFocusSeen = Mark 'delete-focus-observed'; break }
     if ($i -ge 6 -and -not $moved) { break }
   }
   Log "narrator_nav start=[$($startFocus.Id)] target=[$delId] steps=[$($nav -join ' ; ')]"
@@ -203,6 +256,7 @@ try {
 
   # ---------------------------------------------------------- Narrator activate (Caps Lock + Enter) -> model state
   if ($reached) {
+    $tAct = Mark 'narrator-activate'
     [void](Send-GatedChord @($VK_CAPS) $VK_ENTER 'narrator-activate' 400)
     $gone = Wait-Element { if ((Edit 'Row 6') -eq $null) { 'gone' } else { $null } } 'Row 6 removed by Narrator activation' 5000
     Add-Check 'narrator-activate-changes-model-state' $(if ($gone) { 'PASS' } else { 'FAIL' }) "after Caps Lock + Enter on the focused Delete button: Row 6 present in the UIA tree=$(-not $gone) (model state is confirmed from the exe's EVT lines after exit)"
@@ -291,15 +345,15 @@ finally {
   $leftover = @(Get-Process | Where-Object { $pidsBefore -notcontains $_.Id -and $_.Name -like 'Narrator*' }).Count
   Add-Check 'narrator-stopped-and-state-restored' $(if ($stillRunning -eq 0 -and $listenAfter -eq $listenBefore -and $capsNow -eq $capsBefore -and $regLeft.Count -eq 0) { 'PASS' } else { 'FAIL' }) "exit_path=$exitPath narrator_processes_left=$stillRunning uia_clients_listening before=$listenBefore after=$listenAfter caps_lock before=$capsBefore after=$capsNow (restore press=$capsFixed) registry_keys_changed_by_narrator=[$($regDiff -join ' ; ')] registry_restored=$($regRestored.Count) still_different_after_restore=[$($regLeft -join ' ; ')] os_managed_residual=[$($regOs -join ' ; ') values=$($leftDetail -join ' ; ')] (before-snapshot in $Out.regbackup.txt)"
   # ---------------------------------------------------------- Narrator speech content (#23): verdict from the loopback transcript
-  # Required names: only those tied to steps that ran. A name counts when any recognised text contains it (digits normalised: 'three' = '3').
+  # #46: the recognizer now runs RecognizeAsync(Multiple), so each phrase carries its own AudioPosition, and the WAV is zero-filled across
+  # loopback silence so WAV offset == wall time since capture start. Verdict rule:
+  #   'fresh' (a word of the window title, from the HWND default provider): heard in any segment starting at/after the Narrator start step;
+  #   'Delete' (the UIA name our provider gives the button): heard in a segment whose start offset lies in
+  #     [Delete-step - 0.5 s, min(Delete-step + 3 s, activation step)], where Delete-step is the Caps+Right press that put focus on the Delete button
+  #     (the window ends at the Caps+Enter press: later speech belongs to the activation, not to the focus announcement);
+  #   'button' (role): recorded in the same window, not required (offline System.Speech does not reliably resolve it).
   $minPeak = 200; $navRan = ($nav -ne $null -and $nav.Count -gt 0)
-  # Offline System.Speech cannot resolve Narrator's fast TTS word for word (Dell narrator23-b: roles such as 'button' and 'Row 3' were not
-  # recognised), but it does hear names. Required, from any grammar's text: a word of the window title ('SwiftRight FreshOnBridge', likely
-  # from the HWND default provider: shows Narrator spoke in our window; 'fresh' was heard in every Dell run, 'swift right' only in some)
-  # once Narrator ran, and 'Delete' (the UIA name our provider gives the button Narrator reached: the provider-content proof).
-  $req = New-Object System.Collections.Generic.List[string]
-  if ($narStarted) { $req.Add('fresh') }
-  if ($reached) { $req.Add('Delete') }
+  $needFresh = $narStarted; $needDelete = $reached
   $speechStatus = 'FAIL'; $speechDetail = ''
   try {
     if ($listenProc -ne $null) {
@@ -310,32 +364,70 @@ finally {
     } elseif (-not (Test-Path -LiteralPath $listenJson)) {
       $le = ''; if (Test-Path -LiteralPath $listenErr) { $le = ((Get-Content -LiteralPath $listenErr -ErrorAction SilentlyContinue | Select-Object -First 3) -join ' ') }
       $speechStatus = 'FAIL-not-automatable'; $speechDetail = "listener produced no transcript JSON (exit=$($listenProc.ExitCode)): $le"
+    } elseif ($script:CapQpc -eq $null -and ($needFresh -or $needDelete)) {
+      $speechStatus = 'FAIL-not-automatable'; $speechDetail = "listener capture-start time unavailable (ready file unreadable or clock mismatch), so transcript offsets cannot be tied to the driver steps; wav=$listenWav json=$listenJson"
     } else {
       $lj = Get-Content -LiteralPath $listenJson -Raw | ConvertFrom-Json
       $items = @($lj.phrases)
       $norm = { param($t) $x = ([string]$t).ToLowerInvariant(); foreach ($d in @(@('zero','0'),@('one','1'),@('two','2'),@('three','3'),@('four','4'),@('five','5'),@('six','6'),@('seven','7'),@('eight','8'),@('nine','9'))) { $x = $x -replace "\b$($d[0])\b", $d[1] }; return ($x -replace '[^a-z0-9 ]', ' ' -replace '\s+', ' ').Trim() }
+      $hasWord = { param($it, $w) (" $(& $norm $it.text) " -like "* $(& $norm $w) *") }
+      $toMs = { param($t) if ($t -eq $null) { $null } else { [int][math]::Round(([int64]$t - $script:CapQpc) * 1000.0 / $script:CapFreq) } }
+      $narMs = & $toMs $tNarStart; $reachMs = & $toMs $tReached; $seenMs = & $toMs $tFocusSeen; $actMs = & $toMs $tAct
+      $rel = { param($ms, $anchor) if ($anchor -eq $null) { "$ms ms" } else { '{0:+0.00;-0.00}s' -f (($ms - $anchor) / 1000.0) } }
       $parts = @(); $missing = @()
-      foreach ($p in $req) {
-        $pn = (& $norm $p); $best = $null
-        foreach ($it in $items) {
-          if (" $(& $norm $it.text) " -like "* $pn *") { if ($best -eq $null -or [double]$it.confidence -gt [double]$best.confidence) { $best = $it } }
+      $steps = "step offsets in WAV ms: narrator_start=$narMs delete_key=$reachMs delete_focus_seen=$seenMs activate=$actMs capture_start_utc=$($script:CapUtc) padded_gaps=$($lj.paddedGaps) padded_samples=$($lj.paddedSamples)"
+      if ($needFresh) {
+        $best = $null
+        foreach ($it in $items) { if ([int]$it.offsetMs -ge $narMs -and (& $hasWord $it 'fresh')) { if ($best -eq $null -or [double]$it.confidence -gt [double]$best.confidence) { $best = $it } } }
+        if ($best -ne $null) { $parts += "'fresh' found at $($best.offsetMs)ms ($(& $rel $best.offsetMs $narMs) after Narrator start) conf=$($best.confidence) text=[$($best.text)]" }
+        else { $missing += 'fresh'; $parts += "'fresh' NOT found in any segment starting at/after Narrator start ($narMs ms)" }
+      }
+      if ($needDelete) {
+        $lo = $reachMs - 500; $hi = $reachMs + 3000; if ($actMs -ne $null -and $actMs -lt $hi) { $hi = $actMs }
+        $inWin = @($items | Where-Object { [int]$_.offsetMs -ge $lo -and [int]$_.offsetMs -le $hi })
+        $best = $null
+        foreach ($it in $inWin) { if (& $hasWord $it 'Delete') { if ($best -eq $null -or [double]$it.confidence -gt [double]$best.confidence) { $best = $it } } }
+        $btn = @($inWin | Where-Object { & $hasWord $_ 'button' } | Select-Object -First 1)
+        $btnTxt = $(if ($btn.Count -gt 0) { "'button' heard in window at $($btn[0].offsetMs)ms ($(& $rel $btn[0].offsetMs $reachMs) vs Delete step) text=[$($btn[0].text)]" } else { "'button' not heard in window (recorded, not required)" })
+        $winTxt = "window=[$lo..$hi]ms = Delete step $reachMs ms -0.5s..+3s capped at activation"
+        if ($best -ne $null) { $parts += "'Delete' found at $($best.offsetMs)ms ($(& $rel $best.offsetMs $reachMs) vs Delete step, dur=$($best.durationMs)ms) conf=$($best.confidence) grammar=$($best.grammar) text=[$($best.text)]; $winTxt; $btnTxt" }
+        else {
+          $missing += 'Delete'
+          $outside = @($items | Where-Object { & $hasWord $_ 'Delete' } | Select-Object -First 4 | ForEach-Object { "$($_.offsetMs)ms ($(& $rel $_.offsetMs $reachMs))" })
+          $parts += "'Delete' NOT found in a segment starting inside $winTxt; matches outside the window (not counted): [$($outside -join ', ')]; $btnTxt"
         }
-        if ($best -ne $null) { $parts += "'$p' found conf=$($best.confidence) offset=$($best.offsetMs)ms text=[$($best.text)]" }
-        else { $missing += $p; $parts += "'$p' NOT found in any recognised text" }
+        $segs = (@($inWin | Select-Object -First 10 | ForEach-Object { "$($_.offsetMs)ms/$($_.durationMs)ms:'$($_.text)'" }) -join ' | ')
+        $parts += "segments starting in window: $segs"
+        # #46 window recognition: the WAV cut from the Delete key step (Narrator speaks as the focus lands) to 1.5 s after the activation, recognised with the closed grammar. Narrator announces the
+        # NAME only at its default verbosity ('button' is never spoken: scan of narrator46-e), so the ROLE is required from UIA by narrator-moved-focus-to-delete-button (ControlType.Button, name Delete).
+        $wLo = $reachMs - 100; $wHi = $(if ($actMs -ne $null) { $actMs + 1500 } else { $reachMs + 3000 })
+        # A closed grammar only matches a whole utterance, so the window is scanned in 1.2 s hops (400 ms apart) and the words of every hop are collected, each with its start time.
+        $scanWords = New-Object System.Collections.Generic.List[string]; $scanErr = ''
+        for ($t0 = $wLo; $t0 -le ($wHi - 600); $t0 += 400) {
+          $hop = Recognize-WavSlice $listenWav $t0 ([math]::Min($t0 + 1200, $wHi + 200)) @('delete', 'edit', 'button', 'row')
+          foreach ($wd in @($hop.Words)) { $scanWords.Add("$wd@$t0") }
+          if ($hop.Error -and -not $scanErr) { $scanErr = $hop.Error }
+        }
+        $slice = [pscustomobject]@{ Words = @($scanWords); Seconds = [math]::Round(($wHi - $wLo) / 1000.0, 2); Error = $scanErr }
+        $sliceText = (@($slice.Words) -join ' ')
+        $hasDel = (@($slice.Words) | Where-Object { $_ -like 'delete*' -or $_ -match '\bdelete\b' } | Measure-Object).Count -gt 0
+        $hasBtn = (@($slice.Words) | Where-Object { $_ -match 'button' } | Measure-Object).Count -gt 0
+        $parts += "window recognition [$wLo..$wHi]ms ($($slice.Seconds)s = Delete key step -0.1s .. activation +1.5s): [$sliceText]$(if ($slice.Error) { " error=[$($slice.Error)]" }); 'button' spoken=$hasBtn (not required: role is checked from UIA)"
+        if ($hasDel) { $missing = @($missing | Where-Object { $_ -ne 'Delete' }) } else { if ($missing -notcontains 'Delete') { $missing += 'Delete' } }
       }
       $nPhrase = @($items | Where-Object { $_.grammar -eq 'phrase' }).Count; $nDict = @($items | Where-Object { $_.grammar -eq 'dictation' }).Count
       $dictText = (@($items | Where-Object { $_.grammar -eq 'dictation' } | Select-Object -First 12 | ForEach-Object { "$($_.offsetMs)ms:'$($_.text)'($($_.confidence))" }) -join ' | ')
-      $stats = "samples=$($lj.samples) recorded_s=$($lj.recordedSeconds) peak=$($lj.peak)/32767 nonzero_fraction=$($lj.nonZeroFraction) total_results=$($items.Count) (phrase=$nPhrase dictation=$nDict)"
+      $stats = "samples=$($lj.samples) recorded_s=$($lj.recordedSeconds) peak=$($lj.peak)/32767 nonzero_fraction=$($lj.nonZeroFraction) total_results=$($items.Count) (phrase=$nPhrase dictation=$nDict) recognition_error=[$($lj.recognitionError)]"
       $paths = "wav=$listenWav json=$listenJson"
       $silent = ([int]$lj.peak -lt $minPeak)
-      if ($req.Count -eq 0) {
+      if (-not ($needFresh -or $needDelete)) {
         $speechStatus = 'NOT-RUN'; $speechDetail = "no Narrator-announced step ran (Delete button reached=$reached, Row 3 focused=$row3Focused, nav commands=$($navRan)); nothing to check. $stats; $paths"
       } elseif ($missing.Count -eq 0) {
-        $speechStatus = 'PASS'; $speechDetail = "required provider names recognised in the loopback transcript: $($parts -join '; '). $stats; $paths"
+        $speechStatus = 'PASS'; $speechDetail = "required provider names recognised at the right time: $($parts -join '; '). $steps. $stats; $paths"
       } else {
         $speechStatus = 'FAIL'
-        $why = $(if ($silent) { "SILENT capture (peak $($lj.peak) < $minPeak): no audible output reached the loopback, so this is no-audio, not mis-recognition" } else { "audio was captured (non-silent) but the required phrases were not recognised" })
-        $speechDetail = "$why. $($parts -join '; '). dictation fallback heard: $dictText. $stats; $paths"
+        $why = $(if ($silent) { "SILENT capture (peak $($lj.peak) < $minPeak): no audible output reached the loopback, so this is no-audio, not mis-recognition" } else { "audio was captured (non-silent) but the required phrases were not recognised in their time window" })
+        $speechDetail = "$why. $($parts -join '; '). $steps. dictation heard: $dictText. $stats; $paths"
       }
     }
   } catch { $speechStatus = 'FAIL-not-automatable'; $speechDetail = "loopback transcript could not be produced or read: $($_.Exception.Message); $listenStartErr; wav=$listenWav json=$listenJson" }

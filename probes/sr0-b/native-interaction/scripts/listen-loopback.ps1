@@ -5,7 +5,10 @@
 # Optional: -Phrases (a list, or one string with '|' separators) adds a closed phrase grammar (wildcard + any one phrase + wildcard)
 # next to the dictation grammar, which stays loaded as the fallback so unmatched speech is not forced onto a phrase. With -Phrases each
 # result also carries "grammar" ('phrase' | 'dictation') and the JSON adds signal stats. -StopFile ends the recording when the file appears
-# (-Seconds is then only the upper bound). -ReadyFile is written once capture has actually started.
+# (-Seconds is then only the upper bound). -ReadyFile is written once capture has actually started and holds the capture start as
+# 'qpc=<Stopwatch ticks> freq=<ticks/s> utc=<ISO-8601 UTC>' (#46 timing model): WASAPI loopback delivers NO packets during silence, so each
+# packet's qpcPos (100 ns QPC units) is mapped to the WAV sample index and gaps are filled with zero samples; WAV offset t == wall time
+# captureStart + t. Recognition runs as RecognizeAsync(Multiple) so every phrase has its own AudioPosition (WAV time, ms).
 param(
   [Parameter(Mandatory)][string]$Wav,
   [Parameter(Mandatory)][string]$Json,
@@ -45,7 +48,14 @@ public static class Loopback {
 
     // Returns the number of 16-bit mono samples written; the WAV is 16 kHz-free (device rate), mono, 16-bit.
     public static int LastRate; public static long NonZero; public static int Peak;
+    public static long StartQpc; public static long QpcFreq; public static string StartUtc = ""; public static long PadSamples; public static int PadGaps;
+    static void Pad(BinaryWriter bw, long n) { byte[] z = new byte[2 * 4096]; while (n > 0) { int k = (int)Math.Min(n, 4096); bw.Write(z, 0, 2 * k); n -= k; } }
+    static long To100ns(long ticks, long freq) { return (ticks / freq) * 10000000L + (ticks % freq) * 10000000L / freq; }
+    public static string Stage = "";
     public static long Record(string path, int seconds, string stopFile, string readyFile) {
+        try { return RecordImpl(path, seconds, stopFile, readyFile); } catch (Exception e) { throw new Exception("stage=" + Stage + ": " + e.GetType().Name + ": " + e.Message + " | " + e.StackTrace); }
+    }
+    static long RecordImpl(string path, int seconds, string stopFile, string readyFile) {
         var en = (IMMDeviceEnumerator)new MMDeviceEnumerator();
         IMMDevice dev; Check(en.GetDefaultAudioEndpoint(0 /*eRender*/, 1 /*eMultimedia*/, out dev));
         var iidClient = new Guid("1CB9AD4C-DBFA-4c32-B178-C2F568A703B2"); object o;
@@ -62,17 +72,27 @@ public static class Loopback {
         Check(client.GetService(ref iidCap, out co)); var cap = (IAudioCaptureClient)co;
         var ms = new MemoryStream(); var bw = new BinaryWriter(ms);
         int bytesPer = bits / 8; long samples = 0;
-        Check(client.Start());
+        long freq = System.Diagnostics.Stopwatch.Frequency; QpcFreq = freq; PadSamples = 0; PadGaps = 0;
+        long startQpc = System.Diagnostics.Stopwatch.GetTimestamp(); StartQpc = startQpc;   // taken just before Start: sample 0 == this instant
+        long start100 = To100ns(startQpc, freq);
+        Stage = "start"; Check(client.Start());
         LastRate = rate; NonZero = 0; Peak = 0;
-        if (!string.IsNullOrEmpty(readyFile)) File.WriteAllText(readyFile, DateTime.Now.ToString("o"));
+        StartUtc = DateTime.UtcNow.ToString("o");
+        if (!string.IsNullOrEmpty(readyFile)) File.WriteAllText(readyFile, "qpc=" + startQpc + " freq=" + freq + " utc=" + StartUtc);
         bool useStop = !string.IsNullOrEmpty(stopFile);
         var end = DateTime.UtcNow.AddSeconds(seconds);
         while (DateTime.UtcNow < end && !(useStop && File.Exists(stopFile))) {
             Thread.Sleep(10);
-            uint packet; Check(cap.GetNextPacketSize(out packet));
+            uint packet; Stage = "nextpacket"; Check(cap.GetNextPacketSize(out packet));
             while (packet > 0) {
                 IntPtr data; uint frames, flags; ulong dp, qp;
-                Check(cap.GetBuffer(out data, out frames, out flags, out dp, out qp));
+                Stage = "getbuffer"; Check(cap.GetBuffer(out data, out frames, out flags, out dp, out qp));
+                if ((flags & 0x4) == 0 && qp != 0) {   // AUDCLNT_BUFFERFLAGS_TIMESTAMP_ERROR not set: place this packet on the wall-clock timeline
+                    long rel = (long)qp - start100; if (rel < 0) rel = 0;
+                    long target = (long)((double)rel / 1e7 * rate);
+                    long gap = target - samples;
+                    if (gap > rate / 100) { Pad(bw, gap); samples += gap; PadSamples += gap; PadGaps++; }   // >10 ms with no packet: silence
+                }
                 for (uint f = 0; f < frames; f++) {
                     double sum = 0;
                     if ((flags & AUDCLNT_BUFFERFLAGS_SILENT) == 0) {
@@ -88,11 +108,13 @@ public static class Loopback {
                     if (sv != 0) { NonZero++; int a = Math.Abs((int)sv); if (a > Peak) Peak = a; }
                 }
                 Check(cap.ReleaseBuffer(frames));
-                Check(cap.GetNextPacketSize(out packet));
+                Stage = "nextpacket"; Check(cap.GetNextPacketSize(out packet));
             }
         }
-        client.Stop();
-        using (var fs = File.Create(path)) {
+        Stage = "stop"; client.Stop();
+        { long endTarget = (long)((double)(System.Diagnostics.Stopwatch.GetTimestamp() - startQpc) / freq * rate); long gap = endTarget - samples; if (gap > rate / 100) { Pad(bw, gap); samples += gap; PadSamples += gap; PadGaps++; } }
+        bw.Flush();
+        Stage = "write-wav"; using (var fs = File.Create(path)) {
             var w = new BinaryWriter(fs); int dataLen = (int)ms.Length;
             w.Write(new[] { 'R', 'I', 'F', 'F' }); w.Write(36 + dataLen); w.Write(new[] { 'W', 'A', 'V', 'E' });
             w.Write(new[] { 'f', 'm', 't', ' ' }); w.Write(16); w.Write((short)1); w.Write((short)1); w.Write(rate); w.Write(rate * 2); w.Write((short)2); w.Write((short)16);
@@ -110,7 +132,34 @@ $limit = if ($StopFile) { $dur } else { $Seconds }   # end-of-file test below: t
 $plist = @(); foreach ($p in $Phrases) { foreach ($q in ([string]$p -split '\|')) { if ($q.Trim()) { $plist += $q.Trim() } } }
 $usePhrases = $plist.Count -gt 0
 Add-Type -AssemblyName System.Speech
+Add-Type -ReferencedAssemblies System.Speech -Language CSharp -TypeDefinition @'
+using System;
+using System.Collections.Generic;
+using System.Threading;
+using System.Speech.Recognition;
+public class SegRow { public int OffsetMs; public int DurationMs; public string Text; public double Confidence; public string Grammar; public bool Alt; }
+public class SegCollector {
+    public List<SegRow> Rows = new List<SegRow>(); public ManualResetEvent Done = new ManualResetEvent(false); public string Error = ""; public bool UsePhrases;
+    public void Attach(SpeechRecognitionEngine rec) { rec.SpeechRecognized += OnRec; rec.RecognizeCompleted += OnDone; }
+    void OnDone(object s, RecognizeCompletedEventArgs e) { if (e.Error != null) Error = e.Error.Message; Done.Set(); }
+    void OnRec(object s, SpeechRecognizedEventArgs e) {
+        var r = e.Result; if (r == null) return;
+        int off = r.Audio != null ? (int)r.Audio.AudioPosition.TotalMilliseconds : (int)((SpeechRecognitionEngine)s).AudioPosition.TotalMilliseconds;
+        int dm = r.Audio != null ? (int)r.Audio.Duration.TotalMilliseconds : 0;
+        string g = (r.Grammar != null && !string.IsNullOrEmpty(r.Grammar.Name)) ? r.Grammar.Name : "dictation";
+        lock (Rows) {
+            Rows.Add(new SegRow { OffsetMs = off, DurationMs = dm, Text = r.Text, Confidence = Math.Round(r.Confidence, 3), Grammar = g, Alt = false });
+            if (UsePhrases && g != "phrase") {   // keep phrase-grammar alternates (marked alt) so a lower-ranked phrase match is not lost
+                foreach (var a in r.Alternates) {
+                    try { if (a.Grammar != null && a.Grammar.Name == "phrase") Rows.Add(new SegRow { OffsetMs = off, DurationMs = dm, Text = a.Text, Confidence = Math.Round(a.Confidence, 3), Grammar = "phrase", Alt = true }); } catch { }
+                }
+            }
+        }
+    }
+}
+'@
 $out = New-Object System.Collections.Generic.List[object]
+$recogError = ''
 if ($n -ge ($rate / 2)) {   # a WAV with no (or almost no) samples cannot be recognized; the stats still go to the JSON
     $culture = [System.Globalization.CultureInfo]::GetCultureInfo('en-US')
     $rec = New-Object System.Speech.Recognition.SpeechRecognitionEngine($culture)
@@ -126,37 +175,22 @@ if ($n -ge ($rate / 2)) {   # a WAV with no (or almost no) samples cannot be rec
         $rec.MaxAlternates = 4
     }
     $rec.LoadGrammar($dict)
+    # RecognizeAsync(Multiple): one SpeechRecognized event per phrase, each with its own AudioPosition (WAV time). Shorter end-silence
+    # timeouts split Narrator's utterances at the (now zero-filled) gaps instead of merging them into one long dictation result.
+    $rec.InitialSilenceTimeout = [TimeSpan]::Zero; $rec.BabbleTimeout = [TimeSpan]::Zero
+    $rec.EndSilenceTimeout = [TimeSpan]::FromMilliseconds(150); $rec.EndSilenceTimeoutAmbiguous = [TimeSpan]::FromMilliseconds(250)
     $rec.SetInputToWaveFile($Wav)
-    $nulls = 0
-    while ($true) {
-        # Once the WAV is consumed, Recognize throws "No audio input is supplied" instead of returning null (Dell, narrator23-a): end of input.
-        try { $r = $rec.Recognize() } catch [System.Management.Automation.MethodInvocationException] { if ($_.Exception.InnerException -is [System.InvalidOperationException]) { break } else { throw } }
-        if ($null -eq $r) {
-            # Recognize returns null on silence or at the end of the file; stop once the stream position reaches the end.
-            $nulls++
-            if ($rec.AudioPosition.TotalSeconds -ge ($limit - 0.5) -or $rec.AudioState -eq 'Stopped' -or $nulls -gt 200) { break } else { continue }
-        }
-        $nulls = 0
-        $off = [int]$r.Audio.AudioPosition.TotalMilliseconds; $dm = [int]$r.Audio.Duration.TotalMilliseconds
-        $row = [ordered]@{ offsetMs = $off; durationMs = $dm; text = $r.Text; confidence = [math]::Round($r.Confidence, 3) }
-        if ($usePhrases) {
-            $row['grammar'] = $(if ($r.Grammar -ne $null -and $r.Grammar.Name) { $r.Grammar.Name } else { 'dictation' })
-            $row['alt'] = $false
-        }
+    $col = New-Object SegCollector; $col.UsePhrases = $usePhrases; $col.Attach($rec)
+    $rec.RecognizeAsync([System.Speech.Recognition.RecognizeMode]::Multiple)
+    if (-not $col.Done.WaitOne([int](60000 + 3000 * $dur))) { $recogError = 'recognition did not complete in time'; try { $rec.RecognizeAsyncCancel() } catch { } }
+    if ($col.Error) { $recogError = $col.Error }   # end of the WAV normally completes without error; any text here is recorded, not hidden
+    foreach ($r in @($col.Rows | Sort-Object OffsetMs)) {
+        $row = [ordered]@{ offsetMs = $r.OffsetMs; durationMs = $r.DurationMs; text = $r.Text; confidence = $r.Confidence }
+        if ($usePhrases) { $row['grammar'] = $r.Grammar; $row['alt'] = $r.Alt }
         $out.Add($row)
-        if ($usePhrases) {
-            # when the top hypothesis came from dictation, keep phrase-grammar alternates (marked alt) so a lower-ranked phrase match is not lost
-            foreach ($a in $r.Alternates) {
-                try {
-                    if ($a.Grammar -ne $null -and $a.Grammar.Name -eq 'phrase' -and $row['grammar'] -ne 'phrase') {
-                        $out.Add([ordered]@{ offsetMs = $off; durationMs = $dm; text = $a.Text; confidence = [math]::Round($a.Confidence, 3); grammar = 'phrase'; alt = $true })
-                    }
-                } catch { }
-            }
-        }
     }
-    $rec.Dispose()
+    try { $rec.Dispose() } catch { }
 }
 $nzf = if ($n -gt 0) { [math]::Round($nonZero / [double]$n, 4) } else { 0 }
-@{ samples = $n; seconds = $Seconds; recordedSeconds = [math]::Round($dur, 2); sampleRate = $rate; nonZeroSamples = $nonZero; nonZeroFraction = $nzf; peak = $peak; phraseMode = $usePhrases; phrases = $out } | ConvertTo-Json -Depth 4 | Set-Content -LiteralPath $Json -Encoding utf8
+@{ captureStartQpc = [Loopback]::StartQpc; qpcFrequency = [Loopback]::QpcFreq; captureStartUtc = [Loopback]::StartUtc; paddedSamples = [Loopback]::PadSamples; paddedGaps = [Loopback]::PadGaps; recognitionError = $recogError; samples = $n; seconds = $Seconds; recordedSeconds = [math]::Round($dur, 2); sampleRate = $rate; nonZeroSamples = $nonZero; nonZeroFraction = $nzf; peak = $peak; phraseMode = $usePhrases; phrases = $out } | ConvertTo-Json -Depth 4 | Set-Content -LiteralPath $Json -Encoding utf8
 "LISTEN_DONE samples=$n phrases=$($out.Count) peak=$peak nonzero_fraction=$nzf"
