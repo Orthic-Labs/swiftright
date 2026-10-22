@@ -254,6 +254,8 @@ enum ModifierSpec {
     case tap(TapHook)
     /// #84: `.gesture`, `.simultaneousGesture`, `.highPriorityGesture` (Tap/SpatialTap/Drag with onChanged/onEnded).
     case gesture(GestureHook)
+    /// #84: `.accessibilityAction(named:_:)` / `.accessibilityAction(_:_:)`.
+    case accessibilityAction(AccessibilityActionHook)
     /// SR2 R1 (#36): `.offset(x:y:)`. Layout is unchanged; the child is placed shifted by (x, y) (not mirrored under right-to-left, as in SwiftUI).
     case offset(CGFloat, CGFloat)
     /// SR2 R1 (#36): `.position(x:y:)`. Takes the whole proposed space; the child is centred at the point in this node's coordinate space.
@@ -309,6 +311,7 @@ enum ModifierSpec {
         case .hover: return "modifier.onHover"
         case .tap: return "modifier.onTapGesture"
         case .gesture: return "modifier.gesture"
+        case .accessibilityAction: return "modifier.accessibilityAction"
         case .offset: return "modifier.offset"
         case .position: return "modifier.position"
         case .alignmentGuide: return "modifier.alignmentGuide"
@@ -359,6 +362,7 @@ enum ModifierSpec {
         case .hover: return "onHover"
         case .tap: return "onTapGesture"
         case .gesture: return "gesture"
+        case .accessibilityAction: return "accessibilityAction"
         case .offset: return "offset"
         case .position: return "position"
         case .alignmentGuide: return "alignmentGuide"

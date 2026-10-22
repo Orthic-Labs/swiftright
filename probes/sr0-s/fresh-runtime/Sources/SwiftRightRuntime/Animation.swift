@@ -33,6 +33,8 @@ public struct Animation: Sendable, Equatable {
         case integratedSpring(stiffness: Double, damping: Double)
         /// `interpolatingSpring`: the closed-form damped oscillator (unit mass).
         case closedSpring(stiffness: Double, damping: Double)
+        /// `timingCurve(c0x, c0y, c1x, c1y)`: a unit cubic Bezier through (0, 0) and (1, 1) with these control points (#84).
+        case bezier(Double, Double, Double, Double)
     }
 
     /// Tag recorded in commit records.
@@ -70,6 +72,11 @@ public struct Animation: Sendable, Equatable {
 
     public static func easeInOut(duration: Double) -> Animation {
         Animation(name: "easeInOut", duration: duration, curve: .easeInOut)
+    }
+
+    /// Apple: https://developer.apple.com/documentation/swiftui/animation/timingcurve(_:_:_:_:duration:)
+    public static func timingCurve(_ c0x: Double, _ c0y: Double, _ c1x: Double, _ c1y: Double, duration: Double = 0.35) -> Animation {
+        Animation(name: "timingCurve", duration: duration, curve: .bezier(c0x, c0y, c1x, c1y))
     }
 
     /// 0.35 s, as SwiftUI.
@@ -219,6 +226,7 @@ extension Animation.Curve {
         case .easeIn: return UnitBezier.easeIn.value(at: x)
         case .easeOut: return UnitBezier.easeOut.value(at: x)
         case .easeInOut: return UnitBezier.easeInOut.value(at: x)
+        case .bezier(let a, let b, let c, let d): return UnitBezier(a, b, c, d).value(at: x)
         case .spring: return SpringModel.value(elapsed: x * 0.5, duration: 0.5)
         case .integratedSpring, .closedSpring: return x
         }
