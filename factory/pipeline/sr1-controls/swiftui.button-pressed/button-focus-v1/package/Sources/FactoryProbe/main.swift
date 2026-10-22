@@ -171,7 +171,7 @@ struct HostPlacement {
             print("HOST_ROOT_CENTERING rootX=\(rootBounds.x) rootY=\(rootBounds.y) rootW=\(rootBounds.w) rootH=\(rootBounds.h) dx=\(placement.dx) dy=\(placement.dy) viewportW=\(viewport.w) viewportH=\(viewport.h)")
         }
         do {
-            let committed = try painter.commit(root: root, version: version + 1, previousLive: live,
+            let committed = try painter.commit(root: root, version: version + 1, previousLive: live, focused: record.focused,
                                                background: ResolvedNodePainter.Background(bounds: viewport, color: Self.dark ? 0x1e1e1eff : 0xffffffff),
                                                place: { placement.applying(to: $0) }) { try window.commit($0) }
             version += 1

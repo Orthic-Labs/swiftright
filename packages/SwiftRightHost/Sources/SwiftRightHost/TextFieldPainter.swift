@@ -11,8 +11,10 @@ public enum TextFieldColors {
     /// emphasized colour the Mac captures show (the field editor is first responder in a key-appearance window). Read from AppKit by
     /// `factory/tools/appkit-probe`. Dark appearance (63,99,139) and the unemphasized grey (220) are not painted.
     public static let selection: UInt32 = 0xb3d7ffff
-    /// Caret: reported state.
-    public static let caret: UInt32 = 0x111111ff
+    /// Caret: the accent (0,122,255), as measured on macOS 27 in an active key window (window-server capture, CI 39722299676); it was 0x111111, never gated.
+    public static let caret: UInt32 = 0x007affff
+    /// A focused field's ring: 3 pt outside the frame to 1 pt inside it, the same extent and colour as a Button's, the outer corner radius about 6.5 pt (measured, #80).
+    public static let focusRingOuterRadius = 6.5
 }
 
 /// Caret and range geometry of a shaped run: x positions in pixels (relative to the run's left) at each UTF-16 offset.
@@ -122,6 +124,17 @@ extension ResolvedNodePainter {
         let isPlaceholder = shown.isEmpty
         let content = isPlaceholder ? (node.placeholder ?? "") : shown
         let isFocused = focusedFieldID == node.id
+        // #80: the focus ring of a focused bezeled field, over the bezel (it reaches 1 pt into the frame) and under the text and caret
+        if isFocused, artwork == .bezel, isEnabled, bounds.w >= 1, bounds.h >= 1 {
+            let ring = ButtonArtwork.labelFocusRing(widthPX: Int(bounds.w.rounded()), heightPX: Int(bounds.h.rounded()), scale: scale, outerRadius: TextFieldColors.focusRingOuterRadius)
+            let margin = Float(ButtonArtwork.focusRingPixels(scale: scale))
+            let ringHandle = try images.registerImage(width: UInt32(ring.width), height: UInt32(ring.height), rgba: ring.rgba, stride: 0)
+            let ringKey = id | (UInt64(0x500) << 48)
+            if let stale = pendingShapeImages[ringKey] { _ = images.release(stale) }
+            pendingShapeImages[ringKey] = ringHandle
+            primitives.append(.image(ringHandle, Rect(x: bounds.x - margin + imageGuardBand, y: bounds.y - margin + imageGuardBand,
+                                                      w: Float(ring.width) - 2 * imageGuardBand, h: Float(ring.height) - 2 * imageGuardBand)))
+        }
         let inset = Float(TextFieldMetrics.textOrigin(artwork)) * scale          // where the text starts (bezel: 6 pt)
         let clipInset = Float(TextFieldMetrics.textInset(artwork)) * scale        // the cell's content rect clips it (bezel: 4 pt each side; Mac: ink reaches 4 pt from the right edge)
         let clip = Rect(x: bounds.x + clipInset, y: bounds.y, w: max(0, bounds.w - 2 * clipInset), h: bounds.h)

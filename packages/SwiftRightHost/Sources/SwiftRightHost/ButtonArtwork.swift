@@ -97,12 +97,13 @@ public enum ButtonArtwork {
 
     /// The focus ring of a button without a body (`.plain`, `.borderless`): the ring only, `focusRingPixels` larger than the frame on every side. A rounded rectangle `focusRingWidth` points outside
     /// the frame (corner radius `labelFocusRingRadius`) minus the frame inset by `labelFocusRingOverlap`, in `focusRingRGB` at `focusRingAlpha`.
-    public static func labelFocusRing(widthPX: Int, heightPX: Int, scale: Float, ringTint: UInt32? = nil) -> ContinuousRGBAImage {
+    public static func labelFocusRing(widthPX: Int, heightPX: Int, scale: Float, ringTint: UInt32? = nil, outerRadius: Double = labelFocusRingRadius) -> ContinuousRGBAImage {
         let n = samplesPerAxis, total = Double(n * n), pxPerPoint = Double(scale)
         let margin = focusRingPixels(scale: scale), marginPt = Double(margin) / pxPerPoint
         let outW = widthPX + 2 * margin, outH = heightPX + 2 * margin
         let wPt = Double(outW) / pxPerPoint, hPt = Double(outH) / pxPerPoint
-        let r = labelFocusRingRadius, hole = marginPt + labelFocusRingOverlap
+        let r = outerRadius, hole = marginPt + labelFocusRingOverlap
+        let holeR = max(0, outerRadius - (marginPt + labelFocusRingOverlap))   // the hole's corner follows the outer one, one ring thickness in
         let ringRGB = ringTint ?? focusRingRGB
         let rgb = [UInt8(ringRGB >> 16 & 255), UInt8(ringRGB >> 8 & 255), UInt8(ringRGB & 255)]
         func inOuter(_ x: Double, _ y: Double) -> Bool {
@@ -110,7 +111,12 @@ public enum ButtonArtwork {
             let cx = min(max(x, r), wPt - r), cy = min(max(y, r), hPt - r)
             return (x - cx) * (x - cx) + (y - cy) * (y - cy) <= r * r
         }
-        func inHole(_ x: Double, _ y: Double) -> Bool { x > hole && x < wPt - hole && y > hole && y < hPt - hole }
+        func inHole(_ x: Double, _ y: Double) -> Bool {
+            guard x > hole, x < wPt - hole, y > hole, y < hPt - hole else { return false }
+            guard holeR > 0 else { return true }
+            let cx = min(max(x, hole + holeR), wPt - hole - holeR), cy = min(max(y, hole + holeR), hPt - hole - holeR)
+            return (x - cx) * (x - cx) + (y - cy) * (y - cy) <= holeR * holeR
+        }
         var rgba = [UInt8](repeating: 0, count: max(0, outW * outH * 4))
         for py in 0..<outH { for px in 0..<outW {
             var covered = 0

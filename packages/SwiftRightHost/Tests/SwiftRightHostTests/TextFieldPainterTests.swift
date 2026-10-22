@@ -173,4 +173,33 @@ final class TextFieldPainterTests: XCTestCase {
         // initial focus selects the whole text: a selection rect is painted before the text
         XCTAssertTrue(upsert.primitives.contains { if case .rect = $0 { return true }; return false })
     }
+
+    // Issue #80: a focused bezeled TextField gets the focus ring (a registered image over the bezel, 3 pt outside the frame to 1 pt inside) and an accent caret; an unfocused one gets neither.
+    func testAFocusedFieldPaintsTheRingAndAnAccentCaret() throws {
+        let runs = NaturalRuns()
+        let images = FakeImages()
+        let painter = ResolvedNodePainter(images: images, scale: 2.5, text: runs, log: { _ in })
+        let graph = Graph(Witness_FocusedField(), scale: 2.5)
+        graph.rootProposal = ProposedViewSize(width: 320, height: 240)
+        var record: CommitRecord?
+        graph.commitSink = { record = $0 }
+        graph.flush()
+        _ = graph.applyInitialFocus()
+        graph.flush()
+        let root = try XCTUnwrap(record?.root)
+        var sent: [SwiftRightBridge.Transaction] = []
+        _ = try painter.commit(root: root, version: 1, previousLive: [], focused: record?.focused) { sent.append($0) }
+        let tx = try XCTUnwrap(sent.first)
+        let upsert = try XCTUnwrap(tx.upserts.first { $0.id == tx.focus })
+        let handles = upsert.primitives.compactMap { p -> ImageHandle? in if case .image(let h, _, _) = p { return h } else { return nil } }
+        XCTAssertEqual(handles.count, 2, "the bezel and the ring")
+        let ring = try XCTUnwrap(images.registered[handles[1].raw])
+        let m = ButtonArtwork.focusRingPixels(scale: 2.5)
+        XCTAssertEqual(Int(ring.width) % 2, Int(ring.width) % 2)
+        // beside the frame's left edge, mid-height: (0,103,245) at 50%
+        let o = (Int(ring.height) / 2 * Int(ring.width) + 3) * 4
+        XCTAssertEqual(Int(ring.rgba[o]), 0); XCTAssertEqual(Int(ring.rgba[o + 1]), 0x67); XCTAssertEqual(Int(ring.rgba[o + 2]), 0xf5); XCTAssertEqual(Int(ring.rgba[o + 3]), 128)
+        XCTAssertGreaterThan(m, 0)
+        XCTAssertEqual(TextFieldColors.caret, 0x007affff)
+    }
 }
