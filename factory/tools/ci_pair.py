@@ -197,9 +197,29 @@ def cmd_renderer(a):
 
 
 # ---------------------------------------------------------------- mac
+def apply_mac_defaults(case):
+    """<case>/mac-defaults.json {"AppleKeyboardUIMode": 3} (issue #79: Tab must reach Buttons for a focus ring): global user defaults written with `defaults write -g` before the Mac
+    capture. ONLY on the CI runner (GITHUB_ACTIONS set; the runner is ephemeral): a local run never changes the person's preferences."""
+    pj = case / "mac-defaults.json"
+    if not pj.is_file():
+        return {}
+    if os.environ.get("GITHUB_ACTIONS") != "true":
+        print(f"mac-defaults.json ignored outside CI ({case.name})")
+        return {}
+    wanted = json.loads(pj.read_text())
+    for key, value in wanted.items():
+        flag = "-bool" if isinstance(value, bool) else "-int" if isinstance(value, int) else "-string"
+        r = subprocess.run(["defaults", "write", "-g", key, flag, str(value).lower() if isinstance(value, bool) else str(value)], capture_output=True, text=True)
+        if r.returncode != 0:
+            sys.exit(f"defaults write {key} failed: {r.stderr}")
+        print(f"mac default {key} = {value}")
+    return wanted
+
+
 def cmd_mac(a):
     case = case_path(a.case)
     out = run_dir(a.root, a.case, a.ts)
+    apply_mac_defaults(case)
     set_globals(case)
     clock = pair.load_clock(case, None)
     ok = pair.mac(case, case.name, a.runs, out, clock, False)
