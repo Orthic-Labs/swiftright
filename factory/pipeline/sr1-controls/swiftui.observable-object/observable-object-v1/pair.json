@@ -1,0 +1,64 @@
+{
+ "steps": [
+  {
+   "op": "wait",
+   "ms": 700
+  },
+  {
+   "op": "shot",
+   "label": "rest"
+  },
+  {
+   "op": "down",
+   "x": 175,
+   "y": 450
+  },
+  {
+   "op": "up",
+   "x": 175,
+   "y": 450
+  },
+  {
+   "op": "wait",
+   "ms": 300
+  },
+  {
+   "op": "shot",
+   "label": "one-tap"
+  },
+  {
+   "op": "down",
+   "x": 175,
+   "y": 450
+  },
+  {
+   "op": "up",
+   "x": 175,
+   "y": 450
+  },
+  {
+   "op": "wait",
+   "ms": 300
+  },
+  {
+   "op": "shot",
+   "label": "two-taps"
+  }
+ ],
+ "macArgs": [
+  "--steps",
+  "[{\"op\":\"wait\",\"ms\":700},{\"op\":\"shot\",\"label\":\"rest\"},{\"op\":\"down\",\"x\":175,\"y\":450},{\"op\":\"up\",\"x\":175,\"y\":450},{\"op\":\"wait\",\"ms\":300},{\"op\":\"shot\",\"label\":\"one-tap\"},{\"op\":\"down\",\"x\":175,\"y\":450},{\"op\":\"up\",\"x\":175,\"y\":450},{\"op\":\"wait\",\"ms\":300},{\"op\":\"shot\",\"label\":\"two-taps\"}]"
+ ],
+ "phaseShots": [
+  "rest",
+  "one-tap",
+  "two-taps"
+ ],
+ "edgeAATolerance": {
+  "levels": 8,
+  "maxOverFraction": 0.0,
+  "maxMeanAbs": 0.1,
+  "reason": "PROVISIONAL (flat rectangles; expected pixel-exact as gesture-drag-tap-v1)."
+ },
+ "macLaunch": "open"
+}
