@@ -1,0 +1,22 @@
+#if os(Windows)
+import SwiftRightRuntime
+#else
+import SwiftUI
+#endif
+
+// Issue #77, case button-pressed-v1: the four built-in Button styles, each captured at rest and with the primary mouse button held down on it (ops down / up).
+// Each label is 84 pt wide so the body width does not depend on the text face (Segoe UI vs SF would otherwise make the bodies differ).
+struct Witness_g79_button_focus_default_v1: View {
+    @FocusState private var focus: Int?
+    var body: some View {
+        VStack(spacing: 14) {
+            Button { } label: { Text("Bordered").frame(width: 84) }.buttonStyle(.bordered).focused($focus, equals: 0)
+            Button { } label: { Text("Prominent").frame(width: 84) }.buttonStyle(.borderedProminent).focused($focus, equals: 1)
+            Button { } label: { Text("Plain").frame(width: 84) }.buttonStyle(.plain).focused($focus, equals: 2)
+            Button { } label: { Text("Borderless").frame(width: 84) }.buttonStyle(.borderless).focused($focus, equals: 3)
+            TextField("Field", text: .constant("")).frame(width: 120).focused($focus, equals: 4)
+        }
+        .padding(20).frame(width: 200, height: 200)
+        .onAppear { focus = 0 }
+    }
+}

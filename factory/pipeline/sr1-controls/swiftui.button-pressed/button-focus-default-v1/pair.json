@@ -1,0 +1,108 @@
+{
+ "steps": [
+  {
+   "op": "wait",
+   "ms": 700
+  },
+  {
+   "op": "dump",
+   "label": "start"
+  },
+  {
+   "op": "wait",
+   "ms": 250
+  },
+  {
+   "op": "front"
+  },
+  {
+   "op": "wait",
+   "ms": 500
+  },
+  {
+   "op": "screen",
+   "label": "s0"
+  },
+  {
+   "op": "key",
+   "key": "Tab"
+  },
+  {
+   "op": "wait",
+   "ms": 400
+  },
+  {
+   "op": "screen",
+   "label": "s1"
+  },
+  {
+   "op": "key",
+   "key": "Tab"
+  },
+  {
+   "op": "wait",
+   "ms": 400
+  },
+  {
+   "op": "screen",
+   "label": "s2"
+  },
+  {
+   "op": "key",
+   "key": "Tab"
+  },
+  {
+   "op": "wait",
+   "ms": 400
+  },
+  {
+   "op": "screen",
+   "label": "s3"
+  },
+  {
+   "op": "key",
+   "key": "Tab"
+  },
+  {
+   "op": "wait",
+   "ms": 400
+  },
+  {
+   "op": "screen",
+   "label": "s4"
+  }
+ ],
+ "macArgs": [
+  "--steps",
+  "[{\"op\":\"wait\",\"ms\":700},{\"op\":\"dump\",\"label\":\"start\"},{\"op\":\"wait\",\"ms\":250},{\"op\":\"front\"},{\"op\":\"wait\",\"ms\":500},{\"op\":\"screen\",\"label\":\"s0\"},{\"op\":\"key\",\"key\":\"Tab\"},{\"op\":\"wait\",\"ms\":400},{\"op\":\"screen\",\"label\":\"s1\"},{\"op\":\"key\",\"key\":\"Tab\"},{\"op\":\"wait\",\"ms\":400},{\"op\":\"screen\",\"label\":\"s2\"},{\"op\":\"key\",\"key\":\"Tab\"},{\"op\":\"wait\",\"ms\":400},{\"op\":\"screen\",\"label\":\"s3\"},{\"op\":\"key\",\"key\":\"Tab\"},{\"op\":\"wait\",\"ms\":400},{\"op\":\"screen\",\"label\":\"s4\"}]"
+ ],
+ "phaseShots": [
+  "s0",
+  "s1",
+  "s2",
+  "s3",
+  "s4"
+ ],
+ "edgeAATolerance": {
+  "levels": 255,
+  "maxOverFraction": 1.0,
+  "maxMeanAbs": 255,
+  "reason": "PROVISIONAL (issue #79): first Mac vs Windows pair of the focus ring at scale 1 (the Mac window-server capture is 1x on the runner). Measuring run."
+ },
+ "semanticGate": {
+  "fields": [
+   "role",
+   "name",
+   "count",
+   "order"
+  ],
+  "scope": "main",
+  "phases": [
+   "start"
+  ],
+  "boundsTolerancePt": 0.5
+ },
+ "excludeRects": [],
+ "macLaunch": "open",
+ "captureScale": 1.0
+}

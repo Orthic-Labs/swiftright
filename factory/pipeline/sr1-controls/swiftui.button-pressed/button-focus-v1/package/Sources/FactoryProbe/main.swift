@@ -146,6 +146,7 @@ struct HostPlacement {
             let graph = Graph(ZStack(alignment: .center) { Witness_g79_button_focus_v1() }.frame(width: CGFloat(metrics.width) / CGFloat(scale), height: CGFloat(metrics.height) / CGFloat(scale), alignment: .center), measurer: measurer, scale: CGFloat(scale))
             images.install(on: graph)
             graph.rootProposal = ProposedViewSize(width: CGFloat(metrics.width) / CGFloat(scale), height: CGFloat(metrics.height) / CGFloat(scale))
+            graph.tabFocusesAllControls = true   // #79: the Mac side runs with full keyboard access on (AppleKeyboardUIMode 3), where Tab walks the Buttons
             graph.commitSink = { [weak self] record in self?.commit(record) }
             self.graph = graph
             try window.requestTicks(true)
