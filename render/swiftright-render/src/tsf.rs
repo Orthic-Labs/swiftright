@@ -21,13 +21,15 @@ use windows::Win32::System::Com::{
     CoCreateInstance, CoInitializeEx, CoUninitialize, IDataObject, CLSCTX_INPROC_SERVER, COINIT_APARTMENTTHREADED,
 };
 use windows::Win32::UI::TextServices::{
-    CLSID_TF_ThreadMgr, ITextStoreACP, ITextStoreACPSink, ITextStoreACP_Impl, ITfCompositionView, ITfContext,
+    CLSID_TF_InputProcessorProfiles, CLSID_TF_ThreadMgr, GUID_TFCAT_TIP_KEYBOARD, ITextStoreACP, ITextStoreACPSink, ITextStoreACP_Impl, ITfCompositionView, ITfContext,
     ITfContextOwnerCompositionServices, ITfContextOwnerCompositionSink, ITfContextOwnerCompositionSink_Impl,
-    ITfCandidateListUIElement, ITfDocumentMgr, ITfRange, ITfSource, ITfThreadMgr, ITfUIElementMgr, ITfUIElementSink,
+    ITfCandidateListUIElement, ITfDocumentMgr, ITfInputProcessorProfileMgr, ITfIntegratableCandidateListUIElement, ITfRange,
+    ITfSource, ITfThreadMgr, ITfUIElementMgr, ITfUIElementSink,
     ITfUIElementSink_Impl, TEXT_STORE_LOCK_FLAGS, TEXT_STORE_TEXT_CHANGE_FLAGS, TS_ATTRVAL, TS_LC_CHANGE, TS_LC_CREATE, TS_LC_DESTROY, TS_RUNINFO, TS_RT_PLAIN,
     TS_SELECTIONSTYLE, TS_SELECTION_ACP, TS_STATUS, TS_TEXTCHANGE, TS_AE_END, TS_AE_START,
 };
 
+use crate::cand::CandState;
 use crate::rt::*;
 use crate::view;
 
@@ -769,10 +771,22 @@ impl UiSink {
 }
 
 thread_local! {
-    /// UI-less spike: id of the candidate list element being tracked, and its latest contents (strings of the current page,
-    /// selection relative to the page start, page number).
+    /// UI-less mode: id of the candidate list element being tracked, and its latest contents.
     static UILESS_ID: Cell<Option<u32>> = const { Cell::new(None) };
-    static UILESS_STATE: RefCell<Option<(Vec<String>, usize, u32)>> = const { RefCell::new(None) };
+    static UILESS_STATE: RefCell<Option<CandState>> = const { RefCell::new(None) };
+    /// Element id whose `ITfUIElement::IsShown()` must be re-checked at its first UpdateUIElement (after we answered pbShow=FALSE).
+    static UILESS_RECHECK: Cell<Option<u32>> = const { Cell::new(None) };
+    /// The re-check found the element still shown (the IME ignored pbShow=FALSE): our popup must not be drawn for it.
+    static UILESS_IGNORED: Cell<bool> = const { Cell::new(false) };
+    /// The active TIP CLSID has been logged once.
+    static TIP_LOGGED: Cell<bool> = const { Cell::new(false) };
+}
+
+fn uiless_clear() {
+    UILESS_ID.with(|t| t.set(None));
+    UILESS_STATE.with(|s| *s.borrow_mut() = None);
+    UILESS_RECHECK.with(|t| t.set(None));
+    UILESS_IGNORED.with(|t| t.set(false));
 }
 
 /// Latest candidate list state captured in UI-less mode: (strings of the current page, capped at 9; selection index relative
@@ -782,7 +796,102 @@ pub fn uiless_candidates() -> Option<(Vec<String>, usize, u32)> {
     if !uiless() {
         return None;
     }
+    UILESS_STATE.with(|s| {
+        s.borrow().as_ref().map(|c| (c.strings.clone(), c.selection.saturating_sub(c.first_on_page()), c.page))
+    })
+}
+
+/// The latest candidate list state (UI-less mode, list open, not ignored). UI thread only.
+#[allow(dead_code)]
+pub fn cand_state() -> Option<CandState> {
+    if !uiless() || UILESS_IGNORED.with(|t| t.get()) {
+        return None;
+    }
     UILESS_STATE.with(|s| s.borrow().clone())
+}
+
+/// True while a candidate list element is open in UI-less mode and the IME honoured pbShow=FALSE.
+#[allow(dead_code)]
+pub fn cand_open() -> bool {
+    uiless() && !UILESS_IGNORED.with(|t| t.get()) && UILESS_ID.with(|t| t.get()).is_some()
+}
+
+/// True when the IME kept its own candidate list visible after we answered pbShow=FALSE (see `recheck_shown`): the popup must
+/// not be drawn for that element. Reset when the element ends or a new one begins.
+#[allow(dead_code)]
+pub fn cand_ignored() -> bool {
+    uiless() && UILESS_IGNORED.with(|t| t.get())
+}
+
+/// Called from the first UpdateUIElement of an element we answered pbShow=FALSE for: `ITfUIElement::IsShown()` TRUE means the
+/// IME ignored the request, so the system list is still visible and ours would double it.
+fn recheck_shown(id: u32) {
+    if UILESS_RECHECK.with(|t| t.get()) != Some(id) {
+        return;
+    }
+    UILESS_RECHECK.with(|t| t.set(None));
+    let el = UIMGR.with(|u| {
+        let u = u.borrow();
+        let mgr = u.as_ref()?;
+        unsafe { mgr.GetUIElement(id).ok() }
+    });
+    let Some(el) = el else { return };
+    match unsafe { el.IsShown() } {
+        Ok(b) if b.0 != 0 => {
+            tsf_log!("tsf_uiless_ignored id={id}");
+            UILESS_IGNORED.with(|t| t.set(true));
+        }
+        Ok(_) => tsf_log!("tsf_uiless_hidden id={id}"),
+        Err(e) => tsf_log!("tsf_uiless_isshown_failed id={id} hr=0x{:08X}", e.code().0 as u32),
+    }
+}
+
+/// Mirror of TF_INPUTPROCESSORPROFILE (msctf.h). The crate gates the real struct (and GetActiveProfile) behind a feature
+/// this crate does not enable, so the call goes through the vtable slot by hand.
+#[repr(C)]
+struct TipProfile {
+    profile_type: u32,
+    langid: u16,
+    clsid: GUID,
+    guid_profile: GUID,
+    catid: GUID,
+    hkl_substitute: isize,
+    caps: u32,
+    hkl: isize,
+    flags: u32,
+}
+
+/// Logs the active keyboard TIP's CLSID once (ITfInputProcessorProfileMgr::GetActiveProfile, GUID_TFCAT_TIP_KEYBOARD).
+fn log_active_tip_once() {
+    if TIP_LOGGED.with(|t| t.replace(true)) {
+        return;
+    }
+    let mgr: windows::core::Result<ITfInputProcessorProfileMgr> =
+        unsafe { CoCreateInstance(&CLSID_TF_InputProcessorProfiles, None, CLSCTX_INPROC_SERVER) };
+    let Ok(mgr) = mgr else {
+        tsf_log!("tsf_active_tip skipped: profile manager unavailable");
+        return;
+    };
+    type GetActiveProfileFn = unsafe extern "system" fn(*mut c_void, *const GUID, *mut TipProfile) -> HRESULT;
+    // ITfInputProcessorProfileMgr vtable: IUnknown (0..=2), ActivateProfile 3, DeactivateProfile 4, GetProfile 5, EnumProfiles 6,
+    // ReleaseInputProcessor 7, RegisterProfile 8, UnregisterProfile 9, GetActiveProfile 10.
+    let mut prof: TipProfile = unsafe { std::mem::zeroed() };
+    let hr = unsafe {
+        let raw = Interface::as_raw(&mgr);
+        let vtbl = *(raw as *const *const usize);
+        let f: GetActiveProfileFn = std::mem::transmute(*vtbl.add(10));
+        f(raw, &GUID_TFCAT_TIP_KEYBOARD, &mut prof)
+    };
+    if hr.is_ok() {
+        let c = prof.clsid;
+        tsf_log!(
+            "tsf_active_tip clsid={{{:08X}-{:04X}-{:04X}-{:02X}{:02X}-{:02X}{:02X}{:02X}{:02X}{:02X}{:02X}}} langid=0x{:04X}",
+            c.data1, c.data2, c.data3, c.data4[0], c.data4[1], c.data4[2], c.data4[3], c.data4[4], c.data4[5], c.data4[6],
+            c.data4[7], prof.langid
+        );
+    } else {
+        tsf_log!("tsf_active_tip skipped: GetActiveProfile hr=0x{:08X}", hr.0 as u32);
+    }
 }
 
 /// Reads count / selection / page / the current page's strings (max 9) and logs them under `tsf_uiless <what>`.
@@ -820,8 +929,21 @@ fn uiless_read(cand: &ITfCandidateListUIElement, id: u32, what: &str) {
         tsf_log!("tsf_uiless cand i={i} text={text}");
         out.push(text);
     }
-    let rel = (sel.saturating_sub(first)) as usize;
-    UILESS_STATE.with(|s| *s.borrow_mut() = Some((out, rel, page)));
+    let show_numbers = cand
+        .cast::<ITfIntegratableCandidateListUIElement>()
+        .ok()
+        .and_then(|i| unsafe { i.ShowCandidateNumbers().ok() })
+        .map_or(true, |b| b.0 != 0);
+    UILESS_STATE.with(|s| {
+        *s.borrow_mut() = Some(CandState {
+            strings: out,
+            selection: sel as usize,
+            page,
+            page_starts: if hr2.is_ok() { starts.clone() } else { Vec::new() },
+            count,
+            show_numbers,
+        })
+    });
 }
 
 impl UiSink {
@@ -857,8 +979,12 @@ impl ITfUIElementSink_Impl for UiSink_Impl {
         }
         self.note(dwuielementid, "open");
         if uiless() && self.st.associated.get() {
+            UILESS_IGNORED.with(|t| t.set(false));
+            log_active_tip_once();
             if self.uiless_event(dwuielementid, "begin") && !pbshow.is_null() {
                 unsafe { *pbshow = BOOL(0) };
+                // The IME may still show its own list: re-check IsShown() at the first UpdateUIElement.
+                UILESS_RECHECK.with(|t| t.set(Some(dwuielementid)));
             }
         }
         Ok(())
@@ -867,6 +993,7 @@ impl ITfUIElementSink_Impl for UiSink_Impl {
     fn UpdateUIElement(&self, dwuielementid: u32) -> windows::core::Result<()> {
         self.note(dwuielementid, "change");
         if uiless() && UILESS_ID.with(|t| t.get()) == Some(dwuielementid) {
+            recheck_shown(dwuielementid);
             self.uiless_event(dwuielementid, "update");
         }
         Ok(())
@@ -877,8 +1004,7 @@ impl ITfUIElementSink_Impl for UiSink_Impl {
         self.st.cand_open.set(false);
         if uiless() && UILESS_ID.with(|t| t.get()) == Some(dwuielementid) {
             tsf_log!("tsf_uiless end id={dwuielementid}");
-            UILESS_ID.with(|t| t.set(None));
-            UILESS_STATE.with(|s| *s.borrow_mut() = None);
+            uiless_clear();
         }
         Ok(())
     }
@@ -1025,8 +1151,7 @@ impl Tsf {
         self.st.mask.set(0);
         drop(self.ctx.take());
         UIMGR.with(|u| *u.borrow_mut() = None);
-        UILESS_ID.with(|t| t.set(None));
-        UILESS_STATE.with(|s| *s.borrow_mut() = None);
+        uiless_clear();
         if self.ui_cookie != 0 {
             if let Some(src) = self.tm.as_ref().and_then(|t| t.cast::<ITfSource>().ok()) {
                 let _ = unsafe { src.UnadviseSink(self.ui_cookie) };

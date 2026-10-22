@@ -22,6 +22,8 @@ mod text;
 mod trace;
 mod tree;
 mod tsf;
+mod cand;
+mod cand_popup;
 mod view;
 
 use std::ffi::c_void;
