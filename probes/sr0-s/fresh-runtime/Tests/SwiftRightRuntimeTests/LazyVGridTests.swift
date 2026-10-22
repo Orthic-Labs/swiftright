@@ -29,3 +29,13 @@ final class LazyVGridTests: XCTestCase {
         XCTAssertEqual(f[0].1, 80)
     }
 }
+
+@MainActor
+final class ContentShapeHelpTests: XCTestCase {
+    func testContentShapeAndHelpKeepLayout() {
+        let graph = Graph(Color.red.frame(width: 30, height: 10).contentShape(Rectangle()).contentShape(.interaction, Circle()).help("tip").help(Text("tip")), scale: 1)
+        graph.flush()
+        let c = everyNode(graph.snapshot()).first { $0.kind == "Color" }
+        XCTAssertEqual(c?.frame.width, 30)
+    }
+}
