@@ -1,8 +1,9 @@
 {
+ "hazeTolerance": 1,
  "edgeAATolerance": {
-  "levels": 40,
-  "maxOverFraction": 0.02,
-  "maxMeanAbs": 2,
-  "reason": "PROVISIONAL (blurred shadows through the host raster); refit from the first CI pair."
+  "levels": 110,
+  "maxOverFraction": 0.001,
+  "maxMeanAbs": 1.5,
+  "reason": "Measured on CI 39742566365 (3 identical runs): the shadow gradients agree to 1 level (out-of-band max 1, 6259 px, covered by hazeTolerance 1; in-band mean 1.07); 12 pixels differ more (max 101), all one column of the circle's left edge (x 699, y 295-304) where the Windows circle starts a pixel later than the Mac's anti-aliased edge. Tolerance = measured plus margin."
  }
 }
