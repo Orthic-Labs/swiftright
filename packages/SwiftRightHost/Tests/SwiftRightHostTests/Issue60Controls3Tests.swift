@@ -149,6 +149,21 @@ final class Issue60Controls3HostTests: XCTestCase {
         XCTAssertEqual(plan.placement.w, bounds(focused).w + 2 * Float(ButtonArtwork.focusRingPixels(scale: 2.5)), accuracy: 0.1)
     }
 
+    // Issue #79: the ring is 4 px thick at 1x, 3 outside the body and a fourth over it. Measured on the Mac (CI 39721102417): the first body row of a focused bordered button is
+    // (118,169,240), the ring at 50% over the (235,235,235) body.
+    func testTheRingLaysOverTheBodysFirstPixelRow() {
+        let m = ButtonArtwork.focusRingPixels(scale: 1)
+        XCTAssertEqual(m, 3)
+        let focused = ButtonArtwork.render(widthPX: 108, heightPX: 24, scale: 1, isEnabled: true, focused: true)
+        let outside = pixel(focused, m + 54, m - 1)      // the ring's third pixel outside the body
+        XCTAssertEqual(outside.r, 0); XCTAssertEqual(outside.g, 0x67); XCTAssertEqual(outside.b, 0xf5); XCTAssertEqual(outside.a, 128)
+        let over = pixel(focused, m + 54, m)             // the body's first row, under the ring
+        XCTAssertEqual(over.a, 255)
+        XCTAssertEqual(over.r, 118, accuracy: 1); XCTAssertEqual(over.g, 169, accuracy: 1); XCTAssertEqual(over.b, 240, accuracy: 1)
+        let clear = pixel(focused, m + 54, m + 1)        // the second row is plain body
+        XCTAssertEqual(clear.r, 0xeb)
+    }
+
     func testAFocusRingFollowsTheTint() {
         let tinted = ButtonArtwork.render(widthPX: 300, heightPX: 60, scale: 2.5, isEnabled: true, prominent: true, tint: 0xff383c, focused: true)
         let ring = pixel(tinted, 3, ButtonArtwork.focusRingPixels(scale: 2.5) + 30)

@@ -33,8 +33,10 @@ public enum ButtonArtwork {
     /// (0,103,245) at 50%. It is NOT the accent (0,122,255) the first estimate used. The ring is 3 pt outside the control's frame on every side, for all four built-in styles, plus a fraction of a point
     /// laid over the frame edge (`labelFocusRingOverlap`). A tinted button keeps its own ring colour (not measured).
     public static let focusRingRGB: UInt32 = 0x0067f5
-    /// How far a ring-only focus ring (plain, borderless) reaches inside the label's frame, in points (the fourth ring pixel measured at 25% and 38% coverage).
-    public static let labelFocusRingOverlap: Double = 0.3
+    /// How far the focus ring reaches INSIDE the control's frame, in points, for every style: measured at 1x (CI 39721102417, paired window-server captures) the ring is 4 px thick, 3 px outside
+    /// the frame and a fourth px over it: over the bordered body (118,169,240) = the ring at 50% over (236,236,236), over the prominent body (0,112,250), over a plain or borderless label's edge
+    /// the same ring colour at full strength where nothing is under it.
+    public static let labelFocusRingOverlap: Double = 1.0
     /// The outer corner radius of a ring-only focus ring around a label, in points (the ring's corners are nearly square: measured about 1.5).
     public static let labelFocusRingRadius: Double = 1.5
 
@@ -146,29 +148,41 @@ public enum ButtonArtwork {
             return (x - cx) * (x - cx) + (y - cy) * (y - cy) <= radius * radius
         }
         var rgba = [UInt8](repeating: 0, count: max(0, outW * outH * 4))
+        let ov = labelFocusRingOverlap
         for py in 0..<outH {
             for px in 0..<outW {
-                var inside = 0, ringSamples = 0
+                var inside = 0, ringSamples = 0, band = 0
                 for sy in 0..<n {
                     let y = (Double(py) + (Double(sy) + 0.5) / Double(n)) / pxPerPoint
                     for sx in 0..<n {
                         let x = (Double(px) + (Double(sx) + 0.5) / Double(n)) / pxPerPoint
-                        if SwitchArtwork.inside(ButtonArtworkData.corner, x: x - marginPt, y: y - marginPt, width: widthPt, height: heightPt) { inside += 1 }
+                        if SwitchArtwork.inside(ButtonArtworkData.corner, x: x - marginPt, y: y - marginPt, width: widthPt, height: heightPt) {
+                            // the ring reaches `ov` points into the body: that band is the ring blended over the body
+                            if focused, !SwitchArtwork.inside(ButtonArtworkData.corner, x: x - marginPt - ov, y: y - marginPt - ov, width: widthPt - 2 * ov, height: heightPt - 2 * ov) { band += 1 } else { inside += 1 }
+                        }
                         else if focused, insideRing(x, y) { ringSamples += 1 }
                     }
                 }
-                guard inside > 0 || ringSamples > 0 else { continue }
+                guard inside > 0 || ringSamples > 0 || band > 0 else { continue }
                 let o = (py * outW + px) * 4
-                let bodyAlpha = Double(inside) / total
-                guard ringSamples > 0 else {
+                let bandAlpha = Double(band) / total
+                let ringAlphaFull = Double(focusRingAlpha) / 255
+                // body samples of the band show the body under the half-opaque ring: an opaque mix
+                let bodyAlpha = Double(inside) / total + bandAlpha
+                guard ringSamples > 0 || band > 0 else {
                     rgba[o] = rgb[0]; rgba[o + 1] = rgb[1]; rgba[o + 2] = rgb[2]
                     rgba[o + 3] = UInt8(max(0, min(255, (bodyAlpha * 255).rounded())))
                     continue
                 }
                 // body and ring cover disjoint parts of the pixel: their alphas add and the colour is the alpha-weighted mix
-                let ringAlpha = Double(ringSamples) / total * Double(focusRingAlpha) / 255
+                let ringAlpha = Double(ringSamples) / total * ringAlphaFull
                 let alpha = bodyAlpha + ringAlpha
-                for c in 0..<3 { rgba[o + c] = UInt8(max(0, min(255, ((Double(rgb[c]) * bodyAlpha + ring[c] * ringAlpha) / alpha).rounded()))) }
+                for c in 0..<3 {
+                    // plain body weight, plus the band's ring-over-body mix (ring at its alpha over the opaque body), plus the ring alone outside
+                    let bodyOnly = Double(inside) / total * Double(rgb[c])
+                    let bandMix = bandAlpha * (Double(rgb[c]) * (1 - ringAlphaFull) + ring[c] * ringAlphaFull)
+                    rgba[o + c] = UInt8(max(0, min(255, ((bodyOnly + bandMix + ring[c] * ringAlpha) / alpha).rounded())))
+                }
                 rgba[o + 3] = UInt8(max(0, min(255, (alpha * 255).rounded())))
             }
         }
