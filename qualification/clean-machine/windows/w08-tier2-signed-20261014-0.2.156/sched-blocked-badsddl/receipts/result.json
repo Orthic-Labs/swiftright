@@ -1,0 +1,100 @@
+{
+    "method":  "tier2-sched-blocked",
+    "started_utc":  "2026-10-22T14:11:29.1875438Z",
+    "marker":  "w08-recovery-tier2-sched-blocked-marker",
+    "attempts":  [
+
+                 ],
+    "induction":  {
+
+                  },
+    "pre_recovery":  {
+
+                     },
+    "recovery":  {
+                     "root_sd_before":  "D:PAI(A;CI;FA;;;BA)(A;OI;0x1f019f;;;BA)(A;CI;FA;;;SY)(A;OI;0x1f019f;;;SY)(A;CI;FW;;;AU)(A;CI;FW;;;NS)(A;CI;FW;;;LS)(A;OICIIO;FA;;;CO)",
+                     "policy_set":  false,
+                     "policy_error":  "The specified datatype is invalid. (Exception from HRESULT: 0x8007070C)",
+                     "root_sd_blocked":  "D:PAI(A;CI;FA;;;BA)(A;OI;0x1f019f;;;BA)(A;CI;FA;;;SY)(A;OI;0x1f019f;;;SY)(A;CI;FW;;;AU)(A;CI;FW;;;NS)(A;CI;FW;;;LS)(A;OICIIO;FA;;;CO)",
+                     "block_effective":  false,
+                     "first_launch":  {
+                                          "tag":  "first-launch-sched-blocked",
+                                          "launched":  true,
+                                          "pid":  7028,
+                                          "window_name":  "SliceApp",
+                                          "exe_path":  "C:\\Program Files\\WindowsApps\\OrthicLabs.SliceApp_0.1.0.0_x64__j3cejpx244dcr\\SliceApp.exe",
+                                          "running_version":  "0.1.0.0",
+                                          "seconds":  2.1,
+                                          "processes_without_window":  0,
+                                          "top_windows":  [
+                                                              "class=Zed::Window name=[SliceApp] pid=0",
+                                                              "class=ConsoleWindowClass name=[Administrator: Windows PowerShell] pid=6896"
+                                                          ]
+                                      },
+                     "guard_registered":  true,
+                     "guard_state":  {
+                                         "task_name":  "OrthicLabs.SliceApp_j3cejpx244dcr-Repair",
+                                         "task_exists":  true,
+                                         "task_state":  "Ready",
+                                         "last_run":  "11/30/1999 00:00:00",
+                                         "last_result":  267011,
+                                         "triggers":  [
+                                                          "MSFT_TaskEventTrigger \u003cQueryList\u003e\u003cQuery Id=\"0\" Path=\"Microsoft-Windows-AppXDeploymentServer/Operational\"\u003e\u003cSelect Path=\"Microsoft-Windows-AppXDeploymentServer/Operational\"\u003e*[System[(EventID=751)]]\u003c/Select\u003e\u003c/Query\u003e\u003c/QueryList\u003e",
+                                                          "MSFT_TaskLogonTrigger"
+                                                      ],
+                                         "action":  "%SystemRoot%\\System32\\conhost.exe --headless powershell.exe -NoProfile -NonInteractive -ExecutionPolicy Bypass -WindowStyle Hidden -File \"C:\\Users\\WDAGUtilityAccount\\AppData\\Local\\SliceApp\\repair\\repair-guard.ps1\" -EventRecordID $(EventRecordID)",
+                                         "run_as":  "WDAGUtilityAccount Interactive Limited",
+                                         "dir_exists":  true,
+                                         "files":  [
+                                                       "guard.json 551",
+                                                       "install-result.json 404",
+                                                       "repair-guard.ps1 29518",
+                                                       "repair.log 428"
+                                                   ],
+                                         "guard_json":  "{ \"guardVersion\": 2, \"pfn\": \"OrthicLabs.SliceApp_j3cejpx244dcr\", \"name\": \"OrthicLabs.SliceApp\", \"publisher\": \"CN=Damned Ventures LLC, O=Damned Ventures LLC, L=new york, S=New York, C=US\", \"feed\": \"https://localhost:8443/sliceapp/SliceApp.appinstaller\", \"msix\": \"https://localhost:8443/sliceapp/SliceApp_0.1.0.0_x64.msix\", \"task\": \"OrthicLabs.SliceApp_j3cejpx244dcr-Repair\", \"dir\": \"C:\\\\Users\\\\WDAGUtilityAccount\\\\AppData\\\\Local\\\\SliceApp\\\\repair\", \"installedUtc\": \"2026-10-22T14:11:59.7085655Z\" }",
+                                         "repair_log":  [
+                                                            "2026-10-22T14:11:54Z [app] installer started (script changed, guard.json missing or task missing)",
+                                                            "2026-10-22T19:41:59.837+05:30 [install] task OrthicLabs.SliceApp_j3cejpx244dcr-Repair registered; identity=OrthicLabs.SliceApp / CN=Damned Ventures LLC, O=Damned Ventures LLC, L=new york, S=New York, C=US; feed=https://localhost:8443/sliceapp/SliceApp.appinstaller msix=https://localhost:8443/sliceapp/SliceApp_0.1.0.0_x64.msix"
+                                                        ],
+                                         "last-result.json":  null,
+                                         "retry.json":  null,
+                                         "install-result.json":  "{ \"status\": \"installed\", \"code\": 0, \"mode\": \"install\", \"timeUtc\": \"2026-10-22T14:11:59.8688616Z\", \"guardVersion\": 2, \"guardSha256\": \"5abc0a4d72ae851be349c082482c99c9b7ec73ffe0a04117e2cde535f0ba37e5\", \"guardSha256Lf\": \"5abc0a4d72ae851be349c082482c99c9b7ec73ffe0a04117e2cde535f0ba37e5\", \"detail\": \"task OrthicLabs.SliceApp_j3cejpx244dcr-Repair registered\" }",
+                                         "install-attempt.json":  null
+                                     },
+                     "guard_dir_exists":  true,
+                     "guard_dir_files":  [
+                                             "guard.json",
+                                             "install-result.json",
+                                             "repair-guard.ps1",
+                                             "repair.log"
+                                         ],
+                     "package":  "0.1.0.0:Ok",
+                     "relaunch":  {
+                                      "tag":  "relaunch-sched-blocked",
+                                      "launched":  true,
+                                      "pid":  7028,
+                                      "window_name":  "SliceApp",
+                                      "exe_path":  "C:\\Program Files\\WindowsApps\\OrthicLabs.SliceApp_0.1.0.0_x64__j3cejpx244dcr\\SliceApp.exe",
+                                      "running_version":  "0.1.0.0",
+                                      "seconds":  0,
+                                      "processes_without_window":  0,
+                                      "top_windows":  [
+                                                          "class=Zed::Window name=[SliceApp] pid=0",
+                                                          "class=ConsoleWindowClass name=[Administrator: Windows PowerShell] pid=6896"
+                                                      ]
+                                  },
+                     "rows_exists":  true,
+                     "policy_removed":  true,
+                     "guard_log":  "2026-10-22T14:11:54Z [app] installer started (script changed, guard.json missing or task missing)\r\n2026-10-22T19:41:59.837+05:30 [install] task OrthicLabs.SliceApp_j3cejpx244dcr-Repair registered; identity=OrthicLabs.SliceApp / CN=Damned Ventures LLC, O=Damned Ventures LLC, L=new york, S=New York, C=US; feed=https://localhost:8443/sliceapp/SliceApp.appinstaller msix=https://localhost:8443/sliceapp/SliceApp_0.1.0.0_x64.msix\r\n",
+                     "pass":  false,
+                     "result":  "block effective=False app launched=True/True guard registered=True guard dir files=guard.json,install-result.json,repair-guard.ps1,repair.log"
+                 },
+    "post":  {
+
+             },
+    "errors":  [
+
+               ],
+    "default_routes":  1,
+    "ended_utc":  "2026-10-22T14:12:06.2521597Z"
+}

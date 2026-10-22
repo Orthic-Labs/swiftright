@@ -17,8 +17,20 @@ $W = 'C:\w08t2'
 $res = [ordered]@{ kind = 'w08'; method = $Method; ok = $false; needs_fresh_sandbox = $false; clean_before = $null; clean_after = $null }
 
 function Reset-W08State {
-    # #47 tier2-sched-blocked sets a Task Scheduler creation policy; never leave it behind for the next job
-    try { Remove-Item -Path "HKLM:\SOFTWARE\Policies\Microsoft\Windows\Task Scheduler5.0" -Recurse -Force -ErrorAction SilentlyContinue } catch { }
+    # #47 tier2-sched-blocked denies task creation on the Task Scheduler root folder, which also stops an interactive administrator from undoing it: the saved DACL is
+    # put back by restore-taskroot.ps1 running as LocalSystem through a one-shot service. The service runs cmd /c powershell (powershell as the service binary itself never ran the script, measured 22 Oct). Never leave the deny behind for the next job.
+    if (Test-Path 'C:\sbq\state\taskroot-dacl.txt') {
+        try {
+            Remove-Item 'C:\Windows\Temp\restore-taskroot.out' -Force -ErrorAction SilentlyContinue
+            Copy-Item 'C:\sbq\guest\restore-taskroot.ps1', 'C:\sbq\state\taskroot-dacl.txt' 'C:\Windows\Temp\' -Force   # LocalSystem cannot read the mapped folder
+            & sc.exe create SRRestoreTaskRoot binPath= 'C:\Windows\System32\cmd.exe /c C:\Windows\System32\WindowsPowerShell\v1.0\powershell.exe -NoProfile -ExecutionPolicy Bypass -File C:\Windows\Temp\restore-taskroot.ps1' type= own start= demand | Out-Null
+            & sc.exe start SRRestoreTaskRoot | Out-Null
+            $sw = [Diagnostics.Stopwatch]::StartNew(); while ($sw.Elapsed.TotalSeconds -lt 30 -and -not (Test-Path 'C:\Windows\Temp\restore-taskroot.out')) { Start-Sleep -Milliseconds 300 }
+            & sc.exe delete SRRestoreTaskRoot | Out-Null
+            $restored = [IO.File]::ReadAllText('C:\Windows\Temp\restore-taskroot.out')
+            if ($restored -eq [IO.File]::ReadAllText('C:\sbq\state\taskroot-dacl.txt')) { Remove-Item 'C:\sbq\state\taskroot-dacl.txt' -Force }
+        } catch { }
+    }
     $log = @()
     function Step([string]$m, [scriptblock]$b) { try { & $b; $script:log += ('ok   ' + $m) } catch { $script:log += ('FAIL ' + $m + ': ' + $_.Exception.Message) } }
     $script:log = @()

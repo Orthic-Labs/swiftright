@@ -24,7 +24,9 @@
 #   tier2-corrupt       msix files replaced by truncated copies at the cancel: explicit failure, package untouched, retry; the feed is restored after 60 s and the retry recovers
 #   tier2-mutex         a second run of the guard script is started while the task's run is in its settle window: it must log that another run is active and exit
 #   tier2-killclient    AddPackageAsync runs in a child process that is killed at staging+delay instead of Cancel (does the deployment survive its client being killed?)
-#   tier2-sched-blocked no induction (#47): the Task Scheduler policy Prohibit New Task Creation is set BEFORE the first launch (proved effective by a failing Register-ScheduledTask of our own); the app must still
+#   tier2-sched-blocked no induction (#47): task creation is denied BEFORE the first launch by an ACE on the Task Scheduler root folder's security descriptor
+#                       (deny FW, the right Authenticated Users are granted, to Interactive users; the GPO `Prohibit New Task Creation` only governs the UI, measured 22 Oct: it does not stop
+#                       Register-ScheduledTask), proved by a failing Register-ScheduledTask of our own; the app must still
 #                       launch and work, the guard task must not exist, and the state is recorded (no crash, no half-written guard directory)
 #   tier2-healthy       no induction: the guard must do nothing to a healthy package (same package full name, last-result healthy, no Add-AppxPackage logged)
 #   tier2-task-deleted  no induction: the task is deleted; the next app launch must register it again; then with a fresh install-attempt marker the next launch must NOT (24 h backoff)
@@ -704,9 +706,12 @@ try {
     }
     if ($Method -eq 'tier2-sched-blocked') {
         $b = $R.recovery
-        $pol = 'HKLM:\SOFTWARE\Policies\Microsoft\Windows\Task Scheduler5.0'
-        try { New-Item -Path $pol -Force | Out-Null; New-ItemProperty -Path $pol -Name 'Task Creation' -Value 0 -PropertyType DWord -Force | Out-Null; $b.policy_set = $true } catch { $b.policy_set = $false; $b.policy_error = $_.Exception.Message }
-        Start-Sleep -Seconds 3
+        $sched = New-Object -ComObject Schedule.Service; $sched.Connect(); $root = $sched.GetFolder('\')
+        $b.root_sd_before = $root.GetSecurityDescriptor(4)   # DACL only
+        try { [IO.File]::WriteAllText('C:\sbq\state\taskroot-dacl.txt', $b.root_sd_before) } catch { }
+        try { $root.SetSecurityDescriptor(($b.root_sd_before -replace '^D:([A-Z]*)', 'D:$1(D;CI;FW;;;IU)'), 0); $b.policy_set = $true } catch { $b.policy_set = $false; $b.policy_error = $_.Exception.Message }
+        $b.root_sd_blocked = $root.GetSecurityDescriptor(4)
+        Start-Sleep -Seconds 2
         try {
             $act = New-ScheduledTaskAction -Execute 'cmd.exe' -Argument '/c exit'
             Register-ScheduledTask -TaskName 'W08-block-probe' -Action $act -ErrorAction Stop | Out-Null
@@ -726,7 +731,8 @@ try {
         $b.relaunch = Invoke-Launch 60 'relaunch-sched-blocked'
         Stop-App | Out-Null
         $b.rows_exists = (Test-Path -LiteralPath $RowsPath)
-        try { Remove-Item -Path $pol -Recurse -Force -ErrorAction Stop; $b.policy_removed = $true } catch { $b.policy_removed = $false }
+        try { $root.SetSecurityDescriptor($b.root_sd_before, 0); $b.policy_removed = ($root.GetSecurityDescriptor(4) -eq $b.root_sd_before) } catch { $b.policy_removed = $false; $b.restore_error = $_.Exception.Message }
+        try { $b.guard_log = Get-GuardLogText } catch { }
         $b.pass = [bool]($b.block_effective -and $b.first_launch.launched -and $b.relaunch.launched -and -not $b.guard_registered)
         $b.result = 'block effective=' + $b.block_effective + ' app launched=' + $b.first_launch.launched + '/' + $b.relaunch.launched + ' guard registered=' + $b.guard_registered + ' guard dir files=' + (($b.guard_dir_files) -join ',')
         L ('result: ' + $b.result)

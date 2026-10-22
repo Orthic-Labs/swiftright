@@ -1,0 +1,93 @@
+{
+    "method":  "tier2-sched-blocked",
+    "started_utc":  "2026-10-22T14:39:57.7880530Z",
+    "marker":  "w08-recovery-tier2-sched-blocked-marker",
+    "attempts":  [
+
+                 ],
+    "induction":  {
+
+                  },
+    "pre_recovery":  {
+
+                     },
+    "recovery":  {
+                     "root_sd_before":  "D:PAI(A;CI;FA;;;BA)(A;OI;0x1f019f;;;BA)(A;CI;FA;;;SY)(A;OI;0x1f019f;;;SY)(A;CI;FW;;;AU)(A;CI;FW;;;NS)(A;CI;FW;;;LS)(A;OICIIO;FA;;;CO)",
+                     "policy_set":  true,
+                     "root_sd_blocked":  "D:PAI(D;CI;FW;;;IU)(A;CI;FA;;;BA)(A;OI;0x1f019f;;;BA)(A;CI;FA;;;SY)(A;OI;0x1f019f;;;SY)(A;CI;FW;;;AU)(A;CI;FW;;;NS)(A;CI;FW;;;LS)(A;OICIIO;FA;;;CO)",
+                     "block_effective":  true,
+                     "block_probe_error":  "Access is denied.\r\n",
+                     "first_launch":  {
+                                          "tag":  "first-launch-sched-blocked",
+                                          "launched":  true,
+                                          "pid":  7728,
+                                          "window_name":  "SliceApp",
+                                          "exe_path":  "C:\\Program Files\\WindowsApps\\OrthicLabs.SliceApp_0.1.0.0_x64__j3cejpx244dcr\\SliceApp.exe",
+                                          "running_version":  "0.1.0.0",
+                                          "seconds":  3.3,
+                                          "processes_without_window":  0,
+                                          "top_windows":  [
+                                                              "class=Zed::Window name=[SliceApp] pid=0",
+                                                              "class=ConsoleWindowClass name=[Administrator: Windows PowerShell] pid=6924"
+                                                          ]
+                                      },
+                     "guard_registered":  false,
+                     "guard_state":  {
+                                         "task_name":  "OrthicLabs.SliceApp_j3cejpx244dcr-Repair",
+                                         "task_exists":  false,
+                                         "dir_exists":  true,
+                                         "files":  [
+                                                       "install-attempt.json 96",
+                                                       "install-result.json 399",
+                                                       "repair-guard.ps1 29518",
+                                                       "repair.log 210"
+                                                   ],
+                                         "guard_json":  "unreadable",
+                                         "repair_log":  [
+                                                            "2026-10-22T14:40:36Z [app] installer started (script changed, guard.json missing or task missing)",
+                                                            "2026-10-22T20:10:42.478+05:30 [install] MISCONFIGURED (code 2): task registration failed: Access is denied.",
+                                                            ""
+                                                        ],
+                                         "last-result.json":  null,
+                                         "retry.json":  null,
+                                         "install-result.json":  "{ \"status\": \"misconfigured\", \"code\": 2, \"mode\": \"install\", \"timeUtc\": \"2026-10-22T14:40:42.5121809Z\", \"guardVersion\": 2, \"guardSha256\": \"5abc0a4d72ae851be349c082482c99c9b7ec73ffe0a04117e2cde535f0ba37e5\", \"guardSha256Lf\": \"5abc0a4d72ae851be349c082482c99c9b7ec73ffe0a04117e2cde535f0ba37e5\", \"detail\": \"task registration failed: Access is denied.\\r\\n\" }",
+                                         "install-attempt.json":  "{\"epoch\":1792680036,\"sha256\":\"5abc0a4d72ae851be349c082482c99c9b7ec73ffe0a04117e2cde535f0ba37e5\"}"
+                                     },
+                     "guard_dir_exists":  true,
+                     "guard_dir_files":  [
+                                             "install-attempt.json",
+                                             "install-result.json",
+                                             "repair-guard.ps1",
+                                             "repair.log"
+                                         ],
+                     "package":  "0.1.0.0:Ok",
+                     "relaunch":  {
+                                      "tag":  "relaunch-sched-blocked",
+                                      "launched":  true,
+                                      "pid":  7728,
+                                      "window_name":  "SliceApp",
+                                      "exe_path":  "C:\\Program Files\\WindowsApps\\OrthicLabs.SliceApp_0.1.0.0_x64__j3cejpx244dcr\\SliceApp.exe",
+                                      "running_version":  "0.1.0.0",
+                                      "seconds":  0.1,
+                                      "processes_without_window":  0,
+                                      "top_windows":  [
+                                                          "class=Zed::Window name=[SliceApp] pid=0",
+                                                          "class=ConsoleWindowClass name=[Administrator: Windows PowerShell] pid=6924"
+                                                      ]
+                                  },
+                     "rows_exists":  true,
+                     "policy_removed":  false,
+                     "restore_error":  "Access is denied. (Exception from HRESULT: 0x80070005 (E_ACCESSDENIED))",
+                     "guard_log":  "2026-10-22T14:40:36Z [app] installer started (script changed, guard.json missing or task missing)\r\n2026-10-22T20:10:42.478+05:30 [install] MISCONFIGURED (code 2): task registration failed: Access is denied.\r\n\r\n2026-10-22T14:41:42Z [app] install skipped: the previous installer attempt did not finish successfully less than 24 h ago (install-attempt.json); retried after that or when the embedded script changes\r\n",
+                     "pass":  true,
+                     "result":  "block effective=True app launched=True/True guard registered=False guard dir files=install-attempt.json,install-result.json,repair-guard.ps1,repair.log"
+                 },
+    "post":  {
+
+             },
+    "errors":  [
+
+               ],
+    "default_routes":  1,
+    "ended_utc":  "2026-10-22T14:41:46.0838908Z"
+}
