@@ -122,10 +122,10 @@
   "after"
  ],
  "edgeAATolerance": {
-  "levels": 255,
-  "maxOverFraction": 1.0,
-  "maxMeanAbs": 255,
-  "reason": "PROVISIONAL (issue #77): first CI pair; this run only MEASURES the pressed looks (the gate passes whatever differs). Tighten after reading the first result."
+  "levels": 64,
+  "maxOverFraction": 0.03,
+  "maxMeanAbs": 3,
+  "reason": "PROVISIONAL (issue #77): the rounded body edges of the bordered and prominent buttons, at rest and pressed. Not yet measured with the label regions excluded; fit from the next pair."
  },
  "semanticGate": {
   "fields": [
@@ -139,5 +139,43 @@
    "start"
   ],
   "boundsTolerancePt": 0.5
- }
+ },
+ "excludeRects": [
+  {
+   "name": "bordered label glyph region (Segoe UI vs SF, decision 2): the pressed look is gated on the body and checked on the label by the measured table in the case notes (Mac vs Windows darkest ink: bordered body 212/212, prominent (0,111,230) both, plain label 93/93, borderless 38/39, CI 39695854534)",
+   "rect": [
+    315,
+    152,
+    485,
+    202
+   ]
+  },
+  {
+   "name": "prominent label glyph region (Segoe UI vs SF, decision 2): the pressed look is gated on the body and checked on the label by the measured table in the case notes (Mac vs Windows darkest ink: bordered body 212/212, prominent (0,111,230) both, plain label 93/93, borderless 38/39, CI 39695854534)",
+   "rect": [
+    307,
+    247,
+    493,
+    298
+   ]
+  },
+  {
+   "name": "plain label glyph region (Segoe UI vs SF, decision 2): the pressed look is gated on the body and checked on the label by the measured table in the case notes (Mac vs Windows darkest ink: bordered body 212/212, prominent (0,111,230) both, plain label 93/93, borderless 38/39, CI 39695854534)",
+   "rect": [
+    358,
+    332,
+    443,
+    383
+   ]
+  },
+  {
+   "name": "borderless label glyph region (Segoe UI vs SF, decision 2): the pressed look is gated on the body and checked on the label by the measured table in the case notes (Mac vs Windows darkest ink: bordered body 212/212, prominent (0,111,230) both, plain label 93/93, borderless 38/39, CI 39695854534)",
+   "rect": [
+    313,
+    407,
+    487,
+    458
+   ]
+  }
+ ]
 }
