@@ -529,7 +529,7 @@ impl CandPopup {
             return true;
         }
         unsafe {
-            let hinst: HINSTANCE = match GetModuleHandleW(None::<PCWSTR>) {
+            let hinst: HINSTANCE = match GetModuleHandleW(PCWSTR::null()) {
                 Ok(h) => HINSTANCE(h.0),
                 Err(_) => return false,
             };
