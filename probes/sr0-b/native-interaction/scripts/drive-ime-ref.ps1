@@ -9,6 +9,19 @@ param(
   [string]$ExpectExe = '', [string]$ExpectDll = ''
 )
 . "$PSScriptRoot\native-common.ps1"
+function Start-EventLog {
+  if (-not ('SRN.EventLog' -as [type])) {
+    $refs = @([System.Windows.Automation.AutomationElement].Assembly.Location, [System.Windows.Automation.ControlType].Assembly.Location, [System.Windows.Automation.TextPattern].Assembly.Location)
+    Add-Type -TypeDefinition ([IO.File]::ReadAllText((Join-Path $PSScriptRoot 'EventLog.cs'))) -ReferencedAssemblies $refs
+  }
+  [SRN.EventLog]::Start($script:Hwnd); Log 'event_log started'
+}
+function Stop-EventLog([string]$path) {
+  if (-not ('SRN.EventLog' -as [type])) { return }
+  $ev = [SRN.EventLog]::Stop()
+  [IO.File]::WriteAllText($path, [string]::Join("`r`n", $ev), (New-Object Text.UTF8Encoding $false))
+  Log "event_log stopped lines=$($ev.Count) -> $path"
+}
 
 $TIP_GUID = '{03B5835F-F03C-411B-9CE2-AA23E1171E36}'
 Log "host=$env:COMPUTERNAME user=$env:USERNAME session=$((Get-Process -Id $PID).SessionId) reference=edge started=$(Get-Date -Format o)"
@@ -89,6 +102,7 @@ function Ime-Wins([string]$tag) {
   if ($o.Count -eq 0) { Log "$tag no window appeared or moved" }
   return ,$o
 }
+Start-EventLog
 $before = Ime-Wins 'before_typing'
 foreach ($c in 'NIHONN'.ToCharArray()) { if (-not (Send-GatedKey ([uint16][int]$c) "romaji-$c" 150)) { break } }
 Start-Sleep -Milliseconds 600
@@ -98,6 +112,7 @@ $titleNow = { ([SRN.N]::TopWindows() | Where-Object { $_.Hwnd -eq $script:Hwnd.T
 $sw = [Diagnostics.Stopwatch]::StartNew()
 while ($sw.Elapsed.TotalSeconds -lt 10 -and -not ((& $titleNow) -like '*moved')) { Start-Sleep -Milliseconds 100 }
 $moved = (& $titleNow) -like '*moved'
+[SRN.EventLog]::Mark("page row inserted (title moved)")
 Log "page_row_inserted=$moved after_ms=$($sw.ElapsedMilliseconds)"
 Start-Sleep -Milliseconds 1000
 $after = Ime-Wins 'after_move'
@@ -119,4 +134,5 @@ foreach ($k in 1..3) { [void](Send-GatedKey 0x1B "escape-$k" 200) }
 [void][SRN.N]::PostMessage($script:Hwnd, [SRN.N]::WM_INPUTLANGCHANGEREQUEST, [IntPtr]0, [IntPtr]$layoutBefore)
 Start-Sleep -Milliseconds 500
 try { Get-CimInstance Win32_Process | Where-Object { $_.Name -eq 'msedge.exe' -and $_.CommandLine -match [regex]::Escape($profileDir) } | ForEach-Object { Stop-Process -Id $_.ProcessId -Force -ErrorAction SilentlyContinue } } catch { }
+Stop-EventLog "$Out.events.txt"
 Write-Result $Out 'ime-ref-edge'

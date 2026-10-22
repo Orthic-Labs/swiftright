@@ -6,7 +6,7 @@
 # desktop lane to be free (nothing else may use the Dell desktop while it runs: it types real keys into the probe window).
 param(
   [string]$Base = 'D:\Claude\sr0s-bridge06b',
-  [Parameter(Mandatory)][ValidateSet('ime-f7', 'ime-f7live', 'ime-f7live-down', 'ime-f7live-syscaret', 'ime-f7live-tsf-caret', 'ime-ref-edge', 'ime-f8', 'narrator')][string]$Check,
+  [Parameter(Mandatory)][ValidateSet('ime-f7', 'ime-f7live', 'ime-f7live-down', 'ime-f7live-syscaret', 'ime-f7live-tsf-caret', 'ime-f7live-events', 'ime-f7live-syscaret-events', 'ime-ref-edge', 'ime-f8', 'narrator')][string]$Check,
   [string]$Tag = 'run1',
   [Parameter(Mandatory)][string]$ExpectExe,
   [Parameter(Mandatory)][string]$ExpectDll
@@ -18,7 +18,7 @@ if (@($verify) -cnotcontains 'ARTIFACT_OK') { throw 'artifact check failed; no t
 $artifactLine = ($verify | Where-Object { $_ -like 'ARTIFACT base=*' } | Select-Object -First 1).Trim()
 $scripts = "$Base\probes\sr0-b\native-interaction\scripts"
 $out = "$Base\result-native-$Check-$Tag.txt"
-foreach ($f in @('NativeHelpers.cs', 'native-common.ps1', 'drive-ime.ps1', 'drive-ime-ref.ps1', 'drive-narrator.ps1')) { if (-not (Test-Path -LiteralPath "$scripts\$f")) { throw "missing $scripts\$f (stage the scripts first, see run-native.sh)" } }
+foreach ($f in @('NativeHelpers.cs', 'EventLog.cs', 'native-common.ps1', 'drive-ime.ps1', 'drive-ime-ref.ps1', 'drive-narrator.ps1')) { if (-not (Test-Path -LiteralPath "$scripts\$f")) { throw "missing $scripts\$f (stage the scripts first, see run-native.sh)" } }
 switch ($Check) {
   'ime-f7' { $drv = 'drive-ime.ps1'; $extra = '-Fixture F7' }
   'ime-f7live' { $drv = 'drive-ime.ps1'; $extra = '-Fixture F7live' }
@@ -26,6 +26,8 @@ switch ($Check) {
   'ime-ref-edge' { $drv = 'drive-ime-ref.ps1'; $extra = '' }
   'ime-f7live-syscaret' { $drv = 'drive-ime.ps1'; $extra = '-Fixture F7live -SysCaret' }
   'ime-f7live-tsf-caret' { $drv = 'drive-ime.ps1'; $extra = '-Fixture F7live -SysCaret -Tsf' }
+  'ime-f7live-events' { $drv = 'drive-ime.ps1'; $extra = '-Fixture F7live -EventLog' }
+  'ime-f7live-syscaret-events' { $drv = 'drive-ime.ps1'; $extra = '-Fixture F7live -SysCaret -EventLog' }
   'ime-f8' { $drv = 'drive-ime.ps1'; $extra = '-Fixture F8' }
   'narrator' { $drv = 'drive-narrator.ps1'; $extra = '' }
 }

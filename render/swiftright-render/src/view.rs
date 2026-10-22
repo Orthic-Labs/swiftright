@@ -1478,6 +1478,10 @@ extern "system" {
     fn ShowCaret(hwnd: *mut c_void) -> i32;
     fn DestroyCaret() -> i32;
     fn NotifyWinEvent(event: u32, hwnd: *mut c_void, id_object: i32, id_child: i32);
+    }
+#[link(name = "kernel32")]
+extern "system" {
+    fn GetCurrentThreadId() -> u32;
 }
 #[link(name = "gdi32")]
 extern "system" {
@@ -1624,6 +1628,7 @@ fn ime_replace_on_layout(hwnd: *mut c_void) {
     }
     if old.0 != i32::MIN {
         eprintln!("[swiftright-render] ime_replace reason=layout old={},{},{},{} new={},{},{},{}", old.0, old.1, old.2, old.3, new.0, new.1, new.2, new.3);
+        eprintln!("[swiftright-render] ime_replace_timing qpc={} tid={}", qpc_now(), unsafe { GetCurrentThreadId() });
         place_ime_windows(hwnd);
         tsf::layout_changed();
     } else {
@@ -1670,9 +1675,12 @@ fn sys_caret_place(hwnd: *mut c_void, x: i32, y: i32, h: i32) {
             eprintln!("[swiftright-render] ime_sys_caret create ok={ok} h={h}");
         }
         if SYS_CARET.load(SeqCst) != 0 {
-            SetCaretPos(x, y);
+            let rc = SetCaretPos(x, y);
             NotifyWinEvent(0x800B, hwnd, -8, 0); // EVENT_OBJECT_LOCATIONCHANGE, OBJID_CARET, CHILDID_SELF
-            eprintln!("[swiftright-render] ime_sys_caret pos={x},{y} h={h}");
+            // qpc = raw QueryPerformanceCounter ticks, comparable with the harness event log (#45); tid = calling thread, win_tid = the window's thread
+            let mut pid = 0u32;
+            let win_tid = GetWindowThreadProcessId(hwnd, &mut pid);
+            eprintln!("[swiftright-render] ime_sys_caret pos={x},{y} h={h} set_rc={rc} qpc={} tid={} win_tid={win_tid}", qpc_now(), GetCurrentThreadId());
         }
     }
 }

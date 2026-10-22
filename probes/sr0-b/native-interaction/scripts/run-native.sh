@@ -17,13 +17,13 @@ HERE="$(cd "$(dirname "$0")" && pwd)"
 OUT="${OUT_DIR:-$HERE/../out}"; mkdir -p "$OUT"
 TAG="${TAG:-$(date +%Y%m%dT%H%M%S)}"
 CHECKS=("$@"); [ ${#CHECKS[@]} -eq 0 ] && CHECKS=(ime-f7 ime-f7live ime-f8 narrator)
-for c in "${CHECKS[@]}"; do case "$c" in ime-f7|ime-f7live|ime-f7live-down|ime-f7live-syscaret|ime-f7live-tsf-caret|ime-ref-edge|ime-f8|narrator) ;; *) echo "unknown check: $c" >&2; exit 2;; esac; done
+for c in "${CHECKS[@]}"; do case "$c" in ime-f7|ime-f7live|ime-f7live-down|ime-f7live-syscaret|ime-f7live-tsf-caret|ime-f7live-events|ime-f7live-syscaret-events|ime-ref-edge|ime-f8|narrator) ;; *) echo "unknown check: $c" >&2; exit 2;; esac; done
 for h in "$EXPECT_EXE_SHA256" "$EXPECT_DLL_SHA256"; do printf %s "$h" | grep -Eq '^[0-9A-Fa-f]{64}$' || { echo "expected hash is not 64 hex digits: $h" >&2; exit 2; }; done
 WINDIR_SCRIPTS="$BASE_DIR\\probes\\sr0-b\\native-interaction\\scripts"
 SCP_DIR="$(printf %s "$WINDIR_SCRIPTS" | tr '\\' '/')"
 
 win "New-Item -ItemType Directory -Force -Path '$WINDIR_SCRIPTS' | Out-Null; 'staging dir ready'" || exit 1
-scp -q "$HERE"/NativeHelpers.cs "$HERE"/*.ps1 "win:$SCP_DIR/" || { echo "staging failed" >&2; exit 1; }
+scp -q "$HERE"/NativeHelpers.cs "$HERE"/EventLog.cs "$HERE"/*.ps1 "win:$SCP_DIR/" || { echo "staging failed" >&2; exit 1; }
 win "powershell -NoProfile -ExecutionPolicy Bypass -File $WINDIR_SCRIPTS\\check-native.ps1" | tee "$OUT/static-check-$TAG.txt"
 grep -q '^CHECK_OK' "$OUT/static-check-$TAG.txt" || { echo "static check failed; nothing was run" >&2; exit 2; }
 win "powershell -NoProfile -ExecutionPolicy Bypass -File $BASE_DIR\\probes\\sr0-s\\fresh-on-bridge\\scripts\\verify-artifacts.ps1 -Base $BASE_DIR -ExpectExe $EXPECT_EXE_SHA256 -ExpectDll $EXPECT_DLL_SHA256" | tee "$OUT/preflight-$TAG.txt"

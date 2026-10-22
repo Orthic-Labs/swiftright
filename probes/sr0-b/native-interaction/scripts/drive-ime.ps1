@@ -21,11 +21,27 @@ param(
   # #45: run the fixture with the renderer's opt-in system caret (SWIFTRIGHT_IME_SYSTEM_CARET=1)
   [switch]$SysCaret,
   # #45: run the fixture with the renderer's opt-in TSF text store (SWIFTRIGHT_IME_TSF=1)
-  [switch]$Tsf
+  [switch]$Tsf,
+  # #45: record WinEvents and UIA text/selection/structure events of the probe window (EventLog.cs) into "$Out.events.txt"
+  [switch]$EventLog
 )
 . "$PSScriptRoot\native-common.ps1"
 if ($SysCaret) { $env:SWIFTRIGHT_IME_SYSTEM_CARET = '1' }
 if ($Tsf) { $env:SWIFTRIGHT_IME_TSF = '1' }
+function Start-EventLog {
+  if (-not ('SRN.EventLog' -as [type])) {
+    $refs = @([System.Windows.Automation.AutomationElement].Assembly.Location, [System.Windows.Automation.ControlType].Assembly.Location, [System.Windows.Automation.TextPattern].Assembly.Location)
+    Add-Type -TypeDefinition ([IO.File]::ReadAllText((Join-Path $PSScriptRoot 'EventLog.cs'))) -ReferencedAssemblies $refs
+  }
+  [SRN.EventLog]::Start($script:Hwnd); Log 'event_log started'
+}
+function Stop-EventLog([string]$path) {
+  if (-not ('SRN.EventLog' -as [type])) { return }
+  $ev = [SRN.EventLog]::Stop()
+  [IO.File]::WriteAllText($path, [string]::Join("`r`n", $ev), (New-Object Text.UTF8Encoding $false))
+  Log "event_log stopped lines=$($ev.Count) -> $path"
+}
+
 
 # user32 calls for the post-move candidate track (IME_CANDIDATE_TRACK); not exposed by SRN.N, same Add-Type style as NativeHelpers.cs.
 if (-not ('SRN.WinTrack' -as [type])) {
@@ -74,6 +90,7 @@ if ($script:Root -eq $null) { Add-Check 'window' 'FAIL' 'no probe window'; Close
 $procIdOut = [uint32]0
 $tid = [SRN.N]::GetWindowThreadProcessId($script:Hwnd, [ref]$procIdOut)
 $layoutBefore = [SRN.N]::LayoutOfThread($tid)
+if ($EventLog) { Start-EventLog }
 Log ("probe_thread=$tid layout_before=0x{0:X8} ja_hkl=0x{1:X8} input_struct_size=$([SRN.N]::InputSize())" -f $layoutBefore, $hklJa)
 
 # ------------------------------------------------------------ IME control, window-targeted
@@ -382,6 +399,7 @@ function Layout-Trigger {
     $newS = [int[]]@(($o[0] + $nc[0]), ($o[1] + $nc[1]), $nc[2], $nc[3])
     $scale = [SRN.N]::GetDpiForWindow($script:Hwnd) / 96.0
     $mv = [Diagnostics.Stopwatch]::StartNew()   # IME_CANDIDATE_TRACK clock: started at detection of the move line (before the 400 ms wait)
+    if ($EventLog) { [SRN.EventLog]::Mark("layout move detected line=$i") }
     Log "candidate_after_layout line=$i caret_old_screen=$($oldS -join ',') caret_new_screen=$($newS -join ',') scale=$scale wait_ms=400"
     Start-Sleep -Milliseconds 400
     $hits = @(Cand-Hits-Near $newS 'candidate_after_layout')
@@ -785,4 +803,5 @@ if ($Fixture -eq 'F7live') {
   $ed7 = @($evt | Where-Object { $_.node_id -eq $u7 -and $_.kind -eq 'state' -and $_.payload.op -eq 'edit' } | ForEach-Object { $_.payload.text })
   Add-Check 'identity-model-state-row7' $(if ($dis -eq 0 -and $ed7.Count -eq 1 -and $ed7[0] -eq ($v0 + $NIPPON)) { 'PASS' } else { 'FAIL' }) "Row 7 uuid=$u7 disappear events before window close=$dis (0 expected) state-edit texts=[$($ed7 -join ' | ')] (one edit at commit expected: marked text never reached the model before it)"
 }
+if ($EventLog) { Stop-EventLog "$Out.events.txt" }
 Write-Result $Out "ime-$Fixture"
