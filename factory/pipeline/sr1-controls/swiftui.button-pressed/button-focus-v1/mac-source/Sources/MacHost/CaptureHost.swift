@@ -208,6 +208,8 @@ final class Driver {
             // #79: AppKit moves the key view onto controls only with full keyboard access; ask for it for this process (app domain) and put the window on screen and key first
             UserDefaults.standard.set(3, forKey: "AppleKeyboardUIMode")
             if !window.isVisible { window.setFrameOrigin(NSPoint(x: 40, y: 80)); window.orderFrontRegardless(); window.makeKey(); pump(0.3) }
+            NSApp.activate(ignoringOtherApps: true); pump(0.2)   // SwiftUI draws a focus ring only for the active app's key window
+            NSApp.sendEvent(ev); pump(0.3); return              // the real key event: SwiftUI's own focus system moves the focus
         }
         if name == "Tab" { if flags.contains(.shift) { window.selectPreviousKeyView(nil) } else { window.selectNextKeyView(nil) }; return }
         if let tv = table(), name == "PageDown" || name == "PageUp" {
