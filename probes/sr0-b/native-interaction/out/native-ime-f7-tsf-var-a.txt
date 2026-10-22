@@ -1,0 +1,112 @@
+ARTIFACT base=D:\Claude\swiftright\.work\sr0-ime45\src exe_sha256=87B8CB27CE6730E56681FAC3EA22ED3DFB859B3DDDB697C339318F4CE60EB374 dll_sha256=E44077E03F9F94ADF4B38783B7C504740F7B8CBF445E9D75942B658A73687DF7 expect_exe=87B8CB27CE6730E56681FAC3EA22ED3DFB859B3DDDB697C339318F4CE60EB374 expect_dll=E44077E03F9F94ADF4B38783B7C504740F7B8CBF445E9D75942B658A73687DF7
+ARTIFACT_OK
+registered=SR0N-ime-f7-tsf-var-a at=2026-10-22T23:18:23.0017981+05:30
+state=Ready last_result=0
+deleted=SR0N-ime-f7-tsf-var-a exists_after=False
+ARTIFACT base=D:\Claude\swiftright\.work\sr0-ime45\src exe_sha256=87B8CB27CE6730E56681FAC3EA22ED3DFB859B3DDDB697C339318F4CE60EB374 dll_sha256=E44077E03F9F94ADF4B38783B7C504740F7B8CBF445E9D75942B658A73687DF7 expect_exe=87B8CB27CE6730E56681FAC3EA22ED3DFB859B3DDDB697C339318F4CE60EB374 expect_dll=E44077E03F9F94ADF4B38783B7C504740F7B8CBF445E9D75942B658A73687DF7 class=native check=ime-f7-tsf tag=var-a
+    0.2s host=BOGUS-DELL user=adrds session=1 fixture=F7 started=2026-10-22T23:18:24.5066626+05:30
+    0.3s ARTIFACTS exe=87B8CB27CE6730E56681FAC3EA22ED3DFB859B3DDDB697C339318F4CE60EB374 renderer=E44077E03F9F94ADF4B38783B7C504740F7B8CBF445E9D75942B658A73687DF7 expect_exe=87B8CB27CE6730E56681FAC3EA22ED3DFB859B3DDDB697C339318F4CE60EB374 expect_dll=E44077E03F9F94ADF4B38783B7C504740F7B8CBF445E9D75942B658A73687DF7 match=True
+    0.4s CHECK ime-installed PASS :: tip_registered=True user_has_tip=True (want 0411:{03B5835F-F03C-411B-9CE2-AA23E1171E36}{A76C93D9-5523-4E90-AAFA-4DB112F9AC76}) user_tips=[0409:00000409 0411:{03B5835F-F03C-411B-9CE2-AA23E1171E36}{A76C93D9-5523-4E90-AAFA-4DB112F9AC76}] hkls_0411=[0x04110411]
+    1.1s fixture=F7 pid=66268 window_hwnd=4069442 polls=2 exited_early=False dpi=240
+    3.0s probe_thread=38776 layout_before=0x04110411 ja_hkl=0x04110411 input_struct_size=40
+    5.8s foreground_failed fg=[hwnd=10816344 pid=59488 class=[Chrome_WidgetWin_1] title=[ChatGPT]]
+    5.8s focus[Row 2]=not_foreground
+    8.4s foreground_failed fg=[hwnd=10816344 pid=59488 class=[Chrome_WidgetWin_1] title=[ChatGPT]]
+    8.4s driver_abort=foreground-lost fg=[hwnd=10816344 pid=59488 class=[Chrome_WidgetWin_1] title=[ChatGPT]] probe=4069442
+    8.4s key_skipped setup-a reason=foreground-lost
+   28.6s wait_value[Row 2] TIMEOUT expected=[Row 2ka] last=[Row 2]
+   63.0s wait_element[inserted row 99 (Engine 0)] TIMEOUT
+   83.0s wait_value[Row 2] TIMEOUT expected=[Row 2kana] last=[NOT_FOUND]
+   83.0s ready_file=False waited_ms=2
+   83.0s CHECK precondition-row2 FAIL :: value=[NOT_FOUND] (after the exe's programmatic F7 script)
+   86.6s ime_switch set_open_rc=-1 set_conv_rc=-1 readback open=-1 conv=0xFFFFFFFFFFFFFFFF layout=0x00000000
+   86.6s ime_switch fallback: VK_IME_ON and VK_DBE_HIRAGANA via the gated SendInput path
+   86.6s key_skipped vk-ime-on reason=foreground-lost
+   86.6s key_skipped vk-hiragana reason=foreground-lost
+   86.6s CHECK ime-activated-on-probe-thread FAIL :: layout=0x00000000 open_status=-1 conversion_mode=0xFFFFFFFFFFFFFFFF (hiragana = native|fullshape = 0x9)
+   86.7s driver_exception: ime-not-active
+   86.7s CHECK driver-run FAIL :: exception: ime-not-active
+   89.9s ime_restore open=-1 layout=0x00000000 (before 0x04110411)
+   90.0s CHECK ime-restored FAIL :: probe thread layout back to 0x04110411 and IME closed
+   90.6s exe_exit=1 keys_sent=0 driver_abort=foreground-lost
+   90.8s selftest_verdict=[SELFTEST F7: FAIL (6/20 asserted; blocked=0; end=timeout waiting for 'row2 focused by AX')]
+   90.9s CHECK ime-caret-bounds-logged FAIL :: exe EVT ime/caret-bounds lines=0 with a non-empty rectangle=0 distinct x positions=0 (expected >=2: the caret rectangle must move as the composition grows) last=none
+   90.9s CHECK f7-selftest-programmatic-asserts-unaffected FAIL :: failed asserts=[script-completed,committed-text-on-original-identity,identity-index-shift,focus-stays-on-identity,insert-committed,text-store-keystrokes,composition-uncommitted-in-model,composition-marked-range,marked-range-via-text-store,composition-replaced-in-place,composition-survives-insert-above,composition-committed-on-unmark,ime-calls-recorded,marked-text-in-commit-records] (expected to fail only: text-store-keystrokes,ime-calls-recorded because the real IME added calls) unexpected=[script-completed,committed-text-on-original-identity,identity-index-shift,focus-stays-on-identity,insert-committed,composition-uncommitted-in-model,composition-marked-range,marked-range-via-text-store,composition-replaced-in-place,composition-survives-insert-above,composition-committed-on-unmark,marked-text-in-commit-records]
+   91.0s CHECK tsf-text-store-log-matches-live-composition FAIL :: tsf_edit marked lengths=[] live-observed lengths=[] missing=[]
+   91.0s CHECK model-state-edits-during-real-ime FAIL :: state-edit texts for Row 2 after the programmatic stage=[] expected exactly [NOT_FOUND?? | Row 2kana]: no model write while composing or on Escape; one write at commit; one write from the driver's restore
+   91.1s CHECK tsf-escape-and-commit-close-every-composition FAIL :: tsf_composition starts=0 ends=0 (every composition, committed or cancelled with Escape, must end)
+   91.1s CHECK input-gate-no-foreground-abort FAIL :: gated virtual-key events sent=0 abort=foreground-lost (any foreground change aborts the run; no keystroke may reach another application)
+   91.1s NATIVE_SUMMARY ime-F7 pass=1 fail=10 fail_not_automatable=0 not_run=0
+   91.1s --- exe stdout ---
+   91.1s EVT {"kind":"lifecycle","mono_ns":292274511545600,"node_id":"selftest","payload":{"fixture":"F7","phase":"start"},"seq":0}
+   91.1s EVT {"kind":"lifecycle","mono_ns":292275049356200,"node_id":"window","payload":{"phase":"root-appear"},"seq":1}
+   91.1s EVT {"kind":"lifecycle","mono_ns":292275051824400,"node_id":"F0000007-0000-4000-8000-000000000001","payload":{"controls":["field"],"local":0,"phase":"appear"},"seq":2}
+   91.1s EVT {"kind":"lifecycle","mono_ns":292275053069300,"node_id":"F0000007-0000-4000-8000-000000000002","payload":{"controls":["field"],"local":0,"phase":"appear"},"seq":3}
+   91.1s EVT {"kind":"lifecycle","mono_ns":292275053332700,"node_id":"F0000007-0000-4000-8000-000000000003","payload":{"controls":["field"],"local":0,"phase":"appear"},"seq":4}
+   91.1s EVT {"kind":"lifecycle","mono_ns":292275053557200,"node_id":"F0000007-0000-4000-8000-000000000004","payload":{"controls":["field"],"local":0,"phase":"appear"},"seq":5}
+   91.1s EVT {"kind":"lifecycle","mono_ns":292275053808300,"node_id":"F0000007-0000-4000-8000-000000000005","payload":{"controls":["field"],"local":0,"phase":"appear"},"seq":6}
+   91.1s EVT {"kind":"lifecycle","mono_ns":292275054095600,"node_id":"F0000007-0000-4000-8000-000000000006","payload":{"controls":["field"],"local":0,"phase":"appear"},"seq":7}
+   91.1s EVT {"kind":"lifecycle","mono_ns":292275054306200,"node_id":"F0000007-0000-4000-8000-000000000007","payload":{"controls":["field"],"local":0,"phase":"appear"},"seq":8}
+   91.1s EVT {"kind":"lifecycle","mono_ns":292275054525500,"node_id":"F0000007-0000-4000-8000-000000000008","payload":{"controls":["field"],"local":0,"phase":"appear"},"seq":9}
+   91.1s EVT {"kind":"lifecycle","mono_ns":292275054766700,"node_id":"F0000007-0000-4000-8000-000000000009","payload":{"controls":["field"],"local":0,"phase":"appear"},"seq":10}
+   91.1s EVT {"kind":"lifecycle","mono_ns":292275054978500,"node_id":"F0000007-0000-4000-8000-000000000010","payload":{"controls":["field"],"local":0,"phase":"appear"},"seq":11}
+   91.1s EVT {"kind":"lifecycle","mono_ns":292275059078800,"node_id":"window","payload":{"height_px":1200,"phase":"ready","reduce_motion":false,"reduce_source":"default","scale":2.5,"width_px":1600},"seq":12}
+   91.1s EVT {"kind":"lifecycle","mono_ns":292275060065300,"node_id":"screen","payload":{"effect":"insert-above","gen":0,"key":"insert-above","phase":"task-start"},"seq":13}
+   91.1s EVT {"kind":"effect","mono_ns":292275060160400,"node_id":"screen","payload":{"key":"insert-above","phase":"engine-request"},"seq":14}
+   91.1s EVT {"kind":"lifecycle","mono_ns":292275061563500,"node_id":"selftest","payload":{"name":"insert-above pending","phase":"stage"},"seq":15}
+   91.1s SELFTEST-STAGES F7: insert-above pending@0.55s end-reason=timeout waiting for 'row2 focused by AX'
+   91.1s ASSERT F7 script-completed: FAIL stages=insert-above pending@0.55s
+   91.1s ASSERT F7 committed-text-on-original-identity: FAIL text=Row 2
+   91.1s ASSERT F7 identity-index-shift: FAIL index=1
+   91.1s ASSERT F7 focus-stays-on-identity: FAIL focus=nil
+   91.1s ASSERT F7 insert-committed: FAIL top=Row 1
+   91.1s ASSERT F7 no-teardown: PASS row2 disappear events before window close=0 (teardown at close excluded: 0 incl. teardown)
+   91.1s ASSERT F7 text-store-keystrokes: FAIL replace calls=
+   91.1s ASSERT F7 composition-uncommitted-in-model: FAIL committed during composition=nil / nil
+   91.1s ASSERT F7 composition-marked-range: FAIL display=nil marked=nil
+   91.1s ASSERT F7 marked-range-via-text-store: FAIL store markedRange=nil
+   91.1s ASSERT F7 composition-replaced-in-place: FAIL display=nil marked=nil
+   91.1s ASSERT F7 composition-survives-insert-above: FAIL display=nil marked=nil
+   91.1s ASSERT F7 composition-committed-on-unmark: FAIL committed=nil marked=none
+   91.1s ASSERT F7 ime-calls-recorded: FAIL calls=
+   91.1s ASSERT F7 marked-text-in-commit-records: FAIL commits with marked text=0
+   91.1s ASSERT F7 initial-focus-matches-mac-oracle: PASS expected=none initial-events=0 focused=none first-focus-event-is-initial=false after-appears-before-tasks=true (Mac: List-first window none; VStack, LazyVStack, custom Layout: row 1)
+   91.1s ASSERT F7 invoke-does-not-move-focus: PASS ax-invokes=0 coalesced-focus-requests=0 offenders=none
+   91.1s ASSERT F7 renderer-no-violations: PASS thread_violations=0 host_panics=0
+   91.1s ASSERT F7 commits-accepted: PASS commits=2 errors=0 dropped-after-close=0
+   91.1s ASSERT F7 no-measure-or-draw-failures: PASS measure=0 draw=0 
+   91.1s SELFTEST F7: FAIL (6/20 asserted; blocked=0; end=timeout waiting for 'row2 focused by AX')
+   91.1s EVT {"kind":"lifecycle","mono_ns":292315068662800,"node_id":"window","payload":{"phase":"closed"},"seq":16}
+   91.1s EVT {"kind":"lifecycle","mono_ns":292315068960900,"node_id":"window","payload":{"phase":"root-disappear","source":"host-window-close"},"seq":17}
+   91.1s EVT {"kind":"lifecycle","mono_ns":292315069202800,"node_id":"screen","payload":{"effect":"insert-above","key":"insert-above","phase":"task-cancel"},"seq":18}
+   91.1s EVT {"kind":"lifecycle","mono_ns":292315069492500,"node_id":"F0000007-0000-4000-8000-000000000001","payload":{"local":0,"phase":"disappear"},"seq":19}
+   91.1s EVT {"kind":"lifecycle","mono_ns":292315069765700,"node_id":"F0000007-0000-4000-8000-000000000002","payload":{"local":0,"phase":"disappear"},"seq":20}
+   91.1s EVT {"kind":"lifecycle","mono_ns":292315070025200,"node_id":"F0000007-0000-4000-8000-000000000003","payload":{"local":0,"phase":"disappear"},"seq":21}
+   91.1s EVT {"kind":"lifecycle","mono_ns":292315070322600,"node_id":"F0000007-0000-4000-8000-000000000004","payload":{"local":0,"phase":"disappear"},"seq":22}
+   91.1s EVT {"kind":"lifecycle","mono_ns":292315070566800,"node_id":"F0000007-0000-4000-8000-000000000005","payload":{"local":0,"phase":"disappear"},"seq":23}
+   91.1s EVT {"kind":"lifecycle","mono_ns":292315070811400,"node_id":"F0000007-0000-4000-8000-000000000006","payload":{"local":0,"phase":"disappear"},"seq":24}
+   91.1s EVT {"kind":"lifecycle","mono_ns":292315071072300,"node_id":"F0000007-0000-4000-8000-000000000007","payload":{"local":0,"phase":"disappear"},"seq":25}
+   91.1s EVT {"kind":"lifecycle","mono_ns":292315071346000,"node_id":"F0000007-0000-4000-8000-000000000008","payload":{"local":0,"phase":"disappear"},"seq":26}
+   91.1s EVT {"kind":"lifecycle","mono_ns":292315071604100,"node_id":"F0000007-0000-4000-8000-000000000009","payload":{"local":0,"phase":"disappear"},"seq":27}
+   91.1s EVT {"kind":"lifecycle","mono_ns":292315071827800,"node_id":"F0000007-0000-4000-8000-000000000010","payload":{"local":0,"phase":"disappear"},"seq":28}
+   91.1s --- exe stderr ---
+   91.1s [swiftright-render] SetProcessDpiAwarenessContext(PER_MONITOR_AWARE_V2) -> 1
+   91.1s [swiftright-render] tsf_enabled env=SWIFTRIGHT_IME_TSF
+   91.1s [swiftright-render] ime_subclass installed=1
+   91.1s [swiftright-render] paint pacing off (SWR_PAINT_PHASE_MS=0)
+   91.1s [swiftright-render] requested=640x480dip expected=1600x1200px initial-client=2560x1396px scale=2.5
+   91.1s [swiftright-render] window hwnd=0x3e1842 style=0x4cf0000 exstyle=0x240100 (WS_EX_LAYERED=false WS_EX_TRANSPARENT=false WS_EX_NOREDIRECTIONBITMAP=true) scale=2.5 client=2560x1396px background=Opaque
+   91.1s [swiftright-render] modal start path: posted (WM_SWR_MODAL)
+   91.1s [swiftright-render] ime_msg msg=0x0282 wparam=0x2 lparam=0x0
+   91.1s [swiftright-render] ime_msg msg=0x0281 wparam=0x1 lparam=0xC000000F
+   91.1s [swiftright-render] ready metrics requested=640x480dip ready-client=1600x1200px scale=2.5 changed_since_initial=false
+   91.1s [swiftright-render] ax publication policy: off=false min_interval_ms=100
+   91.1s [swiftright-render] ime_msg msg=0x0282 wparam=0x1 lparam=0x0
+   91.1s [swiftright-render] ime_msg msg=0x0281 wparam=0x0 lparam=0xC000000F
+   91.1s [swiftright-render] ime_msg msg=0x0282 wparam=0x2 lparam=0x0
+   91.1s [swiftright-render] ime_msg msg=0x0281 wparam=0x1 lparam=0xC000000F
+   91.1s [swiftright-render] ime_msg msg=0x0282 wparam=0x1 lparam=0x0
+   91.1s [swiftright-render] ime_msg msg=0x0281 wparam=0x0 lparam=0xC000000F
+   91.1s [swiftright-render] shutdown paints=2278 paints_while_inactive=51 drains=2280 ticks_delivered=2276 events_pushed=1 reentry_refused=0 post_close_drains=2 post_close_timeouts=1
+   91.1s [swiftright-render] phases commit[n=2 mean_us=132 max_us=162] tree_commit[n=2 mean_us=127 max_us=156] paint_root[n=2278 mean_us=114 max_us=10082] present[n=1 mean_us=345 max_us=345] host_tick[n=2276 mean_us=71 max_us=8391] host_drain[n=2278 mean_us=4 max_us=710] frame[n=2276 mean_us=2543 max_us=100548] ime_cb[n=0 mean_us=0 max_us=0] paint_start_after_edge[n=0 mean_us=0 max_us=0] pacing[phase_us=0 period_us=0 edges=0 posted=0 skipped_pending=0 expired=0 swallowed=0 passed_stale=0 no_wait_edges=0]
+   91.1s [swiftright-render] memory rust_live_bytes=1206441 rust_allocs=146529 private_bytes=198299648 working_set=118845440 ax_publishes=1 ax_throttled=0 ax_rethrottled=0

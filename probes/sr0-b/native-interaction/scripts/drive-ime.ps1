@@ -537,6 +537,18 @@ function Eval-PositionSet($m) {
   $opens = @($m.ExeEv | Where-Object { $_.Event -eq 'open' })
   if ($opens.Count -eq 0) { return [pscustomobject]@{ Fired = $false; Match = $false; Note = 'no IMN_OPENCANDIDATE logged'; Vis = 0 } }
   $match = $false; $note = @(); $vis = 0
+  if ($Tsf) {
+    # TSF mode: the IME has no CANDIDATEFORM to set; it places its list from our ITextStoreACP::GetTextExt answer. The check is that the extents we gave it sit at the caret we draw.
+    $exts = @(Exe-ErrLines | ForEach-Object { [regex]::Match([string]$_, 'tsf_get_text_ext acp=\d+,\d+ rect=(-?\d+),(-?\d+),(-?\d+),(-?\d+)') } | Where-Object { $_.Success })
+    foreach ($e in $opens) {
+      $vis += @(Cand-UiWins $e).Count
+      if ($e.Caret -eq $null) { $note += 'caret=none'; continue }
+      $hit = @($exts | Where-Object { [math]::Abs([int]$_.Groups[1].Value - $e.Caret[0]) -le 4 * $s -and [math]::Abs([int]$_.Groups[2].Value - $e.Caret[1]) -le 4 * $s })
+      if ($hit.Count -gt 0) { $match = $true }
+      $note += "tsf: GetTextExt answers=$($exts.Count) at-caret=$($hit.Count) caret=$($e.Caret -join ',')"
+    }
+    return [pscustomobject]@{ Fired = $true; Match = $match; Note = ($note | Select-Object -First 3) -join ' ; '; Vis = $vis }
+  }
   foreach ($e in $opens) {
     $vis += @(Cand-UiWins $e).Count
     if ($e.Caret -eq $null) { $note += 'caret=none'; continue }
@@ -866,7 +878,15 @@ if ($Fixture -eq 'F7live') {
   # every distinct marked string observed live in composition 1 must appear, in order, in the runtime's replaceAndMark log
   $pos = 0; $missing = @()
   foreach ($w in $want) { $found = $false; for ($i = $pos; $i -lt $real.Count; $i++) { if ($real[$i] -eq $w) { $pos = $i + 1; $found = $true; break } }; if (-not $found) { $missing += $w } }
-  Add-Check 'runtime-text-store-log-matches-live-composition' $(if ($want.Count -gt 0 -and $missing.Count -eq 0 -and ($keys -contains $NIPPON)) { 'PASS' } else { 'FAIL' }) "runtime replaceAndMark/unmark calls after the 3 programmatic ones=[$($real -join ' ')] ; live-observed marks missing from it=[$($missing -join ' ')] ; replace calls=[$($keys -join ' ')] (commit must appear as the ideographs)"
+  if ($Tsf) {
+    # TSF mode: the store is our ITextStoreACP, logged as tsf_edit lines. Every marked length seen live in composition 1 must appear, in order, in the marked lengths the IME wrote through it.
+    $mls = @(Exe-ErrLines | ForEach-Object { [regex]::Match([string]$_, 'tsf_edit marked .* mark_len=(\d+)') } | Where-Object { $_.Success } | ForEach-Object { [int]$_.Groups[1].Value })
+    $wantLens = @($obs1 | Where-Object { $_ -ne '' } | ForEach-Object { $_.Length })
+    $pos2 = 0; $miss2 = @(); foreach ($w in $wantLens) { $f2 = $false; for ($k = $pos2; $k -lt $mls.Count; $k++) { if ($mls[$k] -eq $w) { $pos2 = $k + 1; $f2 = $true; break } }; if (-not $f2) { $miss2 += $w } }
+    Add-Check 'tsf-text-store-log-matches-live-composition' $(if ($wantLens.Count -gt 0 -and $miss2.Count -eq 0) { 'PASS' } else { 'FAIL' }) "tsf_edit marked lengths=[$($mls -join ' ')] live-observed lengths=[$($wantLens -join ' ')] missing=[$($miss2 -join ' ')]"
+  } else {
+    Add-Check 'runtime-text-store-log-matches-live-composition' $(if ($want.Count -gt 0 -and $missing.Count -eq 0 -and ($keys -contains $NIPPON)) { 'PASS' } else { 'FAIL' }) "runtime replaceAndMark/unmark calls after the 3 programmatic ones=[$($real -join ' ')] ; live-observed marks missing from it=[$($missing -join ' ')] ; replace calls=[$($keys -join ' ')] (commit must appear as the ideographs)"
+  }
   # model state from EVT: Row 2 uuid is in the field automation id; edits after the programmatic Row 2kana
   $edits = @($evt | Where-Object { $_.kind -eq 'state' -and $_.payload.op -eq 'edit' -and $_.payload.text -like 'Row 2*' })
   $texts = @($edits | ForEach-Object { $_.payload.text })
@@ -875,7 +895,12 @@ if ($Fixture -eq 'F7live') {
   $wantEdits = @(($v0 + $NIPPON), 'Row 2kana')
   Add-Check 'model-state-edits-during-real-ime' $(if ($afterFirst.Count -eq 2 -and $afterFirst[0] -eq $wantEdits[0] -and $afterFirst[1] -eq $wantEdits[1]) { 'PASS' } else { 'FAIL' }) "state-edit texts for Row 2 after the programmatic stage=[$($afterFirst -join ' | ')] expected exactly [$($wantEdits -join ' | ')]: no model write while composing or on Escape; one write at commit; one write from the driver's restore"
   $emptyReplaces = @($evt | Where-Object { $_.kind -eq 'input' -and $_.payload.op -eq 'text-store-replace' -and $_.payload.inserted -eq '' }).Count
-  Add-Check 'escape-visible-in-runtime-log' $(if ($emptyReplaces -ge 1) { 'PASS' } else { 'FAIL' }) "text-store-replace calls with empty text (the IME's cancel path)=$emptyReplaces (>=1 expected)"
+  if ($Tsf) {
+    $starts = @(Exe-ErrLines | Where-Object { $_ -match 'tsf_composition event=start' }).Count; $ends = @(Exe-ErrLines | Where-Object { $_ -match 'tsf_composition event=end' }).Count
+    Add-Check 'tsf-escape-and-commit-close-every-composition' $(if ($starts -ge 2 -and $ends -ge $starts) { 'PASS' } else { 'FAIL' }) "tsf_composition starts=$starts ends=$ends (every composition, committed or cancelled with Escape, must end)"
+  } else {
+    Add-Check 'escape-visible-in-runtime-log' $(if ($emptyReplaces -ge 1) { 'PASS' } else { 'FAIL' }) "text-store-replace calls with empty text (the IME's cancel path)=$emptyReplaces (>=1 expected)"
+  }
 } else {
   Add-Check 'f8-selftest-verdict' $(if ($verdict -like '*: PASS*') { 'PASS' } else { 'FAIL' }) "failed asserts=[$($failedAsserts -join ',')] verdict=[$verdict] (the real composition must not disturb the F8 script: Row 6 removed once, Row 3 focus and value kept)"
   $u7 = $uuid7
