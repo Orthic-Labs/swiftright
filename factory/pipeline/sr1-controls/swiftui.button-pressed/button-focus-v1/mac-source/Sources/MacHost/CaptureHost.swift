@@ -236,6 +236,9 @@ func runSteps(_ steps: [[String: Any]], driver: Driver, png: String, ax: String?
         do {
             switch op {
             case "click": try driver.click(px: (s["x"] as? NSNumber)?.doubleValue ?? 0, py: (s["y"] as? NSNumber)?.doubleValue ?? 0, mods: mods)
+            case "front":
+                if !driver.window.isVisible { driver.window.setFrameOrigin(NSPoint(x: 40, y: 80)); driver.window.orderFrontRegardless() }
+                driver.window.makeKey(); NSApp.activate(ignoringOtherApps: true); pump(0.4)
             case "down": driver.pointer(down: true, px: (s["x"] as? NSNumber)?.doubleValue ?? 0, py: (s["y"] as? NSNumber)?.doubleValue ?? 0)
             case "up": driver.pointer(down: false, px: (s["x"] as? NSNumber)?.doubleValue ?? 0, py: (s["y"] as? NSNumber)?.doubleValue ?? 0)
             case "key": try driver.key(s["key"] as? String ?? "", mods: mods)
