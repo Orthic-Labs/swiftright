@@ -19,6 +19,6 @@ struct Witness_g79_button_focus_v1: View {
         .padding(20).frame(width: 200, height: 200)
         .onAppear { focus = 0 }
         // Escape clears the focus (so the case ends with nothing focused: the Mac's cacheDisplay final shot cannot show a ring, Windows would paint the focused one)
-        .background { Button { focus = nil } label: { Text("x") }.buttonStyle(.plain).keyboardShortcut(.escape, modifiers: []).offset(x: 3000).accessibilityHidden(true) }
+        .background { Button { focus = nil } label: { Text("x") }.buttonStyle(.plain).keyboardShortcut(.escape, modifiers: []).offset(x: 3000, y: 3000).accessibilityHidden(true) }
     }
 }
