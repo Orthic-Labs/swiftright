@@ -1,0 +1,89 @@
+ARTIFACT base=D:\Claude\swiftright\.work\sr0-ime33\src exe_sha256=87B8CB27CE6730E56681FAC3EA22ED3DFB859B3DDDB697C339318F4CE60EB374 dll_sha256=F52F3FD939B6AE726C597D4D7BDF9F1A5F5084DBF1F172D5CD74021D1AB3FC68 expect_exe=87B8CB27CE6730E56681FAC3EA22ED3DFB859B3DDDB697C339318F4CE60EB374 expect_dll=F52F3FD939B6AE726C597D4D7BDF9F1A5F5084DBF1F172D5CD74021D1AB3FC68
+ARTIFACT_OK
+registered=SR0N-ime-f7live-ime33-a at=2026-10-21T02:01:30.5726687+05:30
+state=Ready last_result=0
+deleted=SR0N-ime-f7live-ime33-a exists_after=False
+ARTIFACT base=D:\Claude\swiftright\.work\sr0-ime33\src exe_sha256=87B8CB27CE6730E56681FAC3EA22ED3DFB859B3DDDB697C339318F4CE60EB374 dll_sha256=F52F3FD939B6AE726C597D4D7BDF9F1A5F5084DBF1F172D5CD74021D1AB3FC68 expect_exe=87B8CB27CE6730E56681FAC3EA22ED3DFB859B3DDDB697C339318F4CE60EB374 expect_dll=F52F3FD939B6AE726C597D4D7BDF9F1A5F5084DBF1F172D5CD74021D1AB3FC68 class=native check=ime-f7live tag=ime33-a
+    0.3s host=BOGUS-DELL user=adrds session=1 fixture=F7live started=2026-10-21T02:01:36.2964052+05:30
+    0.5s ARTIFACTS exe=87B8CB27CE6730E56681FAC3EA22ED3DFB859B3DDDB697C339318F4CE60EB374 renderer=F52F3FD939B6AE726C597D4D7BDF9F1A5F5084DBF1F172D5CD74021D1AB3FC68 expect_exe=87B8CB27CE6730E56681FAC3EA22ED3DFB859B3DDDB697C339318F4CE60EB374 expect_dll=F52F3FD939B6AE726C597D4D7BDF9F1A5F5084DBF1F172D5CD74021D1AB3FC68 match=True
+    0.6s CHECK ime-installed PASS :: tip_registered=True user_has_tip=True (want 0411:{03B5835F-F03C-411B-9CE2-AA23E1171E36}{A76C93D9-5523-4E90-AAFA-4DB112F9AC76}) user_tips=[0409:00000409 0411:{03B5835F-F03C-411B-9CE2-AA23E1171E36}{A76C93D9-5523-4E90-AAFA-4DB112F9AC76}] hkls_0411=[0x04110411]
+    1.3s fixture=F7 pid=67096 window_hwnd=2494338 polls=2 exited_early=False dpi=240
+    2.9s probe_thread=23060 layout_before=0x04090409 ja_hkl=0x04110411 input_struct_size=40
+    6.1s foreground_failed fg=[hwnd=7408430 pid=41832 class=[WinUIDesktopWin32WindowClass] title=[Windows Sandbox]]
+    6.1s focus[Row 2]=not_foreground
+   12.3s foreground_failed fg=[hwnd=7408430 pid=41832 class=[WinUIDesktopWin32WindowClass] title=[Windows Sandbox]]
+   12.3s driver_abort=foreground-lost fg=[hwnd=7408430 pid=41832 class=[WinUIDesktopWin32WindowClass] title=[Windows Sandbox]] probe=2494338
+   12.3s key_skipped setup-a reason=foreground-lost
+   32.5s wait_value[Row 2] TIMEOUT expected=[Row 2ka] last=[Row 2]
+   47.1s hook_armed=False waited_ms=14575
+   49.7s driver_exception: Exception calling "FindAll" with "2" argument(s): "Catastrophic failure (Exception from HRESULT: 0x8000FFFF (E_UNEXPECTED))"
+   49.7s CHECK driver-run FAIL :: exception: Exception calling "FindAll" with "2" argument(s): "Catastrophic failure (Exception from HRESULT: 0x8000FFFF (E_UNEXPECTED))"
+   53.4s ime_restore open=-1 layout=0x00000000 (before 0x04090409)
+   53.5s CHECK ime-restored FAIL :: probe thread layout back to 0x04090409 and IME closed
+   55.5s exe_exit=1 keys_sent=0 driver_abort=foreground-lost
+   55.9s selftest_verdict=[SELFTEST F7: FAIL (6/10 asserted; blocked=0; end=timeout waiting for 'row2 focused by AX')]
+   60.5s CHECK ime-caret-bounds-logged FAIL :: exe EVT ime/caret-bounds lines=0 with a non-empty rectangle=0 distinct x positions=0 (expected >=2: the caret rectangle must move as the composition grows) last=none
+   60.8s CHECK f7live-selftest-verdict FAIL :: failed asserts=[script-completed,insert-committed,identity-index-shift,release-hook-fired] verdict=[SELFTEST F7: FAIL (6/10 asserted; blocked=0; end=timeout waiting for 'row2 focused by AX')] (live variant: insert-committed, identity-index-shift, no-teardown, release-hook-fired)
+   60.9s CHECK f7live-hook-evidence-recorded FAIL :: release hook EVT: key= source= display=[] marked=
+   60.9s CHECK input-gate-no-foreground-abort FAIL :: gated virtual-key events sent=0 abort=foreground-lost (any foreground change aborts the run; no keystroke may reach another application)
+   60.9s NATIVE_SUMMARY ime-F7live pass=1 fail=6 fail_not_automatable=0 not_run=0
+   60.9s --- exe stdout ---
+   60.9s EVT {"kind":"lifecycle","mono_ns":129264445362600,"node_id":"selftest","payload":{"fixture":"F7","phase":"start"},"seq":0}
+   60.9s EVT {"kind":"hook","mono_ns":129264446561400,"node_id":"release-hook","payload":{"event":"Local\\SR0_RELEASE_HOOK","file":"none","phase":"configured"},"seq":1}
+   60.9s EVT {"kind":"lifecycle","mono_ns":129264982089600,"node_id":"window","payload":{"phase":"root-appear"},"seq":2}
+   60.9s EVT {"kind":"lifecycle","mono_ns":129264984125900,"node_id":"F0000007-0000-4000-8000-000000000001","payload":{"controls":["field"],"local":0,"phase":"appear"},"seq":3}
+   60.9s EVT {"kind":"lifecycle","mono_ns":129264985059400,"node_id":"F0000007-0000-4000-8000-000000000002","payload":{"controls":["field"],"local":0,"phase":"appear"},"seq":4}
+   60.9s EVT {"kind":"lifecycle","mono_ns":129264985303700,"node_id":"F0000007-0000-4000-8000-000000000003","payload":{"controls":["field"],"local":0,"phase":"appear"},"seq":5}
+   60.9s EVT {"kind":"lifecycle","mono_ns":129264985520700,"node_id":"F0000007-0000-4000-8000-000000000004","payload":{"controls":["field"],"local":0,"phase":"appear"},"seq":6}
+   60.9s EVT {"kind":"lifecycle","mono_ns":129264985782200,"node_id":"F0000007-0000-4000-8000-000000000005","payload":{"controls":["field"],"local":0,"phase":"appear"},"seq":7}
+   60.9s EVT {"kind":"lifecycle","mono_ns":129264985986100,"node_id":"F0000007-0000-4000-8000-000000000006","payload":{"controls":["field"],"local":0,"phase":"appear"},"seq":8}
+   60.9s EVT {"kind":"lifecycle","mono_ns":129264986256800,"node_id":"F0000007-0000-4000-8000-000000000007","payload":{"controls":["field"],"local":0,"phase":"appear"},"seq":9}
+   60.9s EVT {"kind":"lifecycle","mono_ns":129264986455100,"node_id":"F0000007-0000-4000-8000-000000000008","payload":{"controls":["field"],"local":0,"phase":"appear"},"seq":10}
+   60.9s EVT {"kind":"lifecycle","mono_ns":129264986667500,"node_id":"F0000007-0000-4000-8000-000000000009","payload":{"controls":["field"],"local":0,"phase":"appear"},"seq":11}
+   60.9s EVT {"kind":"lifecycle","mono_ns":129264986898000,"node_id":"F0000007-0000-4000-8000-000000000010","payload":{"controls":["field"],"local":0,"phase":"appear"},"seq":12}
+   60.9s EVT {"kind":"lifecycle","mono_ns":129264990500100,"node_id":"window","payload":{"height_px":1200,"phase":"ready","reduce_motion":false,"reduce_source":"default","scale":2.5,"width_px":1600},"seq":13}
+   60.9s EVT {"kind":"lifecycle","mono_ns":129264990739200,"node_id":"screen","payload":{"effect":"insert-above","gen":0,"key":"insert-above","phase":"task-start"},"seq":14}
+   60.9s EVT {"kind":"effect","mono_ns":129264990811000,"node_id":"screen","payload":{"key":"insert-above","phase":"engine-request"},"seq":15}
+   60.9s EVT {"kind":"lifecycle","mono_ns":129264991620200,"node_id":"selftest","payload":{"name":"insert-above pending","phase":"stage"},"seq":16}
+   60.9s SELFTEST-STAGES F7: insert-above pending@0.55s end-reason=timeout waiting for 'row2 focused by AX'
+   60.9s ASSERT F7 script-completed: FAIL stages=insert-above pending@0.55s
+   60.9s ASSERT F7 insert-committed: FAIL top=Row 1
+   60.9s ASSERT F7 identity-index-shift: FAIL index=1
+   60.9s ASSERT F7 no-teardown: PASS row2 disappear events before window close=0
+   60.9s ASSERT F7 release-hook-fired: FAIL firings=0 releases=0
+   60.9s OBSERVE F7 live-composition-text: row2 text=Row 2 (real IME; composition state at release is in the EVT hook line)
+   60.9s ASSERT F7 initial-focus-matches-mac-oracle: PASS expected=none initial-events=0 focused=none first-focus-event-is-initial=false after-appears-before-tasks=true (Mac: List-first window none; VStack, LazyVStack, custom Layout: row 1)
+   60.9s ASSERT F7 invoke-does-not-move-focus: PASS ax-invokes=0 coalesced-focus-requests=0 offenders=none
+   60.9s ASSERT F7 renderer-no-violations: PASS thread_violations=0 host_panics=0
+   60.9s ASSERT F7 commits-accepted: PASS commits=2 errors=0 dropped-after-close=0
+   60.9s ASSERT F7 no-measure-or-draw-failures: PASS measure=0 draw=0 
+   60.9s SELFTEST F7: FAIL (6/10 asserted; blocked=0; end=timeout waiting for 'row2 focused by AX')
+   60.9s EVT {"kind":"lifecycle","mono_ns":129305083547200,"node_id":"window","payload":{"phase":"closed"},"seq":17}
+   60.9s EVT {"kind":"lifecycle","mono_ns":129305083822600,"node_id":"window","payload":{"phase":"root-disappear","source":"host-window-close"},"seq":18}
+   60.9s EVT {"kind":"lifecycle","mono_ns":129305084134000,"node_id":"screen","payload":{"effect":"insert-above","key":"insert-above","phase":"task-cancel"},"seq":19}
+   60.9s EVT {"kind":"lifecycle","mono_ns":129305084359900,"node_id":"F0000007-0000-4000-8000-000000000001","payload":{"local":0,"phase":"disappear"},"seq":20}
+   60.9s EVT {"kind":"lifecycle","mono_ns":129305084690400,"node_id":"F0000007-0000-4000-8000-000000000002","payload":{"local":0,"phase":"disappear"},"seq":21}
+   60.9s EVT {"kind":"lifecycle","mono_ns":129305085114500,"node_id":"F0000007-0000-4000-8000-000000000003","payload":{"local":0,"phase":"disappear"},"seq":22}
+   60.9s EVT {"kind":"lifecycle","mono_ns":129305085312700,"node_id":"F0000007-0000-4000-8000-000000000004","payload":{"local":0,"phase":"disappear"},"seq":23}
+   60.9s EVT {"kind":"lifecycle","mono_ns":129305085728700,"node_id":"F0000007-0000-4000-8000-000000000005","payload":{"local":0,"phase":"disappear"},"seq":24}
+   60.9s EVT {"kind":"lifecycle","mono_ns":129305086098100,"node_id":"F0000007-0000-4000-8000-000000000006","payload":{"local":0,"phase":"disappear"},"seq":25}
+   60.9s EVT {"kind":"lifecycle","mono_ns":129305086440600,"node_id":"F0000007-0000-4000-8000-000000000007","payload":{"local":0,"phase":"disappear"},"seq":26}
+   60.9s EVT {"kind":"lifecycle","mono_ns":129305086639100,"node_id":"F0000007-0000-4000-8000-000000000008","payload":{"local":0,"phase":"disappear"},"seq":27}
+   60.9s EVT {"kind":"lifecycle","mono_ns":129305086813100,"node_id":"F0000007-0000-4000-8000-000000000009","payload":{"local":0,"phase":"disappear"},"seq":28}
+   60.9s EVT {"kind":"lifecycle","mono_ns":129305087160500,"node_id":"F0000007-0000-4000-8000-000000000010","payload":{"local":0,"phase":"disappear"},"seq":29}
+   60.9s --- exe stderr ---
+   60.9s [swiftright-render] SetProcessDpiAwarenessContext(PER_MONITOR_AWARE_V2) -> 1
+   60.9s [swiftright-render] ime_subclass installed=1 t_ms=0.0
+   60.9s [swiftright-render] paint pacing off (SWR_PAINT_PHASE_MS=0)
+   60.9s [swiftright-render] requested=640x480dip expected=1600x1200px initial-client=2560x1396px scale=2.5
+   60.9s [swiftright-render] window hwnd=0x260f82 style=0x4cf0000 exstyle=0x240100 (WS_EX_LAYERED=false WS_EX_TRANSPARENT=false WS_EX_NOREDIRECTIONBITMAP=true) scale=2.5 client=2560x1396px background=Opaque
+   60.9s [swiftright-render] modal start path: posted (WM_SWR_MODAL)
+   60.9s [swiftright-render] ime_msg msg=0x0282 wparam=0x2 lparam=0x0 t_ms=14.3
+   60.9s [swiftright-render] ime_msg msg=0x0281 wparam=0x1 lparam=0xC000000F t_ms=14.5
+   60.9s [swiftright-render] ready metrics requested=640x480dip ready-client=1600x1200px scale=2.5 changed_since_initial=false
+   60.9s [swiftright-render] ax publication policy: off=false min_interval_ms=100
+   60.9s [swiftright-render] ime_msg msg=0x0282 wparam=0x1 lparam=0x0 t_ms=40456.2
+   60.9s [swiftright-render] ime_msg msg=0x0281 wparam=0x0 lparam=0xC000000F t_ms=40460.2
+   60.9s [swiftright-render] shutdown paints=1535 paints_while_inactive=2 drains=1537 ticks_delivered=1533 events_pushed=1 reentry_refused=0 post_close_drains=2 post_close_timeouts=1
+   60.9s [swiftright-render] phases commit[n=2 mean_us=93 max_us=104] tree_commit[n=2 mean_us=90 max_us=101] paint_root[n=1535 mean_us=108 max_us=7331] present[n=1 mean_us=269 max_us=269] host_tick[n=1533 mean_us=291 max_us=324309] host_drain[n=1535 mean_us=5 max_us=728] frame[n=1533 mean_us=9560 max_us=1492946] ime_cb[n=0 mean_us=0 max_us=0] paint_start_after_edge[n=0 mean_us=0 max_us=0] pacing[phase_us=0 period_us=0 edges=0 posted=0 skipped_pending=0 expired=0 swallowed=0 passed_stale=0 no_wait_edges=0]
+   60.9s [swiftright-render] memory rust_live_bytes=1204550 rust_allocs=95439 private_bytes=196694016 working_set=111599616 ax_publishes=1 ax_throttled=0 ax_rethrottled=0

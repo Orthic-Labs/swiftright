@@ -680,7 +680,10 @@ try {
       $tail = (Exe-ErrLines | Where-Object { $_ -match 'tsf_cand pick' } | Select-Object -Last 1)
       Log "click result: value before=[$valBefore] after=[$valAfter] marked=[$markedAfter] pick-log=[$tail]"
       Add-Check 'own-candidate-click-no-focus-steal' $(if ($fgBefore -eq $fgAfter -and $fgAfter -eq $script:Hwnd) { 'PASS' } else { 'FAIL' }) "foreground before=$($fgBefore.ToInt64()) after=$($fgAfter.ToInt64()) probe=$($script:Hwnd.ToInt64())"
-      Add-Check 'own-candidate-click-pick' $(if ($tail -match 'row=1 index=1 set_hr=0x00000000 hr=0x00000000' -and [string]::IsNullOrEmpty($markedAfter)) { 'PASS' } else { 'FAIL' }) "pick-log=[$tail] value=[$valAfter] marked=[$markedAfter] (the composition must be committed: no marked text left)"
+      # After a commit the candidate is plain text after the prefix, so the value cannot tell marked from committed: the proof is the renderer's own composition-end line after the pick.
+      $lines2 = @(Exe-ErrLines); $pickAt = -1; for ($k = 0; $k -lt $lines2.Count; $k++) { if ($lines2[$k] -match 'tsf_cand pick') { $pickAt = $k } }
+      $ended = ($pickAt -ge 0) -and (@($lines2[$pickAt..($lines2.Count - 1)] | Where-Object { $_ -match 'tsf_composition event=end' }).Count -gt 0)
+      Add-Check 'own-candidate-click-pick' $(if ($tail -match 'row=1 index=1 set_hr=0x00000000' -and $ended -and $valAfter.StartsWith($v0) -and $valAfter.Length -gt $v0.Length) { 'PASS' } else { 'FAIL' }) "pick-log=[$tail] composition-ended-after-pick=$ended value=[$valAfter] (a candidate was written after the prefix and the composition ended)"
     }
   }
   elseif ($UiLess) {
