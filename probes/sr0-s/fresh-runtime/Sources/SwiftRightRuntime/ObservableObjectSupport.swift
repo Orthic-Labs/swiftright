@@ -1,5 +1,7 @@
 import Foundation
-import Combine   // Apple's on macOS; SwiftRightCombine (OpenCombine-backed) on Windows and Linux (#88)
+// Re-exported as SwiftUI does: `import SwiftUI` alone gives ObservableObject, @Published and the publishers. Apple's Combine on macOS; SwiftRightCombine
+// (OpenCombine-backed) on Windows and Linux (#88).
+@_exported import Combine
 
 // Issue #88: the ObservableObject family, so SwiftUI code written with Combine runs as written.
 //   - @StateObject: the object is made once per view identity (the autoclosure runs on the first evaluation only) and lives with the node.
