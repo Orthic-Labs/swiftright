@@ -23,11 +23,14 @@ param(
   # #45: run the fixture with the renderer's opt-in TSF text store (SWIFTRIGHT_IME_TSF=1)
   [switch]$Tsf,
   # #45: record WinEvents and UIA text/selection/structure events of the probe window (EventLog.cs) into "$Out.events.txt"
-  [switch]$EventLog
+  [switch]$EventLog,
+  # #45: with -Tsf, also the UI-less spike (SWIFTRIGHT_IME_UILESS=1): the system candidate list is hidden and its contents logged
+  [switch]$UiLess
 )
 . "$PSScriptRoot\native-common.ps1"
 if ($SysCaret) { $env:SWIFTRIGHT_IME_SYSTEM_CARET = '1' }
 if ($Tsf) { $env:SWIFTRIGHT_IME_TSF = '1' }
+if ($UiLess) { $env:SWIFTRIGHT_IME_UILESS = '1' }
 function Start-EventLog {
   if (-not ('SRN.EventLog' -as [type])) {
     $refs = @([System.Windows.Automation.AutomationElement].Assembly.Location, [System.Windows.Automation.ControlType].Assembly.Location, [System.Windows.Automation.TextPattern].Assembly.Location)
