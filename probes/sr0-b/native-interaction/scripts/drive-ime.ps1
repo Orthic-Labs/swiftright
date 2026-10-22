@@ -19,10 +19,13 @@ param(
   # new caret means the IME applies the new position only on a candidate update. Later checks may change (Down picks a prediction): diagnostic run only.
   [switch]$DownAfterMove,
   # #45: run the fixture with the renderer's opt-in system caret (SWIFTRIGHT_IME_SYSTEM_CARET=1)
-  [switch]$SysCaret
+  [switch]$SysCaret,
+  # #45: run the fixture with the renderer's opt-in TSF text store (SWIFTRIGHT_IME_TSF=1)
+  [switch]$Tsf
 )
 . "$PSScriptRoot\native-common.ps1"
 if ($SysCaret) { $env:SWIFTRIGHT_IME_SYSTEM_CARET = '1' }
+if ($Tsf) { $env:SWIFTRIGHT_IME_TSF = '1' }
 
 # user32 calls for the post-move candidate track (IME_CANDIDATE_TRACK); not exposed by SRN.N, same Add-Type style as NativeHelpers.cs.
 if (-not ('SRN.WinTrack' -as [type])) {
