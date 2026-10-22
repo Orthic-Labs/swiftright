@@ -28,7 +28,8 @@ param(
   [switch]$UiLess,
   # #45 step 4: instead of the R1 key test, click row 2 of our candidate popup with the mouse and check that the IME commits it, with no focus change
   [switch]$ClickPick,
-  [switch]$NumberPick
+  [switch]$NumberPick,
+  [switch]$UiaList
 )
 . "$PSScriptRoot\native-common.ps1"
 if ($SysCaret) { $env:SWIFTRIGHT_IME_SYSTEM_CARET = '1' }
@@ -697,6 +698,26 @@ try {
       $lines2 = @(Exe-ErrLines); $pickAt = -1; for ($k = 0; $k -lt $lines2.Count; $k++) { if ($lines2[$k] -match 'tsf_cand pick') { $pickAt = $k } }
       $ended = ($pickAt -ge 0) -and (@($lines2[$pickAt..($lines2.Count - 1)] | Where-Object { $_ -match 'tsf_composition event=end' }).Count -gt 0)
       Add-Check 'own-candidate-click-pick' $(if ($tail -match 'row=1 index=1 set_hr=0x00000000' -and $ended -and $valAfter.StartsWith($v0) -and $valAfter.Length -gt $v0.Length) { 'PASS' } else { 'FAIL' }) "pick-log=[$tail] composition-ended-after-pick=$ended value=[$valAfter] (a candidate was written after the prefix and the composition ended)"
+    }
+  }
+  elseif ($UiaList) {
+    # #45 step 5: an independent UIA client (this process) reads our candidate popup as a list: name, one option per row, the selected one marked, then the selection after Down.
+    [void](Send-GatedKey 0x20 'uia-extra-space' 1200)   # conversion list; the popup is published to UIA (throttled) shortly after
+    $list = Find-Named 'Candidates' ([System.Windows.Automation.ControlType]::List) 3000
+    $rowsFn = { param($l) @($l.FindAll([System.Windows.Automation.TreeScope]::Descendants, (New-Object System.Windows.Automation.PropertyCondition([System.Windows.Automation.AutomationElement]::ControlTypeProperty, [System.Windows.Automation.ControlType]::ListItem)))) }
+    $selFn = { param($items) $r = -1; for ($z = 0; $z -lt $items.Count; $z++) { $sp = $null; if ($items[$z].TryGetCurrentPattern([System.Windows.Automation.SelectionItemPattern]::Pattern, [ref]$sp)) { if ($sp.Current.IsSelected) { $r = $z } } }; $r }
+    if ($list -eq $null) { Add-Check 'uia-candidate-list-exposed' 'FAIL' 'no UIA List named Candidates under the window while the popup is open' }
+    else {
+      $items = & $rowsFn $list; $sel0 = & $selFn $items
+      $names = ($items | ForEach-Object { $_.Current.Name }) -join ' | '
+      Add-Check 'uia-candidate-list-exposed' $(if ($items.Count -ge 2 -and $sel0 -ge 0) { 'PASS' } else { 'FAIL' }) "List 'Candidates' with $($items.Count) options, selected index=$sel0; names=[$names]"
+      [void](Send-GatedKey 0x28 'uia-down' 1200)
+      $list2 = Find-Named 'Candidates' ([System.Windows.Automation.ControlType]::List) 2000
+      if ($list2 -eq $null) { Add-Check 'uia-candidate-selection-follows-down' 'FAIL' 'list gone after Down' }
+      else { $items2 = & $rowsFn $list2; $sel1 = & $selFn $items2; Add-Check 'uia-candidate-selection-follows-down' $(if ($sel1 -eq $sel0 + 1) { 'PASS' } else { 'FAIL' }) "selected index before=$sel0 after Down=$sel1" }
+      [void](Send-GatedKey 0x1B 'uia-escape' 900)
+      $gone = (Find-Named 'Candidates' ([System.Windows.Automation.ControlType]::List) 2500) -eq $null
+      Add-Check 'uia-candidate-list-removed-on-close' $(if ($gone) { 'PASS' } else { 'FAIL' }) "list removed from the UIA tree after Escape closes the IME list: $gone"
     }
   }
   elseif ($NumberPick) {

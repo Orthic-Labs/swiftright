@@ -17,7 +17,7 @@ HERE="$(cd "$(dirname "$0")" && pwd)"
 OUT="${OUT_DIR:-$HERE/../out}"; mkdir -p "$OUT"
 TAG="${TAG:-$(date +%Y%m%dT%H%M%S)}"
 CHECKS=("$@"); [ ${#CHECKS[@]} -eq 0 ] && CHECKS=(ime-f7 ime-f7live ime-f8 narrator)
-for c in "${CHECKS[@]}"; do case "$c" in ime-f7|ime-f7live|ime-f7live-down|ime-f7live-syscaret|ime-f7live-tsf-caret|ime-f7live-events|ime-f7live-uiless|ime-f7live-clickpick|ime-f7live-numberpick|ime-f7live-numberpick-sys|ime-f7-tsf|ime-f7live-syscaret-events|ime-ref-edge|ime-f8|narrator) ;; *) echo "unknown check: $c" >&2; exit 2;; esac; done
+for c in "${CHECKS[@]}"; do case "$c" in ime-f7|ime-f7live|ime-f7live-down|ime-f7live-syscaret|ime-f7live-tsf-caret|ime-f7live-events|ime-f7live-uiless|ime-f7live-clickpick|ime-f7live-numberpick|ime-f7live-uialist|ime-f7live-numberpick-sys|ime-f7-tsf|ime-f7live-syscaret-events|ime-ref-edge|ime-f8|narrator) ;; *) echo "unknown check: $c" >&2; exit 2;; esac; done
 for h in "$EXPECT_EXE_SHA256" "$EXPECT_DLL_SHA256"; do printf %s "$h" | grep -Eq '^[0-9A-Fa-f]{64}$' || { echo "expected hash is not 64 hex digits: $h" >&2; exit 2; }; done
 WINDIR_SCRIPTS="$BASE_DIR\\probes\\sr0-b\\native-interaction\\scripts"
 SCP_DIR="$(printf %s "$WINDIR_SCRIPTS" | tr '\\' '/')"
