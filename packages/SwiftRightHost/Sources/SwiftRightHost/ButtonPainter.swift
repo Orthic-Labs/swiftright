@@ -64,6 +64,14 @@ public enum ButtonPainter {
         let isEnabled = node.accessibility.isEnabled
         let width = bounds.w.rounded(), height = bounds.h.rounded()
         guard look.hasBody else {
+            // a focused `.plain` or `.borderless` Button: the ring alone, 3 pt outside the label's frame (measured, #79); nothing else is drawn under the label
+            if node.buttonIsFocused, isEnabled, width > 0, height > 0 {
+                let ring = ButtonArtwork.labelFocusRing(widthPX: Int(width), heightPX: Int(height), scale: scale)
+                let margin = Float(ButtonArtwork.focusRingPixels(scale: scale))
+                return ButtonPaintPlan(image: ring, placement: Rect(x: bounds.x - margin + imageGuardBand, y: bounds.y - margin + imageGuardBand,
+                                                                    w: width + 2 * margin - 2 * imageGuardBand, h: height + 2 * margin - 2 * imageGuardBand),
+                                       isEnabled: isEnabled, look: look, labelColor: try labelColor(of: node), isFocused: true)
+            }
             return ButtonPaintPlan(image: nil, placement: bounds, isEnabled: isEnabled, look: look, labelColor: try labelColor(of: node))
         }
         // An empty frame (a Button laid out at zero size) has nothing to draw; SwiftUI draws nothing for it.

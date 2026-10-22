@@ -119,13 +119,34 @@ final class Issue60Controls3HostTests: XCTestCase {
         XCTAssertEqual(focused.width, 300 + 2 * m); XCTAssertEqual(focused.height, 60 + 2 * m)
         // the body keeps its fill, offset by the margin
         XCTAssertEqual(pixel(focused, m + 150, m + 30).r, 0xeb); XCTAssertEqual(pixel(focused, m + 150, m + 30).a, 255)
-        // the ring: the accent at half opacity, in the margin beside the body's straight edge
+        // the ring: (0,103,245) at half opacity (measured on macOS 27: solid ring pixels over white are (128,179,250)), in the margin beside the body's straight edge
         let ring = pixel(focused, 3, m + 30)
-        XCTAssertEqual(ring.a, Int(ButtonArtwork.focusRingAlpha)); XCTAssertEqual(ring.r, 0); XCTAssertEqual(ring.g, 0x7b); XCTAssertEqual(ring.b, 0xff)
+        XCTAssertEqual(ring.a, Int(ButtonArtwork.focusRingAlpha)); XCTAssertEqual(ring.r, 0); XCTAssertEqual(ring.g, 0x67); XCTAssertEqual(ring.b, 0xf5)
         // outside the outer outline (the very corner of the image) nothing is drawn
         XCTAssertEqual(pixel(focused, 0, 0).a, 0)
         // the ring does not cover the body: just inside the body's top edge is body, not ring
         XCTAssertEqual(pixel(focused, m + 150, m + 2).a, 255)
+    }
+
+    // Issue #79: a focused .plain or .borderless Button gets a ring alone, 3 pt outside the label's frame (measured: the same colour and outset as the bodied styles).
+    func testALabelOnlyFocusRingSurroundsTheFrameAndLeavesItsInsideClear() {
+        let m = ButtonArtwork.focusRingPixels(scale: 2.5)
+        let ring = ButtonArtwork.labelFocusRing(widthPX: 73, heightPX: 40, scale: 2.5)
+        XCTAssertEqual(ring.width, 73 + 2 * m); XCTAssertEqual(ring.height, 40 + 2 * m)
+        let edge = pixel(ring, 3, m + 20)   // inside the 8 px band, beside the frame's left edge
+        XCTAssertEqual(edge.a, Int(ButtonArtwork.focusRingAlpha)); XCTAssertEqual(edge.r, 0); XCTAssertEqual(edge.g, 0x67); XCTAssertEqual(edge.b, 0xf5)
+        XCTAssertEqual(pixel(ring, m + 36, m + 20).a, 0, "the label's own area is clear")
+        XCTAssertLessThan(pixel(ring, 0, 0).a, Int(ButtonArtwork.focusRingAlpha), "the corners are only slightly rounded (about 1.5 pt) but the very corner is not solid")
+    }
+
+    func testAFocusedPlainButtonPlansARingAndAnUnfocusedOneDoesNot() throws {
+        struct W: View { var body: some View { Button("Plain") {}.buttonStyle(.plain) } }
+        let plain = try buttonNode(W())
+        XCTAssertNil(try ButtonPainter.plan(plain, bounds: bounds(plain), scale: 2.5).image)
+        let focused = try buttonNode(W(), focused: true)
+        let plan = try ButtonPainter.plan(focused, bounds: bounds(focused), scale: 2.5)
+        XCTAssertNotNil(plan.image); XCTAssertTrue(plan.isFocused)
+        XCTAssertEqual(plan.placement.w, bounds(focused).w + 2 * Float(ButtonArtwork.focusRingPixels(scale: 2.5)), accuracy: 0.1)
     }
 
     func testAFocusRingFollowsTheTint() {

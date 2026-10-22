@@ -7,6 +7,7 @@
 #        window the foreground, because posted messages do not move GetKeyState (the Sandbox is its own desktop; nothing reaches the Dell).
 #   {"op":"char","text":"héllo"}                         WM_CHAR per UTF-16 unit
 #   {"op":"click","x":10,"y":20,"button":"left|right","count":1}   WM_MOUSEMOVE + button down/up
+#   {"op":"front"} no-op, {"op":"screen","label":"x"} = shot (the Mac window-server capture, #79)
 #   {"op":"down","x":10,"y":20} / {"op":"up","x":10,"y":20}   WM_LBUTTONDOWN held (no up) / WM_LBUTTONUP: a "shot" between them captures the pressed state (#77)
 #   {"op":"move","x":10,"y":20,"down":false}                   WM_MOUSEMOVE posted at the client point (wParam MK_LBUTTON when "down"): a pointer move, with no button (hover) or with the primary button held (a drag in steps)
 #   {"op":"drag","x0":10,"y0":20,"x1":90,"y1":20,"steps":6}    WM_MOUSEMOVE, left button down at (x0, y0), `steps` WM_MOUSEMOVE with MK_LBUTTON along the line, button up at (x1, y1)
@@ -373,6 +374,9 @@ function Do-Step($proc, $mainH, $step, [string]$out, [string]$n) {
         'wait' { Start-Sleep -Milliseconds ([int]$step.ms); return 'ok' }
         'dump' { Dump-Process $proc $mainH (Join-Path $out ("uia-$n-" + [string]$step.label + '.json')); return 'ok' }
         'shot' { return Save-SettledShot $mainH (Join-Path $out ("native-$n-" + [string]$step.label + '.png')) (Join-Path $out ("settle-$n-" + [string]$step.label + '.txt')) }
+        # #79: the Mac drives its window to the front and captures it with the window server ('front', 'screen': the focus ring is drawn outside the view's own pixels). Here the window is already the target: 'front' is a no-op and 'screen' is a shot.
+        'front' { return 'ok' }
+        'screen' { return Save-SettledShot $mainH (Join-Path $out ("native-$n-" + [string]$step.label + '.png')) (Join-Path $out ("settle-$n-" + [string]$step.label + '.txt')) }
         'key' {
             $keyVk = Get-Vk ([string]$step.key); $mods = @($step.mods | Where-Object { $_ })
             $ext = $keyVk -in 33, 34, 35, 36, 37, 38, 39, 40, 45, 46
