@@ -24,6 +24,8 @@
 #   tier2-corrupt       msix files replaced by truncated copies at the cancel: explicit failure, package untouched, retry; the feed is restored after 60 s and the retry recovers
 #   tier2-mutex         a second run of the guard script is started while the task's run is in its settle window: it must log that another run is active and exit
 #   tier2-killclient    AddPackageAsync runs in a child process that is killed at staging+delay instead of Cancel (does the deployment survive its client being killed?)
+#   tier2-sched-blocked no induction (#47): the Task Scheduler policy Prohibit New Task Creation is set BEFORE the first launch (proved effective by a failing Register-ScheduledTask of our own); the app must still
+#                       launch and work, the guard task must not exist, and the state is recorded (no crash, no half-written guard directory)
 #   tier2-healthy       no induction: the guard must do nothing to a healthy package (same package full name, last-result healthy, no Add-AppxPackage logged)
 #   tier2-task-deleted  no induction: the task is deleted; the next app launch must register it again; then with a fresh install-attempt marker the next launch must NOT (24 h backoff)
 #   tier2-uninstall-retry  feed down so the first run fails and a retry is pending, then Remove-AppxPackage: the retry tick (no manual start) must clean up the task and folder
@@ -697,6 +699,37 @@ try {
         $u.pass = [bool]($u.guard_registered -and $u.task_removed -and $u.repair_dir_removed -and $u.parent_dir_kept -and $u.rows_kept)
         $u.result = 'task removed=' + $gone + ' repair dir removed=' + $u.repair_dir_removed + ' user data kept=' + $u.rows_kept
         L ('uninstall: ' + $u.result)
+        Save-Result
+        return
+    }
+    if ($Method -eq 'tier2-sched-blocked') {
+        $b = $R.recovery
+        $pol = 'HKLM:\SOFTWARE\Policies\Microsoft\Windows\Task Scheduler5.0'
+        try { New-Item -Path $pol -Force | Out-Null; New-ItemProperty -Path $pol -Name 'Task Creation' -Value 0 -PropertyType DWord -Force | Out-Null; $b.policy_set = $true } catch { $b.policy_set = $false; $b.policy_error = $_.Exception.Message }
+        Start-Sleep -Seconds 3
+        try {
+            $act = New-ScheduledTaskAction -Execute 'cmd.exe' -Argument '/c exit'
+            Register-ScheduledTask -TaskName 'W08-block-probe' -Action $act -ErrorAction Stop | Out-Null
+            $b.block_effective = $false
+            Unregister-ScheduledTask -TaskName 'W08-block-probe' -Confirm:$false -ErrorAction SilentlyContinue
+        } catch { $b.block_effective = $true; $b.block_probe_error = $_.Exception.Message }
+        L ('policy set: ' + $b.policy_set + '; block effective: ' + $b.block_effective)
+        $pe = @(Install-OldViaFeed); $pe = [string]$pe[-1]
+        if ($pe) { throw $pe }
+        try { $script:AppId = [string](Get-AppxPackageManifest -Package (Get-Pkgs)[0].PackageFullName).Package.Applications.Application.Id } catch { }
+        $b.first_launch = Invoke-Launch 60 'first-launch-sched-blocked'
+        $b.guard_registered = Wait-Guard 60
+        $b.guard_state = Get-GuardState
+        $b.guard_dir_exists = [bool](Test-Path -LiteralPath (Get-GuardDir))
+        try { $b.guard_dir_files = @(Get-ChildItem -LiteralPath (Get-GuardDir) -ErrorAction Stop | ForEach-Object { $_.Name }) } catch { $b.guard_dir_files = @() }
+        $b.package = Get-PkgText
+        $b.relaunch = Invoke-Launch 60 'relaunch-sched-blocked'
+        Stop-App | Out-Null
+        $b.rows_exists = (Test-Path -LiteralPath $RowsPath)
+        try { Remove-Item -Path $pol -Recurse -Force -ErrorAction Stop; $b.policy_removed = $true } catch { $b.policy_removed = $false }
+        $b.pass = [bool]($b.block_effective -and $b.first_launch.launched -and $b.relaunch.launched -and -not $b.guard_registered)
+        $b.result = 'block effective=' + $b.block_effective + ' app launched=' + $b.first_launch.launched + '/' + $b.relaunch.launched + ' guard registered=' + $b.guard_registered + ' guard dir files=' + (($b.guard_dir_files) -join ',')
+        L ('result: ' + $b.result)
         Save-Result
         return
     }

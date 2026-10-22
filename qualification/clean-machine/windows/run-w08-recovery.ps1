@@ -10,7 +10,7 @@
 # The packages must hash to the expected values (the tuple 08 MSIX pair); nothing is deleted or recycled.
 [CmdletBinding()]
 param(
-    [Parameter(Mandatory = $true)][ValidateSet('settings-probe', 'settings-repair', 'settings-repair-same', 'settings-repair-path', 'platform-register', 'reset', 'reinstall-same', 'appinstaller-same', 'tier1-launch', 'tier1-launch-old', 'tier2-repair', 'tier2-feed-down', 'tier2-uninstall')][string]$Method,
+    [Parameter(Mandatory = $true)][ValidateSet('settings-probe', 'settings-repair', 'settings-repair-same', 'settings-repair-path', 'platform-register', 'reset', 'reinstall-same', 'appinstaller-same', 'tier1-launch', 'tier1-launch-old', 'tier2-repair', 'tier2-feed-down', 'tier2-uninstall', 'tier2-stale', 'tier2-wrongid', 'tier2-corrupt', 'tier2-mutex', 'tier2-killclient', 'tier2-healthy', 'tier2-task-deleted', 'tier2-uninstall-retry', 'tier2-sched-blocked')][string]$Method,
     [Parameter(Mandatory = $true)][string]$RunId,
     [Parameter(Mandatory = $true)][string]$OldMsix,
     [Parameter(Mandatory = $true)][string]$NewMsix,

@@ -17,6 +17,8 @@ $W = 'C:\w08t2'
 $res = [ordered]@{ kind = 'w08'; method = $Method; ok = $false; needs_fresh_sandbox = $false; clean_before = $null; clean_after = $null }
 
 function Reset-W08State {
+    # #47 tier2-sched-blocked sets a Task Scheduler creation policy; never leave it behind for the next job
+    try { Remove-Item -Path "HKLM:\SOFTWARE\Policies\Microsoft\Windows\Task Scheduler5.0" -Recurse -Force -ErrorAction SilentlyContinue } catch { }
     $log = @()
     function Step([string]$m, [scriptblock]$b) { try { & $b; $script:log += ('ok   ' + $m) } catch { $script:log += ('FAIL ' + $m + ': ' + $_.Exception.Message) } }
     $script:log = @()
@@ -121,7 +123,7 @@ try {
             'tier2-stale' { $res.pass = $recovered }
             'tier2-mutex' { $res.pass = [bool]($recovered -and $rc.mutex_second_run_busy) }
             { $_ -in 'tier2-feed-down', 'tier2-wrongid', 'tier2-corrupt' } { $res.pass = [bool]($recovered -and $rc.failed_explicitly -and $rc.recovered_by_retry -and -not $rc.other_app_installed_at_end -and $rc.snapshot_before_restore.rows_sha_equals_written) }
-            { $_ -in 'tier2-uninstall', 'tier2-uninstall-retry', 'tier2-healthy', 'tier2-task-deleted' } { $res.pass = [bool]$rc.pass }
+            { $_ -in 'tier2-uninstall', 'tier2-uninstall-retry', 'tier2-healthy', 'tier2-task-deleted', 'tier2-sched-blocked' } { $res.pass = [bool]$rc.pass }
             'tier2-feed-down-long' { $res.pass = [bool]($hr.long_run -and $hr.long_run.package -match 'NeedsRemediation' -and -not $hr.long_run.feed_up) }
         }
     }
