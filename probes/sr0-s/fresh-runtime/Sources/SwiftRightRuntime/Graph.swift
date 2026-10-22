@@ -937,6 +937,8 @@ public struct ResolvedNode: Equatable, Sendable {
     public var scaleEffect: ResolvedScale? = nil
     /// Modifier nodes of `.brightness` only (SR2 R4, #39): the amount added to each sRGB channel of the subtree's colours.
     public var brightness: Double? = nil
+    /// A Text whose `text` is the head- or middle-truncated string for its frame (`.truncationMode`, #82): the host paints the string's natural run at the frame's origin.
+    public var isTruncatedDisplay: Bool = false
     /// Modifier nodes of `.shadow` only (#82).
     public var shadow: ResolvedShadow? = nil
     /// Modifier nodes of `.clipShape` only (SR2 R6, #41): the presented clip geometry (in this node's frame) and its fill rule.
@@ -2501,12 +2503,16 @@ public final class Graph {
 
     func resolve(_ node: Node, selected: Bool = false) -> ResolvedNode {
         let kind = node.kind
+        var truncatedShown = false
         let text: String?
         var selection: UTF16Range?
         var marked: UTF16Range?
         switch kind {
         case .text(let string):
-            text = truncatedDisplay(node, node.environment.textCase?.apply(string) ?? string)
+            let cased = node.environment.textCase?.apply(string) ?? string
+            let shortened = truncatedDisplay(node, cased)
+            text = shortened ?? cased
+            truncatedShown = shortened != nil
         case .textField, .textEditor:
             text = node.textInput?.display
             selection = node.textInput?.selection
@@ -2673,6 +2679,7 @@ public final class Graph {
             styledText: styledText(of: node)
         )
         resolvedNode.gradient = gradient
+        resolvedNode.isTruncatedDisplay = truncatedShown
         if case .modifier(.shadow(let shadow)) = kind { resolvedNode.shadow = shadow }
         resolvedNode.numericRoll = resolveNumericRoll(node, style: style, text: text)
         // #54: a control reads the environment's tint where it paints its accent (a prominent Button's fill, a Toggle's on state, a Slider's fill).

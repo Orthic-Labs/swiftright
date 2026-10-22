@@ -981,16 +981,16 @@ extension Graph {
     /// `.truncationMode(.head | .middle)` on a one-line Text wider than its frame (#82): the string the host paints. Head keeps the longest suffix that fits after the ellipsis;
     /// middle alternates one character from the end, then one from the start, while the whole still fits (measured on macOS 27: widths 120 -> 8 + 8 and 9 + 10 characters). A
     /// space at the junction with the ellipsis is dropped. The renderer's own tail truncation covers `.tail`, other line limits and styled text.
-    func truncatedDisplay(_ node: Node, _ string: String) -> String {
+    func truncatedDisplay(_ node: Node, _ string: String) -> String? {
         let mode = node.environment.truncationMode
-        guard mode != .tail, node.environment.lineLimit == 1, !string.contains("\n"), styledText(of: node) == nil else { return string }
+        guard mode != .tail, node.environment.lineLimit == 1, !string.contains("\n"), styledText(of: node) == nil else { return nil }
         let bound = node.frame.width
-        guard bound.isFinite, bound > 0 else { return string }
+        guard bound.isFinite, bound > 0 else { return nil }
         let font = node.environment.textFont ?? Font(id: "body")
         func width(_ s: String) -> CGFloat {
             measurer.measure(TextMeasureRequest(text: s, fontID: font.id, proposedWidth: nil, scale: scale, fontMetadata: font.metadata, lineLimit: nil)).size.width
         }
-        guard width(string) > bound + 0.01 else { return string }
+        guard width(string) > bound + 0.01 else { return nil }
         let chars = Array(string)
         func clean(_ prefix: Int, _ suffix: Int) -> String {
             var head = Array(chars[..<prefix]), tail = Array(chars[(chars.count - suffix)...])
@@ -1012,11 +1012,10 @@ extension Graph {
                 guard fits(np, nq) else { break }
                 p = np; q = nq; fromEnd.toggle()
             }
-        case .tail: return string
+        case .tail: return nil
         }
         let result = clean(p, q)
-        // keep the shaped run of the shown string, so the host finds it for the frame it was given
-        _ = measurer.measure(TextMeasureRequest(text: result, fontID: font.id, proposedWidth: bound, scale: scale, fontMetadata: font.metadata, lineLimit: nil))
+        _ = width(result)   // the natural run of the shown string stays retained for the host
         return result
     }
 

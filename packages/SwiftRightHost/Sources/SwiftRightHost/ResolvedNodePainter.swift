@@ -781,6 +781,15 @@ public final class ResolvedNodePainter {
                                     semantic: SemanticNode(role: .staticText, label: string, identifier: node.id, disabled: !node.accessibility.isEnabled),
                                     flags: [], structural: false)
             }
+            // `.truncationMode(.head | .middle)` (#82): `string` is already the shortened text, narrower than the frame: its natural run sits at the frame's origin.
+            if node.isTruncatedDisplay {
+                let shade = try color ?? HostPaint.rgba(.semantic("label"), opacity: node.opacity, scheme: node.style.colorScheme)
+                if let natural = try text.naturalRun(text: string, font: node.style.font, color: shade) {
+                    return NodeEmission(primitives: [.text(natural.run, x: bounds.x, y: bounds.y)],
+                                        semantic: SemanticNode(role: .staticText, label: string, identifier: node.id, disabled: !node.accessibility.isEnabled),
+                                        flags: [], structural: false)
+                }
+            }
             let run = try color.map { try text.run(text: string, font: node.style.font, bounds: bounds, color: $0) }
                 ?? text.run(text: string, font: node.style.font, bounds: bounds)
             var emission = NodeEmission(primitives: [.text(run, x: bounds.x, y: bounds.y)],
