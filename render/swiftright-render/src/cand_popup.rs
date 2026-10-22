@@ -10,7 +10,7 @@
 //! Threading: all state is single-threaded. The graphics factories live in a thread local of the thread that uses them
 //! (the render thread); no thread is created here.
 
-use std::cell::RefCell;
+use std::cell::{Cell, RefCell};
 use std::ffi::c_void;
 use std::sync::Once;
 
@@ -48,7 +48,7 @@ use windows::Win32::System::Registry::{RegGetValueW, HKEY_CURRENT_USER, RRF_RT_R
 use windows::Win32::UI::Accessibility::{HCF_HIGHCONTRASTON, HIGHCONTRASTW};
 use windows::Win32::UI::HiDpi::SystemParametersInfoForDpi;
 use windows::Win32::UI::WindowsAndMessaging::{
-    CreateWindowExW, DefWindowProcW, DestroyWindow, LoadCursorW, HCURSOR, RegisterClassExW, SetWindowPos, ShowWindow,
+    CreateWindowExW, DefWindowProcW, DestroyWindow, GetWindow, LoadCursorW, GW_OWNER, HCURSOR, RegisterClassExW, SetWindowPos, ShowWindow,
     SystemParametersInfoW, IDC_ARROW, MA_NOACTIVATE, NONCLIENTMETRICSW, SPI_GETHIGHCONTRAST,
     SPI_GETNONCLIENTMETRICS, SWP_NOACTIVATE, SWP_SHOWWINDOW, SW_HIDE, SYSTEM_PARAMETERS_INFO_UPDATE_FLAGS,
     WM_ERASEBKGND, WM_MOUSEACTIVATE, WM_PAINT, WNDCLASSEXW, WS_EX_NOACTIVATE, WS_EX_TOOLWINDOW, WS_POPUP,
@@ -377,6 +377,19 @@ fn paint(rt: &ID2D1RenderTarget, g: &Gfx, model: &PopupModel, scale: f32, theme:
             let top = (py + i as i32 * rh) as f32;
             let bottom = top + rh as f32;
             let selected = model.selected == Some(i);
+            if !selected && HOVER.with(|h| h.get()) == Some(i) {
+                let inset_x = px(4.0, scale) as f32;
+                let inset_y = px(1.0, scale) as f32;
+                let rr = D2D1_ROUNDED_RECT {
+                    rect: rect(inset_x, top + inset_y, wf - inset_x, bottom - inset_y),
+                    radiusX: px(4.0, scale) as f32,
+                    radiusY: px(4.0, scale) as f32,
+                };
+                // hover = the selection fill at 25 % over the background
+                let mix = |a: f32, b: f32| a + (b - a) * 0.25;
+                brush.SetColor(&D2D1_COLOR_F { r: mix(pal.bg.r, pal.sel_bg.r), g: mix(pal.bg.g, pal.sel_bg.g), b: mix(pal.bg.b, pal.sel_bg.b), a: 1.0 });
+                rt.FillRoundedRectangle(&rr, &brush);
+            }
             if selected {
                 let inset_x = px(4.0, scale) as f32;
                 let inset_y = px(1.0, scale) as f32;
@@ -479,11 +492,80 @@ pub fn render_to_rgba(model: &PopupModel, scale: f32, theme: &Theme) -> Option<(
 
 static REGISTER: Once = Once::new();
 
+thread_local! {
+    /// Shape of what is shown (width, height, rows, scale), read by `popup_proc` for mouse hit testing.
+    static GEOM: Cell<(i32, i32, usize, f32)> = const { Cell::new((0, 0, 0, 1.0)) };
+    /// Row under the mouse pointer (highlight only), painted by `paint`.
+    static HOVER: Cell<Option<usize>> = const { Cell::new(None) };
+}
+
+#[repr(C)]
+struct TrackMouseEventArgs {
+    cb_size: u32,
+    flags: u32,
+    hwnd_track: *mut c_void,
+    hover_time: u32,
+}
+
+#[link(name = "user32")]
+extern "system" {
+    fn TrackMouseEvent(ev: *mut TrackMouseEventArgs) -> i32;
+}
+
+const WM_MOUSEMOVE_: u32 = 0x0200;
+const WM_LBUTTONUP_: u32 = 0x0202;
+const WM_MOUSEWHEEL_: u32 = 0x020A;
+const WM_MOUSELEAVE_: u32 = 0x02A3;
+
+fn client_point(lparam: LPARAM) -> (i32, i32) {
+    (((lparam.0 & 0xFFFF) as u16 as i16) as i32, (((lparam.0 >> 16) & 0xFFFF) as u16 as i16) as i32)
+}
+
+fn geom_row(lparam: LPARAM) -> Option<usize> {
+    let (x, y) = client_point(lparam);
+    let (w, h, rows, scale) = GEOM.with(|g| g.get());
+    hit_client(x, y, w, h, rows, scale)
+}
+
+fn owner_ptr(hwnd: HWND) -> *mut c_void {
+    unsafe { GetWindow(hwnd, GW_OWNER).map_or(std::ptr::null_mut(), |h| h.0) }
+}
+
 unsafe extern "system" fn popup_proc(hwnd: HWND, msg: u32, wparam: WPARAM, lparam: LPARAM) -> LRESULT {
     match msg {
         // Never take activation (or focus) from the render window when clicked.
         WM_MOUSEACTIVATE => LRESULT(MA_NOACTIVATE as isize),
         WM_ERASEBKGND => LRESULT(1),
+        // Mouse (issue #45 R4/R5): hover only highlights (the owner repaints through WM_SWR_CAND); a left click over a row, and the
+        // wheel, are posted to the owner window, which talks to TSF. Nothing here activates or focuses the popup.
+        WM_MOUSEMOVE_ => {
+            let mut ev = TrackMouseEventArgs { cb_size: std::mem::size_of::<TrackMouseEventArgs>() as u32, flags: 0x2, hwnd_track: hwnd.0, hover_time: 0 };
+            TrackMouseEvent(&mut ev); // TME_LEAVE
+            let row = geom_row(lparam);
+            if HOVER.with(|h| h.replace(row)) != row {
+                crate::tsf::post_cand_refresh(owner_ptr(hwnd));
+            }
+            LRESULT(0)
+        }
+        WM_MOUSELEAVE_ => {
+            if HOVER.with(|h| h.replace(None)).is_some() {
+                crate::tsf::post_cand_refresh(owner_ptr(hwnd));
+            }
+            LRESULT(0)
+        }
+        WM_LBUTTONUP_ => {
+            if let Some(row) = geom_row(lparam) {
+                crate::tsf::post_to_window(owner_ptr(hwnd), crate::tsf::WM_SWR_CAND_PICK, row, 0);
+            }
+            LRESULT(0)
+        }
+        WM_MOUSEWHEEL_ => {
+            let delta = ((wparam.0 >> 16) & 0xFFFF) as u16 as i16;
+            if delta != 0 {
+                crate::tsf::post_to_window(owner_ptr(hwnd), crate::tsf::WM_SWR_CAND_WHEEL, 0, if delta < 0 { 1 } else { -1 });
+            }
+            LRESULT(0)
+        }
         // Painting is done synchronously in `show`; DWM keeps the surface, so just validate.
         WM_PAINT => {
             let _ = ValidateRect(Some(hwnd), None);
@@ -598,6 +680,7 @@ impl CandPopup {
         self.rows = model.rows.len();
         self.scale = scale;
         self.visible = true;
+        GEOM.with(|g| g.set((w, h, model.rows.len(), scale)));
         if !self.paint_window(model, scale, theme, w, h) {
             // Target lost or never created; drop it so the next show recreates it.
             self.hwnd_rt = None;
@@ -650,6 +733,7 @@ impl CandPopup {
     /// Hides the popup (no activation change). Safe to call when never shown.
     pub fn hide(&mut self) {
         self.visible = false;
+        HOVER.with(|h| h.set(None));
         if !self.hwnd.is_invalid() {
             unsafe {
                 let _ = ShowWindow(self.hwnd, SW_HIDE);
@@ -663,6 +747,17 @@ impl CandPopup {
             return None;
         }
         hit_client(x - self.left, y - self.top, self.width, self.height, self.rows, self.scale)
+    }
+}
+
+impl CandPopup {
+    /// Row under popup-client point (x, y) (the coordinates a mouse message carries), or None when hidden or outside any row.
+    #[allow(dead_code)]
+    pub fn row_at_client(&self, x: i32, y: i32) -> Option<usize> {
+        if !self.visible {
+            return None;
+        }
+        hit_client(x, y, self.width, self.height, self.rows, self.scale)
     }
 }
 

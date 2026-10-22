@@ -1444,6 +1444,131 @@ pub(crate) fn tsf_caret_destroy() {
     sys_caret_destroy();
 }
 
+
+// ------------------------------------------------ #45 step 3: own candidate popup (UI-less TSF mode)
+// Only reachable with SWIFTRIGHT_IME_TSF=1 and SWIFTRIGHT_IME_UILESS=1 (tsf::uiless()); every entry returns at once otherwise.
+
+thread_local! {
+    static POPUP: RefCell<Option<crate::cand_popup::CandPopup>> = const { RefCell::new(None) };
+    /// Side (above / below the caret) of the last placement, for the placement hysteresis; reset at hide.
+    static CAND_SIDE: std::cell::Cell<Option<crate::cand::Side>> = const { std::cell::Cell::new(None) };
+    /// The popup is shown (a `tsf_cand hide` line is written once per transition).
+    static CAND_SHOWN: std::cell::Cell<bool> = const { std::cell::Cell::new(false) };
+}
+
+/// Hides the popup (UI thread). Logs `tsf_cand hide` once per shown -> hidden transition.
+pub(crate) fn cand_hide() {
+    if !tsf::uiless() {
+        return;
+    }
+    POPUP.with(|p| {
+        if let Ok(mut b) = p.try_borrow_mut() {
+            if let Some(pp) = b.as_mut() {
+                pp.hide();
+            }
+        }
+    });
+    CAND_SIDE.with(|c| c.set(None));
+    if CAND_SHOWN.with(|c| c.replace(false)) {
+        eprintln!("[swiftright-render] tsf_cand hide qpc={}", qpc_now());
+    }
+}
+
+/// WM_DESTROY of the render window: destroys the popup window before the owner goes.
+fn cand_destroy() {
+    if !tsf::uiless() {
+        return;
+    }
+    cand_hide();
+    POPUP.with(|p| {
+        if let Ok(mut b) = p.try_borrow_mut() {
+            *b = None;
+        }
+    });
+}
+
+/// Screen px rect of the composition caret the popup is placed against: the target clause start (the selection start inside the
+/// marked range when there is a marked range, else the marked start; no marked range: the selection start).
+fn cand_anchor(hwnd: *mut c_void) -> Option<crate::cand::Rect> {
+    let start = match tsf_host_marked() {
+        Some((ms, me)) => match tsf_host_selection() {
+            Some((s, _, _)) if s >= ms && s <= me => s,
+            _ => ms,
+        },
+        None => tsf_host_selection()?.0,
+    };
+    let r = tsf_host_bounds(start, start)?;
+    let mut o = [0i32, 0];
+    unsafe { ClientToScreen(hwnd, &mut o) };
+    let (l, t) = (o[0] + r.x as i32, o[1] + r.y as i32);
+    Some(crate::cand::Rect { left: l, top: t, right: l + (r.w as i32).max(1), bottom: t + (r.h as i32).max(1) })
+}
+
+/// Shows, moves or hides the popup from the latest candidate list state (UI thread; WM_SWR_CAND handler).
+pub(crate) fn cand_refresh() {
+    use windows::Win32::Foundation::{HWND as WinHwnd, RECT as WinRect};
+    use windows::Win32::Graphics::Gdi::{GetMonitorInfoW, MonitorFromRect, MONITORINFO, MONITOR_DEFAULTTONEAREST};
+    use windows::Win32::UI::HiDpi::{GetDpiForMonitor, MDT_EFFECTIVE_DPI};
+    if !tsf::uiless() {
+        return;
+    }
+    let hwnd = MAIN_HWND.load(SeqCst) as *mut c_void;
+    let st = if tsf::associated() && tsf::cand_open() && !tsf::cand_ignored() { tsf::cand_state() } else { None };
+    let Some(st) = st.filter(|s| s.rows() > 0) else {
+        cand_hide();
+        return;
+    };
+    if hwnd.is_null() {
+        return;
+    }
+    // No anchor now (host busy / no field): leave the popup as it is; the next layout or list event refreshes it.
+    let Some(anchor) = cand_anchor(hwnd) else { return };
+    let rc = WinRect { left: anchor.left, top: anchor.top, right: anchor.right, bottom: anchor.bottom };
+    let (work, scale) = unsafe {
+        let mon = MonitorFromRect(&rc, MONITOR_DEFAULTTONEAREST);
+        let mut mi = MONITORINFO { cbSize: std::mem::size_of::<MONITORINFO>() as u32, ..Default::default() };
+        let w = if GetMonitorInfoW(mon, &mut mi).as_bool() {
+            crate::cand::Rect { left: mi.rcWork.left, top: mi.rcWork.top, right: mi.rcWork.right, bottom: mi.rcWork.bottom }
+        } else {
+            crate::cand::Rect { left: anchor.left - 4000, top: anchor.top - 4000, right: anchor.left + 4000, bottom: anchor.top + 4000 }
+        };
+        let (mut dx, mut dy) = (96u32, 96u32);
+        let _ = GetDpiForMonitor(mon, MDT_EFFECTIVE_DPI, &mut dx, &mut dy);
+        (w, dx.max(48) as f32 / 96.0)
+    };
+    let model = crate::cand_popup::PopupModel {
+        rows: st.strings.clone(),
+        selected: st.selected_row(),
+        show_numbers: st.show_numbers,
+        first_number: 1,
+    };
+    let size = crate::cand_popup::measure(&model, scale);
+    let (rect, side) = crate::cand::place(anchor, work, size, scale, CAND_SIDE.with(|c| c.get()));
+    CAND_SIDE.with(|c| c.set(Some(side)));
+    let theme = crate::cand_popup::system_theme();
+    let shown = POPUP.with(|p| {
+        let Ok(mut b) = p.try_borrow_mut() else { return false };
+        let pp = b.get_or_insert_with(|| crate::cand_popup::CandPopup::new(WinHwnd(hwnd)));
+        pp.show(&model, rect.left, rect.top, scale, &theme);
+        true
+    });
+    if shown {
+        CAND_SHOWN.with(|c| c.set(true));
+        eprintln!(
+            "[swiftright-render] tsf_cand show rect={},{},{},{} side={side:?} sel={} page={} rows={} row_h={} qpc={}",
+            rect.left,
+            rect.top,
+            rect.right,
+            rect.bottom,
+            st.selection,
+            st.page,
+            model.rows.len(),
+            crate::cand_popup::row_height(scale),
+            qpc_now()
+        );
+    }
+}
+
 // ---------------------------------------------------------- IME window placement (subclass)
 // GPUI 0.2.2 (not vendored) calls ImmSetComposition/CandidateWindow once, at WM_IME_STARTCOMPOSITION,
 // and forwards WM_IME_SETCONTEXT / WM_IME_NOTIFY to DefWindowProc. Microsoft IME positions its candidate
@@ -1500,6 +1625,10 @@ extern "system" {
 }
 const WM_PAINT: u32 = 0x000F;
 const WM_DESTROY: u32 = 0x0002;
+const WM_SIZE: u32 = 0x0005;
+const WM_ACTIVATE: u32 = 0x0006;
+const WM_KILLFOCUS: u32 = 0x0008;
+const WM_SHOWWINDOW: u32 = 0x0018;
 const WM_MOUSEWHEEL: u32 = 0x020A;
 const WM_MOUSEHWHEEL: u32 = 0x020E;
 const WM_IME_SETCONTEXT: u32 = 0x0281;
@@ -1631,6 +1760,7 @@ fn ime_replace_on_layout(hwnd: *mut c_void) {
         eprintln!("[swiftright-render] ime_replace_timing qpc={} tid={}", qpc_now(), unsafe { GetCurrentThreadId() });
         place_ime_windows(hwnd);
         tsf::layout_changed();
+        tsf::post_cand_refresh(hwnd); // #45: UI-less popup follows the layout (no-op unless SWIFTRIGHT_IME_UILESS=1)
     } else {
         ime_remember(new.0, new.1, new.2, new.3);
     }
@@ -1765,7 +1895,31 @@ unsafe extern "system" fn ime_subclass_proc(hwnd: *mut c_void, msg: u32, w: usiz
             return 0;
         }
         if msg == WM_DESTROY {
+            cand_destroy();
             tsf::teardown(hwnd);
+        }
+    }
+    // #45 step 3: own candidate popup (SWIFTRIGHT_IME_TSF=1 + SWIFTRIGHT_IME_UILESS=1 only; nothing below runs otherwise).
+    if tsf::uiless() {
+        match msg {
+            tsf::WM_SWR_CAND => {
+                tsf::cand_message_taken();
+                cand_refresh();
+                return 0;
+            }
+            tsf::WM_SWR_CAND_PICK => {
+                tsf::cand_pick(w);
+                return 0;
+            }
+            tsf::WM_SWR_CAND_WHEEL => {
+                tsf::cand_wheel(l);
+                return 0;
+            }
+            WM_KILLFOCUS | WM_IME_ENDCOMPOSITION => cand_hide(),
+            WM_ACTIVATE if (w & 0xFFFF) == 0 => cand_hide(), // WA_INACTIVE
+            WM_SHOWWINDOW if w == 0 => cand_hide(),
+            WM_SIZE if w == 1 => cand_hide(), // SIZE_MINIMIZED
+            _ => {}
         }
     }
     // Rev 0.11 (issue #31): a host that asked for SWR_PTR_WHEEL gets the wheel and GPUI does not also handle it. Any other host

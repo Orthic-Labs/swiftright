@@ -13,7 +13,7 @@
 use std::cell::{Cell, RefCell};
 use std::ffi::c_void;
 use std::rc::Rc;
-use std::sync::atomic::{AtomicU32, Ordering::SeqCst};
+use std::sync::atomic::{AtomicBool, AtomicU32, Ordering::SeqCst};
 
 use windows::core::{implement, Interface, Ref, BOOL, GUID, HRESULT, IUnknown, PCWSTR, PWSTR};
 use windows::Win32::Foundation::{E_FAIL, E_INVALIDARG, E_NOTIMPL, E_UNEXPECTED, HWND, RECT, S_FALSE, S_OK};
@@ -23,7 +23,7 @@ use windows::Win32::System::Com::{
 use windows::Win32::UI::TextServices::{
     CLSID_TF_InputProcessorProfiles, CLSID_TF_ThreadMgr, GUID_TFCAT_TIP_KEYBOARD, ITextStoreACP, ITextStoreACPSink, ITextStoreACP_Impl, ITfCompositionView, ITfContext,
     ITfContextOwnerCompositionServices, ITfContextOwnerCompositionSink, ITfContextOwnerCompositionSink_Impl,
-    ITfCandidateListUIElement, ITfDocumentMgr, ITfInputProcessorProfileMgr, ITfIntegratableCandidateListUIElement, ITfRange,
+    ITfCandidateListUIElement, ITfCandidateListUIElementBehavior, ITfDocumentMgr, ITfInputProcessorProfileMgr, ITfIntegratableCandidateListUIElement, ITfRange,
     ITfSource, ITfThreadMgr, ITfUIElementMgr, ITfUIElementSink,
     ITfUIElementSink_Impl, TEXT_STORE_LOCK_FLAGS, TEXT_STORE_TEXT_CHANGE_FLAGS, TS_ATTRVAL, TS_LC_CHANGE, TS_LC_CREATE, TS_LC_DESTROY, TS_RUNINFO, TS_RT_PLAIN,
     TS_SELECTIONSTYLE, TS_SELECTION_ACP, TS_STATUS, TS_TEXTCHANGE, TS_AE_END, TS_AE_START,
@@ -37,6 +37,17 @@ use crate::view;
 pub const WM_SWR_TSF: u32 = 0x8000 + 0x5A3;
 
 // ---- constants spelled out (msctf.h) so the code does not depend on how the crate types them
+/// #45 step 3 (UI-less own candidate popup, SWIFTRIGHT_IME_UILESS=1): WM_APP + 0x5A5 asks the render window to refresh (show / move /
+/// hide) the popup; coalesced through `CAND_PENDING`. WM_APP + 0x5A4 is view.rs WM_SWR_CARET.
+pub const WM_SWR_CAND: u32 = 0x8000 + 0x5A5;
+/// WM_APP + 0x5A6: the popup's window procedure posts it to the owner on a left click over a row (wparam = row on the page).
+pub const WM_SWR_CAND_PICK: u32 = 0x8000 + 0x5A6;
+/// WM_APP + 0x5A7: mouse wheel over the popup (lparam = +1 wheel down / next, -1 wheel up / previous).
+pub const WM_SWR_CAND_WHEEL: u32 = 0x8000 + 0x5A7;
+static CAND_PENDING: AtomicBool = AtomicBool::new(false);
+/// SWIFTRIGHT_IME_UILESS_PICK diagnostic: the scheduled pick has been armed (once per process).
+static PICK_ARMED: AtomicBool = AtomicBool::new(false);
+
 const TS_LF_SYNC: u32 = 0x1;
 const TS_LF_READ: u32 = 0x2;
 const TS_LF_READWRITE: u32 = 0x6;
@@ -823,6 +834,94 @@ pub fn cand_ignored() -> bool {
     uiless() && UILESS_IGNORED.with(|t| t.get())
 }
 
+// ---- #45 step 3: glue between the UI element sink and the popup in view.rs (UI-less mode only)
+
+/// Posts a window message (any thread). False when it could not be posted.
+pub fn post_to_window(hwnd: *mut c_void, msg: u32, w: usize, l: isize) -> bool {
+    !hwnd.is_null() && unsafe { PostMessageW(hwnd, msg, w, l) } != 0
+}
+
+/// Asks the render window to refresh the candidate popup. The sink callbacks run inside TIP calls and must not touch windows,
+/// so they only post; one message in flight at a time.
+pub fn post_cand_refresh(hwnd: *mut c_void) {
+    if !uiless() || hwnd.is_null() {
+        return;
+    }
+    if !CAND_PENDING.swap(true, SeqCst) && !post_to_window(hwnd, WM_SWR_CAND, 0, 0) {
+        CAND_PENDING.store(false, SeqCst);
+    }
+}
+
+/// WM_SWR_CAND handler entry (before the refresh): the next sink event may post again.
+pub fn cand_message_taken() {
+    CAND_PENDING.store(false, SeqCst);
+}
+
+/// SWIFTRIGHT_IME_UILESS_PICK=<row> (diagnostic): 2 s after the first BeginUIElement, once per process, posts a pick of that row.
+fn arm_diagnostic_pick(hwnd: *mut c_void) {
+    let Some(row) = std::env::var("SWIFTRIGHT_IME_UILESS_PICK").ok().and_then(|v| v.trim().parse::<usize>().ok()) else { return };
+    if hwnd.is_null() || PICK_ARMED.swap(true, SeqCst) {
+        return;
+    }
+    tsf_log!("tsf_cand pick_scheduled row={row} delay_ms=2000");
+    let h = hwnd as usize;
+    std::thread::spawn(move || {
+        std::thread::sleep(std::time::Duration::from_millis(2000));
+        let ok = post_to_window(h as *mut c_void, WM_SWR_CAND_PICK, row, 0);
+        tsf_log!("tsf_cand pick_posted row={row} ok={ok}");
+    });
+}
+
+/// The tracked candidate list element as the behaviour interface (SetSelection / Finalize), plus the current state. The COM
+/// object is cloned out so no thread-local borrow is held while the TIP runs.
+fn cand_behavior() -> Option<(ITfCandidateListUIElementBehavior, CandState)> {
+    let id = UILESS_ID.with(|t| t.get())?;
+    let st = cand_state()?;
+    let el = UIMGR.with(|u| {
+        let u = u.borrow();
+        let mgr = u.as_ref()?;
+        unsafe { mgr.GetUIElement(id).ok() }
+    })?;
+    let b = el.cast::<ITfCandidateListUIElementBehavior>().ok()?;
+    Some((b, st))
+}
+
+/// Mouse pick of `row` on the current page (WM_SWR_CAND_PICK, UI thread, top-level message): selects it and finalizes.
+pub fn cand_pick(row: usize) {
+    if !uiless() {
+        return;
+    }
+    let Some((b, st)) = cand_behavior() else {
+        tsf_log!("tsf_cand pick row={row} skipped=no_open_list");
+        return;
+    };
+    if row >= st.rows() {
+        tsf_log!("tsf_cand pick row={row} skipped=row_out_of_page rows={}", st.rows());
+        return;
+    }
+    let index = st.first_on_page() + row;
+    let set = unsafe { b.SetSelection(index as u32) };
+    let set_hr = hr_of(&set);
+    let fin = unsafe { b.Finalize() };
+    tsf_log!("tsf_cand pick row={row} index={index} set_hr=0x{set_hr:08X} hr=0x{:08X}", hr_of(&fin));
+}
+
+/// Wheel over the popup (WM_SWR_CAND_WHEEL): moves the selection by one page of rows (`dir` > 0 forward, < 0 back).
+pub fn cand_wheel(dir: isize) {
+    if !uiless() {
+        return;
+    }
+    let Some((b, st)) = cand_behavior() else { return };
+    let step = st.rows().max(1);
+    let last = (st.count as usize).saturating_sub(1);
+    let to = if dir > 0 { (st.selection + step).min(last) } else { st.selection.saturating_sub(step) };
+    if to == st.selection {
+        return;
+    }
+    let r = unsafe { b.SetSelection(to as u32) };
+    tsf_log!("tsf_cand wheel dir={dir} from={} to={to} hr=0x{:08X}", st.selection, hr_of(&r));
+}
+
 /// Called from the first UpdateUIElement of an element we answered pbShow=FALSE for: `ITfUIElement::IsShown()` TRUE means the
 /// IME ignored the request, so the system list is still visible and ours would double it.
 fn recheck_shown(id: u32) {
@@ -985,7 +1084,9 @@ impl ITfUIElementSink_Impl for UiSink_Impl {
                 unsafe { *pbshow = BOOL(0) };
                 // The IME may still show its own list: re-check IsShown() at the first UpdateUIElement.
                 UILESS_RECHECK.with(|t| t.set(Some(dwuielementid)));
+                arm_diagnostic_pick(self.st.hwnd_ptr());
             }
+            post_cand_refresh(self.st.hwnd_ptr());
         }
         Ok(())
     }
@@ -995,6 +1096,7 @@ impl ITfUIElementSink_Impl for UiSink_Impl {
         if uiless() && UILESS_ID.with(|t| t.get()) == Some(dwuielementid) {
             recheck_shown(dwuielementid);
             self.uiless_event(dwuielementid, "update");
+            post_cand_refresh(self.st.hwnd_ptr());
         }
         Ok(())
     }
@@ -1005,6 +1107,7 @@ impl ITfUIElementSink_Impl for UiSink_Impl {
         if uiless() && UILESS_ID.with(|t| t.get()) == Some(dwuielementid) {
             tsf_log!("tsf_uiless end id={dwuielementid}");
             uiless_clear();
+            post_cand_refresh(self.st.hwnd_ptr());
         }
         Ok(())
     }
@@ -1116,6 +1219,10 @@ impl Tsf {
             drop(r);
         }
         self.st.associated.set(false);
+        if uiless() {
+            uiless_clear();
+            view::cand_hide();
+        }
         view::tsf_caret_destroy();
         self.st.pending.set(0);
         self.st.known.set(Known::default());
@@ -1152,6 +1259,7 @@ impl Tsf {
         drop(self.ctx.take());
         UIMGR.with(|u| *u.borrow_mut() = None);
         uiless_clear();
+        view::cand_hide();
         if self.ui_cookie != 0 {
             if let Some(src) = self.tm.as_ref().and_then(|t| t.cast::<ITfSource>().ok()) {
                 let _ = unsafe { src.UnadviseSink(self.ui_cookie) };
