@@ -67,7 +67,7 @@ final class Issue60Controls3HostTests: XCTestCase {
         XCTAssertEqual(ButtonArtwork.pressedColor(0xebebeb, prominent: false, dark: false), 0xd4d4d4)
         XCTAssertEqual(ButtonArtwork.pressedColor(0x303030, prominent: false, dark: true), 0x444444, "the dark bordered body lightens")
         XCTAssertEqual(ButtonArtwork.pressedColor(0x007bff, prominent: true, dark: false), 0x006fe6)
-        XCTAssertEqual(ButtonArtwork.pressedColor(0x007bff, prominent: true, dark: true), 0x006fe6, "a prominent body darkens in both appearances")
+        XCTAssertEqual(ButtonArtwork.pressedColor(0x007bff, prominent: true, dark: true), 0x1988ff, "a prominent body lightens in dark mode (measured (25,136,255))")
     }
 
     func testAPressedBodyIsFilledWithThePressedColour() {

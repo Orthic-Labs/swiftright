@@ -122,10 +122,10 @@
   "after"
  ],
  "edgeAATolerance": {
-  "levels": 255,
-  "maxOverFraction": 1.0,
-  "maxMeanAbs": 255,
-  "reason": "PROVISIONAL (issue #79): first dark pair; this run MEASURES the dark pressed looks, the gate passes whatever differs. Tighten after reading the result."
+  "levels": 64,
+  "maxOverFraction": 0.01,
+  "maxMeanAbs": 2,
+  "reason": "Measured on CI 39701531679 (dark, 21 pairs): rounded body edges max 12 to 31 levels in the pairs that passed before the prominent-dark fix, over-32 pixels 0, out-of-band 0. Tolerance = measured max doubled; confirmed on the next run."
  },
  "semanticGate": {
   "fields": [

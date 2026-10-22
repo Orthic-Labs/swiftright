@@ -30,9 +30,10 @@ public enum ButtonArtwork {
     public static let focusRingWidth: Double = 3
     public static let focusRingAlpha: UInt8 = 0x80
 
-    /// `fill` (0xRRGGBB) as the pressed state draws it: mixed toward black, or toward white for the dark bordered body.
+    /// `fill` (0xRRGGBB) as the pressed state draws it: mixed toward black in light mode, toward white in dark mode, for the bordered and the prominent body alike (measured on macOS 27,
+    /// CI 39701531679 dark: bordered 48 -> 68, prominent (0,123,255) -> (25,136,255), both 9.8% toward white).
     public static func pressedColor(_ fill: UInt32, prominent: Bool, dark: Bool) -> UInt32 {
-        let toward: Double = dark && !prominent ? 255 : 0
+        let toward: Double = dark ? 255 : 0
         let f = prominent ? pressedProminentMix : pressedMix
         func channel(_ shift: UInt32) -> UInt32 {
             let c = Double(fill >> shift & 255)
