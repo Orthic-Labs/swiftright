@@ -1,0 +1,33 @@
+ARTIFACT base=D:\Claude\swiftright\.work\sr0-ime33\src exe_sha256=87B8CB27CE6730E56681FAC3EA22ED3DFB859B3DDDB697C339318F4CE60EB374 dll_sha256=78C5646D7A92D6B8D6FB6449EF1016602343AEDAE6E784B87741B964A8D57F3D expect_exe=87B8CB27CE6730E56681FAC3EA22ED3DFB859B3DDDB697C339318F4CE60EB374 expect_dll=78C5646D7A92D6B8D6FB6449EF1016602343AEDAE6E784B87741B964A8D57F3D
+ARTIFACT_OK
+registered=SR0N-ime-ref-edge-ev-a at=2026-10-22T21:29:52.5999544+05:30
+state=Ready last_result=0
+deleted=SR0N-ime-ref-edge-ev-a exists_after=False
+ARTIFACT base=D:\Claude\swiftright\.work\sr0-ime33\src exe_sha256=87B8CB27CE6730E56681FAC3EA22ED3DFB859B3DDDB697C339318F4CE60EB374 dll_sha256=78C5646D7A92D6B8D6FB6449EF1016602343AEDAE6E784B87741B964A8D57F3D expect_exe=87B8CB27CE6730E56681FAC3EA22ED3DFB859B3DDDB697C339318F4CE60EB374 expect_dll=78C5646D7A92D6B8D6FB6449EF1016602343AEDAE6E784B87741B964A8D57F3D class=native check=ime-ref-edge tag=ev-a
+    0.3s host=BOGUS-DELL user=adrds session=1 reference=edge started=2026-10-22T21:29:55.4181077+05:30
+    2.5s edge_window hwnd=3543906
+    6.5s ime_switch rc=0/0 layout=0x04110411 open=1 conv=0x9
+   12.9s event_log started
+   13.1s before_typing baseline windows=34
+   13.6s key romaji-N vk=0x4E mods= delivered fg_ok=true
+   13.9s key romaji-I vk=0x49 mods= delivered fg_ok=true
+   14.1s key romaji-H vk=0x48 mods= delivered fg_ok=true
+   14.3s key romaji-O vk=0x4F mods= delivered fg_ok=true
+   14.6s key romaji-N vk=0x4E mods= delivered fg_ok=true
+   14.8s key romaji-N vk=0x4E mods= delivered fg_ok=true
+   15.5s composition_open no window appeared or moved
+   16.5s shot composition_open origin=113,400 size=3024 x 2337 -> D:\Claude\swiftright\.work\sr0-ime33\src\result-native-ime-ref-edge-ev-a.txt.composition_open.png
+   19.6s page_row_inserted=True after_ms=3159
+   20.6s after_move no window appeared or moved
+   20.8s shot after_move origin=113,400 size=3024 x 2337 -> D:\Claude\swiftright\.work\sr0-ime33\src\result-native-ime-ref-edge-ev-a.txt.after_move.png
+   21.3s key down-after-move vk=0x28 mods= delivered fg_ok=true
+   21.4s after_down no window appeared or moved
+   21.6s shot after_down origin=113,400 size=3024 x 2337 -> D:\Claude\swiftright\.work\sr0-ime33\src\result-native-ime-ref-edge-ev-a.txt.after_down.png
+   21.6s expected_shift_px=150 (60 css px at dpi 240) move_delta=no common window after_down_delta=no common window
+   21.6s CHECK reference-edge-candidate-after-layout-move PASS :: state=no-list (diagnostic: followed = Edge moves the open list with the field; stayed = the IME leaves it, as in SwiftRight)
+   21.9s key escape-1 vk=0x1B mods= delivered fg_ok=true
+   22.2s key escape-2 vk=0x1B mods= delivered fg_ok=true
+   22.5s key escape-3 vk=0x1B mods= delivered fg_ok=true
+   29.0s event_log stopped lines=913 -> D:\Claude\swiftright\.work\sr0-ime33\src\result-native-ime-ref-edge-ev-a.txt.events.txt
+   29.0s CHECK input-gate-no-foreground-abort PASS :: gated virtual-key events sent=10 abort=none (any foreground change aborts the run; no keystroke may reach another application)
+   29.1s NATIVE_SUMMARY ime-ref-edge pass=2 fail=0 fail_not_automatable=0 not_run=0
