@@ -244,6 +244,8 @@ enum ModifierSpec {
     case scale(CGFloat, CGFloat, UnitPoint)
     /// SR2 R4 (#39): `.brightness(_:)`. Layout is unchanged; the host adds the amount to each sRGB channel of the subtree's colours (clamped).
     case brightness(Double)
+    /// #82: `.shadow(color:radius:x:y:)`. Layout is unchanged; the host paints a blurred, offset, tinted copy of the subtree's shape alpha beneath it.
+    case shadow(ResolvedShadow)
     /// SR2 R6 (#41): `.clipShape(_:style:)`. Layout is unchanged; the host clips the subtree's painting to the shape in this node's frame. The geometry is
     /// animated like a shape's (`Node.presentedGeometry`), so an animatable clip follows its shape.
     case clipShape(ShapeGeometry, FillStyle)
@@ -300,6 +302,7 @@ enum ModifierSpec {
         case .rotation: return "modifier.rotationEffect"
         case .scale: return "modifier.scaleEffect"
         case .brightness: return "modifier.brightness"
+        case .shadow: return "modifier.shadow"
         case .clipShape: return "modifier.clipShape"
         case .hover: return "modifier.onHover"
         case .tap: return "modifier.onTapGesture"
@@ -348,6 +351,7 @@ enum ModifierSpec {
         case .rotation: return "rotationEffect"
         case .scale: return "scaleEffect"
         case .brightness: return "brightness"
+        case .shadow: return "shadow"
         case .clipShape: return "clipShape"
         case .hover: return "onHover"
         case .tap: return "onTapGesture"
@@ -933,6 +937,8 @@ public struct ResolvedNode: Equatable, Sendable {
     public var scaleEffect: ResolvedScale? = nil
     /// Modifier nodes of `.brightness` only (SR2 R4, #39): the amount added to each sRGB channel of the subtree's colours.
     public var brightness: Double? = nil
+    /// Modifier nodes of `.shadow` only (#82).
+    public var shadow: ResolvedShadow? = nil
     /// Modifier nodes of `.clipShape` only (SR2 R6, #41): the presented clip geometry (in this node's frame) and its fill rule.
     public var clipShape: ResolvedClipShape? = nil
     /// The frame before device-pixel snapping (#44), when it differs from `frame` and the node is not moving; nil otherwise. A host scales this under
@@ -2667,6 +2673,7 @@ public final class Graph {
             styledText: styledText(of: node)
         )
         resolvedNode.gradient = gradient
+        if case .modifier(.shadow(let shadow)) = kind { resolvedNode.shadow = shadow }
         resolvedNode.numericRoll = resolveNumericRoll(node, style: style, text: text)
         // #54: a control reads the environment's tint where it paints its accent (a prominent Button's fill, a Toggle's on state, a Slider's fill).
         switch kind {
@@ -2809,4 +2816,14 @@ public final class Graph {
         case .menu: return "Menu"
         }
     }
+}
+
+
+/// What `.shadow(color:radius:x:y:)` asks of the host: the shadow of the subtree's opaque shapes, a Gaussian blur of standard deviation `radius` points (measured on
+/// macOS 27, #82: ImageRenderer alpha at radius 4 and 8 fits sigma = radius), offset by (`x`, `y`) points, tinted `color`.
+public struct ResolvedShadow: Equatable, Sendable {
+    public var color: ResolvedColor
+    public var radius: Double
+    public var x: Double
+    public var y: Double
 }

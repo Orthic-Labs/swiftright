@@ -140,6 +140,11 @@ extension View {
 
     /// Brightens (or, below 0, darkens) this view's rendering: `amount` is added to each sRGB channel, clamped to 0...1; alpha is unchanged
     /// (measured on macOS 27 with ImageRenderer: (0.2, 0.4, 0.6) + 0.2 = (102, 153, 204); black + 0.5 = 128). Not animated: a change snaps.
+    /// Apple: https://developer.apple.com/documentation/swiftui/view/shadow(color:radius:x:y:)
+    public func shadow(color: Color = Color(white: 0, opacity: 0.33), radius: CGFloat, x: CGFloat = 0, y: CGFloat = 0) -> some View {
+        Modified(content: self, spec: .shadow(ResolvedShadow(color: color.resolvedColor, radius: Double(radius), x: Double(x), y: Double(y))))
+    }
+
     /// Apple: https://developer.apple.com/documentation/swiftui/view/brightness(_:)
     public func brightness(_ amount: Double) -> some View {
         Modified(content: self, spec: .brightness(amount))

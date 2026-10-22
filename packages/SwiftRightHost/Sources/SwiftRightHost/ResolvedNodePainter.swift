@@ -136,6 +136,8 @@ public final class ResolvedNodePainter {
     private var pixelImages: [PixelKey: ImageHandle] = [:]
     private var pendingPixelImages: [PixelKey: ImageHandle] = [:]
     /// The runtime id of the TextField that holds the focus while a commit is painted (`commit(focused:)`); nil when no field is focused.
+    /// The `place` of the commit in progress (the shadow raster places each leaf it traces the way `walk` places it, #82).
+    private var commitShift: (x: Float, y: Float) = (0, 0)
     var focusedFieldID: String?
     /// True while the keyboard is in a List (the host sets it on a pointer press in the list or a navigation key): a selection then paints in the accent colour,
     /// otherwise grey, as AppKit draws a table that is not the first responder.
@@ -335,6 +337,7 @@ public final class ResolvedNodePainter {
         let focusedField = focused.flatMap { Self.focusedField(in: root, modifierID: $0) }
         focusedFieldID = focusedField?.id
         beginCommit()
+        do { let z = place(Rect(x: 0, y: 0, w: 0, h: 0)); commitShift = (z.x, z.y) }   // a host's placement is a translation
         var committed = false
         defer { endCommit(committed: committed) }
         func walk(_ n: ResolvedNode, parent: UInt64, order: UInt32, clip: Rect?, rotations: [ShapeRotation] = [], textColor: UInt32? = nil, row: ListPainter.Row? = nil, rowList: (bounds: Rect, look: ListLook)? = nil, inButton: Bool = false, a11y: A11yPatch = A11yPatch(), hidden: Bool = false, transform: PaintScale = .identity, brightness: [Float] = [], clipMasks: [ClipMask] = [], scaleOrigin: (x: Float, y: Float)? = nil) throws {
@@ -884,6 +887,16 @@ public final class ResolvedNodePainter {
             // Measured on macOS 27 (light): the separator is black at alpha 25/255 (230 over white, (0,123,230) over (0,136,255)), as thick as the layout box (1 pt, snapped to the
             // device grid like any edge: 2 or 3 px at scale 2.5). Dark appearance (round 5 block 31): white at alpha 25/255 (`HostPaint.darkSemantic`).
             return NodeEmission(primitives: [.rect(bounds, color: try HostPaint.rgba(.semantic("separator"), opacity: node.opacity, scheme: node.style.colorScheme))], semantic: nil, flags: [], structural: false)
+
+        case "modifier.shadow":
+            // #82: the shadow is this modifier node's own primitive, so it paints beneath the subtree (a parent's primitives come before its children's).
+            guard let shadow = node.shadow else { return NodeEmission(primitives: [], semantic: nil, flags: [], structural: false) }
+            let rgba = try HostPaint.rgba(shadow.color, opacity: node.opacity, scheme: node.style.colorScheme)
+            guard let drawn = try ShadowRaster.render(node, shadow: shadow, scale: scale, place: { [commitShift] in Rect(x: $0.x + commitShift.x, y: $0.y + commitShift.y, w: $0.w, h: $0.h) }, rgba: adjusted(rgba)) else { return NodeEmission(primitives: [], semantic: nil, flags: [], structural: false) }
+            let handle = try images.registerImage(width: UInt32(drawn.image.width), height: UInt32(drawn.image.height), rgba: drawn.image.rgba, stride: 0)
+            if let stale = pendingShapeImages[id] { _ = images.release(stale) }
+            pendingShapeImages[id] = handle
+            return NodeEmission(primitives: [.image(handle, drawn.placement)], semantic: nil, flags: [], structural: false)
 
         case "Color":
             guard let color = node.color else { throw HostPaintError.colorMetadataRequired }
