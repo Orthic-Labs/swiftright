@@ -10,6 +10,9 @@ import Foundation
 
 final class HoverHook {
     let action: (Bool) -> Void
+    /// `.onContinuousHover` (#84): the pointer's location in the view's space on every move while inside, nil when it leaves.
+    var location: ((CGPoint?, CoordinateSpace) -> Void)?
+    var space: CoordinateSpace = .local
     init(_ action: @escaping (Bool) -> Void) { self.action = action }
 }
 
@@ -19,10 +22,24 @@ final class TapHook {
     init(count: Int, _ action: @escaping () -> Void) { self.count = count; self.action = action }
 }
 
+/// Apple: https://developer.apple.com/documentation/swiftui/hoverphase
+public enum HoverPhase: Equatable, Sendable {
+    case active(CGPoint)
+    case ended
+}
+
 extension View {
     /// Apple: https://developer.apple.com/documentation/swiftui/view/onhover(perform:)
     public func onHover(perform action: @escaping (Bool) -> Void) -> some View {
         Modified(content: self, spec: .hover(HoverHook(action)))
+    }
+
+    /// Apple: https://developer.apple.com/documentation/swiftui/view/oncontinuoushover(coordinatespace:perform:)
+    public func onContinuousHover(coordinateSpace: CoordinateSpace = .local, perform action: @escaping (HoverPhase) -> Void) -> some View {
+        let hook = HoverHook({ _ in })
+        hook.space = coordinateSpace
+        hook.location = { point, _ in action(point.map { .active($0) } ?? .ended) }
+        return Modified(content: self, spec: .hover(hook))
     }
 
     /// Apple: https://developer.apple.com/documentation/swiftui/view/ontapgesture(count:perform:)
@@ -75,11 +92,18 @@ extension Graph {
         for (n, _) in hooks { if let x, let y { inside.append(n.environment.allowsHitTesting && contains(hitFrame(n), x, y)) } else { inside.append(false) } }
         for (i, (n, _)) in hooks.enumerated() where n.hovered && !inside[i] {
             n.hovered = false
-            if case .modifier(.hover(let hook)) = n.kind { hook.action(false) }
+            if case .modifier(.hover(let hook)) = n.kind { hook.action(false); hook.location?(nil, hook.space) }
         }
         for (i, (n, _)) in hooks.enumerated() where !n.hovered && inside[i] {
             n.hovered = true
             if case .modifier(.hover(let hook)) = n.kind { hook.action(true) }
+        }
+        if let x, let y {
+            for (i, (n, _)) in hooks.enumerated() where inside[i] {
+                guard case .modifier(.hover(let hook)) = n.kind, let report = hook.location else { continue }
+                let f = hitFrame(n)
+                report(hook.space == .local ? CGPoint(x: x - f.minX, y: y - f.minY) : CGPoint(x: x, y: y), hook.space)
+            }
         }
         flush()
     }

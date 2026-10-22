@@ -252,6 +252,8 @@ enum ModifierSpec {
     /// SR1 round 6 block 38: `.onHover(perform:)` and `.onTapGesture(count:perform:)`; the host routes pointer positions to `Graph.pointerMoved` and a release to `Graph.tapGesture`.
     case hover(HoverHook)
     case tap(TapHook)
+    /// #84: `.gesture`, `.simultaneousGesture`, `.highPriorityGesture` (Tap/SpatialTap/Drag with onChanged/onEnded).
+    case gesture(GestureHook)
     /// SR2 R1 (#36): `.offset(x:y:)`. Layout is unchanged; the child is placed shifted by (x, y) (not mirrored under right-to-left, as in SwiftUI).
     case offset(CGFloat, CGFloat)
     /// SR2 R1 (#36): `.position(x:y:)`. Takes the whole proposed space; the child is centred at the point in this node's coordinate space.
@@ -306,6 +308,7 @@ enum ModifierSpec {
         case .clipShape: return "modifier.clipShape"
         case .hover: return "modifier.onHover"
         case .tap: return "modifier.onTapGesture"
+        case .gesture: return "modifier.gesture"
         case .offset: return "modifier.offset"
         case .position: return "modifier.position"
         case .alignmentGuide: return "modifier.alignmentGuide"
@@ -355,6 +358,7 @@ enum ModifierSpec {
         case .clipShape: return "clipShape"
         case .hover: return "onHover"
         case .tap: return "onTapGesture"
+        case .gesture: return "gesture"
         case .offset: return "offset"
         case .position: return "position"
         case .alignmentGuide: return "alignmentGuide"
@@ -635,6 +639,8 @@ final class Node {
     var sliderDragging = false
     /// `.onHover` nodes: whether the pointer is inside (the last state the action was told).
     var hovered = false
+    /// The recognizer of a `.gesture` modifier node (state lives with the node, #84).
+    var gestureRecognizer: GestureRecognizer?
     /// GeometryReader (R1): the size layout last gave this node, and the size its content was last built for.
     var geometrySize: LayoutSize?
     var geometryBuilt: LayoutSize?
@@ -1164,6 +1170,8 @@ public final class Graph {
     /// Host-supplied time in seconds of the last `tick(now:)`; nil before the first tick. It has no required origin. A motion
     /// does not start at it: a motion begins at the next tick (see `advanceMotions`).
     var clock: Double?
+    /// The gesture modifier nodes a pointer press handed the moves and the release to (#84).
+    var gestureActive: [Node] = []
     /// Steps of the spinner nodes as of the last tick (#60).
     private var shownSpinnerSteps: [String: Int] = [:]
     private var closed = false
