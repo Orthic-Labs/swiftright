@@ -132,6 +132,7 @@ def mac(case, name, runs, out, clock=None, strict=False):
     if any("ScalePin." in Path(p).read_text() for p in srcs):
         srcs.append(str(Path(__file__).resolve().parent / "mac-scale-pin/ScalePin.swift"))   # decision C12: the window/displayScale pin and its MAC_ENV report
     pj = case / "pair.json"
+    mac_launch = json.loads(pj.read_text()).get("macLaunch", "") if pj.is_file() else ""   # "open": start the host as a real app through LaunchServices (issue #79)
     mac_args = json.loads(pj.read_text()).get("macArgs", []) if pj.is_file() else []   # extra host arguments for the case (e.g. ["--press", "1"])
     mac_args = [a.replace("{repo}", str(Path(__file__).resolve().parents[2])) for a in mac_args]   # "{repo}" makes a resource path independent of the working directory (CI, Dell, Mac)
     if (case / "mac-source/Package.swift").is_file():
@@ -162,8 +163,22 @@ def mac(case, name, runs, out, clock=None, strict=False):
                log=out / f"mac-run-{i:02d}.log", timeout=120 + 20 * len(clock))
             continue
         if png_mode:
-            sh([str(cache / "bin/host"), "--plain", "--scale", str(CAPTURE_SCALE), "--png", str(mdir / f"run-{i:02d}.png"), *(["--ax", str(mdir / f"ax-{i:02d}.json")] if ax_mode else []), *mac_args],
-               log=out / f"mac-run-{i:02d}.log", timeout=120)
+            host_args = ["--plain", "--scale", str(CAPTURE_SCALE), "--png", str(mdir / f"run-{i:02d}.png"), *(["--ax", str(mdir / f"ax-{i:02d}.json")] if ax_mode else []), *mac_args]
+            if mac_launch == "open":
+                # issue #79: a focus ring and a caret draw only for the ACTIVE app's key window; a process started by a subprocess never becomes active. LaunchServices does: wrap the host in a
+                # minimal ad-hoc-signed .app and start it with `open -n -W` (waits until it quits; stdout and stderr go to the run log).
+                app = cache / "bin/PairHost.app"; (app / "Contents/MacOS").mkdir(parents=True, exist_ok=True)
+                shutil.copyfile(cache / "bin/host", app / "Contents/MacOS/host"); (app / "Contents/MacOS/host").chmod(0o755)
+                (app / "Contents/Info.plist").write_text('<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd"><plist version="1.0"><dict>'
+                    '<key>CFBundleExecutable</key><string>host</string><key>CFBundleIdentifier</key><string>com.orthiclabs.swiftright.pairhost</string><key>CFBundleName</key><string>PairHost</string>'
+                    '<key>CFBundlePackageType</key><string>APPL</string><key>NSPrincipalClass</key><string>NSApplication</string><key>LSMinimumSystemVersion</key><string>14.0</string></dict></plist>')
+                sh(["/usr/bin/codesign", "--force", "--sign", "-", str(app)], log=out / f"mac-sign-{i:02d}.log")
+                err = out / f"mac-run-{i:02d}.err"
+                sh(["/usr/bin/open", "-n", "-W", "-a", str(app), "--stdout", str(out / f"mac-run-{i:02d}.log"), "--stderr", str(err), "--args", *host_args], log=out / f"mac-open-{i:02d}.log", timeout=180)
+                if err.is_file() and err.stat().st_size:
+                    with open(out / f"mac-run-{i:02d}.log", "a") as lg: lg.write(err.read_text())
+                continue
+            sh([str(cache / "bin/host"), *host_args], log=out / f"mac-run-{i:02d}.log", timeout=120)
             continue
         scratch = base / f"pair-{out.name}-{i:02d}"
         sh([str(cache / "bin/host"), "--observe", *(["--scale", str(CAPTURE_SCALE)] if scale_flag[0] else []), "--scratch-root", str(scratch)],
