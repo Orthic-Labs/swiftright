@@ -122,10 +122,10 @@
   "after"
  ],
  "edgeAATolerance": {
-  "levels": 64,
-  "maxOverFraction": 0.03,
-  "maxMeanAbs": 3,
-  "reason": "PROVISIONAL (issue #77): the rounded body edges of the bordered and prominent buttons, at rest and pressed. Not yet measured with the label regions excluded; fit from the next pair."
+  "levels": 36,
+  "maxOverFraction": 0.005,
+  "maxMeanAbs": 1,
+  "reason": "Measured on CI 39700355764 (3 identical runs, 21 pairs: rest, four pressed states, released): maxdiff 18 overall, over-32 pixels 0, out-of-band 0. The rounded body edges of the bordered and prominent buttons; tolerance = measured max doubled. Pressed colours (Mac = Windows): bordered body 212, prominent (0,111,230), plain label 93, borderless label 38/39."
  },
  "semanticGate": {
   "fields": [
