@@ -95,7 +95,7 @@
   "levels": 140,
   "maxOverFraction": 0.03,
   "maxMeanAbs": 4,
-  "reason": "Measured on CI 39722299676 (3 identical runs, 18 pairs, scale 1, Mac window-server capture vs Windows, full keyboard access ON): ring colour (127,179,250) vs (128,179,250); ring positions and 4 px thickness agree. Residual: the plain and borderless rings hug the text and the Mac text is wider than Segoe (a few px at the ring ends), the bordered corner shape, and a 1-level colour offset of the window-server capture (hazeTolerance 2). Worst row: maxInBand 127, over-32 pixels 122 of 8079 (1.5%), mean 1.97. Tolerance = measured plus margin."
+  "reason": "Measured on CI 39732340982 (3 identical runs, 18 pairs, scale 1; Mac window-server capture vs Windows, full keyboard access ON): rows s0-s4 and the final state. Worst row: maxInBand 127, over-32 pixels 122 of 8079 (1.5%), mean 2.61. Ring colour (127,179,250) vs (128,179,250); the Button and TextField rings share position, thickness and colour; residual: plain/borderless ring ends (Segoe text narrower than SF), the TextField bezel border pixel under the ring (Mac 236 vs Windows 217 before the ring: (118,169,240) vs (108,160,231)), 1-level window-server colour offset (hazeTolerance 2). The TextField placeholder glyphs and the blinking caret are excluded. The case ends with nothing focused (an off-screen Escape Button clears the FocusState) because the Mac's cacheDisplay final shot cannot show a ring. Tolerance = measured plus margin."
  },
  "semanticGate": {
   "fields": [
