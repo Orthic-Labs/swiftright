@@ -6,11 +6,20 @@ import Foundation
 // the content sees `Date(timeIntervalSinceReferenceDate: 0)` for animation and periodic schedules, and the first explicit date.
 // Not modelled: pausing (`TimelineScheduleMode.lowFrequency`), `minimumInterval` throttling, and dates between ticks.
 
-/// The host clock as observable state.
+/// The host clock as observable state, one per graph (`Graph.timelineSource`); `ticked` is false until the first `tick(now:)`.
 @Observable @MainActor
 final class TimelineClockSource {
-    static let shared = TimelineClockSource()
     var now: Double = 0
+    var ticked = false
+}
+
+/// Binds a view to its graph's clock (the graph looks for members that are dynamic properties).
+@MainActor
+struct ClockBinder: DynamicPropertyStorage {
+    final class Cell { weak var node: Node? }
+    let cell = Cell()
+    func bindDynamicProperty(to node: Node, key: String) { cell.node = node }
+    var source: TimelineClockSource? { cell.node?.owner?.timelineSource }
 }
 
 /// Apple: https://developer.apple.com/documentation/swiftui/timelineschedule
@@ -73,6 +82,7 @@ public struct TimelineView<Schedule: TimelineSchedule, Content: View>: View {
 
     let schedule: Schedule
     let content: (Context) -> Content
+    let clock = ClockBinder()
 
     public init(_ schedule: Schedule, @ViewBuilder content: @escaping (Context) -> Content) {
         self.schedule = schedule
@@ -80,7 +90,7 @@ public struct TimelineView<Schedule: TimelineSchedule, Content: View>: View {
     }
 
     @MainActor public var body: some View {
-        let now = Date(timeIntervalSinceReferenceDate: TimelineClockSource.shared.now)
+        let now = Date(timeIntervalSinceReferenceDate: clock.source?.now ?? 0)
         return content(TimelineViewContext(date: schedule.date(at: now), cadence: .live))
     }
 }

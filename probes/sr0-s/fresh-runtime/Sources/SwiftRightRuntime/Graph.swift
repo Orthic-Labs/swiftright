@@ -1174,6 +1174,8 @@ public final class Graph {
     /// Host-supplied time in seconds of the last `tick(now:)`; nil before the first tick. It has no required origin. A motion
     /// does not start at it: a motion begins at the next tick (see `advanceMotions`).
     var clock: Double?
+    /// The host clock as observable state for TimelineView and keyframeAnimator.
+    let timelineSource = TimelineClockSource()
     /// The gesture modifier nodes a pointer press handed the moves and the release to (#84).
     var gestureActive: [Node] = []
     /// Steps of the spinner nodes as of the last tick (#60).
@@ -1629,7 +1631,7 @@ public final class Graph {
         guard !closed, root != nil else { return }
         let wasAnimating = !ghosts.isEmpty || animating.contains { $0.motion != nil && $0.alive }
         clock = now
-        if TimelineClockSource.shared.now != now { TimelineClockSource.shared.now = now }   // TimelineView content re-evaluates (#82)
+        if timelineSource.now != now || !timelineSource.ticked { timelineSource.ticked = true; timelineSource.now = now }   // TimelineView and keyframeAnimator content re-evaluate (#82, #84)
         advanceMotions(now: now, anchoring: true)
         // Issue #60: an indeterminate ProgressView spins by the host clock. Nothing is re-evaluated; the resolved rotation of a spinner node follows `clock`, so a commit is
         // emitted only when some spinner's step changed since the last one.
