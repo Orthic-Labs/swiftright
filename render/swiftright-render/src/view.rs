@@ -1649,10 +1649,23 @@ fn sys_caret_enabled() -> bool {
     *ON.get_or_init(|| std::env::var("SWIFTRIGHT_IME_SYSTEM_CARET").map_or(false, |v| v == "1"))
 }
 
+/// #45: the caret is moved from a posted message, outside paint (measured 22 Oct: SetCaretPos/NotifyWinEvent made inside the paint path reached no WinEvent
+/// client, while the same calls during typing did). The latest position wins.
+pub const WM_SWR_CARET: u32 = 0x8000 + 0x5A4;
+static SYS_CARET_PENDING: [AtomicI32; 3] = [AtomicI32::new(0), AtomicI32::new(0), AtomicI32::new(0)];
+
 fn sys_caret_place(hwnd: *mut c_void, x: i32, y: i32, h: i32) {
     if !sys_caret_enabled() {
         return;
     }
+    for (a, v) in SYS_CARET_PENDING.iter().zip([x, y, h]) {
+        a.store(v, SeqCst);
+    }
+    unsafe { PostMessageW(hwnd, WM_SWR_CARET, 0, 0) };
+}
+
+fn sys_caret_apply(hwnd: *mut c_void) {
+    let (x, y, h) = (SYS_CARET_PENDING[0].load(SeqCst), SYS_CARET_PENDING[1].load(SeqCst), SYS_CARET_PENDING[2].load(SeqCst));
     unsafe {
         if SYS_CARET.load(SeqCst) == 0 || SYS_CARET_HEIGHT.load(SeqCst) != h {
             if SYS_CARET.load(SeqCst) != 0 {
@@ -1740,6 +1753,10 @@ unsafe extern "system" fn ime_subclass_proc(hwnd: *mut c_void, msg: u32, w: usiz
     }
     if msg == WM_SWR_MODAL {
         on_modal_message();
+        return 0;
+    }
+    if msg == WM_SWR_CARET {
+        sys_caret_apply(hwnd);
         return 0;
     }
     if tsf::enabled() {
