@@ -1,0 +1,75 @@
+{
+ "steps": [
+  {
+   "op": "wait",
+   "ms": 700
+  },
+  {
+   "op": "dump",
+   "label": "start"
+  },
+  {
+   "op": "wait",
+   "ms": 250
+  },
+  {
+   "op": "front"
+  },
+  {
+   "op": "wait",
+   "ms": 600
+  },
+  {
+   "op": "screen",
+   "label": "s0"
+  },
+  {
+   "op": "key",
+   "key": "Escape"
+  },
+  {
+   "op": "wait",
+   "ms": 400
+  }
+ ],
+ "macArgs": [
+  "--steps",
+  "[{\"op\":\"wait\",\"ms\":700},{\"op\":\"dump\",\"label\":\"start\"},{\"op\":\"wait\",\"ms\":250},{\"op\":\"front\"},{\"op\":\"wait\",\"ms\":600},{\"op\":\"screen\",\"label\":\"s0\"},{\"op\":\"key\",\"key\":\"Escape\"},{\"op\":\"wait\",\"ms\":400}]"
+ ],
+ "phaseShots": [
+  "s0"
+ ],
+ "edgeAATolerance": {
+  "levels": 140,
+  "maxOverFraction": 0.03,
+  "maxMeanAbs": 4,
+  "reason": "PROVISIONAL (issue #81): first pair of the initial focus; fit from the first run."
+ },
+ "semanticGate": {
+  "fields": [
+   "role",
+   "name",
+   "count",
+   "order"
+  ],
+  "scope": "main",
+  "phases": [
+   "start"
+  ],
+  "boundsTolerancePt": 0.5
+ },
+ "excludeRects": [
+  {
+   "name": "TextField placeholder glyphs (Segoe UI vs SF) and the caret (it blinks: the Mac capture caught it at full and at half strength); the ring and the bezel are gated (#80)",
+   "rect": [
+    103,
+    178,
+    160,
+    198
+   ]
+  }
+ ],
+ "macLaunch": "open",
+ "captureScale": 1.0,
+ "hazeTolerance": 2
+}
