@@ -984,7 +984,11 @@ extension Graph {
     func truncatedDisplay(_ node: Node, _ string: String) -> String? {
         let mode = node.environment.truncationMode
         guard mode != .tail, node.environment.lineLimit == 1, !string.contains("\n"), styledText(of: node) == nil else { return nil }
-        let bound = node.frame.width
+        // The frame is as wide as the renderer's tail-truncated line (a little under the offer); the shortened text may use the whole width the layout offered, which is the
+        // smallest finite proposal the node was measured at that is not below its frame (macOS 27: "...ps over the lazy dog", 199.17 pt, in a 200 pt frame).
+        let frameWidth = node.frame.width
+        let offered = node.memo.keys.compactMap { $0 }.filter { $0 >= frameWidth - 0.01 && $0.isFinite }.min()
+        let bound = offered ?? frameWidth
         guard bound.isFinite, bound > 0 else { return nil }
         let font = node.environment.textFont ?? Font(id: "body")
         func width(_ s: String) -> CGFloat {
