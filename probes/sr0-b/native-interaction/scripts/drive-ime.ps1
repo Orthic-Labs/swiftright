@@ -27,7 +27,8 @@ param(
   # #45: with -Tsf, also the UI-less spike (SWIFTRIGHT_IME_UILESS=1): the system candidate list is hidden and its contents logged
   [switch]$UiLess,
   # #45 step 4: instead of the R1 key test, click row 2 of our candidate popup with the mouse and check that the IME commits it, with no focus change
-  [switch]$ClickPick
+  [switch]$ClickPick,
+  [switch]$NumberPick
 )
 . "$PSScriptRoot\native-common.ps1"
 if ($SysCaret) { $env:SWIFTRIGHT_IME_SYSTEM_CARET = '1' }
@@ -685,6 +686,21 @@ try {
       $ended = ($pickAt -ge 0) -and (@($lines2[$pickAt..($lines2.Count - 1)] | Where-Object { $_ -match 'tsf_composition event=end' }).Count -gt 0)
       Add-Check 'own-candidate-click-pick' $(if ($tail -match 'row=1 index=1 set_hr=0x00000000' -and $ended -and $valAfter.StartsWith($v0) -and $valAfter.Length -gt $v0.Length) { 'PASS' } else { 'FAIL' }) "pick-log=[$tail] composition-ended-after-pick=$ended value=[$valAfter] (a candidate was written after the prefix and the composition ended)"
     }
+  }
+  elseif ($NumberPick) {
+    [void](Send-GatedKey 0x20 'number-extra-space' 700)   # conversion list
+    $valBefore = Value-Of (Edit $row)
+    $idx0 = (Exe-ErrLines).Count
+    [void](Send-GatedKey 0x33 'number-3' 1800)             # the IME's own number-key shortcut: row 3
+    $valAfter = Value-Of (Edit $row)
+    $after = @((Exe-ErrLines)[$idx0..((Exe-ErrLines).Count - 1)])
+    # Measured with the system list visible (numberpick-sys): the Microsoft IME's digit key picks that candidate and closes the list but leaves the converted text marked (Enter commits).
+    # Our popup must close with it and the text must change.
+    $listEnded = @($after | Where-Object { $_ -match 'tsf_ui_element event=end' }).Count -gt 0
+    $popupHidden = @($after | Where-Object { $_ -match 'tsf_cand hide' }).Count -gt 0
+    $ended = @($after | Where-Object { $_ -match 'tsf_composition event=end' }).Count -gt 0
+    if ($UiLess) { Add-Check 'own-candidate-number-key-closes-popup' $(if ($listEnded -and $popupHidden -and -not $ended) { 'PASS' } else { 'FAIL' }) "digit 3 closes the IME list and our popup, composition stays marked like the system list: list-end=$listEnded popup-hidden=$popupHidden composition-ended=$ended value before=[$valBefore] after=[$valAfter]" }
+    else { Add-Check 'system-list-number-key-closes-list' $(if ($listEnded -and -not $ended) { 'PASS' } else { 'FAIL' }) "reference behaviour: list-end=$listEnded composition-ended=$ended value before=[$valBefore] after=[$valAfter]" }
   }
   elseif ($UiLess) {
     # #45 step 0 / R1: in UI-less mode (system list hidden) the IME must still handle Down and the number keys. Observed through the renderer's tsf_uiless update lines
