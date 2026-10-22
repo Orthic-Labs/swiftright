@@ -14,7 +14,10 @@ param(
   [string]$ReleaseEvent = 'Local\SR0_RELEASE_HOOK',
   [string]$Out = 'D:\Claude\sr0s-bridge06b\result-native-ime.txt',
   [Parameter(Mandatory)][string]$ExpectExe,
-  [Parameter(Mandatory)][string]$ExpectDll
+  [Parameter(Mandatory)][string]$ExpectDll,
+  # #45 experiment E1: after the layout move is tracked, press Down once (selection change in the open list) and track the list again; a jump to the
+  # new caret means the IME applies the new position only on a candidate update. Later checks may change (Down picks a prediction): diagnostic run only.
+  [switch]$DownAfterMove
 )
 . "$PSScriptRoot\native-common.ps1"
 
@@ -379,6 +382,14 @@ function Layout-Trigger {
     Log "candidate_after_layout line=$i hits=$($hits.Count)"
     $script:LayoutRes += [pscustomobject]@{ Idx = $i; Old = $oldS; New = $newS; Scale = $scale; Hits = $hits }
     Track-After-Move $i $oldS $newS $scale $mv
+    if ($DownAfterMove) {
+      Log "E1 down-after-move line=${i}: pressing Down once, then tracking the candidate list again"
+      [void](Send-GatedKey 0x28 'down-after-move' 150)
+      $mv2 = [Diagnostics.Stopwatch]::StartNew()
+      $hits2 = @(Cand-Hits-Near $newS 'candidate_after_down')
+      Log "E1 candidate_after_down line=$i hits=$($hits2.Count)"
+      Track-After-Move $i $oldS $newS $scale $mv2
+    }
   }
 }
 
