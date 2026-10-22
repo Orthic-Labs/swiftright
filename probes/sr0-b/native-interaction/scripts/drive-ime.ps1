@@ -671,6 +671,29 @@ try {
     [void](Send-GatedKey 0x33 'R1-digit-3' 500)
     Log ("R1 after digit 3 value=[" + (Value-Of (Edit $row)) + "] marked=[" + (Marked-Of $row $v0) + "]")
   }
+  if ($UiLess) {
+    # #45: the candidate list we draw must follow a layout move: the last tsf_cand show before `ime_replace reason=layout` and the first after it differ by the caret delta.
+    $exeLines = @(Exe-ErrLines); $li = -1
+    for ($k = 0; $k -lt $exeLines.Count; $k++) { if ([string]$exeLines[$k] -match 'ime_replace reason=layout') { $li = $k; break } }
+    if ($li -lt 0) { Add-Check 'own-candidate-list-follows-layout-move' 'NOT-RUN' 'no ime_replace reason=layout' }
+    else {
+      $mv = [regex]::Match([string]$exeLines[$li], 'old=(-?\d+),(-?\d+),(-?\d+),(-?\d+) new=(-?\d+),(-?\d+),(-?\d+),(-?\d+)')
+      $cdy = [int]$mv.Groups[6].Value - [int]$mv.Groups[2].Value
+      $cdx = [int]$mv.Groups[5].Value - [int]$mv.Groups[1].Value
+      $rx = 'tsf_cand show rect=(-?\d+),(-?\d+),(-?\d+),(-?\d+) side=(\w+)'
+      $before = $null; $after = $null
+      for ($k = $li - 1; $k -ge 0; $k--) { $m = [regex]::Match([string]$exeLines[$k], $rx); if ($m.Success) { $before = $m; break } }
+      for ($k = $li + 1; $k -lt $exeLines.Count; $k++) { $m = [regex]::Match([string]$exeLines[$k], $rx); if ($m.Success) { $after = $m; break } }
+      if ($before -eq $null -or $after -eq $null) { Add-Check 'own-candidate-list-follows-layout-move' 'FAIL' "no tsf_cand show before ($($before -ne $null)) / after ($($after -ne $null)) the layout move" }
+      else {
+        $dy = [int]$after.Groups[2].Value - [int]$before.Groups[2].Value
+        $dx = [int]$after.Groups[1].Value - [int]$before.Groups[1].Value
+        $sc = [SRN.N]::GetDpiForWindow($script:Hwnd) / 96.0; $tol = [math]::Ceiling(12 * $sc)
+        $ok = ([math]::Abs($dy - $cdy) -le $tol) -and ([math]::Abs($dx - $cdx) -le $tol) -and ($before.Groups[5].Value -eq $after.Groups[5].Value)
+        Add-Check 'own-candidate-list-follows-layout-move' $(if ($ok) { 'PASS' } else { 'FAIL' }) "caret delta=($cdx,$cdy) popup delta=($dx,$dy) tol=$tol side $($before.Groups[5].Value)->$($after.Groups[5].Value) before=$($before.Groups[1].Value),$($before.Groups[2].Value) after=$($after.Groups[1].Value),$($after.Groups[2].Value)"
+      }
+    }
+  }
   if ($UiLess) { Log 'R1 done; the remaining checks need the system candidate window and are skipped in UI-less mode'; Close-And-Collect $Fixture; if ($EventLog) { Stop-EventLog "$Out.events.txt" }; Write-Result $Out "ime-$Fixture"; exit 0 }
   $m1 = Measure-Candidate $row $v0 $winBefore
   $a1 = Eval-Anchor $m1
