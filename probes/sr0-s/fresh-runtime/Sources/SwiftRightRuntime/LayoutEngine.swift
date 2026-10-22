@@ -1002,9 +1002,8 @@ extension Graph {
         var p = 0, q = 0
         switch mode {
         case .head:
-            var lo = 0, hi = chars.count
-            while lo < hi { let mid = (lo + hi + 1) / 2; if fits(0, mid) { lo = mid } else { hi = mid - 1 } }
-            q = lo
+            // widths are not monotone in the suffix length (a space at the junction is dropped), so scan down from the longest
+            q = (0...chars.count).reversed().first { fits(0, $0) } ?? 0
         case .middle:
             var fromEnd = true
             while p + q < chars.count {
