@@ -1606,6 +1606,7 @@ public final class Graph {
         guard !closed, root != nil else { return }
         let wasAnimating = !ghosts.isEmpty || animating.contains { $0.motion != nil && $0.alive }
         clock = now
+        if TimelineClockSource.shared.now != now { TimelineClockSource.shared.now = now }   // TimelineView content re-evaluates (#82)
         advanceMotions(now: now, anchoring: true)
         // Issue #60: an indeterminate ProgressView spins by the host clock. Nothing is re-evaluated; the resolved rotation of a spinner node follows `clock`, so a commit is
         // emitted only when some spinner's step changed since the last one.
