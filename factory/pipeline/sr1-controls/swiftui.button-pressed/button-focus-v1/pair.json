@@ -70,11 +70,19 @@
   {
    "op": "screen",
    "label": "s4"
+  },
+  {
+   "op": "key",
+   "key": "Escape"
+  },
+  {
+   "op": "wait",
+   "ms": 400
   }
  ],
  "macArgs": [
   "--steps",
-  "[{\"op\":\"wait\",\"ms\":700},{\"op\":\"dump\",\"label\":\"start\"},{\"op\":\"wait\",\"ms\":250},{\"op\":\"front\"},{\"op\":\"wait\",\"ms\":500},{\"op\":\"screen\",\"label\":\"s0\"},{\"op\":\"key\",\"key\":\"Tab\"},{\"op\":\"wait\",\"ms\":400},{\"op\":\"screen\",\"label\":\"s1\"},{\"op\":\"key\",\"key\":\"Tab\"},{\"op\":\"wait\",\"ms\":400},{\"op\":\"screen\",\"label\":\"s2\"},{\"op\":\"key\",\"key\":\"Tab\"},{\"op\":\"wait\",\"ms\":400},{\"op\":\"screen\",\"label\":\"s3\"},{\"op\":\"key\",\"key\":\"Tab\"},{\"op\":\"wait\",\"ms\":400},{\"op\":\"screen\",\"label\":\"s4\"}]"
+  "[{\"op\":\"wait\",\"ms\":700},{\"op\":\"dump\",\"label\":\"start\"},{\"op\":\"wait\",\"ms\":250},{\"op\":\"front\"},{\"op\":\"wait\",\"ms\":500},{\"op\":\"screen\",\"label\":\"s0\"},{\"op\":\"key\",\"key\":\"Tab\"},{\"op\":\"wait\",\"ms\":400},{\"op\":\"screen\",\"label\":\"s1\"},{\"op\":\"key\",\"key\":\"Tab\"},{\"op\":\"wait\",\"ms\":400},{\"op\":\"screen\",\"label\":\"s2\"},{\"op\":\"key\",\"key\":\"Tab\"},{\"op\":\"wait\",\"ms\":400},{\"op\":\"screen\",\"label\":\"s3\"},{\"op\":\"key\",\"key\":\"Tab\"},{\"op\":\"wait\",\"ms\":400},{\"op\":\"screen\",\"label\":\"s4\"},{\"op\":\"key\",\"key\":\"Escape\"},{\"op\":\"wait\",\"ms\":400}]"
  ],
  "phaseShots": [
   "s0",
