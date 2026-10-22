@@ -30,7 +30,8 @@ param(
   [switch]$ClickPick,
   [switch]$NumberPick,
   [switch]$UiaList,
-  [switch]$FlipAbove
+  [switch]$FlipAbove,
+  [switch]$PlainText
 )
 . "$PSScriptRoot\native-common.ps1"
 if ($SysCaret) { $env:SWIFTRIGHT_IME_SYSTEM_CARET = '1' }
@@ -616,6 +617,26 @@ try {
     $v0 = 'Row 7'
   }
 
+  if ($PlainText) {
+    # #45 fallback: with TSF on and no composing IME (plain en-US layout, then the Japanese layout with the IME closed) typing must reach the field unchanged and no composition may start.
+    $nP = (Exe-ErrLines).Count
+    foreach ($k in 0x58, 0x59, 0x5A) { [void](Send-GatedKey $k 'plain-key' 250) }
+    Start-Sleep -Milliseconds 900
+    $vA = Value-Of (Edit $row)
+    Add-Check 'tsf-fallback-default-layout-types-plain-text' $(if ($vA -eq ($v0 + 'xyz')) { 'PASS' } else { 'FAIL' }) "layout=0x$(([SRN.N]::LayoutOfThread($tid) -band 0xFFFF).ToString('X')) value=[$vA] expected=[$($v0)xyz]"
+    [void][SRN.N]::PostMessage($script:Hwnd, [SRN.N]::WM_INPUTLANGCHANGEREQUEST, [IntPtr]0, [IntPtr]$hklJa)
+    $sw = [Diagnostics.Stopwatch]::StartNew(); while ($sw.ElapsedMilliseconds -lt 3000 -and (([SRN.N]::LayoutOfThread($tid) -band 0xFFFF) -ne 0x411)) { Start-Sleep -Milliseconds 100 }
+    [void][SRN.N]::ImeControl($script:Hwnd, [SRN.N]::IMC_SETOPENSTATUS, 0); Start-Sleep -Milliseconds 500
+    $rbP = Ime-Readback
+    foreach ($k in 0x58, 0x59, 0x5A) { [void](Send-GatedKey $k 'plain-key-ja-closed' 250) }
+    Start-Sleep -Milliseconds 900
+    $vB = Value-Of (Edit $row)
+    Add-Check 'tsf-fallback-japanese-layout-ime-closed-types-plain-text' $(if ($vB -eq ($v0 + 'xyzxyz')) { 'PASS' } else { 'FAIL' }) "layout=0x$(([SRN.N]::LayoutOfThread($tid) -band 0xFFFF).ToString('X')) open_status=$($rbP.Open) value=[$vB] expected=[$($v0)xyzxyz]"
+    $starts = @((Exe-ErrLines) | Select-Object -Skip $nP | Where-Object { $_ -match 'tsf_composition event=start' }).Count
+    Add-Check 'tsf-fallback-no-composition-without-ime' $(if ($starts -eq 0) { 'PASS' } else { 'FAIL' }) "tsf_composition starts while plain typing=$starts"
+    throw 'plain-text-done'
+  }
+
   # ------------------------------------------------------------ (2) switch the probe's input to the Japanese IME
   $rb = Switch-Japanese
   $imeOn = (([SRN.N]::LayoutOfThread($tid) -band 0xFFFF) -eq 0x411) -and ($rb.Open -gt 0)
@@ -906,7 +927,7 @@ try {
   # ------------------------------------------------------------ leave the fixture in its scripted end state
   if ($Fixture -eq 'F7') { Set-Value $row 'Row 2kana' } elseif ($Fixture -eq 'F8') { [void](Focus-Edit 'Row 3') }
 }
-catch { Log "driver_exception: $($_.Exception.Message)"; Add-Check 'driver-run' 'FAIL' "exception: $($_.Exception.Message)" }
+catch { Log "driver_exception: $($_.Exception.Message)"; if ($_.Exception.Message -ne 'plain-text-done') { Add-Check 'driver-run' 'FAIL' "exception: $($_.Exception.Message)" } }
 finally {
   $restored = Restore-Ime
   Add-Check 'ime-restored' $(if ($restored) { 'PASS' } else { 'FAIL' }) "probe thread layout back to 0x$($layoutBefore.ToString('X8')) and IME closed"
@@ -927,9 +948,11 @@ $cbX = @($cbOk | ForEach-Object { [math]::Round($_.payload.x) } | Sort-Object -U
 Add-Check 'ime-caret-bounds-logged' $(if ($cbOk.Count -ge 2 -and $cbX.Count -ge 2) { 'PASS' } else { 'FAIL' }) "exe EVT ime/caret-bounds lines=$($cbAll.Count) with a non-empty rectangle=$($cbOk.Count) distinct x positions=$($cbX.Count) (expected >=2: the caret rectangle must move as the composition grows) last=$(if ($cbOk.Count) { $l = $cbOk[$cbOk.Count - 1].payload; "x=$($l.x) y=$($l.y) w=$($l.w) h=$($l.h) scale=$($l.scale)" } else { 'none' })"
 if ($Fixture -eq 'F7live') {
   $failedOther = @($failedAsserts)
+  if ($PlainText) { } else {
   Add-Check 'f7live-selftest-verdict' $(if ($verdict -like '*: PASS*') { 'PASS' } else { 'FAIL' }) "failed asserts=[$($failedOther -join ',')] verdict=[$verdict] (live variant: insert-committed, identity-index-shift, no-teardown, release-hook-fired)"
   $row2 = $evt | Where-Object { $_.kind -eq 'hook' -and $_.payload.phase -eq 'release' } | Select-Object -First 1
   Add-Check 'f7live-hook-evidence-recorded' $(if ($row2 -ne $null -and $row2.payload.marked -ne 'none') { 'PASS' } else { 'FAIL' }) "release hook EVT: key=$($row2.payload.key) source=$($row2.payload.source) display=[$($row2.payload.display)] marked=$($row2.payload.marked)"
+  }
 } elseif ($Fixture -eq 'F7') {
   # the exact-list asserts compare against the programmatic calls only; real IME input legitimately adds calls
   $allowed = @('text-store-keystrokes', 'ime-calls-recorded')
