@@ -12,8 +12,8 @@ struct Witness_g79_button_focus_v1: View {
         VStack(spacing: 14) {
             Button { } label: { Text("Bordered").frame(width: 84) }.buttonStyle(.bordered).focused($focus, equals: 0)
             Button { } label: { Text("Prominent").frame(width: 84) }.buttonStyle(.borderedProminent).focused($focus, equals: 1)
-            Button { } label: { Text("Plain").frame(width: 84) }.buttonStyle(.plain).focused($focus, equals: 2)
-            Button { } label: { Text("Borderless").frame(width: 84) }.buttonStyle(.borderless).focused($focus, equals: 3)
+            Button { } label: { Text("Plain") }.buttonStyle(.plain).focused($focus, equals: 2)
+            Button { } label: { Text("Borderless") }.buttonStyle(.borderless).focused($focus, equals: 3)
             TextField("Field", text: .constant("")).frame(width: 120).focused($focus, equals: 4)
         }
         .padding(20).frame(width: 200, height: 200)

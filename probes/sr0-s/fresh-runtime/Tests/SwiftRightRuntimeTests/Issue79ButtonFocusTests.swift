@@ -46,6 +46,7 @@ final class Issue79ButtonFocusTests: XCTestCase {
         let graph = Graph(Screen(), scale: 1)
         graph.rootProposal = ProposedViewSize(width: 320, height: 240)
         graph.flush()
+        XCTAssertEqual(focusedButtons(graph), [false, false, false, false], "a focus request on a Button is refused with the macOS default (measured: the TextField kept the focus)")
         XCTAssertTrue(graph.moveFocus(forward: true))
         XCTAssertEqual(focusedButtons(graph), [false, false, false, false], "Tab goes to the TextField, not to a Button")
     }

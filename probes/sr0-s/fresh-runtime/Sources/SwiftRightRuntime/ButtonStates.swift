@@ -17,7 +17,9 @@ extension Graph {
     func buttonIsFocused(_ node: Node) -> Bool {
         guard node.environment.isEnabled else { return false }
         if let focused = focusedButtonID, focused == node.idString { return true }
-        // a `.focused` modifier directly around the button (only modifiers between them)
+        // a `.focused` modifier directly around the button (only modifiers between them). With the macOS default (full keyboard access off) a Button cannot take keyboard focus: a focus
+        // request on it is refused and no ring is drawn (measured on the Mac CI runner, #79: the TextField kept the focus in every shot).
+        guard tabFocusesAllControls else { return false }
         var ancestor = node.parent
         while let a = ancestor, case .modifier = a.kind {
             if case .modifier(.focus) = a.kind, a.focused { return true }
