@@ -26,6 +26,10 @@ final class OffscreenWindow: NSWindow {
     @objc(hasKeyAppearance) func hasKeyAppearanceOverride() -> Bool { true }
     override var backingScaleFactor: CGFloat { ScalePin.scale }
     override var canBecomeKey: Bool { true }
+    // #79: this process never becomes the active app on the CI runner (NSApp.isActive stays false), so the window says it is key and main for the focus drawing
+    var pretendKey = false
+    override var isKeyWindow: Bool { pretendKey ? true : super.isKeyWindow }
+    override var isMainWindow: Bool { pretendKey ? true : super.isMainWindow }
 }
 
 func pump(_ seconds: Double) { RunLoop.current.run(until: Date().addingTimeInterval(seconds)) }
@@ -246,6 +250,13 @@ func runSteps(_ steps: [[String: Any]], driver: Driver, png: String, ax: String?
             case "front":
                 if !driver.window.isVisible { driver.window.setFrameOrigin(NSPoint(x: 40, y: 80)); driver.window.orderFrontRegardless() }
                 NSApp.setActivationPolicy(.regular); driver.window.makeKey(); NSApp.activate(ignoringOtherApps: true); pump(0.6)
+                if let w = driver.window as? OffscreenWindow {
+                    w.pretendKey = true
+                    NotificationCenter.default.post(name: NSApplication.didBecomeActiveNotification, object: NSApp)
+                    NotificationCenter.default.post(name: NSWindow.didBecomeKeyNotification, object: w)
+                    NotificationCenter.default.post(name: NSWindow.didBecomeMainNotification, object: w)
+                    w.makeFirstResponder(w.firstResponder); pump(0.6)
+                }
                 print("MAC_FRONT policy=\(NSApp.activationPolicy().rawValue) active=\(NSApp.isActive) key=\(driver.window.isKeyWindow) firstResponder=\(String(describing: driver.window.firstResponder))")
             case "down": driver.pointer(down: true, px: (s["x"] as? NSNumber)?.doubleValue ?? 0, py: (s["y"] as? NSNumber)?.doubleValue ?? 0)
             case "up": driver.pointer(down: false, px: (s["x"] as? NSNumber)?.doubleValue ?? 0, py: (s["y"] as? NSNumber)?.doubleValue ?? 0)
