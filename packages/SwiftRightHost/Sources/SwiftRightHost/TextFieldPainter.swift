@@ -13,8 +13,10 @@ public enum TextFieldColors {
     public static let selection: UInt32 = 0xb3d7ffff
     /// Caret: the accent (0,122,255), as measured on macOS 27 in an active key window (window-server capture, CI 39722299676); it was 0x111111, never gated.
     public static let caret: UInt32 = 0x007affff
-    /// A focused field's ring: 3 pt outside the frame to 1 pt inside it, the same extent and colour as a Button's, the outer corner radius about 6.5 pt (measured, #80).
-    public static let focusRingOuterRadius = 6.5
+    /// A focused field's ring: 3 pt outside the frame to 1 pt inside it, the same extent and colour as a Button's, the outer corner radius about 8 pt (fitted to the Mac ring's corner rows, #80).
+    /// The caret: 2 px wide at 1x (measured, CI 39725683016: two full accent columns) and centred on the insertion boundary; one point at larger scales (not measured above 1x).
+    public static func caretWidth(scale: Float) -> Float { max(2, scale) }
+    public static let focusRingOuterRadius = 8.0
 }
 
 /// Caret and range geometry of a shaped run: x positions in pixels (relative to the run's left) at each UTF-16 offset.
@@ -175,11 +177,11 @@ extension ResolvedNodePainter {
                     primitives.append(.underline(Rect(x: originX + a, y: originY + natural.height - max(1, scale / 2), w: max(1, b - a), h: max(1, scale / 2)), color: TextFieldColors.caret))
                 }
                 if let selection = node.selection, selection.length == 0, selection.location < xs.count {
-                    primitives.append(.rect(Rect(x: originX + xs[selection.location], y: originY, w: max(1, scale / 2), h: natural.height), color: TextFieldColors.caret))
+                    primitives.append(.rect(Rect(x: originX + xs[selection.location] - TextFieldColors.caretWidth(scale: scale) / 2, y: originY, w: TextFieldColors.caretWidth(scale: scale), h: natural.height), color: TextFieldColors.caret))
                 }
             }
             if isFocused, isPlaceholder {
-                primitives.append(.rect(Rect(x: bounds.x + inset, y: originY, w: max(1, scale / 2), h: natural.height), color: TextFieldColors.caret))
+                primitives.append(.rect(Rect(x: bounds.x + inset - TextFieldColors.caretWidth(scale: scale) / 2, y: originY, w: TextFieldColors.caretWidth(scale: scale), h: natural.height), color: TextFieldColors.caret))
             }
             primitives.append(.clipPop)
         } else {
@@ -187,7 +189,7 @@ extension ResolvedNodePainter {
             let top = bounds.y + (bounds.h - height) / 2
             pendingFieldLayouts[node.id] = TextFieldLayout(bounds: bounds, textOriginX: bounds.x + inset, boundaries: [0], lineHeight: height, textTop: top)
             if isFocused {
-                primitives.append(.rect(Rect(x: bounds.x + inset, y: top, w: max(1, scale / 2), h: height), color: TextFieldColors.caret))
+                primitives.append(.rect(Rect(x: bounds.x + inset - TextFieldColors.caretWidth(scale: scale) / 2, y: top, w: TextFieldColors.caretWidth(scale: scale), h: height), color: TextFieldColors.caret))
             }
         }
         let semantic = SemanticNode(role: .textField, label: node.placeholder ?? node.accessibility.label ?? ""  /* macOS exposes the placeholder (prompt, else title) as the field name */, value: shown,
@@ -243,11 +245,11 @@ extension ResolvedNodePainter {
             }
             if let selection = node.selection, selection.length == 0, selection.location < positions.count {
                 let p = positions[selection.location]
-                primitives.append(.rect(Rect(x: originX + p.x, y: top + Float(p.line) * lineHeight, w: max(1, scale / 2), h: lineHeight), color: TextFieldColors.caret))
+                primitives.append(.rect(Rect(x: originX + p.x - TextFieldColors.caretWidth(scale: scale) / 2, y: top + Float(p.line) * lineHeight, w: TextFieldColors.caretWidth(scale: scale), h: lineHeight), color: TextFieldColors.caret))
             }
         }
         if isFocused, isPlaceholder {
-            primitives.append(.rect(Rect(x: originX, y: top, w: max(1, scale / 2), h: lineHeight), color: TextFieldColors.caret))
+            primitives.append(.rect(Rect(x: originX - TextFieldColors.caretWidth(scale: scale) / 2, y: top, w: TextFieldColors.caretWidth(scale: scale), h: lineHeight), color: TextFieldColors.caret))
         }
         primitives.append(.clipPop)
         return primitives
